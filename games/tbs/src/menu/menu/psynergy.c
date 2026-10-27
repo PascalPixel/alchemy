@@ -608,9 +608,9 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex) {
   s32 code = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | id;
 
   if (shortcutIndex == 0) {
-    gPersistentState.firstShortcut = code;
+    gCommon.firstShortcut = code;
   } else {
-    gPersistentState.secondShortcut = code;
+    gCommon.secondShortcut = code;
   }
   return 1;
 }
@@ -629,52 +629,47 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {
   s32 height;
   s32 wide;
 
-  if (gPersistentState.firstShortcut != 0 &&
-      gPersistentState.secondShortcut != 0)
+  if (gCommon.firstShortcut != 0 && gCommon.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
-  Text_GetMessageSizeFar(
-      (gPersistentState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-          MsgAbilityName,
-      &left, &top, &width, &height);
+  Text_GetMessageSizeFar((gCommon.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+                             MsgAbilityName,
+                         &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gPersistentState.firstShortcut != 0) {
-    MessageArgument_PushFar(gPersistentState.firstShortcut &
-                                PSYNERGY_SHORTCUT_ID_MASK,
+  if (gCommon.firstShortcut != 0) {
+    MessageArgument_PushFar(gCommon.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gPersistentState.firstShortcut >>
-                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT)
-                                     ->name,
-                                 window, 80, 0);
+      Text_DrawStringAtOffsetFar(
+          Unit_GetFar(gCommon.firstShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+              ->name,
+          window, 80, 0);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyL, window, 0, 0);
   }
 
-  Text_GetMessageSizeFar(
-      (gPersistentState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-          MsgAbilityName,
-      &left, &top, &width, &height);
+  Text_GetMessageSizeFar((gCommon.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+                             MsgAbilityName,
+                         &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gPersistentState.secondShortcut != 0) {
-    MessageArgument_PushFar(gPersistentState.secondShortcut &
-                                PSYNERGY_SHORTCUT_ID_MASK,
+  if (gCommon.secondShortcut != 0) {
+    MessageArgument_PushFar(gCommon.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gPersistentState.secondShortcut >>
-                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT)
-                                     ->name,
-                                 window, 80, 8);
+      Text_DrawStringAtOffsetFar(
+          Unit_GetFar(gCommon.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+              ->name,
+          window, 80, 8);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyR, window, 0, 8);
@@ -690,16 +685,14 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
   s32 height;
   u16 wide;
 
-  if (gPersistentState.firstShortcut != 0 &&
-      gPersistentState.secondShortcut != 0)
+  if (gCommon.firstShortcut != 0 && gCommon.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
-  Text_GetMessageSizeFar(
-      (gPersistentState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-          MsgAbilityName,
-      &left, &top, &width, &height);
+  Text_GetMessageSizeFar((gCommon.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+                             MsgAbilityName,
+                         &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
   else
@@ -708,29 +701,26 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLString, window, 0, 0);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLColonString, window, 0, 0);
-  if (gPersistentState.firstShortcut != 0) {
+  if (gCommon.firstShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gPersistentState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-              MsgAbilityName,
+          (gCommon.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
           window, 8, 0);
     else
       Text_DrawMessageAsTilesFar(
-          (gPersistentState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-              MsgAbilityName,
+          (gCommon.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
           window, 16, 0);
-    Text_DrawStringAtOffsetFar(Unit_GetFar(gPersistentState.firstShortcut >>
-                                           PSYNERGY_SHORTCUT_MEMBER_SHIFT)
-                                   ->name,
-                               window, 80, 0);
+    Text_DrawStringAtOffsetFar(
+        Unit_GetFar(gCommon.firstShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+            ->name,
+        window, 80, 0);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyL, window, 24, 0);
   }
 
-  Text_GetMessageSizeFar(
-      (gPersistentState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-          MsgAbilityName,
-      &left, &top, &width, &height);
+  Text_GetMessageSizeFar((gCommon.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+                             MsgAbilityName,
+                         &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
   else
@@ -739,21 +729,19 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRString, window, 0, 8);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRColonString, window, 0, 8);
-  if (gPersistentState.secondShortcut != 0) {
+  if (gCommon.secondShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gPersistentState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-              MsgAbilityName,
+          (gCommon.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
           window, 8, 8);
     else
       Text_DrawMessageAsTilesFar(
-          (gPersistentState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
-              MsgAbilityName,
+          (gCommon.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
           window, 16, 8);
-    Text_DrawStringAtOffsetFar(Unit_GetFar(gPersistentState.secondShortcut >>
-                                           PSYNERGY_SHORTCUT_MEMBER_SHIFT)
-                                   ->name,
-                               window, 80, 8);
+    Text_DrawStringAtOffsetFar(
+        Unit_GetFar(gCommon.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+            ->name,
+        window, 80, 8);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyR, window, 24, 8);

@@ -9,7 +9,7 @@
 #define _XOPEN_SOURCE 700
 #define _DARWIN_C_SOURCE
 #include "../ags-graphics/graphics.h"
-#include "../common/assembly.h"
+#include "../shared/assembly.h"
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>

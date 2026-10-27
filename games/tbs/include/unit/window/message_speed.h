@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// PersistentState.messageSpeed, as the settings name it
+/// Common.messageSpeed, as the settings name it
 /// (MsgMessageSpeedSetting
 /// + speed): it indexes the speed tables below.
 enum MessageSpeed {

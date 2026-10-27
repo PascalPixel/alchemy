@@ -19,7 +19,7 @@ enum {
 
 /// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
-#include "../../scene/common/effect_spawn.h"
+#include "../../scene/shared/effect_spawn.h"
 #undef EFFECT_SPAWN_RESIDENT
 
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z

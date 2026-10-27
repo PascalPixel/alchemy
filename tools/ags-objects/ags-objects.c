@@ -7,7 +7,7 @@
  * themselves. Either way the same Make variables result, and the table
  * gives the main image its linker fragments.
  */
-#include "../common/common.h"
+#include "../shared/shared.h"
 #include <dirent.h>
 
 static const char *defaults = ".text .rodata .data .padding";

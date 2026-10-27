@@ -32,7 +32,7 @@
 /// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
 /// hides the area name.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "event_layer.h"
 #include "unit/scene/rock_rooms.h"
 #include "unit/overworld/overworld.h"
@@ -291,7 +291,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// The triggers of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gPersistentState.entrance == ROOM_GATE_TO_SUHALLA) {
+  if (gCommon.entrance == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaTriggers;
   }
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -485,11 +485,11 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gPersistentState.entrance;
+  entrance = gCommon.entrance;
   if (entrance == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    gPersistentState.restartScene = (s32)&SceneId_RockRooms;
-    gPersistentState.restartEntrance = entrance;
+    gCommon.restartScene = (s32)&SceneId_RockRooms;
+    gCommon.restartEntrance = entrance;
   }
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEAPON_COUNTER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ARMOR_COUNTER), 0);

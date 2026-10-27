@@ -6,7 +6,7 @@
  */
 #ifndef AGS_ASSEMBLY_H
 #define AGS_ASSEMBLY_H
-#include "common.h"
+#include "shared.h"
 typedef struct
 {
 	size_t offset;

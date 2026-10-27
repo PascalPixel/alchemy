@@ -38,7 +38,7 @@
 /// barrel holds a Lucky Medal.
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/lalivero_interiors.h"
@@ -224,7 +224,7 @@ const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *LaliveroInteriors_GetRegions(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_TimberRoomsB) {
+  if (gCommon.sceneId == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -234,7 +234,7 @@ const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ActorTemplate *LaliveroInteriors_GetActorTemplates(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gCommon.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorTemplatesAfterLighthouse;
@@ -418,7 +418,7 @@ static void LaliveroInteriors_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *LaliveroInteriors_GetTriggers(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gCommon.sceneId == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -842,12 +842,12 @@ s32 Scene_Initialize(void) {
   s16 entrance;
   struct Actor *actor;
 
-  if (gPersistentState.entrance == ENTRANCE_FROM_AERIE) {
+  if (gCommon.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  sceneId = gPersistentState.sceneId;
+  sceneId = gCommon.sceneId;
   if (sceneId == (s32)&SceneId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
@@ -865,13 +865,13 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     Import_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
-    entrance = gPersistentState.entrance;
+    entrance = gCommon.entrance;
     if (entrance == TIMBER_ROOMS_B_SANCTUM) {
-      gPersistentState.restartScene = sceneId;
-      gPersistentState.restartEntrance = entrance;
+      gCommon.restartScene = sceneId;
+      gCommon.restartEntrance = entrance;
     }
   }
-  if (gPersistentState.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gCommon.sceneId == (s32)&SceneId_TimberRoomsC) {
     actor = Actor_GetById(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
@@ -879,8 +879,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
       Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
     }
-    if (gPersistentState.entrance ==
-        TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
+    if (gCommon.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       LaliveroInteriors_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // templates do.
@@ -888,7 +887,7 @@ s32 Scene_Initialize(void) {
                             MOVEMENT_TYPE_FACE_LEADER);
       Actor_SetMovementType(Actor_GetById(ACTOR_FARAN),
                             MOVEMENT_TYPE_FACE_LEADER);
-      gPersistentState.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
+      gCommon.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;

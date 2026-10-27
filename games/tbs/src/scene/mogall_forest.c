@@ -56,13 +56,13 @@
 /// settles are SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "engine_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/mogall_forest.h"
-#include "unit/scene/common/actor_orbit.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/actor_orbit.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 
@@ -299,10 +299,10 @@ enum {
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
-#include "common/staged_actor.h"
+#include "shared/staged_actor.h"
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
 /// Mogall Forest, the second area: talking to Quartz, a Venus Djinni, starts
 /// the Djinni battle.
@@ -437,7 +437,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
-  s16 selector = gPersistentState.sceneId;
+  s16 selector = gCommon.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Entrances;
@@ -457,7 +457,7 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorTemplate *MogallForest_GetActorTemplates(void) {
-  s16 selector = gPersistentState.sceneId;
+  s16 selector = gCommon.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ActorTemplates;
@@ -1355,7 +1355,7 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *MogallForest_GetTriggers(void) {
-  s16 selector = gPersistentState.sceneId;
+  s16 selector = gCommon.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Triggers;
@@ -1385,11 +1385,11 @@ s32 MogallForest_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gPersistentState.sceneId;
+  sceneId = gCommon.sceneId;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
     // crossing.
-    entrance = gPersistentState.entrance;
+    entrance = gCommon.entrance;
     switch (entrance) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
@@ -1474,7 +1474,7 @@ s32 MogallForest_Initialize(void) {
     }
   } else if (sceneId == (s32)&SceneId_MogallForestQuartz) {
     // Restore revealed guides, moved rocks and the second crossing.
-    entrance = gPersistentState.entrance;
+    entrance = gCommon.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
@@ -1543,7 +1543,7 @@ s32 MogallForest_Initialize(void) {
   } else if (sceneId == (s32)&SceneId_MogallForestKillerApe) {
     // Restore both crossing logs and the creatures leading to the final
     // encounter.
-    entrance = gPersistentState.entrance;
+    entrance = gCommon.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:
@@ -1672,7 +1672,7 @@ s32 MogallForest_Initialize(void) {
   return 0;
 }
 
-#include "common/actor_orbit.h"
+#include "shared/actor_orbit.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))

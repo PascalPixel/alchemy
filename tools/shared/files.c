@@ -7,7 +7,7 @@
  * writeChanged also preserves an existing identical file and its timestamp.
  */
 #define _POSIX_C_SOURCE 200809L
-#include "common.h"
+#include "shared.h"
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>

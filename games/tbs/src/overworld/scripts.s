@@ -319,13 +319,13 @@ gActor_LinkedScript:
 @ Ground particles, motes of light and sparkles
 	.global gFieldEffect_GroundParticleTiles
 gFieldEffect_GroundParticleTiles:
-	.incbin "games/tbs/src/field/common/effect/ground.4bpp16x16.plz"
+	.incbin "games/tbs/src/field/shared/effect/ground.4bpp16x16.plz"
 	.global gFieldEffect_MoteTiles
 gFieldEffect_MoteTiles:
 	.incbin "games/tbs/src/overworld/mote.4bpp16x16.plz"
 	.global gFieldEffect_SparkleTiles
 gFieldEffect_SparkleTiles:
-	.incbin "games/tbs/src/field/common/effect/sparkle.4bpp16x16.plz"
+	.incbin "games/tbs/src/field/shared/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
 	.global gFieldEffect_TargetColors
 gFieldEffect_TargetColors:

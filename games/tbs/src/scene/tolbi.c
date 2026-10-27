@@ -86,7 +86,7 @@ static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(ACTOR_TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
 }
 
-#include "common/actor_distance.h"
+#include "shared/actor_distance.h"
 
 /// Stops a running child when the target is close by and ahead of it, or
 /// always when force is set; otherwise starts the child running again.

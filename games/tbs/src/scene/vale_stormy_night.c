@@ -54,10 +54,10 @@
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/import.h"
 #include "unit/scene/vale_stormy_night.h"
-#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/shared/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -301,7 +301,7 @@ static s32 ValeStormyNight_RerollHeadingOnCountdown(struct Actor *interpreter) {
   return 1;
 }
 
-#include "common/actor_pulse.h"
+#include "shared/actor_pulse.h"
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.
@@ -357,7 +357,7 @@ static void ValeStormyNight_StepOffBridge(void) {
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-#include "common/vale.h"
+#include "shared/vale.h"
 
 /// Unused: on the stormy night, the Sanctum's door opens and the leader goes
 /// into a house of Vale.
@@ -696,8 +696,7 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gPersistentState.entrance !=
-          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
+  if (gCommon.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -722,8 +721,7 @@ s32 ValeStormyNight_Initialize(void) {
   }
   WaitTicks(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gPersistentState.entrance ==
-          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
+      gCommon.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValeStormyNight_DoraSendsIsaacToThePlaza();
     return 0;
   }
@@ -2941,7 +2939,7 @@ static void ValeStormyNight_CycleActorPalettes(struct Actor *actor) {
   }
 }
 
-#include "common/effect_vertical.h"
+#include "shared/effect_vertical.h"
 
 /// Spawns a pair of Psynergy sparks on an elder, one rising and one falling
 /// (common/effect_vertical.h), with SE_JUMP.
@@ -2995,7 +2993,7 @@ static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 /// Cycles the four elders' palettes and effects while they hold the Boulder;
 /// the westernmost elder's stop once that elder lets go (sShakeDone).

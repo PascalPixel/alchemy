@@ -7,7 +7,7 @@
  * in either the flat-bank or sectioned layout.
  */
 #include "resource.h"
-#include "../common/assembly.h"
+#include "../shared/assembly.h"
 
 typedef struct
 {

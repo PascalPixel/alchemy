@@ -38,7 +38,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 /// and OBJ palettes. The packed colours are double-buffered: work->page names
 /// the page the queued DMA reads, and the other is written. Registered by
 /// PaletteFade_Initialize as a task; the menus clear
-/// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
+/// and set FLAG_PALETTE_BLEND_HELD around it (menu/shared.c).
 void PaletteFade_Update(void) {
   struct PaletteFade *work = gPaletteFadeWork;
   u16 *channelDelta = work->delta;

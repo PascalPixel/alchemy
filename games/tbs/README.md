@@ -170,8 +170,8 @@ battle, or else to the last Sanctum.
 
 ### How a program finds its way back
 
-Programs pass nothing to each other directly. Everything goes through the
-persistent state, `gPersistentState`:
+Programs pass nothing to each other directly. Everything goes through common,
+`gCommon`, the one struct every program shares:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -184,7 +184,7 @@ persistent state, `gPersistentState`:
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gPersistentState.programResult` for the scene that comes back.
+result stays in `gCommon.programResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
 **Reference:** `Monitor_Run` · `Scene_ReturnFromProgram`

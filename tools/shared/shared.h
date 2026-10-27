@@ -1,11 +1,11 @@
 /*
- * common.h
+ * shared.h
  *
  * Shared allocation, buffer, file, and string-list interfaces. Returned buffers
  * and strings belong to the caller unless the declaration says otherwise.
  */
-#ifndef AGS_COMMON_H
-#define AGS_COMMON_H
+#ifndef AGS_SHARED_H
+#define AGS_SHARED_H
 
 #include <stdbool.h>
 #include <stddef.h>

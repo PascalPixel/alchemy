@@ -15,7 +15,7 @@
 ///   onto the World Map, with a Psynergy Stone.
 ///
 /// One exit table serves the three scenes; the other getters choose by
-/// gPersistentState.sceneId, and SuhallaGateCheckpoint's actor templates also
+/// gCommon.sceneId, and SuhallaGateCheckpoint's actor templates also
 /// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any scene not
 /// otherwise named.
 ///
@@ -39,7 +39,7 @@
 /// Stone is kept in an area flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
 /// it is back whenever the party returns from another area.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "version.h"
 #include "unit/scene/suhalla_gate.h"
 #include "unit/overworld/overworld.h"
@@ -127,7 +127,7 @@ static void SuhallaGate_FightDew(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewEntrances;
@@ -145,7 +145,7 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
 /// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewActorTemplates;
@@ -163,7 +163,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// Gateway Cave (SceneId_GatewayCave), or of the gate itself
 /// (SceneId_SuhallaGateCheckpoint) for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewTriggers;
@@ -187,10 +187,10 @@ s32 Scene_Initialize(void) {
   s32 sceneId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gPersistentState.restartScene = (s32)&SceneId_RockRooms;
-    gPersistentState.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
+    gCommon.restartScene = (s32)&SceneId_RockRooms;
+    gCommon.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
-  sceneId = gPersistentState.sceneId;
+  sceneId = gCommon.sceneId;
   if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Import_ActorSetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
@@ -204,27 +204,23 @@ s32 Scene_Initialize(void) {
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the area's name is not shown again.
-    if (gPersistentState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
+    if (gCommon.entrance == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
-        gPersistentState.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
-        gPersistentState.retreatEntrance =
-            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
+        gCommon.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gCommon.retreatEntrance = SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
-        gPersistentState.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
-        gPersistentState.retreatEntrance =
-            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
+        gCommon.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gCommon.retreatEntrance = SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
-    if (gPersistentState.entrance ==
-        SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
+    if (gCommon.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
       if (!GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
-    if (gPersistentState.entrance ==
-        SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
+    if (gCommon.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     Import_ActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);

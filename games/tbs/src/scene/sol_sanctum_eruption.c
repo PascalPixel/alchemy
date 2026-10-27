@@ -34,10 +34,10 @@
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/scene/sol_sanctum_eruption.h"
-#include "unit/scene/common/effect_psynergy.h"
-#include "unit/scene/common/sol_sanctum_elemental_star_ring_setup.h"
+#include "unit/scene/shared/effect_psynergy.h"
+#include "unit/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -631,7 +631,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
 /// FieldLoop_Run once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
-  if (gPersistentState.entrance ==
+  if (gCommon.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageEvent();
@@ -1801,7 +1801,7 @@ static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "common/effect_vertical.h"
+#include "shared/effect_vertical.h"
 
 /// Creates two vertical effects sharing the parent position and cached tiles.
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
@@ -1850,7 +1850,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 /// Cycles the Wise One's palette while it glows. Run each frame as a task
 /// that SolSanctumEruption_PlayWiseOneRescue adds and
@@ -1859,7 +1859,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_GetById(ACTOR_WISE_ONE));
 }
 
-#include "common/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.h"
 
 s32 gEruption_ArcOriginsHead[] = {
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),

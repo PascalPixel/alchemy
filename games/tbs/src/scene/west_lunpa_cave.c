@@ -41,7 +41,7 @@
 /// camera bounds, so Frost can never reach it
 /// (WestLunpaCave_UnusedFreezePuddle).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "event_layer.h"
 #include "unit/scene/west_lunpa_cave.h"
@@ -103,7 +103,7 @@ const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave scene places puddles, Hammet, Bunza and the party members.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_WestLunpaCave) {
+  if (gCommon.sceneId == (s32)&SceneId_WestLunpaCave) {
     return gCaveActorTemplates;
   }
   return gCaveNoActorTemplates;
@@ -1037,7 +1037,7 @@ static void Party_RidesWagon(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gPersistentState.sceneId == (s32)&SceneId_WestLunpaCave) {
+  if (gCommon.sceneId == (s32)&SceneId_WestLunpaCave) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_UNUSED_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTH_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_GATE_PUDDLE), 0);

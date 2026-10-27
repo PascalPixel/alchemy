@@ -22,7 +22,7 @@
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
 /// Called by Monitor_Run with FieldLoop_Run's result; sets
-/// gPersistentState.sceneId and .entrance, and leaves them alone for
+/// gCommon.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
 void Scene_TakeExit(s32 exitId) {
@@ -37,7 +37,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gPersistentState.sceneId;
+  currentMap = gCommon.sceneId;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -82,8 +82,8 @@ void Scene_TakeExit(s32 exitId) {
 
   // Commit the chosen exit only after a matching scene was found.
   if (destinationScene != EXIT_KEEP_DESTINATION) {
-    gPersistentState.sceneId = destinationScene;
-    gPersistentState.entrance = destinationEntrance;
+    gCommon.sceneId = destinationScene;
+    gCommon.entrance = destinationEntrance;
   }
 }
 
@@ -98,7 +98,7 @@ void Scene_TakeExit(s32 exitId) {
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
 /// Monitor_Run after each scene from PROGRAM_NONE on; stores result in
-/// gPersistentState.programResult and sets gPersistentState.sceneId and
+/// gCommon.programResult and sets gCommon.sceneId and
 /// .entrance.
 void Scene_ReturnFromProgram(s32 result) {
   struct Unit *unit;
@@ -106,10 +106,10 @@ void Scene_ReturnFromProgram(s32 result) {
   s32 sceneId;
   s32 entrance;
 
-  gPersistentState.programResult = result;
+  gCommon.programResult = result;
   if (result == -1) {
     // Revive the leader before choosing the restart point.
-    unit = Unit_GetFar(gPersistentState.leaderActorId);
+    unit = Unit_GetFar(gCommon.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -122,37 +122,37 @@ void Scene_ReturnFromProgram(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    sceneId = gPersistentState.defeatScene;
-    entrance = gPersistentState.defeatEntrance;
+    sceneId = gCommon.defeatScene;
+    entrance = gCommon.defeatEntrance;
     if (sceneId == -1 && entrance == -1) {
-      gPersistentState.sceneId = gPersistentState.restartScene;
-      gPersistentState.entrance = gPersistentState.restartEntrance;
+      gCommon.sceneId = gCommon.restartScene;
+      gCommon.entrance = gCommon.restartEntrance;
     } else {
       if (sceneId != -1)
-        gPersistentState.sceneId = sceneId;
+        gCommon.sceneId = sceneId;
       else
-        gPersistentState.sceneId = gPersistentState.returnScene;
+        gCommon.sceneId = gCommon.returnScene;
       if (entrance != -1)
-        gPersistentState.entrance = entrance;
+        gCommon.entrance = entrance;
       else
-        gPersistentState.entrance = gPersistentState.returnEntrance;
+        gCommon.entrance = gCommon.returnEntrance;
     }
   } else {
     // An after-battle destination an event set overrides the return point.
-    sceneId = gPersistentState.afterBattleScene;
-    entrance = gPersistentState.afterBattleEntrance;
+    sceneId = gCommon.afterBattleScene;
+    entrance = gCommon.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
-        gPersistentState.sceneId = sceneId;
+        gCommon.sceneId = sceneId;
       else
-        gPersistentState.sceneId = gPersistentState.returnScene;
+        gCommon.sceneId = gCommon.returnScene;
       if (entrance != -1)
-        gPersistentState.entrance = entrance;
+        gCommon.entrance = entrance;
       else
-        gPersistentState.entrance = gPersistentState.returnEntrance;
+        gCommon.entrance = gCommon.returnEntrance;
     } else {
-      gPersistentState.sceneId = gPersistentState.returnScene;
-      gPersistentState.entrance = gPersistentState.returnEntrance;
+      gCommon.sceneId = gCommon.returnScene;
+      gCommon.entrance = gCommon.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -223,19 +223,18 @@ void Monitor_Run(s32 mode) {
   table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
-    gPersistentState.sceneId = (s32)&SceneId_ValePlaza;
-    gPersistentState.entrance = mode;
+    gCommon.sceneId = (s32)&SceneId_ValePlaza;
+    gCommon.entrance = mode;
   } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gPersistentState.sceneId = (s32)&SceneId_FileScreen;
-    gPersistentState.entrance = FILE_SCREEN_FROM_SANCTUM;
+    gCommon.sceneId = (s32)&SceneId_FileScreen;
+    gCommon.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
-    PersistentState_InitializeDefaultsFar();
-    gPersistentState.sceneId = (s32)&SceneId_Title;
-    gPersistentState.entrance = TITLE_AFTER_RUN;
+    Common_InitializeDefaultsFar();
+    gCommon.sceneId = (s32)&SceneId_Title;
+    gCommon.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gPersistentState.windowColor[0],
-                       gPersistentState.windowColor[1]);
+  WindowColor_ApplyFar(gCommon.windowColor[0], gCommon.windowColor[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -246,8 +245,8 @@ void Monitor_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlaySongFar(SE_STOP_ACTION_SE);
-    record = &table[gPersistentState.sceneId];
-    entrance = gPersistentState.entrance;
+    record = &table[gCommon.sceneId];
+    entrance = gCommon.entrance;
 
     // Stop DMA 0, which a scene may have left running for an HBlank effect.
     {
@@ -266,9 +265,9 @@ void Monitor_Run(s32 mode) {
     DebugText_Clear();
     VramCache_Reset();
     // A battle or minigame returns a result, not an exit: the return scene is
-    // chosen from the persistent state, and no overlay is loaded.
-    if (gPersistentState.sceneId >= PROGRAM_NONE) {
-      switch (gPersistentState.sceneId) {
+    // chosen from common, and no overlay is loaded.
+    if (gCommon.sceneId >= PROGRAM_NONE) {
+      switch (gCommon.sceneId) {
       case PROGRAM_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
@@ -287,8 +286,7 @@ void Monitor_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_Arrive(gPersistentState.sceneId,
-                 GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
+    Scene_Arrive(gCommon.sceneId, GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC_ONCE for
@@ -298,15 +296,15 @@ void Monitor_Run(s32 mode) {
         GameFlag_ClearFar(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
-    } else if (gPersistentState.returnMusic != -1) {
+    } else if (gCommon.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
       // last opened (field_loop.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
-      Sound_PlaySongFar(gPersistentState.returnMusic);
+      Sound_PlaySongFar(gCommon.returnMusic);
     } else {
       Scene_PlayMusic();
     }
-    gPersistentState.mapId = record->mapIndex;
+    gCommon.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
     Scene_TakeExit(FieldLoop_Run(entrance));
   }
@@ -318,7 +316,7 @@ void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
   table = gScenes;
-  Overlay_Load(table[gPersistentState.sceneId].resourceId, &gOverlayArea);
+  Overlay_Load(table[gCommon.sceneId].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gScenes[id])
@@ -330,29 +328,29 @@ void Scene_LoadOverlay(s32 unused) {
 /// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
 /// (FLAG_AREA_VISITED) is set. Called by Monitor_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gPersistentState.area
+/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gCommon.area
 /// and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = MAP_HEADER(gPersistentState.sceneId)->area;
+  s32 area = MAP_HEADER(gCommon.sceneId)->area;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a scene.
     for (flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (area != gPersistentState.area) {
+    if (area != gCommon.area) {
       // Area state and Retreat's destination survive moves within it.
       for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
-      gPersistentState.encounterSteps = 0;
-      gPersistentState.hazardSteps = 0;
+      gCommon.encounterSteps = 0;
+      gCommon.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gPersistentState.retreatScene = gPersistentState.sceneId;
-      gPersistentState.retreatEntrance = gPersistentState.entrance;
+      gCommon.retreatScene = gCommon.sceneId;
+      gCommon.retreatEntrance = gCommon.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
     // and so do the 16 after them to 0xdf, which nothing else uses.
@@ -365,12 +363,12 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
-    gPersistentState.returnMusic = -1;
+    gCommon.returnMusic = -1;
   }
-  gPersistentState.area = area;
+  gCommon.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
-  gPersistentState.sceneType = MAP_HEADER(gPersistentState.sceneId)->sceneType;
-  if (gPersistentState.sceneType == SCENE_TYPE_TOWN)
+  gCommon.sceneType = MAP_HEADER(gCommon.sceneId)->sceneType;
+  if (gCommon.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
@@ -378,7 +376,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 /// Starts the current scene's field music, chosen by
 /// Scene_ChooseMusic. Called by Monitor_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
-void Scene_PlayMusic(void) { Sound_PlaySongFar(gPersistentState.sceneMusic); }
+void Scene_PlayMusic(void) { Sound_PlaySongFar(gCommon.sceneMusic); }
 
 #undef EXIT_SCENE_MASK
 #undef ENTRANCE

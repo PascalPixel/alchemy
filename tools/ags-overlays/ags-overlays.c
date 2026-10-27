@@ -5,7 +5,7 @@
  * Convert relative BL displacements to stored positions before LZ compression.
  * The loader reverses this filter after decompressing the overlay.
  */
-#include "../common/compress.h"
+#include "../shared/compress.h"
 /* Store absolute call positions modulo the Thumb displacement width. */
 static void
 filterCalls(Buffer *data)

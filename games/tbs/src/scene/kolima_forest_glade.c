@@ -21,8 +21,8 @@
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_glade.h"
-#include "unit/scene/common/actor_orbit.h"
-#include "unit/scene/common/kolima_palette.h"
+#include "unit/scene/shared/actor_orbit.h"
+#include "unit/scene/shared/kolima_palette.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "battle.h"
@@ -55,7 +55,7 @@ enum KolimaForestGladeActorId {
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
-#include "common/staged_actor.h"
+#include "shared/staged_actor.h"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
@@ -119,8 +119,8 @@ s32 KolimaForestGlade_Initialize(void) {
   return 0;
 }
 
-#include "common/kolima_palette.h"
-#include "common/actor_orbit.h"
+#include "shared/kolima_palette.h"
+#include "shared/actor_orbit.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

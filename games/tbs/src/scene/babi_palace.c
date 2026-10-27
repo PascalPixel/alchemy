@@ -47,7 +47,7 @@
 /// Ball on show is an actor drawn from the item's icon until the party
 /// takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "heap.h"
 #include "version.h"
 #include "keystate.h"
@@ -328,7 +328,7 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gCommon.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideEntrances;
   }
   return gBabiPalace_Entrances;
@@ -345,7 +345,7 @@ const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 /// Returns the actor templates for the scene and the story: before Babi's
 /// rescue, during the finals or after Colosso.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gCommon.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideActorTemplates;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -2443,7 +2443,7 @@ static void BabiPalace_ExamineWell(void) {
 /// Returns the triggers for the scene and the story, as for the actor
 /// templates.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gCommon.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideTriggersAfterColosso;
     }
@@ -2474,15 +2474,15 @@ s32 BabiPalace_ApplyEntryState(void) {
   // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
   // BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector
   // reaches them, and nothing in the ROM says why they set these story flags.
-  if (gPersistentState.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
+  if (gCommon.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }
-  if (gPersistentState.entrance == BABI_PALACE_AFTER_COLOSSO) {
+  if (gCommon.entrance == BABI_PALACE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gPersistentState.sceneId != (s32)&SceneId_BabiPalaceEntrance) {
-    if (gPersistentState.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
+  if (gCommon.sceneId != (s32)&SceneId_BabiPalaceEntrance) {
+    if (gCommon.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
@@ -2505,8 +2505,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Vram_Load(sprite->slot, 128, buf + 0x400);
         Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
-      if (gPersistentState.entrance ==
-              BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
+      if (gCommon.entrance == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !Event_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
         Actor_SetPosition(ACTOR_BABI, PIXELS(208), PIXELS(704));
@@ -2525,16 +2524,16 @@ s32 BabiPalace_ApplyEntryState(void) {
     // The attendant before the rescue and after Colosso; during the finals
     // ACTOR_FINALS_HURRYING_WARRIORS_ALONG has this number.
     Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= ACTOR_NEAR_TALK;
-    if (gPersistentState.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
+    if (gCommon.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       // Only this entrance chooses the waking, so rewriting it makes a
-      // later load of the scene from the persistent state, as when a game saved
+      // later load of the scene from common, as when a game saved
       // here is continued, an arrival from the statue room, not a second
       // waking.
-      gPersistentState.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gCommon.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
-    if (gPersistentState.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
+    if (gCommon.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
@@ -2542,7 +2541,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       Actor_FaceDirection(ACTOR_FINALS_ATTENDANT,
                           FACING_NORTHEAST + FACING_STEP, 0);
       BabiPalace_WakeFromFinalsDream();
-      gPersistentState.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gCommon.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
   }
   return 0;

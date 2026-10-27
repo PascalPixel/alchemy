@@ -65,7 +65,7 @@
 /// finds nothing on the stormy night, and after Kalay it is there only from the
 /// third patch on.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/import.h"
 #include "unit/scene/vale_kradens_cottage.h"
 #include "unit/overworld/overworld.h"
@@ -139,7 +139,7 @@ enum ValeKradensCottageActorId {
   ACTOR_COTTAGE_VISITOR
 };
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 /// The front door of Kraden's cottage stands open since Kraden set off, so
 /// walking in (metatile behavior 3, the exit into the cottage) skips its
@@ -928,10 +928,8 @@ s32 ValeKradensCottage_Initialize(void) {
   struct Actor *actor;
   s32 debrisRow;
 
-  if (gPersistentState.entrance ==
-          VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
-      gPersistentState.entrance ==
-          VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
+  if (gCommon.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
+      gCommon.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -982,8 +980,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Import_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Event_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gPersistentState.entrance ==
-          VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
+      if (gCommon.entrance == VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
         ValeKradensCottage_KradenSetsOff();
       }
     }

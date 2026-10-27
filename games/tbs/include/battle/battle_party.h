@@ -65,11 +65,11 @@ struct DjinnRecoveryList {
 };
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gPersistentState from its byte 12, the enemies' over battle
+/// party's inside gCommon from its byte 12, the enemies' over battle
 /// unit 0x83.
 struct DjinnRecoveryTable {
   u32 summonMask; ///< BattleSummonState's availableMask; not named here
-  /// In the party's table, gPersistentState.coins; not named here.
+  /// In the party's table, gCommon.coins; not named here.
   u32 partyCoins;
   struct DjinnRecoveryList list;
 };

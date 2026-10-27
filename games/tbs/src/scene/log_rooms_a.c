@@ -59,7 +59,7 @@
 /// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// log-rooms-a: the room has no GUESTS_ROOM cell once the flag is set).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "flags.h"
 #include "animspr.h"
 #include "version.h"
@@ -67,7 +67,7 @@
 #include "unit/import.h"
 #include "unit/scene/log_rooms_a.h"
 #include "log_rooms_a.h"
-#include "unit/scene/common/vault_itemobj.h"
+#include "unit/scene/shared/vault_itemobj.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/battle/battle.h"
@@ -308,7 +308,7 @@ const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   struct ActorTemplate *table;
 
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -494,7 +494,7 @@ static void LogRoomsA_TalkToInnkeeper(void) {
   Event_End();
 }
 
-#include "common/vault_bone.h"
+#include "shared/vault_bone.h"
 
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
@@ -534,7 +534,7 @@ static void LogRoomsA_SearchEmptyChest(void) {
 /// Returns the loft's events for the loft's three entrances, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct Trigger *Scene_GetTriggers(void) {
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -553,7 +553,7 @@ static void LogRoomsA_StandAndShowMessage(s32 x) {
   Event_ShowMessageAndWait(x, 0);
 }
 
-#include "common/vault_talk.h"
+#include "shared/vault_talk.h"
 
 /// Faces the leader and selects the next reply when the answer is no.
 static void LogRoomsA_AskYesNoAndShowReply(s32 x) {
@@ -2094,7 +2094,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
   }
 }
 
-#include "common/vault_spotflag.h"
+#include "shared/vault_spotflag.h"
 
 /// Arriving in any room of Vault's houses, shops and inn: restores the room
 /// for the story so far, and plays the loft's events: the tied-up villager, the
@@ -2110,7 +2110,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 
@@ -2398,7 +2398,7 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "common/vault_djinn.h"
+#include "shared/vault_djinn.h"
 
 /// Stages the defeated thieves and gathers the townspeople in the loft.
 ///
@@ -3175,7 +3175,7 @@ static void LogRoomsA_EndMindRead(void) {
   FieldPsynergy_End();
 }
 
-#include "common/vault_itemobj.h"
+#include "shared/vault_itemobj.h"
 
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.

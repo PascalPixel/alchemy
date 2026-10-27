@@ -6,7 +6,7 @@
  */
 #ifndef AGS_MIDI_H
 #define AGS_MIDI_H
-#include "../common/common.h"
+#include "../shared/shared.h"
 typedef struct
 {
 	int64_t tick;

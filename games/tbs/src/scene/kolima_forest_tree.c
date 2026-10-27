@@ -39,9 +39,9 @@
 /// Switch's scene (SceneId_KolimaForestFloodgate).
 
 #include "speaker.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/scene/kolima_forest_tree.h"
-#include "unit/scene/common/kolima_palette.h"
+#include "unit/scene/shared/kolima_palette.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -789,8 +789,8 @@ s32 KolimaForestTree_Initialize(void) {
   Actor_ConfigureSpriteColor(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gPersistentState.retreatScene = (s32)&SceneId_KolimaForestEntrance;
-  gPersistentState.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
+  gCommon.retreatScene = (s32)&SceneId_KolimaForestEntrance;
+  gCommon.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   Actor_GetById(ACTOR_TRET)->radius = 6;
@@ -822,7 +822,7 @@ s32 KolimaForestTree_Initialize(void) {
   return 0;
 }
 
-#include "common/kolima_grow.h"
+#include "shared/kolima_grow.h"
 
 /// Spawns the growing sparks that repel the party leader.
 static void KolimaForestTree_SpawnRejectionSpark(void) {
@@ -1061,7 +1061,7 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
   }
 }
 
-#include "common/kolima_palette.h"
+#include "shared/kolima_palette.h"
 
 s32 gKolimaForestTree_GaretApproachActions[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(312), 0, PIXELS(230)), SC_SYNC,

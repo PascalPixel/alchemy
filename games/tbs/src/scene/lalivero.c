@@ -27,7 +27,7 @@
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "djinn_ids.h"
 #include "unit/scene/lalivero.h"
 #include "unit/overworld/overworld.h"
@@ -831,11 +831,11 @@ s32 Lalivero_Initialize(void) {
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
-  if (gPersistentState.entrance == ENTRANCE_FROM_AERIE) {
+  if (gCommon.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
-  if (gPersistentState.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
+  if (gCommon.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -899,8 +899,8 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 78, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 17, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
-    if ((gPersistentState.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
-         gPersistentState.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
+    if ((gCommon.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
+         gCommon.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !Event_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during

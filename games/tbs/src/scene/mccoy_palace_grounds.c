@@ -27,10 +27,10 @@
 /// show bare (renders of tbs-en and tbs-fr); no exit or trigger answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace_grounds.h"
-#include "unit/scene/common/actor_orbit.h"
+#include "unit/scene/shared/actor_orbit.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/runtime/runtime.h"
@@ -119,7 +119,7 @@ static void McCoyPalaceGrounds_RestoreStory(void);
 static void McCoyPalaceGrounds_GuardsArrestParty(void);
 static void McCoyPalaceGrounds_OpenGate(void);
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGroundsEntrances;
@@ -133,7 +133,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorTemplates[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -166,7 +166,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -318,7 +318,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gPersistentState.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
   }
 
@@ -456,7 +456,7 @@ static void McCoyPalaceGrounds_OpenGate(void) {
   GameFlag_Set(FLAG_GATE_OPEN);
 }
 
-#include "common/actor_orbit.h"
+#include "shared/actor_orbit.h"
 
 // clang-format off
 /// The gate opening: three steps of cells, 5 frames each.

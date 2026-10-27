@@ -29,10 +29,10 @@ struct StatWork {
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// Starts a new game: clears the persistent state and restarts at the opening.
+/// Starts a new game: clears common and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_RestartQuest(void) {
-  PersistentState_InitializeDefaults();
+  Common_InitializeDefaults();
   Monitor_RunFar(0);
 }
 
@@ -45,7 +45,7 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);
   }
-  return &gPersistentState.summonMask;
+  return &gCommon.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -63,14 +63,14 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gPersistentState.party[partyIndex])->level;
+    totalLevels += Unit_Get(gCommon.party[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the persistent state, 0x80 to 0x85 the enemies of the current
+/// characters in common, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
@@ -85,7 +85,7 @@ struct Unit *Unit_Get(u32 unitId) {
      * instructions differ in tbs-en. */
     __asm__("" : : "l"(caller));
   }
-  states = gPersistentState.units;
+  states = gCommon.units;
   if (unitId <= PIERS) {
     unit = &states[unitId];
     return unit;
@@ -465,7 +465,7 @@ void GameFlag_RefreshLureCap(void) {
     struct Unit *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gPersistentState.party[partyIndex]);
+    unit = Unit_Get(gCommon.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct EquipEffect *effect;
@@ -488,7 +488,7 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// PersistentState_InitializeDefaults stores it as a new game's start stamp,
+/// Common_InitializeDefaults stores it as a new game's start stamp,
 /// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
@@ -535,7 +535,7 @@ u32 BuildStamp_GetTime(void) {
 }
 
 /// A view of EWRAM from gSceneLocalState on, which
-/// PersistentState_InitializeDefaults writes one byte through.
+/// Common_InitializeDefaults writes one byte through.
 /// gSceneLocalState's 0x78 bytes and gInventorySnapshot's 0x8c come first, so
 /// firstSnapshotSlot is the first byte of gActorSnapshot.
 struct MapLocalStateSnapshotView {
@@ -555,16 +555,16 @@ struct MapLocalStateSnapshotView {
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the File Screen's new game, by
 /// Game_RestartQuest and Monitor_Run, and by the debug battle menu.
-void PersistentState_InitializeDefaults(void) {
+void Common_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene state, flags and save metadata in DMA order:
-  // 0xb0 words are gPersistentState up to the characters (units, which
+  // 0xb0 words are gCommon up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
-  START_DMA(&zero, &gPersistentState,
+  START_DMA(&zero, &gCommon,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
   START_DMA(&zero, gSceneLocalState,
@@ -580,47 +580,47 @@ void PersistentState_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
-  gPersistentState.aKeys = KEY_A;
-  gPersistentState.bKeys = KEY_B;
-  gPersistentState.selectKeys = KEY_SELECT;
-  gPersistentState.startKeys = KEY_START;
-  gPersistentState.firstShortcutKeys = KEY_L;
-  gPersistentState.secondShortcutKeys = KEY_R;
-  gPersistentState.dashKeys = KEY_B;
-  gPersistentState.firstShortcut = 0;
-  gPersistentState.secondShortcut = 0;
-  gPersistentState.leaderActorId = 0;
+  gCommon.aKeys = KEY_A;
+  gCommon.bKeys = KEY_B;
+  gCommon.selectKeys = KEY_SELECT;
+  gCommon.startKeys = KEY_START;
+  gCommon.firstShortcutKeys = KEY_L;
+  gCommon.secondShortcutKeys = KEY_R;
+  gCommon.dashKeys = KEY_B;
+  gCommon.firstShortcut = 0;
+  gCommon.secondShortcut = 0;
+  gCommon.leaderActorId = 0;
   Party_AddMember(0);
-  gPersistentState.coins = 0;
-  gPersistentState.messageSpeed = 1;
-  gPersistentState.speech = 1;
-  gPersistentState.unusedAfterSpeech = 1;
-  gPersistentState.windowColor[0] = 0;
-  gPersistentState.windowColor[1] = 8;
-  gPersistentState.buildStamp = 0;
-  gPersistentState.startStamp = BuildStamp_GetTime();
+  gCommon.coins = 0;
+  gCommon.messageSpeed = 1;
+  gCommon.speech = 1;
+  gCommon.unusedAfterSpeech = 1;
+  gCommon.windowColor[0] = 0;
+  gCommon.windowColor[1] = 8;
+  gCommon.buildStamp = 0;
+  gCommon.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
-  gPersistentState.playTime = 0;
+  gCommon.playTime = 0;
   gIdleSleepEnabled = 0;
-  gPersistentState.idleSleepEnabled = gIdleSleepEnabled;
+  gCommon.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   // Three prizes share each successive slot-machine weight.
-  gPersistentState.prizeWeights[0] = 4;
-  gPersistentState.prizeWeights[1] = 4;
-  gPersistentState.prizeWeights[2] = 4;
-  gPersistentState.prizeWeights[3] = 8;
-  gPersistentState.prizeWeights[4] = 8;
-  gPersistentState.prizeWeights[5] = 8;
-  gPersistentState.prizeWeights[6] = 16;
-  gPersistentState.prizeWeights[7] = 16;
-  gPersistentState.prizeWeights[8] = 16;
-  gPersistentState.prizeWeights[9] = 32;
-  gPersistentState.prizeWeights[10] = 32;
-  gPersistentState.prizeWeights[11] = 32;
-  gPersistentState.prizeWeights[12] = 64;
-  gPersistentState.prizeWeights[13] = 64;
-  gPersistentState.prizeWeights[14] = 64;
+  gCommon.prizeWeights[0] = 4;
+  gCommon.prizeWeights[1] = 4;
+  gCommon.prizeWeights[2] = 4;
+  gCommon.prizeWeights[3] = 8;
+  gCommon.prizeWeights[4] = 8;
+  gCommon.prizeWeights[5] = 8;
+  gCommon.prizeWeights[6] = 16;
+  gCommon.prizeWeights[7] = 16;
+  gCommon.prizeWeights[8] = 16;
+  gCommon.prizeWeights[9] = 32;
+  gCommon.prizeWeights[10] = 32;
+  gCommon.prizeWeights[11] = 32;
+  gCommon.prizeWeights[12] = 64;
+  gCommon.prizeWeights[13] = 64;
+  gCommon.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -677,7 +677,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gPersistentState.coins += 300;
+  gCommon.coins += 300;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -691,7 +691,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gPersistentState.party[partyIndex]);
+    unit = Unit_Get(gCommon.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -717,7 +717,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gPersistentState.party[partyIndex];
+    unitId = gCommon.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {

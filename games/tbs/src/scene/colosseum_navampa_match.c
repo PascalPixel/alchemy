@@ -49,17 +49,17 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/colosseum_navampa_match.h"
-#include "unit/scene/common/colosso_solo.h"
-#include "unit/scene/common/colosso_marker.h"
-#include "unit/scene/common/colosso_setup.h"
-#include "unit/scene/common/colosso_occupant.h"
+#include "unit/scene/shared/colosso_solo.h"
+#include "unit/scene/shared/colosso_marker.h"
+#include "unit/scene/shared/colosso_setup.h"
+#include "unit/scene/shared/colosso_occupant.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -69,7 +69,7 @@
 #include "unit/menu/menu.h"
 #include "unit/sound/sound.h"
 #include "unit/runtime/runtime.h"
-#include "unit/scene/common/colosso_item_icon.h"
+#include "unit/scene/shared/colosso_item_icon.h"
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
@@ -328,7 +328,7 @@ const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void) {
 /// gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
-  struct Actor *actor = Actor_GetById(gPersistentState.leaderActorId);
+  struct Actor *actor = Actor_GetById(gCommon.leaderActorId);
   s32 row = actor->z.fixed >> 20;
   s32 i;
   s32 kind;
@@ -412,7 +412,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 /// controlled actor and the camera west.
 static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
-  struct PersistentState *state = &gPersistentState;
+  struct Common *state = &gCommon;
   s32 id = state->leaderActorId;
   struct Actor *subject = work->camera;
   struct Actor *actor = Actor_GetById(id);
@@ -473,7 +473,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   struct Actor *rider;
   u8 *flags;
 
-  actorId = gPersistentState.leaderActorId;
+  actorId = gCommon.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
@@ -506,7 +506,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
 static void ColosseumNavampaMatch_StepOffScales(void) {
   struct Actor *actor;
 
-  Import_ActorSetAnimation(gPersistentState.leaderActorId, 1);
+  Import_ActorSetAnimation(gCommon.leaderActorId, 1);
 
   actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
   actor->motionFlags = 0;
@@ -623,7 +623,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 behavior;
 
-  actor = Actor_GetById(gPersistentState.leaderActorId);
+  actor = Actor_GetById(gCommon.leaderActorId);
   x = actor->x.fixed >> 20;
   behavior = 23;
   z = actor->z.fixed >> 20;
@@ -692,11 +692,11 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = Actor_GetById(gPersistentState.leaderActorId);
+  rider = Actor_GetById(gCommon.leaderActorId);
   log = Actor_GetById(ACTOR_LONG_LOG);
   steps = 0;
   angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
-  actorId = gPersistentState.leaderActorId;
+  actorId = gCommon.leaderActorId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
@@ -842,12 +842,12 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  actorId = &gPersistentState.leaderActorId;
+  actorId = &gCommon.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gPersistentState;
-  actorId = (s32 *)&gameWords[offsetof(struct PersistentState, leaderActorId) /
-                              sizeof(s16)];
+  gameWords = (s16 *)&gCommon;
+  actorId =
+      (s32 *)&gameWords[offsetof(struct Common, leaderActorId) / sizeof(s16)];
 #endif
   actor = Actor_GetById(*actorId);
   actor->acceleration = PIXELS(1);
@@ -872,12 +872,12 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  actorId = &gPersistentState.leaderActorId;
+  actorId = &gCommon.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gPersistentState;
-  actorId = (s32 *)&gameWords[offsetof(struct PersistentState, leaderActorId) /
-                              sizeof(s16)];
+  gameWords = (s16 *)&gCommon;
+  actorId =
+      (s32 *)&gameWords[offsetof(struct Common, leaderActorId) / sizeof(s16)];
 #endif
   actor = Actor_GetById(*actorId);
   if (actor->x.fixed > PIXELS(664)) {
@@ -914,8 +914,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   s32 entrance;
 
   work = gFieldWork;
-  actorId = gPersistentState.leaderActorId;
-  entrance = gPersistentState.entrance;
+  actorId = gCommon.leaderActorId;
+  entrance = gCommon.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Event_Start();
     messageOffset = warriorId * 3;
@@ -1166,14 +1166,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gPersistentState.movementMode = LEADER_MOVEMENT_WALK;
+  gCommon.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
   Actor_ConfigureSpriteColor(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
   // Entrances: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 6, PIXELS(1512),
                            PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
@@ -1593,8 +1593,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   struct Actor *eastPanAgain;
   s32 promptResult;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1658,8 +1657,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1715,8 +1713,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1779,8 +1776,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   s32 raisedHeight;
   s32 shiftedX;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1869,8 +1865,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1913,7 +1908,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Event_ShowMessage(guideId, 0);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
-      gPersistentState.movementMode = LEADER_MOVEMENT_CLIMB;
+      gCommon.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
@@ -1932,8 +1927,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(actorId);
     return;
   }
@@ -1973,9 +1967,9 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 // This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
-#include "common/colosso_solo.h"
-#include "common/item_equip.h"
-#include "common/colosso_task.h"
+#include "shared/colosso_solo.h"
+#include "shared/item_equip.h"
+#include "shared/colosso_task.h"
 
 /// Chooses the lettering animation script and resets its task state.
 static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
@@ -2109,8 +2103,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   Event_WaitTransitionFrames();
 }
 
-#include "common/colosso_marker.h"
-#include "common/colosso_item_icon.h"
+#include "shared/colosso_marker.h"
+#include "shared/colosso_item_icon.h"
 
 /// Unused: writes eight hexadecimal digits followed by a terminator; nothing
 /// calls it.
@@ -2212,7 +2206,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   s16 *linkedItemActorId;
 
   opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
-  actor = Actor_GetById(gPersistentState.leaderActorId);
+  actor = Actor_GetById(gCommon.leaderActorId);
   if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
@@ -2247,16 +2241,16 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }
-  MessageArgument_Push(gPersistentState.leaderActorId, 1);
+  MessageArgument_Push(gCommon.leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   Actor_WaitForScriptEnd(actor);
   return opponentFinishedFirst;
 }
 
-#include "common/colosso_path_opponent.h"
-#include "common/colosso_setup.h"
-#include "common/colosso_map_state.h"
-#include "common/actor_findslot.h"
+#include "shared/colosso_path_opponent.h"
+#include "shared/colosso_setup.h"
+#include "shared/colosso_map_state.h"
+#include "shared/actor_findslot.h"
 
 /// Pushes a neighboring actor one cell when its destination and overhead
 /// are clear.
@@ -2270,7 +2264,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gPersistentState.leaderActorId;
+  subjectHandle = gCommon.leaderActorId;
   subject = Actor_GetById(subjectHandle);
 
   direction = subject->facing >> 12;
@@ -2342,7 +2336,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
   Actor_SelectAnimation(subject, 1);
 }
 
-#include "common/colosso_occupant.h"
+#include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the

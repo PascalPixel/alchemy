@@ -28,7 +28,7 @@
 #include "flags.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_floodgate.h"
-#include "unit/scene/common/kolima_palette.h"
+#include "unit/scene/shared/kolima_palette.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -127,7 +127,7 @@ static void KolimaForestFloodgate_PushLog(void) {
 /// (step trigger 10): the leader jumps across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
-#include "common/map_grid_panel.h"
+#include "shared/map_grid_panel.h"
 
 /// Gives the short log's column of cells its metatile behavior: column 4 at the
 /// west place, column 6 at the east.
@@ -612,7 +612,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Event_End();
 }
 
-#include "common/kolima_palette.h"
+#include "shared/kolima_palette.h"
 
 /// The logs on a first visit, as struct FloodgateLog, each in the sprite of the
 /// way it runs: one sprite for north to south, another for west to east.

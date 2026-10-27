@@ -6,7 +6,7 @@
  */
 #ifndef AGS_COMPRESS_H
 #define AGS_COMPRESS_H
-#include "common.h"
+#include "shared.h"
 typedef struct
 {
 	size_t window, ahead, distance, paletteAhead;

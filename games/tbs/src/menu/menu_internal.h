@@ -45,7 +45,7 @@
 #include "keystate.h"
 #include "paged_list.h"
 #include "tbs_edition.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "songs.h"
 #include "iwram_call.h"
 #include "heap.h"

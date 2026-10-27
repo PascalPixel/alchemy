@@ -13,7 +13,7 @@
 #include "system.h"
 #include "battle_anim_work.h"
 #include "heap.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "types.h"
 #include "macros.h"
 #include "dma.h"
@@ -57,7 +57,7 @@
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomSeed = gPersistentState.playTime;
+  gRandomSeed = gCommon.playTime;
   Sound_PlaySongFar(MUS_DJINN_LESSON);
   LuckyWheels_Run();
   return 0;
@@ -336,11 +336,11 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// gPersistentState seen from +12, the base the bytes load: wonPrizes is
-/// gPersistentState.wonPrizes (through the field itself LuckyWheels_RunFrame
+/// gCommon seen from +12, the base the bytes load: wonPrizes is
+/// gCommon.wonPrizes (through the field itself LuckyWheels_RunFrame
 /// differs 12)
-struct PersistentStateWonPrizesView {
-  u8 beforeWonPrizes[0x120]; ///< gPersistentState from summonMask to wonPrizes
+struct CommonWonPrizesView {
+  u8 beforeWonPrizes[0x120]; ///< gCommon from summonMask to wonPrizes
   s8 wonPrizes[16];
 };
 
@@ -414,9 +414,8 @@ void LuckyWheels_RunFrame(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        struct PersistentStateWonPrizesView *save =
-            (struct PersistentStateWonPrizesView *)((u8 *)&gPersistentState +
-                                                    12);
+        struct CommonWonPrizesView *save =
+            (struct CommonWonPrizesView *)((u8 *)&gCommon + 12);
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -629,9 +628,8 @@ void LuckyWheels_RunFrame(void) {
       }
 
       if (stoppedReels == 5) {
-        struct PersistentStateWonPrizesView *save =
-            (struct PersistentStateWonPrizesView *)((u8 *)&gPersistentState +
-                                                    12);
+        struct CommonWonPrizesView *save =
+            (struct CommonWonPrizesView *)((u8 *)&gCommon + 12);
         s32 hits = 0;
 
         for (col = 0; col != 7; col++) {
@@ -966,7 +964,7 @@ void LuckyWheels_Run(void) {
   void *canvas;
   struct BattleAnimWork *work;
   struct LuckyWheelsWork *state;
-  struct PersistentStateWonPrizesView *save;
+  struct CommonWonPrizesView *save;
   u8 *entry;
   u8 *tiles;
   s32 frame;
@@ -982,7 +980,7 @@ void LuckyWheels_Run(void) {
   state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
-  save = (struct PersistentStateWonPrizesView *)((u8 *)&gPersistentState + 12);
+  save = (struct CommonWonPrizesView *)((u8 *)&gCommon + 12);
   Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;

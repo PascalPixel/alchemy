@@ -37,7 +37,7 @@ struct SaveFileSummary {
   u32 coins;
   u8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
-  /// Copied from PersistentState.sendFlag, which saving at the end of the game
+  /// Copied from Common.sendFlag, which saving at the end of the game
   /// sets; the file list for cleared data lists a file without it as not
   /// cleared.
   s8 sendFlag;
@@ -45,10 +45,10 @@ struct SaveFileSummary {
   u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 windowBrightness | 7..0 windowColor
   ///@{
-  u16 windowHue : 8;        ///< PersistentState.windowColor[0]
-  u16 windowBrightness : 8; ///< PersistentState.windowColor[1]
+  u16 windowHue : 8;        ///< Common.windowColor[0]
+  u16 windowBrightness : 8; ///< Common.windowColor[1]
   ///@}
-  /// Low half of PersistentState.buildStamp; a file below the current stamp is
+  /// Low half of Common.buildStamp; a file below the current stamp is
   /// listed as from an older build.
   u16 frames;
   /// Filled on reading: the play time from the file's second record. A file

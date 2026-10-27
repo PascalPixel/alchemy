@@ -33,8 +33,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // The way the leader faces, to the nearest quarter turn.
   djinni = Actor_GetById(djinniId);
-  dir =
-      (Actor_GetById(gPersistentState.leaderActorId)->facing + 0x2000) & 0xc000;
+  dir = (Actor_GetById(gCommon.leaderActorId)->facing + 0x2000) & 0xc000;
   Event_Start();
   WaitTicks(10);
   Sound_PlaySongFar(SE_NOTE_LOW);
@@ -185,8 +184,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// first call, that is after a won battle; the second call then makes this
 /// actor join the party.
 void Actor_PlaceMapActors(void) {
-  s32 flags = gPersistentState.pendingDjinni & 0xf000;
-  u32 event = gPersistentState.pendingDjinni & 0xfff;
+  s32 flags = gCommon.pendingDjinni & 0xf000;
+  u32 event = gCommon.pendingDjinni & 0xfff;
   s32 id;
 
   // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
@@ -195,8 +194,7 @@ void Actor_PlaceMapActors(void) {
     event &= 0x7ff;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
-    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
-        gPersistentState.programResult > 0) {
+    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gCommon.programResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ActorTemplate *desc = Scene_FindActorTemplate(id);
         struct Actor *object;
@@ -215,7 +213,7 @@ void Actor_PlaceMapActors(void) {
           object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
           Actor_SetPositionAndResetMotionFar(object, desc->x, desc->y, desc->z);
         } else {
-          struct Actor *leader = Actor_Lookup(gPersistentState.leaderActorId);
+          struct Actor *leader = Actor_Lookup(gCommon.leaderActorId);
 
           Actor_SetPositionAndResetMotionFar(object, leader->x.fixed,
                                              leader->y.fixed,
@@ -241,7 +239,7 @@ void Actor_PlaceMapActors(void) {
 /// A mimic chest's event (kind 0x1000, overworld/triggers.c) sets the chest's
 /// flag when the battle ended with exactly one enemy defeated, and is dropped.
 void Djinn_ResolvePending(s32 shown) {
-  struct PersistentState *st = &gPersistentState;
+  struct Common *st = &gCommon;
   s16 *pending = &st->pendingDjinni;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
@@ -288,7 +286,7 @@ void Djinn_ResolvePending(s32 shown) {
       }
     }
   }
-  gPersistentState.pendingDjinni = 0;
+  gCommon.pendingDjinni = 0;
 }
 
 /// Task: updates the 24 field effect sprites.
@@ -352,7 +350,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;
 
-  target = Actor_GetById(gPersistentState.leaderActorId);
+  target = Actor_GetById(gCommon.leaderActorId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

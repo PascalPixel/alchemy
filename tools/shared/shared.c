@@ -1,12 +1,12 @@
 /*
- * common.c
+ * shared.c
  *
  * Diagnostics, allocation, and byte/bit buffers for the host tools.
  * Growing buffers own their storage and keep a spare trailing NUL. Binary
  * writes use little-endian order; bit streams consume the low bits first.
  * File operations and string-list parsing live in their own modules.
  */
-#include "common.h"
+#include "shared.h"
 #include <stdarg.h>
 
 static const char *program = "ags";

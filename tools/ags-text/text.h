@@ -7,7 +7,7 @@
 #ifndef AGS_TEXT_H
 #define AGS_TEXT_H
 
-#include "../common/assembly.h"
+#include "../shared/assembly.h"
 
 typedef struct
 {

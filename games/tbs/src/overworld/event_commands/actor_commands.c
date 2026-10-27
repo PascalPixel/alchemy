@@ -246,7 +246,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     struct Actor *leader;
 
     Actor_SetSpeedParameters(actorId, 0x9999, 0x4CCC);
-    leader = Actor_GetById(gPersistentState.leaderActorId);
+    leader = Actor_GetById(gCommon.leaderActorId);
     if (leader != NULL)
       Actor_SetHorizontalPositionWithTerrain(actorId, leader->x.fixed,
                                              leader->z.fixed);

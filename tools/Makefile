@@ -8,14 +8,14 @@ OBJ := $(OUT)/obj
 NAMES := graphics audio music text objects deps overlays header
 BINARIES := $(addprefix $(OUT)/ags-,$(NAMES))
 # Shared runtime, codecs, and assembly output are linked only where needed.
-COMMON := $(addprefix $(OBJ)/common/,common.o files.o strings.o)
-COMPRESS := $(addprefix $(OBJ)/common/,compress.o lz.o arena.o)
-ASSEMBLY := $(OBJ)/common/assembly.o
+SHARED := $(addprefix $(OBJ)/shared/,shared.o files.o strings.o)
+COMPRESS := $(addprefix $(OBJ)/shared/,compress.o lz.o arena.o)
+ASSEMBLY := $(OBJ)/shared/assembly.o
 PNG_CFLAGS = $(shell $(PKG_CONFIG) --cflags libpng 2>/dev/null)
 PNG_LIBS = $(shell $(PKG_CONFIG) --libs libpng 2>/dev/null)
 UTF8_CFLAGS = $(shell $(PKG_CONFIG) --cflags libutf8proc 2>/dev/null)
 UTF8_LIBS = $(shell $(PKG_CONFIG) --libs libutf8proc 2>/dev/null)
-SOURCES := $(wildcard tools/ags-*/*.c tools/common/*.c tools/tests/*.c)
+SOURCES := $(wildcard tools/ags-*/*.c tools/shared/*.c tools/tests/*.c)
 OBJECTS := $(patsubst tools/%.c,$(OBJ)/%.o,$(SOURCES))
 
 .PHONY: all test clean dependencies
@@ -28,21 +28,21 @@ dependencies:
 
 $(OBJECTS): | dependencies
 
-$(OUT)/ags-graphics: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-graphics/*.c)) $(COMMON) $(COMPRESS) $(ASSEMBLY)
+$(OUT)/ags-graphics: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-graphics/*.c)) $(SHARED) $(COMPRESS) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(PNG_LIBS) -o $@
-$(OUT)/ags-audio: $(OBJ)/ags-audio/ags-audio.o $(COMMON)
+$(OUT)/ags-audio: $(OBJ)/ags-audio/ags-audio.o $(SHARED)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -lm -o $@
-$(OUT)/ags-music: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-music/*.c)) $(COMMON) $(ASSEMBLY)
+$(OUT)/ags-music: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-music/*.c)) $(SHARED) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-text: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-text/*.c)) $(COMMON) $(ASSEMBLY)
+$(OUT)/ags-text: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-text/*.c)) $(SHARED) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(UTF8_LIBS) -o $@
-$(OUT)/ags-objects: $(OBJ)/ags-objects/ags-objects.o $(COMMON)
+$(OUT)/ags-objects: $(OBJ)/ags-objects/ags-objects.o $(SHARED)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-deps: $(OBJ)/ags-deps/ags-deps.o $(COMMON)
+$(OUT)/ags-deps: $(OBJ)/ags-deps/ags-deps.o $(SHARED)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-overlays: $(OBJ)/ags-overlays/ags-overlays.o $(COMMON) $(COMPRESS)
+$(OUT)/ags-overlays: $(OBJ)/ags-overlays/ags-overlays.o $(SHARED) $(COMPRESS)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-header: $(OBJ)/ags-header/ags-header.o $(COMMON)
+$(OUT)/ags-header: $(OBJ)/ags-header/ags-header.o $(SHARED)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
 
 $(OBJ)/ags-graphics/%.o: CPPFLAGS += $(PNG_CFLAGS)
@@ -53,7 +53,7 @@ $(OBJ)/%.o: tools/%.c
 
 test: all $(OUT)/test-tools
 	$(OUT)/test-tools $(OUT)
-$(OUT)/test-tools: $(OBJ)/tests/tests.o $(OBJ)/ags-graphics/graphics.o $(OBJ)/ags-graphics/image.o $(COMMON) $(COMPRESS) $(ASSEMBLY)
+$(OUT)/test-tools: $(OBJ)/tests/tests.o $(OBJ)/ags-graphics/graphics.o $(OBJ)/ags-graphics/image.o $(SHARED) $(COMPRESS) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(PNG_LIBS) -o $@
 
 clean:

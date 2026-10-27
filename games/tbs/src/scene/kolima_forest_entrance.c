@@ -29,11 +29,11 @@
 #include "script_operands.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_entrance.h"
-#include "unit/scene/common/kolima_forest_bridge_falling_effect.h"
+#include "unit/scene/shared/kolima_forest_bridge_falling_effect.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "battle.h"
@@ -113,7 +113,7 @@ extern s32 gKolimaForestEntrance_PsynergyFieldHit;
 extern s32 gKolimaForestEntrance_MiaInParty;
 extern s32 gKolimaForestEntrance_SparkleSoundOn;
 
-#include "common/staged_actor.h"
+#include "shared/staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -206,7 +206,7 @@ static void KolimaForestEntrance_PushLog(void) {
   Event_End();
 }
 
-#include "common/kolima_jump.h"
+#include "shared/kolima_jump.h"
 
 /// The logs, the hop east from the bank and the two ways out.
 const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
@@ -227,7 +227,7 @@ s32 KolimaForestEntrance_Initialize(void) {
   }
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
-  if (gPersistentState.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
+  if (gCommon.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
     }
@@ -1102,7 +1102,7 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
   Event_WaitTicks(waitFrames);
 }
 
-#include "common/kolima_grow.h"
+#include "shared/kolima_grow.h"
 
 /// Every eighth frame a sparkle of Tret's glamour (SPRITE_GOLDEN_RINGS) falls
 /// toward the party, with its tinkle while the rain is at its height.
@@ -1139,7 +1139,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleScript);
 }
 
-#include "common/kolima_blink.h"
+#include "shared/kolima_blink.h"
 
 /// The end of a sparkle's fall: one that lands on a field (the Psynergy fields'
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
@@ -1182,7 +1182,7 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
   return 0;
 }
 
-#include "common/kolima_forest_bridge_falling_effect.h"
+#include "shared/kolima_forest_bridge_falling_effect.h"
 s32 gKolimaForestEntrance_PsynergyFieldHit __attribute__((section(".bss")));
 s32 gKolimaForestEntrance_MiaInParty __attribute__((section(".bss")));
 s32 gKolimaForestEntrance_SparkleSoundOn __attribute__((section(".bss")));

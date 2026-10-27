@@ -17,7 +17,7 @@ struct ActorSystemSuspendView {
 
 /// Runs the current scene, which the party entered by entrance, until it
 /// leaves; returns the exit kind it left by, for Scene_TakeExit, or
-/// EXIT_KEEP_DESTINATION when the next scene is already in gPersistentState: a
+/// EXIT_KEEP_DESTINATION when the next scene is already in gCommon: a
 /// random battle, a party that fell outside battle, Retreat or an event's
 /// destination. Sets the scene up (map, actors, encounters, return points),
 /// runs its initialization, fades it in, then runs the field loop: the party
@@ -27,7 +27,7 @@ struct ActorSystemSuspendView {
 /// Called by Monitor_Run for every scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
-/// block the scene took after it from the same pool; sets gPersistentState's
+/// block the scene took after it from the same pool; sets gCommon's
 /// return point, after-battle and defeat destinations, and clears
 /// FLAG_IN_BATTLE and, once the scene has started, FLAG_KEEP_PARTY_POSITION.
 s32 FieldLoop_Run(s32 entrance) {
@@ -41,21 +41,21 @@ s32 FieldLoop_Run(s32 entrance) {
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gPersistentState.returnScene = gPersistentState.sceneId;
-  gPersistentState.returnEntrance = gPersistentState.entrance;
-  gPersistentState.afterBattleScene = -1;
-  gPersistentState.afterBattleEntrance = -1;
-  gPersistentState.defeatScene = -1;
-  gPersistentState.defeatEntrance = -1;
+  gCommon.returnScene = gCommon.sceneId;
+  gCommon.returnEntrance = gCommon.entrance;
+  gCommon.afterBattleScene = -1;
+  gCommon.afterBattleEntrance = -1;
+  gCommon.defeatScene = -1;
+  gCommon.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gPersistentState.mapId == MAP_INDEX_WORLD) {
+  if (gCommon.mapId == MAP_INDEX_WORLD) {
     WorldMap_InitializePerspectiveFar();
-    gPersistentState.perspectiveMap = 1;
+    gCommon.perspectiveMap = 1;
     mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
-    MapGrid_LoadMapFar(gPersistentState.mapId);
+    MapGrid_LoadMapFar(gCommon.mapId);
     mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
@@ -68,11 +68,11 @@ s32 FieldLoop_Run(s32 entrance) {
   Actor_ResetForLeader((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
-  if (gPersistentState.pendingDjinni != 0)
+  if (gCommon.pendingDjinni != 0)
     Actor_PlaceMapActors();
   if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
-    WorldMap_LoadGraphicsFar(gPersistentState.x, gPersistentState.z);
+    WorldMap_LoadGraphicsFar(gCommon.x, gCommon.z);
   } else {
     MapGrid_CenterOnFollowedPointFar();
   }
@@ -90,7 +90,7 @@ s32 FieldLoop_Run(s32 entrance) {
   // block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
-  if (gPersistentState.sceneType == SCENE_TYPE_TOWN) {
+  if (gCommon.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_SetFar(FLAG_RETREAT_BLOCKED);
   }
@@ -99,11 +99,11 @@ s32 FieldLoop_Run(s32 entrance) {
   // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetRestartPoint();
-    gPersistentState.hazardLimit = 16;
-    gPersistentState.hazardMode = HAZARD_COUNT_ON_CELLS;
-    gPersistentState.hazardDamage = 1;
-    gPersistentState.haltedActor = -1;
-    gPersistentState.cloaked = 0;
+    gCommon.hazardLimit = 16;
+    gCommon.hazardMode = HAZARD_COUNT_ON_CELLS;
+    gCommon.hazardDamage = 1;
+    gCommon.haltedActor = -1;
+    gCommon.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
   work->queuedSound = -1;
@@ -130,31 +130,31 @@ s32 FieldLoop_Run(s32 entrance) {
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
-        AreaNameWindow_ShowFar(gPersistentState.sceneId);
+        AreaNameWindow_ShowFar(gCommon.sceneId);
       }
-      if (gPersistentState.pendingDjinni != 0) {
-        Djinn_ResolvePending(gPersistentState.pendingDjinni, 1);
-        gPersistentState.pendingDjinni = 0;
+      if (gCommon.pendingDjinni != 0) {
+        Djinn_ResolvePending(gCommon.pendingDjinni, 1);
+        gCommon.pendingDjinni = 0;
       }
-      if (gPersistentState.pendingItem != 0) {
+      if (gCommon.pendingItem != 0) {
         WorldMap_Freeze();
-        if (Party_CheckItemLimit(gPersistentState.pendingItem) == 0)
-          PartyInventory_GiveItem(gPersistentState.pendingItem, 0);
+        if (Party_CheckItemLimit(gCommon.pendingItem) == 0)
+          PartyInventory_GiveItem(gCommon.pendingItem, 0);
         WorldMap_Unfreeze();
-        gPersistentState.pendingItem = 0;
+        gCommon.pendingItem = 0;
       }
     }
 
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gPersistentState.leaderActorId];
+      actor = work->actors[gCommon.leaderActorId];
       Actor_StartIdleFar(actor);
-      gPersistentState.x = actor->x.fixed;
-      gPersistentState.y = 0;
-      gPersistentState.z = actor->z.fixed;
-      gPersistentState.heading = actor->facing;
-      gPersistentState.layer = actor->layer;
+      gCommon.x = actor->x.fixed;
+      gCommon.y = 0;
+      gCommon.z = actor->z.fixed;
+      gCommon.heading = actor->facing;
+      gCommon.layer = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
@@ -184,7 +184,7 @@ s32 FieldLoop_Run(s32 entrance) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct Unit *vitals;
 
-              if (gPersistentState.leaderActorId == 0) {
+              if (gCommon.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
                   Actor_SelectAnimationFar(actor, 21);
                 else
@@ -195,11 +195,11 @@ s32 FieldLoop_Run(s32 entrance) {
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
-              vitals = Unit_GetFar(gPersistentState.leaderActorId);
+              vitals = Unit_GetFar(gCommon.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gPersistentState.sceneId = gPersistentState.restartScene;
-              gPersistentState.entrance = gPersistentState.restartEntrance;
+              gCommon.sceneId = gCommon.restartScene;
+              gCommon.entrance = gCommon.restartEntrance;
               WorldMap_Unfreeze();
               result = EXIT_KEEP_DESTINATION;
               goto done;
@@ -224,14 +224,14 @@ s32 FieldLoop_Run(s32 entrance) {
           // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
           Actor_Snapshot();
-          gPersistentState.returnMusic = -1;
-          gPersistentState.sceneId = PROGRAM_BATTLE;
-          gPersistentState.entrance = work->encounter;
+          gCommon.returnMusic = -1;
+          gCommon.sceneId = PROGRAM_BATTLE;
+          gCommon.entrance = work->encounter;
           work->exit = EXIT_KEEP_DESTINATION;
           Field_StartEncounterTransition(work->encounter);
           work->encounterBias = 0;
           work->encounter = 0;
-          gPersistentState.encounterSteps = 0;
+          gCommon.encounterSteps = 0;
         } else if (work->stepTrigger != 0) {
           work->busy = 1;
           Scene_RunStepTriggerOrExit(work->stepTrigger);
@@ -246,7 +246,7 @@ s32 FieldLoop_Run(s32 entrance) {
           s32 object;
 
           AreaNameWindow_HideFar();
-          object = Field_FindNearbyTalkTarget(gPersistentState.leaderActorId);
+          object = Field_FindNearbyTalkTarget(gCommon.leaderActorId);
           mode = 0;
           if (object != -1) {
             mode = Scene_FindActorTalkTrigger(object) != 0;
@@ -330,7 +330,7 @@ s32 FieldLoop_Run(s32 entrance) {
           } else {
             Field_EndBusyAndReveal();
             AreaNameWindow_HideFar();
-            gPersistentState.returnMusic = Sound_GetCurrentBgmFar();
+            gCommon.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
@@ -367,11 +367,11 @@ s32 FieldLoop_Run(s32 entrance) {
       // air (only a key check runs), on the World Map or walking, and run the
       // walking update until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gPersistentState.leaderActorId];
+      actor = work->actors[gCommon.leaderActorId];
       if (actor != NULL) {
-        if (gPersistentState.movementMode == LEADER_MOVEMENT_AIRBORNE)
+        if (gCommon.movementMode == LEADER_MOVEMENT_AIRBORNE)
           Actor_StartKeyCheckFar(actor);
-        else if (gPersistentState.movementMode == LEADER_MOVEMENT_CLIMB)
+        else if (gCommon.movementMode == LEADER_MOVEMENT_CLIMB)
           Actor_StartMoveByKeysFar(actor);
         else if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
           Actor_StartWorldMapControlFar(actor);
@@ -380,7 +380,7 @@ s32 FieldLoop_Run(s32 entrance) {
       }
       do {
         WaitTicks(1);
-        actor = work->actors[gPersistentState.leaderActorId];
+        actor = work->actors[gCommon.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
                               actor->z.fixed);
@@ -419,7 +419,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = Actor_Lookup(gPersistentState.leaderActorId);
+  leader = Actor_Lookup(gCommon.leaderActorId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
@@ -462,10 +462,10 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
 /// Called by FieldLoop_Run once the scene's events are set. Writes
-/// gPersistentState's position, heading and turn, and the scene's minX to maxY.
+/// gCommon's position, heading and turn, and the scene's minX to maxY.
 void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 entrance = gPersistentState.entrance;
+  s32 entrance = gCommon.entrance;
   const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
   s32 foundEntrance = 0;
 
@@ -483,11 +483,11 @@ void Scene_ApplyEntrance(void) {
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gPersistentState.x = REGION_FIXED(entranceEntry->x);
-    gPersistentState.y = REGION_FIXED(entranceEntry->y);
-    gPersistentState.z = REGION_FIXED(entranceEntry->z);
-    gPersistentState.heading = entranceEntry->facing;
-    gPersistentState.layer = 0;
+    gCommon.x = REGION_FIXED(entranceEntry->x);
+    gCommon.y = REGION_FIXED(entranceEntry->y);
+    gCommon.z = REGION_FIXED(entranceEntry->z);
+    gCommon.heading = entranceEntry->facing;
+    gCommon.layer = 0;
   }
 
   if (entranceEntry->cameraLeft != -1)

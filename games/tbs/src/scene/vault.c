@@ -39,13 +39,13 @@
 /// and stepping onto either end of it or off its west end switches the cells
 /// beneath it between the deck and the path (common/vault_toggle.h).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "animspr.h"
 #include "window.h"
 #include "unit/scene/vault.h"
 #include "vault.h"
-#include "unit/scene/common/vault_range.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/vault_range.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/battle/battle.h"
@@ -152,10 +152,10 @@ static void Vault_ShowStandingActorMessage(s32 actorId);
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay);
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
-#include "common/vault_nearby.h"
+#include "shared/vault_nearby.h"
 
 // The woman wanting the roof fixed walks about looking for the man who
 // should be fixing it and stops to face
@@ -213,7 +213,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "common/vault_djinn.h"
+#include "shared/vault_djinn.h"
 
 /// Leaving Vault by either gate (MB_VAULT_SOUTH_GATE and _NORTH_GATE, before
 /// VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH): while Ivan is
@@ -436,7 +436,7 @@ static void Vault_ShowStandingActorMessage(s32 actorId) {
   Event_End();
 }
 
-#include "common/vault_talk.h"
+#include "shared/vault_talk.h"
 
 /// The welcoming young man asks whether the party is leaving again.
 /// He asks after the thieves are jailed. "So, you're hitting the road again?"
@@ -679,7 +679,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
   Event_End();
 }
 
-#include "common/vault_toggle.h"
+#include "shared/vault_toggle.h"
 
 /// Walks to the exit's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
@@ -753,7 +753,7 @@ static void Vault_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
 }
 
-#include "common/vault_map_cells.h"
+#include "shared/vault_map_cells.h"
 
 /// In Vault, the jail door opens and the party walks in, drawn behind the
 /// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
@@ -903,7 +903,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gPersistentState.entrance <= VAULT_NORTH_UNUSED) {
+  if (gCommon.entrance <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -913,7 +913,7 @@ s32 Scene_Initialize(void) {
           if (actor != 0) {
             Import_ActorSetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
-          if (gPersistentState.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
+          if (gCommon.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(400), PIXELS(448));
           } else {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(224), PIXELS(162));
@@ -945,7 +945,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
-  if (gPersistentState.entrance == VAULT_FROM_SANCTUM) {
+  if (gCommon.entrance == VAULT_FROM_SANCTUM) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -975,7 +975,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
-    if (gPersistentState.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
+    if (gCommon.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Import_ActorSetPosition(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
@@ -984,8 +984,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "common/actor_distance.h"
-#include "common/vault_range.h"
+#include "shared/actor_distance.h"
+#include "shared/vault_range.h"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
   Event_ShowMessageAndWait(actorId, 0);

@@ -2,7 +2,7 @@
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, in three scenes that share one overlay: SceneId_KalayDocks,
 /// SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet that holds a room at
-/// each. The getters pick each scene's tables by gPersistentState.sceneId, and
+/// each. The getters pick each scene's tables by gCommon.sceneId, and
 /// three story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether
 /// the ship has made its crossing (set on the World Map,
 /// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
@@ -63,7 +63,7 @@
 /// by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "unit/scene/kalay_tolbi_docks.h"
@@ -279,7 +279,7 @@ static void KalayTolbiDocks_GroundJoins(void) {
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     return gKalayTolbiDocks_KalayEntrances;
@@ -305,7 +305,7 @@ const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ActorTemplate *KalayTolbiDocks_GetActorTemplates(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -351,7 +351,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 
 /// Selects each scene's events for the same three times as its people.
 const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -526,7 +526,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// pays (sets FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
-  struct PersistentState *state;
+  struct Common *state;
   s32 ticketPrice;
 
 #if !TBS_PATCH_1
@@ -559,7 +559,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
 #endif
-      state = &gPersistentState;
+      state = &gCommon;
 #if LANGUAGE == LANGUAGE_JAPANESE
       coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
@@ -668,11 +668,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_PlaySong(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gPersistentState.sceneId == (s32)&SceneId_KalayDocks) {
+  if (gCommon.sceneId == (s32)&SceneId_KalayDocks) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gPersistentState.sceneId == (s32)&SceneId_TolbiDocks) {
+    if (gCommon.sceneId == (s32)&SceneId_TolbiDocks) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -690,14 +690,14 @@ enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 /// KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
-  if (gPersistentState.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
+  if (gCommon.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gPersistentState.sceneId == (s32)&SceneId_KalayDocks) {
+  if (gCommon.sceneId == (s32)&SceneId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gPersistentState.sceneId == (s32)&SceneId_TolbiDocks) {
+  } else if (gCommon.sceneId == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gPersistentState.sceneId == (s32)&SceneId_CottageRoomsE) {
+  } else if (gCommon.sceneId == (s32)&SceneId_CottageRoomsE) {
     KalayTolbiDocks_PrepareInterior();
   }
   return 0;
@@ -708,13 +708,13 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// tour's group has left Kalay the ticket taker stands at the ship's plank
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
-  if (gPersistentState.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
+  if (gCommon.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
-  if (gPersistentState.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gCommon.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
@@ -739,10 +739,10 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   if (Event_GetFlag(FLAG_COLOSSO_OVER)) {
     Actor_ConfigureSpriteColor(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
   }
-  if (gPersistentState.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
+  if (gCommon.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
-  if (gPersistentState.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gCommon.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {

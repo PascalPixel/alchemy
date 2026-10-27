@@ -3,7 +3,7 @@
 /// ending, and the screens that lead from the prologue and the last event on
 /// to Vale and the File Screen. Title_Run chooses by entrance.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "vram_cache.h"
 #include "unit/menu/title.h"
 #include "unit/overworld/overworld.h"
@@ -83,8 +83,8 @@ s32 Title_Run(void) {
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gPersistentState.entrance == TITLE_FROM_WORLD_MAP) {
-    Actor_GetById(gPersistentState.leaderActorId)->motionFlags = 0;
+  if (gCommon.entrance == TITLE_FROM_WORLD_MAP) {
+    Actor_GetById(gCommon.leaderActorId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     WaitTicks(120);
@@ -99,7 +99,7 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gPersistentState.entrance == TITLE_FROM_LEMURIAN_SHIP) {
+  if (gCommon.entrance == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
@@ -117,7 +117,7 @@ s32 Title_Run(void) {
   // evidence): what the call once did; the stub is empty in every edition, so
   // only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
-  if (gPersistentState.entrance == TITLE_AFTER_RUN) {
+  if (gCommon.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).

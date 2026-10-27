@@ -9,7 +9,7 @@
 #include "unit/field/field.h"
 #include "unit/menu/menu.h"
 #include "unit/shop/shop.h"
-#include "unit/scene/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/shared/scroll_initialize_hblank_dma.h"
 
 struct FieldPosition;
 struct Actor;

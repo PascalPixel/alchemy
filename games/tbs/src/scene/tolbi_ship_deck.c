@@ -57,7 +57,7 @@
 #include "flags.h"
 #include "songs.h"
 #include "version.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/scene/tolbi_ship_deck.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -335,7 +335,7 @@ enum TolbiShipDeckMetatileBehavior {
 };
 
 // Shared code, included where it sits in the ROM.
-#include "common/actor_pulse.h"
+#include "shared/actor_pulse.h"
 
 /// The door to the passengers' hold has been drawn open this visit.
 /// ★ Named from the game: "I saw some warriors in among the passengers
@@ -1296,7 +1296,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
     break;
@@ -1519,7 +1519,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
     record = Actor_GetById(ACTOR_SEA_OURANOS);
     record->facing = FACING_NORTHWEST + FACING_STEP;
   }
-  if (gPersistentState.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
+  if (gCommon.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
   }
   Event_End();
@@ -2063,8 +2063,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkTo(ACTOR_IVAN, 248, 564);
   Actor_WalkTo(ACTOR_MIA, 248, 564);
   Event_WaitTicks(20);
-  gPersistentState.restartScene = (s32)&SceneId_ShipRooms;
-  gPersistentState.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gCommon.restartScene = (s32)&SceneId_ShipRooms;
+  gCommon.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(
       (s32)&SceneId_TolbiShipDeck,

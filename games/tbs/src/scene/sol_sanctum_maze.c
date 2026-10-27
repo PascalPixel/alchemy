@@ -18,7 +18,7 @@
 /// doorway in the room of steps (render probe maze-exit).
 
 #include "unit/scene/sol_sanctum_maze.h"
-#include "unit/scene/common/sol_sanctum_init_zoom.h"
+#include "unit/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -55,7 +55,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumMazeTriggers;
 }
 
-#include "common/sol_sanctum_init_zoom.h"
+#include "shared/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,

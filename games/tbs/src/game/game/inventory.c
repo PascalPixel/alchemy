@@ -102,7 +102,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 unitIndex;
   s16 *unitCursor;
 
-  if (Inventory_Count(gPersistentState.leaderActorId) != INVENTORY_SLOTS)
+  if (Inventory_Count(gCommon.leaderActorId) != INVENTORY_SLOTS)
     return 1;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
@@ -234,8 +234,8 @@ s32 PartyInventory_FindMember(s32 itemId) {
   s16 *unitCursor;
   s16 unitId;
 
-  if (Inventory_Find(gPersistentState.leaderActorId, itemId) != -1)
-    return gPersistentState.leaderActorId;
+  if (Inventory_Find(gCommon.leaderActorId, itemId) != -1)
+    return gCommon.leaderActorId;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
   unitIndex = 0;

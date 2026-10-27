@@ -28,7 +28,7 @@
 #include "edition.h"
 #include "io_reg.h"
 #include "battle_unit.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "battle_system.h"
 #include "text/msg_ids.h"
 #include "mem.h"

@@ -21,13 +21,13 @@
 #include "unit/shop/shop.h"
 #include "unit/window/window.h"
 #include "unit/menu/menu.h"
-#include "unit/scene/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/shared/scroll_initialize_hblank_dma.h"
 #include "fixed_math.h"
 #include "map_grid_copy.h"
 
 #include "static_assert.h"
 
-#include "persistent_state.h"
+#include "common.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
 // The games' compiler takes the store as written; a current GCC refuses it,
@@ -41,7 +41,7 @@
 
 /// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
-/// leaves it alone; PersistentState_InitializeDefaults clears it for a new
+/// leaves it alone; Common_InitializeDefaults clears it for a new
 /// game.
 extern u8 gSceneLocalState[];
 
@@ -159,7 +159,7 @@ struct MapGridCellAnimation {
 // Event_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Import_EventShowTwoMessagesAndWait).
 /// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
-/// gPersistentState's scene and entrance.
+/// gCommon's scene and entrance.
 void Import_EventSetExitRequest();
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain

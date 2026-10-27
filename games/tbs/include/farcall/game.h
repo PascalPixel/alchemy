@@ -59,9 +59,9 @@ s32 Unit_LearnPsynergyFar();
 /// Returns 1 when the action is in the unit's action list; events check a
 /// party member's Psynergy with it.
 s32 Unit_KnowsPsynergyFar(s32 owner, s32 value);
-/// Clears the persistent state and sets a new game's defaults: Isaac alone in
+/// Clears common and sets a new game's defaults: Isaac alone in
 /// the party, the standard buttons, the message speed and the play time clock.
-void PersistentState_InitializeDefaultsFar(void);
+void Common_InitializeDefaultsFar(void);
 /// Levels a character up once if its experience reaches the next level, and
 /// returns `value` filled with the gains, or NULL; the spoils call it per level
 /// reached.

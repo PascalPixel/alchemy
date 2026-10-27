@@ -19,7 +19,7 @@
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_cliff.h"
-#include "unit/scene/common/kolima_palette.h"
+#include "unit/scene/shared/kolima_palette.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "battle.h"
@@ -37,7 +37,7 @@
 
 #include "pushed_actor.h"
 #include "actor.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "songs.h"
@@ -53,7 +53,7 @@ enum {
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "common/staged_actor.h"
+#include "shared/staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -103,7 +103,7 @@ static void KolimaForestCliff_PushLog(void) {
   Event_End();
 }
 
-#include "common/kolima_jump.h"
+#include "shared/kolima_jump.h"
 
 /// The logs, the two ways out and the hop east from the bank.
 const struct Trigger *KolimaForestCliff_GetTriggers(void) {
@@ -136,7 +136,7 @@ s32 KolimaForestCliff_Initialize(void) {
   return 0;
 }
 
-#include "common/kolima_palette.h"
+#include "shared/kolima_palette.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

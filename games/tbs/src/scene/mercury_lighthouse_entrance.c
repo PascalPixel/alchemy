@@ -78,15 +78,15 @@
 
 #include "script_operands.h"
 #include "animspr.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "heap_slots.h"
 #include "heap.h"
 #include "keystate.h"
 #include "unit/import.h"
 #include "unit/scene/mercury_lighthouse_entrance.h"
-#include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/mercury_lighthouse_lights.h"
-#include "unit/scene/common/mercury_lighthouse_pillar.h"
+#include "unit/scene/shared/effect_spawn.h"
+#include "unit/scene/shared/mercury_lighthouse_lights.h"
+#include "unit/scene/shared/mercury_lighthouse_pillar.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -160,10 +160,10 @@ enum {
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
-#include "common/staged_actor.h"
-#include "common/mercury_lighthouse_sparks.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
+#include "shared/staged_actor.h"
+#include "shared/mercury_lighthouse_sparks.h"
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
@@ -197,7 +197,7 @@ static s32 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
 #endif
 }
 
-#include "common/mercury_lighthouse_palette_cycle.h"
+#include "shared/mercury_lighthouse_palette_cycle.h"
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching
 /// MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading from the
@@ -253,7 +253,7 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_End();
 }
 
-#include "common/mercury_lighthouse_passage.h"
+#include "shared/mercury_lighthouse_passage.h"
 
 /// Mercury Lighthouse: walking north into metatile behavior 67, a sparkling
 /// passage, leaves by
@@ -408,7 +408,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Event_End();
 }
 
-#include "common/mercury_lighthouse_arrive.h"
+#include "shared/mercury_lighthouse_arrive.h"
 
 /// Sets up Mercury Lighthouse's ground floor: the lights the leader carries,
 /// FLAG_MERCURY_LIGHTHOUSE_LIT, the Retreat point, the pool's colours and the
@@ -433,8 +433,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       MB_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gPersistentState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gPersistentState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gCommon.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gCommon.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
@@ -443,7 +443,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each entrance restores its route or plays its one-time arrival.
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man event.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
@@ -479,7 +479,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       WaitTicks(1);
       MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     }
-    if (gPersistentState.entrance !=
+    if (gCommon.entrance !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
     arrivalSeen = Event_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);
@@ -697,7 +697,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   }
 }
 
-#include "common/mercury_lighthouse_lights.h"
+#include "shared/mercury_lighthouse_lights.h"
 
 /// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
 static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
@@ -719,7 +719,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   }
 }
 
-#include "common/mercury_lighthouse_pillar.h"
+#include "shared/mercury_lighthouse_pillar.h"
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),

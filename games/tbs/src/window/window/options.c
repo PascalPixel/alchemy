@@ -57,8 +57,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gPersistentState.windowColor[0] + 12) % 24 * 4;
-  bias = gPersistentState.windowColor[1] - 7;
+  phase = (gCommon.windowColor[0] + 12) % 24 * 4;
+  bias = gCommon.windowColor[1] - 7;
   red = gWindowColor_WaveTable[(phase % 96)];
   green = gWindowColor_WaveTable[(phase + 32) % 96];
   blue = gWindowColor_WaveTable[(phase + 64) % 96];
@@ -227,16 +227,16 @@ UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gPersistentState.messageSpeed != 0)
-      gPersistentState.messageSpeed--;
+    if (gCommon.messageSpeed != 0)
+      gCommon.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gPersistentState.windowColor[0] != 0)
-      gPersistentState.windowColor[0]--;
+    if (gCommon.windowColor[0] != 0)
+      gCommon.windowColor[0]--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gPersistentState.windowColor[1] != 0)
-      gPersistentState.windowColor[1]--;
+    if (gCommon.windowColor[1] != 0)
+      gCommon.windowColor[1]--;
     break;
   }
 }
@@ -246,16 +246,16 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gPersistentState.messageSpeed <= 1)
-      gPersistentState.messageSpeed++;
+    if (gCommon.messageSpeed <= 1)
+      gCommon.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gPersistentState.windowColor[0] <= 23)
-      gPersistentState.windowColor[0]++;
+    if (gCommon.windowColor[0] <= 23)
+      gCommon.windowColor[0]++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gPersistentState.windowColor[1] <= 14)
-      gPersistentState.windowColor[1]++;
+    if (gCommon.windowColor[1] <= 14)
+      gCommon.windowColor[1]++;
     break;
   }
 }
@@ -317,15 +317,15 @@ void SettingsMenu_InitializeWork(void) {
 
   work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  work->option[0] = gPersistentState.windowColor[0];
+  work->option[0] = gCommon.windowColor[0];
   work->optionCount[0] = 24;
-  work->option[1] = gPersistentState.windowColor[1];
+  work->option[1] = gCommon.windowColor[1];
   work->optionCount[1] = 15;
-  work->option[2] = gPersistentState.messageSpeed;
+  work->option[2] = gCommon.messageSpeed;
   work->optionCount[2] = 3;
-  work->option[3] = gPersistentState.speech;
+  work->option[3] = gCommon.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gPersistentState.idleSleepEnabled;
+  work->option[4] = gCommon.idleSleepEnabled;
   work->optionCount[4] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
@@ -630,15 +630,14 @@ s32 SettingsMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gPersistentState.windowColor[0] = work->option[0];
-    gPersistentState.windowColor[1] = work->option[1];
-    gPersistentState.messageSpeed = work->option[2];
-    gPersistentState.speech = work->option[3];
-    gPersistentState.idleSleepEnabled = work->option[4];
-    gIdleSleepEnabled = gPersistentState.idleSleepEnabled;
+    gCommon.windowColor[0] = work->option[0];
+    gCommon.windowColor[1] = work->option[1];
+    gCommon.messageSpeed = work->option[2];
+    gCommon.speech = work->option[3];
+    gCommon.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gCommon.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gPersistentState.windowColor[0],
-                      gPersistentState.windowColor[1]);
+    WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
   }
   SettingsMenu_Release();
   WaitTicks(1);

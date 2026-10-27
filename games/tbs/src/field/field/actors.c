@@ -461,13 +461,13 @@ void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
 /// The field loop (overworld/overworld/field_loop.c) gives it to the
-/// leader when gPersistentState.movementMode is 2.
+/// leader when gCommon.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
 
 /// Starts an actor on the script that moves it by the keys (SC_KEYS).
-/// The field loop gives it to the leader when gPersistentState.movementMode
+/// The field loop gives it to the leader when gCommon.movementMode
 /// is 1.
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);

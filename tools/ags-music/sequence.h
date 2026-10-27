@@ -7,7 +7,7 @@
 #ifndef AGS_SEQUENCE_H
 #define AGS_SEQUENCE_H
 #include "midi.h"
-#include "../common/assembly.h"
+#include "../shared/assembly.h"
 typedef struct
 {
 	char *kind;

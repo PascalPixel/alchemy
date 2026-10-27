@@ -136,7 +136,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = Actor_Lookup(gPersistentState.leaderActorId);
+    object = Actor_Lookup(gCommon.leaderActorId);
   work->actor = object;
 }
 

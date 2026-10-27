@@ -13,7 +13,7 @@
 
 #define NULL ((void *)0)
 
-#include "common/colosso_story_flags.h"
+#include "shared/colosso_story_flags.h"
 #include "flags.h"
 
 /// Growth has raised the sprout into a vine the leader can climb.

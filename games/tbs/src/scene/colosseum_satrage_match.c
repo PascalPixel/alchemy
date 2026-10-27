@@ -50,16 +50,16 @@
 /// a jump across or open ground, as the lifts line up or part.
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/colosseum_satrage_match.h"
-#include "unit/scene/common/colosso_solo.h"
-#include "unit/scene/common/colosso_marker.h"
-#include "unit/scene/common/colosso_setup.h"
-#include "unit/scene/common/colosso_occupant.h"
+#include "unit/scene/shared/colosso_solo.h"
+#include "unit/scene/shared/colosso_marker.h"
+#include "unit/scene/shared/colosso_setup.h"
+#include "unit/scene/shared/colosso_occupant.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -69,7 +69,7 @@
 #include "unit/menu/menu.h"
 #include "unit/sound/sound.h"
 #include "unit/runtime/runtime.h"
-#include "unit/scene/common/colosso_item_icon.h"
+#include "unit/scene/shared/colosso_item_icon.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -518,7 +518,7 @@ static void ColosseumSatrageMatch_GrowPlant(void) {
 /// hop the field plays at any ledge (FieldActor_JumpDownLedge) for the actor
 /// touching it.
 static void ColosseumSatrageMatch_JumpDownLedge(void) {
-  FieldActor_JumpDownLedge(gPersistentState.leaderActorId, 6, 0);
+  FieldActor_JumpDownLedge(gCommon.leaderActorId, 6, 0);
 }
 
 /// Walking west into the obstacle at step trigger 30 in Colosseum Final 2: the
@@ -536,7 +536,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   s32 destinationX;
   s32 destinationZ;
 
-  pusher = Actor_GetById(gPersistentState.leaderActorId);
+  pusher = Actor_GetById(gCommon.leaderActorId);
   log = Actor_GetById(logId);
   Event_Start();
   {
@@ -584,7 +584,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 /// Standing on one of the Log-Rolling Stage's logs (step trigger 22): it
 /// carries the rider across the water the way the player holds.
 static void ColosseumSatrageMatch_RideLog(void) {
-  struct Actor *pusher = Actor_GetById(gPersistentState.leaderActorId);
+  struct Actor *pusher = Actor_GetById(gCommon.leaderActorId);
   s32 column = pusher->x.fixed >> 20;
   s32 offsetX = 0;
   s32 logId = ACTOR_RIDING_LOG_NORTH;
@@ -616,7 +616,7 @@ static void ColosseumSatrageMatch_RideLog(void) {
 /// Rolls a log to half-cell coordinates while its pusher follows halfway.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
-  s32 pusher = gPersistentState.leaderActorId;
+  s32 pusher = gCommon.leaderActorId;
   struct Actor *pusherActor = Actor_GetById(pusher);
   struct Actor *log = Actor_GetById(logId);
   s32 heading = (pusherActor->facing + 0x1000) & 0xe000;
@@ -741,7 +741,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 deltaZ;
   struct Actor *liftActor;
 
-  rider = Actor_GetById(gPersistentState.leaderActorId);
+  rider = Actor_GetById(gCommon.leaderActorId);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
   for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
@@ -1112,12 +1112,12 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Task_SetFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gPersistentState.movementMode = LEADER_MOVEMENT_WALK;
+  gCommon.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CHAIN_MAIL);
   Actor_ConfigureSpriteColor(ACTOR_OPPONENT, SPRITE_COLOR_GRB);
   // The race, the friends' turns, the tour, and the battle's result.
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
     Scene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 5,
                                         PIXELS(104), PIXELS(256), ACTOR_PRIZE_A,
@@ -1252,8 +1252,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct Actor *actor;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gCommon.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
@@ -1298,8 +1297,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
 static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gCommon.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
@@ -1345,8 +1343,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
 static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gCommon.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
@@ -1402,8 +1399,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   struct Actor *actor;
   s32 result;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gCommon.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1457,7 +1453,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
 /// follows.
 static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
                                                      s32 row) {
-  s32 pusher = gPersistentState.leaderActorId;
+  s32 pusher = gCommon.leaderActorId;
   struct Actor *pusherActor = Actor_GetById(pusher);
   struct Actor *obstacle = Actor_GetById(obstacleId);
   s32 alongX = (obstacle->x.fixed >> 20) != column / 2;
@@ -1501,8 +1497,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
 static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
-  if (gPersistentState.entrance ==
-      COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gCommon.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1546,9 +1541,9 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
 // This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
-#include "common/colosso_solo.h"
-#include "common/item_equip.h"
-#include "common/colosso_task.h"
+#include "shared/colosso_solo.h"
+#include "shared/item_equip.h"
+#include "shared/colosso_task.h"
 
 /// Chooses the lettering animation script and resets its task state.
 static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
@@ -1684,8 +1679,8 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   Event_WaitTransitionFrames();
 }
 
-#include "common/colosso_marker.h"
-#include "common/colosso_item_icon.h"
+#include "shared/colosso_marker.h"
+#include "shared/colosso_item_icon.h"
 
 /// Unused: writes eight uppercase hexadecimal digits followed by a terminator;
 /// nothing calls it.
@@ -1784,8 +1779,8 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 
   finishAlreadyReached = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  gameState = (u8 *)&gPersistentState;
-  warrior = Actor_GetById(((struct PersistentState *)gameState)->leaderActorId);
+  gameState = (u8 *)&gCommon;
+  warrior = Actor_GetById(((struct Common *)gameState)->leaderActorId);
 
   if (gauge->finishX < warrior->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1828,15 +1823,15 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
     MessageArgument_Push(secondItem, 2);
   }
 
-  gameState = (u8 *)&gPersistentState;
-  MessageArgument_Push(((struct PersistentState *)gameState)->leaderActorId, 1);
+  gameState = (u8 *)&gCommon;
+  MessageArgument_Push(((struct Common *)gameState)->leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   Actor_WaitForScriptEnd(warrior);
 
   return finishAlreadyReached;
 }
 
-#include "common/colosso_path_opponent.h"
+#include "shared/colosso_path_opponent.h"
 
 /// Allocates the race work, records both warriors and installs the gauge
 /// task.
@@ -1903,8 +1898,8 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   Task_AddFrame(Colosso_UpdatePathOpponent, TASK_PASS_FRAME + 5);
 }
 
-#include "common/colosso_map_state.h"
-#include "common/actor_findslot.h"
+#include "shared/colosso_map_state.h"
+#include "shared/actor_findslot.h"
 
 /// Pushes the adjacent obstacle only when the destination and space above are
 /// clear.
@@ -1919,7 +1914,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   s32 zero;
   s32 actorId;
 
-  actorId = gPersistentState.leaderActorId;
+  actorId = gCommon.leaderActorId;
   pusher = Actor_GetById(actorId);
 
   direction = pusher->facing >> 12;
@@ -1995,7 +1990,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   Actor_SelectAnimation(pusher, 1);
 }
 
-#include "common/colosso_occupant.h"
+#include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the

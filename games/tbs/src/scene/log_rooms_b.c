@@ -41,10 +41,10 @@
 /// counter. A jar, two barrels and a wooden box keep the first visit's flags,
 /// so what the party took then stays taken, and two bookcases can be read.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
-#include "unit/scene/common/vault_itemobj.h"
+#include "unit/scene/shared/vault_itemobj.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -149,7 +149,7 @@ enum {
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
 // Shared scene routines stay in their linked order.
-#include "common/vault_spotflag.h"
+#include "shared/vault_spotflag.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsB_Entrances;
@@ -313,7 +313,7 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
 }
 
 // Shared Bone-item dialogue follows the actor conversations.
-#include "common/vault_bone.h"
+#include "shared/vault_bone.h"
 
 /// Across the counter the weapon shop opens; from elsewhere the merchant talks
 /// of a river of fire on the other side of Mt. Aleph.
@@ -416,7 +416,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gPersistentState.entrance;
+  entrance = gCommon.entrance;
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
     // Draw the table bare, its stone gone, and set the gem owner back on the
@@ -438,7 +438,7 @@ s32 Scene_Initialize(void) {
 }
 
 // Shared item-object routines follow the scene initializer.
-#include "common/vault_itemobj.h"
+#include "shared/vault_itemobj.h"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

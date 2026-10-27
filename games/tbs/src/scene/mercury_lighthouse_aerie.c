@@ -57,12 +57,12 @@
 /// exit, table or code leads there; only the debug scene selector, which
 /// reaches every scene, can.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/mercury_lighthouse_aerie.h"
-#include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/actor_nearest.h"
+#include "unit/scene/shared/effect_spawn.h"
+#include "unit/scene/shared/actor_nearest.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -170,9 +170,9 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 
 #define NULL ((void *)0)
 
-#include "common/effect_create.h"
+#include "shared/effect_create.h"
 
-#include "common/effect_spawn.h"
+#include "shared/effect_spawn.h"
 #include "actor_script.h"
 
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
@@ -194,7 +194,7 @@ const u32 *MercuryLighthouseAerie_GetExits(void) {
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) places Jenna, Kraden, Felix
 /// and Menardi.
 const struct ActorTemplate *MercuryLighthouseAerie_GetActorTemplates(void) {
-  if (gPersistentState.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+  if (gCommon.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieActorTemplates;
@@ -220,7 +220,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
+  if (gCommon.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -257,12 +257,11 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 3), 0);
     Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
-    if (gPersistentState.entrance ==
-        MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+    if (gCommon.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gPersistentState.entrance ==
+    } else if (gCommon.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
@@ -279,7 +278,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gPersistentState.entrance ==
+    } else if (gCommon.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       GameFlag_Set(FLAG_LIFT_UP);
     }
@@ -387,8 +386,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Event_End();
 }
 
-#include "common/actor_distance.h"
-#include "common/actor_nearest.h"
+#include "shared/actor_distance.h"
+#include "shared/actor_nearest.h"
 
 /// Lighthouse Aerie: walking into metatile behavior 10 or 11. If nothing is in
 /// the way the leader jumps two cells ahead, off any platform and onto the

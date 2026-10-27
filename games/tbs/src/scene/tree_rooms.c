@@ -56,10 +56,10 @@
 
 #include "speaker.h"
 #include "version.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "unit/scene/tree_rooms.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -150,9 +150,9 @@ static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
 static s16 *sLastCocoon;
 
-#include "common/effect_create.h"
+#include "shared/effect_create.h"
 
-#include "common/effect_spawn.h"
+#include "shared/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
@@ -301,9 +301,9 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   struct Actor *actor;
   s32 spinFrame;
 
-  destinationColumn = (gPersistentState.x >> 20) + 64;
-  destinationRow = gPersistentState.z >> 20;
-  leaderActorId = gPersistentState.leaderActorId;
+  destinationColumn = (gCommon.x >> 20) + 64;
+  destinationRow = gCommon.z >> 20;
+  leaderActorId = gCommon.leaderActorId;
   actor = Actor_GetById(leaderActorId);
   if (entrance == *sLastCocoon)
     return;
@@ -827,7 +827,7 @@ s32 TreeRooms_EnterRoom(void) {
   }
   Actor_ConfigureSpriteColor(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  if (gPersistentState.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
+  if (gCommon.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Import_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
@@ -853,8 +853,8 @@ s32 TreeRooms_EnterRoom(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  entrance = gPersistentState.entrance;
-  leaderActorId = gPersistentState.leaderActorId;
+  entrance = gCommon.entrance;
+  leaderActorId = gCommon.leaderActorId;
   actor = Actor_GetById(leaderActorId);
   // Entrances 20, 30, 40 and 50: the leader falls on through the room,
   // to the entrance numbered ten lower. Entrance 10: the leader
@@ -1142,7 +1142,7 @@ static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
-#include "common/effect_advance.h"
+#include "shared/effect_advance.h"
 
 /// Entrance 10, at the end of the fall from cocoon 50: the leader drops
 /// in from 130 pixels up in front of Tret, lands in a ring of dust and the map

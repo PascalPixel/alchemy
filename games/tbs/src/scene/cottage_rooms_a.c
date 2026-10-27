@@ -53,7 +53,7 @@
 /// (CottageRoomsA_AdvanceSleepZ).
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/import.h"
 #include "unit/scene/cottage_rooms_a.h"
 #include "unit/overworld/overworld.h"
@@ -177,7 +177,7 @@ enum CottageRoomsAAnimation {
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
@@ -439,7 +439,7 @@ s32 CottageRoomsA_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gPersistentState.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
+    if (gCommon.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         CottageRoomsA_GaretComesHome();
       }
@@ -447,7 +447,7 @@ s32 CottageRoomsA_Initialize(void) {
     Actor_GetById(ACTOR_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gPersistentState.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
+  if (gCommon.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
                               PIXELS(150));

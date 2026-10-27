@@ -31,7 +31,7 @@
 /// to the World Map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -110,8 +110,8 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
 // Shared effects stay at their native positions in the overlay.
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
@@ -528,7 +528,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
 }
 
 // Shared height-wait code stays at its native position in the overlay.
-#include "common/actor_waitdown.h"
+#include "shared/actor_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the pool under the waterfall with a splash and sinks
@@ -597,7 +597,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 }
 
 // Shared inventory equipment code stays at its native overlay position.
-#include "common/item_equip.h"
+#include "shared/item_equip.h"
 
 /// Gives Ivan the Shaman's Rod and equips it. With his items full, he drops
 /// another to make room; later patches skip items marked only indispensable.

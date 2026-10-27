@@ -79,14 +79,14 @@
 /// through his colour modes while pairs of sparks rise and fall about him every
 /// 16 frames (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/scene/vale_plaza.h"
-#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/shared/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -448,7 +448,7 @@ static inline s32 ValePlaza_TurnAndWaitValue(s32 actorId, s32 facing,
 #define VALE_PLAZA_TURN_AND_WAIT ValePlaza_TurnAndWaitValue
 #endif
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 const struct SceneEntrance *ValePlaza_GetEntrances(void) {
   return gValePlaza_Entrances;
@@ -471,7 +471,7 @@ const struct ActorTemplate *ValePlaza_GetActorTemplates(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormActorTemplates;
   }
-  if (gPersistentState.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gCommon.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureActorTemplates;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -505,7 +505,7 @@ const struct Trigger *ValePlaza_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValePlaza_TriggersAfterLeaving;
   }
-  if (gPersistentState.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gCommon.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureTriggers;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -808,7 +808,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
   Event_End();
 }
 
-#include "common/vale.h"
+#include "shared/vale.h"
 
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
@@ -955,7 +955,7 @@ s32 ValePlaza_Initialize(void) {
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Import_ActorSetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
-  switch (gPersistentState.entrance) {
+  switch (gCommon.entrance) {
   case VALE_PLAZA_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
     Import_EventSetExitRequest(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST);
@@ -1002,7 +1002,7 @@ s32 ValePlaza_Initialize(void) {
         WaitTicks(1);
       }
     }
-    if (gPersistentState.entrance == VALE_PLAZA_FROM_SANCTUM) {
+    if (gCommon.entrance == VALE_PLAZA_FROM_SANCTUM) {
       ValePlaza_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -1035,7 +1035,7 @@ s32 ValePlaza_Initialize(void) {
         Import_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
         Import_ActorSetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
-      if (gPersistentState.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
+      if (gCommon.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
         ValePlaza_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
@@ -1971,7 +1971,7 @@ static void ValePlaza_CyclePsynergyPalette(struct Actor *actor) {
   }
 }
 
-#include "common/effect_vertical.h"
+#include "shared/effect_vertical.h"
 
 /// Spawns a pair of Psynergy sparks, one rising and one falling
 /// (common/effect_vertical.h).
@@ -2025,7 +2025,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 /// Updates the rock-lifting boy's Psynergy display.
 ///

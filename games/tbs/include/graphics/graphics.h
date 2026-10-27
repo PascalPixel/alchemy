@@ -48,7 +48,7 @@ extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 /// Decompress_ByteLzArm: how much Decompress_ByteLz allocates for it.
 extern u8 Decompress_ByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
-/// string, drawn by the unit summary in menu/menu/common.c.
+/// string, drawn by the unit summary in menu/menu/shared.c.
 extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
 /// (gPointingHandTiles), returned by WindowSprite_GetPointerTiles.

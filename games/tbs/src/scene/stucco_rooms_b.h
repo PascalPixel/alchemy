@@ -4,7 +4,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "common/colosso_story_flags.h"
+#include "shared/colosso_story_flags.h"
 #include "flags.h"
 
 /// The placed actors, numbering the rows of the actor template

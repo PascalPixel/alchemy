@@ -13,7 +13,7 @@
 #include "menu_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "menu/common.c"
+#include "menu/shared.c"
 #include "menu/item.c"
 #include "menu/psynergy.c"
 #include "menu/status.c"

@@ -98,10 +98,10 @@
 /// ValeKradensCottage, Vale and ValeStormyNight) or between this scene's own
 /// parts.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "vram_cache.h"
 #include "unit/scene/cottage_rooms_b.h"
-#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/shared/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -150,7 +150,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
@@ -333,7 +333,7 @@ const u32 *CottageRoomsB_GetExits(void) {
 const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void) {
   struct ActorTemplate *table;
 
-  if (gPersistentState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
+  if (gCommon.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
     return gCottageRoomsB_BabiScholarsActorTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gCottageRoomsB_ActorTemplatesAfterKalay;
@@ -366,7 +366,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct Trigger *CottageRoomsB_GetTriggers(void) {
-  if (gPersistentState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gCommon.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterTriggers;
     }
@@ -541,7 +541,7 @@ static void CottageRoomsB_ExitToValeStormyNightEast(void) {
 s32 CottageRoomsB_Initialize(void) {
   struct Actor *actor;
 
-  if (gPersistentState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gCommon.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -560,9 +560,8 @@ s32 CottageRoomsB_Initialize(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       actor = Actor_GetById(ACTOR_INVISIBLE_AFTER_KALAY);
       Actor_SetSpriteFlags(actor, 0);
-      if (gPersistentState.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
-          gPersistentState.entrance ==
-              COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
+      if (gCommon.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
+          gCommon.entrance == COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
             TilesetAnim_Resume(12);
@@ -575,16 +574,15 @@ s32 CottageRoomsB_Initialize(void) {
         }
       }
     } else {
-      if (gPersistentState.entrance ==
+      if (gCommon.entrance ==
           COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         CottageRoomsB_HurryToThePlaza();
       } else {
-        if (gPersistentState.entrance ==
-            COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
+        if (gCommon.entrance == COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           CottageRoomsB_DoraWakesIsaac();
         } else {
-          if (gPersistentState.entrance ==
+          if (gCommon.entrance ==
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             CottageRoomsB_ShowMythrilBag();
           } else {
@@ -1242,7 +1240,7 @@ static void CottageRoomsB_CyclePaletteOnOddFrames(struct Actor *actor) {
 }
 
 // Shared vertical-effect update routines precede their paired-effect creator.
-#include "common/effect_vertical.h"
+#include "shared/effect_vertical.h"
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
@@ -1299,7 +1297,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
 }
 
 // Shared Psynergy setup precedes the scene's Psynergy wrappers.
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {

@@ -351,7 +351,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// the palette mode names (TILEMAP_ENTRY_), or as it is for
 /// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the frame's
 /// top row, where the menus put their page numbers and arrows
-/// (menu/menu/common.c); a place beyond the bottom or right frame, or outside
+/// (menu/menu/shared.c); a place beyond the bottom or right frame, or outside
 /// the tilemap, is ignored. The entry is not uploaded until the tilemap is
 /// next marked dirty.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,

@@ -26,9 +26,9 @@
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/scene/lacquer_rooms_b.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "types.h"
@@ -126,8 +126,8 @@ enum {
 /// room behind the school (spr_041.png's frame 36; the room's render).
 enum { ANIM_HSU_IN_BED = 6 };
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
@@ -145,8 +145,7 @@ const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 /// replaces with whether each actor stands inside the view bounds of the
 /// room entered.
 const struct ActorTemplate *LacquerRoomsB_GetActorTemplates(void) {
-  if (gPersistentState.entrance ==
-      LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gCommon.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorTemplates;
   }
   Scene_AssignViewFlags(gLacquerRoomsB_ActorTemplates);
@@ -279,8 +278,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own triggers.
 const struct Trigger *LacquerRoomsB_GetTriggers(void) {
-  if (gPersistentState.entrance ==
-      LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gCommon.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
   }
   return gLacquerRoomsB_Triggers;
@@ -297,7 +295,7 @@ s32 LacquerRoomsB_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gPersistentState.entrance;
+  entrance = gCommon.entrance;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||

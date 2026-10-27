@@ -11,7 +11,7 @@
 /// and shakes.
 
 #include "unit/scene/sol_sanctum_corridor.h"
-#include "unit/scene/common/sol_sanctum_init_zoom.h"
+#include "unit/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -46,7 +46,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumCorridorTriggers;
 }
 
-#include "common/sol_sanctum_init_zoom.h"
+#include "shared/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,

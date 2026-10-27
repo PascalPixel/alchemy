@@ -143,7 +143,7 @@ In the source an overlay is three files in its folder:
   image through, chosen from the list in `system/overlay.inc`.
 
 Only one overlay is loaded at a time, so code several scenes use is in
-headers under `scene/common/`, and each scene that includes one compiles its
+headers under `scene/shared/`, and each scene that includes one compiles its
 own copy. [System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes the tables and how an overlay is packed.
 

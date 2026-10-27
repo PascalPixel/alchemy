@@ -148,7 +148,7 @@ void TilesetAnim_StartAll(const u16 *script) {
 }
 
 /// Suspends the tileset animations, unless the world map's still view is shown.
-/// Menu_SuspendFieldTasks (menu/menu/common.c) calls it
+/// Menu_SuspendFieldTasks (menu/menu/shared.c) calls it
 /// through TilesetAnim_SuspendAllFar.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
@@ -156,7 +156,7 @@ void TilesetAnim_SuspendAll(void) {
 }
 
 /// Resumes the tileset animations, unless the world map's still view is shown.
-/// Menu_ResumeFieldTasks (menu/menu/common.c) calls it
+/// Menu_ResumeFieldTasks (menu/menu/shared.c) calls it
 /// through TilesetAnim_ResumeAllFar.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)

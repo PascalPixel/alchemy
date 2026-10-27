@@ -6,7 +6,7 @@
  * each object. Generated includes can be named before they exist; they are
  * object prerequisites but must not cause the scanner to rebuild itself.
  */
-#include "../common/common.h"
+#include "../shared/shared.h"
 
 typedef struct
 {

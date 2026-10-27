@@ -4,7 +4,7 @@
 /// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
 /// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the World
 /// Map farther north. No one speaks here: each scene is a run of Psynergy
-/// puzzles, the getters pick its tables by gPersistentState.sceneId, and
+/// puzzles, the getters pick its tables by gCommon.sceneId, and
 /// BilibinCave_Initialize restores what the party has already solved in the
 /// scene being entered.
 ///
@@ -58,7 +58,7 @@
 /// and Water of Life.
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "engine_call.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -193,7 +193,7 @@ BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceEntrances;
@@ -212,7 +212,7 @@ const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
 const struct ActorTemplate *BilibinCave_GetActorTemplates(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceActorTemplates;
@@ -227,7 +227,7 @@ const struct ActorTemplate *BilibinCave_GetActorTemplates(void) {
 }
 
 const struct Trigger *BilibinCave_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceTriggers;
@@ -427,7 +427,7 @@ static void BilibinCave_StopFootprints(void) {
 /// Sets up the scene being entered, with its puzzles already solved. The scene
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
-  s16 variant = gPersistentState.sceneId;
+  s16 variant = gCommon.sceneId;
 
   if (variant == (s32)&SceneId_BilibinCaveEntrance) {
     BilibinCave_RestoreEntrance();
@@ -559,7 +559,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 }
 
 // The shared cell lookup retains its position before the push handler.
-#include "common/actor_findcell.h"
+#include "shared/actor_findcell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce): it moves only when its next cell and movement

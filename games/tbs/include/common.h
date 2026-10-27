@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_PERSISTENT_STATE_H
-#define ALCHEMY_PERSISTENT_STATE_H
+#ifndef ALCHEMY_COMMON_H
+#define ALCHEMY_COMMON_H
 
 /// @file
-/// PersistentState, the state a save file keeps: play time, coins, the scene
+/// Common, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 
 #include "types.h"
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A scene's type (Scene.sceneType, copied to PersistentState.sceneType).
+/// A scene's type (Scene.sceneType, copied to Common.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -18,7 +18,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gPersistentState.hazardMode: what advances the hazard count
+/// gCommon.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MB_DESERT_SAND ground.
@@ -27,11 +27,11 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gPersistentState.hazardDamage's bit 8: its low byte is a percentage of
+/// gCommon.hazardDamage's bit 8: its low byte is a percentage of
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gPersistentState.battleType: how the next battle starts (Battle_SetType); it
+/// gCommon.battleType: how the next battle starts (Battle_SetType); it
 /// is set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that one
 /// stops the opening's first-strike and surprise rolls (Battle_Run).
 enum BattleType {
@@ -54,13 +54,13 @@ enum BattleType {
 /// The state a save file keeps: play time, coins, the scene and the leader's
 /// position, the active party and the options.
 ///
-/// It is the one gPersistentState in EWRAM, right after the 0x200 bytes of game
+/// It is the one gCommon in EWRAM, right after the 0x200 bytes of game
 /// flags. Saving writes it whole in a file's first record, with the flags
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
-/// new game sets its defaults (PersistentState_InitializeDefaults), and the
+/// new game sets its defaults (Common_InitializeDefaults), and the
 /// field, battle, menus and scenes read and write it directly.
-struct PersistentState {
+struct Common {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
@@ -204,38 +204,38 @@ struct PersistentState {
   struct Unit units[8];        ///< the characters
 };
 
-STATIC_ASSERT(offsetof(struct PersistentState, buildStamp) == 0);
-STATIC_ASSERT(offsetof(struct PersistentState, playTime) == 4);
-STATIC_ASSERT(offsetof(struct PersistentState, idleSleepEnabled) == 0x22a);
-STATIC_ASSERT(offsetof(struct PersistentState, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct PersistentState, shopCredit) == 0x118);
-STATIC_ASSERT(offsetof(struct PersistentState, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct PersistentState, units) == 0x2c0);
-STATIC_ASSERT(sizeof(struct PersistentState) == 0xd20);
-STATIC_ASSERT(offsetof(struct PersistentState, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct PersistentState, area) == 0x1cc);
-STATIC_ASSERT(offsetof(struct PersistentState, dashKeys) == 0x21c);
-STATIC_ASSERT(offsetof(struct PersistentState, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct PersistentState, entrance) == 0x1c2);
-STATIC_ASSERT(offsetof(struct PersistentState, special) == 0x1d6);
-STATIC_ASSERT(offsetof(struct PersistentState, x) == 0x1dc);
-STATIC_ASSERT(offsetof(struct PersistentState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct PersistentState, leaderActorId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct PersistentState, party) == 0x1f8);
-STATIC_ASSERT(offsetof(struct PersistentState, speech) == 0x20a);
-STATIC_ASSERT(offsetof(struct PersistentState, messageSpeed) == 0x20c);
-STATIC_ASSERT(offsetof(struct PersistentState, aKeys) == 0x210);
-STATIC_ASSERT(offsetof(struct PersistentState, firstShortcutKeys) == 0x218);
-STATIC_ASSERT(offsetof(struct PersistentState, secondShortcutKeys) == 0x21a);
-STATIC_ASSERT(offsetof(struct PersistentState, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct PersistentState, retreatEntrance) == 0x242);
-STATIC_ASSERT(offsetof(struct PersistentState, cloaked) == 0x24c);
-STATIC_ASSERT(offsetof(struct PersistentState, linkTallies) == 0x2a4);
-STATIC_ASSERT(offsetof(struct PersistentState, startStamp) == 0x2b8);
+STATIC_ASSERT(offsetof(struct Common, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct Common, playTime) == 4);
+STATIC_ASSERT(offsetof(struct Common, idleSleepEnabled) == 0x22a);
+STATIC_ASSERT(offsetof(struct Common, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct Common, shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct Common, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct Common, units) == 0x2c0);
+STATIC_ASSERT(sizeof(struct Common) == 0xd20);
+STATIC_ASSERT(offsetof(struct Common, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct Common, area) == 0x1cc);
+STATIC_ASSERT(offsetof(struct Common, dashKeys) == 0x21c);
+STATIC_ASSERT(offsetof(struct Common, avoidDistance) == 0x244);
+STATIC_ASSERT(offsetof(struct Common, entrance) == 0x1c2);
+STATIC_ASSERT(offsetof(struct Common, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct Common, x) == 0x1dc);
+STATIC_ASSERT(offsetof(struct Common, movementMode) == 0x1f2);
+STATIC_ASSERT(offsetof(struct Common, leaderActorId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct Common, party) == 0x1f8);
+STATIC_ASSERT(offsetof(struct Common, speech) == 0x20a);
+STATIC_ASSERT(offsetof(struct Common, messageSpeed) == 0x20c);
+STATIC_ASSERT(offsetof(struct Common, aKeys) == 0x210);
+STATIC_ASSERT(offsetof(struct Common, firstShortcutKeys) == 0x218);
+STATIC_ASSERT(offsetof(struct Common, secondShortcutKeys) == 0x21a);
+STATIC_ASSERT(offsetof(struct Common, firstShortcut) == 0x220);
+STATIC_ASSERT(offsetof(struct Common, retreatEntrance) == 0x242);
+STATIC_ASSERT(offsetof(struct Common, cloaked) == 0x24c);
+STATIC_ASSERT(offsetof(struct Common, linkTallies) == 0x2a4);
+STATIC_ASSERT(offsetof(struct Common, startStamp) == 0x2b8);
 
-#ifndef OWN_gPersistentState
+#ifndef OWN_gCommon
 /// The game's state (system/ewram.s).
-extern struct PersistentState gPersistentState;
+extern struct Common gCommon;
 #endif
 
 /// Sets the battle type.
@@ -243,7 +243,7 @@ extern struct PersistentState gPersistentState;
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gPersistentState.battleType = (mode);                                      \
+    gCommon.battleType = (mode);                                               \
   } while (0)
 
 #endif

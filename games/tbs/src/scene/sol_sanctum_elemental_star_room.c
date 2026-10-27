@@ -37,11 +37,11 @@
 /// grows with him: the platform's actor, ACTOR_PLATFORM_SHADOW,
 /// draws that shadow.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "unit/import.h"
 #include "unit/scene/sol_sanctum_elemental_star_room.h"
-#include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/sol_sanctum_elemental_star_ring_setup.h"
+#include "unit/scene/shared/effect_spawn.h"
+#include "unit/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -150,15 +150,15 @@ enum SolSanctumElementalStarRoomMetatileBehavior {
 
 struct Actor;
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
 /// Advances through the current dialogue's consecutive messages.
 static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gFieldWork->message += amount;
 }
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
@@ -2156,7 +2156,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gPersistentState.entrance ==
+    if (gCommon.entrance ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }
@@ -2276,7 +2276,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
-#include "common/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.h"
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),

@@ -35,7 +35,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gPersistentState.leaderActorId);
+  Actor_Lookup(gCommon.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -67,7 +67,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct PersistentState *state = &gPersistentState;
+      struct Common *state = &gCommon;
       s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
       state->sceneId = sceneId;
@@ -87,7 +87,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and
-      // entrance it chose stay in the persistent state).
+      // entrance it chose stay in common).
       if (retreat)
         work->exit = 0;
       return 0;
@@ -107,8 +107,8 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gPersistentState.leaderActorId,
-                                            abilityGroup);
+    target =
+        Field_FindNearbyPsynergyTarget(gCommon.leaderActorId, abilityGroup);
     // The after event plays the Psynergy itself.
     if (after && (after->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       GameFlag_ClearFar(FLAG_PLAY_PSYNERGY_CAST);
@@ -122,7 +122,7 @@ s32 Field_UsePsynergy(u32 code) {
     Actor_ClearOutOfBounds();
   FieldPsynergy_LoadResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldPsynergy_SetupActorPair(gPersistentState.leaderActorId, target);
+  FieldPsynergy_SetupActorPair(gCommon.leaderActorId, target);
   FieldPsynergy_StartCast();
 
   Field_RunPsynergyEvent(before, userId, target);

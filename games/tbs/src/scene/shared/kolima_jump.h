@@ -5,7 +5,7 @@
 #include "engine_call.h"
 #include "actor.h"
 #include "scene.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "songs.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
@@ -65,9 +65,9 @@ static void KolimaForest_HopEast(void) {
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
-  // gPersistentState.leaderActorId
+  // gCommon.leaderActorId
   s32 off = 500;
-  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gPersistentState + off));
+  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gCommon + off));
   u32 base = p->x.fixed & 0xfff00000;
 
   target.x = base + PIXELS(8);

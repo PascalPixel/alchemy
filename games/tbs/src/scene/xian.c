@@ -39,11 +39,11 @@
 /// (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the Sanctum
 /// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is not
 /// shown again.
-#include "persistent_state.h"
+#include "common.h"
 #include "djinn_ids.h"
 #include "unit/import.h"
 #include "unit/scene/xian.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -75,8 +75,8 @@
 #include "flags.h"
 #include "songs.h"
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
 // Xian's temporary flags: FLAG_XIAN_WATER_SPILLED the water carrier has spilled
 // her water FLAG_XIAN_SPILLED_WATER_FROZEN the spilled water is frozen
@@ -208,7 +208,7 @@ static void Xian_SpawnTrainingParticles(void) {
   }
 }
 
-#include "common/actor_distance.h"
+#include "shared/actor_distance.h"
 
 /// The water carrier has spilled her water.
 /// ★ Named from the game: "You made me spill my water!"
@@ -813,7 +813,7 @@ s32 Xian_Initialize(void) {
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name
   // is not shown.
-  if (gPersistentState.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gCommon.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {

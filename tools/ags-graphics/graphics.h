@@ -6,7 +6,7 @@
  */
 #ifndef AGS_GRAPHICS_H
 #define AGS_GRAPHICS_H
-#include "../common/compress.h"
+#include "../shared/compress.h"
 typedef struct
 {
 	size_t width, height;

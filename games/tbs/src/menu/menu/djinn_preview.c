@@ -281,7 +281,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->motion = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(2, 96);
-          gPersistentState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gCommon.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0) {
             WaitTicks(1);
           }
@@ -314,7 +314,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->motion = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(106, 56);
-          gPersistentState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gCommon.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0) {
             WaitTicks(1);
           }

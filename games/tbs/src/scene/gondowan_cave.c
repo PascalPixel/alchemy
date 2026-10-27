@@ -15,7 +15,7 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One exit table serves every scene; the other getters choose by
-/// gPersistentState.sceneId, Gondowan Passage's actor templates and triggers
+/// gCommon.sceneId, Gondowan Passage's actor templates and triggers
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// scene. Every scene's trigger table carries GondowanCaveRiver's two
 /// chests.
@@ -48,12 +48,12 @@
 /// either way, and the pillar settles at the same height in each of columns
 /// 41 to 44 either way.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/gondowan_cave.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -146,17 +146,17 @@ static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Shared effect routines retain their position before the scene's events.
-#include "common/effect_create.h"
+#include "shared/effect_create.h"
 
 // Particle and movable-actor routines precede this scene's entry points.
-#include "common/effect_spawn.h"
-#include "common/staged_actor.h"
+#include "shared/effect_spawn.h"
+#include "shared/staged_actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     return gGondowanPassageEntrances;
@@ -178,7 +178,7 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -198,7 +198,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// The triggers of each scene, with Iodem's in Gondowan Passage when he is
 /// there.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -246,8 +246,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       Actor_WaitForMoveById(ACTOR_IODEM);
       Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
-      gPersistentState.restartScene = (s32)&SceneId_StuccoRoomsB;
-      gPersistentState.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
+      gCommon.restartScene = (s32)&SceneId_StuccoRoomsB;
+      gCommon.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the step trigger.
@@ -507,16 +507,16 @@ static void GondowanCave_LiftBoulder(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  if (gPersistentState.sceneId == (s32)&SceneId_GondowanPassage) {
+  if (gCommon.sceneId == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
     }
   }
-  if (gPersistentState.sceneId == (s32)&SceneId_GondowanCave) {
+  if (gCommon.sceneId == (s32)&SceneId_GondowanCave) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
-    if (gPersistentState.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
+    if (gCommon.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {

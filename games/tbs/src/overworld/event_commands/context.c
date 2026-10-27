@@ -67,7 +67,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 i;
   s32 level;
 
-  Sound_PlaySongFar(gPersistentState.battleMusic);
+  Sound_PlaySongFar(gCommon.battleMusic);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -111,7 +111,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  actor = Actor_Lookup(gPersistentState.leaderActorId);
+  actor = Actor_Lookup(gCommon.leaderActorId);
   context = actor->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -159,7 +159,7 @@ void Exit_StartStairsDown(void) {
 void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Actor *leader = Actor_Lookup(gPersistentState.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gCommon.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -215,7 +215,7 @@ s32 Entrance_PlayArrival(void) {
         struct Actor *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gPersistentState.leaderActorId;
+        leaderId = gCommon.leaderActorId;
         leader = Actor_Lookup(leaderId);
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels

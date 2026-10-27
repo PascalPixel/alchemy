@@ -72,13 +72,13 @@
 /// hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west, the pillar
 /// cycling its colour modes too, and sheds sparkles.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/vale.h"
-#include "unit/scene/common/actor_orbit.h"
-#include "unit/scene/common/effect_psynergy.h"
-#include "unit/scene/common/world_map_linked_effects.h"
+#include "unit/scene/shared/actor_orbit.h"
+#include "unit/scene/shared/effect_psynergy.h"
+#include "unit/scene/shared/world_map_linked_effects.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -365,7 +365,7 @@ enum ValeAnimation {
   ANIM_GARET_STARTLED = 13
 };
 
-#include "common/staged_actor.h"
+#include "shared/staged_actor.h"
 
 /// The roof of Isaac's house has just been mended; for the rest of the visit
 /// Dora frets about the hole Garet left.
@@ -421,8 +421,8 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ActorTemplate *Vale_GetActorTemplates(void) {
-  u8 *gameStateBytes = (u8 *)&gPersistentState;
-  if (((struct PersistentState *)gameStateBytes)->entrance == VALE_FROM_TITLE)
+  u8 *gameStateBytes = (u8 *)&gCommon;
+  if (((struct Common *)gameStateBytes)->entrance == VALE_FROM_TITLE)
     return gVale_RepairActorTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorTemplatesAfterKalay;
@@ -1550,9 +1550,8 @@ s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
 
-  if (gPersistentState.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gPersistentState)[517],
-                      ((u8 *)&gPersistentState)[518]);
+  if (gCommon.entrance == VALE_FROM_TITLE) {
+    WindowColor_Apply(((u8 *)&gCommon)[517], ((u8 *)&gCommon)[518]);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1625,13 +1624,13 @@ s32 Vale_Initialize(void) {
           Actor_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
-        if (gPersistentState.entrance != VALE_FROM_TITLE &&
+        if (gCommon.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           Task_AddFrame(Vale_SynchronizeAlephGuardPause, TASK_PASS_FRAME);
         }
       }
       if (!Event_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
-          gPersistentState.entrance == VALE_FROM_ROOF_MENDED) {
+          gCommon.entrance == VALE_FROM_ROOF_MENDED) {
         Vale_RoofMended();
         GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }
@@ -2959,7 +2958,7 @@ static void Vale_RoofMended(void) {
   Event_End();
 }
 
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 /// Cycles palettes on Garet and periodically spawns attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
@@ -3267,7 +3266,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   }
 }
 
-#include "common/actor_orbit.h"
+#include "shared/actor_orbit.h"
 
 /// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
 /// four, and the World Map's linked sparks every 16 frames.
@@ -3298,8 +3297,8 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
 }
 
-#include "common/effect_vertical.h"
-#include "common/world_map_linked_effects.h"
+#include "shared/effect_vertical.h"
+#include "shared/world_map_linked_effects.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

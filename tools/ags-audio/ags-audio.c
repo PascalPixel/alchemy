@@ -6,7 +6,7 @@
  * writing the native sample header. Wave-RAM inputs are already 16-byte
  * patterns and pass through after their size is checked.
  */
-#include "../common/common.h"
+#include "../shared/shared.h"
 #include <math.h>
 #include <strings.h>
 

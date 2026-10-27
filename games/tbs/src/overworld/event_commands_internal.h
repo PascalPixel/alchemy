@@ -13,7 +13,7 @@
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "scene.h"
 #include "battle_system.h"
 #include "battle.h"
@@ -86,8 +86,8 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
-#include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/shared/effect_spawn.h"
+#include "unit/scene/shared/scroll_initialize_hblank_dma.h"
 #include "macros.h"
 #include "ability_ids.h"
 #include "sprite_ids.h"
@@ -96,7 +96,7 @@
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gPersistentState.pendingDjinni of Djinni 0 (requests.c, djinni.c): a Djinni
+/// gCommon.pendingDjinni of Djinni 0 (requests.c, djinni.c): a Djinni
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300

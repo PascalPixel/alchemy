@@ -57,7 +57,7 @@
 /// the Colosseum's exits are how its arrivals chain into one another and into
 /// the finals stages.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/colosseum_entrance.h"
@@ -350,7 +350,7 @@ enum {
 };
 
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
     return gColosseumEntrances;
@@ -373,8 +373,8 @@ const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
   const struct ActorTemplate *table;
 
-  if (gPersistentState.sceneId == (s32)&SceneId_Colosseum) {
-    switch (gPersistentState.entrance) {
+  if (gCommon.sceneId == (s32)&SceneId_Colosseum) {
+    switch (gCommon.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
       table = gColosseumStandsActorTemplates;
@@ -405,7 +405,7 @@ const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
       table = gColosseumActorTemplates;
       break;
     }
-  } else if (gPersistentState.sceneId == (s32)&SceneId_ColosseumEntrance) {
+  } else if (gCommon.sceneId == (s32)&SceneId_ColosseumEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceActorTemplatesAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -420,14 +420,13 @@ const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
 }
 
 const struct Trigger *ColosseumEntrance_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_ColosseumTunnel) {
     return gColosseumTunnelTriggers;
   }
   if (sceneId == (s32)&SceneId_Colosseum) {
-    if (gPersistentState.entrance ==
-        COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
+    if (gCommon.entrance == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumTriggersFromColosseumAzartMatchWest;
     }
     return gColosseumTriggers;
@@ -1380,7 +1379,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 /// set up by the entrance the party arrives at, and the Colosseum
 /// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
-  s32 sceneId = gPersistentState.sceneId;
+  s32 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
     ColosseumEntrance_ApplyArrivalState();
@@ -1404,7 +1403,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 entrance;
 
   WaitTicks(1);
-  entrance = gPersistentState.entrance;
+  entrance = gCommon.entrance;
   switch (entrance) {
   case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     Import_ActorSetAnimation(ACTOR_STANDS_WEST_TORCH, ANIM_WALK);

@@ -253,18 +253,20 @@ pokeemerald, finds each entry saying what pret calls the nearest thing.
 ### Program
 
 What the monitor runs: the scene program, the battle program, the dice program
-(Lucky Dice) or the slots program (Lucky Wheels). One runs at a time, until it ends and
-names the next program in the persistent state. The monitor (`Monitor_Run`) is
-the loop around them, which tears down what the last program set up and runs
-the next; operating systems of the 1960s called such a loop a resident monitor.
-pret's DS decompilations call the nearest thing an application
-([The front page](README.md#the-monitor)).
+(Lucky Dice) or the slots program (Lucky Wheels). One runs at a time, until it
+ends and names the next program in [common](#common). The monitor
+(`Monitor_Run`) is the loop around them, which tears down what the last
+program set up and runs the next; operating systems of the 1960s called such a
+loop a resident monitor. pret's DS decompilations call the nearest thing an
+application ([The front page](README.md#the-monitor)).
 
-### Persistent state
+### Common
 
-The one struct that outlives every program, `gPersistentState`: the party,
-the flags, where the party stands, the next program and what the last one
-reported. Save Game writes it to the cartridge
+The one struct every program shares and that outlives each of them,
+`gCommon`: the party, the flags, where the party stands, the next program and
+what the last one reported. Save Game writes it to the cartridge. The name is
+FORTRAN's: a `COMMON` block was the memory shared by a program's parts, and what
+survived when one program chained to the next
 ([The front page](README.md#how-a-program-finds-its-way-back)).
 
 ### Scene
@@ -394,7 +396,7 @@ them through one inline each in `event_inline.h`
 
 ### Destination
 
-The scene and entrance the monitor runs next (`gPersistentState.sceneId`
+The scene and entrance the monitor runs next (`gCommon.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

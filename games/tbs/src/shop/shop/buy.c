@@ -172,7 +172,7 @@ next_page:
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
-      if ((u32)selectedDefinition->price > gPersistentState.coins) {
+      if ((u32)selectedDefinition->price > gCommon.coins) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor(MsgBuyNotEnoughMoney);
         selectionResult = -1;
@@ -315,12 +315,12 @@ void Shop_DrawMoney(void) {
   if (window != 0) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     Text_DrawMessageAsTilesFar(MsgYourCoins, window, 0, 0);
-    Text_DrawNumberInWindowFar(gPersistentState.coins, 6, window, 0x20, 8);
+    Text_DrawNumberInWindowFar(gCommon.coins, 6, window, 0x20, 8);
 #else
     s32 msg = MsgYourCoins;
 
     Text_DrawMessageAsTilesFar(msg, window, 0, 0);
-    Text_DrawNumberInWindowFar(gPersistentState.coins, 6, window, 0, 8);
+    Text_DrawNumberInWindowFar(gCommon.coins, 6, window, 0, 8);
     Text_DrawMessageAsTilesFar(msg - 2, window, 48, 8);
 #endif
   }
@@ -569,7 +569,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     quantityLimit = SHOP_STACK_LIMIT;
     if (item->price != 0)
-      quantityLimit = (u32)gPersistentState.coins / item->price;
+      quantityLimit = (u32)gCommon.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
       artifactLimit = Item_AdjustCounterFar(itemId, 0);

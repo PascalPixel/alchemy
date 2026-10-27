@@ -6,7 +6,7 @@
  * directly, preserving empty delimited fields while discarding whitespace
  * between words. Numeric parsing rejects trailing or out-of-range input.
  */
-#include "common.h"
+#include "shared.h"
 #include <ctype.h>
 #include <errno.h>
 

@@ -54,11 +54,11 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "unit/scene/kolima.h"
-#include "unit/scene/common/kolima_forest_bridge_falling_effect.h"
+#include "unit/scene/shared/kolima_forest_bridge_falling_effect.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -266,11 +266,11 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
   return 1;
 }
 
-#include "common/actor_facing.h"
+#include "shared/actor_facing.h"
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeEntrances;
@@ -284,7 +284,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneExitRegion *Kolima_GetRegions(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (gCommon.sceneId == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -300,7 +300,7 @@ const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ActorTemplate *Kolima_GetActorTemplates(void) {
-  s32 sceneId = gPersistentState.sceneId;
+  s32 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -339,7 +339,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
 const struct Trigger *Kolima_GetTriggers(void) {
-  if (gPersistentState.sceneId == (s32)&SceneId_KolimaBridge) {
+  if (gCommon.sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -508,7 +508,7 @@ s32 Kolima_Initialize(void) {
   u32 actorId;
   const s32 *table;
 
-  sceneId = gPersistentState.sceneId;
+  sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     Kolima_RestoreBridgeState();
@@ -543,7 +543,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gPersistentState.entrance == KOLIMA_FROM_WORLD_MAP) {
+    if (gCommon.entrance == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }
@@ -1559,7 +1559,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Event_WaitTicks(waitFrames);
 }
 
-#include "common/kolima_grow.h"
+#include "shared/kolima_grow.h"
 
 /// Spawns a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
@@ -1598,7 +1598,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   Actor_StartScript(sparkle, gKolima_GoldenRingsScript);
 }
 
-#include "common/kolima_blink.h"
+#include "shared/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
@@ -1627,7 +1627,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
   return 0;
 }
 
-#include "common/kolima_forest_bridge_falling_effect.h"
+#include "shared/kolima_forest_bridge_falling_effect.h"
 s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));

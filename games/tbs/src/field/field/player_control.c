@@ -96,19 +96,19 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (gKeysPressed & gPersistentState.selectKeys) {
+  if (gKeysPressed & gCommon.selectKeys) {
     work->fieldMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gPersistentState.aKeys) {
+  } else if (gKeysPressed & gCommon.aKeys) {
     work->aButton = 1;
     result = 1;
-  } else if (gKeysPressed & gPersistentState.startKeys) {
+  } else if (gKeysPressed & gCommon.startKeys) {
     work->pauseMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gPersistentState.firstShortcutKeys) {
-    result = Field_RequestShortcut(gPersistentState.firstShortcut);
-  } else if (gKeysPressed & gPersistentState.secondShortcutKeys) {
-    result = Field_RequestShortcut(gPersistentState.secondShortcut);
+  } else if (gKeysPressed & gCommon.firstShortcutKeys) {
+    result = Field_RequestShortcut(gCommon.firstShortcut);
+  } else if (gKeysPressed & gCommon.secondShortcutKeys) {
+    result = Field_RequestShortcut(gCommon.secondShortcut);
   }
   return result;
 }
@@ -223,7 +223,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   }
   // Walk, or run with the dash keys (animation 5 instead of 2); with
   // FLAG_FAST_WALK, B moves faster still.
-  if (gKeysHeld & gPersistentState.dashKeys) {
+  if (gKeysHeld & gCommon.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
     movementAnimation = 5;
@@ -429,7 +429,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gPersistentState.leaderActorId)->hp == 0)
+    if (Unit_GetFar(gCommon.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -568,7 +568,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 #endif
   // Walk, or run with the dash keys. L, as it repeats, raises the limit
   // further; unlike the field's fast walk, no debug test or flag guards it.
-  if (gKeysHeld & gPersistentState.dashKeys) {
+  if (gKeysHeld & gCommon.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = 5;

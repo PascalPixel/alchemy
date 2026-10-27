@@ -44,8 +44,8 @@ void InventorySnapshot_Save(void) {
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gPersistentState.firstShortcut;
-    secondShortcut = gPersistentState.secondShortcut;
+    firstShortcut = gCommon.firstShortcut;
+    secondShortcut = gCommon.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = 0; unitId < 4; unitId++) {
       unit = Unit_Get(unitId);
@@ -65,10 +65,10 @@ void InventorySnapshot_Save(void) {
     *save++ = secondShortcut;
 #ifdef UBFIX
     // Party order is a byte array; pack its two saved halfwords explicitly.
-    save[0] = gPersistentState.party[0] | (gPersistentState.party[1] << 8);
-    save[1] = gPersistentState.party[2] | (gPersistentState.party[3] << 8);
+    save[0] = gCommon.party[0] | (gCommon.party[1] << 8);
+    save[1] = gCommon.party[2] | (gCommon.party[3] << 8);
 #else
-    inventory = (s16 *)gPersistentState.party;
+    inventory = (s16 *)gCommon.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
 #endif
@@ -100,17 +100,17 @@ void InventorySnapshot_Restore(void) {
       unitId++;
     } while (unitId <= 3);
 
-    gPersistentState.firstShortcut = *source++;
-    gPersistentState.secondShortcut = *source++;
+    gCommon.firstShortcut = *source++;
+    gCommon.secondShortcut = *source++;
 #ifdef UBFIX
-    gPersistentState.party[0] = source[0];
-    gPersistentState.party[1] = source[0] >> 8;
-    gPersistentState.party[2] = source[1];
-    gPersistentState.party[3] = source[1] >> 8;
+    gCommon.party[0] = source[0];
+    gCommon.party[1] = source[0] >> 8;
+    gCommon.party[2] = source[1];
+    gCommon.party[3] = source[1] >> 8;
     source++;
 #else
-    *(u16 *)gPersistentState.party = *source++;
-    *(u16 *)((u8 *)gPersistentState.party + 2) = *source;
+    *(u16 *)gCommon.party = *source++;
+    *(u16 *)((u8 *)gCommon.party + 2) = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

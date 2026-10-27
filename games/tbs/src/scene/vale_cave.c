@@ -56,14 +56,14 @@
 /// rebuilds the cells of each puzzle already solved and, once Kite has run
 /// behind its ledge, puts it back there.
 
-#include "persistent_state.h"
+#include "common.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "engine_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/vale_cave.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/runtime/runtime.h"
@@ -205,9 +205,9 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
-#include "common/staged_actor.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
+#include "shared/staged_actor.h"
 
 /// In the third room, the western log has been pushed off the ledge.
 /// ★ Named from what the player sees: two logs standing north to south on the
@@ -290,7 +290,7 @@ static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 /// Selects entrance positions and camera bounds for the current cave
 /// room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthEntrances;
@@ -312,7 +312,7 @@ const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 /// Selects the current room's actor templates: Kite, and the crates and
 /// logs.
 const struct ActorTemplate *ValeCave_GetActorTemplates(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthActorTemplates;
@@ -597,7 +597,7 @@ static void ValeCave_KiteKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gPersistentState.haltedActor != ACTOR_KITE) {
+    if (gCommon.haltedActor != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_KITE);
@@ -773,7 +773,7 @@ static void ValeCave_PushLogNorth(void) {
 
 /// Selects the current room's coord, Psynergy and examine triggers.
 const struct Trigger *ValeCave_GetTriggers(void) {
-  s16 sceneId = gPersistentState.sceneId;
+  s16 sceneId = gCommon.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthTriggers;
@@ -798,7 +798,7 @@ s32 ValeCave_Initialize(void) {
 
   *request =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gPersistentState.sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (gCommon.sceneId == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     WaitTicks(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -836,7 +836,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
   }
 }
 
-#include "common/actor_pairmove.h"
+#include "shared/actor_pairmove.h"
 
 /// In Vale Cave's second room, walking east onto the riding log: it carries
 /// the leader to the eastern end of the passage.
@@ -895,8 +895,8 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gPersistentState.sceneId == (s32)&SceneId_ValeCaveKite) {
-    switch (gPersistentState.entrance) {
+  if (gCommon.sceneId == (s32)&SceneId_ValeCaveKite) {
+    switch (gCommon.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
@@ -919,7 +919,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
-      if (gPersistentState.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
+      if (gCommon.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       }
       WaitTicks(1);
@@ -946,8 +946,8 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gPersistentState.sceneId == (s32)&SceneId_ValeCaveLogs) {
-    switch (gPersistentState.entrance) {
+  } else if (gCommon.sceneId == (s32)&SceneId_ValeCaveLogs) {
+    switch (gCommon.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:

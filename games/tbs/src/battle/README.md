@@ -113,7 +113,7 @@ try turns the rest of the round into one the enemies began.
 
 `BattleWork.firstStrike` records which side has the jump, and
 `BattleFlee_CheckSuccess` (`round.c`) rolls the escape. What kind of battle it
-is, `gPersistentState.battleType`, decides the rest:
+is, `gCommon.battleType`, decides the rest:
 
 | Kind | What it changes |
 | --- | --- |

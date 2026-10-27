@@ -33,13 +33,13 @@
 /// fiery rock burnt in it (render probe vault-revisit, the town before and
 /// after).
 
-#include "persistent_state.h"
+#include "common.h"
 #include "djinn_ids.h"
 #include "window.h"
 #include "unit/scene/vault_revisit.h"
 #include "vault.h"
-#include "unit/scene/common/vault_range.h"
-#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/shared/vault_range.h"
+#include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -148,11 +148,11 @@ enum {
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
-#include "common/actor_distance.h"
-#include "common/vault_range.h"
-#include "common/vault_nearby.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
+#include "shared/actor_distance.h"
+#include "shared/vault_range.h"
+#include "shared/vault_nearby.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
@@ -522,7 +522,7 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 }
 
 // The remaining doorway helper retains its position in the overlay.
-#include "common/vault_map_cells.h"
+#include "shared/vault_map_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
@@ -543,7 +543,7 @@ static void VaultRevisit_EnterJail(void) {
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
-#include "common/vault_toggle.h"
+#include "shared/vault_toggle.h"
 
 /// Talking to Sap, a Venus Djinni: it joins the party.
 static void VaultRevisit_SapJoins(void) {
@@ -688,16 +688,16 @@ s32 Scene_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gPersistentState.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gCommon.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
-  if (gPersistentState.entrance == VAULT_REVISIT_FROM_SANCTUM)
+  if (gCommon.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  if (gPersistentState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+  if (gCommon.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }

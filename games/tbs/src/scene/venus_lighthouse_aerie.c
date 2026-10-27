@@ -55,13 +55,13 @@
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
 #include "script_operands.h"
-#include "persistent_state.h"
+#include "common.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse_aerie.h"
-#include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/actor_nearest.h"
-#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/shared/effect_spawn.h"
+#include "unit/scene/shared/actor_nearest.h"
+#include "unit/scene/shared/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -214,8 +214,8 @@ enum {
 // the party and flashed white. FLAG_VENUS_AERIE_ON_PLATFORM: the leader stands
 // on a platform.
 
-#include "common/effect_create.h"
-#include "common/effect_spawn.h"
+#include "shared/effect_create.h"
+#include "shared/effect_spawn.h"
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
@@ -285,7 +285,7 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
   }
 }
 
-#include "common/actor_heading.h"
+#include "shared/actor_heading.h"
 
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
@@ -305,8 +305,8 @@ const struct ActorTemplate *VenusLighthouseAerie_GetActorTemplates(void) {
   return gVenusLighthouseAerieActorTemplates;
 }
 
-#include "common/actor_distance.h"
-#include "common/actor_nearest.h"
+#include "shared/actor_distance.h"
+#include "shared/actor_nearest.h"
 
 /// Saturos and Menardi slide together as they fuse.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
@@ -462,7 +462,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);
 
-  entrance = gPersistentState.entrance;
+  entrance = gCommon.entrance;
 
   switch (entrance) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:
@@ -1269,7 +1269,7 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "common/effect_vertical.h"
+#include "shared/effect_vertical.h"
 
 /// Spawns two vertical effects using the parent position and shared cached
 /// tiles.
@@ -1323,7 +1323,7 @@ static void VenusLighthouseAerie_SpawnLinkedPairEffects(struct Actor *parent) {
   }
 }
 
-#include "common/effect_psynergy.h"
+#include "shared/effect_psynergy.h"
 
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_GetById(ACTOR_SHEBA));

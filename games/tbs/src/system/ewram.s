@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gPersistentState
-gPersistentState:
+	.global gCommon
+gCommon:
 	.space 0x00000140
 	.global gRareItemStock
 gRareItemStock:

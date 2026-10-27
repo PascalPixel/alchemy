@@ -4,7 +4,7 @@
 
 #include "../overworld_internal.h"
 
-/// A map's encounter zones (gScene_EncounterRules, location_rules.s),
+/// A map's encounter zones (gScene_EncounterRules, encounter_rules.s),
 /// ended by map -1. Encounter_SelectMapZones takes the first rule that
 /// matches the map and entrance and is not turned off.
 struct SceneEncounterRule {
@@ -277,7 +277,7 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 }
 
 /// A rule choosing a map's field music (gScene_MusicRules,
-/// map_rules.s), ended by id -1.
+/// scene_rules.s), ended by id -1.
 struct MapMusicRule {
   s16 id;            ///< a map, or an area
   s16 entrance : 15; ///< -1 for any entrance
@@ -323,7 +323,7 @@ void Scene_ChooseMusic(void) {
   gSaveBlock.sceneMusic = music;
 }
 
-/// A rule naming the area a map is in (gArea_NameRules, map_rules.s),
+/// A rule naming the area a map is in (gArea_NameRules, scene_rules.s),
 /// ended by id -1.
 struct AreaNameRule {
   s16 id;            ///< a map, or an area
@@ -404,7 +404,7 @@ void BattleBackground_SelectForMap(void) {
   s32 target = gSaveBlock.sceneId;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
-  // The first map_rules.s word names a battle background. It cannot match the
+  // The first scene_rules.s word names a battle background. It cannot match the
   // halfword map id, so the loop sets this before testing any map.
   s32 backdrop;
 

@@ -1420,7 +1420,7 @@
 /// Set as the prologue ends, three years after the stormy night
 /// (Party_EndChildhood); nothing clears it. While it is set Vale's field music
 /// is MUS_VALE, ahead of the MUS_DANGER that FLAG_VALE_STORM_MONSTER_FOUGHT
-/// chose (the music rules in overworld/map_rules.s).
+/// chose (the music rules in overworld/scene_rules.s).
 /// ★ Named from the game: "Three years later..." (MsgValeRepairCaption)
 #define FLAG_VALE_THREE_YEARS_LATER 0x901
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the

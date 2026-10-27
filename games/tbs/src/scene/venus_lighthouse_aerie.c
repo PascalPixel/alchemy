@@ -123,7 +123,7 @@
 
 /// Area flags that choose the aerie's field music after each battle, by
 /// the map's field music rules (gScene_MusicRules,
-/// overworld/map_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
+/// overworld/scene_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
 /// the first has begun and MUS_ELEMENTAL_STARS once the second has.
 /// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
 /// area, keep their Psynergy Stones in the same two flags, which no one goes

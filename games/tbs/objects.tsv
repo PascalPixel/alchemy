@@ -96,9 +96,9 @@ main	rom_main_04	games/tbs/src/overworld/overworld
 main	rom_main_04	games/tbs/src/overworld/event_commands
 main	rom_main_04	games/tbs/src/overworld/arcspark
 main	rom_main_04	games/tbs/src/overworld/encounter_zones
-main	rom_main_04	games/tbs/src/overworld/location_rules
+main	rom_main_04	games/tbs/src/overworld/encounter_rules
 main	rom_main_04	games/tbs/src/overworld/zonedata
-main	rom_main_04	games/tbs/src/overworld/map_rules
+main	rom_main_04	games/tbs/src/overworld/scene_rules
 main	rom_main_04	games/tbs/src/overworld/battle_cue
 main	rom_main_04	games/tbs/src/overworld/swatch
 main	rom_main_04	games/tbs/src/overworld/fxdata

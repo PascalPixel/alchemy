@@ -2953,16 +2953,8 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
       Scene_QueueMusic(SE_AMBIENT_WATER);
       BlendScript_Suspend();
-      {
-        s32 zero = 0;
-
-        /* FAKEMATCH(barrier): the empty asm gives the zero the refs that put
-         * it in r3 and the address in r2; as Io_Write16(0, &REG_BLDCNT), 3 of
-         * 1431 instructions differ in tbs-en. */
-        asm("" : "+l"(zero));
-        Io_Write16(zero, &REG_BLDCNT);
-      }
-      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
+      Io_Write16(0, &REG_BLDCNT);
+      if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         MapGrid_CopyCellsTo(15, 96, 9, 96, 3, 3);
         MapGrid_CopyCellsTo(12, 96, 15, 96, 3, 3);
         MapGrid_CopyCellsTo(5, 50, 15, 32, 3, 4);

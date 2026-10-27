@@ -4,6 +4,27 @@ Golden Sun was released in Japan as Golden Sun: The Broken Seal. These pages
 use the Japanese subtitle, or TBS, to keep it apart from
 [The Lost Age](glossary.md#the-two-games).
 
+## How it differs from other games
+
+Most games of its time, the Pokémon games among them, are built around a main
+loop that calls every part of the game once a frame. The Broken Seal is built
+the other way round:
+
+- **No main loop of frames.** A [sequence manager](#the-sequence-manager)
+  runs one sequence (a scene, a battle, a minigame) from start to finish.
+- **Sequences hand over by themselves.** A scene that meets a random battle
+  writes the battle down as the next sequence and ends; the battle ends by
+  reporting a result, and the game works out where to go back to.
+- **Code waits in place.** An event or a menu is an ordinary function that
+  runs top to bottom and pauses when time must pass. While it pauses, a short
+  list of [tasks](glossary.md#task) keeps the world moving
+  ([Waiting in place](#waiting-in-place)).
+- **The scene's loop only listens.** The scene manager goes round once a frame
+  while the player walks, and acts on what the tasks noted down.
+- **A battle's rules and animations run together.** Damage appears while the
+  attack is still on screen ([Battles](#battles)).
+- **A long frame slows the game instead of skipping work.**
+
 ## Architecture
 
 The game runs in four layers, each inside the one above it.
@@ -145,16 +166,89 @@ nothing to unpack, and afterwards the party stands where it stood. After a
 defeat the game goes where an [event](glossary.md#event) chose for losing that
 battle, or else to the last Sanctum.
 
-### Why a turn can last minutes
+### How a sequence finds its way back
 
-Most game loops go round once a frame and call every part of the game, so
-anything that takes time has to be cut into steps that remember where they
-were. Here a scene, an event or a menu is an ordinary function that runs top
-to bottom and asks to wait when time must pass. While it waits, the queued
-tasks keep everything else moving ([Engine](engine.md#waiting-and-tasks)). Event
-code reads in the order things happen on screen.
+Sequences pass nothing to each other directly. Everything goes through the
+save block, `gSaveBlock`:
+
+| When                       | What is written                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
+| a scene starts             | the return point (this scene and entrance), and empty after-battle and defeat destinations   |
+| an event prepares a battle | the after-battle or defeat destination, where the story should continue                      |
+| a random battle starts     | the battle as the next scene, its enemy group as the entrance, every actor's position        |
+| the battle ends            | its result: won, fled or lost                                                                |
+
+`Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
+after-battle destination, or else to the return point with everyone where they
+stood; a defeat goes to the defeat destination, or else to the last Sanctum
+with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
+result stays in `gSaveBlock.sequenceResult` for the scene that comes back.
+The Title and the File Screen need none of this: they are ordinary scenes.
 
 **Reference:** `SequenceManager_Run` · `Scene_ReturnFromSequence`
+
+## Waiting in place
+
+Every frame of the game happens inside one function, `WaitFrames`. Whatever
+code is in charge (the scene manager, an event, a menu, a battle animation)
+calls it when time must pass:
+
+```c
+void WaitFrames(s32 frames) {        /* simplified */
+  while (frames--) {
+    Task_RunPass(TASK_PASS_FRAME);   /* every queued task, once */
+    Oam_BuildBuffer(...);            /* this frame's sprites */
+    VBlankIntrWait();                /* sleep until the screen refreshes */
+  }
+}
+```
+
+The tasks are the world's moving parts: the actors, the camera, the animated
+water, the open windows. They run whoever is waiting, so the world keeps
+moving through a conversation, a menu or a cutscene without any of that code
+knowing about it.
+
+An event therefore reads in the order things happen. Showing the water
+carrier's line, `Event_ShowMessageAndWait` simplified:
+
+```c
+window = FieldMessage_ShowAtActor(actorId, flags);  /* open her window */
+while (!Window_IsClosedFar(window))
+  WaitFrames(1);                       /* the water keeps moving */
+```
+
+The window itself is drawn by a task, which types the line out and closes the
+window once the player presses A.
+
+| Frame | Code in charge         | Tasks during its wait                         | After the wait                                |
+| ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
+| 1     | scene manager          | the carrier steps, the water moves            | nothing asked for: next frame                 |
+| 2     | scene manager          | player control sees A and notes a request     | a talk request: run her event                 |
+| 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
+| …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
+| next  | scene manager          | the carrier walks on                          | nothing asked for: next frame                 |
+
+In a Pokémon game the main loop calls the current screen once a frame, and the
+screen must return within that frame. A conversation is then a numbered list
+of states, and the screen's code jumps to the state it reached last time. Here
+the conversation is the function itself, paused inside `WaitFrames` and
+resumed on the next line. To allow a wait from deep inside any function,
+`WaitFrames` copies the caller's stack aside while the frame runs
+([Runtime](src/runtime/README.md#the-stack-switch-in-waitframes)).
+
+### When a frame runs long
+
+The screen refreshes 60 times a second whatever the code is doing, and each
+refresh interrupts the game. The interrupt always mixes the next slice of
+sound and reads the buttons, and it shows the new frame only if `WaitFrames`
+has finished one. A frame whose tasks take longer than a refresh still runs to
+the end: the screen shows the old picture once more while the music plays on,
+and the game runs slower until the work fits again. The refreshes a frame
+overran are counted in `gLagFrameCount`.
+
+**Reference:** [Engine: Waiting and tasks](engine.md#waiting-and-tasks) ·
+[Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
+`Event_WaitFrames`
 
 ## The scene sequence
 
@@ -337,6 +431,33 @@ party returns from a battle to the same spot.
 `ActorSystem_PlaceSprites` · `TilesetAnim_Update` · `WindowSystem_Update` ·
 `Field_CheckConfiguredKeys` · `Field_UpdateWalking` ·
 [Running a scene](src/overworld/README.md#the-scene-manager-serves-requests)
+
+## Battles
+
+![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next round's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
+
+A battle is a sequence of its own with an ordinary loop, in `Battle_Run`:
+
+```c
+for (;;) {                                  /* one round */
+  actionCount = Battle_GatherActions(...);  /* menus and enemy habits */
+  for (i = 0; i < actionCount; i++) {       /* in Agility order */
+    BattleStaging_DispatchAction(...);      /* announce, animate, apply */
+    /* stop here if a side has fled or been beaten */
+  }
+  Battle_ProcessRoundEnd();                 /* statuses count down */
+}
+```
+
+An attack's animation is an ordinary function that waits frame by frame.
+Its damage comes from a task, playback, which stays idle until the animation
+signals that the blow has landed and then applies it target by target. So
+Quake's damage messages appear while the rock is still rising, rather than
+after it: the rules decide how much, the animation only when. The battle's
+code also stays loaded between battles, so starting one unpacks nothing.
+
+**Reference:** [Battle](battle.md) ·
+[Rules and animations run together](battle.md#rules-and-animations-run-together)
 
 ## Scenes and overlays
 

@@ -134,7 +134,7 @@ s32 ValeEruption_Initialize(void) {
 /// ground while the villagers wonder where Isaac and Garet are; the two come
 /// down the mountain, tell that Jenna and Kraden were taken away, and follow
 /// the elders into the sanctum. Called by ValeEruption_Initialize on arrival by
-/// VALE_ERUPTION_FROM_SOL_ENTRANCE. Clears FLAG_SHOW_LOCATION_NAME, sets
+/// VALE_ERUPTION_FROM_SOL_ENTRANCE. Clears FLAG_SHOW_AREA_NAME, sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes VALE_ERUPTION_TO_SANCTUM, where
 /// Sanctum_RequestQuestAcceptance follows.
 static void ValeEruption_ReturnFromMtAleph(void) {
@@ -478,7 +478,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_FinishScreenTransition();
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
   Import_EventSetExitRequest(VALE_ERUPTION_TO_SANCTUM);
   Event_End();

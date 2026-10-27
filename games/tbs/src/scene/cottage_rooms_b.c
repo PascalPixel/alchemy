@@ -542,7 +542,7 @@ s32 CottageRoomsB_Initialize(void) {
   struct Actor *actor;
 
   if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {

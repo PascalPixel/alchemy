@@ -60,7 +60,7 @@
 /// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST into Vale Cave's way in
 /// (SceneId_ValeCaveMouth). Coming back from it by
 /// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears
-/// FLAG_SHOW_LOCATION_NAME, so the area name is not shown again. The jar's row
+/// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The jar's row
 /// finds nothing on the stormy night, and after Kalay it is there only from the
 /// third patch on.
 
@@ -929,7 +929,7 @@ s32 ValeKradensCottage_Initialize(void) {
 
   if (gSaveBlock.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gSaveBlock.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_VALE_KRADENS_DOOR_OPEN);

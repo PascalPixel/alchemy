@@ -186,7 +186,7 @@
 /// party watches and resolves to escape (VenusLighthouseAerie_PlayShebasFall).
 #define MUS_FELIX_LEAPS_AFTER_SHEBA 72
 /// The main menu's music, and the field music of the Sanctum.
-#define MUS_MAIN_MENU 74
+#define MUS_FILE_SCREEN 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
 /// event on the world map, until a key is pressed (Title_Run's entrance
 /// 10). ★ Named from what the player sees: the Golden Sun logo after the

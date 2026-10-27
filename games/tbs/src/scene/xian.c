@@ -37,7 +37,7 @@
 /// XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
 /// (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the Sanctum
-/// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
+/// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is not
 /// shown again.
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -814,7 +814,7 @@ s32 Xian_Initialize(void) {
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name
   // is not shown.
   if (gSaveBlock.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
     Actor_FaceDirection(ACTOR_BOY_ON_SILK_CLOTHES, FACING_WEST, 0);

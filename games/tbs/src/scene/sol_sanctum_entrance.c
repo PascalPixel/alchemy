@@ -802,7 +802,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// good look at it." No: "I doubt that..." Called by
 /// SolSanctumEntrance_RestoreInteriorState at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
-/// set, which it sets; clears FLAG_SHOW_LOCATION_NAME.
+/// set, which it sets; clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct Actor *leader;
 
@@ -885,7 +885,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 
@@ -896,7 +896,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
 /// either way the four stay together. Called by
 /// SolSanctumEntrance_RestoreInteriorState there until
 /// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, which it sets; clears
-/// FLAG_SHOW_LOCATION_NAME.
+/// FLAG_SHOW_AREA_NAME.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct Actor *leader;
 
@@ -1110,7 +1110,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 

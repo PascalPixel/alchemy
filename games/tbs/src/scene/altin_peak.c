@@ -1680,7 +1680,7 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
     if ((u32)(((u16)gSaveBlock.entrance -
                ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
               << 16) <= 0x10000) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
   }
 }
@@ -2288,7 +2288,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_WaitFrames(20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   gFieldWork->transitionFrames = 16;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
   Event_End();

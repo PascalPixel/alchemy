@@ -930,7 +930,7 @@ s32 Scene_Initialize(void) {
     }
     entrance = gSaveBlock.entrance;
     if (entrance == LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
@@ -952,7 +952,7 @@ s32 Scene_Initialize(void) {
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
         gSaveBlock.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
 
     // Feizhi is here only once she has set out after Hsu.

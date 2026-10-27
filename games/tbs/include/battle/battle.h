@@ -39,7 +39,7 @@ struct BattleAction;
 struct BattleAnimArgs;
 struct BattlePlaybackWork;
 struct BattleSideOrder;
-struct BattleLocationRule;
+struct SceneEncounterRule;
 struct BattleObject;
 struct BattleTurn;
 struct BattleBackgroundWork;
@@ -163,14 +163,14 @@ extern struct BattleBackgroundWork *gBattleBackgroundWork;
 extern const u8 gActor_LinkedScript[];
 /// Where the party returns after a defeat: {map, entrance (-1 any),
 /// return map, return entrance} rows, ended by map -1
-/// (Scene_SetDefeatReturnPoint).
-extern const s16 gDefeatReturnPoints[];
+/// (Scene_SetRestartPoint).
+extern const s16 gScene_RestartRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// Battle backgrounds by map: a background word (bit 31 set, resource id below)
 /// and then its maps, ended by 0; a map not listed takes the last background
 /// (BattleBackground_SelectForMap).
-extern s32 gBattleBackground_Maps[];
+extern s32 gScene_BattleBackgroundRules[];
 /// The template BattleAnim_BuildBlitter walks word by word to write a blitter
 /// (battle_anim_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];

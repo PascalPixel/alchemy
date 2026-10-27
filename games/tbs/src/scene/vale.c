@@ -1536,7 +1536,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   FieldCamera_WaitForArrival();
   Event_WaitFrames(100);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   *leaderMotion = leaderMotionFlags;
   Event_End();
 }
@@ -2946,7 +2946,7 @@ static void Vale_RoofMended(void) {
   Event_WaitFrames(100);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = 3;
   leader->y.fixed = PIXELS(160);

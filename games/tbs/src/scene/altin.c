@@ -829,7 +829,7 @@ static void Altin_ApplyWaterLevel(void) {
     Task_AddFrame(Altin_BeastSpawnSpray, TASK_PASS_FRAME);
   }
   if (gSaveBlock.entrance == ALTIN_FROM_SANCTUM) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_Get(FLAG_ALTIN_PILLAR_MOVED) != 0) {

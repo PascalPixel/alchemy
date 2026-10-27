@@ -251,7 +251,7 @@
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The map shows its area's name once it is on screen; entering a new
 /// area sets it.
-#define FLAG_SHOW_LOCATION_NAME 0x12f
+#define FLAG_SHOW_AREA_NAME 0x12f
 /// The next layout keeps the palette and tiles already loaded, once.
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
 /// Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum

@@ -27,7 +27,7 @@ enum {
   /// only, though the music player has 10 (sound/music_player_table.s) and
   /// MUS_KALAY, MUS_ELEMENTAL_STARS, MUS_DUNGEON, MUS_CONFRONTATION,
   /// MUS_UNUSED, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP, MUS_VENUS_LIGHTHOUSE and
-  /// MUS_MAIN_MENU use 9 or more: their tracks 8 and 9 keep their volume and
+  /// MUS_FILE_SCREEN use 9 or more: their tracks 8 and 9 keep their volume and
   /// pitch through the ramps and under a fanfare.
   TRACKS_ALL = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSong' entries, one a player.

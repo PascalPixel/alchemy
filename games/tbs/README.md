@@ -168,7 +168,7 @@ flowchart LR
   class code,area,map,type field
 ```
 
-Every scene is a row of `gSceneHeaders`, and code names it by its row's
+Every scene is a row of `gScenes`, and code names it by its row's
 symbol, `SceneId_<Place>`. The four parts are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is an [area](glossary.md#area) of its
 own, and several scenes can share a [map](glossary.md#map). Walking between

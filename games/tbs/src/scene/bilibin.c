@@ -708,7 +708,7 @@ static void Bilibin_RestoreVillageActors(void) {
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   } else if (entrance == BILIBIN_FROM_SANCTUM) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     entrance = gSaveBlock.entrance;

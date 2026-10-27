@@ -31,8 +31,8 @@
 ///   toward its fated destruction...` From there the player can start again
 ///   from the Great Healer, by SANCTUM_TO_QUEST_RESTART to
 ///   SANCTUM_FROM_QUEST_RESTART, which skips the account
-///   (FLAG_SANCTUM_QUEST_RESTARTED), or leave by SANCTUM_TO_MAIN_MENU to
-///   SceneId_MainMenu. After the party has left Vale (FLAG_VALE_PARTY_LEFT),
+///   (FLAG_SANCTUM_QUEST_RESTARTED), or leave by SANCTUM_TO_FILE_SCREEN to
+///   SceneId_FileScreen. After the party has left Vale (FLAG_VALE_PARTY_LEFT),
 ///   and again after it has reached Kalay (FLAG_KALAY_REACHED), the three talk
 ///   of what the eruption and the Wise One changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_LOG_ROOMS_A). Its
@@ -458,7 +458,7 @@ s32 Sanctum_Initialize(void) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Actor_SetPosition(ACTOR_GOLD_STATUE, PIXELS(200), PIXELS(80));
     }
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     break;
   case SANCTUM_FROM_VALE_ERUPTION:
     Sanctum_RestoreQuestFloor();
@@ -469,7 +469,7 @@ s32 Sanctum_Initialize(void) {
   case SANCTUM_FROM_ALTIN:
   case SANCTUM_FROM_XIAN:
   case SANCTUM_FROM_BILIBIN:
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     break;
   case SANCTUM_FROM_QUEST_RESTART:
     Sanctum_RestoreQuestFloor();
@@ -477,7 +477,7 @@ s32 Sanctum_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     break;
   }
   return 0;
@@ -507,7 +507,7 @@ static void Sanctum_WarnBeforeLeaving(void) {
 /// the game. The room turns sepia: `And so the world began drifting toward its
 /// fated destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
-/// choices take SANCTUM_TO_MAIN_MENU, to SceneId_MainMenu.
+/// choices take SANCTUM_TO_FILE_SCREEN, to SceneId_FileScreen.
 static void Sanctum_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
@@ -544,7 +544,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
     Import_EventSetExitRequest(SANCTUM_TO_QUEST_RESTART);
   } else {
     Event_End();
-    Import_EventSetExitRequest(SANCTUM_TO_MAIN_MENU);
+    Import_EventSetExitRequest(SANCTUM_TO_FILE_SCREEN);
   }
 }
 
@@ -2308,7 +2308,7 @@ u32 gSanctum_Exits[] = {
     SCENE_EXIT(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),
-    SCENE_EXIT(SANCTUM_TO_MAIN_MENU, MainMenu, MAIN_MENU_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_FILE_SCREEN, FileScreen, FILE_SCREEN_FROM_SANCTUM),
     SCENE_EXITS_END,
 };
 

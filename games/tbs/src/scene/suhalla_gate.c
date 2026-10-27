@@ -215,7 +215,7 @@ s32 Scene_Initialize(void) {
         gSaveBlock.retreatEntrance =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
     if (gSaveBlock.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);

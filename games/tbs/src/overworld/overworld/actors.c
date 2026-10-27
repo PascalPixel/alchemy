@@ -267,10 +267,10 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   Event_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
-  // gSaveBlock.turn keeps the leader's map grid layer (SceneManager_Run saves
+  // gSaveBlock.layer keeps the leader's map grid layer (SceneManager_Run saves
   // its layer there). Its cell: 16 pixels square, 128 to a row, so above is the
   // cell north of it.
-  object->layer = gSaveBlock.turn;
+  object->layer = gSaveBlock.layer;
   pos = (object->x.fixed / 0x100000) + (object->z.fixed / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];

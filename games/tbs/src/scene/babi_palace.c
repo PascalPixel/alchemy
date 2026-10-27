@@ -2483,7 +2483,7 @@ s32 BabiPalace_ApplyEntryState(void) {
   }
   if (gSaveBlock.sceneId != (s32)&SceneId_BabiPalaceEntrance) {
     if (gSaveBlock.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
       set = GameFlag_Get(FLAG_BABI_PALACE_CLOAK_BALL);

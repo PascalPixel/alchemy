@@ -6,7 +6,7 @@
 /// It lets the party into the areas. Each area stands on the map
 /// as an actor drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE,
 /// _CAVE, _DOCK and the rest), turned with the map (WorldMap_AlignToMap).
-/// WorldMap_UpdateLocationContacts, run every frame, hides the actors
+/// WorldMap_UpdateAreaContacts, run every frame, hides the actors
 /// outside a box around the view and raises the STEP_TRIGGER_AREA of the one
 /// the leader touches, which the trigger table turns into that area's
 /// exit; a few ways in are cells instead, each carrying the number of its exit.
@@ -69,7 +69,7 @@
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) the lighthouse shakes in clouds of dust
 ///   before Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
 /// - The ending: once the cleared game is saved (menu/main_menu.c,
-///   WORLD_MAP_FROM_MAIN_MENU), the island Jenna and Kraden are adrift on
+///   WORLD_MAP_FROM_FILE_SCREEN), the island Jenna and Kraden are adrift on
 ///   drifts east, and WORLD_MAP_JENNA_AND_KRADEN_ADRIFT shows Alex leading them
 ///   to Felix and Sheba before the title screen returns.
 ///
@@ -187,7 +187,7 @@ static void WorldMap_UpdateStormTimer(void);
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 
-/// The actors WorldMap_UpdateLocationContacts looks at, the placed ones
+/// The actors WorldMap_UpdateAreaContacts looks at, the placed ones
 /// to the last slot, and the base of the metatile behaviors a touch raises
 /// (STEP_TRIGGER_AREA).
 enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
@@ -197,7 +197,7 @@ enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
 /// the map, the areas, then the Tolbi-bound Ship, the storm and Iodem.
 /// Each area is named by the map its exit leads into (gWorldMapExits),
 /// and touching it raises its STEP_TRIGGER_AREA
-/// (WorldMap_UpdateLocationContacts).
+/// (WorldMap_UpdateAreaContacts).
 enum WorldMapActorId {
   /// The Venus Djinni: Flint, circling his spot until the party meets him,
   /// and later Vine.
@@ -636,7 +636,7 @@ static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
 }
 
 /// Called each frame by the storm's object script (gWorldMapStormScript): it
-/// hides the storm on odd frames, and WorldMap_UpdateLocationContacts shows it
+/// hides the storm on odd frames, and WorldMap_UpdateAreaContacts shows it
 /// again on the next, so it flickers.
 static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -668,7 +668,7 @@ const struct ActorTemplate *WorldMap_GetActorTemplates(void) {
     return gWorldMapActorTemplatesCrossingEnds;
   case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
     return gWorldMapActorTemplatesFromKalayTunnelEntranceSouth;
-  case WORLD_MAP_FROM_MAIN_MENU:
+  case WORLD_MAP_FROM_FILE_SCREEN:
     return gWorldMapActorTemplatesFromClear;
   case WORLD_MAP_BEFORE_SHEBAS_FALL:
     return gWorldMapActorTemplatesBeforeShebasFall;
@@ -777,7 +777,7 @@ const struct Trigger *WorldMap_GetTriggers(void) { return gWorldTriggers; }
 /// actor within reach of the leader, their radii scaled by their sprites,
 /// measured as the sum of the distances east-west and north-south. With the
 /// debug flag FLAG_DEBUG_STEPS_OFF it raises none.
-static void WorldMap_UpdateLocationContacts(void) {
+static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
   struct Actor *actor;
@@ -861,7 +861,7 @@ static void WorldMap_ReturnToTolbiShip(void) {
 /// The map's initialization: it runs the moment the entrance selects,
 /// the story's moments listed at the top of this file. The two lighthouse
 /// entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
-/// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateLocationContacts,
+/// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateAreaContacts,
 /// opens the screen from a centre line, and until the Manticore of the Lamakan
 /// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile
 /// south of Vault whose bridge over the river is broken in the middle (the
@@ -897,8 +897,8 @@ s32 WorldMap_Initialize(void) {
     gFieldWork->transitionFrames = 16;
     WaitFrames(1);
     FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    Task_AddFrame(WorldMap_UpdateLocationContacts, TASK_PASS_FRAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
+    Task_AddFrame(WorldMap_UpdateAreaContacts, TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
@@ -959,7 +959,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
       WorldMap_StepDownFromBunzasWagon();
       break;
-    case WORLD_MAP_FROM_MAIN_MENU:
+    case WORLD_MAP_FROM_FILE_SCREEN:
       WorldMap_ShowIslandDrifting();
       break;
     case WORLD_MAP_BEFORE_SHEBAS_FALL:
@@ -2542,8 +2542,8 @@ static void WorldMap_SpawnIslandWake(void) {
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
 /// with its wake under warm colours, and the map fades to white and leads into
 /// their event (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_MAIN_MENU, once the cleared
-/// game is saved (menu/main_menu.c).
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_FILE_SCREEN, once the
+/// cleared game is saved (menu/main_menu.c).
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
   struct Actor *spriteActor;
@@ -3307,8 +3307,8 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      2328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH, CONDITION_ALWAYS, 5528, 0,
      2120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_MAIN_MENU, CONDITION_ALWAYS, 7464, 0, 200, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_FILE_SCREEN, CONDITION_ALWAYS, 7464, 0, 200, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {WORLD_MAP_BEFORE_SHEBAS_FALL, CONDITION_ALWAYS, 6088, 0, 3176, FACING_WEST,
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE, CONDITION_ALWAYS, 4728, 0,

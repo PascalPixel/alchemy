@@ -18,7 +18,7 @@
 /// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
 ///   hidden passage reaches (lunpa.c). Its six chests are each opened once
 ///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
-///   into Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no
+///   into Lunpa, and arriving this way clears FLAG_SHOW_AREA_NAME, so no
 ///   area name is shown. The room uses the thieves' tables, so its chests and
 ///   exit sit in the same trigger table as the thieves' talk and the Vault
 ///   door.
@@ -237,7 +237,7 @@ static void StoneRooms_LeaveForVault(void) {
 ///
 /// Called by the engine once the actors are placed. Coming in through
 /// Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
-/// FLAG_SHOW_LOCATION_NAME, so no area name is shown; otherwise it adds
+/// FLAG_SHOW_AREA_NAME, so no area name is shown; otherwise it adds
 /// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;
@@ -249,7 +249,7 @@ s32 Scene_Initialize(void) {
   if (entrance == STONE_ROOMS_FROM_LUNPA) {
     // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this
     // entrance.
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     Actor_GetById(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   } else {

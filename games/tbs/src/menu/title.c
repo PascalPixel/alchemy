@@ -109,7 +109,7 @@ s32 Title_Run(void) {
     ScreenFade_Wait();
     Event_WaitFrames(240);
     Sound_PlaySong(MUS_SILENCE);
-    Event_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_TITLE);
+    Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c), the
@@ -145,7 +145,7 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
+    Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Sound_PlaySong(MUS_TITLE_AFTER_PROLOGUE);

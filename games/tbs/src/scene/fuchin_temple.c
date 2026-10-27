@@ -2362,7 +2362,7 @@ s32 Scene_Initialize(void) {
       }
     } else if (gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
                gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
         trainingTree = Actor_GetById(ACTOR_TRAINING_TREE);
@@ -2409,7 +2409,7 @@ s32 Scene_Initialize(void) {
       Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
     } else if (gSaveBlock.entrance ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
       } else if (!GameFlag_Get(FLAG_HSU_RESCUED)) {

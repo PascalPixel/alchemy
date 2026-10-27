@@ -1163,7 +1163,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 772);
   Import_ActorSetPosition(ACTOR_CAPTAIN, 0, 0);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
   Event_End();
 }
@@ -1530,7 +1530,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_RunRepeatedMotion(ACTOR_SOLDIER_SHOWING_THE_REWARD, 2);
   Event_ShowMessageThenWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_CHOOSING_REWARD);
   Event_End();
 }

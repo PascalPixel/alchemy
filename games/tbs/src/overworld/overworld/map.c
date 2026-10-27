@@ -92,7 +92,7 @@ void Scene_TakeExit(s32 exitId) {
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the story battle's defeat point
 /// (Event_SetDefeatDestination) or, when none is set, to the restart
-/// point, usually the last Sanctum (Scene_SetDefeatReturnPoint). Any other
+/// point, usually the last Sanctum (Scene_SetRestartPoint). Any other
 /// result goes to the next scene the script set, or to the default scene (the
 /// scene the battle or minigame was started from) with the party keeping its
 /// position (FLAG_KEEP_PARTY_POSITION). Called by SequenceManager_Run after
@@ -129,28 +129,28 @@ void Scene_ReturnFromSequence(s32 result) {
       if (sceneId != -1)
         gSaveBlock.sceneId = sceneId;
       else
-        gSaveBlock.sceneId = gSaveBlock.defaultScene;
+        gSaveBlock.sceneId = gSaveBlock.returnScene;
       if (entrance != -1)
         gSaveBlock.entrance = entrance;
       else
-        gSaveBlock.entrance = gSaveBlock.defaultEntrance;
+        gSaveBlock.entrance = gSaveBlock.returnEntrance;
     }
   } else {
     // An explicit script destination overrides the scene's default return.
-    sceneId = gSaveBlock.nextScene;
-    entrance = gSaveBlock.nextEntrance;
+    sceneId = gSaveBlock.afterBattleScene;
+    entrance = gSaveBlock.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
         gSaveBlock.sceneId = sceneId;
       else
-        gSaveBlock.sceneId = gSaveBlock.defaultScene;
+        gSaveBlock.sceneId = gSaveBlock.returnScene;
       if (entrance != -1)
         gSaveBlock.entrance = entrance;
       else
-        gSaveBlock.entrance = gSaveBlock.defaultEntrance;
+        gSaveBlock.entrance = gSaveBlock.returnEntrance;
     } else {
-      gSaveBlock.sceneId = gSaveBlock.defaultScene;
-      gSaveBlock.entrance = gSaveBlock.defaultEntrance;
+      gSaveBlock.sceneId = gSaveBlock.returnScene;
+      gSaveBlock.entrance = gSaveBlock.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -159,7 +159,7 @@ void Scene_ReturnFromSequence(s32 result) {
 /// Returns the area sceneId belongs to. The scenes of one area
 /// share their music, area name and the flags kept while inside it. Called by
 /// Area_GetNameIndex.
-s32 Scene_GetArea(s32 sceneId) { return gSceneHeaders[sceneId].area; }
+s32 Scene_GetArea(s32 sceneId) { return gScenes[sceneId].area; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
 /// and restore around a minigame; palette 15 holds the window colours
@@ -214,18 +214,18 @@ static __inline__ s32 SequenceManager_RunLuckyWheels(s32 entrance) {
 /// SequenceManager_RunFar by System_Initialize at power-on and by
 /// Game_RestartQuest.
 void SequenceManager_Run(s32 mode) {
-  const struct SceneHeader *table;
-  const struct SceneHeader *record;
+  const struct Scene *table;
+  const struct Scene *record;
   s32 entrance;
 
-  table = gSceneHeaders;
+  table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
     gSaveBlock.sceneId = (s32)&SceneId_ValePlaza;
     gSaveBlock.entrance = mode;
   } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gSaveBlock.sceneId = (s32)&SceneId_MainMenu;
-    gSaveBlock.entrance = MAIN_MENU_FROM_SANCTUM;
+    gSaveBlock.sceneId = (s32)&SceneId_FileScreen;
+    gSaveBlock.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
     SaveBlock_InitializeDefaultsFar();
     gSaveBlock.sceneId = (s32)&SceneId_Title;
@@ -311,13 +311,13 @@ void SequenceManager_Run(s32 mode) {
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
 /// Called by SequenceManager_Run before SceneManager_Run.
 void Scene_LoadOverlay(s32 unused) {
-  const struct SceneHeader *table;
+  const struct Scene *table;
 
-  table = gSceneHeaders;
+  table = gScenes;
   Overlay_Load(table[gSaveBlock.sceneId].resourceId, &gOverlayArea);
 }
 
-#define MAP_HEADER(id) (&gSceneHeaders[id])
+#define MAP_HEADER(id) (&gScenes[id])
 
 /// Updates the flags and state that last for one scene or one area, on
 /// entering the current scene. Unless keep is set (the party returns to where
@@ -340,7 +340,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
       // Area state and Retreat's destination survive moves within it.
       for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
-      GameFlag_SetFar(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
       gSaveBlock.encounterSteps = 0;
       gSaveBlock.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);

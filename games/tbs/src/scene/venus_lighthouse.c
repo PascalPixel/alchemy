@@ -2753,7 +2753,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 /// VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS and
 /// _FROM_GREAT_STATUE into the same room, and VenusLighthouseFirstFloor's
 /// VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR clear
-/// FLAG_SHOW_LOCATION_NAME.
+/// FLAG_SHOW_AREA_NAME.
 s32 VenusLighthouse_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
@@ -2815,7 +2815,7 @@ s32 VenusLighthouse_Initialize(void) {
       // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       if (GameFlag_Get(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
       break;
@@ -2836,7 +2836,7 @@ s32 VenusLighthouse_Initialize(void) {
     // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
     switch (gSaveBlock.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST:
       VenusLighthouse_AnimatePairedTileWaves();

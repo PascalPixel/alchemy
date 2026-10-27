@@ -4,10 +4,10 @@
 
 #include "../overworld_internal.h"
 
-/// A map's encounter zones (gBattle_LocationRules, location_rules.s),
+/// A map's encounter zones (gScene_EncounterRules, location_rules.s),
 /// ended by map -1. Encounter_SelectMapZones takes the first rule that
 /// matches the map and entrance and is not turned off.
-struct BattleLocationRule {
+struct SceneEncounterRule {
   s16 sceneId;               ///< -1 ends the table
   s16 entrance;              ///< -1 for any entrance
   s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
@@ -17,7 +17,7 @@ struct BattleLocationRule {
   s16 firstZone;
 };
 
-extern const struct BattleLocationRule gBattle_LocationRules[];
+extern const struct SceneEncounterRule gScene_EncounterRules[];
 
 /// The world map's encounter zone for each encounter region
 /// (gWorldMap_EncounterRules, zonedata.c), ended by region -1. Read by
@@ -50,7 +50,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   s32 sceneId;
   s32 entrance;
   u8 *groundZones;
-  const struct BattleLocationRule *rule;
+  const struct SceneEncounterRule *rule;
   s32 zone;
   s16 firstZoneOnGround;
   u32 i;
@@ -59,7 +59,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   sceneId = gSaveBlock.sceneId;
   entrance = gSaveBlock.entrance;
   groundZones = work->encounterZones;
-  rule = gBattle_LocationRules;
+  rule = gScene_EncounterRules;
   zone = 0;
   firstZoneOnGround = 0;
   if (useRules != 0) {
@@ -370,15 +370,15 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 }
 
 /// Sets the map the party returns to after a defeat (gSaveBlock.restartScene
-/// and restartEntrance), from the first rule of gDefeatReturnPoints that
+/// and restartEntrance), from the first rule of gScene_RestartRules that
 /// matches the current map and entrance: {map, entrance (-1
 /// for any), return map, return entrance}, ended by map -1. Without a
 /// match the return point stays as it was. Called by SceneManager_Run on map
 /// load.
-void Scene_SetDefeatReturnPoint(void) {
+void Scene_SetRestartPoint(void) {
   s16 sceneId = gSaveBlock.sceneId;
   s16 entrance = gSaveBlock.entrance;
-  const s16 *rule = gDefeatReturnPoints;
+  const s16 *rule = gScene_RestartRules;
 
   while (rule[0] != -1) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
@@ -395,14 +395,14 @@ void Scene_SetDefeatReturnPoint(void) {
 /// battle's background.
 s16 Event_GetSpecialValue(void) { return gSaveBlock.special; }
 
-/// Chooses the battle background for the current map. gBattleBackground_Maps
-/// lists each battle background (a word with bit 31 set) followed by the maps
-/// that use it, ended by 0; a map takes the one listed last before it, and a
-/// map not listed takes the last one. Called by
+/// Chooses the battle background for the current map.
+/// gScene_BattleBackgroundRules lists each battle background (a word with bit
+/// 31 set) followed by the maps that use it, ended by 0; a map takes the one
+/// listed last before it, and a map not listed takes the last one. Called by
 /// Encounter_SelectMapZones; sets gSaveBlock.special.
 void BattleBackground_SelectForMap(void) {
   s32 target = gSaveBlock.sceneId;
-  s32 *table = gBattleBackground_Maps;
+  s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   // The first map_rules.s word names a battle background. It cannot match the
   // halfword map id, so the loop sets this before testing any map.

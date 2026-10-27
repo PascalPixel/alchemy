@@ -126,7 +126,7 @@ Each scene's people, scripts and events are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The scene table,
-`gSceneHeaders` in [field/scene_headers.s](field/scene_headers.s), has 201 scenes, and the
+`gScenes` in [field/scene_headers.s](field/scene_headers.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
 ([overworld/overworld/map.c](overworld/overworld/map.c)) unpacks the overlay a scene's row
 names before `SceneManager_Run` runs it; a battle or a minigame is main-image

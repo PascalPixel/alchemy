@@ -22,7 +22,7 @@
 
 @ Defeat return points: the scene and entrance (-1 for any), then the
 @ scene and entrance the party returns to after a defeat there.
-	.macro return_to scene:req, entrance:req, saved:req, saved_entrance:req
+	.macro restart_point scene:req, entrance:req, saved:req, saved_entrance:req
 	.2byte SceneId_\scene, \entrance, SceneId_\saved, \saved_entrance
 	.endm
 
@@ -301,31 +301,31 @@ gArea_NameRules:
 	.2byte 0, 0	@ a row of zeros after the end
 	.4byte 0
 
-	.global gDefeatReturnPoints
-gDefeatReturnPoints:
-	return_to ValeStormyNight, 15, CottageRoomsB, 16
-	return_to Vale, 16, Sanctum, 2
-	return_to Vault, 1, Sanctum, 12
-	return_to Vault, 3, Sanctum, 12
-	return_to Bilibin, -1, Sanctum, 35
-	return_to Kolima, -1, Kolima, 12
-	return_to Imil, -1, IceRooms, 7
-	return_to FuchinTempleGrounds, -1, FuchinTempleGrounds, 5
-	return_to Xian, -1, Sanctum, 32
-	return_to Altin, -1, Sanctum, 29
-	return_to LamaTemple, -1, LamaTemple, 5
-	return_to VaultRevisit, -1, Sanctum, 11
-	return_to Kalay, -1, KalaySanctum, 2
-	return_to Lunpa, 3, RockRooms, 11
-	return_to Tolbi, -1, StuccoRoomsB, 30
-	return_to Suhalla, -1, TimberRoomsA, 6
-	return_to Lalivero, -1, TimberRoomsB, 12
-	return_to BattleArena, -1, BattleArena, 1
+	.global gScene_RestartRules
+gScene_RestartRules:
+	restart_point ValeStormyNight, 15, CottageRoomsB, 16
+	restart_point Vale, 16, Sanctum, 2
+	restart_point Vault, 1, Sanctum, 12
+	restart_point Vault, 3, Sanctum, 12
+	restart_point Bilibin, -1, Sanctum, 35
+	restart_point Kolima, -1, Kolima, 12
+	restart_point Imil, -1, IceRooms, 7
+	restart_point FuchinTempleGrounds, -1, FuchinTempleGrounds, 5
+	restart_point Xian, -1, Sanctum, 32
+	restart_point Altin, -1, Sanctum, 29
+	restart_point LamaTemple, -1, LamaTemple, 5
+	restart_point VaultRevisit, -1, Sanctum, 11
+	restart_point Kalay, -1, KalaySanctum, 2
+	restart_point Lunpa, 3, RockRooms, 11
+	restart_point Tolbi, -1, StuccoRoomsB, 30
+	restart_point Suhalla, -1, TimberRoomsA, 6
+	restart_point Lalivero, -1, TimberRoomsB, 12
+	restart_point BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
 
 @ A scene not listed takes the last battle background.
-	.global gBattleBackground_Maps
-gBattleBackground_Maps:
+	.global gScene_BattleBackgroundRules
+gScene_BattleBackgroundRules:
 	backdrop ValeStormBackdrop, ValeStormyNight, Vale, ValePlaza, ValeKradensCottage
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
 	backdrop InteriorBackdrop, LogRoomsA

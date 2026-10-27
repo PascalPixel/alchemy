@@ -1649,7 +1649,7 @@ s32 TunnelRuins_Initialize(void) {
       gSaveBlock.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gSaveBlock.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))

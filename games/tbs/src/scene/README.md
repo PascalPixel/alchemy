@@ -303,7 +303,7 @@ that includes the header; each header's opening comment says what it holds.
 ## Design
 
 Each overlay is three objects, linked in this order into the overlay area:
-`entry/<scene>`, `<scene>` and `import/<scene>`. The scene table, `gSceneHeaders` in
+`entry/<scene>`, `<scene>` and `import/<scene>`. The scene table, `gScenes` in
 [`field/scene_headers.s`](../field/scene_headers.s), gives each scene its overlay,
 area, scene type and map, and names it `SceneId_<Scene>`; several scenes may
 share one overlay, and then share its file. A scene overlay is never split into

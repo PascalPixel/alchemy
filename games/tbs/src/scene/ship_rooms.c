@@ -3702,7 +3702,7 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Event_WaitFrames(40);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
   ShipRooms_RunEventCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
 /// The crew checks on the party after the monster fight, then resumes rowing.
@@ -3991,7 +3991,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Task_AddFrame(ShipRooms_ShakeWhileKrakenAboard, TASK_PASS_FRAME);
   ShipRooms_RunEventCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   Actor_ReleaseById(ACTOR_ROWING_KAJA);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   Event_End();
 }
@@ -4160,7 +4160,7 @@ static void ShipRooms_ReachIsland(void) {
   ShipRooms_RunEventCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   GameFlag_Set(FLAG_TOLBI_SHIP_AT_ISLAND);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 

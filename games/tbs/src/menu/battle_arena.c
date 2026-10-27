@@ -1366,11 +1366,11 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 }
 
 /// Step trigger 1, the way out: stops the link, loads the normal reverb code
-/// and goes back to the main menu (its entrance MAIN_MENU_FROM_SANCTUM).
+/// and goes back to the main menu (its entrance FILE_SCREEN_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  Event_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
+  Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif
@@ -1534,7 +1534,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// that brought the party here and restarts the Battle Arena's polling. A
 /// linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
 /// BATTLE_ARENA_AFTER_LINK_WIN; any other entrance than the
-/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
+/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_FILE_SCREEN, from the main menu)
 /// restarts the link. Updates gSaveBlock.linkTallies, saves after linked
 /// battles and new monster records, and restores the party's HP, PP and Djinn
 /// unless a monster series goes on. Returns 0.
@@ -1747,14 +1747,14 @@ u8 gBattleArena_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: BATTLE_ARENA_FROM_MAIN_MENU from the main menu,
+/// Where the party appears: BATTLE_ARENA_FROM_FILE_SCREEN from the main menu,
 /// the BATTLE_ARENA_AFTER_ ones after a battle (BattleArena_EnterBattle).
 struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_LINK_LOSS, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_LINK_WIN, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_MONSTER_WIN, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_MONSTER_LOSS, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
-    { BATTLE_ARENA_FROM_MAIN_MENU, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
+    { BATTLE_ARENA_FROM_FILE_SCREEN, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };

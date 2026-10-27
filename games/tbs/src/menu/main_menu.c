@@ -445,10 +445,10 @@ s32 MainMenu_Run(void) {
   gFieldWork->transition = blendStarted;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // MAIN_MENU_FROM_TITLE, after the credits (Title_Run): save the cleared game,
-  // then WORLD_MAP_FROM_MAIN_MENU. Cancelling the file choice asks
+  // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
+  // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
-  if (gSaveBlock.entrance == MAIN_MENU_FROM_TITLE) {
+  if (gSaveBlock.entrance == FILE_SCREEN_FROM_TITLE) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
@@ -468,7 +468,7 @@ s32 MainMenu_Run(void) {
     Event_FinishScreenTransition();
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     Event_WaitFrames(0x12c);
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
+    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -628,7 +628,7 @@ menu_top:;
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
     Event_SetDestination((s32)&SceneId_BattleArena,
-                         BATTLE_ARENA_FROM_MAIN_MENU);
+                         BATTLE_ARENA_FROM_FILE_SCREEN);
     goto leave;
   } else {
     if (v6 != 5) {

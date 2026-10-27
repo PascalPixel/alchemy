@@ -740,7 +740,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     Actor_ConfigureSpriteColor(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
   }
   if (gSaveBlock.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (gSaveBlock.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
@@ -782,7 +782,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 static void KalayTolbiDocks_PrepareInterior(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
 /// Tolbi Docks, after Move pushes either stack of crates: the pier's cells

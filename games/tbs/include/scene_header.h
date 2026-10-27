@@ -14,10 +14,10 @@
 struct MapGridCell;
 struct Actor;
 
-/// A scene's row in gSceneHeaders: its overlay's resource, its area,
+/// A scene's row in gScenes: its overlay's resource, its area,
 /// its scene type and its map. One row per scene number; field/scene_headers.s
 /// writes them, and its SceneId_ symbols are the row numbers.
-struct SceneHeader {
+struct Scene {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
   /// and the step counters and moves Retreat's destination;
@@ -25,13 +25,13 @@ struct SceneHeader {
   s8 area;
   /// An enum SceneType, copied to gSaveBlock.sceneType:
   /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,
-  /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_FIELD for the rest.
+  /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_OTHER for the rest.
   s8 sceneType;
   u16 mapIndex; ///< the map loaded for it, copied to gSaveBlock.mapId
   u16 reserved; ///< 0 in every row; not read
 };
 
-STATIC_ASSERT(sizeof(struct SceneHeader) == 8);
+STATIC_ASSERT(sizeof(struct Scene) == 8);
 
 /// A scene's exit region: the box that, while its condition holds, takes the
 /// party leader out through its exit.
@@ -77,7 +77,7 @@ struct FieldPosition {
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 /// Every scene's header, by scene number (field/scene_headers.s).
-extern const struct SceneHeader gSceneHeaders[];
+extern const struct Scene gScenes[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its 48-byte entry table. Every
 /// overlay is linked to run at this one fixed address (0x02008000).

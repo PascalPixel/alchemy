@@ -805,7 +805,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   work->transitionFrames = 16;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
   Event_End();
 }
@@ -1006,7 +1006,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   work->transitionFrames = 16;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_HAMMET_BACK_HOME_SEEN);
   Event_End();
 }

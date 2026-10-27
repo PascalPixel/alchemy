@@ -193,7 +193,7 @@ battle, after which the scene's map is loaded again; the Battle Arena, which
 leaves the partner's party there for the link battle that follows; the world
 map's still picture; and the debug sprite viewer.
 
-Each scene's row of `gSceneHeaders`
+Each scene's row of `gScenes`
 ([`field/scene_headers.s`](../field/scene_headers.s)) gives a map number,
 which picks a row of `gMaps` ([`field/maps.c`](../field/maps.c)):
 the map's header, palette and tiles. `MapGrid_LoadMap` unpacks each
@@ -373,7 +373,7 @@ One grid serves all three layers, so every map takes the same 64 KB of
 cells, and a layer's window can sit anywhere in the grid.
 
 The map numbers are the order of the directories, not numbers the game
-gives its maps: a scene's row in `gSceneHeaders` names a row of `gMaps`,
+gives its maps: a scene's row in `gScenes` names a row of `gMaps`,
 and that row names the map's resources.
 
 ## Limits
@@ -404,7 +404,7 @@ called the treasure spot list because that function is the only code that reads 
 pointer the loader stores to it (`MapGridScrollWork.markers`).
 
 The haze's map is found from the scene table: `SceneId_SuhallaDesertNorth`'s
-row of `gSceneHeaders` gives map 151, whose row of `gMaps` names the
+row of `gScenes` gives map 151, whose row of `gMaps` names the
 resource the directory's `area` line gives to `Field_Map147`; the south's
 row leads the same way to `Field_Map148`, and the Tolbi ship deck's to
 `Field_Map103`. These three are the only maps whose headers drift a

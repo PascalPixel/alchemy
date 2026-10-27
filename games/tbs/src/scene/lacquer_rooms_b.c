@@ -24,7 +24,7 @@
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, set when the party left the desert with Hsu
 /// still trapped (lamakan_desert.c), picks whether Feizhi thanks the party and
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
-/// Arriving here clears FLAG_SHOW_LOCATION_NAME.
+/// Arriving here clears FLAG_SHOW_AREA_NAME.
 
 #include "save_block.h"
 #include "unit/scene/lacquer_rooms_b.h"
@@ -289,7 +289,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 /// inn (LACQUER_ROOMS_B_INN_SOUTH and
 /// LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
-/// clears FLAG_SHOW_LOCATION_NAME and lays Hsu in the bed.
+/// clears FLAG_SHOW_AREA_NAME and lays Hsu in the bed.
 s32 LacquerRoomsB_Initialize(void) {
   s16 entrance;
 
@@ -305,7 +305,7 @@ s32 LacquerRoomsB_Initialize(void) {
     Actor_CreateConfigured(PIXELS(460), 0, PIXELS(568), SPRITE_CHEST);
     Actor_CreateConfigured(PIXELS(484), 0, PIXELS(568), SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     Import_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
   }
   return 0;

@@ -487,7 +487,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gSaveBlock.entrance;
   if (entrance == ROOM_GATE_TO_SUHALLA) {
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     gSaveBlock.restartScene = (s32)&SceneId_RockRooms;
     gSaveBlock.restartEntrance = entrance;
   }

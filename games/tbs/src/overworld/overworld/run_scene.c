@@ -41,15 +41,15 @@ s32 SceneManager_Run(s32 entrance) {
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gSaveBlock.defaultScene = gSaveBlock.sceneId;
-  gSaveBlock.defaultEntrance = gSaveBlock.entrance;
-  gSaveBlock.nextScene = -1;
-  gSaveBlock.nextEntrance = -1;
+  gSaveBlock.returnScene = gSaveBlock.sceneId;
+  gSaveBlock.returnEntrance = gSaveBlock.entrance;
+  gSaveBlock.afterBattleScene = -1;
+  gSaveBlock.afterBattleEntrance = -1;
   gSaveBlock.defeatScene = -1;
   gSaveBlock.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
+  if (gSaveBlock.mapId == MAP_INDEX_WORLD) {
     WorldMap_InitializePerspectiveFar();
     gSaveBlock.perspectiveMap = 1;
     mode = ACTOR_SYSTEM_WORLD_MAP;
@@ -98,7 +98,7 @@ s32 SceneManager_Run(s32 entrance) {
   // A fresh entry (not a return from battle) resets the hazard count to its
   // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Scene_SetDefeatReturnPoint();
+    Scene_SetRestartPoint();
     gSaveBlock.hazardLimit = 16;
     gSaveBlock.hazardMode = HAZARD_COUNT_ON_CELLS;
     gSaveBlock.hazardDamage = 1;
@@ -128,8 +128,8 @@ s32 SceneManager_Run(s32 entrance) {
         if (Entrance_PlayArrival() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
-      if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
-        GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
+      if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
+        GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
         AreaNameWindow_ShowFar(gSaveBlock.sceneId);
       }
       if (gSaveBlock.pendingDjinni != 0) {
@@ -154,7 +154,7 @@ s32 SceneManager_Run(s32 entrance) {
       gSaveBlock.y = 0;
       gSaveBlock.z = actor->z.fixed;
       gSaveBlock.heading = actor->facing;
-      gSaveBlock.turn = actor->layer;
+      gSaveBlock.layer = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
@@ -487,7 +487,7 @@ void Scene_ApplyEntrance(void) {
     gSaveBlock.y = REGION_FIXED(entranceEntry->y);
     gSaveBlock.z = REGION_FIXED(entranceEntry->z);
     gSaveBlock.heading = entranceEntry->facing;
-    gSaveBlock.turn = 0;
+    gSaveBlock.layer = 0;
   }
 
   if (entranceEntry->cameraLeft != -1)

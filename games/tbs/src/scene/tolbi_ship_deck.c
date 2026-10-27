@@ -2402,7 +2402,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_ArmCallback(ACTOR_ARRIVED_KAJA, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ActorSetPosition(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, 0, 0);
 
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 

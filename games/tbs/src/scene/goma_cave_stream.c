@@ -132,7 +132,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveStream) {
     if (gSaveBlock.entrance == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
-      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else {
       Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {

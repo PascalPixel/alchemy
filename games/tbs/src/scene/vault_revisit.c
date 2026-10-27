@@ -647,7 +647,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
 /// clears FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
-/// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
+/// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_AREA_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
 /// FLAG_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
 /// play.
@@ -696,7 +696,7 @@ s32 Scene_Initialize(void) {
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   if (gSaveBlock.entrance == VAULT_REVISIT_FROM_SANCTUM)
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (gSaveBlock.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;

@@ -64,12 +64,13 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   Encounter_SelectBattleMusic(0, 0);
 }
 
-/// Sets the map and entrance that the field goes to next
-/// (gSaveBlock.nextScene and nextEntrance). About 30 maps and the Battle Arena
-/// reach it through Event_SetAfterBattleDestinationFar.
+/// Sets the after-battle destination (gSaveBlock.afterBattleScene and
+/// afterBattleEntrance), where the party goes once the coming battle is won.
+/// About 30 scenes and the Battle Arena reach it through
+/// Event_SetAfterBattleDestinationFar.
 void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
-  gSaveBlock.nextScene = sceneId;
-  gSaveBlock.nextEntrance = entrance;
+  gSaveBlock.afterBattleScene = sceneId;
+  gSaveBlock.afterBattleEntrance = entrance;
 }
 
 /// Sets where the party wakes up after losing a battle

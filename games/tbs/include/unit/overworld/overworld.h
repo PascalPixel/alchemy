@@ -118,7 +118,7 @@ u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance);
-void Scene_SetDefeatReturnPoint(void);
+void Scene_SetRestartPoint(void);
 s16 Event_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);

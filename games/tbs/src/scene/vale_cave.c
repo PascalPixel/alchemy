@@ -15,7 +15,7 @@
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
 ///   the exit sound first (ValeCave_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
-///   FLAG_SHOW_LOCATION_NAME: entering a new area sets that flag, but
+///   FLAG_SHOW_AREA_NAME: entering a new area sets that flag, but
 ///   this is still Vale.
 /// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each with its
 /// own
@@ -791,7 +791,7 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// restores the room's puzzle state.
 ///
 /// The map's initialize entry. The first room, Vale, fades in from the
-/// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the area name is not shown
+/// backdrop and clears FLAG_SHOW_AREA_NAME, so the area name is not shown
 /// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gFieldWork->transition;
@@ -803,7 +803,7 @@ s32 ValeCave_Initialize(void) {
     WaitFrames(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   ValeCave_ApplyEntryState();
   return 0;

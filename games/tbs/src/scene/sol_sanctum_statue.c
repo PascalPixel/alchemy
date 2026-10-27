@@ -314,7 +314,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 /// from the Luna room. Called by SolSanctumStatue_Initialize at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED
 /// until FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED is set, which the caller
-/// sets. Clears FLAG_SHOW_LOCATION_NAME.
+/// sets. Clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct Actor *leader;
 
@@ -465,7 +465,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   }
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Event_ClearFlag(FLAG_SHOW_LOCATION_NAME);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
   Event_End();
@@ -480,7 +480,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
 /// out. Called by SolSanctumStatue_Initialize at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED until
 /// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller sets.
-/// Clears FLAG_SHOW_LOCATION_NAME.
+/// Clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct FieldWork *work;
   struct Actor *leader;
@@ -676,7 +676,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Import_ActorSetPosition(ACTOR_GARET, 0, 0);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;

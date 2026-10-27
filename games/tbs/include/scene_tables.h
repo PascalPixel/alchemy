@@ -99,7 +99,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 #define SCENE_EXITS_END 0x1ff
 
 /// Scene numbers above the field scenes: what runs instead of a scene
-/// (SceneManager_Run). They have no row in gSceneHeaders.
+/// (SceneManager_Run). They have no row in gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
   SEQUENCE_NONE = 0x1fb,

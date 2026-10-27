@@ -174,7 +174,7 @@ void FieldPsynergy_Retreat(void) {
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
-/// the ground (4 on the world map, whose map is SceneId_MainMenu).
+/// the ground (4 on the World Map, MAP_INDEX_WORLD).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   // One shared inline kernel with constant inversion grows the positive and
   // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
@@ -186,7 +186,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedActor;
-  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
+  if (gSaveBlock.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -216,7 +216,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedActor;
-  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
+  if (gSaveBlock.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;

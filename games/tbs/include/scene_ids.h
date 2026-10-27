@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_IDS_H
 
 /// @file
-/// Scene numbers, named after their places, in the order of gSceneHeaders
+/// Scene numbers, named after their places, in the order of gScenes
 /// (field/scene_headers.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
@@ -15,9 +15,13 @@ extern char SceneId_Title;
 /// it "(Clear data)".
 /// ★ Named from what the player sees: the Golden Sun logo over the start menu
 /// of New Game, Continue, Copy and Erase (its render)
-extern char SceneId_MainMenu;
+extern char SceneId_FileScreen;
 /// ★ Named from its area name: World Map
 extern char SceneId_WorldMap;
+/// The World Map's map, row 1 of gMaps (field/scene_headers.s names it with
+/// the World Map's scene row), which the field compares gSaveBlock.mapId with.
+extern char MapIndex_World;
+#define MAP_INDEX_WORLD ((s32)&MapIndex_World)
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"
 /// (MsgValeSureHelp)
 extern char SceneId_ValeStormyNight;

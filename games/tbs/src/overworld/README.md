@@ -102,7 +102,7 @@ at all: scripted battles, mimic chests and Djinn fights name them directly.
 
 `Encounter_CountStepsAndSelectFormation` fills the counter and
 draws the enemies, `Encounter_SelectMapZones` picks a scene's zones from
-`gBattle_LocationRules`, the world map's come from
+`gScene_EncounterRules`, the world map's come from
 `gWorldMap_EncounterRules`, and each zone is a row of `gEncounterZones`
 (`struct EncounterZone`).
 

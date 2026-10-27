@@ -973,7 +973,7 @@ s32 Scene_Initialize(void) {
         }
       }
     }
-    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
     if (gSaveBlock.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {

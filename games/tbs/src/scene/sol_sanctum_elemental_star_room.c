@@ -1424,7 +1424,7 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 /// gives out the Mythril Bags. Called by SolSanctumElementalStarRoom_Initialize
 /// at SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS until
 /// FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED is set, which it sets; clears
-/// FLAG_SHOW_LOCATION_NAME.
+/// FLAG_SHOW_AREA_NAME.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   u8 *leaderMotion;
@@ -2093,7 +2093,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
   gFieldWork->transitionFrames = 16;
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 

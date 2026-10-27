@@ -759,7 +759,7 @@ s32 ValeStormyNight_Initialize(void) {
 /// Will they be able to stop the Boulder?" Called by ValeStormyNight_Initialize
 /// on arrival by VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA until
 /// FLAG_VALE_STORM_SENT_TO_PLAZA is set. Sets it and
-/// FLAG_VALE_ISAACS_DOOR_OPEN, clears FLAG_SHOW_LOCATION_NAME, and removes Dora
+/// FLAG_VALE_ISAACS_DOOR_OPEN, clears FLAG_SHOW_AREA_NAME, and removes Dora
 /// and Kyle.
 static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   s32 message;
@@ -859,7 +859,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Import_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_GARET_DRAG);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
   GameFlag_Set(FLAG_VALE_ISAACS_DOOR_OPEN);
   Event_End();

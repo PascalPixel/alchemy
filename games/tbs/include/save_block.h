@@ -9,9 +9,9 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A scene's type (SceneHeader.sceneType, copied to SaveBlock.sceneType).
+/// A scene's type (Scene.sceneType, copied to SaveBlock.sceneType).
 enum SceneType {
-  SCENE_TYPE_FIELD = 1, ///< every other scene: dungeons, the world map
+  SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
   /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
   /// off and FLAG_IN_TOWN is set.
@@ -83,31 +83,45 @@ struct SaveBlock {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The scene being played: its index in gSceneHeaders (a SceneId_
-  /// symbol), or SEQUENCE_BATTLE or another number above the field scenes.
+  /// The destination: the sequence the sequence manager runs next, a
+  /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.
+  /// During a scene it is the scene running. An exit-table lookup overwrites
+  /// it, and EXIT_KEEP_DESTINATION keeps it.
   s16 sceneId;
-  s16 entrance;        ///< the entrance taken; in SEQUENCE_BATTLE, the
-                       ///< formation
-  s16 restartScene;    ///< where the party restarts: the last Sanctum, usually
+  /// The destination's entrance; in SEQUENCE_BATTLE, the formation to fight.
+  /// Not a union with a formation member: alchemy-gcc pads a union to a word,
+  /// which would move every member after it.
+  s16 entrance;
+  /// The restart point, usually the last Sanctum: read after a defeat with no
+  /// defeat destination, and by the File Screen.
+  s16 restartScene;
   s16 restartEntrance; ///< the restart point's entrance
-  s16 defaultScene;    ///< the scene being run, kept as it starts
-  s16 defaultEntrance; ///< the entrance it was entered by
-  s16 area;            ///< the current scene's area; a new one resets its flags
-  s16 nextScene;       ///< where the script sends the party next; -1 for none
-  s16 nextEntrance;    ///< where the script sends the party next; -1 for none
-  s16 defeatScene;     ///< where a defeat returns to; -1 for none
-  s16 defeatEntrance;  ///< where a defeat returns to; -1 for none
-  s16 special;         ///< the battle background chosen for the scene or
-                       ///< battle environment
+  /// The return point: the scene that was running when a battle or minigame
+  /// started, where Scene_ReturnFromSequence returns unless an after-battle
+  /// destination is set.
+  s16 returnScene;
+  s16 returnEntrance; ///< the return point's entrance
+  s16 area;           ///< the current scene's area; a new one resets its flags
+  /// The after-battle destination, -1 for none: read by
+  /// Scene_ReturnFromSequence when the party was not defeated, before the
+  /// return point (a minigame's return reads it too), and cleared as each
+  /// scene starts.
+  s16 afterBattleScene;
+  s16 afterBattleEntrance; ///< its entrance; -1 for none
+  /// The defeat destination, -1 for none: read by Scene_ReturnFromSequence
+  /// after a defeat, before the restart point.
+  s16 defeatScene;
+  s16 defeatEntrance;       ///< its entrance; -1 for none
+  s16 special;              ///< the battle background chosen for the scene or
+                            ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
-  /// The scene header's map (mapIndex); the world map's is 1, which the
-  /// code compares as (s32)&SceneId_MainMenu.
+  /// The scene's map (Scene.mapIndex); the World Map's is MAP_INDEX_WORLD.
   s16 mapId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels
   u32 heading;             ///< 1/65536 turns
-  u16 turn;                ///< the leader's layer, kept with its position
+  u16 layer;               ///< the leader's layer, kept with its position
   s16 battleMusic;         ///< the battle music chosen for the encounter
   s16 sceneMusic;          ///< the current scene's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise

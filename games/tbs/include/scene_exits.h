@@ -21,10 +21,10 @@ enum {
   TITLE_FROM_WORLD_MAP = 10,
 };
 
-/// SceneId_MainMenu's entrances and exits.
+/// SceneId_FileScreen's entrances and exits.
 enum {
-  MAIN_MENU_FROM_SANCTUM = 1,
-  MAIN_MENU_FROM_TITLE = 2,
+  FILE_SCREEN_FROM_SANCTUM = 1,
+  FILE_SCREEN_FROM_TITLE = 2,
 };
 
 /// SceneId_WorldMap's entrances.
@@ -95,7 +95,7 @@ enum {
   WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND = 69,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
-  WORLD_MAP_FROM_MAIN_MENU = 72,
+  WORLD_MAP_FROM_FILE_SCREEN = 72,
   /// After the look back at Venus Lighthouse, the lighthouse shakes in clouds
   /// of dust and WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE sends the party on to
   /// Sheba's fall (WorldMap_ShakeVenusLighthouse).
@@ -469,7 +469,7 @@ enum {
   SANCTUM_TO_ALTIN = 40,
   SANCTUM_TO_BILIBIN = 41,
   SANCTUM_TO_XIAN = 42,
-  SANCTUM_TO_MAIN_MENU = 50,
+  SANCTUM_TO_FILE_SCREEN = 50,
 };
 
 /// SceneId_ValeEruption's entrances.
@@ -6124,7 +6124,7 @@ enum {
 
 /// SceneId_BattleArena's entrances and exits.
 enum {
-  BATTLE_ARENA_FROM_MAIN_MENU = 1,
+  BATTLE_ARENA_FROM_FILE_SCREEN = 1,
   BATTLE_ARENA_AFTER_MONSTER_WIN = 8,
   BATTLE_ARENA_AFTER_MONSTER_LOSS = 9,
   BATTLE_ARENA_AFTER_LINK_WIN = 10, ///< or after a linked battle broken off

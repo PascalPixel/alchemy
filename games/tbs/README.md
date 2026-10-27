@@ -9,18 +9,21 @@ The whole game is one loop, the [sequence manager](#the-sequence-manager).
 Each time round it runs one [sequence](glossary.md#sequence): a
 [scene](glossary.md#scene) (a place, or a screen such as the Title or the File
 Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
-from there each exit leads to the next scene. Four steps take the game from
-switching on to a moment such as Isaac standing in Xian at the foot of the
-stairs: start-up, the sequence manager, the scene sequence that loads the place, and the scene
-manager that runs it.
+from there each exit leads to the next scene.
+
+Four parts take the game from switching on to a moment such as Isaac standing
+in Xian at the foot of the stairs: start-up, the sequence manager, the scene
+sequence that loads a place, and the scene manager that runs it. Each section
+below has a chart of the part in general and, where it helps, a second chart
+of the same part in Xian. A box keeps its name and colour from chart to chart.
 
 ## Start-up
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  power(["Power on"]) --> memory["Clear memory"] --> irq["Install the fast code"]
-  irq --> services["Start the sound and the tasks"] --> seq(["Sequence manager"])
+  power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
+  irq --> services["Start the sound and the task queue"] --> seq(["Sequence manager"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -33,7 +36,7 @@ flowchart TD
 Switching on runs `System_Initialize` once. It clears the console's fast
 memory, copies in the routines that must run fastest and the interrupt
 handlers, loads the graphics windows are drawn with, starts the sound and
-empties the list of [tasks](glossary.md#task). Then it hands over to the
+empties the queue of [tasks](glossary.md#task). Then it hands over to the
 sequence manager, which never returns. [Engine](engine.md#start-up) has the
 details.
 
@@ -56,6 +59,26 @@ flowchart TD
   class scene sceneSequence
   class back request
   class battle,dice,wheels step
+```
+
+Leaving Xian for the World Map and meeting a random battle there takes four
+turns of the loop:
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  xian(["Scene sequence: Xian"]) --> ask1(["Request another sequence: the World Map"])
+  ask1 --> world(["Scene sequence: World Map"]) --> ask2(["Request another sequence: a random battle"])
+  ask2 --> battle["Battle"] --> ask3(["Request another sequence: back to the World Map"])
+  ask3 --> again(["Scene sequence: World Map, the party where it stood"])
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class xian,world,again sceneSequence
+  class ask1,ask2,ask3 request
+  class battle step
 ```
 
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
@@ -87,9 +110,11 @@ to go back to.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags"] --> music["Start Xian's music"] --> code["Unpack Xian's code"]
-  code --> map["Load its map, with its animated water"] --> place["Place the party and the villagers"]
-  place --> own["Xian's own set-up, by the flags"] --> fade["Fade in"] --> run(["Scene manager"])
+  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
+  arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
+  code --> map["Load the map"] --> place["Place the party at its entrance"]
+  place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
+  own --> fade["Fade in"] --> run(["Scene manager"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -97,24 +122,41 @@ flowchart TD
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class pick sceneSequence
   class run sceneManager
-  class arrive,music,code,map,place,own,fade step
+  class arrive,music,code,map,place,actors,own,fade step
 ```
 
-When an exit leads to Xian, the sequence manager clears the flags the last
-scene kept for itself and, since Xian is a new [area](glossary.md#area),
-the area's flags too, and starts Xian's music. It unpacks Xian's code, its
-[overlay](glossary.md#overlay), over the last scene's.
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  pick(["Scene sequence: Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
+  arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay over the World Map's"]
+  code --> map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
+  place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
+  actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
+  own --> fade["Fade in, Xian's name at the top"] --> run(["Scene manager: Xian"])
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class pick sceneSequence
+  class run sceneManager
+  class arrive,music,code,map,place,actors,own,fade step
+```
 
-The scene manager then builds the place. It loads Xian's
+When an exit names a scene, the sequence manager clears the
+[game flags](glossary.md#game-flag) the last scene kept for itself, and on
+entering a new [area](glossary.md#area) the area's flags too, and starts the
+area's music. It unpacks the scene's code, its [overlay](glossary.md#overlay),
+over the last scene's.
+
+The scene manager then builds the place. It loads the scene's
 [map](glossary.md#map): the picture, the ground the party walks on and the
-list of tiles that animate, such as the water. It puts the party at the
-[entrance](glossary.md#entrance) it came in by and creates every villager
-from Xian's list of [actors](glossary.md#actor). Then Xian's own code sets
-the village up as the story has left it, reading the
-[game flags](glossary.md#game-flag): once Xian has heard that Hsu is trapped,
-the kung fu student stands where her strike left her and Feizhi is gone from
-the south exit; the water carrier is given the routine that walks her round.
-Last, the screen fades in and the area name appears.
+list of tiles that animate. It puts the party at the
+[entrance](glossary.md#entrance) it came in by and creates every
+[actor](glossary.md#actor) on the scene's list. Then the scene's own code
+sets the place up as the story has left it, reading the flags, and the screen
+fades in.
 
 The steps are `Scene_Arrive`, `Scene_ChooseMusic` and `Scene_LoadOverlay` in
 the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
@@ -128,11 +170,11 @@ flowchart TD
   frame(["Scene manager"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
-    t1["15 · Palette fade · colours held"] ~~~ t2["10 · Actors · each takes a step; is a button pressed? no"]
-    t2 ~~~ t3["5 · Camera · follows Isaac"] ~~~ t4["0 · Sprites · actors placed on screen"]
-    t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
+    t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script"]
+    t2 ~~~ t3["5 · Camera · scrolls the map after the leader"] ~~~ t4["0 · Sprites · places each actor on the screen"]
+    t4 ~~~ t5["0 · Tile animation · steps the map's animated tiles"] ~~~ t6["0 · Windows · draws each open window"]
   end
-  queue --> ground["Check the ground under Isaac"]
+  queue --> ground["Check the ground under the leader"]
   ground --> check{"A request?"}
   check -->|"no: next frame"| frame
   check -->|"yes"| handle["Handle it to the end"]
@@ -145,35 +187,48 @@ flowchart TD
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class frame sceneManager
   class next request
-  class t1,t2,t3,t4,t5,t6,ground,handle step
+  class t1,t2,t3,t4,t5,t6,ground,handle,check step
   style queue fill:#FFFFFF,stroke:#9AA3AE
-  class check step
 ```
 
-Isaac stands at the foot of Xian's stairs and the player presses nothing,
-yet the village is alive. Each frame the scene manager waits for the screen,
-and while it waits every queued task runs once, highest priority first:
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  frame(["Scene manager: Xian"]) --> queue
+  subgraph queue ["Queued tasks, this frame"]
+    direction TB
+    t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac: is a button pressed? no"]
+    t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
+    t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
+  end
+  queue --> ground["Isaac stands at the foot of the stairs"]
+  ground --> check{"A request?"}
+  check -->|"no: next frame"| frame
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class frame sceneManager
+  class t1,t2,t3,t4,t5,t6,ground,check step
+  style queue fill:#FFFFFF,stroke:#9AA3AE
+```
 
-| Priority | Task           | This frame in Xian                                                                                       |
-| -------- | -------------- | -------------------------------------------------------------------------------------------------------- |
-| 15       | Palette fade   | the colours stay as they are, the fade-in being over                                                    |
-| 10       | Actors         | every actor takes a step of its [actor script](glossary.md#actor-script): the water carrier walks her round; Isaac's player control asks whether a button is pressed, and none is |
-| 5        | Camera         | the camera stays on Isaac, who has not moved                                                             |
-| 0        | Sprites        | every actor's sprite is placed on the screen                                                             |
-| 0        | Tile animation | the next frame of the moving water is swapped in                                                         |
-| 0        | Windows        | no window is open, so nothing is drawn                                                                   |
+Each frame the scene manager waits for the screen, and while it waits every
+queued task runs once, highest priority first; the camera ranks below the
+actors so that it follows where they are now. The leader's
+[actor script](glossary.md#actor-script) has handed it to player control,
+which asks each frame whether a button is pressed. In the Xian chart Isaac
+stands still and the player presses nothing, yet the village is alive: the
+water carrier walks her round and the water moves.
 
-The camera ranks below the actors so that it follows where they are now; the
-three at 0 share a rank.
-
-Then the scene manager checks the ground under Isaac and asks whether
-anything should happen. Usually nothing
-has, and the next frame begins. When something has, it is a
-[field request](glossary.md#field-request), and the scene manager runs it
-from start to finish before the next frame of standing or walking. Talking
-to the water carrier is a request: her conversation is an event, and while
-it waits for A the tasks still run, so the water keeps moving. When none is
-left, the player has Isaac again.
+Then the scene manager checks the ground under the leader and asks whether
+anything should happen. Usually nothing has, and the next frame begins. When
+something has, it is a [field request](glossary.md#field-request), and the
+scene manager runs it from start to finish before the next frame of standing
+or walking. Talking to the water carrier is a request: her conversation is an
+event, and while it waits for A the tasks still run, so the water keeps
+moving.
 
 | Request        | What raises it                                                                     |
 | -------------- | ---------------------------------------------------------------------------------- |
@@ -195,11 +250,11 @@ which is why the party comes back from a battle to the same spot: the scene
 is loaded again, keeping where everyone stood.
 
 The loop is the rest of `SceneManager_Run` in
-[scene_manager.c](src/overworld/overworld/scene_manager.c). The tasks are, in the
-order above, `PaletteFade_Update`, `Actor_UpdateAllThumb`,
+[scene_manager.c](src/overworld/overworld/scene_manager.c). The tasks are, in
+the order of the chart, `PaletteFade_Update`, `Actor_UpdateAllThumb`,
 `MapGrid_UpdateLayerScroll`, then `ActorSystem_PlaceSprites`,
-`TilesetAnim_Update` and `WindowSystem_Update`; Isaac's buttons are read by
-`Field_CheckConfiguredKeys` and the ground under him by `Field_UpdateWalking`.
+`TilesetAnim_Update` and `WindowSystem_Update`; the buttons are read by
+`Field_CheckConfiguredKeys` and the ground by `Field_UpdateWalking`.
 [Running a scene](src/overworld/README.md#the-scene-manager-serves-requests)
 follows each request in full.
 

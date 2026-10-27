@@ -154,11 +154,12 @@ loop is `str lr, [pc]`, which in the link lands on that word, the one after
 the routine, with the clip mask `0x80008000` the routine has just built.
 
 A library call is dropped only when it meets another that holds the lock, and
-library calls all run on the main thread except from a VBlank
+library calls all run outside the VBlank interrupt except from a VBlank
 [task](../../glossary.md#task). A call graph of the English edition's build
-finds one VBlank task that reaches the library: `LuckyWheels_RunFrame`, the
-Lucky Wheels frame. While Lucky Wheels runs, the main thread only draws and
-waits, and no message types, so in practice nothing is dropped.
+finds one VBlank task that reaches the library: `LuckyWheels_Update`, which
+runs Lucky Wheels once a VBlank. While Lucky Wheels runs, the code outside the
+interrupt only draws and waits, and no message types, so in practice nothing
+is dropped.
 
 The driver's structures keep pret's names for the bytes nothing uses: the
 notes' `dummy1` to `dummy5`, `xpi` and `xpc`, a track's `gap`, `timer` and

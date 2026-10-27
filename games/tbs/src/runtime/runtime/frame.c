@@ -18,7 +18,7 @@ static __inline__ void System_SoftReset(void) {
   reset();
 }
 
-/// Sleeps in the BIOS Halt until the VBlank handler has run once.
+/// Halts the CPU (the BIOS Halt) until the VBlank handler has run once.
 #define VBlankIntrWait()                                                       \
   {                                                                            \
     gVBlankDone &= ~1;                                                         \
@@ -138,7 +138,7 @@ void WaitFrames(s32 frames) {
         line -= DISPLAY_HEIGHT;
       else
         line += 68;
-      line += (gLagFrameCount - 1) << 8;
+      line += (gFrameVBlanks - 1) << 8;
       if (gCpuLoadTimer == 0)
         gCpuLoadPeak = 0;
       else
@@ -197,8 +197,8 @@ void WaitFrames(s32 frames) {
       }
     }
     // Wait for VBlank, then start the next frame
-    gLagFramesShown = gLagFrameCount;
-    gLagFrameCount = 0;
+    gLastFrameVBlanks = gFrameVBlanks;
+    gFrameVBlanks = 0;
     CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
     FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
@@ -439,7 +439,7 @@ void System_VBlankHandler(void) {
   }
   gKeysHeldAtVBlank = keys;
   gVBlankCount++;
-  gLagFrameCount++;
+  gFrameVBlanks++;
   gVBlankDone = 1;
   Mixer_Enter();
 }

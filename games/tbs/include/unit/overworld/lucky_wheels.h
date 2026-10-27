@@ -13,7 +13,7 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 extern const u8 gLuckyWheels_SymbolPrizes[];
 extern const u8 gLuckyWheels_FrameSpriteX[];
 extern const u8 gLuckyWheels_FrameSpriteY[];
-void LuckyWheels_RunFrame(void);
+void LuckyWheels_Update(void);
 void LuckyWheels_InitializeTitle(void);
 void LuckyWheels_Run(void);
 void LzPack_ResetSlotBuckets(void);

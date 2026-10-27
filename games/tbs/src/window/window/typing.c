@@ -102,7 +102,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
   // The ROM reads gKeysHeld here once and never uses the value.
   u32 keys = gKeysHeld;
   s32 glyphsLeft = gMessageSpeed_Steps[gCommon.messageSpeed];
-  s32 lag;
+  s32 frameVBlanks;
   u32 code;
   u32 nextCode;
   struct Window *window;
@@ -123,12 +123,12 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
   (void)keys;
 
   // In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
-  // last frame took (gLagFramesShown, 1 for a frame on time), counting at most
-  // two.
+  // last frame took (gLastFrameVBlanks, 1 for a frame on time), counting at
+  // most two.
   if (work->battleMode != WINDOW_FIELD) {
-    lag = gLagFramesShown;
-    CLAMP(lag, 0, 2);
-    glyphsLeft = lag * 5 + 3;
+    frameVBlanks = gLastFrameVBlanks;
+    CLAMP(frameVBlanks, 0, 2);
+    glyphsLeft = frameVBlanks * 5 + 3;
   }
 
   // Finish scrolling the canvas up a line before any more text.

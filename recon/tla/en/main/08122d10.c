@@ -8,7 +8,7 @@
 // alchemy-devtools diff 08122d10.c 08122cd0,08122d10): ☀️'s BattlePlayback_Run
 // (games/tbs/src/battle/battle/playback.c), ported; the nested function is
 // ☀️'s BattleSprite_ClearTiles. ⚓️ adds event 15 (BattleActor_RemoveFromLists),
-// lets gLagFramesShown push a hit's flash on a frame, flashes for 8 frames
+// lets gLastFrameVBlanks push a hit's flash on a frame, flashes for 8 frames
 // rather than 9, and keeps the message window in heap slot 0x94.
 // Near miss, differ 44 of 870 (2026-10-24), instruction order only: 22 pairs,
 // a load or a constant one slot from the native, as in ⚓️'s other near misses.
@@ -313,7 +313,7 @@ void BattleEvent_Playback(void) {
         return;
       }
     } else if (events->phase == 10) {
-      if (gLagFramesShown)
+      if (gLastFrameVBlanks)
         events->timer |= 1;
       if (events->timer & 1) {
         if (events->timer & 2) {

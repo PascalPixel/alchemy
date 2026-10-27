@@ -15,7 +15,7 @@ struct TimedNoticeWork {
 /// Shows the area's name in a window near the top of the screen for 90 frames.
 /// The field work owns the window and countdown until a task closes it.
 /// The window is centred across the screen and in its top 10 rows, and opens
-/// at once; AreaNameWindow_Update counts it down each frame in the main loop's
+/// at once; AreaNameWindow_Update counts it down each frame in the frame
 /// pass.
 void AreaNameWindow_Show(void) {
   struct TimedNoticeWork *notice;

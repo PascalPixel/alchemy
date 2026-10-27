@@ -6,8 +6,8 @@
 extern u8 gRenderOamEnabled;
 extern u8 gFrameRenderPending;
 extern u8 gCpuLoadDisplayEnabled;
-extern u16 gLagFrameCount;
-extern u16 gLagFramesShown;
+extern u16 gFrameVBlanks;
+extern u16 gLastFrameVBlanks;
 extern u32 gCpuLoadTimer;
 extern u32 gCpuLoadPeak;
 extern volatile u8 gSleepDisabled;

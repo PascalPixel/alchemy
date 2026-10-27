@@ -190,8 +190,8 @@ struct SelectionNode *SelectionMenu_FindFreeIcon(s32 kind) {
   return NULL;
 }
 
-/// Starts drawing the selection screen each frame, in the main loop's pass
-/// (0xc80).
+/// Starts drawing the selection screen each frame, in the frame pass
+/// (TASK_PASS_FRAME).
 void SelectionMenu_StartDrawing(void) {
   Task_Add(SelectionMenu_Draw, TASK_PASS_FRAME);
 }

@@ -957,7 +957,7 @@ BattleEvent_Playback:
 .L_08123480:
 	.4byte gVBlankCount
 .L_08123484:
-	.4byte gLagFramesShown
+	.4byte gLastFrameVBlanks
 .L_08123488:
 	.4byte 0xfffffc00
 .L_0812348c:

@@ -60,7 +60,7 @@ void WaitFrames(s32 frames) {
         line -= 160;
       else
         line += 68;
-      line += (gLagFrameCount - 1) << 8;
+      line += (gFrameVBlanks - 1) << 8;
       if (gCpuLoadTimer == 0)
         gCpuLoadPeak = 0;
       else
@@ -107,8 +107,8 @@ void WaitFrames(s32 frames) {
         }
       }
     }
-    gLagFramesShown = gLagFrameCount;
-    gLagFrameCount = 0;
+    gLastFrameVBlanks = gFrameVBlanks;
+    gFrameVBlanks = 0;
     System_WaitForFrameInterrupt();
     Runtime_ReleaseHeapBlock(80);
     Render_ResetFrame();

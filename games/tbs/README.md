@@ -4,13 +4,13 @@ Golden Sun was released in Japan as Golden Sun: The Broken Seal. These pages
 use the Japanese subtitle, or TBS, to keep it apart from
 [The Lost Age](glossary.md#the-two-games).
 
-## How it differs from other games
+## How the game is built
 
-Most games of its time, the Pokémon games among them, are built around a main
-loop that calls every part of the game once a frame. The Broken Seal is built
-the other way round:
+Every part of The Broken Seal, from one line of dialogue to a whole battle, is
+code that runs from its start to its end and waits where it stands whenever
+time must pass:
 
-- **No main loop of frames.** A [monitor](#the-monitor)
+- **One program at a time.** A [monitor](#the-monitor)
   runs one program (a scene, a battle, a minigame) from start to finish.
 - **Programs hand over by themselves.** A scene that meets a random battle
   writes the battle down as the next program and ends; the battle ends by
@@ -202,7 +202,7 @@ void WaitFrames(s32 frames) {         /* simplified */
   while (frames--) {
     Task_RunPass(TASK_PASS_FRAME);   /* every queued task, once */
     Oam_BuildBuffer(...);            /* this frame's picture */
-    VBlankIntrWait();                /* sleep until the next VBlank */
+    VBlankIntrWait();                /* halt until the next VBlank *
   }
 }
 ```
@@ -226,18 +226,16 @@ window once the player presses A.
 
 | Frame | Code in charge         | Tasks during its wait                         | After the wait                                |
 | ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| 1     | field loop          | the carrier steps, the water moves            | nothing asked for: next frame                 |
-| 2     | field loop          | player control sees A and notes a request     | a talk request: run her event                 |
+| 1     | field loop             | the carrier steps, the water moves            | nothing asked for: next frame                 |
+| 2     | field loop             | player control sees A and notes a request     | a talk request: run her event                 |
 | 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
 | …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
-| next  | field loop          | the carrier walks on                          | nothing asked for: next frame                 |
+| next  | field loop             | the carrier walks on                          | nothing asked for: next frame                 |
 
-In a Pokémon game the main loop calls the current screen once a frame, and the
-screen must return within that frame. A conversation is then a numbered list
-of states, and the screen's code jumps to the state it reached last time. Here
-the conversation is the function itself, paused inside `WaitFrames` and
-resumed on the next line. To allow a wait from deep inside any function,
-`WaitFrames` copies the caller's stack aside while the frame runs
+The conversation is the function itself, paused inside `WaitFrames` and
+resumed on the next line, so nothing has to note how far it has got: the place
+it has reached in its own code says so. To allow a wait from deep inside any
+function, `WaitFrames` copies the caller's stack aside while the frame runs
 ([Runtime](src/runtime/README.md#the-stack-switch-in-waitframes)).
 
 ### When a frame runs long
@@ -249,7 +247,7 @@ than one refresh still runs to the end, while the screen shows the old picture
 until the next VBlank. Every wait, walk and animation is counted in frames, so
 they all slow down together, while the music, counted in VBlanks, keeps its
 tempo. This is the game's slowdown. The VBlanks a frame took are counted in
-`gLagFrameCount`.
+`gFrameVBlanks`.
 
 **Reference:** [Engine: Waiting and tasks](engine.md#waiting-and-tasks) ·
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·

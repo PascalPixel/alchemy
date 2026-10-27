@@ -205,6 +205,6 @@ Func_0801399c:
 .L_08013b24:
 	.4byte IwramSoundRenderFrame
 .L_08013b28:
-	.4byte gLagFrameCount
+	.4byte gFrameVBlanks
 .L_08013b2c:
 	.4byte gData_0300121c

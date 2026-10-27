@@ -9,7 +9,7 @@
 // counts 11 frames, a text-mode channel with spacing[3] set draws at y / 320
 // - 3, and a glyph that draws nothing closes the channel. Both reads of
 // globals the twin reads volatile are volatile here (the held keys' first
-// sample and gLagFramesShown, which ☀️'s frame.h declares volatile; plain,
+// sample and gLastFrameVBlanks, which ☀️'s frame.h declares volatile; plain,
 // differ 68). Left, all one-slot scheduling: the parameter copy and the
 // keys sample swap, and five times a split constant's first half is issued
 // between a store and the load that follows it (the native fills the
@@ -69,7 +69,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   (void)keys;
 
   if (work->menuState != 0) {
-    lag = *(volatile u16 *)&gLagFramesShown;
+    lag = *(volatile u16 *)&gLastFrameVBlanks;
     if (lag < 0)
       lag = 0;
     if (lag > 3)

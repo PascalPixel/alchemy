@@ -2,14 +2,14 @@
 #define ALCHEMY_FRAME_H
 
 /// @file
-/// The frame loop's globals: lag counts, the CPU load display and the VBlank
-/// flags.
+/// The frame loop's globals: the VBlanks a frame takes, the CPU load
+/// display and the VBlank flags.
 ///
 /// WaitFrames (runtime/frame.c) and the VBlank handler share these cells.
 /// gVBlankDone and gFrameCount are volatile because an interrupt handler uses
-/// them too; the other volatiles are only ever read and written by the main
-/// loop, so they are devices, and each tag names the function that differs
-/// without one.
+/// them too; the other volatiles are only ever read and written outside
+/// the interrupt, so they are devices, and each tag names the function that
+/// differs without one.
 
 #include "types.h"
 
@@ -25,12 +25,12 @@ extern volatile u8 gCpuLoadDisplayEnabled;
 /// it to keep their own sprites on screen.
 extern u8 gOamCopyEnabled;
 /// VBlanks since WaitFrames last started a frame: 1 when the frame took one.
-extern u16 gLagFrameCount;
-/// gLagFrameCount as the last frame left it; the text typing paces itself by
+extern u16 gFrameVBlanks;
+/// gFrameVBlanks as the last frame left it; the text typing paces itself by
 /// it.
 /* FAKEMATCH(volatile): as plain u16, 33 of 628 instructions differ in tbs-en
  * (TextPrinter_Step). */
-extern volatile u16 gLagFramesShown;
+extern volatile u16 gLastFrameVBlanks;
 /// Bit 0 is set by the VBlank handler; WaitFrames clears it and halts until
 /// it is set again.
 // volatile: the VBlank handler sets it while WaitFrames halts on it, so it is

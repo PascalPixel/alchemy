@@ -7,7 +7,7 @@
 // and the KEY_L mask, which CSE reuses as the first modulus of the Left branch,
 // r7; the native swaps them (lreg: the mask 6 refs over 30 insns ranks above
 // the window's 19 over 214). Tried: the windows declared the other way, a
-// goto main loop (144), one-pass blocks around the redraw block or its item
+// goto loop (144), one-pass blocks around the redraw block or its item
 // branch (84, 86), the window pinned to r7 (169), four minutes of alchemy
 // permute (its best moves calls between branches).
 #include "types.h"

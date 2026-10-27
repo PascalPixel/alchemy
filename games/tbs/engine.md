@@ -35,8 +35,8 @@ The cartridge's first instruction leads to `System_Entry`, which calls
 ![Isaac talks to the strongman by Vale's river: a window opens and types out "I don't blame Felix", its red arrow bobbing while it waits; A brings a second page, and the window closes](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
 While a line of dialogue waits for A, the code that showed it simply stops
-and waits, yet the arrow keeps bobbing and the river keeps rippling. The
-game has no main loop that calls each part once a frame. A talk, an event,
+and waits, yet the arrow keeps bobbing and the river keeps rippling. No
+part of the game is called once a frame to do its share. A talk, an event,
 a menu screen or a battle animation is an ordinary piece of code that runs
 from start to finish, and when time has to pass it asks to wait a number of
 frames. What must keep moving meanwhile is a task, a short job run once every

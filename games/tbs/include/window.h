@@ -13,7 +13,7 @@
 #include "render_input.h"
 
 /// Where the windows are drawn (WindowWork.battleMode). In battle, typing
-/// speeds up with the lag frames shown and the bottom rows of a cleared
+/// speeds up when a frame overruns, and the bottom rows of a cleared
 /// rectangle keep the battle tile.
 enum WindowBattleMode {
   WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block

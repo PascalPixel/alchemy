@@ -147,7 +147,7 @@ collects them.
 ### Frame
 
 One step of the game: every queued [task](#task) runs once and one picture is
-prepared, then the game sleeps until the next [VBlank](#vblank) shows it. Code
+prepared, then the game halts until the next [VBlank](#vblank) shows it. Code
 lets time pass with `WaitFrames(n)`, and every wait, walk and animation is
 counted in frames. A frame normally lasts one VBlank; one whose work overruns
 lasts two or more, which is the game's slowdown

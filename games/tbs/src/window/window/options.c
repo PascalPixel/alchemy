@@ -663,8 +663,8 @@ void PauseMenu_AnimateCursor(void) {
 /// Allocates the Pause menu's work block and starts its per-frame task.
 /// The Pause menu shares the settings menu's heap slot and cannot run
 /// concurrently: PauseMenu_Choose frees it before
-/// PauseMenu_Run opens the settings menu. 3200 is 0xc80, the
-/// main loop's pass.
+/// PauseMenu_Run opens the settings menu. The task runs in the
+/// frame pass.
 void PauseMenu_Initialize(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);

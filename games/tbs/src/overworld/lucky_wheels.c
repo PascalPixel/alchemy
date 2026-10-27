@@ -337,7 +337,7 @@ struct LuckyWheelsWork {
 };
 
 /// gCommon seen from +12, the base the bytes load: wonPrizes is
-/// gCommon.wonPrizes (through the field itself LuckyWheels_RunFrame
+/// gCommon.wonPrizes (through the field itself LuckyWheels_Update
 /// differs 12)
 struct CommonWonPrizesView {
   u8 beforeWonPrizes[0x120]; ///< gCommon from summonMask to wonPrizes
@@ -346,12 +346,12 @@ struct CommonWonPrizesView {
 
 #include "../graphics/lucky_wheels/reel_tables.h"
 
-/// Lucky Wheels' frame task: reads the keys, runs the game's state
+/// Lucky Wheels' VBlank task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing
 /// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
-void LuckyWheels_RunFrame(void) {
+void LuckyWheels_Update(void) {
   /* FAKEMATCH(volatile): struct OamWords's volatile words (oambuf.h) keep
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
@@ -1150,7 +1150,7 @@ void LuckyWheels_Run(void) {
       Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Task_Add(LuckyWheels_RunFrame, TASK_PASS_VBLANK);
+    Task_Add(LuckyWheels_Update, TASK_PASS_VBLANK);
     Task_Add(LuckyWheels_TransferCanvas, TASK_PASS_VBLANK);
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
@@ -1282,7 +1282,7 @@ void LuckyWheels_Run(void) {
     FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     Task_Remove(LuckyWheels_TransferCanvas);
-    Task_Remove(LuckyWheels_RunFrame);
+    Task_Remove(LuckyWheels_Update);
     FreeHeapSlot(LUCKY_WHEELS_HEAP_SLOT);
     FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
     FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);

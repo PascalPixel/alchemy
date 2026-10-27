@@ -107,6 +107,6 @@ void Func_0801399c(void) {
     gData_03001138.lastVBlank = vblankCount;
   }
   gVBlankCount = vblankCount + 1;
-  gLagFrameCount++;
+  gFrameVBlanks++;
   gData_0300121c = 1;
 }

@@ -286,8 +286,8 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  // 200 << 4 is 0xc80, TASK_PASS_FRAME: the update runs in the main
-  // loop's pass.
+  // 200 << 4 is 0xc80, TASK_PASS_FRAME: the update runs in the frame
+  // pass.
   priority = 200;
   priority <<= 4;
   Task_Add(WindowSystem_Update, priority);
@@ -559,8 +559,8 @@ void FieldMessage_Show(s32 message, s32 flags) {
 }
 
 /// The window system's per-frame task: windows, then text printers,
-/// then sprite animation. Both setups schedule it in the main loop's pass
-/// (0xc80); nothing here removes it.
+/// then sprite animation. Both setups schedule it in the frame pass
+/// (TASK_PASS_FRAME); nothing here removes it.
 void WindowSystem_Update(void) {
   Window_UpdateZooms();
   TextPrinter_RunAll();

@@ -207,8 +207,8 @@ The exchange is `Serial_ExchangePayloads`, and larger data starts with
 
 The game is written as ordinary functions that run until they are done. A
 battle animation, an event or a menu screen is a function with its own loop
-that waits when time has to pass and carries on from the same place; nothing
-returns to a main loop between frames. Most of the runtime's shape follows:
+that waits when time has to pass and carries on from the same place; none of
+them returns between frames to be called again. Most of the runtime's shape follows:
 tasks keep the world moving while such a function waits, the stack switch
 keeps the stack bounded however deep it waits, task priorities give tasks a
 known order, and heap slots let a task find blocks that other code took.

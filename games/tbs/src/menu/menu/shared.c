@@ -585,8 +585,8 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabSprites[i] = 0;
   }
-  // 200 << 4 is 0xc80, TASK_PASS_FRAME: once a frame in the main
-  // loop, rank 0x80.
+  // 200 << 4 is 0xc80, TASK_PASS_FRAME: once a frame in the frame
+  // pass, rank 0x80.
   {
     s32 priority = 200;
     priority <<= 4;
@@ -1288,7 +1288,7 @@ void Menu_UpdateCancelSound(void) {
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
-  // TASK_PASS_FRAME: once a frame in the main loop.
+  // TASK_PASS_FRAME: once a frame, in the frame pass.
   Task_Add(Menu_UpdateCancelSound, TASK_PASS_FRAME);
 }
 

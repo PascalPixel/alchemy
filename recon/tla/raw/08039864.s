@@ -411,7 +411,7 @@ Func_08039864:
 .L_08039bac:
 	.4byte gUiText_SpeedSteps
 .L_08039bb0:
-	.4byte gLagFramesShown
+	.4byte gLastFrameVBlanks
 .L_08039bb4:
 	.4byte .L_08039910
 .L_08039bb8:

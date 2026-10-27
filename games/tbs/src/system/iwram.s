@@ -98,11 +98,11 @@ gTransformStackDepth:
 	.global gSleepRequested
 gSleepRequested:
 	.space 0x00000004
-	.global gLagFrameCount
-gLagFrameCount:
+	.global gFrameVBlanks
+gFrameVBlanks:
 	.space 0x00000004
-	.global gLagFramesShown
-gLagFramesShown:
+	.global gLastFrameVBlanks
+gLastFrameVBlanks:
 	.space 0x00000004
 	.global gScreenFadeToWhite
 gScreenFadeToWhite:

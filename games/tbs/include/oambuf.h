@@ -7,7 +7,7 @@
 #include "types.h"
 
 /// One sprite's two OAM words. Both are volatile: LuckyDice_Run,
-/// LuckyWheels_RunFrame and Title_UpdateIntroSprites, which build lists of
+/// LuckyWheels_Update and Title_UpdateIntroSprites, which build lists of
 /// them, each tag what that steers.
 struct OamWords {
   volatile u32 attr01; ///< attr0 | attr1 << 16

@@ -11,7 +11,7 @@ Each time round it runs one [sequence](glossary.md#sequence): a
 Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
 from there each exit leads to the next scene. Four steps take the game from
 switching on to a moment such as Isaac standing in Xian at the foot of the
-stairs: start-up, the sequence manager, loading the scene, and the scene
+stairs: start-up, the sequence manager, the scene sequence that loads the place, and the scene
 manager that runs it.
 
 ## Start-up
@@ -20,11 +20,14 @@ manager that runs it.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   power(["Power on"]) --> memory["Clear memory"] --> irq["Install the fast code"]
-  irq --> services["Start the sound and the tasks"] --> seq(["The sequence manager"])
-  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  irq --> services["Start the sound and the tasks"] --> seq(["Sequence manager"])
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class power,seq link
-  class memory,irq,services step
+  class seq sequenceManager
+  class power,memory,irq,services step
 ```
 
 Switching on runs `System_Initialize` once. It clears the console's fast
@@ -41,13 +44,18 @@ details.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["The sequence manager"]) --> scene["Scene"] & battle["Battle"] & dice["Lucky Dice"] & wheels["Lucky Wheels"]
-  scene & battle & dice & wheels --> back["Request another sequence"]
+  loop(["Sequence manager"]) --> scene(["Scene sequence"]) & battle["Battle"] & dice["Lucky Dice"] & wheels["Lucky Wheels"]
+  scene & battle & dice & wheels --> back(["Request another sequence"])
   back --> loop
-  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class loop link
-  class scene,battle,dice,wheels,back step
+  class loop sequenceManager
+  class scene sceneSequence
+  class back request
+  class battle,dice,wheels step
 ```
 
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
@@ -74,17 +82,21 @@ The loop is `SequenceManager_Run`. A battle or a minigame reports a result
 rather than an exit, and `Scene_ReturnFromSequence` turns it into the scene
 to go back to.
 
-## Loading a scene
+## The scene sequence
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Xian is next"]) --> arrive["Clear the last scene's flags"] --> music["Start Xian's music"] --> code["Unpack Xian's code"]
+  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags"] --> music["Start Xian's music"] --> code["Unpack Xian's code"]
   code --> map["Load its map, with its animated water"] --> place["Place the party and the villagers"]
-  place --> own["Xian's own set-up, by the flags"] --> fade["Fade in"] --> run(["The scene manager"])
-  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  place --> own["Xian's own set-up, by the flags"] --> fade["Fade in"] --> run(["Scene manager"])
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class pick,run link
+  class pick sceneSequence
+  class run sceneManager
   class arrive,music,code,map,place,own,fade step
 ```
 
@@ -113,7 +125,7 @@ the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["A frame in Xian"]) --> queue
+  frame(["Scene manager"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
     t1["15 · Palette fade · colours held"] ~~~ t2["10 · Actors · each takes a step; is a button pressed? no"]
@@ -122,13 +134,17 @@ flowchart TD
   end
   queue --> ground["Check the ground under Isaac"]
   ground --> check{"A request?"}
-  check -->|"no"| frame
+  check -->|"no: next frame"| frame
   check -->|"yes"| handle["Handle it to the end"]
-  handle --> frame
+  handle -->|"next frame"| frame
   handle -->|"an exit or a battle"| next(["Request another sequence"])
-  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class frame,next link
+  class frame sceneManager
+  class next request
   class t1,t2,t3,t4,t5,t6,ground,handle step
   style queue fill:#FFFFFF,stroke:#9AA3AE
   class check step

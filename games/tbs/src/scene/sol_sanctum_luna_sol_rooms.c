@@ -96,7 +96,7 @@
 /// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_SCENE_TEMP_02
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.

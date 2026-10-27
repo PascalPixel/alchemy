@@ -37,7 +37,7 @@
 #include "script_layer.h"
 #include "flags.h"
 
-// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
 // the party enters another area, and other areas use the numbers
 // for their own.
 

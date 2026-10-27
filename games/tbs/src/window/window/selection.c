@@ -1402,7 +1402,7 @@ void Resource_ResetPendingTransfer(void) {
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
 /// UBFIX); its one caller, SceneManager_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the field work's
-/// searchCell, is unreachable.
+/// examineCell, is unreachable.
 s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
@@ -1436,13 +1436,13 @@ s32 FieldMenu_Run(void) {
     // A screen left without a choice (-1, or nonzero from the Djinn screen)
     // opens the field menu again. Case 0 is unreachable:
     // FieldMenu_SelectCommand returns a FieldMenuCommand or -1; it would store
-    // the trigger tile ahead of the leader (0xff for none) in searchCell.
+    // the trigger tile ahead of the leader (0xff for none) in examineCell.
     switch (selection) {
     case 0:
-      ret = Actor_GetTriggerTileAheadOfCurrentFar();
+      ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
-      ((struct FieldWork *)state)->searchCell = ret;
+      ((struct FieldWork *)state)->examineCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();

@@ -611,7 +611,7 @@ static void EventScript_TalkToDog(void) {
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gFieldWork->menu = 1;
+    gFieldWork->fieldMenu = 1;
   }
 
   FieldScript_End();

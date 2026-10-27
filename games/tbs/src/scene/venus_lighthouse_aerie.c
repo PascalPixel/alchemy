@@ -112,7 +112,7 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 
@@ -122,7 +122,7 @@
 #define FLAG_SHAMANS_ROD_HOLDER 0x345
 
 /// Area flags that choose the aerie's field music after each battle, by
-/// the map's field music rules (gMap_MusicRules,
+/// the map's field music rules (gScene_MusicRules,
 /// overworld/map_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
 /// the first has begun and MUS_ELEMENTAL_STARS once the second has.
 /// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
@@ -2071,7 +2071,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   FieldScript_Start();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
   VenusLighthouseAerie_TryToPreventFall();
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
@@ -2592,7 +2592,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   } while (GameFlag_Get(FLAG_VENUS_AERIE_PARTY_LIFTED) == 0);
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_Snapshot();
   FieldScript_SetDestination((s32)&SceneId_WorldMap,
                              WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);

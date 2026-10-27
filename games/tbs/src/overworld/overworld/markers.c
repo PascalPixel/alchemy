@@ -80,7 +80,7 @@ void Field_PlaceTreasureSpots(void) {
     if (id >= 100 && id <= 239) {
       // The first event with this trigger that places something wins; the
       // event's value says what the search gives (its FIND_ type, as
-      // Field_SearchCell reads it).
+      // Field_ExamineCell reads it).
       trigger = gOverlayArea.triggers();
       for (; trigger->kind != -1; trigger++) {
         if (trigger->subject != id)
@@ -97,7 +97,7 @@ void Field_PlaceTreasureSpots(void) {
           Object_SetSpriteFlagsFar((struct Object *)markerActor, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
-          // when the one enemy was defeated (Djinn_ResolvePendingEvent).
+          // when the one enemy was defeated (Djinn_ResolvePending).
           if (GameFlag_GetFar(trigger->condition)) {
             if ((trigger->value & 0xfff00000) == 0x500000) {
               Object_ReleaseFar((struct Object *)markerActor);
@@ -198,7 +198,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 }
 
 /// Closes the chest of treasure spot id again (its item could not be carried),
-/// with SE_CHEST_CLOSE. Called by Field_SearchCell.
+/// with SE_CHEST_CLOSE. Called by Field_ExamineCell.
 void TreasureSpot_CloseChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING,
                                  SE_CHEST_CLOSE);
@@ -206,7 +206,7 @@ void TreasureSpot_CloseChest(s32 id) {
 
 /// Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
 /// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward
-/// velocityY of 8 << 16. Called by Field_SearchCell before the mimic's battle.
+/// velocityY of 8 << 16. Called by Field_ExamineCell before the mimic's battle.
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -228,14 +228,14 @@ void TreasureSpot_LaunchMimic(s32 id) {
 }
 
 /// Opens the chest of treasure spot id with SE_CHEST_OPEN, and waits 12
-/// frames. Called by Field_SearchCell when a chest is searched.
+/// frames. Called by Field_ExamineCell when a chest is searched.
 void TreasureSpot_OpenChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING,
                                  SE_CHEST_OPEN);
 }
 
 /// Shows the chest of treasure spot id open, with no sound. Called by
-/// Field_SearchCell once a chest's contents are taken.
+/// Field_ExamineCell once a chest's contents are taken.
 void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -251,7 +251,7 @@ void TreasureSpot_ShowOpened(s32 id) {
 }
 
 /// Returns the object of treasure spot id, or NULL when no slot has it. Called
-/// by Field_SearchCell, and by Reveal's marks (field_fx.c) to skip a treasure
+/// by Field_ExamineCell, and by Reveal's marks (field_fx.c) to skip a treasure
 /// spot already placed.
 struct Object *TreasureSpot_GetActor(s32 id) {
   s32 slotIndex = TreasureSpot_FindSlot(id);
@@ -265,7 +265,7 @@ struct Object *TreasureSpot_GetActor(s32 id) {
 
 /// Hides the object of treasure spot id by clearing its animationKind:
 /// OBJECT_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
-/// by Field_SearchCell once a Psynergy Stone is taken.
+/// by Field_ExamineCell once a Psynergy Stone is taken.
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;

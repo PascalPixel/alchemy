@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_WORK_H
 
 /// @file
-/// FieldWork, the running map's work, with its treasure spots and the raised
-/// events the field loop handles itself.
+/// FieldWork, the running scene's work, with its treasure spots and the raised
+/// triggers the field loop handles itself.
 
 #include "types.h"
 #include "edition.h"
@@ -29,22 +29,22 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, id) == 4);
 STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
-/// The values of FieldWork.raisedEvent that the field loop handles itself,
-/// rather than passing them to the map (Scene_RunRaisedEvent).
-enum FieldRaisedEvent {
+/// The values of FieldWork.raisedTrigger that the field loop handles itself,
+/// rather than passing them to the map (Scene_RunRaisedTrigger).
+enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
-  FIELD_RAISED_EVENT_PARTY_FELL = -1,
+  FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
   /// R on the world map: the picture of the whole world (WorldPicture_Show).
-  FIELD_RAISED_EVENT_WORLD_PICTURE = -888,
+  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held
   /// (FieldEffect_RunVisibilityTransition).
-  FIELD_RAISED_EVENT_WORLD_MAP_ZOOM = -889
+  FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 
 /// A field map's work: SceneManager_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field loop,
 /// the field services and the map overlays all reach it through gFieldWork. The
-/// twelve requests from stepTrigger to raisedEvent are handled by the field
+/// twelve requests from stepTrigger to raisedTrigger are handled by the field
 /// loop.
 struct FieldWork {
   /// The actor template tables placed so far, recorded by
@@ -60,23 +60,25 @@ struct FieldWork {
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
   s16 stepTrigger; ///< a step trigger (1 to 239) for Scene_RunStepTriggerOrExit
-  s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
-  s16 exit;     ///< the exit taken, which ends the map
-  s16 menu;     ///< open the field menu
-  s16 examine;  ///< the A button: examine what is ahead
-  s16 start;    ///< the Start button: open the pause menu
-  u16 talk;     ///< an actor's talk trigger, as actor id | 0x1000
-  s16 searchCell; ///< a cell's metatile behavior, for Field_SearchCell
-  s16 battle;     ///< the formation of a random encounter
-  s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
-  s16 item;       ///< an item to use, packed as Field_UseItem reads it
-  /// A raised event for Scene_RunRaisedEvent, or an enum FieldRaisedEvent.
-  s16 raisedEvent;
+  s16 pushCell;    ///< a metatile behavior (252 to 254) for Field_RunPushCell
+  s16 exit;        ///< the exit taken, which ends the map
+  s16 fieldMenu;   ///< open the field menu
+  /// The A button: a talk, an examine or the field menu, by what is ahead.
+  s16 aButton;
+  s16 pauseMenu;   ///< the Start button: open the Pause menu
+  u16 talk;        ///< an actor's talk trigger, as actor id | 0x1000
+  s16 examineCell; ///< a cell's metatile behavior, for Field_ExamineCell
+  s16 encounter;   ///< the formation of a random encounter
+  s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
+  s16 item;        ///< an item to use, packed as Field_UseItem reads it
+  /// A raised trigger's number for Scene_RunRaisedTrigger, or an enum
+  /// FieldRaisedTrigger.
+  s16 raisedTrigger;
   ///@}
   s16 fallenCount;     ///< the characters who fell this step
   s16 survivorCount;   ///< 0 when the whole party fell
   s16 fallenOwners[9]; ///< the characters who fell, from the active party
-  s16 itemArgument;    ///< the inventory slot Field_UseItem receives
+  s16 itemSlot;        ///< the inventory slot Field_UseItem receives
   /// Frames the leader has pushed against something, counted by the player
   /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
@@ -88,7 +90,7 @@ struct FieldWork {
   /// (about 1/160) on entry, 0 in a town.
   s32 walkingDistanceScale;
   /// Distance walked toward the next 0x10000, at which the party regains PP,
-  /// Djinn recover and poison hurts (Field_ProcessStep).
+  /// Djinn recover and poison hurts (Field_UpdateWalking).
   s32 walkingDistance;
   struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapGridCell *previousCell; ///< the cell before it
@@ -139,8 +141,8 @@ STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
 STATIC_ASSERT(offsetof(struct FieldWork, treasureSpots) == 0x11c);
 STATIC_ASSERT(offsetof(struct FieldWork, stepTrigger) == 0x16c);
 STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);
-STATIC_ASSERT(offsetof(struct FieldWork, battle) == 0x17c);
-STATIC_ASSERT(offsetof(struct FieldWork, raisedEvent) == 0x182);
+STATIC_ASSERT(offsetof(struct FieldWork, encounter) == 0x17c);
+STATIC_ASSERT(offsetof(struct FieldWork, raisedTrigger) == 0x182);
 STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 0x19c);
 STATIC_ASSERT(offsetof(struct FieldWork, mode) == 0x19e);
 STATIC_ASSERT(offsetof(struct FieldWork, encounterZones) == 0x1a0);

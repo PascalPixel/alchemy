@@ -214,7 +214,7 @@ s32 Actor_GetScreenPositionFar(s32 objectId, s32 *position);
 /// Returns the metatile behavior of the searchable cell 16 pixels ahead of the
 /// leader, or 0 when there is nothing to search; the field menu's search
 /// entry asks it.
-s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
+s32 Actor_GetTriggerCellAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
 s32 Party_RemapCharacterIdByFlagsFar(s32 character);

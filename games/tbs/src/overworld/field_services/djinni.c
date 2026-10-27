@@ -135,7 +135,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 ///
 /// Nothing happens when Djinn_GiveToParty refuses the Djinni: -1
 /// when it was found before, -2 when no member has room; its actor then
-/// stays. Called by Djinn_ResolvePendingEvent after a won Djinni battle, by
+/// stays. Called by Djinn_ResolvePending after a won Djinni battle, by
 /// 13 maps directly and by the debug rooms.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
@@ -179,17 +179,17 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 }
 
 /// Puts a Djinni's actor back where its battle started from: for a
-/// pending Djinni battle (pendingDjinnEvent 300 to 380,
+/// pending Djinni battle (pendingDjinni 300 to 380,
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the map's actor placed
 /// for that Djinni (condition = its flag) goes back to its template's position,
 /// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
 /// set, and stands (animation 1). SceneManager_Run calls it as it rebuilds the
-/// map, only while an event is still pending after Djinn_ResolvePendingEvent's
+/// map, only while an event is still pending after Djinn_ResolvePending's
 /// first call, that is after a won battle; the second call then makes this
 /// actor join the party.
 void Actor_PlaceMapActors(void) {
-  s32 flags = gSaveBlock.pendingDjinnEvent & 0xf000;
-  u32 event = gSaveBlock.pendingDjinnEvent & 0xfff;
+  s32 flags = gSaveBlock.pendingDjinni & 0xf000;
+  u32 event = gSaveBlock.pendingDjinni & 0xfff;
   s32 id;
 
   // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
@@ -198,7 +198,8 @@ void Actor_PlaceMapActors(void) {
     event &= 0x7ff;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
-    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gSaveBlock.runResult > 0) {
+    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
+        gSaveBlock.sequenceResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ActorTemplate *desc = Scene_FindActorTemplate(id);
         struct Object *object;
@@ -230,7 +231,7 @@ void Actor_PlaceMapActors(void) {
 }
 
 /// Settles a pending Djinni battle as a map loads, from the battle's result
-/// in runResult (the enemies defeated, 999 when the party fled, -1
+/// in sequenceResult (the enemies defeated, 999 when the party fled, -1
 /// when it lost). SceneManager_Run calls it with shown 0 while it builds the
 /// map and, while the event is still pending, with shown nonzero once the
 /// map is on screen.
@@ -242,9 +243,9 @@ void Actor_PlaceMapActors(void) {
 /// is entered normally again (overworld/actors.c), and drops the event.
 /// A mimic chest's event (kind 0x1000, overworld/triggers.c) sets the chest's
 /// flag when the battle ended with exactly one enemy defeated, and is dropped.
-void Djinn_ResolvePendingEvent(s32 shown) {
+void Djinn_ResolvePending(s32 shown) {
   struct SaveBlock *st = &gSaveBlock;
-  s16 *pending = &st->pendingDjinnEvent;
+  s16 *pending = &st->pendingDjinni;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
 
@@ -255,13 +256,13 @@ void Djinn_ResolvePendingEvent(s32 shown) {
           flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
       // Won: the event waits for the call once the map is shown.
-      if (st->runResult > 0 && st->runResult != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
-      if (st->runResult == 1)
+      if (st->sequenceResult == 1)
         GameFlag_SetFar(flag);
       *pending = shown;
     }
@@ -272,7 +273,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
       flag &= 0x7ff;
-      if (st->runResult > 0) {
+      if (st->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / 20;
         s32 index = djinni % 20;
@@ -290,7 +291,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       }
     }
   }
-  gSaveBlock.pendingDjinnEvent = 0;
+  gSaveBlock.pendingDjinni = 0;
 }
 
 /// Task: updates the 24 field effect sprites.

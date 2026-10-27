@@ -18,7 +18,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gSaveBlock.hazardMode: what advances the hazard count (Field_ProcessStep).
+/// gSaveBlock.hazardMode: what advances the hazard count (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MB_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
@@ -162,8 +162,8 @@ struct SaveBlock {
   ///@}
   /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
   /// flags in bits 15 to 11), resolved on returning to the field.
-  s16 pendingDjinnEvent;
-  s16 runResult;      ///< the last battle's result; -1 for a defeat
+  s16 pendingDjinni;
+  s16 sequenceResult; ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its header

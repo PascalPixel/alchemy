@@ -21,7 +21,7 @@ struct SceneHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
   /// and the step counters and moves Retreat's destination;
-  /// FLAG_AREA_VISITED(area) marks it visited (Scene_ResetFlagsOnEnter).
+  /// FLAG_AREA_VISITED(area) marks it visited (Scene_Arrive).
   s8 area;
   /// An enum SceneType, copied to gSaveBlock.sceneType:
   /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,

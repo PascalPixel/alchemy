@@ -19,7 +19,7 @@
 /// -1 when the leader cannot jump; a chain that is blocked after its first jump
 /// also returns -1, with the leader standing on the jump spot it reached.
 ///
-/// Called by Field_RunPushCellEvent when the leader has pushed against a jump
+/// Called by Field_RunPushCell when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
 /// Cave's pillar and Kolima Forest's bend, which import it. Moves the leader,
 /// and takes the field over between FieldScript_Start and FieldScript_End.
@@ -118,7 +118,7 @@ again:
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
 /// when there is nothing to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCellEvent for a climbing spot (0xfd) with Down held,
+/// Called by Field_RunPushCell for a climbing spot (0xfd) with Down held,
 /// and imported by the maps with ladders and climbable walls (Babi's
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gSaveBlock.movementMode: 1 while the leader is on the wall, 0 off it.
@@ -197,7 +197,7 @@ failure:
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
 /// to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCellEvent for a climbing spot (0xfd) with Up held,
+/// Called by Field_RunPushCell for a climbing spot (0xfd) with Up held,
 /// and imported by the maps with ladders and climbable walls (Babi's
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gSaveBlock.movementMode as Field_ClimbDown does.

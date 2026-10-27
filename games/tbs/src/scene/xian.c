@@ -157,7 +157,7 @@ enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The event the water carrier raises when the leader has stood in her way
 /// for XIAN_CARRIER_BLOCKED_FRAMES.
-enum XianRaisedEvent { RAISED_CARRIER_BLOCKED = 200 };
+enum XianRaisedTrigger { RAISED_CARRIER_BLOCKED = 200 };
 
 enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
@@ -298,7 +298,7 @@ static s32 Xian_WatchWaterCarrierPath(union ActorOrEffect *fieldObject) {
     self->riseCounter = 0;
   }
   if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
-    gFieldWork->raisedEvent = RAISED_CARRIER_BLOCKED;
+    gFieldWork->raisedTrigger = RAISED_CARRIER_BLOCKED;
     self->riseCounter = 0;
   }
   Xian_UpdateCarrierTracking(self, leader, 18, near);

@@ -115,8 +115,8 @@ void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject) {
 /// a free object. The picture is object 22, thrown up (velocityY 2 << 16,
 /// gravity 0x4000: it rises for 8 frames) while it grows to full size, its icon
 /// drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded
-/// into VRAM. The caller owns the picture: Field_SearchCell releases it once
-/// the find is told. Called by Field_SearchCell for coins and items found, and
+/// into VRAM. The caller owns the picture: Field_ExamineCell releases it once
+/// the find is told. Called by Field_ExamineCell for coins and items found, and
 /// by FieldEffect_PlayCueAndStartEmitterOnTarget.
 struct Object *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   struct Object *picture;
@@ -199,7 +199,7 @@ struct Object *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   return picture;
 }
 
-/// Releases object unless it is NULL. Called by Field_SearchCell to drop the
+/// Releases object unless it is NULL. Called by Field_ExamineCell to drop the
 /// picture of an item nobody could carry.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
@@ -208,7 +208,7 @@ void Object_DestroyIfPresent(void *object) {
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
 /// holds it up (ANIM_LEADER_ARMS_RAISED) facing the screen. Called by
-/// Field_SearchCell for what a search finds, by ItemDisplay_ShowPicture and by
+/// Field_ExamineCell for what a search finds, by ItemDisplay_ShowPicture and by
 /// ItemDisplay_ShowItem.
 void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   struct Object *leader;

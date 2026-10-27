@@ -79,7 +79,7 @@
 #include "songs.h"
 #include "heap.h"
 
-// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
 // the party enters another area, and other areas use the numbers
 // for their own.
 /// CrossboneIsleBane's third stone pillar has come down to two cells high or
@@ -145,7 +145,7 @@ enum CrossboneIsleStatuesActorId {
 /// The events CrossboneIsleStatues's per-frame checks raise when the
 /// leader crosses the first, second or fifth pursuer's stretch of the room.
 /// The third and fourth chases start from step triggers instead.
-enum CrossboneIsleStatuesRaisedEvent {
+enum CrossboneIsleStatuesRaisedTrigger {
   RAISED_FIRST_CHASE = 91,
   RAISED_SECOND_CHASE = 92,
   RAISED_FIFTH_CHASE = 96
@@ -688,7 +688,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
       gSaveBlock.pausedObject != ACTOR_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    work->raisedEvent = RAISED_FIRST_CHASE;
+    work->raisedTrigger = RAISED_FIRST_CHASE;
   }
 }
 
@@ -730,7 +730,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
       gSaveBlock.pausedObject != ACTOR_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
     Script_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    MapLocalState_StoreStep(&work->raisedEvent, RAISED_SECOND_CHASE);
+    MapLocalState_StoreStep(&work->raisedTrigger, RAISED_SECOND_CHASE);
   }
 }
 
@@ -885,7 +885,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
       Script_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
     Script_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    MapLocalState_StoreStep(&work->raisedEvent, RAISED_FIFTH_CHASE);
+    MapLocalState_StoreStep(&work->raisedTrigger, RAISED_FIFTH_CHASE);
   }
 }
 

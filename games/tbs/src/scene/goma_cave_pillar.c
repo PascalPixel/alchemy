@@ -79,7 +79,7 @@
 #include "flags.h"
 #include "songs.h"
 
-// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
 // the party enters another area, and other areas use the numbers
 // for their own.
 /// The stump has been pushed over into the room below.
@@ -135,7 +135,7 @@ enum { ENTRANCE_STUMP_FALL = 99 };
 
 /// The trigger the man's timer raises once Forge has joined the party
 /// (GomaCavePillar_FidgetWhileForgeFights).
-enum GomaCavePillarRaisedEvent { RAISED_FORGE_JOINED = 99 };
+enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
@@ -556,8 +556,8 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Import_ActorSetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
-  if (gSaveBlock.pendingDjinnEvent == 0)
-    work->raisedEvent = RAISED_FORGE_JOINED;
+  if (gSaveBlock.pendingDjinni == 0)
+    work->raisedTrigger = RAISED_FORGE_JOINED;
 }
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
@@ -629,7 +629,7 @@ s32 Scene_Initialize(void) {
     EventScript_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.
-  if (gSaveBlock.pendingDjinnEvent != 0) {
+  if (gSaveBlock.pendingDjinni != 0) {
     gGomaCavePillar_WitnessFrames = 0;
     Task_AddFrame(GomaCavePillar_FidgetWhileForgeFights, TASK_PASS_FRAME);
   }

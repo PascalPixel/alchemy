@@ -63,7 +63,7 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a map's tables: events
-/// (Scene_FindTrigger, Field_SearchCell), actor templates
+/// (Scene_FindTrigger, Field_ExamineCell), actor templates
 /// (FieldScript_SpawnActorTemplates), exit regions
 /// (Field_CheckExitRegions) and item triggers.
 s32 GameFlag_IsConditionActive(s32 condition) {
@@ -83,7 +83,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (type 0x005 in its top 12 bits).
 ///
-/// Called by Scene_FindTrigger. Field_SearchCell tests such an event's
+/// Called by Scene_FindTrigger. Field_ExamineCell tests such an event's
 /// condition itself (a chest's flag is set once it is opened), so the event is
 /// found either way and the leader still checks the spot; a mimic is found only
 /// while its condition holds.
@@ -112,7 +112,7 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 /// the direction in the top four bits.
 ///
 /// Called by every lookup of a map's events in this part and by
-/// Actor_GetTriggerTileAheadOfCurrent. Changes nothing.
+/// Actor_GetTriggerCellAheadOfCurrent. Changes nothing.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct TriggerView *trigger = (struct TriggerView *)work->triggers;
@@ -312,7 +312,7 @@ finish:
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
 /// Called by SceneManager_Run for a positive event request (work->event).
-s32 Scene_RunRaisedEvent(s32 value) {
+s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
   struct TriggerView *trigger;
@@ -343,7 +343,7 @@ s32 Scene_RunRaisedEvent(s32 value) {
 /// nothing.
 ///
 /// Called by SceneManager_Run for its step request (work->action), which
-/// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
+/// Field_UpdateWalking raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->exit for an exit, and clears work->blockedSteps after a
 /// step trigger that needs pushing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
@@ -401,9 +401,9 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// pushed for more than 12 frames; the count then restarts.
 ///
 /// Called by SceneManager_Run for its push request (work->pushCell), which
-/// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
+/// Field_UpdateWalking raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
-s32 Field_RunPushCellEvent(s32 behavior) {
+s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gSaveBlock.leaderActorId;
 
@@ -443,8 +443,8 @@ s32 Field_RunPushCellEvent(s32 behavior) {
 ///
 /// Called by SceneManager_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
-/// (work->battle), give coins or an item, or restore all PP.
-s32 Field_SearchCell(s32 tile) {
+/// (work->encounter), give coins or an item, or restore all PP.
+s32 Field_ExamineCell(s32 tile) {
   const struct Trigger *trigger;
   s32 leader;
   u32 messageOffset;
@@ -552,18 +552,18 @@ s32 Field_SearchCell(s32 tile) {
 
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_LaunchMimic(tile);
-              // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
+              // The chest's flag (with 0x1000) waits in pendingDjinni,
               // which SceneManager_Run resolves when the map is entered again
               // after the battle.
               if (condition != -1) {
-                condition = gSaveBlock.pendingDjinnEvent = condition | 0x1000;
+                condition = gSaveBlock.pendingDjinni = condition | 0x1000;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/round.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
               // still offers it, refusing outright only for
               // BATTLE_TYPE_SCRIPTED and BATTLE_TYPE_LINK.
-              work->battle = Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC,
-                                                          (u16)trigger->value);
+              work->encounter = Encounter_GetFormationAtSlot(
+                  ENCOUNTER_ZONE_MIMIC, (u16)trigger->value);
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);

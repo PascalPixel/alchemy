@@ -452,7 +452,7 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a map (Scene_ResetFlagsOnEnter, SceneManager_Run) and at the end of
+/// entering a map (Scene_Arrive, SceneManager_Run) and at the end of
 /// a field script, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
@@ -649,7 +649,7 @@ void Party_EndChildhood(void) {
   Unit_UpdateClass(JENNA);
   Unit_Calculate(JENNA);
   GameFlag_Clear(FLAG_KEEP_MUSIC_HELD);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 
   for (unitId = 0; unitId <= 1; unitId++) {
     struct Unit *unit = Unit_Get(unitId);

@@ -212,8 +212,8 @@ enum LobbySlot {
   LOBBY_SLOT_ALONE = 5
 };
 
-/// The Battle Arena's raised events (FieldWork.raisedEvent).
-enum BattleArenaRaisedEvent {
+/// The Battle Arena's raised events (FieldWork.raisedTrigger).
+enum BattleArenaRaisedTrigger {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< BattleArena_PromptToParticipate
   LOBBY_EVENT_DISCONNECTED = 2 ///< BattleArena_ReportDisconnection
@@ -411,7 +411,7 @@ static s32 BattleArena_PollPeerReady(void) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
-  if (work->raisedEvent != LOBBY_EVENT_DISCONNECTED) {
+  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
     BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
     if (!GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
       // Without a link for 26 frames, clear every console's received payload
@@ -434,7 +434,7 @@ static s32 BattleArena_PollPeerReady(void) {
            BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) {
-          work->raisedEvent = LOBBY_EVENT_PROMPT;
+          work->raisedTrigger = LOBBY_EVENT_PROMPT;
         }
         result = 1;
       } else {
@@ -445,7 +445,7 @@ static s32 BattleArena_PollPeerReady(void) {
     if (GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
         GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED) &&
         !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
-      work->raisedEvent = LOBBY_EVENT_PROMPT;
+      work->raisedTrigger = LOBBY_EVENT_PROMPT;
     }
   }
   // The 25th frame without a link while a linked battle is being arranged:
@@ -455,14 +455,14 @@ static s32 BattleArena_PollPeerReady(void) {
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
       !BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sBattleArenaWaitFrames > 24) {
-    work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED)) {
-    work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   }
 #ifdef UBFIX
   (void)result;
@@ -519,7 +519,7 @@ static s32 BattleArena_ReportDisconnection(void) {
   GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
   FieldScript_Start();
-  work->raisedEvent = LOBBY_EVENT_NONE;
+  work->raisedTrigger = LOBBY_EVENT_NONE;
   FieldScript_SetMessageId(MsgLobbyLinkDisconnected);
   FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
   GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
@@ -956,7 +956,7 @@ static s32 BattleArena_EnterBattle(void) {
         missedFrames = 0;
       }
       if (cancelEntry) {
-        work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
@@ -1021,7 +1021,7 @@ static s32 BattleArena_EnterBattle(void) {
         GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
-        work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         FieldScript_End();
         return LOBBY_NO_RESULT;
       }
@@ -1670,7 +1670,7 @@ s32 BattleArena_RunRoundResult(void) {
     if (Script_GetFlag(FLAG_AREA_TEMP_E8)) {
       work = gFieldWork;
       GameFlag_Clear(FLAG_AREA_TEMP_E8);
-      work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
+      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       WaitFrames(20);
       BattleArena_InitializeSerial();

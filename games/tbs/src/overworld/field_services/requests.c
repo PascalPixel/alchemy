@@ -18,7 +18,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 slot = slotNo;
   struct FieldWork *work = gFieldWork;
 
-  work->battle = Encounter_GetFormationAtSlot(zone, slot);
+  work->encounter = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
@@ -31,9 +31,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
 /// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn
-/// are numbered 20 to an element (Djinn_ResolvePendingEvent). Sets
-/// gSaveBlock.pendingDjinnEvent and the field work's battle request; when
-/// the map is entered again after the battle, Djinn_ResolvePendingEvent
+/// are numbered 20 to an element (Djinn_ResolvePending). Sets
+/// gSaveBlock.pendingDjinni and the field work's encounter request; when
+/// the map is entered again after the battle, Djinn_ResolvePending
 /// reads the pending event to make the Djinni join or hide it. About 20
 /// maps reach it through Field_RequestDjinnBattleFar.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
@@ -52,8 +52,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
-  state->pendingDjinnEvent = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
-  work->battle = Encounter_GetDjinnFormation(no);
+  state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
+  work->encounter = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     struct Object *leader = Actor_GetByActorId(state->leaderActorId);
 

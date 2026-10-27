@@ -292,7 +292,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
-      requests->raisedEvent = RAISED_SANDSTORM_CARRIES_PARTY_AWAY;
+      requests->raisedTrigger = RAISED_SANDSTORM_CARRIES_PARTY_AWAY;
     } else if (GameFlag_Get(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
@@ -344,7 +344,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT,
                           SANDSTORM_CAPTURE_FRAMES);
     FieldScript_End();
-    gFieldWork->battle = 0; // drop any battle this step rolled
+    gFieldWork->encounter = 0; // drop any battle this step rolled
   }
 }
 
@@ -610,7 +610,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
       struct FieldWork *work = gFieldWork;
 
       if (selectedActor->motionFlags != 0) {
-        work->raisedEvent = RAISED_CHASING_SANDSTORM_CATCHES;
+        work->raisedTrigger = RAISED_CHASING_SANDSTORM_CATCHES;
       }
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       actor->targetX = selectedActor->x.fixed;
@@ -661,8 +661,8 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   struct SaveBlock *state;
 
   // The storm no longer carries the party away.
-  if (gFieldWork->raisedEvent == RAISED_SANDSTORM_CARRIES_PARTY_AWAY) {
-    gFieldWork->raisedEvent = 0;
+  if (gFieldWork->raisedTrigger == RAISED_SANDSTORM_CARRIES_PARTY_AWAY) {
+    gFieldWork->raisedTrigger = 0;
   }
   GameFlag_Clear(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertNorth) {

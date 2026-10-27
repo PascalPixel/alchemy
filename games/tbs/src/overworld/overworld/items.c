@@ -65,7 +65,7 @@ s32 Field_FindItemTrigger(s32 item) {
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
 /// item's own action included; SceneManager_Run ignores it.
 /// Called by SceneManager_Run for the item request (work->item and
-/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .entrance to the
+/// work->itemSlot). Retreat sets gSaveBlock.sceneId and .entrance to the
 /// Retreat point and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;

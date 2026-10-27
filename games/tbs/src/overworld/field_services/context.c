@@ -56,7 +56,7 @@ UNUSED void Exit_NoOp(void) {}
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by SceneManager_Run when it
-/// handles work->battle; clears work->transitionActive once the screen is
+/// handles work->encounter; clears work->transitionActive once the screen is
 /// closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {

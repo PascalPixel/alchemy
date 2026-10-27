@@ -116,8 +116,8 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    // Djinn_ResolvePendingEvent hides a Djinni after the party loses or flees.
-    // Scene_ResetFlagsOnEnter clears these temporary flags on a normal entry.
+    // Djinn_ResolvePending hides a Djinni after the party loses or flees.
+    // Scene_Arrive clears these temporary flags on a normal entry.
     if ((u32)(condition - FLAG_DJINN_FIRST) <= ACTOR_DJINNI_FLAG_COUNT - 1 &&
         work->mode != OBJECT_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))

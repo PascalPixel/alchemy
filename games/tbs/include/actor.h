@@ -11,7 +11,7 @@
 
 /// How a map fades in and out: SCENE_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
-enum MapTransitionStyle {
+enum ScreenTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
   TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
   TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses

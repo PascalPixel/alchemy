@@ -326,7 +326,7 @@ enum LunpaFortressMetatileBehavior {
 };
 
 /// The events a watching guard raises on spotting the party.
-enum LunpaFortressRaisedEvent {
+enum LunpaFortressRaisedTrigger {
   RAISED_PATROL_PAIR_SPOTTED = 91,
   RAISED_HALL_PATROL_SPOTTED,
   RAISED_GROUND_FLOOR_PATROL_SPOTTED,
@@ -823,11 +823,11 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
-#define PATROL_RAISED_EVENT(work) ((work)->raisedEvent)
+#define PATROL_RAISED_TRIGGER(work) ((work)->raisedTrigger)
 #else
 #define PATROL_PSYNERGY_REQUEST(work) ((work)[191])
 #define PATROL_ITEM_REQUEST(work) ((work)[192])
-#define PATROL_RAISED_EVENT(work) ((work)[193])
+#define PATROL_RAISED_TRIGGER(work) ((work)[193])
 #endif
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
@@ -890,7 +890,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
                           RAISED_PATROL_PAIR_SPOTTED);
       }
     }
@@ -995,7 +995,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
                           RAISED_HALL_PATROL_SPOTTED);
       }
     }
@@ -1073,7 +1073,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
                           RAISED_GROUND_FLOOR_PATROL_SPOTTED);
       }
     }
@@ -1117,7 +1117,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) != 0) {
-        work->raisedEvent = RAISED_UPPER_HALL_SPOTTED;
+        work->raisedTrigger = RAISED_UPPER_HALL_SPOTTED;
       }
     }
   }
@@ -1143,7 +1143,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
     s32 caughtTrigger;
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
-    raisedTrigger = &work->raisedEvent;
+    raisedTrigger = &work->raisedTrigger;
     caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
     *raisedTrigger = caughtTrigger;
   }
@@ -1163,7 +1163,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
         GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
-        work->raisedEvent = RAISED_SENTRIES_SPOTTED;
+        work->raisedTrigger = RAISED_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1182,7 +1182,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
         GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
-        work->raisedEvent = RAISED_SENTRIES_SPOTTED;
+        work->raisedTrigger = RAISED_SENTRIES_SPOTTED;
       }
     }
   }

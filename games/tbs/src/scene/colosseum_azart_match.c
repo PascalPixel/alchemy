@@ -645,7 +645,7 @@ static void EventScript_ReachArena(void) {
                                  COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch,
                                    COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
 /// Walking into something in the Rock Challenge (step trigger 90): a rock is

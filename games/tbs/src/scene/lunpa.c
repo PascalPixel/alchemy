@@ -759,7 +759,7 @@ static void EventScript_CloakFades(void) {
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
-    work->raisedEvent = RAISED_PARTY_SPOTTED;
+    work->raisedTrigger = RAISED_PARTY_SPOTTED;
 #else
     EventScript_GuardsCatchParty();
 #endif
@@ -780,7 +780,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
-    work->raisedEvent = RAISED_PARTY_SPOTTED;
+    work->raisedTrigger = RAISED_PARTY_SPOTTED;
   }
 }
 

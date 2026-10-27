@@ -119,7 +119,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 
@@ -1246,7 +1246,7 @@ static void EventScript_ReadRelief(void) {
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
-  message = work->searchCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
+  message = work->examineCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
             MB_VENUS_LIGHTHOUSE_FIRST_RELIEF;
 #endif
   FieldMessage_Show(message, 1);

@@ -33,7 +33,7 @@
 /// events exist only while the party is in it. Each pushable statue's column
 /// is kept in two area flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
-/// Scene_ResetFlagsOnEnter clears them when the party enters another
+/// Scene_Arrive clears them when the party enters another
 /// area, so the statues are back at their starts on the next visit.
 /// Searching a relief while its Small Jewel is held asks for the field menu as
 /// the search ends, so that the jewel can be used on it at once.
@@ -74,7 +74,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 
@@ -314,7 +314,7 @@ static void EventScript_InspectFirstMinotaurRelief(void) {
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *menuRequest = &gFieldWork->menu;
+      u16 *menuRequest = &gFieldWork->fieldMenu;
       u16 open = 1;
       *menuRequest = open;
     }
@@ -396,7 +396,7 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
 
-      u16 *menuRequest = &work->menu;
+      u16 *menuRequest = &work->fieldMenu;
       s32 open = 1;
       *menuRequest = open;
     }

@@ -84,9 +84,9 @@ At power-on `System_Initialize` clears the fast memory, installs the code that
 always stays loaded and the interrupt handlers, loads the window graphics,
 starts the sound and calls `SequenceManager_Run`, which never returns.
 
-A scene's turn is `Scene_ResetFlagsOnEnter`, `Scene_ChooseMusic`,
+A scene's turn is `Scene_Arrive`, `Scene_ChooseMusic`,
 `Scene_LoadOverlay` and `SceneManager_Run`, whose result goes to
-`Scene_TakeExit`. Inside, the party walks (`Field_ProcessStep` each frame)
+`Scene_TakeExit`. Inside, the party walks (`Field_UpdateWalking` each frame)
 until something makes a request, and the requests are then handled until
 none is left, most urgent first: an exit, an event, a random battle, a step
 trigger, a push, the A button, the field menu, talking, searching, Psynergy,

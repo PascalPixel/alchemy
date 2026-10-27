@@ -358,9 +358,9 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
           [i - ACTOR_FIRST_PISTON];
       if ((u32)(actor->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
         if (row == 11 && kind == 4)
-          work->raisedEvent = kind;
+          work->raisedTrigger = kind;
         if (row == 12 && kind == 5)
-          work->raisedEvent = kind;
+          work->raisedTrigger = kind;
       }
     }
   }
@@ -981,7 +981,7 @@ static void EventScript_ReachArena(void) {
                                  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
                                    COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
 /// Walking into something on Colosseum Final 3's stages (step trigger 90):
@@ -1737,13 +1737,13 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      if (work->raisedEvent != 5) {
+      if (work->raisedTrigger != 5) {
         do {
           WaitFrames(1);
           if (++promptResult > 239) {
             break;
           }
-        } while (work->raisedEvent != 5);
+        } while (work->raisedTrigger != 5);
       }
       EventScript_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -1753,7 +1753,7 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
-      work->raisedEvent = 0;
+      work->raisedTrigger = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoOperatorWallsCheer);
       FieldScript_ShowMessageAndWait(guideId, 0);

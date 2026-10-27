@@ -36,7 +36,7 @@ typedef struct WorldMapEncounterRule {
 
 /// Chooses the current map's encounter zones, one for each kind of ground
 /// the party can stand on (gFieldWork->encounterZones, read by
-/// Encounter_RollLayoutStep), from the first rule matching the map
+/// Encounter_RollMapStep), from the first rule matching the map
 /// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
@@ -129,7 +129,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// world map's debug entrance 99, and cleared by every entry that does
 /// not keep the party's position. Flag 351 (0x15f), which no Broken Seal C code
 /// sets, skips the checks and the counting and draws a formation at once.
-/// Called by Encounter_RollLayoutStep and Encounter_RollWorldMap; adds to
+/// Called by Encounter_RollMapStep and Encounter_RollWorldMap; adds to
 /// gSaveBlock.encounterSteps, sets or clears work->encounterBias, and on a
 /// battle sets gSaveBlock.battleMusic.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
@@ -235,9 +235,10 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 /// ground, 1 and 2 for MB_ENCOUNTER_GROUND_1 and _2 cells.
 /// steps: the step weight, passed on to Encounter_CountStepsAndSelectFormation.
 /// Returns the formation to fight, or 0 for no battle.
-/// Called by Field_ProcessStep in a map, which stores the result in
-/// work->battle; steps is the leader's speed limit, doubled with FLAG_LURE_CAP.
-s32 Encounter_RollLayoutStep(u32 terrain, s32 steps) {
+/// Called by Field_UpdateWalking in a map, which stores the result in
+/// work->encounter; steps is the leader's speed limit, doubled with
+/// FLAG_LURE_CAP.
+s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
   u8 *zone;
 
   zone = gFieldWork->encounterZones;
@@ -246,7 +247,7 @@ s32 Encounter_RollLayoutStep(u32 terrain, s32 steps) {
 
 /// Rolls a random battle on the world map, taking the zone from the cell at
 /// pos. Returns the formation to fight, or 0 for no battle. Called by
-/// Field_ProcessStep on the world map.
+/// Field_UpdateWalking on the world map.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
@@ -275,7 +276,7 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 #endif
 }
 
-/// A rule choosing a map's field music (gMap_MusicRules,
+/// A rule choosing a map's field music (gScene_MusicRules,
 /// map_rules.s), ended by id -1.
 struct MapMusicRule {
   s16 id;            ///< a map, or an area
@@ -285,7 +286,7 @@ struct MapMusicRule {
   s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
 
-extern const struct MapMusicRule gMap_MusicRules[];
+extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Chooses the current map's field music (gSaveBlock.cue) from the first rule
 /// matching the map or its area and the entrance;
@@ -296,7 +297,7 @@ void Scene_ChooseMusic(void) {
   s16 sceneId = gSaveBlock.sceneId;
   s16 entrance = gSaveBlock.entrance;
   s16 group = gSaveBlock.area;
-  const struct MapMusicRule *rule = gMap_MusicRules;
+  const struct MapMusicRule *rule = gScene_MusicRules;
 
   for (; rule->id != -1; rule++) {
     if (rule->idIsMap) {

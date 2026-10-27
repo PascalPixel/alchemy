@@ -934,7 +934,7 @@ static void EventScript_ReachArena(void) {
                                  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
                                    COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
 /// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.

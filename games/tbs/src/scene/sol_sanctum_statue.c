@@ -91,7 +91,7 @@
 /// before it (its render)
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// Set once Kraden has found the hole and explained the disarmed trap.

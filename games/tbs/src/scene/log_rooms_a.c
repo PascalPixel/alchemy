@@ -26,7 +26,8 @@
 ///   LOG_ROOMS_A_LEADER_CORNERED, _THIEF_CORNERED or _BOTH_CORNERED, and
 ///   Ivan reads the cornered suspect's mind
 ///   (EventScript_ReadCorneredSuspectsMinds, FLAG_VAULT_SUSPECTS_MIND_READ).
-///   Meanwhile the menus answer with Garet's refusal (FLAG_MENUS_RAISE_EVENT).
+///   Meanwhile the menus answer with Garet's refusal
+///   (FLAG_MENUS_RAISE_TRIGGER).
 /// - In the room with the crate, Move pushes the crate aside
 ///   (EventScript_CheckCrateMoved, FLAG_VAULT_CRATE_MOVED), and the way behind
 ///   it climbs to the loft (EventScript_ClimbToLoft). Freeing the villager tied
@@ -110,7 +111,7 @@
 #define LOG_ROOMS_A_CORNERED_FRAMES 30
 
 /// The chase adds the blocked-suspect mask (1 the leader, 2 the thief) to 200.
-enum LogRoomsARaisedEvent {
+enum LogRoomsARaisedTrigger {
   LOG_ROOMS_A_CORNERED_EVENT_BASE = 200,
   LOG_ROOMS_A_LEADER_CORNERED,
   LOG_ROOMS_A_THIEF_CORNERED,
@@ -498,8 +499,8 @@ static void EventScript_TalkToInnkeeper(void) {
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
 ///
-/// Reached through FIELD_RAISED_EVENT_MENUS, which the engine raises in place
-/// of a menu or a shortcut while FLAG_MENUS_RAISE_EVENT is set.
+/// Reached through FIELD_RAISED_TRIGGER_MENUS, which the engine raises in place
+/// of a menu or a shortcut while FLAG_MENUS_RAISE_TRIGGER is set.
 static void EventScript_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
@@ -1712,12 +1713,12 @@ static void EventScript_DiscussSuspiciousGuests(void) {
 /// suspects.
 ///
 /// Reached by stepping on MB_LOG_ROOMS_A_CORNERING_START while
-/// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_EVENT, so the
+/// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_TRIGGER, so the
 /// menus answer with Garet's refusal, and FLAG_VAULT_CORNERING_SUSPECTS, so
 /// talking to Ivan or the suspects does nothing; then starts the chase
 /// (LogRoomsA_StartActorStops).
 static void EventScript_StartCorneringSuspects(void) {
-  GameFlag_Set(FLAG_MENUS_RAISE_EVENT);
+  GameFlag_Set(FLAG_MENUS_RAISE_TRIGGER);
   GameFlag_Set(FLAG_VAULT_CORNERING_SUSPECTS);
   LogRoomsA_StartActorStops();
 }
@@ -1786,9 +1787,9 @@ static inline void LogRoomsA_SetPartyImagePriority(void) {
 /// Reached through raised events 201 to 203, which
 /// LogRoomsA_UpdateActorStops raises after thirty frames with at
 /// least one suspect blocked: 201 the leader, 202 the thief, 203 both. Stops
-/// the chase, clears FLAG_MENUS_RAISE_EVENT and FLAG_VAULT_CORNERING_SUSPECTS,
-/// plays the party's talk (LogRoomsA_DiscussMindReading) and sets
-/// FLAG_VAULT_SUSPECTS_MIND_READ.
+/// the chase, clears FLAG_MENUS_RAISE_TRIGGER and
+/// FLAG_VAULT_CORNERING_SUSPECTS, plays the party's talk
+/// (LogRoomsA_DiscussMindReading) and sets FLAG_VAULT_SUSPECTS_MIND_READ.
 static void EventScript_ReadCorneredSuspectsMinds(void) {
   s32 actorId;
   struct FieldWork *work;
@@ -1796,7 +1797,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   work = gFieldWork;
   FieldScript_Start();
   Task_Remove(LogRoomsA_UpdateActorStops);
-  GameFlag_Clear(FLAG_MENUS_RAISE_EVENT);
+  GameFlag_Clear(FLAG_MENUS_RAISE_TRIGGER);
   GameFlag_Clear(FLAG_VAULT_CORNERING_SUSPECTS);
   Import_ActorSetAnimation(ACTOR_SUSPECTED_LEADER, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_SUSPECTED_THIEF, ANIM_STAND);
@@ -1810,7 +1811,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   FieldScript_WaitFrames(10);
   actorId = ACTOR_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
-  switch (work->raisedEvent) {
+  switch (work->raisedTrigger) {
   case LOG_ROOMS_A_THIEF_CORNERED:
   case LOG_ROOMS_A_BOTH_CORNERED:
     FieldScript_SetMessageId(MsgVaultImSurrounded);
@@ -1818,7 +1819,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     ObjectMotion_SetVarCbAndRefresh(ACTOR_SUSPECTED_THIEF, 2);
     LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
-    if (work->raisedEvent == LOG_ROOMS_A_THIEF_CORNERED) {
+    if (work->raisedTrigger == LOG_ROOMS_A_THIEF_CORNERED) {
       actorId = ACTOR_SUSPECTED_THIEF;
       break;
     }
@@ -3431,7 +3432,7 @@ static void LogRoomsA_UpdateActorStops(void) {
   // A failed route choice alone is not enough to end the chase.
   if (blocked != 0) {
     if (++gLogRoomsA_StopTimer > LOG_ROOMS_A_CORNERED_FRAMES - 1)
-      work->raisedEvent = blocked + LOG_ROOMS_A_CORNERED_EVENT_BASE;
+      work->raisedTrigger = blocked + LOG_ROOMS_A_CORNERED_EVENT_BASE;
   } else {
     gLogRoomsA_StopTimer = blocked;
   }
@@ -4000,7 +4001,7 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { TRIGGER_RAISED, LOG_ROOMS_A_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
-    { TRIGGER_RAISED, FIELD_RAISED_EVENT_MENUS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
+    { TRIGGER_RAISED, FIELD_RAISED_TRIGGER_MENUS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
     { TRIGGER_STEP, MB_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
     { STEP_TRIGGER_WALKING, MB_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
     { TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },

@@ -1866,7 +1866,7 @@ static void FuchinFallsCave_SearchDragonStatue(void) {
   } else {
     FieldMessage_Show(MsgFuchinEyelessDragon, 1);
     if (PartyInventory_FindMember(ITEM_DRAGONS_EYE) != -1) {
-      gFieldWork->menu = 1;
+      gFieldWork->fieldMenu = 1;
     }
   }
   FieldScript_End();

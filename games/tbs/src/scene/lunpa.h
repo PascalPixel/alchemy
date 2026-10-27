@@ -60,7 +60,7 @@ enum LunpaFortressGatesMetatileBehavior {
 };
 
 /// The event the gates' guards raise on spotting the uncloaked party.
-enum LunpaFortressGatesRaisedEvent { RAISED_PARTY_SPOTTED = 91 };
+enum LunpaFortressGatesRaisedTrigger { RAISED_PARTY_SPOTTED = 91 };
 
 enum {
   DOOR_COUNT = 8,

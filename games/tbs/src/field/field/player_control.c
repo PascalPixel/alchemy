@@ -45,12 +45,12 @@ UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
 /// requests (enum FieldShortcutKind) and the low 14 bits which one. With
-/// FLAG_MENUS_RAISE_EVENT set it raises FIELD_RAISED_EVENT_MENUS instead, as
-/// the menus do then; on the world map R raises
-/// FIELD_RAISED_EVENT_WORLD_PICTURE and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
-/// Returns the request id, the assignment's low 14 bits, even when it raised an
-/// event instead; a shortcut with nothing assigned returns 0, as no key pressed
-/// does.
+/// FLAG_MENUS_RAISE_TRIGGER set it raises FIELD_RAISED_TRIGGER_MENUS instead,
+/// as the menus do then; on the world map R raises
+/// FIELD_RAISED_TRIGGER_WORLD_PICTURE and L
+/// FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM. Returns the request id, the
+/// assignment's low 14 bits, even when it raised an event instead; a shortcut
+/// with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
 /// work->item or work->event, which the map loop (run_scene.c)
@@ -60,13 +60,13 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 requestId = 0x3FFF & encodedAssignment;
   struct FieldWork *work = gFieldWork;
 
-  if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-    work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
+  if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
+    work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      work->raisedEvent = FIELD_RAISED_EVENT_WORLD_PICTURE;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      work->raisedEvent = FIELD_RAISED_EVENT_WORLD_MAP_ZOOM;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
     }
   } else {
     switch (assignmentKind) {
@@ -89,7 +89,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// Only the first configured key pressed this frame counts, in that order.
 ///
 /// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
-/// and SC_KEY_COUNT. Sets work->menu, examine or start.
+/// and SC_KEY_COUNT. Sets work->fieldMenu, aButton or pauseMenu.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -97,13 +97,13 @@ s32 Field_CheckConfiguredKeys(void) {
   if (work == NULL)
     return 0;
   if (gKeysPressed & gSaveBlock.selectKeys) {
-    work->menu = 1;
+    work->fieldMenu = 1;
     result = 1;
   } else if (gKeysPressed & gSaveBlock.aKeys) {
-    work->examine = 1;
+    work->aButton = 1;
     result = 1;
   } else if (gKeysPressed & gSaveBlock.startKeys) {
-    work->start = 1;
+    work->pauseMenu = 1;
     result = 1;
   } else if (gKeysPressed & gSaveBlock.firstShortcutKeys) {
     result = Field_RequestShortcut(gSaveBlock.firstShortcut);

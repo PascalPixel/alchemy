@@ -9,7 +9,7 @@
 // EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
 // the whole table. SCENE_EXIT and SCENE_EXIT_UNLESS (scene_tables.h) give an
 // exit word's bits.
-#define EXIT_MAP_MASK 0xfff
+#define EXIT_SCENE_MASK 0xfff
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
 #define EXIT_HAS_FLAG 0x10000000
@@ -47,9 +47,9 @@ void Scene_TakeExit(s32 exitId) {
   for (;;) {
     // Find the header of the current scene: exit words have high bits set.
     sceneId = *exitTable++;
-    if (sceneId & ~EXIT_MAP_MASK)
+    if (sceneId & ~EXIT_SCENE_MASK)
       continue;
-    sceneId &= EXIT_MAP_MASK;
+    sceneId &= EXIT_SCENE_MASK;
     if (sceneId == EXIT_TABLE_END)
       break;
     if (sceneId != currentMap)
@@ -58,14 +58,14 @@ void Scene_TakeExit(s32 exitId) {
     firstExit = exitTable;
     for (;;) {
       word = *exitTable++;
-      sceneId = word & EXIT_MAP_MASK;
+      sceneId = word & EXIT_SCENE_MASK;
       entrance = ENTRANCE(word);
       kind = EXIT_ID(word);
       flag = word & EXIT_HAS_FLAG;
       if (flag)
         flag = *exitTable++;
       if (sceneId == EXIT_TABLE_END || kind == 0) {
-        nextScene = *firstExit & 0x1ff; // only 9 bits, unlike EXIT_MAP_MASK
+        nextScene = *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
         break;
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
@@ -96,15 +96,15 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the next scene the script set, or to the default scene (the
 /// scene the battle or minigame was started from) with the party keeping its
 /// position (FLAG_KEEP_PARTY_POSITION). Called by SequenceManager_Run after
-/// each scene from SEQUENCE_NONE on; stores result in gSaveBlock.runResult and
-/// sets gSaveBlock.sceneId and .entrance.
+/// each scene from SEQUENCE_NONE on; stores result in gSaveBlock.sequenceResult
+/// and sets gSaveBlock.sceneId and .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 sceneId;
   s32 entrance;
 
-  gSaveBlock.runResult = result;
+  gSaveBlock.sequenceResult = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
     unit = Unit_GetFar(gSaveBlock.leaderActorId);
@@ -172,7 +172,7 @@ enum {
 /// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
 /// Alloc copy freed afterwards. Returns the minigame's result, 0, for
 /// Scene_ReturnFromSequence.
-static __inline__ s32 RunLuckyDice(s32 entrance) {
+static __inline__ s32 SequenceManager_RunLuckyDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -189,8 +189,8 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
 }
 
 /// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
-/// RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 RunLuckyWheels(s32 entrance) {
+/// SequenceManager_RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 SequenceManager_RunLuckyWheels(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -270,10 +270,10 @@ void SequenceManager_Run(s32 mode) {
         entrance = Battle_RunFar(entrance);
         break;
       case SEQUENCE_LUCKY_DICE:
-        entrance = RunLuckyDice(entrance);
+        entrance = SequenceManager_RunLuckyDice(entrance);
         break;
       case SEQUENCE_LUCKY_WHEELS:
-        entrance = RunLuckyWheels(entrance);
+        entrance = SequenceManager_RunLuckyWheels(entrance);
         break;
       case SEQUENCE_NONE:
         entrance = 0;
@@ -284,15 +284,14 @@ void SequenceManager_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_ResetFlagsOnEnter(gSaveBlock.sceneId,
-                            GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
+    Scene_Arrive(gSaveBlock.sceneId, GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-      // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC for this
-      // one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
-      if (GameFlag_GetFar(FLAG_KEEP_MUSIC) ||
+      // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC_ONCE for
+      // this one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
+      if (GameFlag_GetFar(FLAG_KEEP_MUSIC_ONCE) ||
           GameFlag_GetFar(FLAG_KEEP_MUSIC_HELD))
-        GameFlag_ClearFar(FLAG_KEEP_MUSIC);
+        GameFlag_ClearFar(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
     } else if (gSaveBlock.returnMusic != -1) {
@@ -329,7 +328,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// (FLAG_AREA_VISITED) is set. Called by SequenceManager_Run before each
 /// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.area and
 /// .sceneType.
-void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
+void Scene_Arrive(s32 unused, s32 keep) {
   s32 area = MAP_HEADER(gSaveBlock.sceneId)->area;
   s32 flag;
 
@@ -377,7 +376,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
 /// 34 scene overlays through Scene_PlayMusicFar.
 void Scene_PlayMusic(void) { Sound_PlaySongFar(gSaveBlock.sceneMusic); }
 
-#undef EXIT_MAP_MASK
+#undef EXIT_SCENE_MASK
 #undef ENTRANCE
 #undef EXIT_ID
 #undef EXIT_HAS_FLAG

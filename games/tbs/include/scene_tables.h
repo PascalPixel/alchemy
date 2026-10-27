@@ -236,7 +236,7 @@ enum TriggerKind {
   TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
   TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
   TRIGGER_PSYNERGY = 5,
-  TRIGGER_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
+  TRIGGER_RAISED = 6, ///< raised by code through FieldWork.raisedTrigger
   /// Talking to an actor Halt has stopped
   /// (Scene_FindActorTalkTrigger).
   TRIGGER_TALK_HALTED = 7
@@ -259,9 +259,9 @@ enum ExitStyle {
 };
 
 /// The raised event the menus and shortcut keys raise instead of opening
-/// while FLAG_MENUS_RAISE_EVENT is set, as Vault's inn sets it while the
+/// while FLAG_MENUS_RAISE_TRIGGER is set, as Vault's inn sets it while the
 /// party corners the suspects.
-#define FIELD_RAISED_EVENT_MENUS 250
+#define FIELD_RAISED_TRIGGER_MENUS 250
 
 /// A step trigger that needs the leader to have pushed against it for more
 /// than 12 frames, or 2 with STEP_TRIGGER_FLAG_QUICK.

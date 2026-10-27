@@ -65,9 +65,9 @@ them back. The requests, in the order the loop takes them:
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_RAISED_EVENT_PARTY_FELL` | -1 | characters fell to poison or hazardous ground; if no one is left standing, the party goes back to the last place it saved, with the leader at 1 HP |
-| `FIELD_RAISED_EVENT_WORLD_PICTURE` | -888 | R on the world map: the picture of the world |
-| `FIELD_RAISED_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view pulls back |
+| `FIELD_RAISED_TRIGGER_PARTY_FELL` | -1 | characters fell to poison or hazardous ground; if no one is left standing, the party goes back to the last place it saved, with the leader at 1 HP |
+| `FIELD_RAISED_TRIGGER_WORLD_PICTURE` | -888 | R on the world map: the picture of the world |
+| `FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM` | -889 | L on the world map: the view pulls back |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next scene starts where the party was, everyone put back |
 | `ACTOR_SNAPSHOT_CAPACITY` | 32 | people a battle's snapshot keeps |
 
@@ -247,7 +247,7 @@ with each; the encounter columns from what
 
 `Field_CountRequests` adds the requests together (`talk` twice) and tests the
 sum, so a negative event code raised with a positive request can hide both.
-It can happen: `Field_ProcessStep` raises `FIELD_RAISED_EVENT_PARTY_FELL` (-1)
+It can happen: `Field_UpdateWalking` raises `FIELD_RAISED_TRIGGER_PARTY_FELL` (-1)
 on the frame a member falls to poison, and the `action` request is the cell's
 [metatile behavior](../../glossary.md#metatile-behavior), 1 on the cells of
 step trigger 1, which 154 scenes have. Both then wait until another request makes
@@ -255,7 +255,7 @@ the sum non-zero, by which time a later cell's behavior may have replaced the
 action. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and
 `BUGFIX` tests each request instead.
 
-`Scene_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary entry
+`Scene_Arrive` clears flags `0x80` to `0xdf` on every ordinary entry
 to a scene, even within an area: the Djinn's hiding flags
 (`FLAG_DJINN_HIDING_FIRST` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them

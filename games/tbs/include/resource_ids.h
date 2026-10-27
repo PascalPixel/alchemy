@@ -40,7 +40,7 @@ extern char ResourceId_CamelotLogo;
 /// menu, by MainMenu_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
 /// The still world map WorldPicture_Show shows for a
-/// FIELD_RAISED_EVENT_WORLD_PICTURE event; it loads this one whatever picture
+/// FIELD_RAISED_TRIGGER_WORLD_PICTURE event; it loads this one whatever picture
 /// it's passed.
 extern char ResourceId_WorldMapPicture;
 /// The lettering sprites Title_LoadSprites loads: 40 tiles of 16 colours in

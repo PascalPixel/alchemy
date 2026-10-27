@@ -1322,7 +1322,7 @@ static void EventScript_MeetSurvivingTravelers(void) {
 /// Called by EventScript_MeetSurvivingTravelers. Starts the fifth slot of the
 /// encounter zone of the scripted battles of Vale, Vault and the world map,
 /// with both outcomes leading back to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and
-/// sets FLAG_KEEP_MUSIC.
+/// sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
   struct Actor *actor;
   s32 southSouthwestFacing;
@@ -1435,7 +1435,7 @@ static void ValePlaza_FightTravelers(void) {
                                      VALE_PLAZA_AFTER_TRAVELERS_BATTLE);
   }
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
 /// In Vale after the battle, the travelers leave Isaac and Garet lying in the

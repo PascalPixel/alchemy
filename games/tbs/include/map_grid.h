@@ -22,19 +22,19 @@ enum MetatileBehavior {
   MB_ENCOUNTER_GROUND_1 = 240,
   MB_ENCOUNTER_GROUND_2 = 241,
   /// 242 to 247: examine triggers with lines of their own, the same on every
-  /// map (Field_SearchCell, gField_ExamineTriggerMessageOffsets).
+  /// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets).
   MB_JAR = 242,
   MB_BARREL = 243,
   MB_WOODEN_BOX = 244,
   MB_GRAVE = 245,
   MB_BOOKS = 246,
   MB_WELL = 247,
-  /// Jumps forward like MB_JUMP_FORWARD, but Field_ProcessStep never
-  /// passes it to Field_RunPushCellEvent.
+  /// Jumps forward like MB_JUMP_FORWARD, but Field_UpdateWalking never
+  /// passes it to Field_RunPushCell.
   MB_JUMP_FORWARD_UNREACHED = 249,
   /// Ground that hurts the party over time: the Lamakan Desert's sand.
   MB_DESERT_SAND = 250,
-  /// 252 to 254: cells the leader pushes against (Field_RunPushCellEvent).
+  /// 252 to 254: cells the leader pushes against (Field_RunPushCell).
   MB_LEDGE = 252,        ///< jumped down with Down held
   MB_CLIMB = 253,        ///< climbed up or down with Up or Down held
   MB_JUMP_FORWARD = 254, ///< jumped across

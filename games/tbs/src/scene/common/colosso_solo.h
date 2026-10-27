@@ -131,7 +131,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
       GameFlag_Get(FLAG_PSYNERGY_TARGET) != 0) {
-    u16 *raised = (u16 *)&work->raisedEvent;
+    u16 *raised = (u16 *)&work->raisedTrigger;
     s32 trigger = 99;
 
     *raised = trigger;
@@ -199,7 +199,7 @@ static void Colosso_TakePlaceForMatch(void) {
   supporterId++;
   if (supporterId > MIA) {
     Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
-    GameFlag_Set(FLAG_KEEP_MUSIC);
+    GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
     FieldScript_StartScreenTransition();
@@ -249,7 +249,7 @@ void Colosso_AskDoneCheering(s32 id) {
     slot++;
     if (slot > MIA) {
       Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
-      GameFlag_Set(FLAG_KEEP_MUSIC);
+      GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
     } else {
       Colosso_ControlCharacterAlone(slot);
       FieldScript_StartScreenTransition();

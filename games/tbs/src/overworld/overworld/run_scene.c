@@ -21,7 +21,7 @@ struct ObjectSystemSuspendView {
 /// battle, a party that fell outside battle, Retreat or a script's destination.
 /// Sets the scene up (map, actors, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
-/// (Field_ProcessStep each frame) until a request is made, and then the
+/// (Field_UpdateWalking each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
 /// Called by SequenceManager_Run for every scene, which
@@ -48,7 +48,7 @@ s32 SceneManager_Run(s32 entrance) {
   gSaveBlock.defeatScene = -1;
   gSaveBlock.defeatEntrance = -1;
   Task_ResetAll();
-  Djinn_ResolvePendingEvent(0);
+  Djinn_ResolvePending(0);
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
     WorldMap_InitializePerspectiveFar();
     gSaveBlock.perspectiveMap = 1;
@@ -68,7 +68,7 @@ s32 SceneManager_Run(s32 entrance) {
   Actor_ResetForObject((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
-  if (gSaveBlock.pendingDjinnEvent != 0)
+  if (gSaveBlock.pendingDjinni != 0)
     Actor_PlaceMapActors();
   if (mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
@@ -84,7 +84,7 @@ s32 SceneManager_Run(s32 entrance) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
   work->transitionActive = 0;
-  // Field_ProcessStep scales the leader's speed by this (16.16) into the
+  // Field_UpdateWalking scales the leader's speed by this (16.16) into the
   // distance counted towards PP and poison ticks: 0x10000 / 0x199 makes a
   // tick about every 160 pixels walked. Towns turn it off and
   // block Retreat.
@@ -132,9 +132,9 @@ s32 SceneManager_Run(s32 entrance) {
         GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
         AreaNameWindow_ShowFar(gSaveBlock.sceneId);
       }
-      if (gSaveBlock.pendingDjinnEvent != 0) {
-        Djinn_ResolvePendingEvent(gSaveBlock.pendingDjinnEvent, 1);
-        gSaveBlock.pendingDjinnEvent = 0;
+      if (gSaveBlock.pendingDjinni != 0) {
+        Djinn_ResolvePending(gSaveBlock.pendingDjinni, 1);
+        gSaveBlock.pendingDjinni = 0;
       }
       if (gSaveBlock.pendingItem != 0) {
         WorldMap_Freeze();
@@ -165,9 +165,9 @@ s32 SceneManager_Run(s32 entrance) {
           work->exit = 0;
           goto done;
         }
-        if (work->raisedEvent != 0) {
+        if (work->raisedTrigger != 0) {
           work->busy = 1;
-          if (work->raisedEvent == FIELD_RAISED_EVENT_PARTY_FELL) {
+          if (work->raisedTrigger == FIELD_RAISED_TRIGGER_PARTY_FELL) {
             // Characters fell to poison or hazardous ground.
             u32 i;
 
@@ -205,18 +205,20 @@ s32 SceneManager_Run(s32 entrance) {
               goto done;
             }
             WorldMap_Unfreeze();
-          } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_PICTURE) {
+          } else if (work->raisedTrigger ==
+                     FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
             Leader_StopMoving();
             WorldPicture_Show((s32)&ResourceId_WorldMapPicture);
-          } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_MAP_ZOOM) {
+          } else if (work->raisedTrigger ==
+                     FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             FieldEffect_RunVisibilityTransition();
           } else {
-            Scene_RunRaisedEvent(work->raisedEvent);
+            Scene_RunRaisedTrigger(work->raisedTrigger);
           }
           work->busy = 0;
-          work->raisedEvent = 0;
-        } else if (work->battle != 0) {
+          work->raisedTrigger = 0;
+        } else if (work->encounter != 0) {
           // A random encounter: save the actors and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
           // clears transitionActive, so the scene ends without another fade.
@@ -224,11 +226,11 @@ s32 SceneManager_Run(s32 entrance) {
           Actor_Snapshot();
           gSaveBlock.returnMusic = -1;
           gSaveBlock.sceneId = SEQUENCE_BATTLE;
-          gSaveBlock.entrance = work->battle;
+          gSaveBlock.entrance = work->encounter;
           work->exit = EXIT_KEEP_DESTINATION;
-          Field_StartEncounterTransition(work->battle);
+          Field_StartEncounterTransition(work->encounter);
           work->encounterBias = 0;
-          work->battle = 0;
+          work->encounter = 0;
           gSaveBlock.encounterSteps = 0;
         } else if (work->stepTrigger != 0) {
           work->busy = 1;
@@ -236,9 +238,9 @@ s32 SceneManager_Run(s32 entrance) {
           work->busy = 0;
           work->stepTrigger = 0;
         } else if (work->pushCell != 0) {
-          Field_RunPushCellEvent(work->pushCell);
+          Field_RunPushCell(work->pushCell);
           work->pushCell = 0;
-        } else if (work->examine != 0) {
+        } else if (work->aButton != 0) {
           // Examine the actor or cell ahead, or open the menu if neither
           // has an event.
           s32 object;
@@ -253,18 +255,18 @@ s32 SceneManager_Run(s32 entrance) {
             // 0x1000 keeps actor 0's request non-zero; the handler
             // masks it.
             work->talk = object | 0x1000;
-            work->menu = 0;
+            work->fieldMenu = 0;
           } else {
-            mode = Actor_GetTriggerTileAheadOfCurrent();
+            mode = Actor_GetTriggerCellAheadOfCurrent();
             if (mode != 0) {
-              work->searchCell = mode;
-              work->menu = 0;
+              work->examineCell = mode;
+              work->fieldMenu = 0;
             } else {
-              work->menu = 1;
+              work->fieldMenu = 1;
             }
           }
-          work->examine = 0;
-        } else if (work->menu != 0) {
+          work->aButton = 0;
+        } else if (work->fieldMenu != 0) {
           // The main menu (B + Select in debug mode opens the debug menu).
           AreaNameWindow_HideFar();
           Leader_StopMoving();
@@ -274,8 +276,8 @@ s32 SceneManager_Run(s32 entrance) {
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
             DebugFlagEditor_RunFar();
-          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-            work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
+          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
+            work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
             work->effectTimerRunning = 0;
             FieldMenu_RunFar();
@@ -284,17 +286,17 @@ s32 SceneManager_Run(s32 entrance) {
           WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
-          work->menu = 0;
+          work->fieldMenu = 0;
         } else if ((s16)work->talk != 0) {
           WorldMap_Freeze();
           Scene_TalkToActor(work->talk & 0xfff);
           WorldMap_Unfreeze();
           work->talk = 0;
-        } else if (work->searchCell != 0) {
+        } else if (work->examineCell != 0) {
           WorldMap_Freeze();
-          Field_SearchCell(work->searchCell);
+          Field_ExamineCell(work->examineCell);
           WorldMap_Unfreeze();
-          work->searchCell = 0;
+          work->examineCell = 0;
         } else if (work->psynergy != 0) {
           AreaNameWindow_HideFar();
           WorldMap_Freeze();
@@ -303,10 +305,10 @@ s32 SceneManager_Run(s32 entrance) {
           work->psynergy = 0;
         } else if (work->item != 0) {
           WorldMap_Freeze();
-          Field_UseItem(work->item, work->itemArgument);
+          Field_UseItem(work->item, work->itemSlot);
           WorldMap_Unfreeze();
           work->item = 0;
-        } else if (work->start != 0) {
+        } else if (work->pauseMenu != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
@@ -322,9 +324,9 @@ s32 SceneManager_Run(s32 entrance) {
           else if (*(volatile u8 *)&gDebugMode != 0 &&
                    (gKeysHeld & KEY_L) != 0) {
             PaletteEditor_Run();
-          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
             // As for the main menu above.
-            work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
+            work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
             Field_EndBusyAndReveal();
             AreaNameWindow_HideFar();
@@ -357,7 +359,7 @@ s32 SceneManager_Run(s32 entrance) {
           }
           WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
-          work->start = 0;
+          work->pauseMenu = 0;
         }
       }
 
@@ -380,8 +382,8 @@ s32 SceneManager_Run(s32 entrance) {
         WaitFrames(1);
         actor = work->actors[gSaveBlock.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
-          Field_ProcessStep(actor->layer, actor->x.fixed, actor->y.fixed,
-                            actor->z.fixed);
+          Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
+                              actor->z.fixed);
       } while (Field_CountRequests() == 0);
     }
   }
@@ -403,9 +405,9 @@ done:
 /// Returns 0 otherwise.
 ///
 /// Called by SceneManager_Run for the A button (a non-zero result becomes
-/// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
-/// entry through Actor_GetTriggerTileAheadOfCurrentFar. Changes nothing.
-s32 Actor_GetTriggerTileAheadOfCurrent(void) {
+/// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
+/// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
+s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
   struct Object *leader;

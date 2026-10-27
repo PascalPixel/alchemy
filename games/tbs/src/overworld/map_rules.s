@@ -38,8 +38,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gMap_MusicRules
-gMap_MusicRules:
+	.global gScene_MusicRules
+gScene_MusicRules:
 	area_music 1, -1, -1, 74
 	area_music 2, 90, -1, 19
 	area_music 2, 91, -1, 19

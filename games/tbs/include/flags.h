@@ -27,7 +27,7 @@
 /// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
 #define FLAG_DJINN_HIDING_FIRST 128
 /// Set while `djinni` is hiding, its DjinniId counting from
-/// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePendingEvent sets it after a lost or
+/// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
 /// fled Djinni battle, and the Djinni's actor stays away until the map
 /// is entered normally again, which clears it.
 /// ★ Named from the game: "It must be hiding somewhere again"
@@ -52,13 +52,13 @@
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
-/// raises FIELD_RAISED_EVENT_MENUS instead (SceneManager_Run,
+/// raises FIELD_RAISED_TRIGGER_MENUS instead (SceneManager_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
-#define FLAG_MENUS_RAISE_EVENT 0x107
+#define FLAG_MENUS_RAISE_TRIGGER 0x107
 // Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
 // PP faster (units.c). Each lighthouse's maps set its flag on every arrival,
-// and Scene_ResetFlagsOnEnter clears all four when the party enters another
+// and Scene_Arrive clears all four when the party enters another
 // area, so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse, which is lit.
 /// ★ Named from its area name: Venus Lighthouse
@@ -75,9 +75,9 @@
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
 /// The next map keeps the music that is playing; map.c clears
-/// FLAG_KEEP_MUSIC as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
-#define FLAG_KEEP_MUSIC 0x11a
-/// As FLAG_KEEP_MUSIC, for as long as it is set.
+/// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
+#define FLAG_KEEP_MUSIC_ONCE 0x11a
+/// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
 /// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next map plays
@@ -128,7 +128,7 @@
 #define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another area: Venus
 /// Lighthouse sets it on its Reveal path, the world map's debug
-/// entrance too, and Scene_ResetFlagsOnEnter clears it with a new
+/// entrance too, and Scene_Arrive clears it with a new
 /// area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
@@ -216,11 +216,11 @@
 /// (Object_UpdateLeaderControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The areas the party has visited, one flag for each, set by
-/// Scene_ResetFlagsOnEnter as the party enters the section; the world map
+/// Scene_Arrive as the party enters the section; the world map
 /// screen shows a marker for each.
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
 /// A map's own flags, cleared on every ordinary entry
-/// (Scene_ResetFlagsOnEnter): puzzles reset when the party walks back in.
+/// (Scene_Arrive): puzzles reset when the party walks back in.
 #define FLAG_SCENE_TEMP_FIRST 0x200
 #define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the map's 256 flags
 /// An area's flags, kept while the party moves between the maps of one
@@ -2172,7 +2172,7 @@
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf
 
 // Map flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
-// Scene_ResetFlagsOnEnter clears them on every ordinary entry, and each
+// Scene_Arrive clears them on every ordinary entry, and each
 // map keeps its own puzzle and script states in them. A map says beside its
 // uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
@@ -2433,7 +2433,7 @@
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
 // Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF:
-// Scene_ResetFlagsOnEnter clears them whenever the party enters a different
+// Scene_Arrive clears them whenever the party enters a different
 // area, so they keep what should last while the party is
 // anywhere inside one area, such as where Fuchin Falls Cave's logs
 // float. A map says beside its uses what each one holds there.

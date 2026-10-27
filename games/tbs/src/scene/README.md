@@ -217,7 +217,7 @@ still answers. The game finds the row whatever its condition, shows the
 chest gives what it holds and is marked opened, and an opened one adds "but
 the chest was empty." A chest that hides a mimic starts its battle instead.
 
-`Scene_FindTrigger` finds the row and `Field_SearchCell` runs a
+`Scene_FindTrigger` finds the row and `Field_ExamineCell` runs a
 search. Rows these rules make unreachable keep a
 [`// Unused:`](../../glossary.md#unused) tag in their table, and
 [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every such
@@ -270,7 +270,7 @@ everywhere, each scene names the ones it uses for what they hold there, in its
 own file (`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN` in Crossbone Isle,
 `FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK` in Vault's houses).
 
-`Scene_ResetFlagsOnEnter` clears them ([the front
+`Scene_Arrive` clears them ([the front
 page](../../README.md#game-flags) explains the ranges), and the flags are in
 `games/tbs/include/flags.h`.
 

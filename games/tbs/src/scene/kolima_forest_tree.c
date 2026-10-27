@@ -251,7 +251,7 @@ static void KolimaForestTree_TalkToTret(void) {
                                    FACE_GESTURE_CLOSE_EYES);
       waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
       if (waterHolder != -1) {
-        u16 *menuRequest = &gFieldWork->menu;
+        u16 *menuRequest = &gFieldWork->fieldMenu;
         u16 open = 1;
 
         *menuRequest = open;

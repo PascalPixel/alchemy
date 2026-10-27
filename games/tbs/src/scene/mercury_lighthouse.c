@@ -2072,7 +2072,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindMember(ITEM_EMPTY_BOTTLE) != -1) {
     // The field loop handles this menu request after the inspection ends.
-    s16 *menuRequest = &gFieldWork->menu;
+    s16 *menuRequest = &gFieldWork->fieldMenu;
     s32 enabled = 1;
 
     *menuRequest = enabled;

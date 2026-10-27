@@ -329,7 +329,7 @@ enum WorldMapMetatileBehavior {
 
 /// Raised by WorldMap_UpdateStormTimer when the party's time in the air runs
 /// out.
-enum WorldMapRaisedEvent { RAISED_STORM_TIME_UP = 99 };
+enum WorldMapRaisedTrigger { RAISED_STORM_TIME_UP = 99 };
 
 /// The rowers' balance (WorldMap_GetRowingBalance) that takes the Tolbi-bound
 /// Ship off course to the island.
@@ -2058,7 +2058,7 @@ static void EventScript_SearchShipwreck(void) {
 #endif
   FieldMessage_Show(MsgWorldMapWreckageShipScuttledOffCoast, 1);
   if (GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
-    gFieldWork->menu = 1;
+    gFieldWork->fieldMenu = 1;
   }
 #if !TBS_PATCH_3
   WorldMap_Unfreeze();
@@ -2349,7 +2349,7 @@ static void WorldMap_ShowEndingEvent(void) {
 /// colours fade, and WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE leads back up to the
 /// aerie, its music kept.
 /// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL; sets
-/// FLAG_KEEP_MUSIC.
+/// FLAG_KEEP_MUSIC_ONCE.
 static void WorldMap_ShakeVenusLighthouse(void) {
   FieldScript_Start();
   Sound_PlaySong(SE_RUMBLE);
@@ -2378,7 +2378,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
   Import_ScriptRequestExit(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   FieldScript_End();
 }
 
@@ -2598,7 +2598,7 @@ static void WorldMap_UpdateStormTimer(void) {
   progress = FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
   if (progress != 0) {
     if (progress == 1) {
-      work->raisedEvent = RAISED_STORM_TIME_UP;
+      work->raisedTrigger = RAISED_STORM_TIME_UP;
     } else if (GameFlag_Get(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }
@@ -2640,7 +2640,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
     FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 180);
     FieldScript_End();
-    gFieldWork->battle = 0; // drop any battle this step rolled
+    gFieldWork->encounter = 0; // drop any battle this step rolled
   }
 }
 
@@ -2667,8 +2667,8 @@ static void EventScript_StartDousingStorm(void) {
 static void EventScript_DouseMapStorm(void) {
   struct Actor *selectedActor;
 
-  if (gFieldWork->raisedEvent == RAISED_STORM_TIME_UP) {
-    gFieldWork->raisedEvent = 0;
+  if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
+    gFieldWork->raisedTrigger = 0;
   }
   GameFlag_Clear(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
   GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);

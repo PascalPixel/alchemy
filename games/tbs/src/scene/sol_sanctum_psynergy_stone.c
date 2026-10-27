@@ -6,7 +6,7 @@
 /// to the statue room, and it places nobody. Searching in it finds the
 /// Psynergy Stone, which restores all PP. The stone is kept by an area
 /// flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
-/// Scene_ResetFlagsOnEnter puts it back whenever the party enters another
+/// Scene_Arrive puts it back whenever the party enters another
 /// area. Retreat does not work here, and once Mt. Aleph has erupted the
 /// room rumbles and shakes, as the rest of the sanctum does.
 
@@ -30,7 +30,7 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)

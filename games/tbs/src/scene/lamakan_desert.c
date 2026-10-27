@@ -95,7 +95,7 @@ static void HeatGauge_SetHeld(u16 held);
 
 /// The values HeatGauge_RaiseQuarterTriggers raises as the heat gauge passes
 /// each mark.
-enum LamakanDesertRaisedEvent {
+enum LamakanDesertRaisedTrigger {
   LAMAKAN_DESERT_RAISED_HEAT_QUARTER = 1,
   LAMAKAN_DESERT_RAISED_HEAT_HALF = 2,
   LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS = 3
@@ -521,15 +521,15 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
   if (Script_GetFlag(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
-    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
   if (Script_GetFlag(FLAG_HEAT_HALF) == 0 && percent > 49) {
     GameFlag_Set(FLAG_HEAT_HALF);
-    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_HALF;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
   if (Script_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
-    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
+    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
 }
 

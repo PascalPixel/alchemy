@@ -78,7 +78,7 @@
 /// The field menu's Item screen (FieldMenu_Run, FIELD_MENU_ITEM): choose
 /// a party member, one of their items and a command. Items used here take
 /// effect at once; an item to be used on the field is written as the field's
-/// item request (FieldWork.item and itemArgument), run when the field menu has
+/// item request (FieldWork.item and itemSlot), run when the field menu has
 /// closed. Owns the menu work (HEAP_SLOT_MENU) while it runs and frees it
 /// before returning. Returns ItemMenu_RunCommands' result: 1 when an item is to
 /// be used on the field, -1 when the player backed out or pressed Start (the
@@ -138,7 +138,7 @@ s32 ItemMenu_Run(void) {
         cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM];
 
     selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
-    selection->itemArgument = screen->selectedSlots[0];
+    selection->itemSlot = screen->selectedSlots[0];
   }
 
   // Close the menu and give the screen back to the field.

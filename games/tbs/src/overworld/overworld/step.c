@@ -4,7 +4,7 @@
 
 #include "../overworld_internal.h"
 
-// The fields of struct Unit that Field_ProcessStep reads (see its tag).
+// The fields of struct Unit that Field_UpdateWalking reads (see its tag).
 #ifndef UBFIX
 /// A party member's battle unit, seen as the HP and poison a step reads.
 struct UnitHpPoisonView {
@@ -26,15 +26,15 @@ void Field_ClearRequests(void) {
   work->stepTrigger = noRequest;
   work->pushCell = 0;
   work->exit = 0;
-  work->menu = 0;
-  work->examine = 0;
-  work->start = 0;
+  work->fieldMenu = 0;
+  work->aButton = 0;
+  work->pauseMenu = 0;
   work->talk = 0;
-  work->searchCell = 0;
-  work->battle = 0;
+  work->examineCell = 0;
+  work->encounter = 0;
   work->psynergy = 0;
   work->item = 0;
-  work->raisedEvent = 0;
+  work->raisedTrigger = 0;
 }
 
 /// Returns the sum of the field's twelve pending requests (counting the talk
@@ -44,21 +44,21 @@ void Field_ClearRequests(void) {
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
-  // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
-  // FIELD_RAISED_EVENT_PARTY_FELL (-1) on the frame a member falls to poison,
+  // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises event
+  // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a member falls to poison,
   // and the action request is the cell's metatile behavior, 1 on step trigger
   // 1's cells (154 maps have them); together they sum to 0, and both wait until
   // another request breaks the tie, by which time a later cell's behavior may
   // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->stepTrigger | work->pushCell | work->exit | work->menu |
-         work->examine | work->start | (s16)work->talk | work->searchCell |
-         work->battle | work->psynergy | work->item | work->raisedEvent;
+  return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
+         work->aButton | work->pauseMenu | (s16)work->talk | work->examineCell |
+         work->encounter | work->psynergy | work->item | work->raisedTrigger;
 #else
-  return work->stepTrigger + work->pushCell + work->exit + work->menu +
-         work->examine + work->start + (s16)work->talk + work->searchCell +
-         (s16)work->talk + work->battle + work->psynergy + work->item +
-         work->raisedEvent;
+  return work->stepTrigger + work->pushCell + work->exit + work->fieldMenu +
+         work->aButton + work->pauseMenu + (s16)work->talk + work->examineCell +
+         (s16)work->talk + work->encounter + work->psynergy + work->item +
+         work->raisedTrigger;
 #endif
 }
 
@@ -133,8 +133,8 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// leaving the map. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
-/// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
-/// metatile behavior. Sets work->exit and stops the leader.
+/// Called by Field_UpdateWalking when the leader steps on a cell with a
+/// non-zero metatile behavior. Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
@@ -193,7 +193,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
 /// fallenOwners and survivorCount, and gSaveBlock's hazard and Avoid counts.
-void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
+void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
    * alias set keeps the load order and the 44-byte frame; as struct Unit, 2 of
    * 472 instructions differ in tbs-en. */
@@ -263,16 +263,16 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       encounterSpeed <<= 1;
     if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
       fullEncounterRate = 1;
-      work->battle = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
+      work->encounter = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
     } else if (event == MB_ENCOUNTER_GROUND_1 ||
                event == MB_ENCOUNTER_GROUND_2) {
       fullEncounterRate =
           work->encounterZones[event - (MB_ENCOUNTER_GROUND_1 - 1)];
-      work->battle = Encounter_RollLayoutStep(
+      work->encounter = Encounter_RollMapStep(
           event - (MB_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
     } else {
       fullEncounterRate = work->encounterZones[0];
-      work->battle = Encounter_RollLayoutStep(0, encounterSpeed);
+      work->encounter = Encounter_RollMapStep(0, encounterSpeed);
     }
 
     // Every 0x10000 of distance walked (counted at half speed on ground whose
@@ -361,7 +361,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
         work->fallenOwners[work->fallenCount++] = gSaveBlock.party[i];
-        work->raisedEvent = -1;
+        work->raisedTrigger = -1;
         unitVitals->poison = 0;
       }
     }
@@ -371,7 +371,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 /// Gives each character in the party amount PP (PP regenerates as the party
 /// walks).
 ///
-/// Called by Field_ProcessStep as the party walks, by Field_SearchCell for a
+/// Called by Field_UpdateWalking as the party walks, by Field_ExamineCell for a
 /// Psynergy stone (999, all PP), and by the Vale home map through
 /// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
@@ -391,7 +391,7 @@ void Party_AddPp(s32 amount, s32 unused) {
 /// the positive magnitude of amount. Damage flashes and plays an impact sound;
 /// healing plays the recovery sound.
 ///
-/// Called by Field_ProcessStep for hazardous ground.
+/// Called by Field_UpdateWalking for hazardous ground.
 void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
@@ -431,10 +431,10 @@ void Party_AddHp(s32 amount, s32 percent) {
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
 /// least 1.
 /// Returns 0 when nobody was hurt, else the worst status found
-/// (POISON_NORMAL or POISON_VENOM), after a flash; Field_ProcessStep counts a
+/// (POISON_NORMAL or POISON_VENOM), after a flash; Field_UpdateWalking counts a
 /// non-zero result as the party being hurt.
 ///
-/// Called by Field_ProcessStep at each tick of the distance walked.
+/// Called by Field_UpdateWalking at each tick of the distance walked.
 s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountMembersFar();

@@ -132,7 +132,7 @@
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
 
-// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// A passenger chosen to row follows the party to the rowing deck.
@@ -920,7 +920,7 @@ static void ShipRooms_TalkToCaptain(void) {
     Script_ShowMessage(ACTOR_QUARTERS_CAPTAIN, 0);
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
-      gFieldWork->menu = 1;
+      gFieldWork->fieldMenu = 1;
     }
   } else {
     FieldScript_SetMessageId(MsgTolbiShipItsTooLateHireMercenaries);
@@ -3905,7 +3905,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   FieldScript_WaitFrames(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Script_PlaySong(MUS_ERUPTION);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);

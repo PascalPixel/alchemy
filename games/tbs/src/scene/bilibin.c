@@ -41,7 +41,7 @@
 /// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
 /// party for keeping McCoy waiting. The garden is another area
 /// (scene_headers.s gives Bilibin 8 and the garden 9), so
-/// Scene_ResetFlagsOnEnter clears the flag on the way in and the guard never
+/// Scene_Arrive clears the flag on the way in and the guard never
 /// sees it set.
 ///
 /// The Bilibin Treasury (SceneId_BilibinTreasury) is what its sign calls

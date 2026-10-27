@@ -218,7 +218,7 @@ s32 BattleUnit_TickAgilityStage(s32 unitId) {
 /// A Djinni counts down only while its unit has HP; one that is set is taken
 /// off the party's recovery list and its unit's stats worked out again
 /// (Unit_Calculate). Called once at the end of every battle by
-/// Battle_Run, and outside battle by Field_ProcessStep as the party
+/// Battle_Run, and outside battle by Field_UpdateWalking as the party
 /// walks, by the Djinn menu's tutorial and by DjinnRecovery_TickTwenty.
 s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;

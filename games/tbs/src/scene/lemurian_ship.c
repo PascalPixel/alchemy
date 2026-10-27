@@ -18,7 +18,7 @@
 /// LemurianShip_SetSail plays the departure: three yes-or-no questions each
 /// choose one of two replies, the party boards, the ship sails east as the
 /// curtains close (Curtain_Start), and the game goes to the clear screen by the
-/// title's TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC).
+/// title's TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
 #include "action_script.h"
 #include "version.h"
@@ -333,7 +333,7 @@ static s32 Ivan_StepOnDeck(struct Object *interpreter) {
 /// while three questions shape their replies, everyone boards, and the ship
 /// sails east as the curtains close and the game goes to the clear screen.
 /// Called by EventScript_RaiseTheShip once the ship has risen. Sets
-/// FLAG_KEEP_MUSIC and sends the party to the clear screen (SceneId_Title,
+/// FLAG_KEEP_MUSIC_ONCE and sends the party to the clear screen (SceneId_Title,
 /// TITLE_FROM_LEMURIAN_SHIP).
 static void LemurianShip_SetSail(void) {
   struct MapGridScrollWork *grid;
@@ -568,7 +568,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  GameFlag_Set(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   FieldScript_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 

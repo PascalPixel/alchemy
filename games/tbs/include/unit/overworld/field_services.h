@@ -275,7 +275,7 @@ void Actor_PlaceMapActors(void);
 // Declared without a prototype, as SceneManager_Run (overworld.c) calls it with
 // one argument and with two. overworld.c comes before this unit in ROM order,
 // so in one file the calls would still come before the definition.
-void Djinn_ResolvePendingEvent();
+void Djinn_ResolvePending();
 void FieldEffect_UpdateAllSlots(void);
 void FieldEffect_InitializeSlots(void);
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void);

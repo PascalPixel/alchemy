@@ -594,7 +594,7 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 }
 
 /// Fades the screen in over frames frames. mode's high byte is its enum
-/// MapTransitionStyle: from black, from the backdrop colour, a window
+/// ScreenTransitionStyle: from black, from the backdrop colour, a window
 /// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
 /// opening from the centre line (4, which a non-zero low byte makes flicker).
 /// It returns after one frame while the fade runs on: a caller that must wait

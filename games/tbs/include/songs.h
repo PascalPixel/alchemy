@@ -5,7 +5,7 @@
 /// Song and sound effect ids, indices into gSongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/songs are
 /// named. Only the ids ☀️ plays are here: the code's own, the field music
-/// gMap_MusicRules and gEncounter_BattleMusic choose by number, and
+/// gScene_MusicRules and gEncounter_BattleMusic choose by number, and
 /// the voices and defeat sounds reached by adding to a first id. They are named
 /// as pret names its sounds: music by the place or moment the player knows it
 /// from, a sound effect by what it sounds like or the moment it marks, from its
@@ -358,7 +358,7 @@
 /// Venus Lighthouse's aerie.
 #define SE_ITEM_BREAK 138
 /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the party
-/// walks (Field_ProcessStep).
+/// walks (Field_UpdateWalking).
 /// ★ Named from what the player sees: a Djinni returning to Set (its render)
 #define SE_DJINNI_SET 139
 /// A Djinni spinning up as it joins or is caught, before it leaps or shrinks

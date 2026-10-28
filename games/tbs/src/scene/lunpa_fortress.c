@@ -2035,7 +2035,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(30);
-    Event_PlaySound(MUS_SATUROS_AND_MENARDI);
+    Event_PlaySound(MUS_OMINOUS);
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Actor_PlaceCurrentWithinCameraBounds(ACTOR_TOADONPA_DODONPA, 1);
     FieldCamera_WaitForArrival();

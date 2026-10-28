@@ -624,7 +624,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);
-  Event_PlaySound(MUS_SATUROS_AND_MENARDI);
+  Event_PlaySound(MUS_OMINOUS);
   FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(20);

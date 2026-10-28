@@ -7,8 +7,9 @@
 /// ids ☀️ plays are here: the code's own, the field music gScene_MusicRules and
 /// gEncounter_BattleMusic choose by number, and the voices and defeat sounds
 /// reached by adding to a first id. They are named as pret names its sounds:
-/// music by the place or moment the player knows it from, a sound effect by
-/// what it sounds like or the moment it marks, from its comment and its uses.
+/// music by the place or moment the player knows it from, or by what it sounds
+/// like where it marks many moments (MUS_OMINOUS), a sound effect by what it
+/// sounds like or the moment it marks, from its comment and its uses.
 /// Sound_Play tests the controls SOUND_FADE_OUT_BGM and
 /// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
 /// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, below
@@ -150,10 +151,12 @@
 /// Plays as Ivan is met in Vault, and as the party finds Ivan's master Hammet
 /// in the Lunpa Fortress.
 #define MUS_IVAN 60
-/// Plays as Saturos and Menardi appear: in Vale, at the gate to Mt. Aleph, in
-/// the Elemental Star room, at Mercury Lighthouse's aerie and at Venus
-/// Lighthouse; and as the party finds Hammet and frees the roofer in Vault.
-#define MUS_SATUROS_AND_MENARDI 61
+/// Ominous music that plays outside battle as villains appear: Saturos and
+/// Menardi in Vale's plaza, at Kraden's cottage, in the Elemental Star room and
+/// at the aeries of Mercury Lighthouse and Venus Lighthouse; the thieves in the
+/// loft of Vault's inn; and Dodonpa in the Lunpa Fortress, as he comes to free
+/// Toadonpa on the party.
+#define MUS_OMINOUS 61
 /// Plays as Sheba hangs from the edge of Venus Lighthouse's aerie, from
 /// Felix's cry until it fades as she slips
 /// (VenusLighthouseAerie_TryToPreventFall).

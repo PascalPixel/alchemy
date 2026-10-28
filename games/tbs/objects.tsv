@@ -197,7 +197,7 @@ main	rom_tail_00	games/tbs/sound/songs/mus_boulder_chase	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_victory	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_defeat	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_ivan	.rodata
-main	rom_tail_00	games/tbs/sound/songs/mus_saturos_and_menardi	.rodata
+main	rom_tail_00	games/tbs/sound/songs/mus_ominous	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_sheba_hangs_on	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_eruption	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_title_after_prologue	.rodata

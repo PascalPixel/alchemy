@@ -1271,9 +1271,9 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 93, 343);
   Event_SetMessageId(MsgValeOnlyTwoSurvived);
   Event_ShowMessageAndWait(ACTOR_FIRST_TRAVELER, 0);
-  // The travelers' theme starts; the camera rises to them and the second
+  // The ominous music starts; the camera rises to the travelers and the second
   // traveler walks in.
-  Sound_Play(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_OMINOUS);
   camera->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);

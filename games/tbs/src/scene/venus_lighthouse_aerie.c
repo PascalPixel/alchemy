@@ -621,7 +621,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_Wait(20);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  Sound_Play(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_OMINOUS);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Import_ActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MENARDI);

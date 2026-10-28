@@ -1364,10 +1364,10 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 40);
-  // The thieves' leader appears at the ladder to MUS_SATUROS_AND_MENARDI:
-  // "Looks like we've been found out!" Everyone turns.
+  // The ominous music starts as the thieves' leader appears at the ladder
+  // and says "Looks like we've been found out!"; everyone turns to him.
   Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(744), PIXELS(408));
-  Sound_Play(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_OMINOUS);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);

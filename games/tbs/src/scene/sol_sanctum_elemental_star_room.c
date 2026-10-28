@@ -548,7 +548,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   s32 i;
   u8 zero;
 
-  Sound_Play(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_OMINOUS);
   Import_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgSolSanctumLooksLikeTheyveSpottedUs);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);

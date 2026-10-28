@@ -643,12 +643,12 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   ValeKradensCottage_FacePartySouth();
-  // The camera pans down to the strangers, and their theme plays.
+  // The camera pans down to the strangers, and the ominous music plays.
   FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Event_PlaySound(MUS_SATUROS_AND_MENARDI);
+  Event_PlaySound(MUS_OMINOUS);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.

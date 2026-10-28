@@ -151,6 +151,8 @@ void TilesetAnim_StartAll(const u16 *script) {
   // markers. Only the low four bits pick the tileset animation, so a marker
   // for 16 or more reuses one of the 16.
   marker = *script++;
+  // The stream ends at the TILESET_ANIM_LOOP every script after a marker runs
+  // on to.
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct TilesetAnim *channel;
@@ -245,8 +247,7 @@ again:
 
     // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
     // to white or black by BLDY.
-    if ((gridState->blendControl &
-         (BLDCNT_EFFECT_BLEND | BLDCNT_EFFECT_LIGHTEN)) == BLDCNT_EFFECT_BLEND)
+    if ((gridState->blendControl & 0xc0) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;

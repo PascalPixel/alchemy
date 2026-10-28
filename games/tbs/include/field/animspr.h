@@ -41,9 +41,9 @@ enum SpriteColorMode {
 /// Sprite_ComposePicture skips it until an animation is selected.
 #define SPRITE_PICTURE_NONE 0xff
 
-/// An animation number's bit 7, as SpriteAnimation_Start and
-/// Sprite_StartAnimation take it: keep the place and timer of the script
-/// already running. The bits below it are the animation.
+/// An animation number's bit 7: keep the place and timer of the script already
+/// running. Sprite_StartAnimation masks it off with
+/// SPRITE_ANIMATION_INDEX_MASK; SpriteAnimation_Start keeps it in the index.
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
@@ -65,8 +65,10 @@ struct SpriteAnimation {
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
   u8 scriptOffset; ///< byte offset of the next command in script
   u8 step;         ///< taken off timer each frame; 16 is normal speed
-  u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
-  u8 pictureBase; ///< picture the script chose, before facing; 255 blank
+  u8 picture;      ///< picture shown, pictureBase plus the facing offset;
+                   ///< SPRITE_PICTURE_NONE for none
+  u8 pictureBase;  ///< picture the script chose, before facing;
+                   ///< SPRITE_PICTURE_NONE for none
 };
 
 /// A sprite picture cache: the tag of the animation loaded into it (slot number

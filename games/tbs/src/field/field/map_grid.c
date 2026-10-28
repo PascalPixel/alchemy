@@ -562,18 +562,18 @@ void MapGrid_UpdateLayerScroll(void) {
     }
     baseX += layer->offsetX;
     baseY += layer->offsetY;
-    // x and y are in 8-pixel tiles. A new tile column (bit 19) or cell picture
-    // row (bit 20, 16 pixels) has come into view: draw it at the leading edge,
-    // 30 tiles to the right or 20 below when scrolling that way.
+    // x and y are in 8-pixel tiles. A new tile column (the 8-pixel bit) or
+    // cell picture row (the 16-pixel bit) has come into view: draw it at the
+    // leading edge, 30 tiles to the right or 20 below when scrolling that way.
     x = baseX / (8 << 16);
     y = baseY / (8 << 16);
-    if ((layer->x ^ baseX) & 0x80000) {
+    if ((layer->x ^ baseX) & (8 << 16)) {
       if (layer->x < baseX)
         MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
       else
         MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
-    if ((layer->y ^ baseY) & 0x100000) {
+    if ((layer->y ^ baseY) & (16 << 16)) {
       if (layer->y < baseY)
         MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
       else

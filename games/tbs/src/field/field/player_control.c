@@ -247,7 +247,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   // collision means no direction is held, bit 0 that every heading is
   // blocked.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-  if ((u16)angle == KEY_HEADING_NONE) {
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     collision = 0;
@@ -585,7 +585,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   direction = angle;
-  if (direction == KEY_HEADING_NONE) {
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     collision = 0;
@@ -880,7 +880,7 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
   actor->acceleration = 0x4000;
   animation = 12;
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-  if (angle == KEY_HEADING_NONE) {
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
   } else {
     // The animation by the pad's heading: 14 for headings below 0x1000, 15
@@ -969,3 +969,4 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
 #undef WORLD_MAP_RUN_ACCELERATION
 #undef WORLD_MAP_ACCELERATION
 #undef WORLD_MAP_FAST_SPEED
+#undef FIELD_SHORTCUT_ID_MASK

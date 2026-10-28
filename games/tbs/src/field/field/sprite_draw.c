@@ -212,7 +212,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       if (layer->pictures == 0) {
         continue;
       }
-      if (layer->picture == 255) {
+      if (layer->picture == SPRITE_PICTURE_NONE) {
         continue;
       }
       key = layer->priority;

@@ -192,11 +192,12 @@ struct LuckyDiceSprites {
 #define DICE_RESULT_COUNT 4
 #define DICE_BET_PER_LEVEL 10
 
-/// A die's roll angle (its particle's variant) crosses a face in three tiles,
-/// and LuckyDice_Run reads the tile as angle / DICE_ROLL_PER_TILE and the face
-/// as angle / DICE_ROLL_PER_FACE.
+/// A die's roll angle (its particle's variant) crosses a face in
+/// DICE_TILES_PER_FACE tiles, and LuckyDice_Run reads the tile as angle /
+/// DICE_ROLL_PER_TILE and the face as angle / DICE_ROLL_PER_FACE.
+#define DICE_TILES_PER_FACE 3
 #define DICE_ROLL_PER_TILE 1024
-#define DICE_ROLL_PER_FACE (3 * DICE_ROLL_PER_TILE)
+#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
 #define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
 
 /// What the Lucky Dice screen is doing.
@@ -847,7 +848,7 @@ void LuckyDice_Run(void) {
             SET_VELOCITY(rollingDie, 0, 0, 0);
             spinRate[index] = 0;
             rollAngle = rollingDie->variant;
-            faceTile = rollAngle / DICE_ROLL_PER_TILE % 3;
+            faceTile = rollAngle / DICE_ROLL_PER_TILE % DICE_TILES_PER_FACE;
             if (faceTile == 1) {
               rollingDie->variant = rollAngle + 2 * DICE_ROLL_PER_TILE;
             } else if (faceTile == 2) {

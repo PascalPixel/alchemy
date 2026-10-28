@@ -153,7 +153,7 @@ s32 Sprite_ResetAnimations(struct Sprite *sprite) {
     layer->pictures = pictures;
     layer->scripts = metadata->animation;
     layer->mode = metadata->pictureCodec;
-    // Picture 255 and no script: Sprite_ComposePicture skips the sprite
+    // SPRITE_PICTURE_NONE and no script: Sprite_ComposePicture skips the sprite
     // animation until an animation is selected on it.
     layer->picture = SPRITE_PICTURE_NONE;
     layer->script = 0;
@@ -289,15 +289,16 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-// Unlike Sprite_StartAnimation it does not mask bit 7 off, so with bit 7 set
-// the index would pass animationCount only in a set of more than 128
-// animations. Nothing sets it: the 309 play commands in the sprites' animation
-// scripts all name animations below 128, and the battle passes 0 or 1.
+// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
+// off, so with it set the index would pass animationCount only in a set of more
+// than 128 animations. Nothing sets it: the 309 play commands in the sprites'
+// animation scripts all name animations below 128, and the battle passes 0
+// or 1.
 /// Starts the indexed animation on a sprite animation when its metadata
-/// contains it. Bit 7 preserves the command cursor and timer; it remains part
-/// of the index. Reached through the animation script's play command
-/// (Sprite_ComposePicture) and, as SpriteAnimation_StartFar, from the battle's
-/// motion and objects.
+/// contains it. SPRITE_ANIMATION_KEEP_PLACE preserves the command cursor and
+/// timer; it remains part of the index. Reached through the animation script's
+/// play command (Sprite_ComposePicture) and, as SpriteAnimation_StartFar, from
+/// the battle's motion and objects.
 void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;

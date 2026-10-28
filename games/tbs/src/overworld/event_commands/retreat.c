@@ -6,16 +6,16 @@
 
 // The event owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
-/// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
-/// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
+/// Per-frame update: spins by FACING_STEP + timer * 0x50 a frame, speeding up
+/// (timer counts up) until timer * 0x50 reaches FACING_STEP: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
 void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   u32 step;
 
   step = actor->timer * 0x50;
-  actor->facing = actor->facing + step + 0x1000;
-  if (step < 0x1000)
+  actor->facing = actor->facing + step + FACING_STEP;
+  if (step < FACING_STEP)
     actor->timer = actor->timer + 1;
 }
 
@@ -71,9 +71,10 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     pos.x = effect->originX;
 
     spread = Random16();
-    Vector_AddPolarOffset(
-        120 << 16, ((spread << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
-        &pos);
+    Vector_AddPolarOffset(120 << 16,
+                          ((spread << 13) >> 16) - ((Random16() << 13) >> 16) +
+                              FACING_NORTH,
+                          &pos);
 
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
@@ -184,10 +185,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + 0xA0000;
+  limit = particle->groundHeight + PIXELS(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + 0x40000;
+    limit = particle->groundHeight + PIXELS(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -201,8 +202,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000;
+  particle->y.fixed = y - PIXELS(2);
+  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + PIXELS(9);
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -214,10 +215,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + 0xA0000;
+  limit = particle->groundHeight + PIXELS(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + 0x40000;
+    limit = particle->groundHeight + PIXELS(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -231,8 +232,8 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   particle->scaleX = scale;
   particle->scaleY = -scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000;
+  particle->y.fixed = y - PIXELS(2);
+  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + PIXELS(16);
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -290,7 +291,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
-                            source->y.fixed + 0x400000, source->z.fixed);
+                            source->y.fixed + PIXELS(64), source->z.fixed);
     actors[arcIndex] = actor;
     if (actor == NULL)
       continue;

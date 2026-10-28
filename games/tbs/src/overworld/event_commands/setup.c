@@ -57,7 +57,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
-  // 0xc80 is TASK_PASS_FRAME: the slots update once a frame.
+  // TASK_PASS_FRAME: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
@@ -99,7 +99,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->x = user->x.fixed;
   effectWork->z = user->z.fixed;
   effectWork->y = user->y.fixed;
-  Vector_AddPolarOffset(0x100000, dir, &effectWork->x);
+  Vector_AddPolarOffset(PIXELS(16), dir, &effectWork->x);
 }
 
 /// Stops the caster's update routine and restores its colours (sprite param
@@ -196,7 +196,7 @@ void FieldPsynergy_End(void) {
 /// Starts casting: the caster takes its casting pose (animation 20) and
 /// stops. Unless the Psynergy is silent the caster flashes with a sound; unless
 /// it is quiet, the ability's name is shown while every other actor stands
-/// still. With flag 0x140 the caster's colours keep cycling and it
+/// still. With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's update routine stops. Sets the field
 /// work's castStarted, which FieldPsynergy_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the Psynergy's caster and
@@ -213,7 +213,7 @@ void FieldPsynergy_StartCast(void) {
   caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
-  Actor_SelectAnimationFar(caster, 0x14);
+  Actor_SelectAnimationFar(caster, 20);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -232,13 +232,13 @@ void FieldPsynergy_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    Actor_SetOthersPaused(caster, 0, 0x10);
+    Actor_SetOthersPaused(caster, 0, 16);
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleActorValueByCounter;
     }
-    Actor_SelectAnimationFar(caster, 0x15);
+    Actor_SelectAnimationFar(caster, 21);
   } else {
     FieldPsynergy_StopCasterUpdate();
   }
@@ -247,7 +247,7 @@ void FieldPsynergy_StartCast(void) {
 
 /// Saves the palettes for the Psynergy and fades them toward one of the eight
 /// cast colours (gFieldEffect_TargetColors), picked by the frame counter or
-/// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
+/// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames. Most field Psynergy
 /// opens with it, and FieldPsynergy_FadeFromCastColor fades back.
 void FieldPsynergy_FadeToCastColor(void) {
   u8 *field;
@@ -296,7 +296,7 @@ void FieldPsynergy_FadeToCastColor(void) {
 
 /// Fades the palettes back from a cast's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
-/// instead (PALETTE_TINT_GRAYSCALE, 0x10001).
+/// instead (PALETTE_TINT_GRAYSCALE).
 void FieldPsynergy_FadeFromCastColor(void) {
   s32 savedPalettes;
   u8 *field;
@@ -341,8 +341,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif
-    s32 x = state->viewX & 0xffff0000;
-    s32 z = state->viewY & 0xffff0000;
+    s32 x = state->viewX & FIELD_PIXEL_MASK;
+    s32 z = state->viewY & FIELD_PIXEL_MASK;
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.

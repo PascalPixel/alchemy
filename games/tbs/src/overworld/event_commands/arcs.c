@@ -27,7 +27,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   arc->scaleY = scale;
   arc->x.fixed = anchor->x.fixed;
   arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + 0x90000;
+  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + PIXELS(9);
 }
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
@@ -49,7 +49,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
   arc->scaleY = -scale;
   arc->x.fixed = anchor->x.fixed;
   arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + 0x100000;
+  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + PIXELS(16);
 }
 
 /// A sprite (struct Sprite) as the arcs set it up: its image's three
@@ -152,7 +152,7 @@ void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
 /// Per-frame update: cycles an actor through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldPsynergy_StartCast gives it to the caster in place of the flicker
-/// while flag 0x140 is set.
+/// while FLAG_PLAY_PSYNERGY_CAST is set.
 void FieldEffect_CycleActorValueByCounter(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 1) != 0) {

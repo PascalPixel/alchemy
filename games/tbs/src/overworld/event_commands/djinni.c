@@ -180,19 +180,20 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
 /// for that Djinni (condition = its flag) goes back to its placement's
 /// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
-/// (0x800) set, and stands (animation 1). FieldSequence_Run calls it as it
+/// set, and stands (animation 1). FieldSequence_Run calls it as it
 /// rebuilds the scene, only while an event is still pending after
 /// Djinn_ResolvePending's first call, that is after a won battle; the second
 /// call then makes this actor join the party.
 void Actor_PlaceMapActors(void) {
-  s32 flags = gMainRoutineWork.pendingDjinni & 0xf000;
-  u32 event = gMainRoutineWork.pendingDjinni & 0xfff;
+  s32 flags = gMainRoutineWork.pendingDjinni & PENDING_KIND_MASK;
+  u32 event = gMainRoutineWork.pendingDjinni & PENDING_EVENT_MASK;
   s32 id;
 
-  // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
+  // Kind 0 is a Djinni battle; a mimic chest's event (CONDITION_FLAG_SET) is
+  // skipped.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
-    flags = event & 0x800;
-    event &= 0x7ff;
+    flags = event & DJINN_NO_HOP;
+    event &= PENDING_DJINNI_EVENT_MASK;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
     if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
@@ -238,17 +239,18 @@ void Actor_PlaceMapActors(void) {
 /// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING flag, which
 /// hides the Djinni's actor until the scene
 /// is entered normally again (overworld/actors.c), and drops the event.
-/// A mimic chest's event (kind 0x1000, overworld/triggers.c) sets the chest's
-/// flag when the battle ended with exactly one enemy defeated, and is dropped.
+/// A mimic chest's event (kind CONDITION_FLAG_SET, overworld/triggers.c) sets
+/// the chest's flag when the battle ended with exactly one enemy defeated, and
+/// is dropped.
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinni;
-  s32 kind = *pending & 0xf000;
-  s32 flag = *pending & 0xfff;
+  s32 kind = *pending & PENDING_KIND_MASK;
+  s32 flag = *pending & PENDING_EVENT_MASK;
 
   if (shown == 0) {
     if (kind == 0) {
-      flag &= 0x7ff;
+      flag &= PENDING_DJINNI_EVENT_MASK;
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
@@ -258,7 +260,7 @@ void Djinn_ResolvePending(s32 shown) {
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
       *pending = kind;
-    } else if (kind == 0x1000) {
+    } else if (kind == CONDITION_FLAG_SET) {
       if (st->sequenceResult == 1)
         GameFlag_SetFar(flag);
       *pending = shown;
@@ -266,10 +268,10 @@ void Djinn_ResolvePending(s32 shown) {
     return;
   }
   if (kind == 0) {
-    flag &= 0x7ff;
+    flag &= PENDING_DJINNI_EVENT_MASK;
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
-      flag &= 0x7ff;
+      flag &= PENDING_DJINNI_EVENT_MASK;
       if (st->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / 20;
@@ -369,7 +371,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
     position.x = target->x.fixed;
-    position.y = target->y.fixed + 0x140000;
+    position.y = target->y.fixed + PIXELS(20);
     position.z = target->z.fixed;
     // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);

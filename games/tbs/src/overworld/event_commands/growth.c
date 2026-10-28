@@ -95,7 +95,7 @@ void FieldPsynergy_Growth(void) {
 
     p->values[0] = effectWork->x;
     p->values[2] = effectWork->z;
-    radius = (Random16() * 6) + 0x40000;
+    radius = (Random16() * 6) + PIXELS(4);
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = effectWork->y;
     particle = Actor_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
@@ -133,16 +133,16 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct BurstParticleVisual *child;
     s32 radius;
 
-    if (effectWork->angle == 0x4000) {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+    if (effectWork->angle == FACING_SOUTH) {
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + PIXELS(10),
                  caster->z.fixed);
-    } else if (effectWork->angle == 0xc000) {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0x180000,
+    } else if (effectWork->angle == FACING_NORTH) {
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + PIXELS(24),
                  caster->z.fixed);
     } else {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + PIXELS(10),
                  caster->z.fixed);
-      Vector_AddPolarOffset(0xa0000, effectWork->angle, pos);
+      Vector_AddPolarOffset(PIXELS(10), effectWork->angle, pos);
     }
 
     // The shadow part takes the image's colour mode, shape, size, tile and
@@ -171,9 +171,9 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
       // Destination: 4 to 10 pixels from the Psynergy's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
-      if (effectWork->angle == 0xc000)
-        Vector_AddPolarOffset(0xe0000, effectWork->angle, pos);
-      radius = Random16() * 6 + 0x40000;
+      if (effectWork->angle == FACING_NORTH)
+        Vector_AddPolarOffset(PIXELS(14), effectWork->angle, pos);
+      radius = Random16() * 6 + PIXELS(4);
       Vector_AddPolarOffset(radius, Random16(), pos);
       Actor_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }

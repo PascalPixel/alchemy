@@ -37,15 +37,15 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   sprite = object->actor;
   offset = 0;
   if (object->flags & 4)
-    offset = 0x1fc0000 - object->z;
+    offset = PIXELS(508) - object->z;
   scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
   scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
   position.x = object->x;
   position.height = offset;
   position.y = object->z + offset;
   position.groundHeight = 0;
-  if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
-      object->z < 0xe00000)
+  if (object->x > -PIXELS(32) && object->x < PIXELS(272) &&
+      object->z > -PIXELS(32) && object->z < PIXELS(224))
     Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
@@ -74,10 +74,10 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     pixelX = deltaX / Q16_ONE;
     pixelZ = deltaZ / Q16_ONE;
     distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ) << 16;
-    if (distance < 0x800000)
+    if (distance < PIXELS(128))
       distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
                            Iwram_MulQ16(deltaZ, deltaZ));
-    if (distance <= 0x80000) {
+    if (distance <= PIXELS(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
@@ -163,7 +163,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   effect->scaleX = Q16_ONE;
-  effect->speedMax = 0x20000;
+  effect->speedMax = PIXELS(2);
   effect->scaleY = Q16_ONE;
   effect->acceleration = Q16_ONE;
   effect->originX = x;

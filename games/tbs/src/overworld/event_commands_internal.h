@@ -98,8 +98,17 @@
 
 /// gMainRoutineWork.pendingDjinni of Djinni 0 (requests.c, djinni.c): a
 /// Djinni battle's event is 300 plus the Djinni's number (element * 20 +
-/// index), with DJINN_NO_HOP (0x800) beside it.
+/// index), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
+
+/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
+/// bits: 15..12 kind | 11..0 event or flag. Kind 0 is a Djinni battle, its
+/// event beside DJINN_NO_HOP; CONDITION_FLAG_SET is a mimic chest's flag
+/// (Field_ExamineCell).
+#define PENDING_KIND_MASK 0xf000
+#define PENDING_EVENT_MASK 0xfff
+/// A Djinni battle's event without DJINN_NO_HOP.
+#define PENDING_DJINNI_EVENT_MASK 0x7ff
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
@@ -155,7 +164,7 @@ struct WaveEffectSprite {
   u32 tileHigh : 2;       ///< image.tile's high bits
   u32 priority : 2;       ///< image.priority
   u32 paletteBits : 4;    ///< image.palette
-  u8 attr3ToDirty[0x1c];  ///< image.attr3 to the sprite's dirty flag
+  u8 attr3ToDirty[28];    ///< image.attr3 to the sprite's dirty flag
   u8 flags;               ///< 0 drops shadow and outline
 };
 
@@ -195,32 +204,33 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     effectWork = gFieldEffectWork;                                             \
     FieldPsynergy_FadeToCastColor();                                           \
     pos.x = effectWork->x;                                                     \
-    pos.y = effectWork->y + 0x100000;                                          \
+    pos.y = effectWork->y + PIXELS(16);                                        \
     pos.z = effectWork->z;                                                     \
-    pair[0] = spawn(pos.x + 0x200000, pos.y, pos.z, 0x8000);                   \
-    pair[1] = spawn(pos.x - 0x200000, pos.y, pos.z, 0);                        \
+    pair[0] = spawn(pos.x + PIXELS(32), pos.y, pos.z, 0x8000);                 \
+    pair[1] = spawn(pos.x - PIXELS(32), pos.y, pos.z, 0);                      \
                                                                                \
     wait(15);                                                                  \
     walk = pair;                                                               \
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing); \
+        Actor_SetTargetPositionFromMagnitudeAngle(obj, PIXELS(24),             \
+                                                  obj->facing);                \
     }                                                                          \
                                                                                \
     Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
-      pos.y = effectWork->y + 0x100000;                                        \
+      pos.y = effectWork->y + PIXELS(16);                                      \
       pos.z = effectWork->z;                                                   \
       obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                  \
       if (obj != 0) {                                                          \
         Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);                \
-        obj->speedLimit = Random16() + 0x20000;                                \
-        obj->acceleration = 0x20000;                                           \
+        obj->speedLimit = Random16() + PIXELS(2);                              \
+        obj->acceleration = PIXELS(2);                                         \
         obj->motionFlags = 0;                                                  \
-        dist = Random16() * 24 + 0x80000;                                      \
+        dist = Random16() * 24 + PIXELS(8);                                    \
         Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());      \
       }                                                                        \
     }                                                                          \

@@ -233,7 +233,8 @@ void Event_RunFieldPsynergy(void) {
   }
 }
 
-/// Runs the event tied to a field Psynergy: a result below 0x10000 is a
+/// Runs the event tied to a field Psynergy: a result below
+/// TRIGGER_RESULT_MESSAGE_END is a
 /// message, shown at target; a larger one is a routine, called with param and
 /// target (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But
 /// nothing happens.". Returns 0.
@@ -245,10 +246,11 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {
-    // Every routine's address is above 0x10000, so one word holds either.
+    // Every routine's address is above TRIGGER_RESULT_MESSAGE_END, so one word
+    // holds either.
     script = ((const struct TriggerView *)event)->result;
     if (script != 0) {
-      if (script < 0x10000) {
+      if (script < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
         Event_SetMessageId(((const struct TriggerView *)event)->result);
         Event_ShowMessageAndWait(target, 0);

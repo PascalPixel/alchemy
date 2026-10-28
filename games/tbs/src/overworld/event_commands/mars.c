@@ -30,9 +30,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   effectWork = gFieldEffectWork;
   // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
-  Shop_SaveAndTintFieldPaletteFar(0x201090);
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
   wait(30);
-  // Turn to face the camera (angle 0x4000), then bounce three times, a rising
+  // Turn to face the camera (FACING_SOUTH), then bounce three times, a rising
   // note on each.
   Actor_ArmCallback(djinniId, FACING_SOUTH, 0);
   wait(20);
@@ -159,9 +159,9 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
                         &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
-  y = mote->y.fixed + 0xFFFF0000;
+  y = mote->y.fixed - PIXELS(1);
   mote->y.fixed = y;
-  if (y < leader->y.fixed + 0x140000)
+  if (y < leader->y.fixed + PIXELS(20))
     Actor_ReleaseFar(mote);
 }
 
@@ -186,7 +186,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.y = source->y.fixed;
     position.z = source->z.fixed;
 
-    random = Random16() * 10 + 0xa0000;
+    random = Random16() * 10 + PIXELS(10);
     Vector_AddPolarOffset(random, Random16(), &position);
     Camera_WorldToScreen(&position);
 
@@ -197,11 +197,11 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(0x780000, FACING_NORTH, &position);
+    Vector_AddPolarOffset(PIXELS(120), FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;
-    effect->speedMax = 0x50000;
+    effect->speedMax = PIXELS(5);
     effect->turnStepLimited = state;
     effect->state++;
 

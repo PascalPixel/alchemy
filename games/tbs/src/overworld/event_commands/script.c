@@ -79,7 +79,7 @@ void Leader_StopMoving(void) {
   actor->velocityX = 0;
   actor->velocityZ = 0;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB) {
-    Actor_SelectAnimationFar(actor, 0xC);
+    Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
     return;
   }
   Actor_SelectAnimationFar(actor, 1);
@@ -103,7 +103,7 @@ void Event_Start(void) {
   // Every event starts with no name window and normal waits.
   runtime->choiceMessage = 0;
   runtime->choiceWidth = 0;
-  runtime->transitionFrames = 0x10;
+  runtime->transitionFrames = 16;
   runtime->fastForward = 0;
   runtime->unusedAfterMessage = 0xFFFF;
   runtime->unusedBeforeCamera[0] = -1;

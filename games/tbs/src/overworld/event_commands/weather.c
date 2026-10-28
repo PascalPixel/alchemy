@@ -52,8 +52,8 @@ void Weather_UpdateRain(void) {
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
       // Actor_SetHorizontalPositionWithTerrain (see the XXX there).
-      x = leader[0] + (Random16() << 8) - 0x800000;
-      y = leader[2] + (Random16() << 8) - 0x800000;
+      x = leader[0] + (Random16() << 8) - PIXELS(128);
+      y = leader[2] + (Random16() << 8) - PIXELS(128);
       particle->positionX = x;
       particle->positionZ = y;
       particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16)
@@ -100,7 +100,8 @@ void Weather_UpdateLightning(void) {
   case 10:
     // A frame after each flash: fade back to the dark colours over 12 frames.
     PaletteFade_SetTarget((s32)work, 1);
-    Dma_Set(work->delta, target->delta, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0,
+    Dma_Set(work->delta, target->delta,
+            (DMA_ENABLE | DMA_32BIT) << 16 | sizeof target->delta / 4,
             REG_DMA3);
     target->duration = 12;
     target->step = 0;
@@ -236,8 +237,8 @@ void FieldMotes_Update(void) {
     if (spawned < 8 && mote->timer == 0) {
       s32 *leader = grid->origin;
 
-      x = leader[0] + (Random16() << 8) - 0x800000;
-      y = leader[2] + (Random16() << 8) - 0x800000;
+      x = leader[0] + (Random16() << 8) - PIXELS(128);
+      y = leader[2] + (Random16() << 8) - PIXELS(128);
       mote->positionZ = y;
       mote->positionX = x;
       mote->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
@@ -257,7 +258,7 @@ void FieldMotes_Start(void) {
   u32 i;
   u32 size;
 
-  size = 0x410;
+  size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
   /* FAKEMATCH(temporary): size reused for the cleared word keeps the zero in
@@ -389,8 +390,8 @@ void FieldEffect_UpdateSparkles(void) {
       } else if ((Random16() & 255) == 0) {
         // A burst starts at a random spot.
         leader = grid->origin;
-        spawnX = leader[0] + (Random16() << 8) - 0x800000;
-        spawnZ = leader[2] + (Random16() << 8) - 0x800000;
+        spawnX = leader[0] + (Random16() << 8) - PIXELS(128);
+        spawnZ = leader[2] + (Random16() << 8) - PIXELS(128);
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
         sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
@@ -409,7 +410,7 @@ void FieldEffect_UpdateSparkles(void) {
 /// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
 void FieldEffect_InitializeSparkles(void) {
-  u32 size = 0x410;
+  u32 size = sizeof(struct WeatherWork);
   struct WeatherWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   struct GroundParticle *sparkle = work->particles;
   u8 *tiles;

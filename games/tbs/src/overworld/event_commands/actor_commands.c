@@ -71,7 +71,7 @@ void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
 }
 
 /// Waits, at most 300 frames, for an actor's script to reach its end
-/// (command 0x10). Called by Actor_RunRepeatedMotion, the climbing
+/// (SC_END). Called by Actor_RunRepeatedMotion, the climbing
 /// events and about 28 others.
 void Actor_RefreshSelectorById(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -307,14 +307,13 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
       if (tileX < 0) {
         tileX += 0xFFFF;
       }
-      tileX >>= 0x10;
+      tileX >>= 16;
       tileZ = z;
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
-      tileZ >>= 0x10;
-      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ)
-                     << 0x10;
+      tileZ >>= 16;
+      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ) << 16;
       object->y.fixed = (object->y.fixed - object->groundHeight) + groundHeight;
       object->groundHeight = groundHeight;
     }
@@ -344,13 +343,13 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
       if (tileX < 0) {
         tileX += 0xFFFF;
       }
-      tileX >>= 0x10;
+      tileX >>= 16;
       tileZ = z;
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
-      groundHeight =
-          MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 0x10) << 0x10;
+      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 16)
+                     << 16;
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
     }
@@ -495,7 +494,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor) {
   y = particle->y.fixed + 0x400;
   particle->y.fixed = y;
   particle->targetY = y;
-  particle->speedLimit = (velocityX - velocityX / 0x12);
+  particle->speedLimit = (velocityX - velocityX / 18);
 
   roundedZ = velocityZ;
   if (velocityZ < 0) {
@@ -550,10 +549,10 @@ void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
 
 /// Makes an actor jump down off a ledge in front of it (the field runs
 /// it for the leader when the player presses down at a ledge): it shows pose
-/// for 10 frames, hops 12 pixels south, turns toward angle 0x5000 (1/16 turn
-/// past FACING_SOUTH) while sinking 28 pixels with a dust puff every other
-/// frame (none when param is -1), then jumps on to 16 pixels south of where it
-/// started and lands. The landing plays the queued sound
+/// for 10 frames, hops 12 pixels south, turns toward FACING_SOUTH + FACING_STEP
+/// (1/16 turn past FACING_SOUTH) while sinking 28 pixels with a dust puff every
+/// other frame (none when param is -1), then jumps on to 16 pixels south of
+/// where it started and lands. The landing plays the queued sound
 /// (Scene_PlayQueuedMusic). Called by Field_RunPushCell for a ledge
 /// (CELL_BEHAVIOR_LEDGE) with pose 6 and param 0, and by seven scenes through
 /// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
@@ -578,9 +577,9 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
       flags |= *objectFlags;
       *objectFlags = flags;
     }
-    actor->velocityY = 0x40000;
+    actor->velocityY = PIXELS(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           startZ + 0xC0000);
+                           startZ + PIXELS(12));
     wait(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
@@ -591,7 +590,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     Actor_ArmCallback(actorId, FACING_SOUTH + FACING_STEP, 0);
     *objectFlags = 0;
     do {
-      nextY = actor->y.fixed + 0xFFFE0000;
+      nextY = actor->y.fixed - PIXELS(2);
       actor->y.fixed = nextY;
       actor->targetY = nextY;
       wait(1);
@@ -599,16 +598,16 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
         FieldEffect_SpawnBurstParticle(actor, param);
       }
       pose++;
-    } while ((u32)pose <= 0xD);
+    } while ((u32)pose <= 13);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
     *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->velocityY = 0x30000;
+    actor->velocityY = PIXELS(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           startZ + 0x100000);
+                           startZ + PIXELS(16));
     Actor_WaitForMoveFar(actor);
-    for (pose = 0; (u32)pose <= 0xB3 && actor->y.fixed > actor->groundHeight;
+    for (pose = 0; (u32)pose <= 179 && actor->y.fixed > actor->groundHeight;
          pose++) {
       wait(1);
     }
@@ -669,20 +668,20 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
     actorsTurning = 2;
     angleDifference = (s16)(firstTargetAngle - first->facing);
     if (angleDifference != 0) {
-      if (angleDifference > 0x1000)
-        angleDifference = 0x1000;
-      if (angleDifference < -0x1000)
-        angleDifference = -0x1000;
+      if (angleDifference > FACING_STEP)
+        angleDifference = FACING_STEP;
+      if (angleDifference < -FACING_STEP)
+        angleDifference = -FACING_STEP;
       first->facing += angleDifference;
     } else {
       actorsTurning = 1;
     }
     angleDifference = (s16)(secondTargetAngle - second->facing);
     if (angleDifference != 0) {
-      if (angleDifference > 0x1000)
-        angleDifference = 0x1000;
-      if (angleDifference < -0x1000)
-        angleDifference = -0x1000;
+      if (angleDifference > FACING_STEP)
+        angleDifference = FACING_STEP;
+      if (angleDifference < -FACING_STEP)
+        angleDifference = -FACING_STEP;
       second->facing += angleDifference;
     } else {
       actorsTurning--;
@@ -708,7 +707,9 @@ void Actor_ReleaseById(s32 index) {
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
     // Copy the pointer representation without extending the actor array.
-    memcpy((u8 *)table + 0x14 + index * sizeof(void *), &empty, sizeof(empty));
+    memcpy((u8 *)table + offsetof(struct FieldWork, actors) +
+               index * sizeof(void *),
+           &empty, sizeof(empty));
 #else
     // UB: the getter accepts slots through 191, past the 66 actors.
     table->actors[index] = NULL;
@@ -719,7 +720,7 @@ void Actor_ReleaseById(s32 index) {
 UNUSED void Actor_ReleaseNoOp(void) {}
 
 /// The event command "set actor sprite param": gives every sprite part
-/// of the actor param (Actor_SetSpriteColor). With bit 0x100 set
+/// of the actor param (Actor_SetSpriteColor). With SPRITE_COLOR_BLINK set
 /// the actor blinks instead (Actor_UpdateBlink, every
 /// frame); any other param also ends a blink, clearing the actor's update
 /// routine. Events reach it (Actor_SetSpriteColorById).
@@ -729,7 +730,7 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    blink = 0x100 & param;
+    blink = SPRITE_COLOR_BLINK & param;
     if (blink != 0) {
       (actor)->update = Actor_UpdateBlink;
       return;
@@ -745,7 +746,7 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 void Actor_UpdateBlink(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
+  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
     u8 param;
     struct Sprite *container;
     u8 partCount;
@@ -776,7 +777,7 @@ void Actor_UpdateBlink(struct Actor *actor) {
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   struct Actor *object = actor;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
+  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
     struct Sprite *container = object->sprite;
     u8 partCount = container->count;
 

@@ -62,8 +62,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
 s32 BattleEffect_ProcessPendingGraphicsTransfer(
     void); // the canvas transfer callback
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Scheduler_AddOrUpdateCallback(void *func, s32 order);
+s32 Scheduler_RemoveCallback(void *func);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 u32 Random16(void);

@@ -4,12 +4,12 @@
 /// Runs the game's frame loop for `frames` frames: the tasks, the OAM
 /// list, the idle sleep and the debug pause, then VBlank and the keys.
 void WaitFramesFar(s32 frames);
-/// Adds a task running `callback` at priority `order`, or gives the task
+/// Adds a task running `func` at priority `order`, or gives the task
 /// already running it the new priority. Returns the task's index, or -1 when
 /// all 20 slots are taken.
-s32 Task_AddFar(TaskFunc callback, s32 order);
-/// Removes the task running `callback` and returns its old index, or -1.
-s32 Task_RemoveFar(TaskFunc callback);
+s32 Task_AddFar(TaskFunc func, s32 order);
+/// Removes the task running `func` and returns its old index, or -1.
+s32 Task_RemoveFar(TaskFunc func);
 /// Advances the random number generator and returns 16 bits of the new seed,
 /// 0 to 0xffff.
 u32 Random16Far(void);
@@ -94,6 +94,6 @@ s32 Serial_StartSendFar(void *source, s32 transferValue);
 s32 Serial_StartReceiveFar(void *destination);
 /// Returns bit 0 while a send runs and bit 1 while a receive runs.
 s32 Serial_GetActiveTransfersFar(void);
-/// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
+/// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Returns its index, or -1.
-s32 Task_SetFlagsFar(TaskFunc callback, u32 mask);
+s32 Task_SetFlagsFar(TaskFunc func, u32 mask);

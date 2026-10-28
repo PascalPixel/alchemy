@@ -7,7 +7,7 @@
 /// Keyed callbacks return a value (the target address is left in r0).
 typedef s32 (*KeyCallbackFn)(void);
 
-s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
+s32 Scheduler_ResumeTasks(SchedulerCallback func) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -17,7 +17,7 @@ s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if (callback == 0 || task->callback == (u32)callback) {
+    if (func == 0 || task->func == (u32)func) {
       TASK_STATE_HIGH(task) &= (u8)~1;
       result = i;
     }
@@ -36,7 +36,7 @@ s32 Scheduler_ResumeOverlayTasks(void) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if ((task->callback >> 24) == 2) {
+    if ((task->func >> 24) == 2) {
       TASK_STATE_HIGH(task) &= (u8)~1;
       result = i;
     }
@@ -58,9 +58,9 @@ void Scheduler_RunCallbacksByKey(s32 key) {
     if (remaining != 0) {
       task++;
       if (TASK_STATE_HIGH(task) == key) {
-        KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
+        KeyCallbackFn func = *(KeyCallbackFn *)&task->func;
 
-        callback();
+        func();
       }
       goto next_task;
     }
@@ -122,9 +122,9 @@ void Scheduler_RunCallbacksBeforeBoundary(s32 key) {
         return;
       }
       if (TASK_STATE_HIGH(task) == key) {
-        KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
+        KeyCallbackFn func = *(KeyCallbackFn *)&task->func;
 
-        callback();
+        func();
       }
       goto next_task;
     }

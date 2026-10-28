@@ -15,7 +15,7 @@ typedef void (*TaskFunc)(void);
 /// A task: its routine's address, its priority (see TASK_PRIORITY_) and
 /// its flags, where bit 0 keeps it running while overlay tasks are suspended.
 struct Task {
-  u32 callback;
+  u32 func;
   u16 priority;
   u8 flags;
   u8 reserved;

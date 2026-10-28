@@ -1542,7 +1542,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 s32 BattleArena_RunRoundResult(void) {
   s32 i;
   struct FieldWork *work;
-  void (*callback)(void);
+  void (*func)(void);
 
   gBattleArenaCallFrames = 0;
   sBattleArenaWaitFrames = 0;
@@ -1730,9 +1730,9 @@ s32 BattleArena_RunRoundResult(void) {
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   // Resume polling and restore the party unless continuing a monster run.
-  callback = (TaskFunc)BattleArena_PollPeerReady;
-  Task_AddFrame(callback, TASK_PASS_FRAME);
-  Task_SetFlags(callback, 1);
+  func = (TaskFunc)BattleArena_PollPeerReady;
+  Task_AddFrame(func, TASK_PASS_FRAME);
+  Task_SetFlags(func, 1);
   if (gAdventure.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
       !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);

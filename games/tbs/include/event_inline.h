@@ -128,8 +128,8 @@ static inline void FieldActor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
 }
 
 /// Task_AddFrame (system_call.h) under a second name.
-static inline s32 Task_AddOrUpdateFrame(TaskFunc callback, s32 priority) {
-  return Task_AddFrame(callback, priority);
+static inline s32 Task_AddOrUpdateFrame(TaskFunc func, s32 priority) {
+  return Task_AddFrame(func, priority);
 }
 
 /// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,

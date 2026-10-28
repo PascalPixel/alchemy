@@ -5,7 +5,7 @@
 #include "../runtime_internal.h"
 
 #ifndef UBFIX
-typedef s32 (*KeyCallbackFn)(void);
+typedef s32 (*TaskIntFunc)(void);
 #endif
 
 // Tasks: up to 20 routines run each frame by WaitFrames or each VBlank, kept
@@ -24,7 +24,7 @@ void Task_ResetAll(void) {
   gTasksRunning = 0;
   remaining = TASK_COUNT - 1;
   do {
-    task->callback = 0;
+    task->func = 0;
     task->priority = TASK_PRIORITY_EMPTY;
     task->flags = 0;
     task++;
@@ -72,9 +72,9 @@ void Task_Sort(void) {
   }
 }
 
-/// Unused: returns the table index of the task running `callback`, or -1.
+/// Unused: returns the table index of the task running `func`, or -1.
 /// Nothing in ☀️ calls it.
-UNUSED s32 Task_Find(TaskFunc callback) {
+UNUSED s32 Task_Find(TaskFunc func) {
   s32 result;
   struct Task *task;
   u32 savedInterruptMaster;
@@ -84,7 +84,7 @@ UNUSED s32 Task_Find(TaskFunc callback) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (task->callback == (u32)callback) {
+    if (task->func == (u32)func) {
       result = i;
       break;
     }
@@ -93,7 +93,7 @@ UNUSED s32 Task_Find(TaskFunc callback) {
   return result;
 }
 
-/// Adds a task running `callback` with priority `order`, or gives a task
+/// Adds a task running `func` with priority `order`, or gives a task
 /// already running it the new priority, and re-sorts the table. Writes the
 /// task's routine, priority and flags (cleared for a new task) with interrupts
 /// disabled. Returns the task's index, or -1 when all 20 slots are taken.
@@ -102,7 +102,7 @@ UNUSED s32 Task_Find(TaskFunc callback) {
 /// the low byte. The index is the slot written before this call's own sort,
 /// which may already have moved the task; a few callers return it, but nothing
 /// in ☀️ tests it. A task stays until Task_Remove or Task_ResetAll.
-s32 Task_Add(TaskFunc callback, s32 order) {
+s32 Task_Add(TaskFunc func, s32 order) {
   u32 savedInterruptState;
   s32 index;
   struct Task *task;
@@ -120,7 +120,7 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   IRQ_LOCK(savedInterruptState);
   // Update an existing task before looking for an unused task slot.
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (task->callback == (u32)callback) {
+    if (task->func == (u32)func) {
       task->priority = order;
       index = i;
       break;
@@ -129,8 +129,8 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   task = gTasks;
   if (index == -1) {
     for (i = 0; i < TASK_COUNT; i++, task++) {
-      if (task->callback == 0) {
-        task->callback = (u32)callback;
+      if (task->func == 0) {
+        task->func = (u32)func;
         task->priority = order;
         task->flags = 0;
         index = i;
@@ -149,11 +149,11 @@ UNUSED void Task_Idle(void) {}
 /// Unused: an empty routine; nothing in ☀️ calls it.
 UNUSED void Task_Empty(void) {}
 
-/// Removes the task running `callback`: clears its routine and gives it
+/// Removes the task running `func`: clears its routine and gives it
 /// priority TASK_PRIORITY_REMOVED, which no pass matches. Returns its old
 /// index, or -1. Called throughout the game when the work a task did is
 /// finished.
-s32 Task_Remove(TaskFunc callback) {
+s32 Task_Remove(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
@@ -163,8 +163,8 @@ s32 Task_Remove(TaskFunc callback) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (task->callback == (u32)callback) {
-      task->callback = 0;
+    if (task->func == (u32)func) {
+      task->func = 0;
       task->priority = TASK_PRIORITY_REMOVED;
       result = i;
       break;
@@ -174,12 +174,12 @@ s32 Task_Remove(TaskFunc callback) {
   return result;
 }
 
-/// Suspends the task running `callback`, or every task when `callback` is
+/// Suspends the task running `func`, or every task when `func` is
 /// null, by setting bit 0 of its priority's high byte, which then matches
 /// neither pass. Returns the last index changed, or -1. Called by the map
 /// animation and battle code, through the far-call table, to pause tasks
 /// Task_ResumeAll restarts later.
-s32 Task_SuspendAll(TaskFunc callback) {
+s32 Task_SuspendAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
@@ -189,8 +189,8 @@ s32 Task_SuspendAll(TaskFunc callback) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (callback != 0) {
-      if (task->callback != (u32)callback)
+    if (func != 0) {
+      if (task->func != (u32)func)
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
@@ -216,7 +216,7 @@ s32 Task_SuspendOverlayTasks(void) {
   for (i = 0; i < TASK_COUNT; i++, task++) {
     // Overlays run from EWRAM, so a routine at 0x02xxxxxx is an overlay's.
     // An empty slot (routine 0) never matches.
-    if ((task->callback >> 24) == 2 && (task->flags & 1) == 0) {
+    if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
       result = i;
     }
@@ -225,11 +225,11 @@ s32 Task_SuspendOverlayTasks(void) {
   return result;
 }
 
-/// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
+/// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Called by the Battle Arena
 /// and Colosso scenes for the tasks that must keep running under a menu.
 /// Returns its index, or -1.
-s32 Task_SetFlags(TaskFunc callback, u32 mask) {
+s32 Task_SetFlags(TaskFunc func, u32 mask) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
@@ -239,7 +239,7 @@ s32 Task_SetFlags(TaskFunc callback, u32 mask) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (task->callback == (u32)callback) {
+    if (task->func == (u32)func) {
       task->flags = mask;
       result = i;
       break;
@@ -249,10 +249,10 @@ s32 Task_SetFlags(TaskFunc callback, u32 mask) {
   return result;
 }
 
-/// Resumes the task running `callback`, or every task when `callback` is
+/// Resumes the task running `func`, or every task when `func` is
 /// null, by clearing bit 0 of its priority's high byte. Called by the map
 /// animation and actor code. Returns the last index changed, or -1.
-s32 Task_ResumeAll(TaskFunc callback) {
+s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
   s32 result;
@@ -262,7 +262,7 @@ s32 Task_ResumeAll(TaskFunc callback) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if (callback == 0 || task->callback == (u32)callback) {
+    if (func == 0 || task->func == (u32)func) {
       TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
@@ -284,7 +284,7 @@ s32 Task_ResumeOverlayTasks(void) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if ((task->callback >> 24) == 2) {
+    if ((task->func >> 24) == 2) {
       TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
@@ -318,12 +318,12 @@ void Task_RunPass(s32 key) {
         // object. The native integer-return call uses r0; a void call uses
         // r3 instead (two instructions and the call relocation differ).
 #ifdef UBFIX
-        TaskFunc callback = (TaskFunc)task->callback;
+        TaskFunc func = (TaskFunc)task->func;
 #else
-        KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
+        TaskIntFunc func = *(TaskIntFunc *)&task->func;
 #endif
 
-        callback();
+        func();
       }
     }
   }

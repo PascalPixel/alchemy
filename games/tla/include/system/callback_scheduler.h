@@ -13,7 +13,7 @@ enum SchedulerTaskLimits {
 typedef void (*SchedulerCallback)(void);
 
 struct SchedulerTask {
-  u32 callback;
+  u32 func;
   u16 state;
   u8 mask;
   u8 reserved;
@@ -47,15 +47,15 @@ void PaletteQueue_Start(void);
 void Scheduler_ResetTaskTable(void);
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count);
 void Scheduler_SortTasks(void);
-s32 Scheduler_FindCallback(SchedulerCallback callback);
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
+s32 Scheduler_FindCallback(SchedulerCallback func);
+s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order);
 void Scheduler_Idle(void);
 void Scheduler_EmptyCallback(void);
-s32 Scheduler_RemoveCallback(SchedulerCallback callback);
-s32 Scheduler_SuspendTasks(SchedulerCallback callback);
+s32 Scheduler_RemoveCallback(SchedulerCallback func);
+s32 Scheduler_SuspendTasks(SchedulerCallback func);
 s32 Scheduler_SuspendOverlayTasks(void);
-s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask);
-s32 Scheduler_ResumeTasks(SchedulerCallback callback);
+s32 Scheduler_SetTaskFlags(SchedulerCallback func, u32 mask);
+s32 Scheduler_ResumeTasks(SchedulerCallback func);
 s32 Scheduler_ResumeOverlayTasks(void);
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void);

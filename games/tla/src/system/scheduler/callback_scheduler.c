@@ -15,7 +15,7 @@ void Scheduler_ResetTaskTable(void) {
   zero = 0;
   remaining = 23;
   do {
-    task->callback = zero;
+    task->func = zero;
     task->state |= 0xffff;
     task->mask = zero;
     task++;
@@ -62,7 +62,7 @@ finish_pass:
     goto next_pass;
 }
 
-s32 Scheduler_FindCallback(SchedulerCallback callback) {
+s32 Scheduler_FindCallback(SchedulerCallback func) {
   s32 result;
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
@@ -72,7 +72,7 @@ s32 Scheduler_FindCallback(SchedulerCallback callback) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if (task->callback == (u32)callback) {
+    if (task->func == (u32)func) {
       result = i;
       break;
     }
@@ -81,7 +81,7 @@ s32 Scheduler_FindCallback(SchedulerCallback callback) {
   return result;
 }
 
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
+s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order) {
   u32 saved_interrupt_state;
   s32 index;
   struct SchedulerTask *task;
@@ -92,7 +92,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   index = -1;
   IRQ_LOCK(saved_interrupt_state);
   i = 0;
-  if (task->callback == (u32)callback) {
+  if (task->func == (u32)func) {
     task->state = order;
     index = 0;
   } else {
@@ -100,7 +100,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
     i++;
     task++;
     if (i <= 23) {
-      if (task->callback == (u32)callback) {
+      if (task->func == (u32)func) {
         task->state = order;
         index = i;
       } else {
@@ -111,8 +111,8 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   task = gSchedulerTaskTable;
   if (index == -1) {
     i = 0;
-    if (task->callback == 0) {
-      task->callback = (u32)callback;
+    if (task->func == 0) {
+      task->func = (u32)func;
       task->state = order;
       task->mask = 0;
       index = 0;
@@ -121,8 +121,8 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
       i++;
       task++;
       if (i <= 23) {
-        if (task->callback == 0) {
-          task->callback = (u32)callback;
+        if (task->func == 0) {
+          task->func = (u32)func;
           task->state = order;
           task->mask = 0;
           index = i;
@@ -141,7 +141,7 @@ void Scheduler_Idle(void) {}
 
 void Scheduler_EmptyCallback(void) {}
 
-s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
+s32 Scheduler_RemoveCallback(SchedulerCallback func) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -151,8 +151,8 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if (task->callback == (u32)callback) {
-      task->callback = 0;
+    if (task->func == (u32)func) {
+      task->func = 0;
       task->state = 0x7fff;
       result = i;
       break;
@@ -162,7 +162,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   return result;
 }
 
-s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
+s32 Scheduler_SuspendTasks(SchedulerCallback func) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -172,8 +172,8 @@ s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if (callback != 0) {
-      if (task->callback != (u32)callback)
+    if (func != 0) {
+      if (task->func != (u32)func)
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
@@ -196,7 +196,7 @@ s32 Scheduler_SuspendOverlayTasks(void) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
+    if ((task->func >> 24) == 2 && (task->mask & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
       /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the
        * state byte's load delay; native stores the byte first. */
@@ -213,7 +213,7 @@ extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerReady;
 extern struct SchedulerTask gSchedulerTaskTable[24];
 
-s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
+s32 Scheduler_SetTaskFlags(SchedulerCallback func, u32 mask) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -225,7 +225,7 @@ s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if (task->callback == (u32)callback) {
+    if (task->func == (u32)func) {
       task->mask = mask;
       result = i;
       break;

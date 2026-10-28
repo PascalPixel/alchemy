@@ -52,17 +52,17 @@ void Func_0200030c(void) {
   t9 = Value1(Actor_GetById, 10);
   Call2(Actor_SetModeById, 10, 4);
   Call1(Import_SoundPlay, 165);
-  Call4(Func_02002884, t9, 0x1600000, 0x80000, 0xb00000);
+  Call4(Func_02002884, t9, PIXELS(352), PIXELS(8), PIXELS(176));
   Call2(Func_02002864, t9, (s32)gData_0200b000);
   Call1(FieldEvent_Wait, 25);
   Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(104), 1);
   t16 = Value1(Actor_GetById, 11);
   Call2(Actor_SetModeById, 11, 4);
-  Call4(Func_02002884, t16, 0x1a00000, 0x80000, 0x980000);
+  Call4(Func_02002884, t16, PIXELS(416), PIXELS(8), PIXELS(152));
   Call2(Func_02002864, t16, (s32)gData_0200b000);
   Call1(FieldEvent_Wait, 60);
   Call1(Import_SoundPlay, 165);
-  Call1(Actor_WaitForMoveById, 0xa);
-  Call1(Actor_WaitForMoveById, 0xb);
+  Call1(Actor_WaitForMoveById, 10);
+  Call1(Actor_WaitForMoveById, 11);
   Func_0200298c();
 }

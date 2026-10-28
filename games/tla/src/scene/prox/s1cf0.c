@@ -280,10 +280,10 @@ void Func_02001cf0(void) {
   Call2(Actor_SetModeById, 27, 2);
   t207 = Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   if (t207 != 0) {
-    Call3(Actor_ResetAndSetPosition, 0x1b, FIELD_AT(t207, s16, 10),
+    Call3(Actor_ResetAndSetPosition, 27, FIELD_AT(t207, s16, 10),
           FIELD_AT(t207, s16, 18));
   }
-  Call1(Actor_WaitForMoveById, 0x1b);
+  Call1(Actor_WaitForMoveById, 27);
   Call3(Func_020044cc, 27, 0, 0);
   {
     struct EventWork *work = EVENT_WORK;

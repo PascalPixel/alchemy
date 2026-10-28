@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -35,14 +36,14 @@ void Func_02000440(void) {
   FIELD_AT(t7, s32, 48) = 0x20000;
   FIELD_AT(t7, s32, 52) = 0x8000;
   Call2(Actor_SetModeById, 10, 4);
-  Call4(Func_02002884, t7, 0x2680000, 0x600000, 0xb00000);
+  Call4(Func_02002884, t7, PIXELS(616), PIXELS(96), PIXELS(176));
   Call2(Func_02002864, t7, (s32)gData_02003040);
   t11 = Value1(Actor_GetById, 11);
   FIELD_AT((t11 + 0x55), u8, 0) = 0;
   FIELD_AT(t11, s32, 48) = 0x20000;
   FIELD_AT(t11, s32, 52) = 0x8000;
   Call2(Actor_SetModeById, 11, 4);
-  Call4(Func_02002884, t11, 0x780000, 0x600000, 0xb00000);
+  Call4(Func_02002884, t11, PIXELS(120), PIXELS(96), PIXELS(176));
   Call2(Func_02002864, t11, (s32)gData_02003040);
   Func_020028bc();
 }

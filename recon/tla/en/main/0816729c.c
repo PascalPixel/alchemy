@@ -139,7 +139,7 @@ void *ResourceObject_CreateFar(s32 resource);
 void ResourceObject_ReleaseFar(void *object);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 void Palette_LoadBasicObjColors(void);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 speed);
 void Graphics_LoadGreyRamp(void);
 void Func_0814cca8(void);
@@ -577,7 +577,7 @@ void BattleEffect_RunJudgment(void) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 70) {
-      BattlePresentation_ConfigurePaletteFadeFar(1, 0x75, 7);
+      BattleStaging_ConfigurePaletteFadeFar(1, 0x75, 7);
     }
     if (frame == 150) {
       cx = 112;

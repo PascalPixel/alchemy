@@ -388,7 +388,7 @@ BattleEffect_RunDragonCloud:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #100
-	bl BattlePres_SetupTransitionSceneFar
+	bl BattleCamera_SetViewFar
 	ldr r5, [sp, #44]
 	cmp r5, #17
 	bgt .L_081894c2

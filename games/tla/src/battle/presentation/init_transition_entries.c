@@ -8,7 +8,7 @@ struct BattleTransitionEntry {
   u32 fieldc;
 };
 
-void BattlePresentation_InitializeTransitionEntries(
+void BattleTransition_InitializeEntries(
     struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 

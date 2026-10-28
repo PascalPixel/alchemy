@@ -20,7 +20,7 @@
 #include "battle_target.h"
 #include "text/msg_ids.h"
 
-void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
+void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {
   u8 localContext[4];
   struct BattleUnit *character;

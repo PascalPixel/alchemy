@@ -70,8 +70,8 @@ void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812628c(s32 mode, s32 background, s32 value);
 void Sound_PlayFar(s32 cue);
-void BattlePresentation_WaitForAdvance(void);
-void BattlePres_SetActorModeAndAction(s32 unitId);
+void BattleMessage_WaitForAdvance(void);
+void BattleObject_UpdatePose(s32 unitId);
 s32 sub_08124af8(s32 id);
 
 #define ANNOUNCE_END(test, message)                                            \
@@ -79,16 +79,16 @@ s32 sub_08124af8(s32 id);
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     MessageArgument_PushFar(unitId, 1);                                            \
     Message_ShowAndWaitCoreFar((s32)&message);                           \
-    BattlePresentation_WaitForAdvance();                                       \
+    BattleMessage_WaitForAdvance();                                       \
   }
 
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     MessageArgument_PushFar(unitId, 1);                                            \
-    BattlePres_SetActorModeAndAction(unitId);                                  \
+    BattleObject_UpdatePose(unitId);                                  \
     Message_ShowAndWaitCoreFar((s32)&message);                           \
-    BattlePresentation_WaitForAdvance();                                       \
+    BattleMessage_WaitForAdvance();                                       \
   }
 
 void Func_08124e20(void) {
@@ -211,7 +211,7 @@ void Func_08124e20(void) {
               Message_ShowAndWaitCoreFar((s32)&MsgHpRecover);
             }
             Sound_PlayFar(175);
-            BattlePresentation_WaitForAdvance();
+            BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
             ppAmount = unit->ppRegen;
@@ -227,7 +227,7 @@ void Func_08124e20(void) {
               Message_ShowAndWaitCoreFar((s32)&MsgPpRecover);
             }
             Sound_PlayFar(175);
-            BattlePresentation_WaitForAdvance();
+            BattleMessage_WaitForAdvance();
           }
         }
         ANNOUNCE_END(BattleUnit_CountDownAgilityModifier, MsgAgiNormal);

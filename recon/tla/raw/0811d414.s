@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattlePresentation_AppendLinkedActions
+	.global Battle_AppendLinkedActions
 	.thumb_func
-BattlePresentation_AppendLinkedActions:
+Battle_AppendLinkedActions:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

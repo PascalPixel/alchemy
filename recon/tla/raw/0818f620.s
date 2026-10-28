@@ -1095,7 +1095,7 @@ Func_0818f620:
 	ldrh r1, [r3]
 	movs r0, #2
 	movs r2, #0
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

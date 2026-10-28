@@ -25,5 +25,5 @@ void Battle_DrawPartyPanelsWithEmptyList(void) {
   frame = chain;
   data[0] = 255;
   BattleLayout_HighlightPartyPanels(data);
-  BattlePres_SetActorModesFar(data, 1);
+  BattleHighlight_SetModesFar(data, 1);
 }

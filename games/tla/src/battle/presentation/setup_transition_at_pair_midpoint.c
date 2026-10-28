@@ -8,7 +8,7 @@
 /// Centres the camera on two objects' midpoint in x and z.
 /// a, b: object IDs.
 /// zoom: scale in percent.
-void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
+void BattleCamera_SetViewAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   struct MotionObject *obj_a = BattleObject_Get(a)->object;
   struct MotionObject *obj_b = BattleObject_Get(b)->object;
   s32 ax = obj_a->x;
@@ -18,5 +18,5 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   s32 x = (bx + ax) / 2;
   s32 z = (bz + az) / 2;
 
-  BattlePres_SetupTransitionScene(x, 0, z, zoom);
+  BattleCamera_SetView(x, 0, z, zoom);
 }

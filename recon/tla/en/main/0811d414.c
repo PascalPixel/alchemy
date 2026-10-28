@@ -47,7 +47,7 @@ struct BattleLinkedActionState {
   u8 unk0c[28];
 };
 
-s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
+s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 result = 0;

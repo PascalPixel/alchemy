@@ -4,7 +4,7 @@
 // five minutes of permute; none reaches 0. Left: the native copies the plan
 // into r6 after the flags' store and issues sub sp after the variant's store,
 // as if its prologue followed the first statements.
-// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattlePresentation_BuildTargetList
+// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattleStaging_BuildTargetList
 // (games/tbs/src/battle/battle/staging.c) with ⚓️'s added test that the
 // target is in the battle (BattleParty_IsUnitListed); void, as its callers
 // load r0 before r1 for it. Left: the opening, the plan's copy into r6 one
@@ -18,7 +18,7 @@
 struct BattleUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 
-void BattlePres_BuildTargetList(struct BattlePlan *plan,
+void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                 struct BattlePresentationWork *effect) {
   s16 *outputTarget;
   u32 flags;

@@ -12,12 +12,12 @@
 void *Unit_Get(s32 owner);
 void MessageArgument_ClearAllFar(void);
 extern u8 gData_03001ae8[];
-s32 BattlePres_ShowDefendMessage(s16 *);
+s32 AutoBattle_ShowDefend(s16 *);
 s32 Func_0811ca54(s16 *);
 s32 Func_0811c710(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);
 
-s32 BattlePres_RunAction(s16 *action) {
+s32 AutoBattle_RunAction(s16 *action) {
   struct BattlePresentationTransition *transition;
   s32 actorId;
   s32 battleMode;
@@ -47,7 +47,7 @@ s32 BattlePres_RunAction(s16 *action) {
     break;
   case 3:
     WaitFrames(45);
-    BattlePres_ShowDefendMessage(action);
+    AutoBattle_ShowDefend(action);
     break;
   case 2:
     WaitFrames(45);

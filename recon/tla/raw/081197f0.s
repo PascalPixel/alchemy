@@ -295,7 +295,7 @@ Func_081197f0:
 	movs r2, #0
 	movs r3, #190
 	movs r0, #0
-	bl BattlePres_SetupTransitionScene
+	bl BattleCamera_SetView
 	movs r0, #1
 	bl Party_ReservedNoOp5B14
 	ldr r5, .L_08119aac
@@ -439,7 +439,7 @@ Func_081197f0:
 	cmp r0, #0
 	bne .L_08119bb4
 	adds r0, r5, #0
-	bl BattlePresentation_BuildActions
+	bl Battle_GatherActions
 	b .L_08119bba
 .L_08119ba6:
 	ldr r0, [sp, #40]
@@ -450,7 +450,7 @@ Func_081197f0:
 	b .L_08119dde
 .L_08119bb4:
 	adds r0, r5, #0
-	bl BattlePresentation_BuildSortedUnitEntries
+	bl AutoBattle_BuildActions
 .L_08119bba:
 	str r0, [sp, #28]
 	movs r0, #128
@@ -529,7 +529,7 @@ Func_081197f0:
 	add r0, r9
 	adds r0, r0, r3
 	str r4, [sp, #4]
-	bl BattlePres_RunAction
+	bl AutoBattle_RunAction
 	ldr r4, [sp, #4]
 	cmp r0, #1
 	bne .L_08119c5e
@@ -651,7 +651,7 @@ Func_081197f0:
 	.4byte 0x00000000
 .L_08119d40:
 	str r4, [sp, #4]
-	bl BattlePres_SyncTurn
+	bl LinkBattle_SyncTurn
 	ldr r4, [sp, #4]
 	cmp r0, #0
 	bge .L_08119d4e
@@ -776,7 +776,7 @@ Func_081197f0:
 	ldrb r3, [r0]
 	cmp r3, #0
 	beq .L_08119e46
-	bl BattlePres_SyncTurn
+	bl LinkBattle_SyncTurn
 	cmp r0, #0
 	bge .L_08119e4c
 	b .L_08119f4c
@@ -833,7 +833,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119ebc:
-	bl BattlePres_ClearLinkPayload
+	bl BattleStaging_ClearLinkPayload
 	cmp r5, #1
 	bls .L_08119f34
 	ldr r2, [sp, #40]
@@ -879,7 +879,7 @@ Func_081197f0:
 	ldr r3, .L_08119f74
 	adds r0, r0, r3
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08119f2a:
 	bl Func_081284c0
 .L_08119f2e:
@@ -898,7 +898,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119f4c:
-	bl BattlePres_ClearLinkPayload
+	bl BattleStaging_ClearLinkPayload
 	movs r0, #0
 	bl Task_SuspendAll
 	ldr r3, .L_08119f70
@@ -918,7 +918,7 @@ Func_081197f0:
 .L_08119f74:
 	.4byte 0x00000c84
 .L_08119f78:
-	bl BattlePres_ClearLinkPayload
+	bl BattleStaging_ClearLinkPayload
 	ldr r5, [sp, #40]
 	subs r5, #74
 	cmp r5, #1
@@ -945,7 +945,7 @@ Func_081197f0:
 	ldr r0, .L_0811a02c
 	bl Message_ShowAndWaitCoreFar
 .L_08119fb6:
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08119fba:
 	movs r0, #78
 	bl Sound_PlayFar

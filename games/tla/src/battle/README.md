@@ -33,15 +33,17 @@ bytes differ from English stays on its scaffold under `recon/tla/<lang>`.
 ## Function prefixes
 
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`Battle_`, `BattleAction_`, `BattleCamera_`, `BattleClass_`, `BattleEffect_`,
-`BattleEnemy_`, `BattleEscape_`, `BattleEvent_`, `BattleFormation_`,
-`BattleMotion_`, `BattleObject_`, `BattleParty_`, `BattlePlacement_`,
-`BattlePresentation_`, `BattleQueue_`, `BattleStatusIcon_`, `BattleUnit_`,
-`Ability_`, `Camera_`, `ColorBuffer_`, `Display_`, `Djinn_`, `DjinnRecovery_`,
-`Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
-`FieldEffect_`, `FieldEvent_`, `FieldParticle_`, `Field_`, `Graphics_`, `Marker_`, `Motion_`,
-`Actor_`, `Palette_`, `Party_`, `RamCode_`,
-`Render_`, `Resource_`, `Scene_`, `Summon_`, `SummonSlot_`, `Tile_` and `Window_`.
+`Ability_`, `Actor_`, `AutoBattle_`, `Battle_`, `BattleAction_`, `BattleBackground_`,
+`BattleCamera_`, `BattleClass_`, `BattleEffect_`, `BattleEnemy_`,
+`BattleEscape_`, `BattleEvent_`, `BattleFormation_`, `BattleHighlight_`,
+`BattleMessage_`, `BattleMotion_`, `BattleObject_`, `BattleParty_`,
+`BattlePlacement_`, `BattleQueue_`, `BattleStaging_`, `BattleStatusIcon_`,
+`BattleTransition_`, `BattleUnit_`, `Camera_`, `ColorBuffer_`, `Display_`,
+`Djinn_`, `DjinnRecovery_`, `Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
+`Field_`, `FieldEffect_`, `FieldEvent_`, `FieldParticle_`, `Graphics_`,
+`LinkBattle_`, `Marker_`, `Motion_`, `Palette_`, `Party_`, `RamCode_`,
+`Render_`, `Resource_`, `Scene_`, `Summon_`, `SummonSlot_`, `Tile_` and
+`Window_`.
 Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |
@@ -49,7 +51,6 @@ Those only The Lost Age's code has so far:
 | `BattleActor_` | taking a unit out of the formations and the planned actions |
 | `BattleEventRuntime_` | starting and scheduling a battle phase |
 | `BattlePalette_` | stopping a palette blend and freeing its buffer |
-| `BattlePres_` | the effects' word fills and pending tile transfers, under an older spelling of `BattlePresentation_` |
 | `EffectRuntime_`, `EffectSprite_` | an object's rise and descent, and a sprite drawn at a world position |
 | `SummonEffect_` | the summons' canvas modes |
 | `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |

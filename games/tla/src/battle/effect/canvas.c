@@ -29,10 +29,10 @@ void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
 void BattleEffect_StartCanvasLayer(s32 bg_control);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
-void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants
@@ -61,7 +61,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
+  BattleStaging_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -69,7 +69,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
   REG_BG2CNT = bgControl | 0x784;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = 0;
   WaitFrames(1);
 
@@ -164,10 +164,10 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   WaitFrames(1);
 
-  BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 7);
+  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 7);
   WaitFrames(1);
   for (i = 0; i != 8; i++) {
-    BattlePresentation_SetPaletteLevelFar(*(u16 *)battle->unk670, 21 - i * 3);
+    BattleBackground_SetPaletteLevelFar(*(u16 *)battle->unk670, 21 - i * 3);
     WaitFrames(1);
   }
 
@@ -187,7 +187,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   *flag = 1;
   QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
+  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f83, 0x20000);
   WaitFrames(1);
 }

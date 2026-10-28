@@ -712,7 +712,7 @@ BattleEffect_RunProcne:
 	adds r1, r5, #0
 	movs r0, #1
 	movs r2, #8
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 	movs r5, #240
 	ldr r2, [sp, #88]
 	lsls r5, r5, #7

@@ -266,7 +266,7 @@ Func_0811e3ac:
 	mov r2, r8
 	ldrb r0, [r2]
 	movs r1, #1
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	add r3, sp, #12
 	mov r11, r3
 	b .L_0811e608
@@ -297,7 +297,7 @@ Func_0811e3ac:
 	movs r1, #1
 	subs r5, #1
 	adds r6, #2
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r5, #0
 	bne .L_0811e5f8
 .L_0811e608:
@@ -469,7 +469,7 @@ Func_0811e3ac:
 	ldrb r0, [r1]
 	strh r2, [r3, #6]
 	movs r1, #1
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	movs r6, #128
 	lsls r6, r6, #19
 	movs r5, #0
@@ -512,7 +512,7 @@ Func_0811e3ac:
 	mov r3, r8
 	ldrb r0, [r3]
 	movs r1, #0
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	mov r0, r9
 	b .L_0811e7cc
 	.2byte 0x0000

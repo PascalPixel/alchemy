@@ -51,20 +51,19 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 objectId);
 #ifndef OWN_BattlePres_BuildOpponentEntries
-s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
+s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries);
 #endif
 #ifndef OWN_BattlePres_BuildUnitEntries
-s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
+s32 Battle_BuildUnitActions(struct BattleActionRecord *entries);
 #endif
-s32 BattlePres_WaitSync(void);
-s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
-                                           s32 count);
+s32 LinkBattle_WaitSync(void);
+s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitializeDefaultTransform(void);
 void FieldParticle_UpdateMotion(struct FieldParticle *effect);
 void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
-void BattlePres_SetActorModesFar(u16 *, s32);
+void BattleHighlight_SetModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
@@ -131,8 +130,8 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot);
 void BattleMotion_SetRecordChildValues(void *, s32);
 void BattlePalette_UpdateBlend(void);
 s32 BattleParty_PrepareReserveOwners(u16 *owners);
-void BattlePres_SetActorModes(u16 *, s32);
-void BattlePresentation_WaitForAdvance(void);
+void BattleHighlight_SetModes(u16 *, s32);
+void BattleMessage_WaitForAdvance(void);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void Camera_ConfigureScene(s32 scene);
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);

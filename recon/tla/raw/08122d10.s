@@ -352,7 +352,7 @@ BattleEvent_Playback:
 	ldr r0, [r6]
 	bl BattleMotion_SetRecordChildValues
 	ldr r0, [r7, r5]
-	bl BattlePres_SetActorModeAndAction
+	bl BattleObject_UpdatePose
 	b .L_08122ff0
 .L_08122fe6:
 	lsls r3, r6, #2

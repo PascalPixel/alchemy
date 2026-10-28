@@ -5,7 +5,7 @@
 // I/O write queue, the party is spawned, Func_08138028 plays and the field
 // fades back in; for any other kind seven tile rows are copied from
 // Data_0812cd74 by DMA, BG1 shows a two-colour band, and
-// BattlePres_AdvanceTransitionTimer and BattlePres_DrawTransitionRows run
+// BattleTransition_AdvanceTimer and BattleTransition_DrawRows run
 // (with Func_08125d68 at VCount 32) for 60 frames (kinds 74 to 76 and 638) or
 // until Func_08118bcc returns. Both restore BG1 and the display at the end.
 // Reached from Func_081197f0.
@@ -38,8 +38,8 @@ struct BattleUnit *Unit_Get(s32 unitId);
 void PartyStatus_CreateWindowFar(s32 flags);
 void Func_08138028(struct BattlePresentationWork *work);
 void Func_08118bcc(s32 value);
-void BattlePres_AdvanceTransitionTimer(void);
-void BattlePres_DrawTransitionRows(void);
+void BattleTransition_AdvanceTimer(void);
+void BattleTransition_DrawRows(void);
 void Func_08125d68(void);
 
 void Func_08125d74(s32 arg, s32 kind) {
@@ -97,10 +97,10 @@ void Func_08125d74(s32 arg, s32 kind) {
     REG_WININ = 0x3537;
     REG_WINOUT = 0x3f21;
     QueueIoWriteDelay2(0x04000000, 0x7741);
-    BattlePres_SetupTransitionScene(0, 0, 0, 180);
+    BattleCamera_SetView(0, 0, 0, 180);
     *timer = 0;
-    Task_Add(BattlePres_AdvanceTransitionTimer, TASK_PASS_VBLANK);
-    Task_Add(BattlePres_DrawTransitionRows, TASK_PASS_FRAME);
+    Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
+    Task_Add(BattleTransition_DrawRows, TASK_PASS_FRAME);
     Irq_SetHandler(2, 32, Func_08125d68);
     gBgScroll[0].y = 32;
     WaitFrames(1);
@@ -112,8 +112,8 @@ void Func_08125d74(s32 arg, s32 kind) {
       WaitFrames(60);
     else
       Func_08118bcc(arg);
-    Task_Remove(BattlePres_AdvanceTransitionTimer);
-    Task_Remove(BattlePres_DrawTransitionRows);
+    Task_Remove(BattleTransition_AdvanceTimer);
+    Task_Remove(BattleTransition_DrawRows);
     gBgScroll[0].y = 0;
     Irq_SetHandler(2, 0, 0);
   } else {
@@ -139,7 +139,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     work.actors[work.count] = 255;
     BattleActor_SpawnObjectsForList(work.actors, 0);
     Func_08138028(&work);
-    BattlePres_SetupTransitionScene(0, 0, 0, 100);
+    BattleCamera_SetView(0, 0, 0, 100);
     *timer = 0;
     Irq_SetHandler(2, 32, Func_08125d68);
     WaitFrames(1);
@@ -153,13 +153,13 @@ void Func_08125d74(s32 arg, s32 kind) {
     BattleActor_SpawnObjectsForList((s16 *)shown, 0);
     count = BattleParty_ListActorIds(1, shown);
     for (i = 0; i != count; i++)
-      BattlePres_SetActorRecordMode(shown[i], 1);
+      BattleHighlight_SetSpriteMode(shown[i], 1);
     for (i = 0; i != 16; i++) {
       REG_BLDALPHA = i | 0x1000;
       WaitFrames(1);
     }
     for (i = 0; i != count; i++)
-      BattlePres_SetActorRecordMode(shown[i], 0);
+      BattleHighlight_SetSpriteMode(shown[i], 0);
     Func_08118bcc(arg);
     gBgScroll[0].y = 0;
     WaitFrames(1);

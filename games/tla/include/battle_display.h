@@ -101,18 +101,18 @@ STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
 struct BattlePlan;
-s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
+s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused);
 
-void BattlePres_BuildTargetList(struct BattlePlan *plan,
+void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                 struct BattlePresentationWork *work);
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
-s32 BattlePresentation_RunPairedUnitTransition(
+s32 BattleStaging_RunPairedUnitTransition(
     struct BattleActionRecord *action);
 s32 BattleObject_IsValidId(u32 objectId);
-void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
-void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
+void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 mode);
+void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);
 void BattleObject_Put(void);
 void BattleEffect_RunSceneEffectFar(s32 *context);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);

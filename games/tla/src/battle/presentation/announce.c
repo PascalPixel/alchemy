@@ -7,7 +7,7 @@ void MessageArgument_ClearAllFar(void);
 void Window_CloseSharedFar(void);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Message_ShowAndWaitCoreFar(s32 message);
-void BattlePresentation_WaitForAdvance(void);
+void BattleMessage_WaitForAdvance(void);
 
 /// Announces each enemy that appears, then who strikes first. The Broken
 /// Seal's BattleIntro_AnnounceEncounter.
@@ -31,7 +31,7 @@ void Func_08118bcc(s32 enemyCount) {
       else
         Message_ShowAndWaitCoreFar((s32)MsgEnemyAppeared);
       announced++;
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
     } while (announced != enemyCount);
   }
 
@@ -39,10 +39,10 @@ void Func_08118bcc(s32 enemyCount) {
   if (battle->encounterMode == 1) {
     MessageArgument_ClearAllFar();
     Message_ShowAndWaitCoreFar((s32)MsgPartyStrikesFirst);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   } else if (battle->encounterMode == 2) {
     MessageArgument_ClearAllFar();
     Message_ShowAndWaitCoreFar((s32)MsgPartySurprised);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   }
 }

@@ -51,7 +51,7 @@ void Sound_PlayFar(s32 cue);
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
 /// cursor sound. The Broken Seal's BattleMessage_WaitForAdvance, with the
 /// message window read from its heap slot.
-void BattlePresentation_WaitForAdvance(void) {
+void BattleMessage_WaitForAdvance(void) {
   struct AdvanceSprite *prompt;
   struct AdvanceSprite promptStorage;
   s32 frame;

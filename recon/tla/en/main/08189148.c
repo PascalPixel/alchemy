@@ -77,7 +77,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
@@ -228,7 +228,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       if (frame <= 63)
         camera->yaw += 0x100;
     }
-    BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, 100);
 
     // Frames 0-17: the puff arc rises, one cell every three frames.
     if (frame <= 17) {

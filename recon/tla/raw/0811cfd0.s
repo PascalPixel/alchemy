@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global BattlePres_BuildOpponentEntries
+	.global Battle_BuildOpponentActions
 	.thumb_func
-BattlePres_BuildOpponentEntries:
+Battle_BuildOpponentActions:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

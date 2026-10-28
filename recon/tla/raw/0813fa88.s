@@ -85,7 +85,7 @@ Func_0813fa88:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]
@@ -154,7 +154,7 @@ Func_0813fa88:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #100
-	bl BattlePres_SetupTransitionSceneFar
+	bl BattleCamera_SetViewFar
 	mov r2, r8
 	movs r3, #0
 	str r3, [r2, #12]

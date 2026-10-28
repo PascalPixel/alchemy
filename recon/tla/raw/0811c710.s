@@ -113,7 +113,7 @@ Func_0811c710:
 	movs r1, #1
 	adds r0, r5, r3
 	adds r5, #1
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r5, r11
 	bne .L_0811c7e4
 .L_0811c7f4:
@@ -267,7 +267,7 @@ Func_0811c710:
 	adds r0, r5, r1
 	movs r1, #1
 	adds r5, #1
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r5, r11
 	bne .L_0811c914
 .L_0811c924:
@@ -299,7 +299,7 @@ Func_0811c710:
 	movs r1, #0
 	adds r0, r5, r3
 	adds r5, #1
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r5, r11
 	bne .L_0811c952
 .L_0811c962:
@@ -307,7 +307,7 @@ Func_0811c710:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #100
-	bl BattlePres_SetupTransitionScene
+	bl BattleCamera_SetView
 	movs r0, #3
 	bl WaitFrames
 	movs r0, #0

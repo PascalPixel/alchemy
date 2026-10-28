@@ -113,7 +113,7 @@ Func_0811d9cc:
 	movs r3, #255
 	strh r3, [r0, #2]
 	movs r1, #1
-	bl BattlePres_SetActorModes
+	bl BattleHighlight_SetModes
 	movs r1, #192
 	lsls r1, r1, #3
 	adds r1, #124
@@ -163,7 +163,7 @@ Func_0811d9cc:
 	adds r0, #124
 	add r0, r10
 	movs r1, #0
-	bl BattlePres_RunActorEntries
+	bl BattleStaging_RunActorEntries
 	b .L_0811dd70
 .L_0811db34:
 	movs r0, #192
@@ -378,7 +378,7 @@ Func_0811d9cc:
 .L_0811dce0:
 	cmp r5, #1
 	bgt .L_0811dd70
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 	b .L_0811dd70
 .L_0811dcea:
 	movs r5, #192
@@ -437,13 +437,13 @@ Func_0811d9cc:
 	negs r2, r2
 	cmp r0, r2
 	bne .L_0811dd68
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 	movs r0, #3
 	bl WaitFrames
 .L_0811dd68:
 	movs r0, #0
 	movs r1, #0
-	bl BattlePres_SetActorModes
+	bl BattleHighlight_SetModes
 .L_0811dd70:
 	bl BattleMotion_DestroyAllSlotObjects
 	movs r0, #192

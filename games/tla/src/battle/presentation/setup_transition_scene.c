@@ -1,4 +1,4 @@
-// BattlePres_SetupTransitionScene: The Broken Seal's function of that name
+// BattleCamera_SetView: The Broken Seal's function of that name
 // with the camera from its heap slot. Places the battle camera at a position
 // and zoom for a transition: sets the projection, turns the scene to the
 // camera's yaw and pitch, projects the origin and gives the camera its
@@ -17,7 +17,7 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
-void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
+void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->pos;
   s32 scale = (zoom << 16) / 100;

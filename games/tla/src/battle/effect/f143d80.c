@@ -11,7 +11,7 @@
 #include "bg_scroll.h"
 
 void BattleEffect_ClearActorTimers(void);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
@@ -32,7 +32,7 @@ void Func_08143d80(void) {
   s32 off;
 
   BattleEffect_ClearActorTimers();
-  BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
+  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;
   ClearWords_((void *)0x06003fc0, 64);

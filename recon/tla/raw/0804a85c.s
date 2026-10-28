@@ -792,7 +792,7 @@ Func_0804a85c:
 	strh r3, [r6, r2]
 	mov r0, r10
 	movs r1, #1
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	movs r3, #192
 	ldr r1, [sp, #20]
 	ldr r2, [sp, #16]
@@ -1886,7 +1886,7 @@ Func_0804a85c:
 	bl Window_Close
 	movs r1, #0
 	ldr r0, [sp, #20]
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #228

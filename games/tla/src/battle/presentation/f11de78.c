@@ -12,8 +12,8 @@ struct EscapeTransition {
 
 extern u8 MsgNoEscape[];
 
-void BattlePres_SetActorModes(u16 *actors, s32 mode);
-void BattlePresentation_WaitForAdvance(void);
+void BattleHighlight_SetModes(u16 *actors, s32 mode);
+void BattleMessage_WaitForAdvance(void);
 void Message_ShowAndWaitCoreFar(s32 messageId);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 void BattleMotion_SetupEscapeObject(s32 objectId);
@@ -37,7 +37,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
   completed = 0;
   presentation->targetYaw = 0x2000;
   presentation->active = 1;
-  BattlePres_SetActorModes(0, 0);
+  BattleHighlight_SetModes(0, 0);
 
   if (aid <= 7) {
     partyMode = completed;
@@ -50,7 +50,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
 
     if (!partyMode) {
       Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[14];
       s32 index = BattleParty_ListLivingUnits(1, (u16 *)unitIds) - 1;
@@ -77,7 +77,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     BattleObject_MarkForRelease(plan->actorId);
   } else {
     Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   }
 
   presentation->active = 0;

@@ -32,7 +32,7 @@ Func_0815e9f4:
 	movs r2, #130
 	ldr r0, [r1, #8]
 	ldr r1, [r1, #12]
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	bl Func_08143d80
@@ -77,7 +77,7 @@ Func_0815e9f4:
 	ldr r0, [r2, #8]
 	ldr r1, [r2, #12]
 	movs r2, #130
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -92,7 +92,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_0815ed68
@@ -122,7 +122,7 @@ Func_0815e9f4:
 	mov r3, r11
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #0
@@ -134,7 +134,7 @@ Func_0815e9f4:
 	ldr r0, [r1, #8]
 	movs r2, #130
 	ldr r1, [r1, #12]
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -258,7 +258,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl BattlePres_SetupTransitionAtPairMidpointFar
+	bl BattleCamera_SetViewAtPairMidpointFar
 	ldr r6, [sp, #56]
 	movs r5, #0
 	mov r10, r5
@@ -724,7 +724,7 @@ Func_0815e9f4:
 	mov r3, r9
 	subs r1, r6, r3
 	ldrh r0, [r5]
-	bl BattlePresentation_SetPaletteLevelFar
+	bl BattleBackground_SetPaletteLevelFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1

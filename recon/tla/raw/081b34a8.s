@@ -1001,7 +1001,7 @@ ReelGame_Run:
 .L_081b3c70:
 	.4byte Func_081b3294
 .L_081b3c74:
-	.4byte BattlePres_ProcessPendingTileTransfer
+	.4byte BattleStaging_ProcessPendingTileTransfer
 .L_081b3c78:
 	.4byte 0x05000200
 .L_081b3c7c:
@@ -1213,7 +1213,7 @@ ReelGame_Run:
 .L_081b3e24:
 	.4byte 0x05000200
 .L_081b3e28:
-	.4byte BattlePres_ProcessPendingTileTransfer
+	.4byte BattleStaging_ProcessPendingTileTransfer
 .L_081b3e2c:
 	.4byte Func_081b243c
 .L_081b3e30:

@@ -5,7 +5,7 @@
 // copied into its argument register (pinned) at the call or up to three
 // statements before it, five minutes of permute; none reaches 0.
 // Draft, differ 6 of 193: the enemies' actions for the round, ☀️'s
-// BattlePresentation_BuildOpponentEntries (games/tbs/src/battle/battle.c) with ⚓️'s
+// Battle_BuildOpponentActions (games/tbs/src/battle/battle.c) with ⚓️'s
 // changes: each action records its index, and an enemy acting several times
 // a turn acts later by steps (four actions: 5/6, 4/6, then 1/2 of its
 // Agility; three: 3/4, then 1/2; otherwise 1/2). Left: instruction order
@@ -24,7 +24,7 @@
 struct BattleUnit *Unit_Get(s32 unitId);
 void Func_08122514(struct BattleActionRecord *entry, s32 mode);
 
-s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
+s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;

@@ -189,7 +189,7 @@ Func_0804b8b8:
 	mov r0, r8
 	strh r3, [r2, #2]
 	movs r1, #2
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	mov r0, r8
 	bl BattleLayout_HighlightPartyPanels
 .L_0804ba40:
@@ -227,7 +227,7 @@ Func_0804b8b8:
 	strh r3, [r1]
 	mov r0, r8
 	movs r1, #0
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	mov r0, r8
 	bl BattleLayout_HighlightPartyPanels
 	movs r3, #192

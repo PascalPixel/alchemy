@@ -1808,18 +1808,18 @@ BattleEscape_CheckSuccess:
 	.incbin "baserom.gba", 0x0011ceac, 0x00000110
 	.section .rom.0011cfe8, "ax"
 	.balign 4
-	.global BattlePres_BuildOpponentEntries
-	.type BattlePres_BuildOpponentEntries, %function
+	.global Battle_BuildOpponentActions
+	.type Battle_BuildOpponentActions, %function
 	.thumb_func
-BattlePres_BuildOpponentEntries:
+Battle_BuildOpponentActions:
 	.incbin "baserom.gba", 0x0011cfe8, 0x00000190
 	.section .rom.0011d264, "ax"
 	.incbin "baserom.gba", 0x0011d264, 0x000001c8
 	.section .rom.0011d42c, "ax"
-	.global BattlePresentation_AppendLinkedActions
-	.type BattlePresentation_AppendLinkedActions, %function
+	.global Battle_AppendLinkedActions
+	.type Battle_AppendLinkedActions, %function
 	.thumb_func
-BattlePresentation_AppendLinkedActions:
+Battle_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d42c, 0x0000018c
 	.section .rom.0011d9e4, "ax"
 	.incbin "baserom.gba", 0x0011d9e4, 0x0000040c

@@ -121,7 +121,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   } else {
     actingUnit[0] = request->unitId;
     actingUnit[1] = 255;
-    BattlePres_SetActorModes(actingUnit, 1);
+    BattleHighlight_SetModes(actingUnit, 1);
     result = Func_0812381c(request, &battle->plan);
   }
   if (result == 0) {
@@ -129,7 +129,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     case 0:
       break;
     case 1:
-      BattlePres_RunActorEntries(&battle->plan, 0);
+      BattleStaging_RunActorEntries(&battle->plan, 0);
       break;
     case 2:
       Func_0811ea0c(&battle->plan, 0);
@@ -198,7 +198,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       if (kept == 0)
         Message_ShowAndWaitCoreFar((s32)(&MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       break;
     }
     case 12:
@@ -224,10 +224,10 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     }
   } else {
     if (result == -1) {
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
       WaitFrames(3);
     }
-    BattlePres_SetActorModes(0, 0);
+    BattleHighlight_SetModes(0, 0);
   }
 
   BattleMotion_DestroyAllSlotObjects();

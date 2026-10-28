@@ -10,13 +10,13 @@
 #include "ram_buffer.h"
 #include "system.h"
 
-void BattlePres_ClearAllActorRecordModes(void);
+void BattleHighlight_ClearAllSpriteModes(void);
 void Graphics_AdvancePaletteCycle(void);
 
 /// Mode 0 clears every actor's OBJ mode and stops the palette cycle. Any other
 /// mode starts the cycle: every actor takes mode & 1, and the actors listed
 /// (up to 14, ended by 0xff) take the other.
-void BattlePres_SetActorModes(u16 *actors, s32 mode) {
+void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   s16 activeActors[14];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u32 count;
@@ -25,7 +25,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
   if (mode == 0) {
     Task_Remove(Graphics_AdvancePaletteCycle);
     Io_Write16(mode, &REG_BLDY);
-    BattlePres_ClearAllActorRecordModes();
+    BattleHighlight_ClearAllSpriteModes();
     WaitFrames(1);
     QueueIoWriteDelay2(0x04000050, 0);
   }
@@ -37,7 +37,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
-      BattlePres_SetActorRecordMode(activeActors[i], mode & 1);
+      BattleHighlight_SetSpriteMode(activeActors[i], mode & 1);
 
     if (actors != NULL) {
       u32 actor = *actors;
@@ -46,7 +46,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
       actors++;
       if (actor != 0xff) {
         do {
-          BattlePres_SetActorRecordMode(actor, (mode & 1) ^ 1);
+          BattleHighlight_SetSpriteMode(actor, (mode & 1) ^ 1);
           i++;
           if (i > 13)
             break;

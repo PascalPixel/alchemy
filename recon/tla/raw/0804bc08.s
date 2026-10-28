@@ -599,7 +599,7 @@ Func_0804bc08:
 	ldr r0, [sp, #32]
 	movs r1, #1
 	mov r8, r4
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	ldr r0, [sp, #32]
 	bl BattleLayout_HighlightPartyPanels
 	movs r0, #1
@@ -648,7 +648,7 @@ Func_0804bc08:
 .L_0804c11a:
 	ldr r0, [sp, #32]
 	movs r1, #0
-	bl BattlePres_SetActorModesFar
+	bl BattleHighlight_SetModesFar
 	movs r2, #1
 	negs r2, r2
 	cmp r6, r2

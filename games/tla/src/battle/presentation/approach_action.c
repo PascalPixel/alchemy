@@ -14,7 +14,7 @@ void Func_08138008(struct BattlePresentationWork *work);
 
 /// The actor announces its attack, walks up to its target and plays the
 /// attack's effect on it. Returns -1 when either id is not a battle object.
-s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
+s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
   if (Ram_HeapSlots->transitionWork->targetYaw == 0x2000) {

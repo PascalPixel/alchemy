@@ -5,7 +5,7 @@
 // copied into its argument register (pinned) at the call or up to three
 // statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
-// BattlePres_RunUnitAction with its one-pass block, this game's heap slots and
+// BattleStaging_RunUnitAction with its one-pass block, this game's heap slots and
 // Actor_SetMode for the dispatch argument. In the reset loop the native stores
 // both copies of the work pointer (str r2, [sp, #4]; str r2, [sp]) before it
 // loads the actor (ldrsh r0, [r2, r6]); this draft loads between them. sched2:

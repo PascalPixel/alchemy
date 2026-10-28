@@ -115,7 +115,7 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
   }
 }
 
-s32 BattlePres_SetActorModeAndAction(s32 id) {
+s32 BattleObject_UpdatePose(s32 id) {
   struct BattleUnit *state;
   s32 value;
 

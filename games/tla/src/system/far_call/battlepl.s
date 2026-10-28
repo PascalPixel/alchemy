@@ -45,10 +45,10 @@ Camera_ConfigureSceneFar:
 	.thumb_func
 GetMotionRecordFar:
 	overlay_veneer GetMotionRecord
-	.global BattlePres_SetActorModesFar
+	.global BattleHighlight_SetModesFar
 	.thumb_func
-BattlePres_SetActorModesFar:
-	overlay_veneer BattlePres_SetActorModes
+BattleHighlight_SetModesFar:
+	overlay_veneer BattleHighlight_SetModes
 	.global Func_081180e8
 	.thumb_func
 Func_081180e8:

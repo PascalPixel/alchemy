@@ -326,7 +326,7 @@ BattleEffect_RunVoidBeam:
 	movs r3, #100
 	movs r0, #0
 	movs r1, #0
-	bl BattlePres_SetupTransitionSceneFar
+	bl BattleCamera_SetViewFar
 	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #16]

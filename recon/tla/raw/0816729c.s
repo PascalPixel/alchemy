@@ -1675,7 +1675,7 @@ BattleEffect_RunJudgment:
 	movs r0, #1
 	ldr r1, .L_081680b0
 	movs r2, #7
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 .L_08167fa8:
 	ldr r0, [sp, #72]
 	cmp r0, #150

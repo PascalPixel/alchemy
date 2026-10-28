@@ -5,7 +5,7 @@
 // copied into its argument register (pinned) at the call or up to three
 // statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 14 of 276 (seven reordered rows, 28 before): The Broken
-// Seal's BattlePresentation_RunPairedUnitTransition with this game's heap
+// Seal's BattleStaging_RunPairedUnitTransition with this game's heap
 // slots. Left are load-before-constant swaps of the ARM9 schedule: the
 // transition work's heap base after the stacked parameter, fp after the zero
 // store, and three BLDCNT/BLDALPHA blocks where the native loads the pool value
@@ -69,7 +69,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
   WaitFrames(30);
   REG_BLDCNT = 0x3f40;
   for (index = 0; index != sideCount; index++)
-    BattlePres_SetActorRecordMode(index + sideStart, 1);
+    BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = (16 - index) | 0x1000;
     WaitFrames(1);
@@ -108,14 +108,14 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
   BattleObject_Put();
   REG_BLDCNT = 0x3f40;
   for (index = 0; index != sideCount; index++)
-    BattlePres_SetActorRecordMode(index + sideStart, 1);
+    BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = index | 0x1000;
     WaitFrames(1);
   }
   for (index = 0; index != sideCount; index++)
-    BattlePres_SetActorRecordMode(index + sideStart, 0);
-  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+    BattleHighlight_SetSpriteMode(index + sideStart, 0);
+  BattleCamera_SetView(0, 0, 0, 0x64);
   WaitFrames(3);
   return 0;
 }

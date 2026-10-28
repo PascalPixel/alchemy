@@ -321,7 +321,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       MessageArgument_PushFar(request->unitId, 1);
       Message_ShowAndWaitCoreFar((s32)&MsgActorRuns);
     }
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
     plan->outcome = 7;
     return 0;
 
@@ -519,7 +519,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       if (Djinn_IsReadyFar(request->unitId, (request->parameter >> 8) & 15,
                            request->parameter & 255)) {
         BattleAction_Get(abilityId);
-        BattlePres_SetActorModes(0, 0);
+        BattleHighlight_SetModes(0, 0);
         Djinn_ActivateFar(request->unitId, (request->parameter >> 8) & 15,
                           request->parameter & 255);
         DjinnRecovery_RemoveFar(request->unitId, (request->parameter >> 8) & 15,

@@ -17,7 +17,7 @@ void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
-static __inline__ s32 BattlePres_FillWords(void *destination, s32 size,
+static __inline__ s32 BattleStaging_FillWords(void *destination, s32 size,
                                            u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
@@ -25,7 +25,7 @@ static __inline__ s32 BattlePres_FillWords(void *destination, s32 size,
 /// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
 /// is pending, then clears or fades it; a task, as The Broken
 /// Seal's.
-void BattlePres_ProcessPendingTileTransfer(void) {
+void BattleStaging_ProcessPendingTileTransfer(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;
 
@@ -42,9 +42,9 @@ void BattlePres_ProcessPendingTileTransfer(void) {
       Dma_Set(buf, (void *)0x06003500, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000,
               REG_DMA3);
       /* FAKEMATCH: the fill goes through the inline wrapper
-       * BattlePres_FillWords, as ☀️'s IWRAM call layer; called directly, 4
+       * BattleStaging_FillWords, as ☀️'s IWRAM call layer; called directly, 4
        * instructions differ in tla-en. */
-      BattlePres_FillWords(buf, 0x8000, work->transferValue);
+      BattleStaging_FillWords(buf, 0x8000, work->transferValue);
       break;
     case 2: // Afterimage: nonzero colour numbers drop to 1/2 or 3/4.
       if (work->transferValue == 50)

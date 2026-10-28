@@ -1730,18 +1730,18 @@ BattleEscape_CheckSuccess:
 	.incbin "baserom.gba", 0x0011ce90, 0x00000110
 	.section .rom.0011cfcc, "ax"
 	.balign 4
-	.global BattlePres_BuildOpponentEntries
-	.type BattlePres_BuildOpponentEntries, %function
+	.global Battle_BuildOpponentActions
+	.type Battle_BuildOpponentActions, %function
 	.thumb_func
-BattlePres_BuildOpponentEntries:
+Battle_BuildOpponentActions:
 	.incbin "baserom.gba", 0x0011cfcc, 0x00000190
 	.section .rom.0011d248, "ax"
 	.incbin "baserom.gba", 0x0011d248, 0x000001c8
 	.section .rom.0011d410, "ax"
-	.global BattlePresentation_AppendLinkedActions
-	.type BattlePresentation_AppendLinkedActions, %function
+	.global Battle_AppendLinkedActions
+	.type Battle_AppendLinkedActions, %function
 	.thumb_func
-BattlePresentation_AppendLinkedActions:
+Battle_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d410, 0x0000018c
 	.section .rom.0011d9c8, "ax"
 	.incbin "baserom.gba", 0x0011d9c8, 0x0000040c

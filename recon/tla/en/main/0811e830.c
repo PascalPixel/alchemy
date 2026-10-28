@@ -41,7 +41,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
   QueueIoWriteDelay2(0x04000050, 0x3f40);
-  BattlePres_SetActorRecordMode(unitId, 1);
+  BattleHighlight_SetSpriteMode(unitId, 1);
   for (frame = 0; frame != 16; frame++) {
     s32 fade;
 
@@ -66,7 +66,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     list[0] = unitId;
     list[1] = 255;
     Func_0811b75c((s16 *)list, 1, 0);
-    BattlePres_SetActorRecordMode(unitId, 1);
+    BattleHighlight_SetSpriteMode(unitId, 1);
   } else {
     list = ids;
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, list);
@@ -78,7 +78,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     }
     Func_0811b75c((s16 *)list, 1, 0);
     for (i = 0; i < count; i++)
-      BattlePres_SetActorRecordMode(list[i], 1);
+      BattleHighlight_SetSpriteMode(list[i], 1);
   }
   ObjMotRst(unitId);
   object->x = object->targetX;
@@ -90,10 +90,10 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     WaitFrames(1);
   }
   if (saved->single) {
-    BattlePres_SetActorRecordMode(unitId, 0);
+    BattleHighlight_SetSpriteMode(unitId, 0);
   } else {
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, list);
     for (i = 0; i < count; i++)
-      BattlePres_SetActorRecordMode(list[i], 0);
+      BattleHighlight_SetSpriteMode(list[i], 0);
   }
 }

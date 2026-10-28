@@ -8,17 +8,17 @@
 #include "battle_display.h"
 #include "battle_type.h"
 
-void BattlePresentation_WaitForAdvance(void);
+void BattleMessage_WaitForAdvance(void);
 
 /// Clears the highlights, applies each target's effect and runs the events.
 /// With no targets, only waits for the message to advance.
 /// plan: action and target information.
-s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
+s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 i;
 
-  BattlePres_SetActorModes(0, 0);
+  BattleHighlight_SetModes(0, 0);
   if (plan->targetCount == 0) {
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   } else {
     for (i = 0; i < plan->targetCount; i++) {
       BattleTarget_Execute(plan, i);

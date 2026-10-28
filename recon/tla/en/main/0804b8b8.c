@@ -28,7 +28,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
-void BattlePres_SetActorModesFar(u16 *, s32);
+void BattleHighlight_SetModesFar(u16 *, s32);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 void WaitFrames(s32);
 
@@ -104,7 +104,7 @@ s32 Func_0804b8b8(s32 slot) {
       BattleActor_CommitPlacementFar();
       selected[0] = newId;
       selected[1] = 0xff;
-      BattlePres_SetActorModesFar(selected, 2);
+      BattleHighlight_SetModesFar(selected, 2);
       BattleLayout_HighlightPartyPanels(selected);
     }
     WaitFrames(1);
@@ -118,7 +118,7 @@ s32 Func_0804b8b8(s32 slot) {
   Sound_PlayFar(113);
 done:
   selected[0] = 0xff;
-  BattlePres_SetActorModesFar(selected, 0);
+  BattleHighlight_SetModesFar(selected, 0);
   BattleLayout_HighlightPartyPanels(selected);
   PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
   BattleActor_CommitPlacementFar();

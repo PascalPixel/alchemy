@@ -30,7 +30,7 @@
 /* FAKEMATCH: the do { } while (0) wrapper steers: written plainly as *(ime) =
  * (saved), ElementGlow_Play differs 2 and
  * BattleEffect_RunJudgment differs 6 in all six ☀️ editions;
- * BattlePresentation_SetPaletteLevel's plain restore matches, and
+ * BattleBackground_SetPaletteLevel's plain restore matches, and
  * IME_RESTORE((volatile u16 *)&REG_IME, saved) there differs 2 in all six
  * (measured 2026-10-14). A device at each use, as IRQ_UNLOCK is (S2). */
 #define IME_RESTORE(ime, saved)                                                \
@@ -54,7 +54,7 @@
  * (Task_ResumeOverlayTasks matches either way), and ⚓️'s
  * BattleEffect_TransferHalvedCanvas and
  * BattleEffect_ProcessPendingStampTransfer differ 2 in all six editions;
- * BattlePresentation_SetPaletteLevel's plain restore matches, and through
+ * BattleBackground_SetPaletteLevel's plain restore matches, and through
  * IRQ_UNLOCK it differs 2 in all six (measured 2026-10-13). Not every use
  * matches through it, so it is a device at each use, not a layer (S2). */
 #define IRQ_UNLOCK(saved)                                                      \

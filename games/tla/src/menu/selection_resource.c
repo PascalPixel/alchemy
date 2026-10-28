@@ -65,5 +65,5 @@ void Menu_SendNodeCountList(u8 *arg0) {
     count++;
   }
   data[count] = 0xff;
-  BattlePres_SetActorModesFar(data, 0);
+  BattleHighlight_SetModesFar(data, 0);
 }

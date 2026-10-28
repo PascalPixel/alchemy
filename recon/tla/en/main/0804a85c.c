@@ -126,7 +126,7 @@ struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
 s32 Trig_Sin(s32 angle);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
-void BattlePres_SetActorModesFar(u16 *units, s32 mode);
+void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 void Window_Close(void *window, s32 mode);
 void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window,
                                s32 x, s32 y);
@@ -365,7 +365,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = 255;
-      BattlePres_SetActorModesFar(spreadActorIds, 1);
+      BattleHighlight_SetModesFar(spreadActorIds, 1);
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
           unit = Unit_Get(candidateIds[targetIndex]);
@@ -678,7 +678,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != NULL)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
-  BattlePres_SetActorModesFar(candidateIds, 0);
+  BattleHighlight_SetModesFar(candidateIds, 0);
   NAVIGATION->targetViewOffset = 0;
   WaitFrames(1);
   return targetIndex;

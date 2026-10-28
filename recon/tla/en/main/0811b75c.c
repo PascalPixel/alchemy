@@ -60,7 +60,7 @@ struct TlaSpriteRecord *ResourceObject_CreateFar(s32 resource);
 struct SpriteEntry *ResourceMetadata_RegisterFar(struct TlaSpriteRecord *record,
                                                  s32 sprite);
 void Animation_SetWorkEntryFar(struct SpriteEntry *entry, s32 value);
-void BattlePres_SetActorModeAndAction(s32 unitId);
+void BattleObject_UpdatePose(s32 unitId);
 
 void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   s32 unitIndex;
@@ -157,7 +157,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
         }
       }
     }
-    BattlePres_SetActorModeAndAction(unitId);
+    BattleObject_UpdatePose(unitId);
   }
 
   if (refreshPoses) {
@@ -167,7 +167,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
         if (unitIds[unitIndex] != 254 &&
             (battleObject = (struct TlaBattleObj *)BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
-          BattlePres_SetActorModeAndAction(spriteId);
+          BattleObject_UpdatePose(spriteId);
         unitIndex++;
         if (unitIndex >= 14 || (spriteId = unitIds[unitIndex]) == 255)
           break;

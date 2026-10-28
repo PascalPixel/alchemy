@@ -12,7 +12,7 @@ extern u16 gLinkPeerSignatures[][12];
 /// In a link battle, exchanges the "EXEC" signal with the other console.
 /// Returns zero if both agree within 30 frames, or -1 on timeout or disconnect.
 /// Returns zero immediately outside a link battle.
-s32 BattlePres_WaitSync(void) {
+s32 LinkBattle_WaitSync(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 *peer;
   u16 *sig;
@@ -55,7 +55,7 @@ s32 BattlePres_WaitSync(void) {
 /// Returns -1 if disconnected, if an earlier signal disagrees with the peer,
 /// or after 25 consecutive frames without a connection. Returns zero on
 /// agreement, or outside a link battle.
-s32 BattlePres_SyncTurn(void) {
+s32 LinkBattle_SyncTurn(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 *peer;
   u16 *sig;

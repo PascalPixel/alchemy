@@ -194,11 +194,11 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   Sound_PlayFar(154);
   WaitFrames(10);
   if (single) {
-    BattlePres_SetActorRecordMode(saved->unitId, 1);
+    BattleHighlight_SetSpriteMode(saved->unitId, 1);
   } else {
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++)
-      BattlePres_SetActorRecordMode(ids[i], 1);
+      BattleHighlight_SetSpriteMode(ids[i], 1);
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = (i << 8) | (16 - i);
@@ -241,7 +241,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   Func_0811b75c((s16 *)ids, 1, 0);
   object->y = 0x280000;
   object->angle = plan->targetIds[0] <= 7 ? 0 : 0x8000;
-  BattlePres_SetActorRecordMode(saved->unitId, 1);
+  BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
     object->y = (29 - i) * 3 << 16;
     object->velocityY = 0;
@@ -250,6 +250,6 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
       REG_BLDALPHA = ((16 - i) << 8) | i;
     WaitFrames(1);
   }
-  BattlePres_SetActorRecordMode(saved->unitId, 0);
+  BattleHighlight_SetSpriteMode(saved->unitId, 0);
   return saved;
 }

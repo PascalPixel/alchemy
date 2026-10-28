@@ -216,7 +216,7 @@ Func_08125d74:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #180
-	bl BattlePres_SetupTransitionScene
+	bl BattleCamera_SetView
 	ldr r3, [sp, #4]
 	mov r2, r8
 	movs r1, #144
@@ -282,9 +282,9 @@ Func_08125d74:
 	bl Irq_SetHandler
 	b .L_081261b8
 .L_08125fb0:
-	.4byte BattlePres_AdvanceTransitionTimer
+	.4byte BattleTransition_AdvanceTimer
 .L_08125fb4:
-	.4byte BattlePres_DrawTransitionRows
+	.4byte BattleTransition_DrawRows
 .L_08125fb8:
 	.4byte Func_08125d68
 .L_08125fbc:
@@ -408,7 +408,7 @@ Func_08125d74:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #100
-	bl BattlePres_SetupTransitionScene
+	bl BattleCamera_SetView
 	ldr r0, [sp, #4]
 	mov r3, r8
 	ldr r2, .L_081260dc
@@ -482,7 +482,7 @@ Func_08125d74:
 	movs r1, #1
 	adds r6, #1
 	adds r5, #2
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r6, r7
 	bne .L_0812614e
 .L_0812615e:
@@ -514,7 +514,7 @@ Func_08125d74:
 	movs r1, #0
 	adds r6, #1
 	adds r5, #2
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r6, r7
 	bne .L_0812618c
 .L_0812619c:

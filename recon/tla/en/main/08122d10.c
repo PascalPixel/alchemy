@@ -121,7 +121,7 @@ void Animation_ApplyChildArgumentFar(void *record, s32 value);
 void PartyStatus_DrawFar(s32 flags);
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
 s32 BattleMotion_GetSlotPalette(s32 id);
-void BattlePres_SetActorModeAndAction(s32 id);
+void BattleObject_UpdatePose(s32 id);
 s32 VramCache_Reload(s32 slot, s32 source);
 s32 Trig_Sin(s32 angle);
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
@@ -257,7 +257,7 @@ void BattleEvent_Playback(void) {
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
-            BattlePres_SetActorModeAndAction(
+            BattleObject_UpdatePose(
                 events->queue.operands[eventIndex]);
             break;
           }

@@ -325,7 +325,7 @@ Func_08124e20:
 .L_081250b6:
 	movs r0, #175
 	bl Sound_PlayFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081250c0:
 	adds r0, r7, #0
 	adds r0, #69
@@ -378,7 +378,7 @@ Func_08124e20:
 .L_08125126:
 	movs r0, #175
 	bl Sound_PlayFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125130:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownAgilityModifier
@@ -394,7 +394,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125360
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812515a:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownAttackModifier
@@ -410,7 +410,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125364
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125184:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownDefenseModifier
@@ -426,7 +426,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125368
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081251ae:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownResistanceModifier
@@ -442,7 +442,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_0812536c
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081251d8:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownDelusion
@@ -458,7 +458,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125370
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125202:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownConfusion
@@ -474,7 +474,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125374
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812522c:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownCharm
@@ -490,7 +490,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125378
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125256:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownStun
@@ -505,10 +505,10 @@ Func_08124e20:
 	adds r0, r6, #0
 	bl MessageArgument_PushFar
 	adds r0, r6, #0
-	bl BattlePres_SetActorModeAndAction
+	bl BattleObject_UpdatePose
 	ldr r0, .L_0812537c
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125286:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownSleep
@@ -523,10 +523,10 @@ Func_08124e20:
 	adds r0, r6, #0
 	bl MessageArgument_PushFar
 	adds r0, r6, #0
-	bl BattlePres_SetActorModeAndAction
+	bl BattleObject_UpdatePose
 	ldr r0, .L_08125380
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081252b6:
 	adds r0, r6, #0
 	bl Battle_AdvanceCounterAndCheckChance
@@ -542,7 +542,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125384
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081252e0:
 	adds r0, r6, #0
 	bl sub_08124af8
@@ -558,7 +558,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08125388
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812530a:
 	adds r0, r6, #0
 	bl BattleUnit_CountDownReflect
@@ -574,7 +574,7 @@ Func_08124e20:
 	bl MessageArgument_PushFar
 	ldr r0, .L_0812538c
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08125334:
 	movs r2, #1
 	add r10, r2

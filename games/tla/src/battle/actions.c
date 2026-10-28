@@ -77,7 +77,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// Returns the action count, or a negative value on cancellation or link
 /// failure.
 /// acts: action list, up to 20 entries.
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
+s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   struct BattleUnit *unit;
   struct BattleWork *work;
   u8 *mode;
@@ -106,7 +106,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
 
   // Ally commands (unavailable when enemies strike first).
   if (*mode != 2) {
-    cnt = BattlePres_BuildUnitEntries(acts);
+    cnt = Battle_BuildUnitActions(acts);
     if (cnt < 0)
       goto finish;
     // A failed escape gives enemies the same advantage as striking first.
@@ -118,8 +118,8 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
 
   // Link opponent or enemy actions.
   if (Ram_HeapSlots->battleWork->twoSided != 0) {
-    add = BattlePresentation_AppendLinkedActions(acts, cnt);
-    if (BattlePres_WaitSync() < 0) {
+    add = Battle_AppendLinkedActions(acts, cnt);
+    if (LinkBattle_WaitSync() < 0) {
       cnt = -1;
       goto finish;
     }
@@ -129,7 +129,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
       goto finish;
     }
   } else {
-    cnt += BattlePres_BuildOpponentEntries(acts + cnt);
+    cnt += Battle_BuildOpponentActions(acts + cnt);
   }
 
   // Sort by priority and set guards for Defend (3 and 7) first.

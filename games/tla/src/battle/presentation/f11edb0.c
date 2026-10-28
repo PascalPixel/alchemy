@@ -1,4 +1,4 @@
-// Func_0811edb0: The Broken Seal's BattlePresentation_RunItem
+// Func_0811edb0: The Broken Seal's BattleStaging_RunItem
 // (games/tbs/src/battle/battle/staging.c), ported: plays an item's use, the
 // camera turned to the user's side, the user raising the item and, for an item
 // with an effect, the screen dimming while the effect plays with the events;
@@ -66,7 +66,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   Func_0811ddd8(plan, &work);
-  BattlePres_SetActorModes(0, 0);
+  BattleHighlight_SetModes(0, 0);
   {
     struct BattleObj *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;

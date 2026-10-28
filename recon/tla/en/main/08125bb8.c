@@ -8,7 +8,7 @@
 #include "types.h"
 #include "iwram_call.h"
 
-void BattlePresentation_BuildTilemap(s32 *destination) {
+void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 

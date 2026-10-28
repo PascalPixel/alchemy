@@ -33,9 +33,9 @@ void Func_0813ba50(void);
 void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
@@ -56,7 +56,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   WaitFrames(1);
 
-  BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
+  BattleStaging_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -65,7 +65,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   WaitFrames(1);
   REG_BG2CNT = bgControl | 0x784;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = 0;
   WaitFrames(1);
 

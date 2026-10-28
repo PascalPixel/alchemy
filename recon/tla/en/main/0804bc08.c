@@ -154,7 +154,7 @@ void UpdateLinkSessionCountdown(void);
 s32 Func_0804babc(u16 *actors, struct PartyCommandRecord **cursor,
                   s32 *forcedCount);
 void BattleLayout_HighlightPartyPanels(u16 *units);
-void BattlePres_SetActorModesFar(u16 *units, s32 mode);
+void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 s32 GameFlag_Test(s32 flag);
 s32 Func_080457d0(s32 mode, s32 fleeAllowed);
 void PartyStatus_Draw(s32 flags);
@@ -237,7 +237,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
     data[0] = 255;
     BattleLayout_HighlightPartyPanels(data);
-    BattlePres_SetActorModesFar(data, 1);
+    BattleHighlight_SetModesFar(data, 1);
   }
 
   void Func_0804bbd0(void) {
@@ -457,7 +457,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
       signatureHeader[0] = actorId;
       signatureHeader[1] = 255;
-      BattlePres_SetActorModesFar(signatureHeader, 1);
+      BattleHighlight_SetModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels(signatureHeader);
       WaitFrames(1);
       mode = Func_080457d0(1, 0);
@@ -473,7 +473,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         Heap_Release(block);
         continue;
       }
-      BattlePres_SetActorModesFar(signatureHeader, 0);
+      BattleHighlight_SetModesFar(signatureHeader, 0);
       if (mode == -1) {
         if (commandIndex == 0)
           break;

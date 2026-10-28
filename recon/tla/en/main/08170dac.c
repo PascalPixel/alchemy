@@ -103,7 +103,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void Camera_ApplyPhasedDelta(void); // the camera's sway
@@ -240,7 +240,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
     } else {
       twice = frame * 2;
     }
-    BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, 100);
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);
     caster = *GetBattleObjectSlotFar(effect->actor);

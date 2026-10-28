@@ -66,7 +66,7 @@ Func_0811ea0c:
 .L_0811ea88:
 	movs r0, #0
 	movs r1, #0
-	bl BattlePres_SetActorModes
+	bl BattleHighlight_SetModes
 	add r2, sp, #28
 	mov r8, r2
 	ldr r0, [sp, #16]
@@ -360,7 +360,7 @@ Func_0811ea0c:
 	adds r2, #100
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl BattlePres_SetupTransitionAtPairMidpoint
+	bl BattleCamera_SetViewAtPairMidpoint
 .L_0811ed00:
 	movs r0, #1
 	bl WaitFrames
@@ -419,7 +419,7 @@ Func_0811ea0c:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #100
-	bl BattlePres_SetupTransitionScene
+	bl BattleCamera_SetView
 .L_0811ed7e:
 	mov r2, r8
 	movs r1, #36

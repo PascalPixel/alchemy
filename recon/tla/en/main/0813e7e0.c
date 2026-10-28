@@ -58,9 +58,9 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
 void HeapSlot_Release(s32 slot);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -109,9 +109,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
+  BattleStaging_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
   REG_BG2CNT = 0x784;
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
@@ -180,7 +180,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
+  BattleStaging_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
   WaitFrames(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);

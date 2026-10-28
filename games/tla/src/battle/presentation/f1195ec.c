@@ -23,7 +23,7 @@ void Func_081195ec(void) {
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
   if (count > reserveCount)
     count = reserveCount;
-  BattlePres_SetActorModes(actors, 4);
+  BattleHighlight_SetModes(actors, 4);
   WaitFrames(32);
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
@@ -44,6 +44,6 @@ void Func_081195ec(void) {
     gAdventure.activeOwners[actorCount + i] = actors[i];
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
-  BattlePres_SetActorModes(reserves, 6);
+  BattleHighlight_SetModes(reserves, 6);
   WaitFrames(32);
 }

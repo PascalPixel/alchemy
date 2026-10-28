@@ -35,7 +35,7 @@ extern u16 Data_0200049c;
 
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Message_ShowAndWaitCoreFar(s32 message);
-void BattlePresentation_WaitForAdvance(void);
+void BattleMessage_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 s32 Func_0811a24c(s32 side, u16 *units);
 void *Heap_AllocEwram(s32 size);
@@ -71,7 +71,7 @@ void Battle_AwardSpoils(void) {
   if (spoils->experience != 0) {
     MessageArgument_PushFar(spoils->experience, 5);
     Message_ShowAndWaitCoreFar((s32)Msg03206);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   }
   list = units;
   living = BattleParty_ListLivingUnits(1, list);
@@ -92,7 +92,7 @@ void Battle_AwardSpoils(void) {
       MessageArgument_PushFar(list[i], 1);
       MessageArgument_PushFar(unit->level, 5);
       Message_ShowAndWaitCoreFar((s32)Msg03322);
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
       for (cnt = 0; cnt < 32; cnt++) {
         learned = unit->actionSlots[cnt].encodedAction;
         if ((learned & ACTION_ID_MASK) && (learned >> 15)) {
@@ -107,39 +107,39 @@ void Battle_AwardSpoils(void) {
             MessageArgument_PushFar(learned & ACTION_ID_MASK, 4);
             Sound_PlayFar(154);
             Message_ShowAndWaitCoreFar((s32)Msg03323);
-            BattlePresentation_WaitForAdvance();
+            BattleMessage_WaitForAdvance();
           }
         }
       }
       if (gains[2] != 0) {
         MessageArgument_PushFar(gains[2], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03324);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
       if (gains[3] != 0) {
         MessageArgument_PushFar(gains[3], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03325);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
       if (gains[4] != 0) {
         MessageArgument_PushFar(gains[4], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03326);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
       if (gains[5] != 0) {
         MessageArgument_PushFar(gains[5], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03327);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
       if (gains[6] != 0) {
         MessageArgument_PushFar(gains[6], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03328);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
       if (gains[7] != 0) {
         MessageArgument_PushFar(gains[7], 5);
         Message_ShowAndWaitCoreFar((s32)Msg03329);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
       }
     }
   }
@@ -148,7 +148,7 @@ void Battle_AwardSpoils(void) {
     MessageArgument_PushFar(spoils->coins, 5);
     Message_ShowAndWaitCoreFar((s32)Msg03207);
     Party_AdjustCoinsFar(spoils->coins);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   }
   found = &Data_0200049c;
   for (;;) {
@@ -167,7 +167,7 @@ void Battle_AwardSpoils(void) {
       break;
     MessageArgument_PushFar(spoils->items[bestSlot], 2);
     Message_ShowAndWaitCoreFar((s32)Msg03208);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
     if (PartyInventory_AddFar(spoils->items[bestSlot]) == -1) {
       *found = spoils->items[bestSlot];
       break;

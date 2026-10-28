@@ -66,7 +66,7 @@ void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 layer, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 layer, s32 background,
                                                 s32 frames);
 s32 ArcTan2(s32 x, s32 y);
 u32 Math_UnsignedMulHigh(u32 value, u32 magic);
@@ -333,7 +333,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       s32 angle;
 
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      BattlePresentation_ConfigurePaletteFadeFar(
+      BattleStaging_ConfigurePaletteFadeFar(
           1, (s32)&ResourceId_VioletSkyBackdrop, 8);
       BattleEffect_SelectLivingTargets(work->effect);
       BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);

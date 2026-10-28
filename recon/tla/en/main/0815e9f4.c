@@ -90,9 +90,9 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
 void HeapSlot_Release(s32 slot);
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target,
+void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target,
                                                  s32 frames);
-void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
+void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
@@ -156,7 +156,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     big = 0;
 
   // Setup, one step of the view's swing between each load.
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+  BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
   Func_08143d80();
@@ -176,12 +176,12 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+  BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+  BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
@@ -190,11 +190,11 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   if (effect->actor > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
             (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+  BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+  BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
   work->transferMode = 1;
@@ -235,7 +235,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     Task_Add(Palette_StepFadeTransfer, 0x480);
     Sound_PlayFar(212);
     for (frame = 0; frame != 32; frame++) {
-      BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+      BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                                   effect->firstTarget, 130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
@@ -363,7 +363,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   for (frame = 0, background = (u16 *)Ram_HeapSlots->battleWork->unk670;
        frame != 7; frame++) {
-    BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
+    BattleBackground_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
   BattleEffect_HideBg1AndRestoreBackdrop();

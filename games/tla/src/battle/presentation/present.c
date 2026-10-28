@@ -23,7 +23,7 @@ struct ActorSpriteRecord {
 };
 
 /// Sets the OBJ mode of both sprite parts of each of the actor's records.
-void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
+void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObj *slot = BattleObject_Get(actorId);
   struct MotionObject *object;
   struct ActorSpriteRecord *record;
@@ -66,23 +66,23 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
 
 /// Makes every unit's graphics but except's translucent (OBJ mode 1).
 /// except: unit ID to leave unchanged.
-void BattlePres_SetOtherActorRecordModes(s32 except) {
+void BattleHighlight_SetOtherSpriteModes(s32 except) {
   s16 list[14];
   s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
   s32 i;
 
   for (i = 0; i < cnt; i++) {
     if (list[i] != except)
-      BattlePres_SetActorRecordMode(list[i], 1);
+      BattleHighlight_SetSpriteMode(list[i], 1);
   }
 }
 
 /// Restores normal rendering (OBJ mode 0) for all units.
-void BattlePres_ClearAllActorRecordModes(void) {
+void BattleHighlight_ClearAllSpriteModes(void) {
   s16 list[14];
   s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
   s32 i;
 
   for (i = 0; i < cnt; i++)
-    BattlePres_SetActorRecordMode(list[i], 0);
+    BattleHighlight_SetSpriteMode(list[i], 0);
 }

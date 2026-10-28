@@ -21,7 +21,7 @@ struct BattleSortedUnitEntry {
   u8 unk0c[4];
 };
 
-s32 BattlePresentation_BuildSortedUnitEntries(
+s32 AutoBattle_BuildActions(
     struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];

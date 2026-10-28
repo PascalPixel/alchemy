@@ -32,7 +32,7 @@ Func_0811e830:
 	bl QueueIoWriteDelay2
 	movs r1, #1
 	ldr r0, [sp, #8]
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	movs r6, #0
 	adds r7, #82
 .L_0811e874:
@@ -113,7 +113,7 @@ Func_0811e830:
 	bl Func_0811b75c
 	movs r1, #1
 	ldr r0, [sp, #8]
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	b .L_0811e980
 .L_0811e91a:
 	ldr r2, [sp, #4]
@@ -163,7 +163,7 @@ Func_0811e830:
 	movs r1, #1
 	subs r6, #1
 	adds r5, #2
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r6, #0
 	bne .L_0811e970
 .L_0811e980:
@@ -203,7 +203,7 @@ Func_0811e830:
 	beq .L_0811e9d0
 	ldr r0, [sp, #8]
 	movs r1, #0
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	b .L_0811e9fa
 .L_0811e9d0:
 	ldr r2, [sp, #4]
@@ -223,7 +223,7 @@ Func_0811e830:
 	movs r1, #0
 	subs r6, #1
 	adds r5, #2
-	bl BattlePres_SetActorRecordMode
+	bl BattleHighlight_SetSpriteMode
 	cmp r6, #0
 	bne .L_0811e9ea
 .L_0811e9fa:

@@ -10,12 +10,12 @@
 #include "ram_buffer.h"
 #include "input.h"
 void MessageArgument_ClearAllFar(void);
-s32 BattlePres_ShowDefendMessage(s16 *);
-s32 BattlePres_RunUnitAction(s16 *);
-s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
+s32 AutoBattle_ShowDefend(s16 *);
+s32 BattleStaging_RunUnitAction(s16 *);
+s32 BattleStaging_RunPairedUnitTransition(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);
 
-void BattlePres_AdjustCameraByShoulderKeys(void) {
+void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
   /* FAKEMATCH(volatile): the keys read through a volatile pointer, so each

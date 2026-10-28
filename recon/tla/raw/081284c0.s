@@ -25,7 +25,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08128790
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081284f4:
 	mov r2, sp
 	adds r2, #28
@@ -106,7 +106,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_08128794
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 	movs r3, #252
 	lsls r3, r3, #6
 	adds r3, #255
@@ -162,7 +162,7 @@ Func_081284c0:
 	bl Sound_PlayFar
 	ldr r0, .L_08128798
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812861a:
 	subs r7, #1
 	cmp r7, #0
@@ -176,7 +176,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_0812879c
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812863a:
 	mov r3, r8
 	movs r2, #6
@@ -187,7 +187,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287a0
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08128654:
 	mov r3, r8
 	movs r2, #8
@@ -198,7 +198,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287a4
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_0812866e:
 	mov r3, r8
 	movs r2, #10
@@ -209,7 +209,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287a8
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08128688:
 	mov r3, r8
 	movs r2, #12
@@ -220,7 +220,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287ac
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081286a2:
 	mov r3, r8
 	movs r2, #14
@@ -231,7 +231,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287b0
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_081286bc:
 	movs r2, #166
 	mov r1, r10
@@ -271,7 +271,7 @@ Func_081284c0:
 	ldr r3, [sp, #24]
 	ldr r0, [r3]
 	bl Party_AdjustCoinsFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 .L_08128712:
 	ldr r0, .L_081287bc
 	mov r10, r0
@@ -310,7 +310,7 @@ Func_081284c0:
 	bl MessageArgument_PushFar
 	ldr r0, .L_081287c0
 	bl Message_ShowAndWaitCoreFar
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 	ldr r2, [sp, #24]
 	ldrh r0, [r2, r5]
 	bl PartyInventory_AddFar

@@ -1,7 +1,7 @@
 // Draft, differ 8 of 1016 (tla-en): Lucky Wheels, The Broken Seal's matched
 // LuckyWheels_Run (games/tbs/src/overworld/lucky_wheels.c) on this game's
 // heap slots (sheet 100, canvas 96, effect work 92, wheel work 180), with a
-// third callback, Func_081b3294, and BattlePres_ProcessPendingTileTransfer
+// third callback, Func_081b3294, and BattleStaging_ProcessPendingTileTransfer
 // as the canvas transfer. Reshaped toward The Broken Seal's C, measured in
 // order from 436: resources and messages by their linker names, as the
 // native loads each from the pool (ResourceId_FarCall00C, the Slots_ and
@@ -95,7 +95,7 @@ void WindowSystem_InitFieldFar(void);
 void Func_081b336c(void);
 void Func_081b243c(void);
 void Func_081b3294(void);
-void BattlePres_ProcessPendingTileTransfer(void);
+void BattleStaging_ProcessPendingTileTransfer(void);
 void Func_081b21ec(s32 resource);
 void Func_081b22b8(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void Palette_DarkenSceneStep(void);
@@ -301,7 +301,7 @@ void ReelGame_Run(void) {
     work->transferPending = 0;
     Task_Add(Func_081b243c, 0x480);
     Task_Add(Func_081b3294, 0xc80);
-    Task_Add(BattlePres_ProcessPendingTileTransfer,
+    Task_Add(BattleStaging_ProcessPendingTileTransfer,
                                   0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
@@ -429,7 +429,7 @@ void ReelGame_Run(void) {
     }
     HeapSlot_Release(188);
     HeapSlot_Release(104);
-    Task_Remove(BattlePres_ProcessPendingTileTransfer);
+    Task_Remove(BattleStaging_ProcessPendingTileTransfer);
     Task_Remove(Func_081b243c);
     Task_Remove(Func_081b3294);
     HeapSlot_Release(180);

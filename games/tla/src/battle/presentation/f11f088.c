@@ -1,4 +1,4 @@
-// Func_0811f088: The Broken Seal's BattlePresentation_RunPsynergyCast
+// Func_0811f088: The Broken Seal's BattleStaging_RunPsynergyCast
 // (games/tbs/src/battle/battle/staging.c), ported: turns the camera to the
 // caster (across the field or reversed when the plan's flags say so), raises
 // the caster's hand with its element's glow, then either fails ("But the
@@ -101,7 +101,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   isDjinni = mode & 1;
   if (isDjinni)
     work.flags = 1;
-  BattlePres_SetActorModes(0, 0);
+  BattleHighlight_SetModes(0, 0);
   heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);

@@ -46,7 +46,7 @@ s32 BattleClass_GetAttackHop(s32 classId);
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 frames,
                                  s32 hop);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
-void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 scale);
+void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void *Func_0811e3ac(struct BattlePlan *plan,
                     struct BattlePresentationWork *work);
@@ -102,8 +102,8 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
     WaitFrames(1);
   }
 
-  BattlePres_SetActorModes(0, 0);
-  BattlePres_BuildTargetList(plan, &work);
+  BattleHighlight_SetModes(0, 0);
+  BattleStaging_BuildTargetList(plan, &work);
   if (work.kind == 135)
     PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
@@ -186,7 +186,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
         if (zoomOnCritical != 0) {
           first = work.actor;
           second = work.firstTarget;
-          BattlePres_SetupTransitionAtPairMidpoint(first, second,
+          BattleCamera_SetViewAtPairMidpoint(first, second,
                                                    index * 30 / frames + 100);
         }
         WaitFrames(1);
@@ -209,7 +209,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
     if (critical != 0) {
       view->active = 0;
       BattleParty_ListAllUnitsAndSubmit();
-      BattlePres_SetupTransitionScene(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, 100);
     }
     ObjMotRst(work.actors[0]);
   }

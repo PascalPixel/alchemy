@@ -369,7 +369,7 @@ Func_0812381c:
 	ldr r0, .L_08123c04
 	bl Message_ShowAndWaitCoreFar
 .L_08123bd2:
-	bl BattlePresentation_WaitForAdvance
+	bl BattleMessage_WaitForAdvance
 	mov r4, r11
 	ldr r2, [r4]
 	movs r3, #7
@@ -995,7 +995,7 @@ Func_0812381c:
 	bl BattleAction_Get
 	movs r0, #0
 	movs r1, #0
-	bl BattlePres_SetActorModes
+	bl BattleHighlight_SetModes
 	mov r2, r10
 	ldr r3, [r2]
 	adds r2, r5, #0

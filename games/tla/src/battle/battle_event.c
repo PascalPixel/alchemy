@@ -10,7 +10,7 @@ void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void Message_ShowAndWaitCoreFar(u32 message);
-void BattlePresentation_WaitForAdvance(void);
+void BattleMessage_WaitForAdvance(void);
 void MessageArgument_ClearAllFar(void);
 void Sound_PlayFar(s32 cue);
 void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
@@ -20,7 +20,7 @@ void BattleMotion_ShowDowned(u32 unitId);
 void PartyStatus_DrawFar(s32 state);
 struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleUnit_BuildStatusFlags(u32 unitId, struct BattleObj *slot);
-s32 BattlePres_SetActorModeAndAction(s32 id);
+s32 BattleObject_UpdatePose(s32 id);
 s32 BattleActor_RemoveFromLists(s32 unitId);
 u32 BattleEventRuntime_Reset(void);
 
@@ -70,7 +70,7 @@ u32 BattleEvent_DispatchQueued(void) {
       case BATTLE_EVENT_MESSAGE:
         if ((s32)queue->operands[i] >= 0)
           Message_ShowAndWaitCoreFar(queue->operands[i]);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_WaitForAdvance();
         MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_MESSAGE_NO_WAIT:
@@ -94,7 +94,7 @@ u32 BattleEvent_DispatchQueued(void) {
       case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[i],
                                     BattleObject_Get(queue->operands[i]));
-        BattlePres_SetActorModeAndAction(queue->operands[i]);
+        BattleObject_UpdatePose(queue->operands[i]);
         break;
       case 15:
         BattleActor_RemoveFromLists(queue->operands[i]);

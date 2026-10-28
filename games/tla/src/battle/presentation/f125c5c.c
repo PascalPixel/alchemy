@@ -10,7 +10,7 @@ extern const u8 gData_0812cc74[];
 
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
 /// and the affine block, while the background view is in mode 2.
-void BattlePres_UpdateHBlankScroll(void) {
+void BattleStaging_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *records;
   u16 *record;
 
@@ -32,7 +32,7 @@ void Func_08125c5c(void) {
             REG_DMA3);
 }
 
-void BattlePres_AdvanceTransitionTimer(void) {
+void BattleTransition_AdvanceTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;
   u32 *timer;
@@ -52,15 +52,15 @@ void BattlePres_AdvanceTransitionTimer(void) {
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);
   if (next <= 0x50U) {
-    BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+    BattleCamera_SetView(0, 0, 0, 0xb4 - next);
     return;
   }
-  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+  BattleCamera_SetView(0, 0, 0, 0x64);
 }
 
 /// Draws the transition's two rows of tiles, closing in from row 13 as the
 /// timer runs; the lower row takes the vertically flipped tiles.
-void BattlePres_DrawTransitionRows(void) {
+void BattleTransition_DrawRows(void) {
   u32 i;
   s32 frame;
   s32 aligned;

@@ -41,7 +41,7 @@ s32 BattleEscape_PlayRun(void *action) {
   return 0;
 }
 
-s32 BattlePres_ShowDefendMessage(s16 *script) {
+s32 AutoBattle_ShowDefend(s16 *script) {
   s32 objectId;
   s32 result;
   struct BattleUnit *unit;

@@ -31,7 +31,7 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 
-void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
+void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   s32 span = 0x01fe0000;
   s32 mode;
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;

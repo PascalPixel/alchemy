@@ -109,28 +109,28 @@ void BattleObject_Put(void);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
-void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetView(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void BattleSpoils_Clear(void);
 s32 VramCache_AllocEntry(s32 size);
 u32 Battle_RandomFar(void);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
-void BattlePresentation_UpdateCamera(void);
+void BattleStaging_UpdateCamera(void);
 void Func_0811b9fc(void);
 s32 Func_0811a39c(s32 side, s32 value);
 void Func_081195ec(void);
 void Func_0811d7e4(void);
 void PartyStatus_DrawFar(s32 mode);
 void Resource_ResetEntry(s32 slot);
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions);
-s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *actions);
+s32 Battle_GatherActions(struct BattleActionRecord *actions);
+s32 AutoBattle_BuildActions(struct BattleActionRecord *actions);
 s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
-s32 BattlePres_RunAction(struct BattleActionRecord *action);
+s32 AutoBattle_RunAction(struct BattleActionRecord *action);
 s32 Func_0811a24c(s32 side, s32 value);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *unitIds);
 void Func_081197a8(s32 enemyGroup);
 s32 Battle_FindTaggedSlotByValue(s32 tag);
-s32 BattlePres_SyncTurn(void);
+s32 LinkBattle_SyncTurn(void);
 void Func_08118e64(void);
 void Func_08124cc0(void);
 void Func_08124e20(void);
@@ -140,12 +140,12 @@ s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
 s32 Message_AllTypedFar(void);
 void Window_CloseFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
-void BattlePres_ClearLinkPayload(void);
+void BattleStaging_ClearLinkPayload(void);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
 void MessageArgument_ClearAllFar(void);
 void MessageArgument_PushFar(s32 slot, s32 kind);
 void Message_ShowAndWaitCoreFar(s32 message);
-void BattlePresentation_WaitForAdvance(void);
+void BattleMessage_WaitForAdvance(void);
 void Func_081284c0(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
@@ -232,7 +232,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = 0;
   }
-  Task_Add(BattlePresentation_UpdateCamera, 0x47f);
+  Task_Add(BattleStaging_UpdateCamera, 0x47f);
 
   cue = gAdventure.sceneCue;
   if (cue != 0) {
@@ -261,7 +261,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   Func_081263c4();
   Func_081263fc(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
-  BattlePres_SetupTransitionScene(0, 0, 0, 190);
+  BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   *(volatile u16 *)0x04000050 = 0;
   BattleSpoils_Clear();
@@ -299,9 +299,9 @@ s32 Func_081197f0(s32 enemyGroup) {
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     Resource_ResetEntry(battle->promptSlot);
     if (GameFlag_Test(0x16a) == 0)
-      actionCount = BattlePresentation_BuildActions(battle->actions);
+      actionCount = Battle_GatherActions(battle->actions);
     else
-      actionCount = BattlePresentation_BuildSortedUnitEntries(battle->actions);
+      actionCount = AutoBattle_BuildActions(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
@@ -315,7 +315,7 @@ s32 Func_081197f0(s32 enemyGroup) {
         if (Func_0811d9cc(&battle->actions[i], i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
-        if (BattlePres_RunAction(&battle->actions[i]) == 1)
+        if (AutoBattle_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
       if (enemyGroup == 638)
@@ -345,7 +345,7 @@ s32 Func_081197f0(s32 enemyGroup) {
         battle->actions[i].range = 1;
         i--;
       }
-      if (BattlePres_SyncTurn() < 0)
+      if (LinkBattle_SyncTurn() < 0)
         goto aborted;
       if (i == actionCount - 1 && battle->extraCount != 0) {
         u32 queue = battle->extraQueue;
@@ -377,7 +377,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     if ((u32)scripted <= 1 && round == 2)
       goto won_scripted;
     if (battle->twoSided != 0) {
-      if (BattlePres_SyncTurn() < 0)
+      if (LinkBattle_SyncTurn() < 0)
         goto aborted_scripted;
     } else {
       WaitFrames(20);
@@ -401,7 +401,7 @@ s32 Func_081197f0(s32 enemyGroup) {
 won:
   scripted = enemyGroup - 74;
 won_scripted:
-  BattlePres_ClearLinkPayload();
+  BattleStaging_ClearLinkPayload();
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Test(0x16e) == 0) {
       if (battle->twoSided != 0)
@@ -414,7 +414,7 @@ won_scripted:
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(128, 1);
           Message_ShowAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
-          BattlePresentation_WaitForAdvance();
+          BattleMessage_WaitForAdvance();
         }
       }
       Func_081284c0();
@@ -429,7 +429,7 @@ won_scripted:
 aborted:
   scripted = enemyGroup - 74;
 aborted_scripted:
-  BattlePres_ClearLinkPayload();
+  BattleStaging_ClearLinkPayload();
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
@@ -437,7 +437,7 @@ aborted_scripted:
   goto finished;
 
 party_lost:
-  BattlePres_ClearLinkPayload();
+  BattleStaging_ClearLinkPayload();
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
@@ -447,7 +447,7 @@ party_lost:
         Message_ShowAndWaitCoreFar((s32)MsgGoesDownInDefeat);
       else
         Message_ShowAndWaitCoreFar((s32)MsgPartyDefeated);
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
     }
     Sound_PlayFar(78);
   }

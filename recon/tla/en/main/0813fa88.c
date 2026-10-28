@@ -72,9 +72,9 @@ void BattleEffect_DimBackgroundStep(void); // fades the battle background
 void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
 void Func_0813f8d4(void); // BattleEffect_DrawStreaks
 s32 Task_Add(void *callback, s32 order);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
@@ -109,12 +109,12 @@ void Func_0813fa88(s32 kind) {
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
+  BattleStaging_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
   WaitFrames(1);
   REG_BG2CNT = 0x784;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   WaitFrames(1);
   Func_0814355c();

@@ -69,7 +69,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   u32 kept;
   struct MotionObject *object;
 
-  BattlePres_BuildTargetList(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->presentationFlags & 0x8000) {
@@ -91,7 +91,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       view->targetYaw = yaw;
   }
 
-  BattlePres_SetActorModes(0, 0);
+  BattleHighlight_SetModes(0, 0);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = 0x3f40;
@@ -103,7 +103,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       u32 unit = units[i];
 
       if ((target <= 7) != (unit <= 7))
-        BattlePres_SetActorRecordMode(unit, 1);
+        BattleHighlight_SetSpriteMode(unit, 1);
     } else {
       Actor_SetMode(object, ((u8 *)Ram_HeapSlots->battleWork)[0x869]);
     }
@@ -113,7 +113,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     Func_08127308(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)
-    BattlePres_SetActorRecordMode(actor, 1);
+    BattleHighlight_SetSpriteMode(actor, 1);
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = (16 - i) | 0x1000;
     WaitFrames(1);
@@ -188,15 +188,15 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       continue;
     unit = units[i];
     if ((target <= 7) != (unit <= 7))
-      BattlePres_SetActorRecordMode(unit, 1);
+      BattleHighlight_SetSpriteMode(unit, 1);
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = i | 0x1000;
     WaitFrames(1);
   }
   for (i = 0; i != count; i++)
-    BattlePres_SetActorRecordMode(units[i], 0);
-  BattlePres_SetupTransitionScene(0, 0, 0, 100);
+    BattleHighlight_SetSpriteMode(units[i], 0);
+  BattleCamera_SetView(0, 0, 0, 100);
   WaitFrames(1);
   return 0;
 }

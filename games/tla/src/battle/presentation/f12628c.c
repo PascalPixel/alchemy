@@ -7,19 +7,19 @@
 #include "battle_display.h"
 
 void Task_Add(void (*callback)(void), s32 priority);
-void BattlePres_UpdateHBlankScroll(void);
+void BattleStaging_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *destination);
 void Func_08125bb8(void *destination);
 
-/// The Broken Seal's BattlePresentation_ConfigurePaletteFade, with this
-/// game's heap slots, its callback BattlePres_UpdateHBlankScroll at 0xcff and
+/// The Broken Seal's BattleStaging_ConfigurePaletteFade, with this
+/// game's heap slots, its callback BattleStaging_UpdateHBlankScroll at 0xcff and
 /// its IO write of 0x1f83 to BG1CNT.
 void Func_0812628c(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
   if (transition->mode == 0)
-    Task_Add(BattlePres_UpdateHBlankScroll, 0xcff);
+    Task_Add(BattleStaging_UpdateHBlankScroll, 0xcff);
   transition->mode = mode;
 
   if (mode == 1)

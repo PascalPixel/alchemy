@@ -55,7 +55,7 @@ Func_0813e7e0:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 	ldr r3, .L_0813e890
 	movs r2, #128
 	lsls r2, r2, #19
@@ -65,7 +65,7 @@ Func_0813e7e0:
 	movs r2, #0
 	movs r3, #100
 	movs r0, #0
-	bl BattlePres_SetupTransitionSceneFar
+	bl BattleCamera_SetViewFar
 	movs r3, #128
 	lsls r3, r3, #19
 	movs r5, #0
@@ -384,7 +384,7 @@ Func_0813e7e0:
 	ldrh r1, [r3]
 	movs r2, #0
 	movs r0, #2
-	bl BattlePresentation_ConfigurePaletteFadeFar
+	bl BattleStaging_ConfigurePaletteFadeFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_0813eb68

@@ -18,18 +18,18 @@ u16 EraseAtmelFlashChip(void) {
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  command = (volatile u8 *)0x0E005555;
+  command = (volatile u8 *)(FLASH_BASE + 0x5555);
   *command = 0xAA;
-  unlock = (volatile u8 *)0x0E002AAA;
+  unlock = (volatile u8 *)(FLASH_BASE + 0x2AAA);
   *unlock = 0x55;
   *command = 0x80;
   *command = 0xAA;
   *unlock = 0x55;
   *command = 0x10;
 
-  result = gWaitForFlashWrite(3, (u8 *)0x0E000000, 255);
+  result = gWaitForFlashWrite(3, (u8 *)FLASH_BASE, 255);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
@@ -45,12 +45,12 @@ u16 EraseAtmelFlashSector(u16 sector) {
   s32 bytesRemaining;
   u16 result;
 
-  cursor = (u8 *)(0x0E000000 + (sector << info->type.sector.shift));
+  cursor = (u8 *)(FLASH_BASE + (sector << info->type.sector.shift));
   savedIme = REG_IME;
   REG_IME = 0;
-  *(volatile u8 *)0x0E005555 = 0xAA;
-  *(volatile u8 *)0x0E002AAA = 0x55;
-  *(volatile u8 *)0x0E005555 = 0xA0;
+  FLASH_WRITE(0x5555, 0xAA);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0xA0);
   bytesRemaining = info->type.sector.size;
   while (bytesRemaining != 0) {
     *cursor = 0xFF;
@@ -106,7 +106,7 @@ advanceSector:
     if ((u32)sectorsErased <= 31)
       goto nextSector;
   }
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   return result;
 }
 
@@ -123,13 +123,13 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   input = source;
   sector = (u16)sector;
   destination =
-      (volatile u8 *)(0x0e000000 +
+      (volatile u8 *)(FLASH_BASE +
                       (sector << gFlash_ChipAtmelLayout.type.sector.shift));
   savedIme = REG_IME;
   REG_IME = 0;
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0xa0;
+  FLASH_WRITE(0x5555, 0xaa);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0xa0);
 
   remaining = gFlash_ChipAtmelLayout.type.sector.size;
   if (remaining != 0) {
@@ -189,6 +189,6 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
     smallSector += 1;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   return result;
 }

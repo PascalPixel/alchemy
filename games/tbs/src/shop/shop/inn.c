@@ -6,7 +6,7 @@
 
 /// The innkeeper's lines, in message order from MsgInnWelcome.
 enum InnMessageId {
-  INN_MESSAGE_WELCOME = 0xd1c,
+  INN_MESSAGE_WELCOME = MSGNO(MsgInnWelcome),
   INN_MESSAGE_STAY_COMPLETE,
   INN_MESSAGE_NOT_ENOUGH_COINS,
   INN_MESSAGE_GOODBYE,
@@ -129,7 +129,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   // The night's fades take 60 frames each; the 16 set at the end is what
   // the field's transitions take again afterward
   work = gFieldWork;
-  work->transition = 0x209;
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();

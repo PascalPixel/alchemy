@@ -130,14 +130,23 @@ enum SerialSendState {
   SERIAL_SEND_LAST = 2
 };
 
+/// SerialTransferState.active and gSerialBlockNumber hold a block number in
+/// their low seven bits, counting up and wrapping; the receiver's, with bit 7
+/// set, asks the sender to rewind to that block (Serial_StepBlockTransfer).
+#define SERIAL_BLOCK_NUMBER_MASK 0x7f
+#define SERIAL_BLOCK_REWIND 0x80 ///< bit 7: rewind to the block number
+/// SerialTransferState.status's bit 7, set when a send or receive starts; the
+/// receiver counts its blocks in the low bits (Serial_StepBlockTransfer).
+#define SERIAL_STATUS_RUNNING 0x80
+
 /// A console's block transfer state, exchanged with the partner each VBlank:
 /// its block number, its status and flags, and a 20-byte block.
 struct SerialTransferState {
   /// The number of the block in payload; as receiver, the one it
   /// expects with bit 7 set to ask for a resend; 1 when a transfer starts.
   u8 active;
-  /// 0x80 sending or 0x81 receiving when started; the receiver counts blocks
-  /// (status + 1, with bit 7) and sets 0 after the last.
+  /// SERIAL_STATUS_RUNNING when started, plus 1 for a receive; the receiver
+  /// counts blocks (status + 1, with bit 7) and sets 0 after the last.
   u8 status;
   u8 flags;       ///< the receive state, an enum SerialReceiveState
   u8 peerFlags;   ///< the send state, an enum SerialSendState
@@ -200,7 +209,7 @@ static __inline__ void Serial_ResetTransferState(void) {
      * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
     state = &gSerialTransfer;
   } while (0);
-  state->status = 0x80;
+  state->status = SERIAL_STATUS_RUNNING;
   gSerialSendSource = zero;
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;

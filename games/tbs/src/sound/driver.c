@@ -48,10 +48,6 @@ void CgbOscOff(u8 channel);
 
 extern const u8 gCgb3Vol[];
 
-/// The PCM buffer's size in samples. It holds transferPeriod VBlanks of
-/// samples (0x630 / pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's
-/// rate), after which m4aSoundVSync starts the DMAs again from its start.
-#define SOUND_PCM_BUFFER_SIZE 0x630
 /// The VBlank rate in ten-thousandths of a hertz: 59.7275 VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
 /// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles.
@@ -82,11 +78,11 @@ void SoundInit(struct SoundInfo *work) {
   REG_DMA1DAD = (u32)&REG_FIFO_A;
   REG_DMA2SAD = (u32)work->buffers[1];
   REG_DMA2DAD = (u32)&REG_FIFO_B;
-  // Clear the complete work block (0x3ec words, sizeof(struct SoundInfo)),
-  // then install the PCM driver entries.
+  // Clear the complete work block, then install the PCM driver entries.
   SOUND_INFO_PTR = work;
   zero = 0;
-  Bios_CpuSet(&zero, work, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x3EC);
+  Bios_CpuSet(&zero, work,
+              CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(struct SoundInfo) / 4);
   work->pcmNoteCount = 8;
   work->volume = 15;
   work->noteOn = ply_note;
@@ -98,7 +94,7 @@ void SoundInit(struct SoundInfo *work) {
   work->commands = gMPlayJumpTable;
   // Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets
   // the game's mode.
-  SampleFreqSet(0x40000);
+  SampleFreqSet(SOUND_MODE_FREQ_13379);
   work->ident = ID_NUMBER;
 }
 
@@ -112,7 +108,7 @@ void SampleFreqSet(u32 mode) {
   volatile u16 *timer;
 
   // Convert the selected rate into mixer and timer increments.
-  mode = (mode & 0xF0000) >> 16;
+  mode = (mode & SOUND_MODE_FREQ) >> SOUND_MODE_FREQ_SHIFT;
   work->rate = mode;
   pcmSamplesPerVBlank = gPcmSamplesPerVBlankTable[mode - 1];
   work->pcmSamplesPerVBlank = pcmSamplesPerVBlank;
@@ -121,7 +117,7 @@ void SampleFreqSet(u32 mode) {
   work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, pcmSamplesPerVBlank);
   work->outputRate =
       __divsi3(SOUND_VBLANK_RATE_E4 * pcmSamplesPerVBlank + 5000, 10000);
-  work->rateStep = (__divsi3(0x1000000, work->outputRate) + 1) >> 1;
+  work->rateStep = (__divsi3(16777216, work->outputRate) + 1) >> 1;
   // Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
   // take their next sample, pcmSamplesPerVBlank times a VBlank. It starts at
   // scanline 159 after the FIFO transfers restart.
@@ -152,12 +148,12 @@ void m4aSoundMode(u32 mode) {
   work->ident++;
 
   // A zero field leaves the corresponding setting unchanged.
-  modeField = mode & 0xFF;
+  modeField = mode & (SOUND_MODE_REVERB_SET | SOUND_MODE_REVERB_VAL);
   if (modeField != 0)
-    work->reverb = modeField & 0x7F;
-  modeField = mode & 0xF00;
+    work->reverb = modeField & SOUND_MODE_REVERB_VAL;
+  modeField = mode & SOUND_MODE_MAXCHN;
   if (modeField != 0) {
-    work->pcmNoteCount = modeField >> 8;
+    work->pcmNoteCount = modeField >> SOUND_MODE_MAXCHN_SHIFT;
     modeField = MAX_DIRECTSOUND_CHANNELS;
     note = work->pcmNotes;
     do {
@@ -166,17 +162,17 @@ void m4aSoundMode(u32 mode) {
       note++;
     } while (modeField != 0);
   }
-  modeField = mode & 0xF000;
+  modeField = mode & SOUND_MODE_MASVOL;
   if (modeField != 0)
-    work->volume = modeField >> 12;
+    work->volume = modeField >> SOUND_MODE_MASVOL_SHIFT;
   // Bits 21..20 are the sound bias's resolution, into REG_SOUNDBIAS_H bits
   // 7..6 (SOUNDBIAS bits 15..14); bit 23 lets a mode ask for resolution 0.
-  modeField = mode & 0xB00000;
+  modeField = mode & SOUND_MODE_DA_BIT;
   if (modeField != 0) {
     modeField = (modeField & 0x300000) >> 14;
     REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | modeField;
   }
-  modeField = mode & 0xF0000;
+  modeField = mode & SOUND_MODE_FREQ;
   if (modeField != 0) {
     m4aSoundVSyncOff();
     SampleFreqSet(modeField);
@@ -236,9 +232,9 @@ void m4aSoundVSyncOff(void) {
     REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
   REG_DMA1CNT_H = DMA_32BIT;
   REG_DMA2CNT_H = DMA_32BIT;
-  // 0x318 words: both 0x630-byte buffers.
   zero = 0;
-  Bios_CpuSet(&zero, work->buffers, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x318);
+  Bios_CpuSet(&zero, work->buffers,
+              CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(work->buffers) / 4);
 }
 
 /// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off
@@ -348,7 +344,7 @@ void MPlayStart(struct MusicPlayerInfo *player,
     trackIndex++;
     track++;
   }
-  if (header->mode & 0x80)
+  if (header->mode & SOUND_MODE_REVERB_SET)
     m4aSoundMode(header->mode);
   player->ident = ID_NUMBER;
 }

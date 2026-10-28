@@ -5,7 +5,7 @@
 #include "../runtime_internal.h"
 
 // The heap: two bump allocators, one in IWRAM up to Ram_IwramHeapEnd and one
-// in EWRAM up to its end (0x02040000), and 62 heap slots for long-lived
+// in EWRAM up to its end (EWRAM_END), and 62 heap slots for long-lived
 // blocks (enum HeapSlot). Nothing is freed one block at a time.
 
 /// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
@@ -34,7 +34,7 @@ s32 Heap_GetRemainingIwram(void) {
 s32 Heap_GetRemainingEwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
-  return 0x02040000 - (s32)work->heap.nextEwram;
+  return EWRAM_END - (s32)work->heap.nextEwram;
 }
 
 /// Returns heap slot `kind`'s block, first allocating `size` bytes for it
@@ -68,7 +68,7 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
     if (next >= (u32)Ram_IwramHeapEnd) {
       address = (u32)work->heap.nextEwram;
       nextAddress = address + alignedSize;
-      if (nextAddress >= 0x02040000U) {
+      if (nextAddress >= EWRAM_END) {
         return NULL;
       }
       work->heap.nextEwram = (void *)nextAddress;
@@ -98,7 +98,7 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
     address = (u32)work->heap.nextEwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
     next = address + alignedSize;
-    if (next >= 0x02040000U) {
+    if (next >= EWRAM_END) {
       address = (u32)work->heap.nextIwram;
       nextAddress = address + alignedSize;
       if (nextAddress >= (u32)Ram_IwramHeapEnd) {
@@ -134,7 +134,7 @@ void *Heap_Alloc(s32 size) {
   if (next >= (u32)Ram_IwramHeapEnd) {
     allocationAddress = (u32)work->heap.nextEwram;
     nextAddress = allocationAddress + size;
-    if (nextAddress >= 0x02040000U) {
+    if (nextAddress >= EWRAM_END) {
       return NULL;
     }
     work->heap.nextEwram = (void *)nextAddress;
@@ -156,7 +156,7 @@ void *Heap_AllocEwram(s32 size) {
   allocationAddress = (u32)work->heap.nextEwram;
   size = alignedWords << 2;
   primaryNextAddress = allocationAddress + size;
-  if (primaryNextAddress >= 0x02040000U) {
+  if (primaryNextAddress >= EWRAM_END) {
     allocationAddress = (u32)work->heap.nextIwram;
     alternateNextAddress = allocationAddress + size;
     if (alternateNextAddress >= (u32)Ram_IwramHeapEnd) {

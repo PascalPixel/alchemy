@@ -160,7 +160,7 @@ extern u8 gMapGridShapes[];
 
 /// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
 /// map's char blocks 2 and 3, which WorldMap_ShowBg1FromBuffer copies back
-/// after the still picture. The EWRAM pool's limit, 0x02040000, lies past it,
+/// after the still picture. The EWRAM pool's limit, EWRAM_END, lies past it,
 /// so the pool's blocks can reach these bytes.
 extern u8 gBgTileBuffer[];
 

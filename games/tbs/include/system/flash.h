@@ -6,6 +6,12 @@
 
 #include "types.h"
 
+/// Where the flash chip appears in the cartridge's save area, as pret names it.
+#define FLASH_BASE 0x0E000000
+/// Writes `data` to the flash chip at offset `addr`, as pret writes the chip's
+/// command sequences (0x5555 and 0x2AAA are its command addresses).
+#define FLASH_WRITE(addr, data) (*(volatile u8 *)(FLASH_BASE + (addr)) = (data))
+
 u16 EraseFlashSector(u16 sector);
 u16 ProgramFlashByte(u8 *source, u8 *destination);
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source);

@@ -6,8 +6,8 @@
 
 // The sprite VRAM cache. Sprite tile memory (from 0x06010000) is split into
 // 512 blocks of 64 bytes, and gVramCacheBlockOwners records which of the 96
-// cache entries owns each block. An entry whose offset is 0xffff is free; one
-// whose size is 16 or less holds no VRAM.
+// cache entries owns each block. An entry whose offset is
+// VRAM_CACHE_OFFSET_FREE is free; one whose size is 16 or less holds no VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
 /// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Called
@@ -104,8 +104,8 @@ s32 VramCache_FreeBlocks(s32 id) {
 }
 
 /// Frees cache entry `no`: its blocks go back and the entry is marked free
-/// (offset 0xffff). Called throughout the game when a sprite's picture is no
-/// longer shown.
+/// (offset VRAM_CACHE_OFFSET_FREE). Called throughout the game when a sprite's
+/// picture is no longer shown.
 s32 VramCache_FreeEntry(u32 no) {
   struct VramCacheEntry *entry = &gVramCacheEntries[no];
 

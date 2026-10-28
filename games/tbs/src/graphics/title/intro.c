@@ -139,7 +139,7 @@ void Title_UpdateIntroSprites(void) {
   slopeTopY = 144 - work->rise;
   // Alternating the two groups fits six shapes into twelve OAM entries;
   // each group is visible every other VBlank.
-  if (work->frame < 0x118) {
+  if (work->frame < 280) {
     if ((work->frameCount & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);
       MIRRORED_QUAD(spriteCount, 16, 0x40000000, 232);
@@ -195,14 +195,14 @@ void Title_LoadIntroBackgrounds(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
-  Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
+  Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 0x200;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
@@ -366,7 +366,7 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapGridCellBuffer + 0x2580 - work->backRows * 960,
                   (u8 *)0x06004b00 - work->backRows * 960,
-                  DMA_ENABLE << 16 | 0x1e0, REG_DMA3);
+                  DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
         }
@@ -417,7 +417,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
       resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
-      Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x78), REG_DMA3);
+      Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(120), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 0x200;
       Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
@@ -547,9 +547,9 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   gBgScroll[2].y = result;
   // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   Decompress_TaggedLz(resourceData + 448, Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
+  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tileIndex = 256;
@@ -640,8 +640,8 @@ s32 Title_ShowCamelotLogo(void) {
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation pictures of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x1c0 / 4), REG_DMA3);
-  resourceData += 0x1c0;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+  resourceData += 448;
   Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(0x800 / 4),
           REG_DMA3);
   resourceData += 0x800;
@@ -717,10 +717,12 @@ void TitlePaletteFade_Update(void) {
     return;
   if ((s8)++work->step < work->duration) {
     currentComponents = work->current;
-    for (remaining = 0; remaining <= 0x5ff; remaining++)
+    for (remaining = 0; remaining <= TITLE_PALETTE_FADE_CHANNELS - 1;
+         remaining++)
       *currentComponents++ += *componentSteps++;
   } else {
-    Dma_Set(work->target, work->current, DMA_COPY_WORDS(0x300), REG_DMA3);
+    Dma_Set(work->target, work->current,
+            DMA_COPY_WORDS(sizeof(work->current) / 4), REG_DMA3);
     work->duration = 0;
   }
   // The queued DMA keeps a pointer until VBlank. Build into the spare page
@@ -741,10 +743,10 @@ void TitlePaletteFade_Update(void) {
     u16 *backgroundColors = pagePalettes;
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
-                        DMA_COPY_WORDS(0x80));
+                        DMA_COPY_WORDS(128));
   }
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + 256),
-                      DMA_COPY_WORDS(0x80));
+                      DMA_COPY_WORDS(128));
 }
 
 /// Tints 512 source colours into destination components (three
@@ -1019,8 +1021,8 @@ void TitlePaletteFade_Initialize(void) {
 
   buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
+  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
           REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);

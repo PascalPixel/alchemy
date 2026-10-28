@@ -1837,7 +1837,7 @@ struct ActorPlacement gKolimaTunnelActorPlacements[] = {
 /// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
 /// Tret's and Laurel's voices and the four domes until the curse has been seen
 /// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite until
-/// it joins (its Djinni flag, 0x31).
+/// it joins (its Djinni flag, FLAG_DJINNI(DJINNI_GRANITE)).
 struct ActorPlacement gKolimaActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -1883,7 +1883,7 @@ struct ActorPlacement gKolimaActorPlacements[] = {
         PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
         PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { VENUS_DJINNI, 0x31, MOVEMENT_TYPE_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI(DJINNI_GRANITE), MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1960,8 +1960,8 @@ struct Trigger gKolimaTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_KOLIMA_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_KOLIMA_HERB, FIND_ITEM(ITEM_HERB) },
     { TRIGGERS_END },
 };
 

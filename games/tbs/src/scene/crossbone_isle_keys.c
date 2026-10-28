@@ -79,13 +79,13 @@
 #include "sounds.h"
 #include "heap.h"
 
-// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
-// the party enters another area, and other areas use the numbers
-// for their own.
+// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
+// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
+// the numbers for their own.
 /// CrossboneIsleBane's third stone pillar has come down to two cells high or
 /// less.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-#define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED 0x300
+#define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16

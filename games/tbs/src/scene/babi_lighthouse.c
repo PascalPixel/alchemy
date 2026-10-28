@@ -181,15 +181,15 @@ enum {
   ACTOR_ROAD_PILLAR = 12
 };
 
-/// The lighthouse keeps two flags in the area flags from 0x300.
+/// The lighthouse keeps two flags in the area flags from FLAG_AREA_TEMP_FIRST.
 enum {
   /// Growth has grown the Entry's sprout into a vine.
   /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_GROWTH_PASSAGE_OPEN = 0x300,
+  FLAG_GROWTH_PASSAGE_OPEN = FLAG_AREA_TEMP_00,
   /// The party is on the far side of BabiLighthouseStoneDoor's stone door.
   /// ★ Named from the game: "Yes, they opened the stone door and entered!"
   /// (MsgBabiYoureSureTheyWentThrough)
-  FLAG_BEYOND_DOOR = 0x301
+  FLAG_BEYOND_DOOR = FLAG_AREA_TEMP_01
 };
 
 /// What Actor_Prepare places at the far edge of a pit: a crate

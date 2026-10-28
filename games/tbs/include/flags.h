@@ -340,6 +340,18 @@
 /// ★ Named from what the player sees: a small fire beside a puddle among the
 /// ice pillars (its render)
 #define FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED 0x883
+/// BilibinCaveRapier's chest.
+/// ★ Named from the game: "Elven Rapier" (MsgItemName)
+#define FLAG_BILIBIN_CAVE_ELVEN_RAPIER 0xf5d
+/// One of BilibinCaveIce's chests.
+/// ★ Named from the game: "Vial" (MsgItemName)
+#define FLAG_BILIBIN_CAVE_VIAL 0xf5e
+/// One of BilibinCaveIce's chests.
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_BILIBIN_CAVE_PSY_CRYSTAL 0xfc6
+/// One of BilibinCaveIce's chests.
+/// ★ Named from the game: "Water of Life" (MsgItemName)
+#define FLAG_BILIBIN_CAVE_WATER_OF_LIFE 0xfc7
 /// Feizhi has burst in on Master Hama's lesson at Lama Temple to say that Hsu
 /// is trapped among the boulders, and Hama has gone to his aid. Set as the
 /// lesson ends; every villager in Xian then talks of the rockslide, and Hama
@@ -648,6 +660,21 @@
 /// ★ Named from the game: "Jill gave a special gift."
 /// (MsgBilibinJillGaveIsaacSpecialGift)
 #define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849
+/// A jar in the village.
+/// ★ Named from the game: "Herb" (MsgItemName)
+#define FLAG_BILIBIN_HERB 0xf50
+/// A jar in the village.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_BILIBIN_COINS 0xf51
+/// A barrel in the houses (SceneId_CottageRoomsC).
+/// ★ Named from the game: "Antidote" (MsgItemName)
+#define FLAG_BILIBIN_ANTIDOTE 0xf52
+/// A bed in the houses (SceneId_CottageRoomsC).
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_BILIBIN_SLEEP_BOMB 0xf53
+/// A barrel in the houses (SceneId_CottageRoomsC).
+/// ★ Named from the game: "Hard Nut" (MsgItemName)
+#define FLAG_BILIBIN_HARD_NUT 0xf54
 
 // Colosso
 /// The trial attendant in the Colosseum's stands has shown the party a warrior
@@ -748,6 +775,24 @@
 /// ★ Named from the game: "I'll leave the village in your hands"
 /// (MsgImilMia)
 #define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e
+/// A jar in the village.
+/// ★ Named from the game: "coin" (MsgGotCoins)
+#define FLAG_IMIL_COINS 0xf5f
+/// A chest in the village.
+/// ★ Named from the game: "Vial" (MsgItemName)
+#define FLAG_IMIL_VIAL 0xf60
+/// A grave in the village.
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_IMIL_LUCKY_MEDAL 0xf61
+/// A chest in the houses (SceneId_IceRooms).
+/// ★ Named from the game: "Empty Bottle" (MsgItemName)
+#define FLAG_IMIL_EMPTY_BOTTLE 0xf26
+/// A barrel in the houses (SceneId_IceRooms).
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
+#define FLAG_IMIL_SLEEP_BOMB 0xf62
+/// An oven in the houses (SceneId_IceRooms).
+/// ★ Named from the game: "Lucky Pepper" (MsgItemName)
+#define FLAG_IMIL_LUCKY_PEPPER 0xf63
 
 // Fuchin Falls
 /// The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third
@@ -759,6 +804,12 @@
 /// ★ Named from the game: "It's a statue of an eyeless dragon. What went in
 /// the sockets?" (MsgFuchinEyelessDragon)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
+/// FuchinFallsCaveEntrance's chest, a Mimic (FIND_MIMIC).
+/// ★ Named from the game: "really a Mimic!" (MsgChestWasMimic)
+#define FLAG_FUCHIN_FALLS_MIMIC_BEATEN 0xef1
+/// FuchinFallsCaveArcticBlade's chest.
+/// ★ Named from the game: "Arctic Blade" (MsgItemName)
+#define FLAG_FUCHIN_FALLS_ARCTIC_BLADE 0xf6b
 
 // Kalay and Tolbi docks
 /// The party has bought its tickets for the ship to Tolbi.
@@ -819,11 +870,20 @@
 /// bridge is drawn down from then on, and its piece of the world map with it.
 /// ★ Named from its area name: Kolima Bridge
 #define FLAG_KOLIMA_BRIDGE_LOWERED 0x847
+/// A jar in the village.
+/// ★ Named from the game: "Apple" (MsgItemName)
+#define FLAG_KOLIMA_APPLE 0xf57
+/// A jar in the village.
+/// ★ Named from the game: "Herb" (MsgItemName)
+#define FLAG_KOLIMA_HERB 0xf58
 
 // Kolima Forest
 /// Catch took the clearing's Nut.
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3
+/// KolimaForestFloodgate's chest.
+/// ★ Named from the game: "Fur Coat" (MsgItemName)
+#define FLAG_KOLIMA_FOREST_FUR_COAT 0xf00
 
 // Lamakan Desert
 /// The Manticore, on the third scene, is beaten.
@@ -1724,6 +1784,12 @@
 /// ★ Named from the game: "When I returned, I saw it again..."
 /// (MsgVaultDidYouSeeSomethingStrangeOver)
 #define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869
+/// GomaCaveStream's chest.
+/// ★ Named from the game: "Power Bread" (MsgItemName)
+#define FLAG_GOMA_CAVE_POWER_BREAD 0xf28
+/// GomaCavePillar's chest.
+/// ★ Named from the game: "Lucky Medal" (MsgItemName)
+#define FLAG_GOMA_CAVE_LUCKY_MEDAL 0xf4f
 
 // Hammet's palace
 /// Set once the guards have brought Ivan and the party to Lady Layana and she

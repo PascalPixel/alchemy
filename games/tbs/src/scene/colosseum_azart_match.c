@@ -1284,7 +1284,9 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Event_WaitTransitionFrames();
     gColosseumAzartMatch_LetteringTitle[15] = round * 60;
     Event_Wait(30);
-    Sound_Play(round + 90);
+    // Match 1 to 3 play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
+    // MUS_JINGLE_LARGE.
+    Sound_Play(round + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_1));
     Colosso_LoadLettering(round);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Event_Wait(120);
@@ -1736,7 +1738,7 @@ u32 gColosseumAzartMatch_Exits[] = {
 };
 
 struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
-    { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_PARTY_LEADER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
@@ -1752,11 +1754,11 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
         PIXELS(408), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(456), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0xe5, CONDITION_ALWAYS, 7,
+    { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(601), 0, PIXELS(146), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(664), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(760), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_KEEP, 0 },

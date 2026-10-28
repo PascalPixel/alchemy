@@ -37,14 +37,14 @@
 #include "event.h"
 #include "flags.h"
 
-// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
-// the party enters another area, and other areas use the numbers
-// for their own.
+// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
+// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
+// the numbers for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
 /// ★ Named from what the player sees: a tree stump standing on a ledge in the
 /// room above (its render)
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300
+#define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 
 /// The room's one placed actor.
 enum GomaCavePondActorId {

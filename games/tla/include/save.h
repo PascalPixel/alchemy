@@ -14,14 +14,14 @@ struct SaveSummary {
   u16 area;          ///< area name number (Scene_GetAreaNameIndex)
   u32 playTime;      ///< frames
   u32 coins;
-  u8 djinn[4]; ///< the party's Djinn of each element
-  s8 party[5]; ///< up to four party members, ended by -1
-  s8 sendFlag; ///< copied from byte 0x22f of gMainRoutineWork
-  s8 flagCount; ///< how many of game flags 48 to 127 are set
-  s8 hasFlag34; ///< game flag 34 is set
+  u8 djinn[4];       ///< the party's Djinn of each element
+  s8 party[5];       ///< up to four party members, ended by -1
+  s8 sendFlag;       ///< copied from byte 0x22f of gMainRoutineWork
+  s8 flagCount;      ///< how many of game flags 48 to 127 are set
+  s8 hasFlag34;      ///< game flag 34 is set
   u8 paletteGlow;    ///< gMainRoutineWork.paletteGlow[0]
   u8 paletteGlowSub; ///< gMainRoutineWork.paletteGlow[1]
-  u16 frames; ///< low half of the build stamp saved with the game
+  u16 frames;        ///< low half of the build stamp saved with the game
   /// Filled on reading, from the part's next sector (offset 0x10, or 0x110
   /// for the extra summary).
   u8 unk38[4];
@@ -31,15 +31,15 @@ struct SaveSummary {
 /// The save work: which of the 15 flash sectors hold a part, their part
 /// ids and counters, one part's three sectors and the summaries.
 struct SaveWorkspace {
-  u8 occupied[15];  ///< 1 for a sector holding the current copy of a part
-  u8 partId[15];    ///< each sector's part
+  u8 occupied[15]; ///< 1 for a sector holding the current copy of a part
+  u8 partId[15];   ///< each sector's part
   u16 counter[15]; ///< each sector's counter
-  u8 slot[0x3000];  ///< one part's sectors, read from or written to flash
+  u8 slot[0x3000]; ///< one part's sectors, read from or written to flash
   struct SaveSummary summary[3]; ///< each file's, from parts 0 to 2
   struct SaveSummary extra;      ///< part 3's summary
-  void (*progress)(s32 step); ///< called between sector writes, if set
-  u16 sectorCount; ///< 0 when a write starts
-  u16 sectorTotal; ///< 3 or 6 sectors to write
+  void (*progress)(s32 step);    ///< called between sector writes, if set
+  u16 sectorCount;               ///< 0 when a write starts
+  u16 sectorTotal;               ///< 3 or 6 sectors to write
 };
 
 /// The header of a save sector in flash: its signature, the part it holds,

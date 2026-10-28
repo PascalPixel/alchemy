@@ -5,9 +5,9 @@
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
-/// The cell picture table: each cell picture's top two tile entries, then its bottom
-/// two. Func_0802abbc reads it at constant addresses inside its loop; as the
-/// symbol the two table addresses hoist out of the loop.
+/// The cell picture table: each cell picture's top two tile entries, then its
+/// bottom two. Func_0802abbc reads it at constant addresses inside its loop; as
+/// the symbol the two table addresses hoist out of the loop.
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
 
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)

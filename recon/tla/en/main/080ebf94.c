@@ -1,6 +1,6 @@
 // Draft of Func_080ebf94, differ 2 of 192 (2026-10-26; 98 before): sets up
 // the world map screen, as ☀️'s FieldEffect_SetupResourcesAndWindow
-// (games/tbs/src/overworld/field_services/world_map.c): the marker tiles and
+// (games/tbs/src/field/event_commands/world_picture.c): the marker tiles and
 // their 128 OAM entries, the cursor at the leader's place (or a fixed spot
 // when flag 284 is set), the screen scroll clamped to the map, and the
 // place-name window. The work, the cursor pointer and the cursor's starting

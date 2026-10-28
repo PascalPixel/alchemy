@@ -18,7 +18,7 @@ extern const u8 gMessageSpeed_VoiceGaps[3];
 
 // The German counted nouns of window/counted_nouns.c come right after these
 // tables and stay their own object: in tbs-de the speed tables start at an odd
-// address, right after genders.o, and in one file with
+// address, right after item_genders.o, and in one file with
 // gLocalizedWord_CountedNouns, a word-aligned pointer table, the object would
 // start at the next word, 3 bytes later. Split evidence for
 // message_speed|counted_nouns.

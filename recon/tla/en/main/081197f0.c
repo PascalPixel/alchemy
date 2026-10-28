@@ -5,7 +5,7 @@
 // none reaches 0. Greedy single barriers and a swap reach 28 after six
 // rounds, with five barriers.
 // Draft, differ 84 of 885, from The Broken Seal's Battle_RunEncounter
-// (games/tbs/src/battle/battle/encounter.c): this game allocates by heap
+// (games/tbs/src/battle/battle/run.c): this game allocates by heap
 // byte offset and fills with IwramFillWords, creates the camera through
 // BattleCamera_Create, plays one battle song, runs a reserve swap each
 // round, lets a pending tagged action or a queued extra action repeat the

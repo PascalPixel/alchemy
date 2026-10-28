@@ -1,6 +1,6 @@
 // Draft, differ 199 (231 before statements reordered 2026-10-26).
 // Draft, differ 243 of 543: uses Psynergy on the field, this game's form of
-// ☀️'s Field_UsePsynergy (games/tbs/src/overworld/overworld/psynergy.c).
+// ☀️'s Field_UsePsynergy (games/tbs/src/field/field_sequence/psynergy.c).
 // code holds the Psynergy (bits 0 to 9), its user (10 to 13, 15 for the
 // first) and bit 13 to run only its packed action. Psynergy does nothing
 // with flag 382 set; in event mode 3, abilities 144 and 155 do nothing and

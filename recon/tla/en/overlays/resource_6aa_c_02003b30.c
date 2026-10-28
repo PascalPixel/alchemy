@@ -1,8 +1,9 @@
 // Draft, differ 12 of 207: overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
-// (scene/shared/effect_spawn.h) with the leader from gMainRoutineWork.currentOwner,
-// Actor_SetSingleChildFlags for the sprite flags, the leader's sprite
-// priority through Actor_SetSpritePriorityB, and the scale-to-target target
-// and frame count read before the start-scale test (the ☀️ form: 40). Left:
+// (scene/shared/field_effect_spawn.h) with the leader from
+// gMainRoutineWork.currentOwner, Actor_SetSingleChildFlags for the sprite
+// flags, the leader's sprite priority through Actor_SetSpritePriorityB, and
+// the scale-to-target target and frame count read before the start-scale test
+// (the ☀️ form: 40). Left:
 // three pairs where the native schedules a load before a register copy and this
 // form the copy first: the gMainRoutineWork load before z's copy to sl in the
 // prologue, the sprite load before flags' copy (sched2 priority 60 against 61),

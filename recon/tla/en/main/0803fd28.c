@@ -1,6 +1,6 @@
 // Draft of Func_0803fd28, the option screen's window (Menu_OpenWorkspaceOptions
 // here): differ 8 of 418 (tla-en, 2026-10-26; 38 before). Its ☀️ twin is
-// games/tbs/src/window/window/options.c's OptionMenu_Open: the labels, the
+// games/tbs/src/window/window/settings_menu.c's OptionMenu_Open: the labels, the
 // slider tiles and palette, the two markers, the cursor and the setting frames.
 // The Lost Age's window is a column narrower (27), takes the cursor's tiles
 // from Resource_LoadFixedBlockBIntoFreeSlot, and reads the window position

@@ -66,7 +66,7 @@ s32 FieldMessage_ShowAtActor();
 /// answers count up the event work's halfword 0x1c4); at the end actors 7, 5,
 /// 6 and 13 walk to the controlled character, the camera follows it again
 /// and flag 303 is cleared. Each call goes through the call layer
-/// (lib/call.h), which builds its constants at the call.
+/// (call.h), which builds its constants at the call.
 void Func_02000658(void) {
   Func_020014b8();
   Call1(Func_020015b8, 0);

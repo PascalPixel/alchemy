@@ -8,8 +8,8 @@
 // Earlier: differ 198 of 977 (441 before; 2026-10-26: in the circle case the
 // value is read before the camera's y, which gives the map work r6 as the
 // native has it): the window transition's frame callback, ported from
-// ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/overworld/
-// overworld/transition.c) with this game's state (heap slot 0x7c, s8
+// ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/field/
+// field_sequence/screen_transition.c) with this game's state (heap slot 0x7c, s8
 // steps), its map work's view at 0xe4, the controlled owner in place of the
 // leader, the task table, and one addition: a transition that ends with no
 // next mode also opens WINOUT's layers when the object window is on.

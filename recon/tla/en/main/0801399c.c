@@ -1,6 +1,6 @@
 // Draft, differ 97 (117 before statements reordered 2026-10-26).
 // Draft, differ 119 of 152: the VBlank interrupt handler, as ☀️'s
-// System_VBlankHandler (games/tbs/src/runtime/runtime.c) with ⚓️'s input
+// System_VBlankHandler (games/tbs/src/system/system.c) with ⚓️'s input
 // record and its once-a-frame sound step. Left, other than order: the
 // native rereads gInput.held for the repeat test and gInput.repeatTimer for
 // the decrement (as if the input record were volatile here; through a

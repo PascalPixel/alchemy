@@ -1,4 +1,4 @@
-// Draft, differ 79 of 69: ⚓️'s Window_SetTilemapFlagRect (graphics/window/
+// Draft, differ 79 of 69: ⚓️'s Window_SetTilemapFlagRect (window/
 // fixed_block.c) as overlay 64A's copy. The native strength-reduces the row
 // base (work + y * 64, stepping 64) and adds x * 2 + 8 per row, keeps width
 // in r7 and x in r5, and leaves the shifted field in its stack argument slot

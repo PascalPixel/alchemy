@@ -11,7 +11,7 @@ struct Window;
 
 extern u8 gBlendBrighten;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it five functions of tbs's runtime.c differ in tbs-en:
+ * own; without it five functions of tbs's system.c differ in tbs-en:
  * Fade_Start (31), Fade_FromBlack (19),
  * Fade_FromWhite, Fade_ToWhite and
  * Fade_ToBlack (7 each). */

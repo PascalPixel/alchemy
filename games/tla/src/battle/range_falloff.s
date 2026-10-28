@@ -1,5 +1,6 @@
 @ Percentages by distance from the chosen target (0 is the target itself),
-@ the same in both games: each game's battle_data.s includes them in place.
+@ the same in both games: battle_data.s here (battle_tables.s in The Broken
+@ Seal) includes them in place.
 @ Hit rate (%)
 	.global gHitTable
 gHitTable:

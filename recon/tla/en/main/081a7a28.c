@@ -1,6 +1,6 @@
 // Draft, differ 758 of 827 (tla-en): Palette_Transform, the palette fade's
 // target builder, rewritten from The Broken Seal's matched
-// TitlePaletteFade_BuildColors (games/tbs/src/graphics/title/intro.c) with
+// TitlePaletteFade_BuildColors (games/tbs/src/menu/title_intro.c) with
 // this game's tables (Data_081a877a, Data_081a87ba and Data_081a87fa for its
 // three channel curves) and clamps. The listing has every case in The Broken
 // Seal's form, including the warm tints' +6, +4 and -6 (the earlier draft's

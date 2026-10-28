@@ -1,5 +1,5 @@
 // Draft, differ 8 of 1016 (tla-en): Lucky Wheels, The Broken Seal's matched
-// LuckyWheels_Run (games/tbs/src/overworld/lucky_wheels.c) on this game's
+// LuckyWheels_Run (games/tbs/src/field/lucky_wheels.c) on this game's
 // heap slots (sheet 100, canvas 96, effect work 92, wheel work 180), with a
 // third callback, Func_081b3294, and BattleStaging_ProcessPendingTileTransfer
 // as the canvas transfer. Reshaped toward The Broken Seal's C, measured in

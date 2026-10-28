@@ -8,28 +8,29 @@
 
 #define VISIBLE_SCANLINES 160 ///< visible scanlines
 
-/// An eight-byte runtime entry contains the ldr/bx instructions and a target
-/// word. Entries this routine does not call keep their target word opaque.
+/// An eight-byte entry of the System bank's far-call table holds the ldr/bx
+/// instructions and a target word. Entries this routine does not call keep
+/// their target word opaque.
 struct FarCallVeneer {
   u32 stub;
   u32 target;
 };
 
-/// A runtime table entry whose two-argument target this routine calls, the
+/// A System table entry whose two-argument target this routine calls, the
 /// arctangent.
 struct FarCallAtan2Veneer {
   u32 stub;
   s32 (*target)(s32 x, s32 y);
 };
 
-/// A runtime table entry whose one-argument target this routine calls, the
+/// A System table entry whose one-argument target this routine calls, the
 /// sine or the cosine.
 struct FarCallTrigVeneer {
   u32 stub;
   s32 (*target)(s32 angle);
 };
 
-/// The runtime table's prefix through Trig_Cos, in its assembly order. This
+/// The System table's prefix through Trig_Cos, in its assembly order. This
 /// routine runs from a RAM copy and calls the target words, not the ROM stubs.
 struct FarCallRuntimeTrigView {
   struct FarCallVeneer preceding[8];

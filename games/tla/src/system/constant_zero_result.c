@@ -15,7 +15,7 @@ void System_Halt(void) {
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_ENGLISH)
-/// The last letter of the game code in the cartridge header (rom_head.s): D,
+/// The last letter of the game code in the cartridge header (rom_header.s): D,
 /// F, I or S in the European editions.
 #define CARTRIDGE_LANGUAGE_CODE (*(const u8 *)0x080000af)
 

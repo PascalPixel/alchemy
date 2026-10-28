@@ -1,6 +1,6 @@
 // Draft, differ 1209 of 1044: the world map screen's frame callback, this
-// game's form of ☀️'s RegionMap_UpdateMarkers (games/tbs/src/overworld/
-// field_services/world_map.c). The cursor glides to a target set at
+// game's form of ☀️'s RegionMap_UpdateMarkers (games/tbs/src/field/
+// event_commands/world_picture.c). The cursor glides to a target set at
 // Data_0202a644 (its step a quarter of the distance, at most 8 pixels) or
 // moves with the d-pad, faster the longer it is held, kept on the map; each
 // of up to 128 places of the flag entries whose state is not 0 and whose flag

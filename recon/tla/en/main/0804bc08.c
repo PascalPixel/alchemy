@@ -1,7 +1,7 @@
 // Draft, differ 921 of 1931 (alchemy-devtools diff ... 0804bbd0,0804bc08,
 // the waiting message's nested function and its parent): collecting the party's
 // battle commands, The Broken Seal's Battle_CollectPartyCommands
-// (games/tbs/src/window/screens/party_commands.c) on this game's work and
+// (games/tbs/src/window/screens/battle_party_commands.c) on this game's work and
 // menus, with its two nested functions: the party panels' clear
 // (Battle_DrawPartyPanelsWithEmptyList, adopted alone in window/party_panel.c
 // with a stand-in for the static chain) and the link wait's message

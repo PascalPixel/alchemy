@@ -1,5 +1,5 @@
 // Draft, differ 940 of 1300: FieldSequence_Run, this game's form of ☀️'s
-// FieldSequence_Run (games/tbs/src/overworld/overworld/field_sequence.c):
+// FieldSequence_Run (games/tbs/src/field/field_sequence/run.c):
 // runs the current scene until the party leaves it and returns how (the
 // warp, or 999 after the party falls). It sets the scene up in the event
 // work (heap slot 108, 0xd50 bytes, cleared), the world map (scene map 1,

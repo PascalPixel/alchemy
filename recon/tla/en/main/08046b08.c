@@ -1,5 +1,5 @@
 // Draft, differ 2310 of 3111: the battle summary screen, The Broken Seal's
-// BattleSummaryScreen_Run (games/tbs/src/window/screens/status.c) grown into
+// BattleSummaryScreen_Run (games/tbs/src/window/screens/battle_status.c) grown into
 // four pages that A cycles through: the stats (page 0, as The Broken Seal's),
 // the member's battle Psynergy (1, four rows a page, with PP cost, element and
 // range, coloured by what can be cast), its Djinn (2, three columns of three,

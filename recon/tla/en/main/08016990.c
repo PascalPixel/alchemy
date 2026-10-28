@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Draft, differ 4 of 268 (2026-10-24): The Broken Seal's
-// Serial_StepBlockTransfer (games/tbs/src/runtime/runtime/serial.c) on this
+// Serial_StepBlockTransfer (games/tbs/src/system/system/serial.c) on this
 // game's names, the same source but for one one-pass block. As ☀️ wrote it,
 // differ 6; the one-pass block around the send size's -20 loads the size
 // before it builds 0xffec (permuter). Left: twice the 127 mask, held in lr,

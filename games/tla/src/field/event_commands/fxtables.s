@@ -1,6 +1,6 @@
 	.section .rodata
 @ Effect tables and object scripts after gBattleEffect_CyclePatternWords, in
-@ the order of The Broken Seal's object/fxdata.c. Object scripts are words
+@ the order of The Broken Seal's field_sequence_tables.c. Object scripts are words
 @ in this game's command numbers: 0x00 wait, 0x01 sync, 0x0d loop,
 @ 0x16 set, 0x17 add, 0x26 free, 0x2e call; a label is 0x80000000 | n << 16
 @ and a branch to it 0xc0000000 | n << 16.

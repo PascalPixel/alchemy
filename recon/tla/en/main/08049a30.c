@@ -1,5 +1,5 @@
 // Draft, differ 20 of 790 (545 before, 2026-10-26): the battle item menu, The
-// Broken Seal's BattleItemMenu_Run (games/tbs/src/window/screens/item_menu.c)
+// Broken Seal's BattleItemMenu_Run (games/tbs/src/window/screens/battle_item_menu.c)
 // on this game's work, messages and tiles; the frame tees are copied with
 // Func_08049a04 (The Broken Seal's Vram_CopyTile). Written again from the
 // twin's C: the sprites as its MenuSprite and CursorSprite (u16 bitfields,

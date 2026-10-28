@@ -1,6 +1,6 @@
 // Draft, differ 678 of 1246 (1009 before, 2026-10-26): the battle Djinn menu,
 // The Broken Seal's BattleDjinnMenu_Run
-// (games/tbs/src/window/screens/djinn_menu.c) on this game's work, messages and
+// (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work, messages and
 // change preview (Func_080464dc). The list window is 10 tiles wide from column
 // 20, a recovering Djinni's turns take two digits at x 48, and letting go of R
 // redraws the list as well as the stats page. Rewritten toward the twin: the

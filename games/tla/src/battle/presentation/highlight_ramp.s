@@ -1,4 +1,5 @@
-@ BLDY values, the same in both games; each game's battle_vars.s includes them
+@ BLDY values, the same in both games; battle_vars.s here and knockback_tables.s in
+@ The Broken Seal include them
 @ in place.
 	.global gBattleEffect_HighlightBlendRamp
 gBattleEffect_HighlightBlendRamp:

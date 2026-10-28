@@ -6,7 +6,7 @@
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
-/// A battle runs from Battle_Run (encounter.c). Each turn the
+/// A battle runs from Battle_Run (run.c). Each turn the
 /// actions are gathered and put in action order (turn.c, or auto_battle.c under
 /// auto battle), and each action is announced, built for its targets
 /// (BattleActionRun_Build, action.c), staged

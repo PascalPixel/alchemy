@@ -1,6 +1,6 @@
-@ Heap_Release, as HeapSlot_Release (release_heap_block.s) before it:
+@ Heap_Release, as HeapSlot_Release (heap_slot_release.s) before it:
 @ hand-written, scratching r4 for the 0x03000000 base. The ARM after it is
-@ ☀️'s heapfree.s tail: a halt (SWI 3) and Irq_StopOnGamePakRemoved,
+@ ☀️'s heap_release.s tail: a halt (SWI 3) and Irq_StopOnGamePakRemoved,
 @ which every edition here keeps (☀️ only DE and ES), falling through on
 @ no cartridge interrupt as shipped.
 .syntax unified

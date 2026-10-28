@@ -2,7 +2,7 @@
 // the Thumb veneer Func_080212d8 (bx pc): an ARM copy of the perspective
 // map's scanline table builder (☀️'s WorldMap_BuildScanlineTable, ⚓️'s
 // Thumb Func_0802dd70) at 0x080212dc and ☀️'s Transform_UpdateVertices
-// (games/tbs/src/field/vertices.c) at 0x08021470, written plain here (no
+// (games/tbs/src/field/world_map_lines.c) at 0x08021470, written plain here (no
 // FAKEMATCH devices). The listing is mixed-mode, which alchemy-devtools diff cannot
 // compare; measured by disassembling the listing's ARM words (pools and
 // the veneers between them left out) and the --arm draft's object with

@@ -7,7 +7,7 @@
 /// range. These headers declare ordinary functions; the ordered assembly tables
 /// in src/gamepak/far_call own the entry names and the routines they jump to.
 /// For example, Text_DrawNumberAtOffsetFar is the window bank's entry for
-/// Text_DrawNumberAtOffset. Each bank's header, farcall/window.h and the
+/// Text_DrawNumberAtOffset. Each bank's header, far_call/window.h and the
 /// rest, is in its table's order, and the table is the far_call file of the
 /// same name in capitals (WINDOW.S). Overlays bind their imported names to
 /// these entries in src/system/overlay/imports.inc, using the same 8-byte jump

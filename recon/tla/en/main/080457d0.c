@@ -1,5 +1,5 @@
 // Draft, differ 906 of 1119: the battle command row, The Broken Seal's
-// BattleCommandRow_Run (games/tbs/src/window/screens/command_row.c) on this
+// BattleCommandRow_Run (games/tbs/src/window/screens/battle_command_row.c) on this
 // game's work and command numbers. The party's row (mode 0) is Fight (14),
 // command 49 (when the battle allows it, no reserve member is chosen and
 // more than four are active), Flee (4, when flee is passed above 0 and the

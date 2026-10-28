@@ -132,7 +132,7 @@ extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
 // volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
-// runtime.c)
+// system.c)
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDest;
 // volatile: tagged where it steers, in LinkBattle_ReceiveActions (tbs
@@ -140,7 +140,7 @@ extern s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 // volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
-// runtime.c)
+// system.c)
 extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.

@@ -1,5 +1,5 @@
 // Draft, differ 456 of 817: the battle Psynergy menu, The Broken Seal's
-// BattlePsynergyMenu_Run (games/tbs/src/window/screens/psynergy_menu.c) on
+// BattlePsynergyMenu_Run (games/tbs/src/window/screens/battle_psynergy_menu.c) on
 // this game's work, messages and tiles; the frame tees are copied with
 // Func_08049a04 (The Broken Seal's Vram_CopyTile), and an ability not usable
 // in battle is refused without the dead store. Structure follows the

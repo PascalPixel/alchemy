@@ -249,7 +249,7 @@ void WorldMap_StartStillPicture(void);
 // scripts.s and spark_tiles.s).
 extern u16 gFieldEffect_CyclePatternWords[];
 extern s8 gFieldEffect_RandomChildValues[];
-/// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
+/// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 extern const s32 gFieldEffect_BurstParticleActorScript[];
@@ -266,7 +266,7 @@ extern s16 gFieldEffect_TargetRangeByMode[];
 /// A lone SC_RELEASE: an actor that has arrived releases itself
 /// (FieldEffect_SetCallbackWhenTargetUnset).
 extern const s32 gFieldEffect_UntargetedActorScript[];
-/// The 32 by 16 spark a field Psynergy's particles draw (spark_a), 4
+/// The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4
 /// bits a pixel; FieldPsynergy_LoadResources loads it.
 extern const u8 gFieldEffect_SparkTiles[];
 extern const u8 gFieldEffect_QuadrantModes[];

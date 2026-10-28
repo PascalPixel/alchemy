@@ -1,5 +1,5 @@
 // Draft, differ 143 (199 before statements reordered 2026-10-26) of 228: The Broken Seal's Transform_BuildLookAt
-// (games/tbs/src/runtime/runtime/transform.c) for The Lost Age: the
+// (games/tbs/src/system/system/transform.c) for The Lost Age: the
 // dot-product routine copied to the stack is eight words here
 // (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its
 // fixed entry shifted left 8, and the native holds three routines in

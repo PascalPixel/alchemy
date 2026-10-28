@@ -1,6 +1,6 @@
 // Draft, differ 111 (118 before statements reordered 2026-10-26) of 164: allocates the save workspace, identifies the
 // flash chip and scans the sectors three at a time, as ☀️'s
-// Save_InitializeWork (games/tbs/src/runtime/runtime.c) over 15
+// Save_InitializeWork (games/tbs/src/system/system.c) over 15
 // sectors. Same instructions in the same shape; what is left is register
 // choice: the native keeps the workspace in fp (here a stack slot), the
 // occupied pointer in r7 and the part id byte addressed as a stack offset

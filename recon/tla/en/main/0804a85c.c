@@ -1,7 +1,7 @@
 // Draft, differ 650 of 1647 (777 before; 2026-10-26: the selected position and
 // the candidate count declared earlier, the target count later, the eased
 // track x stored first): battle target selection, The Broken Seal's
-// BattleTarget_RunSelection (games/tbs/src/window/screens/targets.c) on this
+// BattleTarget_RunSelection (games/tbs/src/window/screens/battle_targets.c) on this
 // game's work and messages. The modes are numbered differently (2 the
 // party, 4 the acting unit alone, 1 the enemies, whose downed ones a link
 // battle skips); a new hint (8) starts on the unit the last command aimed at,

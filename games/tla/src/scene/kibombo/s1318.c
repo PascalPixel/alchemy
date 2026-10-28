@@ -46,7 +46,7 @@ extern const u8 gData_02005fe0[];
 /// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
 /// move, turn and speak around the controlled character, two yes-or-no
 /// questions count up the event work's halfword 0x1c4, and the scene ends with
-/// Func_02005a8c. Each call goes through the call layer (lib/call.h).
+/// Func_02005a8c. Each call goes through the call layer (call.h).
 void Func_02001318(void) {
   Call3(Actor_ArmCallback, 7, FACING_NORTH, 0);
   Call1(Func_02005b4c, MsgBlank7);

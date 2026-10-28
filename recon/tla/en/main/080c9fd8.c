@@ -3,7 +3,7 @@
 // the native reads the group with ldrh, but the signed read gives the pick
 // loop the native's registers; as u16, 44) (100 before, 2026-10-25), ported
 // from The Broken Seal's Encounter_CountStepsAndSelectFormation
-// (games/tbs/src/overworld/overworld/encounter.c); this game drops the
+// (games/tbs/src/field/field_sequence/encounter.c); this game drops the
 // Jenna experience check, reads the cloak byte at 0x26d and the encounter
 // bias and threshold at 0x194 and 0x198 of the event work. gMainRoutineWork read
 // by field (the native keeps its address across Party_GetAverageLevelFar and

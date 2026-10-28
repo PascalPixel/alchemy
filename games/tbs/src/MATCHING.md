@@ -25,7 +25,7 @@ is all or nothing. One wrong bit anywhere gives a completely different hash,
 which says nothing about where the difference is. To find it, compare the
 compiler's output before and after your change. The build keeps each C file's
 assembly beside its object (`out/tbs-en/obj/games/tbs/src/system/system.s`
-for `runtime.c`): copy it from a build that compared OK, rebuild, and diff the
+for `system.c`): copy it from a build that compared OK, rebuild, and diff the
 two with the `.L` label numbers ignored. The optional `alchemy-devtools diff`
 instead compares one function with the original's instructions read from your
 own ROM; it is a tool for people and never part of the build.

@@ -1,5 +1,5 @@
 // Draft, differ 169 of 1707 (tla-en): the slot machine's VBlank task, The
-// Broken Seal's LuckyWheels_Update (games/tbs/src/overworld/lucky_wheels.c)
+// Broken Seal's LuckyWheels_Update (games/tbs/src/field/lucky_wheels.c)
 // in its patched form (the hint windows and phases), on this game's work: the
 // sprite count lives in the work (0xa8) for Func_081b3294, which restarts the
 // scanline DMA and copies the sprites; the sprite words are volatile, as The

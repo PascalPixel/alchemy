@@ -33,7 +33,8 @@ void *Func_080d019c(void) {
   void *block = HeapSlot_AllocEwram(124, 0x540);
   volatile u32 zero = 0;
 
-  Dma_Set(&zero, block, (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 336,
+  Dma_Set(&zero, block,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x540 / 4),
           REG_DMA3);
   return block;
 }

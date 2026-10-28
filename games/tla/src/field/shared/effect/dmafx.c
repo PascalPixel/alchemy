@@ -30,7 +30,8 @@ void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
 
   zero = 0;
   Dma_Set((void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 968, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
+          REG_DMA3);
   WaitDma((volatile struct DmaRegisters *)&REG_DMA3SAD);
   work->kind = kind;
   work->unkf08 = a;

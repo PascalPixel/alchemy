@@ -40,13 +40,15 @@ s32 Func_08015ca4(s32 partId, void *source) {
 
   zero = 0;
   START_DMA(&zero, work->slot,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3072);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+                (sizeof(work->slot) / 4));
   WAIT_DMA();
   current = Save_FindLatestSector(partId);
   sector = Save_SelectWriteSector(partId);
   if (sector > 14)
     return 1;
-  START_DMA(source, work->slot + 16, DMA_COPY_WORDS(3068));
+  START_DMA(source, work->slot + 16,
+            DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();

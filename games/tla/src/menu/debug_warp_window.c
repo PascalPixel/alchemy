@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "oam.h"
 
 struct RenderInput;
 
@@ -50,9 +51,7 @@ struct RenderInput *Func_08041068(void) {
     row += 2;
     i++;
   }
-  // 0x40000000 is OUTPUT_SIZE_16X16, which render_input.h names; its
-  // WindowSprite_Create prototype conflicts with this file's.
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     0x40000000, window, 0, 0);
+                                     OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }

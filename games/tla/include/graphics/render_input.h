@@ -4,6 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
+#include "oam.h"
 
 /// A window as the render functions take it: its fields sit where a
 /// Window keeps its width, height and place.
@@ -85,15 +86,6 @@ struct WindowSpriteList {
 
 STATIC_ASSERT(sizeof(struct WindowSpriteList) == 8);
 STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
-
-/// The OAM shape and size a window sprite is created with
-/// (WindowSprite_Create): attribute 0's shape in the low half, attribute 1's
-/// size in the high half, as the hardware reads them.
-#define OUTPUT_SIZE_16X16 0x40000000
-#define OUTPUT_SIZE_32X32 0x80000000
-#define OUTPUT_SIZE_32X8 0x40004000
-#define OUTPUT_SIZE_32X16 0x80004000
-#define OUTPUT_SIZE_16X32 0x80008000
 
 struct WindowSprite *WindowSprite_Create(s32 no, s32 flags,
                                          struct RenderInput *input, s32 offsetX,

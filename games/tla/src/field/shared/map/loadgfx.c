@@ -22,7 +22,8 @@ void MapAnimation_PresentPicture(void) {
   /* FAKEMATCH: ⚓️ addresses the DMA channel before loading the transfer
    * operands */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(10240), dma);
+  Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
+          dma);
 }
 
 extern void (*gData_030011f8)(void);
@@ -50,7 +51,8 @@ void MapAnimation_Start(void) {
   if (work->extraTiles != 0)
     Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
-  Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(2048), REG_DMA3);
+  Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(0x2000 / 4),
+          REG_DMA3);
   wait(1);
   Func_0802dd08(pages + (gFrameCount & one) * 0x1400 + 0xc80,
                 Ram_MapCellBuffer);
@@ -76,5 +78,5 @@ void Map_ShowBg1FromBuffer(void) {
   /* FAKEMATCH: ⚓️ addresses the DMA channel before loading the transfer
    * operands */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(8192), dma);
+  Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
 }

@@ -10,8 +10,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
   s32 i;
 
   for (i = rows - 1; i != 1; i--) {
-    Dma_Set(source, destination, (DMA_ENABLE | DMA_32BIT) << 16 | (stride / 4),
-            REG_DMA3);
+    Dma_Set(source, destination, DMA_COPY_WORDS(stride / 4), REG_DMA3);
     source -= stride;
     destination -= stride;
   }

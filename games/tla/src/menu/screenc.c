@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "oam.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "mem.h"
@@ -54,9 +55,7 @@ struct Window *Func_08040cc4(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 2, window, 8, 52);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, window, 8, 100);
-  // 0x40000000 is OUTPUT_SIZE_16X16, which render_input.h names; its
-  // WindowSprite_Create prototype conflicts with this file's.
   WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, window, 0, 0);
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }

@@ -79,8 +79,7 @@ void Func_081b3294(void) {
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY,
           DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
   if (work->spriteCount > 0)
-    Dma_Set(work->obj, OAM,
-            (DMA_ENABLE | DMA_32BIT) << 16 | (work->spriteCount * 2), REG_DMA3);
+    Dma_Set(work->obj, OAM, DMA_COPY_WORDS(work->spriteCount * 2), REG_DMA3);
 }
 
 #include "reel_tables.h"

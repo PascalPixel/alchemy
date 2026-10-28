@@ -113,7 +113,8 @@ void Func_081a0e0c(s32 page) {
     *cell = objects;
     fill = 0;
     Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 6144, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
+            REG_DMA3);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);

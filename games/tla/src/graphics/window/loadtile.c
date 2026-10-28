@@ -57,7 +57,7 @@ void Func_0803cbf8(struct Window_0803cbf8 *window) {
     window->timer--;
     if (window->timer == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
-              (void *)0x06000100, 0x84000040, REG_DMA3);
+              (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
       window->rect->state = 0;
     }
   }

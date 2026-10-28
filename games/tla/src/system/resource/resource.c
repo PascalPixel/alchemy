@@ -86,8 +86,8 @@ void Resource_LoadCode(u32 index, void *destination) {
     size = (u32)Resource_PatchThumbBranchCodeSize;
   } while (0);
   routine = (void (*)(void *, s32))Heap_Alloc(size);
-  Dma_Set(Resource_PatchThumbBranchCode, routine,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (size >> 2), REG_DMA3);
+  Dma_Set(Resource_PatchThumbBranchCode, routine, DMA_COPY_WORDS(size >> 2),
+          REG_DMA3);
   routine(destination, end);
   Heap_Release(routine);
 }

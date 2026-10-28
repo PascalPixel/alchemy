@@ -56,8 +56,8 @@ void Func_02000490(void) {
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
   Decode_(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, DMA_COPY_WORDS(9600),
-          REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+          DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   /* FAKEMATCH: a one-pass block ends the scheduling block, so the tilemap
    * address loads before the first tile number is built (one reordered row
    * without it). */

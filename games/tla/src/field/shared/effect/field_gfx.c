@@ -62,7 +62,9 @@ void FieldEffect_InitializeSparkles(void) {
    * keeps zero in r1; a separate helper value differs by four instructions. */
   size = 0;
   zero = size;
-  Dma_Set(&zero, work, (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517,
+  Dma_Set(&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              (sizeof(struct DustWork) / 4),
           REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f38b2, buf);
@@ -119,7 +121,8 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 2018, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
+          REG_DMA3);
   BattleEffect_BuildBuffer(0x10003, (u16 *)buffers, (u16 *)work, 1);
   BattleEffect_BuildBuffer(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
   BattleEffect_InterpolateBuffers(work->to, work->from, work->delta, 12);
@@ -160,7 +163,8 @@ void BattleEffect_StartBufferBlend(s32 from, s32 to) {
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 2018, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
+          REG_DMA3);
   BattleEffect_BuildBuffer(from, (u16 *)buffers, (u16 *)work, 1);
   target = work->to;
   BattleEffect_BuildBuffer(to, (u16 *)buffers, (u16 *)target, 1);

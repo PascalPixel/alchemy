@@ -38,18 +38,18 @@ void MapAnimation_Update(void) {
       if (state->wideTiles == 0) {
         if (op >= 0x600)
           Dma_Set(((u8 *)0x0201c000) + op * 32, (void *)(dst * 32 + 0x06004000),
-                  (count * 8) | 0x84000000, REG_DMA3);
+                  DMA_COPY_WORDS(count * 8), REG_DMA3);
         else
           Dma_Set((void *)(op * 32 + 0x06004000),
-                  (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000,
+                  (void *)(dst * 32 + 0x06004000), DMA_COPY_WORDS(count * 8),
                   REG_DMA3);
       } else {
         if (op >= 0x200)
           Dma_Set(((u8 *)0x02020000) + op * 64, (void *)(dst * 64 + 0x06008000),
-                  (count * 16) | 0x84000000, REG_DMA3);
+                  DMA_COPY_WORDS(count * 16), REG_DMA3);
         else
           Dma_Set((void *)(op * 64 + 0x06008000),
-                  (void *)(dst * 64 + 0x06008000), (count * 16) | 0x84000000,
+                  (void *)(dst * 64 + 0x06008000), DMA_COPY_WORDS(count * 16),
                   REG_DMA3);
       }
       (state->anim + i)->cursor += 4;

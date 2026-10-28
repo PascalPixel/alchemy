@@ -40,7 +40,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   if (index > 14)
     return 1;
   Save_ReadSector(index);
-  START_DMA(work->slot + 16, destination, DMA_COPY_WORDS(3068));
+  START_DMA(work->slot + 16, destination,
+            DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
   WAIT_DMA();
   return 0;
 }

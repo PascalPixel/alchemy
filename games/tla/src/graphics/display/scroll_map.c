@@ -37,8 +37,8 @@ void Func_081a1294(const u8 *source, u8 *destination, s32 position) {
     from = (position / 8) << 6;
     offset = start & 0x7ff;
     for (row = 0; row < 31; row++) {
-      Dma_Set(source + from, destination + offset,
-              (DMA_ENABLE | DMA_32BIT) << 16 | 16, REG_DMA3);
+      Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
+              REG_DMA3);
       from += 64;
       offset = (offset + 64) & 0x7ff;
     }

@@ -32,8 +32,7 @@ void PaletteFade_Update(void) {
     for (i = 0; i <= 0x5ff; i++)
       *current++ += *delta++;
   } else {
-    Dma_Set(work->target, work->current, (DMA_ENABLE | DMA_32BIT) << 16 | 768,
-            REG_DMA3);
+    Dma_Set(work->target, work->current, DMA_COPY_WORDS(768), REG_DMA3);
     work->duration = 0;
   }
   packed = work->packed[work->page ^ 1];

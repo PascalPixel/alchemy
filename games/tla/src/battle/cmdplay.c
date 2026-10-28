@@ -9,9 +9,9 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
 void Func_08122c18(void) {
   Math_UnsignedMulHigh(5, 0);
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
 }
 
 void BattlePlayback_Start(s32 cue) {

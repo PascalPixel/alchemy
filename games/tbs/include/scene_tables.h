@@ -125,8 +125,8 @@ struct ActorPlacement {
   /// The actor's sprite; 0 to 7 are the party's characters, each in its
   /// own actor slot, and -1 ends the table.
   s16 sprite;
-  /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
-  /// a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
+  /// CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag clear.
+  /// Off the world map, a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
   /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the
   /// scene is entered normally again.
   s16 condition;
@@ -214,7 +214,8 @@ struct Trigger {
   /// field Psynergy. bits: 15..12 facing | 11 needs facing | 10 own message
   /// | 7..0 target
   s16 subject;
-  s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
+  s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
+                 ///< the flag clear
   /// A message below 0x10000, else an event; for an exit, the exit
   /// kind its scene's exit table matches, and for an examine trigger, a FIND_
   /// value.

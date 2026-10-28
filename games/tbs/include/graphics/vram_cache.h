@@ -9,7 +9,7 @@
 #include "static_assert.h"
 
 /// The sprite VRAM cache's sizes and its free marks. Sprite tile memory, from
-/// 0x06010000, is split into blocks that the cache entries own.
+/// OBJ_VRAM0, is split into blocks that the cache entries own.
 enum VramCacheLimits {
   /// Cache entries; VramCache_FindFreeEntry returns this when none is free.
   VRAM_CACHE_ENTRY_COUNT = 96,

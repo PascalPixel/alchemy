@@ -38,8 +38,9 @@ STATIC_ASSERT(sizeof(struct Scene) == 8);
 struct SceneExitRegion {
   s16 minX, minY, minZ; ///< pixels, inclusive; minX -1 ends the table
   s16 maxX, maxY, maxZ; ///< pixels, exclusive
-  s16 condition;        ///< -1 always, a flag | 0x1000 set, else the flag clear
-  s16 value;            ///< the exit kind, stored in FieldWork's exit
+  s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
+                 ///< the flag clear
+  s16 value;     ///< the exit kind, stored in FieldWork's exit
 };
 
 STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);

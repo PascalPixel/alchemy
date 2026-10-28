@@ -124,8 +124,8 @@ struct BattleWork {
   /// The units' battle objects, reached through placement (BattleObject_Get).
   struct BattleObject objects[14];
   /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
-  /// for enemy unit 0x80 + n: a party unit's place in the active party, an
-  /// enemy's own 8 + n; 0xff for a party unit with no battle object.
+  /// for enemy unit FIRST_ENEMY_UNIT + n: a party unit's place in the active
+  /// party, an enemy's own 8 + n; 0xff for a party unit with no battle object.
   u8 objectIndex[14];
   u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.
@@ -135,7 +135,7 @@ struct BattleWork {
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;
   u16 palette[128]; ///< the battle background's colours, before scaling
-  s32 brightness;   ///< the battle background's brightness, 16.16, 0x10000 full
+  s32 brightness;   ///< the battle background's brightness, 16.16, Q16_ONE full
   u16 background;   ///< the battle background's id
   u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep;           ///< index into gBattleHighlight_BlendRamp

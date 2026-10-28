@@ -164,7 +164,7 @@ enum DisplayControl {
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
 /// tile (EFFECT_WRITE_CANVAS_MAP_ROW).
-#define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
+#define BG_CANVAS_MAP ((volatile s16 *)BG_SCREEN_BLOCK(7))
 /// BG0HOFS as an address for a DMA: copies of gBgScroll over all four
 /// backgrounds' scroll registers start here, and Mind Read's HBlank DMA writes
 /// one halfword a line into it.
@@ -177,13 +177,18 @@ enum DisplayControl {
 /// DMA channel 3's registers as words: the channel Dma_Set copies with.
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
-/// Background colour 0, the backdrop shown where no layer draws.
-#define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
+/// Palette RAM, as pret names it: the background colours, then the sprites'.
+#define PLTT 0x05000000
+#define BG_PLTT_SIZE 0x200 ///< bytes of background colours, 256 of them
 
-#define BG_PLTT ((volatile u16 *)0x05000000) ///< 16 palettes of 16 colours
+/// Background colour 0, the backdrop shown where no layer draws.
+#define PLTT_BACKDROP (*(volatile u16 *)PLTT)
+
+#define BG_PLTT ((volatile u16 *)PLTT) ///< 16 palettes of 16 colours
 /// Colour `color` of 16-colour background palette `palette`.
 #define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
-#define OBJ_PLTT ((volatile u16 *)0x05000200) ///< the sprites' 256 colours
+#define OBJ_PLTT                                                               \
+  ((volatile u16 *)(PLTT + BG_PLTT_SIZE)) ///< the sprites' 256 colours
 /// Colour `color` of 16-colour sprite palette `palette`.
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
 
@@ -197,14 +202,19 @@ enum DisplayControl {
 /// The end of the 256 KB of EWRAM from 0x02000000, as pret names it: the limit
 /// the EWRAM heap's allocators test.
 #define EWRAM_END 0x02040000
+/// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
+#define VRAM 0x06000000
+#define BG_CHAR_SIZE 0x4000  ///< bytes in a character block, 16 KB
+#define BG_SCREEN_SIZE 0x800 ///< bytes in a screen block, 2 KB
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
-#define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
+#define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
-#define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
+#define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
-/// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
-#define OBJ_VRAM0 0x06010000
+/// Sprite tile memory, as pret names it: the 32 KB of sprite tiles after the
+/// four character blocks.
+#define OBJ_VRAM0 (VRAM + 0x10000)
 
 /// Timer 3's reload value and control as one word; it paces the serial
 /// transfers.

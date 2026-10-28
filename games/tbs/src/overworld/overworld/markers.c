@@ -85,12 +85,13 @@ void Field_PlaceTreasureSpots(void) {
       for (; trigger->kind != -1; trigger++) {
         if (trigger->subject != id)
           continue;
-        if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST)) {
+        if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+            EXAMINE_TRIGGER(EXAMINE_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
           markerActor = Actor_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
-                                        (column << 20) + 0x80000, 0,
-                                        (row << 20) + 0x80000);
+                                        (column << 20) + PIXELS(8), 0,
+                                        (row << 20) + PIXELS(8));
           if (markerActor == NULL)
             continue;
           Actor_SnapToTerrain(markerActor);
@@ -99,7 +100,7 @@ void Field_PlaceTreasureSpots(void) {
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePending).
           if (GameFlag_GetFar(trigger->condition)) {
-            if ((trigger->value & 0xfff00000) == 0x500000) {
+            if ((trigger->value & FIND_TYPE_MASK) == FIND_MIMIC) {
               Actor_ReleaseFar(markerActor);
               continue;
             }
@@ -113,21 +114,21 @@ void Field_PlaceTreasureSpots(void) {
           marker->id = trigger->subject;
           marker->actor = markerActor;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = *(s32 *)&markerActor->x / 0x100000;
-          marker->row = *(s32 *)&markerActor->z / 0x100000;
+          marker->column = *(s32 *)&markerActor->x / PIXELS(16);
+          marker->row = *(s32 *)&markerActor->z / PIXELS(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
             return;
-        } else if ((trigger->kind & 0x1ff) == TRIGGER_EXAMINE) {
+        } else if ((trigger->kind & EXAMINE_TRIGGER_MASK) == TRIGGER_EXAMINE) {
           // A Psynergy Stone not yet taken.
-          if ((trigger->value & 0xfff00000) != FIND_PSYNERGY_STONE)
+          if ((trigger->value & FIND_TYPE_MASK) != FIND_PSYNERGY_STONE)
             continue;
           if (GameFlag_GetFar(trigger->condition))
             continue;
           markerActor = Actor_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
-                                        (column << 20) + 0x80000, 0,
-                                        (row << 20) + 0x80000);
+                                        (column << 20) + PIXELS(8), 0,
+                                        (row << 20) + PIXELS(8));
           if (markerActor == NULL)
             continue;
           Actor_SnapToTerrain(markerActor);
@@ -141,8 +142,8 @@ void Field_PlaceTreasureSpots(void) {
           marker->actor = markerActor;
           marker->id = trigger->subject;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = *(s32 *)&markerActor->x / 0x100000;
-          marker->row = *(s32 *)&markerActor->z / 0x100000;
+          marker->column = *(s32 *)&markerActor->x / PIXELS(16);
+          marker->row = *(s32 *)&markerActor->z / PIXELS(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -301,9 +302,9 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
     actor = marker->actor;
     if (actor != NULL) {
       if (objectX == -1)
-        objectX = (marker->column << 20) + 0x80000;
+        objectX = (marker->column << 20) + PIXELS(8);
       if (objectZ == -1)
-        objectZ = (marker->row << 20) + 0x80000;
+        objectZ = (marker->row << 20) + PIXELS(8);
       actor->x.fixed = objectX;
       actor->z.fixed = objectZ;
       groundHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);

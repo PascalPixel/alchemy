@@ -493,14 +493,14 @@ const s32 gFieldEffect_FragmentScript[] = {
 };
 
 /// An angle for each value of the right, left, up and down bits of the
-/// +Control Pad; 0xffff for none (Input_GetDpadAngle, move.c). Opposite
+/// +Control Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, move.c). Opposite
 /// directions cancel, and a diagonal gives none, so Move pushes only along
 /// the four directions.
 const u16 gFieldEffect_CyclePatternWords[16] = {
-    0xffff, 0x0000, 0x8000, 0xffff,
-    0xc000, 0xffff, 0xffff, 0xc000,
-    0x4000, 0xffff, 0xffff, 0x4000,
-    0xffff, 0x0000, 0x8000, 0xffff,
+    DPAD_ANGLE_NONE, 0x0000, 0x8000, DPAD_ANGLE_NONE,
+    0xc000, DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, 0xc000,
+    0x4000, DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, 0x4000,
+    DPAD_ANGLE_NONE, 0x0000, 0x8000, DPAD_ANGLE_NONE,
 };
 
 /// Move's hand animation by the quarter turns from its side of the target to

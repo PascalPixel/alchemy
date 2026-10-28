@@ -16,7 +16,7 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
     do {
       definitionIndex += 1;
       entry++;
-      if (definitionIndex > 0x81)
+      if (definitionIndex > 129)
         break;
     } while (entry->id != id);
   }

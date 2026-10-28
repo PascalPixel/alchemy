@@ -22,7 +22,7 @@ s32 Field_FindItemTrigger(s32 item) {
   s32 actorAhead = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   s32 tileAhead;
 
-  item &= 0x1ff;
+  item &= INVENTORY_ITEM_ID_MASK;
   // Query both target forms once; matching events choose actor or cell
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
@@ -35,7 +35,7 @@ s32 Field_FindItemTrigger(s32 item) {
     s16 requiresFacing = trigger->subject & 0x0800;
     s32 eventTarget = trigger->subject & 0xff;
 
-    if ((trigger->kind & 0x0f) == TRIGGER_ITEM &&
+    if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_ITEM &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
@@ -81,8 +81,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   struct FieldWork *work;
 
   result = -1;
-  itemId = packedItem & 0x3ff;
-  actorId = (packedItem >> 10) & 0xf;
+  itemId = ABILITY_ID(packedItem);
+  actorId = ACT_UNIT(packedItem);
   // Count the user's slots holding the item; with no user given, the user is
   // whoever holds it in the most slots, the earlier on a tie. Nobody holding
   // it ends the use at once.
@@ -96,7 +96,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
-          if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
+          if ((unit->inventory[inventorySlot] & INVENTORY_ITEM_ID_MASK) ==
+              itemId)
             matchingSlots++;
         }
 
@@ -108,7 +109,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     } else {
       unit = Unit_GetFar(actorId);
       for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
-        if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
+        if ((unit->inventory[inventorySlot] & INVENTORY_ITEM_ID_MASK) == itemId)
           mostMatchingSlots++;
       }
     }
@@ -121,7 +122,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
-    // The scene's event: a message, or a function. A value below 0x10000 is
+    // The scene's event: a message, or a function. A value below
+    // TRIGGER_RESULT_MESSAGE_END is
     // a message number; anything else is a code address. Trigger bit 0x400
     // skips the "uses the item" message.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
@@ -131,7 +133,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
     }
-    if ((s32)trigger->value < 0x10000) {
+    if ((s32)trigger->value < TRIGGER_RESULT_MESSAGE_END) {
       s32 nearbyActorId =
           Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
       Event_Start();
@@ -233,12 +235,13 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
     s16 requiresFacing = trigger->subject & 0x0800;
     s32 eventTarget = trigger->subject & 0xff;
 
-    if ((trigger->kind & 0x0f) == TRIGGER_PSYNERGY &&
+    if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
         Ability_Get(((const u8 *)&trigger->kind)[1])->fieldPsynergy == group &&
-        (anyPhase || (trigger->kind & 0x7000000f) == eventFlags)) {
+        (anyPhase || (trigger->kind & (PSYNERGY_PHASE_ANY << 28 |
+                                       TRIGGER_KIND_MASK)) == eventFlags)) {
       // Any Psynergy of the same field kind (fieldPsynergy) as the event's
       // matches.
       if ((trigger->kind & TRIGGER_PSYNERGY_ANYWHERE) != 0)
@@ -269,8 +272,8 @@ s32 Field_RunPsynergyEndEvents(s32 packed) {
   void *beforeEvent;
   void *afterEvent;
 
-  abilityId = packed & 0x3FF;
-  userId = ((u32)packed >> 10) & 0xF;
+  abilityId = ABILITY_ID(packed);
+  userId = ACT_UNIT((u32)packed);
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
   Actor_Lookup(gMainRoutineWork.leaderActorId);

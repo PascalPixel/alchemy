@@ -108,8 +108,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// Psynergy of the given kind can reach, or -1. The direction is rounded to a
 /// quarter turn and the distance measured on the ground; kind sets the range,
 /// the height allowed and the width of the cone. Actors with collision
-/// flag 0x10 count as 2/3 as far. Called with the leader by Field_UsePsynergy,
-/// by the item code (items.c) and by the Psynergy dispatch
+/// ACTOR_NEAR_PSYNERGY count as 2/3 as far. Called with the leader by
+/// Field_UsePsynergy, by the item code (items.c) and by the Psynergy dispatch
 /// (event_commands/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct Actor *source;
@@ -174,7 +174,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     pixelZ = dz >> 16;
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
-    if ((candidate->collisionFlags & 0x10) != 0)
+    if ((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
       distance = distance * 2 / 3;
     if (distance >= nearestDistance)
       continue;

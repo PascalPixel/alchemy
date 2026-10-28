@@ -305,7 +305,7 @@ Func_020007d4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008950
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #160
 	movs r1, #128
 	lsls r0, r0, #10
@@ -3215,7 +3215,7 @@ Func_02003ab0:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200bba0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #4
 	pop {r3, r5, r6}
 	mov r8, r3

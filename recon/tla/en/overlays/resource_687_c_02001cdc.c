@@ -8,7 +8,7 @@
 
 extern u16 gData_020026c0[];
 
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02000c50(void);
 void Func_02001650(void);
 void Func_02001a14(void);
@@ -30,7 +30,7 @@ s32 Func_02001cdc(void) {
       gFrameCount = *state;
       for (i = 1; i != 14; i++)
         ((volatile u16 *)0x05000060)[i] = 0x5ccb;
-      Scheduler_AddOrUpdateCallback(Func_02000c50, 0x480);
+      Task_Add(Func_02000c50, 0x480);
     }
   } else if (gAdventure.scene == (s32)&SceneId_Ov687Room2) {
     gData_020022c8 = gFrameCount;
@@ -60,6 +60,6 @@ s32 Func_02001cdc(void) {
         Func_020018a8(89, 85, 9);
     }
   }
-  Scheduler_AddOrUpdateCallback(Func_02001650, 0xc80);
+  Task_Add(Func_02001650, 0xc80);
   return 0;
 }

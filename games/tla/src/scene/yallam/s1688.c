@@ -67,5 +67,5 @@ void Func_02001730(void) {
   gData_02002fc0[4].mode = (s16)object->unk66;
   gData_02002fc0[4].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[4].byte99 = BYTE_AT(object, 99);
-  Scheduler_RemoveCallbackFar(Func_02001688);
+  Task_RemoveFar(Func_02001688);
 }

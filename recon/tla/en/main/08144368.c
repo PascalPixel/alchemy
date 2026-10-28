@@ -78,10 +78,10 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // On the far side the background and the spirals move 112 pixels left.
   if (effect->side == 1) {
@@ -159,8 +159,8 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

@@ -8,7 +8,7 @@ void Func_0200071c(void) {
   ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
   Func_02003ef4(0x22d);
   priority = 0x480;
-  Scheduler_AddOrUpdateCallback(Func_020006d0, priority);
+  Task_Add(Func_020006d0, priority);
   Func_02003e44_(0x28000, 0x4000);
   Camera_MoveWithinMapBounds_(0x3080000, -1, 0x2880000, 1);
   Func_02003e54();

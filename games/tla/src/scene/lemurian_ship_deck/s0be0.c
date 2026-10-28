@@ -7,7 +7,7 @@
 extern const u8 gData_020020dc[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_020020c4(const void *data);
 void Func_02000188(void);
 void Func_020001cc(void);
@@ -26,7 +26,7 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority) {
   /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
    * arguments up in their own order and keeps each call's constants; a direct
    * call builds the costly constant first or shares it (differ 2 or more). */
-  Scheduler_AddOrUpdateCallback(callback, priority);
+  Task_Add(callback, priority);
 }
 
 s32 Func_02000be0(void) {

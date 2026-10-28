@@ -138,10 +138,10 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg1HBlankDma, 0xc80);
+  Task_Add(BattleEffect_ArmBg1HBlankDma, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Sound_PlayFar(146);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
@@ -246,9 +246,9 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg1HBlankDma);
+  Task_Remove(BattleEffect_ArmBg1HBlankDma);
   BattleEffect_EndCanvasLayer();
 }

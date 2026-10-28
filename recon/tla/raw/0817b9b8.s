@@ -69,7 +69,7 @@ BattleEffect_RunBackstab:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0817bd78
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #32]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
@@ -455,7 +455,7 @@ BattleEffect_RunBackstab:
 	movs r3, #0
 	strb r3, [r2]
 	ldr r0, .L_0817bd78
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

@@ -89,7 +89,7 @@ Func_0813cb34:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0813ce98
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r1, r9
 	ldr r0, [r1, #8]
 	bl GetBattleObjectSlotFar
@@ -507,7 +507,7 @@ Func_0813cb34:
 	b .L_0813cd22
 .L_0813cf20:
 	ldr r0, .L_0813cf70
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -527,7 +527,7 @@ Func_0813cb34:
 	mov lr, r5
 	.2byte 0xf800
 	ldr r0, .L_0813cf7c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r0, r9
 	bl SummonEffect_RunCanvasMode1
 	b .L_0813cf60

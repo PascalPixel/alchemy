@@ -122,7 +122,7 @@ Func_080df1fc:
 	str r3, [r7, #108]
 	lsls r1, r1, #3
 	ldr r0, .L_080df544
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #130
 	bl Sound_PlayFar
 	adds r1, r7, #0
@@ -419,7 +419,7 @@ Func_080df1fc:
 	movs r1, #4
 	bl Object_SetMode
 	ldr r0, .L_080df6ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #135
 	bl Sound_PlayFar
 	movs r0, #15

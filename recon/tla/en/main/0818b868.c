@@ -38,7 +38,7 @@
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -91,8 +91,8 @@ extern u8 gData_08199d94[];
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void WaitFrames(s32 frames);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
@@ -154,7 +154,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
   WaitFrames(8);
 
@@ -274,6 +274,6 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

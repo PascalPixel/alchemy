@@ -31,7 +31,7 @@ void Func_02005688(s32 a) {
      * load (differ 2 without it). */
     s32 priority = 0x485;
 
-    Scheduler_AddOrUpdateCallback(Func_02004ddc, priority);
+    Task_Add(Func_02004ddc, priority);
   }
 }
 

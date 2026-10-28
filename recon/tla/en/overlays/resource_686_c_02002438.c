@@ -37,7 +37,7 @@ void FieldEvent_WaitFrames();
 void WaitFrames();
 void GameFlag_SetBit();
 s32 Func_02002ebc();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 Func_02001420();
 s32 Func_02002e04();
 s32 Func_02002dec();
@@ -426,7 +426,7 @@ L_0200ab36:
 L_0200ab4a:
   Call1((void (*)())Func_02002eec, 0x23f);
 L_0200ab54:
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020010f4, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_020010f4, 0x480);
   goto L_0200ad2a;
 L_0200ab60:
   if (r2 == ((s32)&SceneId_Ov686Room6))

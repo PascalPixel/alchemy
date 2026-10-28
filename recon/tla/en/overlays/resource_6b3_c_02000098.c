@@ -33,7 +33,7 @@ void MemFree(void *block);
 void *Resource_GetTableEntry(u16 id);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_020007ac(void *resource, void *destination);
 void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
@@ -57,5 +57,5 @@ void Func_02000098(void) {
   gData_02000a00.unk09_4 = 14;
   MemFree(buffer);
   gData_02000a34 = 0;
-  Scheduler_AddOrUpdateCallback(Func_0200005c, 0x480);
+  Task_Add(Func_0200005c, 0x480);
 }

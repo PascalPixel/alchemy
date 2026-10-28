@@ -33,7 +33,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect.h"
@@ -46,7 +46,6 @@
 
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
-#define CALLBACK_ORDER 0xc80
 
 #define FLASH_POINTS 16 // flash points kept for each group
 #define FLASH_DRAWN 12  // of which the first 12 are drawn
@@ -191,7 +190,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != GROUP_COUNT * 8 + 40; frame++) {
     struct CameraWork *camera = Ram_HeapSlots->cameraWork;
@@ -301,7 +300,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

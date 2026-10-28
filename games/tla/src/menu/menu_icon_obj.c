@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuIconWork {
   u8 unk000[0x220];
@@ -24,7 +24,7 @@ void MenuIcon_ReleaseObjects(void) {
       menu->objects[i] = NULL;
     }
   }
-  Scheduler_RemoveCallback(MenuIcon_UpdateTransforms);
+  Task_Remove(MenuIcon_UpdateTransforms);
 }
 
 extern s32 gFourObjectMotion_ResourceIds[];

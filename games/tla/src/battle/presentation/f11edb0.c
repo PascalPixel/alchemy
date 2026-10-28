@@ -15,7 +15,7 @@
 #include "battle_display.h"
 #include "battle_event.h"
 #include "battle_system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "item.h"
 #include "motobj.h"
 #include "ram_buffer.h"
@@ -99,7 +99,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
           animation->entries[entryIndex]->param;
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
+  Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
   if (work.kind != 0) {
     s32 fade;
     struct HeapSlots *heap;

@@ -2255,7 +2255,7 @@ Func_020017a8:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02009a30
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #186
 	movs r1, #0
 	ldrsh r3, [r5, r1]
@@ -2282,7 +2282,7 @@ Func_020017a8:
 	cmp r3, r2
 	bne .L_02009a34
 	ldr r0, .L_02009a74
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	mov r0, r10
 	bl Resource_ResetEntry
 	ldr r0, [sp, #4]
@@ -2803,7 +2803,7 @@ Func_0200216c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a3ac
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r8
 	movs r2, #10
 	ldrsh r0, [r3, r2]

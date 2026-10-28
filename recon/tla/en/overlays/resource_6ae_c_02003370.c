@@ -31,7 +31,7 @@ s32 Math_Sine(s32 angle);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void SceneActor_ParkRecord(struct ObjectRuntime *object);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 struct ObjectRuntime *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct ObjectRuntime *object, const u8 *script);
 void Func_020055c4(s32 a, s32 b, s32 c);
@@ -92,7 +92,7 @@ void Func_02003370(void) {
     Data_02006ccc--;
     if (anchor->y > 0x140000) {
       Data_02006ccc = 999;
-      Scheduler_RemoveCallbackFar(Func_02003370);
+      Task_RemoveFar(Func_02003370);
     } else {
       if ((gFrameCount & 7) == 0)
         Func_020057dc(246);
@@ -122,5 +122,5 @@ void Func_02003370(void) {
     }
   }
   if (++Data_02006ccc > Data_02006b68)
-    Scheduler_RemoveCallbackFar(Func_02003370);
+    Task_RemoveFar(Func_02003370);
 }

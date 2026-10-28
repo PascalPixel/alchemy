@@ -427,7 +427,7 @@ Func_0814fab8:
 	str r3, [r2]
 	ldr r0, .L_0814fe2c
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #76]
 	movs r5, #7
 	ldr r3, [r4, #4]
@@ -1275,7 +1275,7 @@ Func_0814fab8:
 	b .L_0814fe30
 .L_0815048a:
 	ldr r0, .L_081504a4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}

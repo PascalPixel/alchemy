@@ -7,8 +7,8 @@ gHeapSlots:
 	.global gVBlankCount
 gVBlankCount:
 	.space 0x00000008
-	.global gSchedulerStatus
-gSchedulerStatus:
+	.global gTasksRunning
+gTasksRunning:
 	.space 0x00000004
 	.global gBlendVBlanksLeft
 gBlendVBlanksLeft:
@@ -118,8 +118,8 @@ gData_0300121c:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gSchedulerReady
-gSchedulerReady:
+	.global gTasksInitialized
+gTasksInitialized:
 	.space 0x00000004
 	.global gFrameCount
 gFrameCount:

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "input.h"
 #include "frame.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "field_event.h"
@@ -56,7 +56,7 @@ void Menu_UpdateCancelSound(void) {
   if (input->pressed & mask) {
     Sound_PlayFar(113);
     GameFlag_SetBit(0x150);
-    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
   wait = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
   while ((wait = (u32 *)*wait) != 0)
@@ -65,12 +65,12 @@ void Menu_UpdateCancelSound(void) {
 
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearBit(0x150);
-  Scheduler_AddOrUpdateCallback((s32)Menu_UpdateCancelSound, 0x480);
+  Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
 void Menu_EnsureCancelSound(void) {
   if (GameFlag_Test(0x150) == 0) {
-    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
 }
 

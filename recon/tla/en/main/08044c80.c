@@ -9,7 +9,7 @@
 // Left: instruction order only (a constant build and two argument copies sit
 // one place apart).
 
-#include "callback_scheduler.h"
+#include "task.h"
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"

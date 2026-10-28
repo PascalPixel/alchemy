@@ -52,7 +52,7 @@ s32 ResourceTable_CountFreeBlocks(void);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_StartArcEffect(void);
 void BattleEffect_UpdateAllEffectSlots(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 
 #define HEAP_SLOT_FX 224
 
@@ -116,5 +116,5 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   event->unkd38 = 0;
   event->unkd30 = 255;
   BattleEffect_StartArcEffect();
-  Scheduler_AddOrUpdateCallback(BattleEffect_UpdateAllEffectSlots, 0x480);
+  Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
 }

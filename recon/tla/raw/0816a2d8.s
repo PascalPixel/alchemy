@@ -184,7 +184,7 @@ Func_0816a2d8:
 	lsls r1, r1, #4
 	str r3, [r2]
 	ldr r0, .L_0816a70c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #12]
 	cmp r1, #1
 	beq .L_0816a44e
@@ -493,7 +493,7 @@ Func_0816a2d8:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816a70c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r1, [sp, #12]
 	cmp r1, #3
 	bne .L_0816a6ca
@@ -509,7 +509,7 @@ Func_0816a2d8:
 	mov lr, r5
 	.2byte 0xf800
 	ldr r0, .L_0816a72c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, [sp, #16]
 	bl SummonEffect_RunCanvasMode2
 	b .L_0816a6e4

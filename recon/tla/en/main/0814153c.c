@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -213,7 +213,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;
   for (frame = 0; frame != 52; frame++) {
     if (frame == 27) {
@@ -229,7 +229,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       work->scrollInterval = 1;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
-      Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
+      Task_Add(Func_0813baec, 0x480);
       transition[4] = 1;
       e = Resource_GetTableEntry(0xa4);
       Iwram_CopyWords((void *)OBJ_PLTT, e, 480);
@@ -497,7 +497,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_0813baec);
+  Task_Remove(Func_0813baec);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   for (i = 0; i != 32; i++) {
@@ -804,7 +804,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

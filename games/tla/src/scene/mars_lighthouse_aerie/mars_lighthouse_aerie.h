@@ -20,7 +20,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void Func_02000038(struct ObjectRuntime *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
@@ -61,7 +61,7 @@ struct MarsLighthouseAerieParty {
   s16 held;
 };
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 s32 Func_0200508c(u16 *list);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);

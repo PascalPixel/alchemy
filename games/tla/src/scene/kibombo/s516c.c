@@ -22,7 +22,7 @@ void Func_020031f0(s32 id);
 void Func_02005b0c(s32 id, s32 x, s32 z);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02002c34(void);
 
 static __inline__ s32 Gauge(s32 value, s32 max) {
@@ -126,7 +126,7 @@ void Func_0200516c(void) {
      * as a plain argument, 2 of 218 instructions differ in tla-en. */
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_02002c34, priority);
+    Task_Add(Func_02002c34, priority);
   }
   Func_02005aa4();
 }

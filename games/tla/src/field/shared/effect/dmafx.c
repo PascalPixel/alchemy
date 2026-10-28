@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_reg.h"
 #include "mem.h"
 #include "dma.h"
@@ -38,13 +38,13 @@ void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
   work->unkf1c = f;
   work->unkf10 = c;
   work->unkf14 = d;
-  Scheduler_AddOrUpdateCallback(Func_080d607c, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_080d5ff8, 0xc80);
+  Task_Add(Func_080d607c, TASK_PASS_VBLANK);
+  Task_Add(Func_080d5ff8, TASK_PASS_FRAME);
 }
 
 void Func_080d64b8(void) {
-  Scheduler_RemoveCallback(Func_080d5ff8);
-  Scheduler_RemoveCallback(Func_080d607c);
+  Task_Remove(Func_080d5ff8);
+  Task_Remove(Func_080d607c);
   {
     volatile u16 *dma = REG_DMA0;
 

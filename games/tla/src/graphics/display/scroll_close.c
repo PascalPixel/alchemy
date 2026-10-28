@@ -4,7 +4,7 @@
 extern const void *gDisplayScroll_LineTable[];
 extern u32 *gDisplayScroll_Objects;
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Remove(void (*callback)(void));
 void Func_081a0cac(void);
 void Func_081a0d78(void);
 
@@ -14,8 +14,8 @@ void Func_081a0fb8(void) {
 
   for (i = 0; i < 32; i++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
-  Scheduler_RemoveCallback(Func_081a0cac);
-  Scheduler_RemoveCallback(Func_081a0d78);
+  Task_Remove(Func_081a0cac);
+  Task_Remove(Func_081a0d78);
   objects = gDisplayScroll_Objects;
   for (i = 0; i != 0x100; i++)
     *objects++ = 0;

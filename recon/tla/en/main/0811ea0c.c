@@ -20,7 +20,7 @@
 #include "battle_display.h"
 #include "battle_event.h"
 #include "battle_party.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -192,7 +192,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
         WaitFrames(1);
       }
     }
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
+    Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
     if (work.kind != 0) {
       if (saved)
         Func_0811e7dc(saved);

@@ -192,7 +192,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Sound_PlayFar(103);
 
@@ -301,7 +301,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
 
@@ -309,7 +309,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 3 || mode == 5) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)
       SummonEffect_RunCanvasMode1(effect);
     else

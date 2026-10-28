@@ -30,7 +30,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -135,10 +135,10 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0xc80);
+  Task_Add(Camera_ApplyPhasedDelta, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75; // each transfer fades the canvas to 3/4: a trail
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != (Data_08198300[effect->variant] >> 1) + 132;
        frame++) {
@@ -237,8 +237,8 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Camera_ApplyPhasedDelta);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

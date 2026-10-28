@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -19,13 +19,13 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   state->value = 0;
   state->mask = 0x3f3f;
   state->active = (REG_WINOUT & 0xff00) | 1;
-  Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
-  Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
+  Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
 }
 
 void Func_080d0184(void) {
-  Scheduler_SuspendTasks(Func_080cf78c);
-  Scheduler_SuspendTasks(BattleEffect_StartWindowHBlankDma);
+  Task_SuspendAll(Func_080cf78c);
+  Task_SuspendAll(BattleEffect_StartWindowHBlankDma);
 }
 
 void *Func_080d019c(void) {

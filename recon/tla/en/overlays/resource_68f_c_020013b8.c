@@ -42,7 +42,7 @@ void Object_SetPartAttribute();
 void Animation_SetStateFlags();
 void Func_02003168();
 void GameFlag_SetBit();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 
 s32 Func_020013b8(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r1, r2, r3, v0, r0, v1, v2, r6, v3, r5, v4, v5, v6, v7, v8, v9, v10, v11,
@@ -273,7 +273,7 @@ L_02009770:
     Call6((void (*)())Func_02002fc0, 13, 26, 13, 16, 3, 3);
     Call6((void (*)())Func_02002fe8, 13, 26, 3, 3, 13, 16);
   } else {
-    Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_0200137c, 0x480);
+    Call2((void (*)())Task_Add, (s32)Func_0200137c, 0x480);
   }
   Func_02003168((s32)gData_0200326e);
 L_020097c4:

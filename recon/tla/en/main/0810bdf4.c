@@ -11,5 +11,5 @@ void Func_0810bdf4(void) {
   for (i = ICON_COUNT - 1; i >= 0; i--)
     work->resources[i] = ICON_NONE;
   work->active = 0;
-  Scheduler_AddOrUpdateCallback(Func_0810bdb0, 0x48a);
+  Task_Add(Func_0810bdb0, TASK_PASS_VBLANK + 10);
 }

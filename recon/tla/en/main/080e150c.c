@@ -6,7 +6,7 @@
 // tests are two compares in the native; written as one range test GCC folds
 // them to an unsigned compare (differ 116), so the negative age continues
 // apart here.
-// BattleEffect_UpdateArcEffect, the arc effect's scheduler callback (heap
+// BattleEffect_UpdateArcEffect, the arc effect's task (heap
 // slot 0xf8, arc_effect.h). For 32 frames after a group starts, its two arc
 // sprites rise from the target object by a pixel a frame and swell and shrink
 // with the sine of the age; the second is drawn a pixel lower, flipped

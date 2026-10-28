@@ -1056,7 +1056,7 @@ Func_0200065c:
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r6, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #9
 	movs r1, #0
 	movs r2, #0
@@ -1105,7 +1105,7 @@ Func_0200065c:
 	movs r0, #60
 	bl WaitFrames
 	adds r0, r6, #0
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #141
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
@@ -7529,7 +7529,7 @@ Func_02004ec8:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200d108
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r8
 	movs r2, #10
 	ldrsh r0, [r3, r2]

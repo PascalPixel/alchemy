@@ -125,7 +125,7 @@ s32 Func_02001418(void) {
       } else {
         if (GameFlag_Test(0x109))
           GameFlag_SetByte(0x278, 0);
-        Scheduler_AddOrUpdateCallback(Func_020011e0, 0x480);
+        Task_Add(Func_020011e0, 0x480);
         GameFlag_SetBit(0x270);
         ObjectMotion_SetActionVariant(16, 3);
         Object_GetById(16)->collisionFlags = placed;

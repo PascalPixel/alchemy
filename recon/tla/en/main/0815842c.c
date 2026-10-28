@@ -99,8 +99,8 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 void EffectPosition_ProjectBattler(s32 id, s32 *position);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -127,7 +127,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
@@ -222,7 +222,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

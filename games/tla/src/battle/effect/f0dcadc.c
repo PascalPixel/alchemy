@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -14,7 +14,7 @@ void Func_08038348(s32 first, s32 second);
 void Func_080dcadc(void) {
   u8 *work = Ram_HeapSlots->windowTiles;
 
-  Scheduler_RemoveCallback((SchedulerCallback)BattleEffect_ArmBg0HBlankDma);
+  Task_Remove((TaskFunc)BattleEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).

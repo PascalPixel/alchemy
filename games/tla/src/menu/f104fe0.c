@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuEntryWindow {
   u8 unk00[12];
@@ -37,5 +37,5 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
     }
   }
   menu->active = 1;
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
 }

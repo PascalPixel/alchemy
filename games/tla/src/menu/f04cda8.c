@@ -7,7 +7,7 @@
 #include "frame.h"
 #include "display_transition.h"
 #include "vram_tab.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 // games/tla/include/affine.h's transform, written out: the stale affine.h
 // beside these drafts would shadow it.

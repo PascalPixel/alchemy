@@ -54,7 +54,7 @@ s32 Object_GetById();
 s32 Object_SetModeById();
 s32 Object_SetPartAttribute();
 s32 Object_SetPositionAndResetMotion();
-s32 Scheduler_RemoveCallbackFar();
+s32 Task_RemoveFar();
 s32 UiText_OpenMessageAtObject();
 s32 WaitFrames();
 extern u8 Func_020004a4[];
@@ -278,7 +278,7 @@ L_0200c4a0:
   Call2(Func_02005724, 0x19999, 0x3333);
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1200000, 1);
   Func_02005734();
-  Call1(Scheduler_RemoveCallbackFar, (s32)Func_020004a4);
+  Call1(Task_RemoveFar, (s32)Func_020004a4);
   Call1(Func_020057dc, 140);
   t184 = Value1(Object_GetById, 8);
   Call2(Object_SetPartAttribute, t184, 12);

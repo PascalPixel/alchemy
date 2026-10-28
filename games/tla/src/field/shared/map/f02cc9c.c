@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 void MapAnimation_Update(void);
 
@@ -31,6 +31,6 @@ void Func_0802cc9c(const u16 *script) {
     }
     command = *script++;
   }
-  if (count != 0 && Scheduler_FindCallback(MapAnimation_Update) == -1)
-    Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0x480);
+  if (count != 0 && Task_Find(MapAnimation_Update) == -1)
+    Task_Add(MapAnimation_Update, TASK_PASS_VBLANK);
 }

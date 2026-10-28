@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "iowrite.h"
@@ -82,5 +82,5 @@ void Func_080d690c(void) {
   Io_Write16(0x3f00, &REG_BLDCNT);
   Io_Write16(0x1008, &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback(Func_080d64f0, 0x480);
+  Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
 }

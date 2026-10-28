@@ -28,5 +28,5 @@ void Func_02002c38(void) {
   } else {
     Object_SetModeById(11, 5);
   }
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02002bd8, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02002bd8, 0x480);
 }

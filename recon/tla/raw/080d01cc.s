@@ -128,12 +128,12 @@ DisplayTransition_Start:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080d0300
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #118
 	ldr r0, .L_080d0304
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080d0308
@@ -225,7 +225,7 @@ DisplayTransition_Start:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d03fc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, .L_080d0400
 	ldr r4, .L_080d0404
 	ldrh r3, [r4]
@@ -304,7 +304,7 @@ DisplayTransition_Start:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d0450
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_080d0454
 	movs r0, #1
 	movs r1, #0
@@ -348,7 +348,7 @@ DisplayTransition_Start:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d0510
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_080d0514
 	movs r0, #1
 	movs r1, #0

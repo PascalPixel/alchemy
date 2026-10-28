@@ -1,6 +1,6 @@
 #include "types.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct TextResourcePosition {
   u8 padding[4];

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "mem.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 void Func_08127038(void);
 void Func_08126e00(void);
@@ -14,8 +14,8 @@ void Func_081272b0(void) {
   Runtime_ReleaseHeapBlock(96);
   Runtime_ReleaseHeapBlock(92);
   REG_DISPCNT = 0x1341;
-  Scheduler_RemoveCallback(Func_08127038);
-  Scheduler_RemoveCallback(Func_08126e00);
+  Task_Remove(Func_08127038);
+  Task_Remove(Func_08126e00);
 }
 
 void Func_08127304(void) {}

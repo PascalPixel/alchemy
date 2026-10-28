@@ -82,7 +82,7 @@ BattleEffect_RunVenus:
 	str r3, [r2]
 	ldr r0, .L_08158058
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r4, #0
 	mov r10, r4
 	movs r7, #63
@@ -382,7 +382,7 @@ BattleEffect_RunVenus:
 	b .L_08157e24
 .L_08158030:
 	ldr r0, .L_08158058
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

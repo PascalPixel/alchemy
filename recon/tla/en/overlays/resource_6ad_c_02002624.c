@@ -31,7 +31,7 @@ s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_0200242c(void);
 
 void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3) {
@@ -100,5 +100,5 @@ void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3) {
     REG_BLDALPHA = 0x608;
     REG_BLDCNT = 0x3f10;
   }
-  Scheduler_AddOrUpdateCallback(Func_0200242c, 0x480);
+  Task_Add(Func_0200242c, 0x480);
 }

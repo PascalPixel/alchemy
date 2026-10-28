@@ -61,8 +61,8 @@ s32 Camera_FollowActor(s32 id, s32 a);
 void Func_02003c30(void);
 void Func_02003c20(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_020024b0(void);
 void Func_0200257c(void);
 void Func_02000ef4(void);
@@ -163,7 +163,7 @@ row:
   Call2((void (*)())Func_02003c20, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x14a0000, -1, 0x490000, 1);
   Func_02003c30();
-  Scheduler_AddOrUpdateCallback(Func_02000ef4, 0xc80);
+  Task_Add(Func_02000ef4, 0xc80);
   Func_02003cd8(163);
   REG_BLDALPHA = 0xf00;
   do {
@@ -225,7 +225,7 @@ fade:
   FieldEvent_WaitFrames(1);
   if (i != 65)
     goto fade;
-  Scheduler_RemoveCallbackFar(Func_02000ef4);
+  Task_RemoveFar(Func_02000ef4);
   ((u8 *)Object_GetById(8))[99] = 0;
   WaitFrames(30);
   Object_GetById(8)->update = 0;

@@ -37,7 +37,7 @@
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -116,8 +116,8 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -236,7 +236,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
@@ -571,6 +571,6 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

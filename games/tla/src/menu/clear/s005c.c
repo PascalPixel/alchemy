@@ -19,7 +19,7 @@ extern u16 gData_020024f4[];
 void Fade_ToBlack(s32 vblanks);
 void Func_020021f8(void *source, void *destination);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH: forwarding through the inline keeps the buffer address a
@@ -125,5 +125,5 @@ void Func_0200015c(void) {
   IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level,
                       0x20000);
   if (level > 15)
-    Scheduler_RemoveCallbackFar(Func_0200015c);
+    Task_RemoveFar(Func_0200015c);
 }

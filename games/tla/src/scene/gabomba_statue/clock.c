@@ -16,8 +16,8 @@ extern u8 gData_020023c4[];
 void Func_02005854(s32 sound);
 void Func_02005090(void);
 s32 Math_Cosine(s32 angle);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_02005210(void);
 void Func_0200525c(void);
 s32 __divsi3(s32 numerator, s32 denominator);
@@ -47,27 +47,27 @@ void Func_020052a4(s32 mode) {
   VramCache_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)
-    Scheduler_AddOrUpdateCallback(Func_02005210, 1152);
+    Task_Add(Func_02005210, 1152);
   else
-    Scheduler_AddOrUpdateCallback(Func_0200525c, 1152);
+    Task_Add(Func_0200525c, 1152);
 }
 
 void Func_0200533c(void) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
   if (clock->mode)
-    Scheduler_RemoveCallbackFar(Func_02005210);
+    Task_RemoveFar(Func_02005210);
   else
-    Scheduler_RemoveCallbackFar(Func_0200525c);
+    Task_RemoveFar(Func_0200525c);
 }
 
 void Func_02005364(void) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
   if (clock->mode)
-    Scheduler_AddOrUpdateCallback(Func_02005210, 1152);
+    Task_Add(Func_02005210, 1152);
   else
-    Scheduler_AddOrUpdateCallback(Func_0200525c, 1152);
+    Task_Add(Func_0200525c, 1152);
   clock->timer = 3600;
 }
 

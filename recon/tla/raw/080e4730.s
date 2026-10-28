@@ -39,7 +39,7 @@ Func_080e4730:
 	mov r0, r8
 	bl ObjectGroup_SetActionForOthers
 	ldr r0, .L_080e4a1c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_080e4a20
 	bl Resource_GetTableEntry
 	mov r1, r10

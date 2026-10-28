@@ -45,6 +45,6 @@ void Func_020055c4(s32 a, s32 b) {
   Func_02005770(gData_020062d4, buffer);
   link->vramEntry = Resource_FindFreeEntry();
   VramCache_Load(link->vramEntry, 576, buffer);
-  Scheduler_AddOrUpdateCallback(Func_020051a0, 0x476);
+  Task_Add(Func_020051a0, 0x476);
   MemFree(buffer);
 }

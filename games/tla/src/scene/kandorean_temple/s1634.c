@@ -8,7 +8,7 @@ void Func_02005178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005388(s32 cue);
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000cf8(s32 id, s32 offset, s32 limit);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 s32 Math_Sine(s32 angle);
 
 void Func_02001634(void) {
@@ -49,7 +49,7 @@ void Func_02001634(void) {
     if (*timer > 2300 && *phase == 0) {
       if (GameFlag_Test(0x208)) {
         Call6((void (*)())Func_02005178, 21, 0, 1, 1, 27, 12);
-        Scheduler_RemoveCallbackFar(Func_02001634);
+        Task_RemoveFar(Func_02001634);
       } else {
         *timer = 2800;
       }

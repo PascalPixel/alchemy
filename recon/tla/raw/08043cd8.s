@@ -270,7 +270,7 @@ Func_08043cd8:
 	ldr r2, .L_0804420c
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Scheduler_ScheduleCallbackAAfterFrames
+	bl PaletteGlow_Start
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #2
@@ -803,7 +803,7 @@ Func_08043cd8:
 	movs r1, #2
 	mov r0, r9
 	bl UiWork_Finalize
-	bl Scheduler_ScheduleCallbackA
+	bl PaletteGlow_Stop
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	ldr r3, .L_08044340

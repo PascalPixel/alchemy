@@ -18,5 +18,5 @@ void Func_020017bc(void) {
   /* FAKEMATCH: held in a local, the priority is built before the callback's
    * address loads, as in the native and events_f.c (as a literal: differ 2). */
   priority = 0x480;
-  Scheduler_AddOrUpdateCallback(Func_020015f8, priority);
+  Task_Add(Func_020015f8, priority);
 }

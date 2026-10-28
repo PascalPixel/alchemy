@@ -528,7 +528,7 @@ BattleEffect_RunProjectileVolley:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08156778
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #148]
 	ldr r0, [r2, #8]
 	bl GetBattleObjectSlotFar
@@ -2548,7 +2548,7 @@ BattleEffect_RunProjectileVolley:
 	bl .L_081569a8
 .L_081574a8:
 	ldr r0, .L_081574dc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

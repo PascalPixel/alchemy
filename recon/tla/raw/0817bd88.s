@@ -57,7 +57,7 @@ BattleEffect_RunFirePuppet:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0817be10
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #68]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
@@ -579,7 +579,7 @@ BattleEffect_RunFirePuppet:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817c278
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}

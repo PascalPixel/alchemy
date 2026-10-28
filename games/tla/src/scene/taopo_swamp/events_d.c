@@ -236,5 +236,5 @@ void Func_02000c24(void) {
   ObjectDispatch_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
   if (gData_02003458 == 0)
-    Scheduler_RemoveCallbackFar(Func_02000c24);
+    Task_RemoveFar(Func_02000c24);
 }

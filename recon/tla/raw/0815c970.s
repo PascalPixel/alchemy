@@ -82,7 +82,7 @@ Func_0815c970:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815cbb8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r8
 	movs r3, #36
 	ldrsh r0, [r2, r3]
@@ -272,7 +272,7 @@ Func_0815c970:
 	b .L_0815ca68
 .L_0815cb86:
 	ldr r0, .L_0815cbb8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

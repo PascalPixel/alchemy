@@ -6,7 +6,7 @@
 #include "resource.h"
 #include "system.h"
 #include "frame.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 void MapAnimation_PresentPicture(void) {
   s32 control;
@@ -43,7 +43,7 @@ void MapAnimation_Start(void) {
   active = &work->animationActive;
   one = 1;
   *active = one;
-  Scheduler_SuspendTasks(MapAnimation_Update);
+  Task_SuspendAll(MapAnimation_Update);
   work->picturePending = one;
   resources = work->resources;
   Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);

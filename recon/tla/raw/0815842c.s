@@ -60,7 +60,7 @@ BattleEffect_RunHail:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_081585a4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #20]
 	add r5, sp, #32
 	movs r2, #36
@@ -447,7 +447,7 @@ BattleEffect_RunHail:
 	b .L_0815855a
 .L_081587aa:
 	ldr r0, .L_081587e0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

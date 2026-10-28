@@ -211,7 +211,7 @@ BattleEffect_RunTargetMotes:
 	movs r1, #200
 	ldr r0, .L_0814aa64
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0814a9ae:
 	movs r2, #239
 	lsls r2, r2, #7
@@ -227,7 +227,7 @@ BattleEffect_RunTargetMotes:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814aa68
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #142
 	bl Sound_PlayFar
 	ldr r3, [sp, #60]
@@ -825,14 +825,14 @@ BattleEffect_RunTargetMotes:
 	b .L_0814a9e4
 .L_0814ae74:
 	ldr r0, .L_0814aeb4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r3, r10
 	cmp r3, #1
 	bls .L_0814ae8a
 	cmp r3, #3
 	beq .L_0814ae8a
 	ldr r0, .L_0814aeb8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_0814ae8a:
 	bl BattleEffect_EndCanvasLayer
 	add sp, #120

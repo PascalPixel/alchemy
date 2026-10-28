@@ -60,7 +60,7 @@ void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
 s32 Func_020029f0(struct ObjectRuntime *object);
 s32 Func_020029f8(struct ObjectRuntime *object);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001538(void);
 
 void Func_02001718(const s32 *from, const s32 *to) {
@@ -100,5 +100,5 @@ next:
   if (i <= 95)
     goto next;
   work->next = 0;
-  Scheduler_AddOrUpdateCallback(Func_02001538, 0x480);
+  Task_Add(Func_02001538, 0x480);
 }

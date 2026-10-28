@@ -35,7 +35,7 @@
 #include "battle_effect_work.h"
 #include "battle_session.h"
 #include "bg_scroll.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "effect_step.h"
 #include "graphics.h"
@@ -172,7 +172,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Func_08163c2c(0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
 
@@ -211,7 +211,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Scheduler_AddOrUpdateCallback(Func_0813baec, 0xc80);
+  Task_Add(Func_0813baec, TASK_PASS_FRAME);
   presentation->active = 1;
   Func_08163c2c(0, 1);
   REG_DISPCNT = 0x7741;
@@ -353,7 +353,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
   // The giant leaves: the sky stops, the palette is restored and the
   // pieces go.
-  Scheduler_RemoveCallback(Func_0813baec);
+  Task_Remove(Func_0813baec);
   presentation->active = 0;
   gBgScroll[1].x = scrollX;
   Func_0814cca8();
@@ -442,7 +442,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

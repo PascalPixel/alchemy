@@ -32,7 +32,7 @@
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 #define PHASE_RESULTS 133
 
 // The map cell buffer holds WIN0's line table and then the splashes.
@@ -63,8 +63,8 @@ void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
@@ -170,7 +170,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   }
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   if (effect->variant == 0) {
     work->transferMode = 1;
     work->transferValue = 0;
@@ -181,7 +181,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 64)
@@ -256,8 +256,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmWin0HBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

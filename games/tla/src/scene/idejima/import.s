@@ -6,10 +6,10 @@
 	.thumb_func
 Task_Wait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Task_Add
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+Task_Add:
+	overlay_veneer Task_AddFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:

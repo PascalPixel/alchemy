@@ -126,7 +126,7 @@ Func_080ed2a4:
 	str r3, [r2]
 	bl EventRuntime_FinishScreen
 	bl EventRuntime_WaitDelay
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	bl UiWork_InitializeWithResourceCountersFar
 	ldr r2, [sp, #12]
 	movs r0, #1

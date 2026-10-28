@@ -8,7 +8,7 @@
 // Disabling writes the low 16 address bits (0x0208, with bit zero clear)
 // back to the register itself.
 // Each step is its own statement macro, written do { } while (0), the shape
-// ☀️'s lock sites and write-queue pushes and ⚓️'s callback scheduler match
+// ☀️'s lock sites and write-queue pushes and ⚓️'s task table match
 // through: the saved copy is taken before IME is written.
 // SerialRuntime_Initialize writes IRQ_LOCK's two steps out (see its tag).
 // IME_RESTORE's and IRQ_UNLOCK's wrappers are devices, not this layer: a plain
@@ -50,8 +50,8 @@
 /// Restores the IME value saved by IRQ_LOCK.
 /* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart
  * from the code before it. Written plainly as REG_IME = saved, 7 of the 8
- * Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en
- * (Scheduler_ResumeOverlayTasks matches either way), and ⚓️'s
+ * Task_ functions in ☀️'s task.c that lock differ 2 in tbs-en
+ * (Task_ResumeOverlayTasks matches either way), and ⚓️'s
  * BattleEffect_TransferHalvedCanvas and
  * BattleEffect_ProcessPendingStampTransfer differ 2 in all six editions;
  * BattlePresentation_SetPaletteLevel's plain restore matches, and through

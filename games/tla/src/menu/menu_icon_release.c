@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuIconWork {
   u8 unk000[0xc08];
@@ -15,7 +15,7 @@ void MenuIcon_ReleaseSlots(void) {
   u16 *resource;
   s32 i;
 
-  Scheduler_RemoveCallback(MenuIcon_PushSlots);
+  Task_Remove(MenuIcon_PushSlots);
   resource = menu->resources;
   for (i = 4; i >= 0; i--)
     Resource_ResetEntry(*resource++);

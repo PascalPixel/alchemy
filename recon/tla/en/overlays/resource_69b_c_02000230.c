@@ -19,8 +19,8 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Camera_FollowActor(s32 id, s32 a);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void WaitFrames(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);
@@ -49,7 +49,7 @@ void Func_02000230(s32 kind) {
     target[1] = 144 << 16;
     target[2] = 144 << 18;
   }
-  Scheduler_AddOrUpdateCallback(Func_020000b4, 0x480);
+  Task_Add(Func_020000b4, 0x480);
   Camera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
@@ -101,7 +101,7 @@ spin:
   leader->motionFlags = 3;
   leader->y = 0x900000;
   leader->terrainHeight = 0x900000;
-  Scheduler_RemoveCallbackFar(Func_020000b4);
+  Task_RemoveFar(Func_020000b4);
   Func_02000054();
   Func_02002254();
 }

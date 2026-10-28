@@ -40,7 +40,7 @@ typedef DrawRectangle BlitterPair[2];
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 #define PHASE_RESULTS 133
 
 // Shards and frames for each variant (The Broken Seal's
@@ -64,8 +64,8 @@ void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
@@ -175,13 +175,13 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = 2;
   if (effect->variant == 1)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 16)
@@ -265,8 +265,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmWin0HBlankDma);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

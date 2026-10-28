@@ -35,7 +35,7 @@
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -129,7 +129,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (effect->side == 1)
     REG_BG2X = -0x7000;
 
@@ -310,6 +310,6 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

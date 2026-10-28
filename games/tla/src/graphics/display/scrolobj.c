@@ -1,7 +1,7 @@
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct DisplayScrollObject {
   u32 attr01;
@@ -49,7 +49,7 @@ void Func_081a0cac(void) {
     gDisplayScroll_Position++;
 }
 
-/// A scheduler callback added by Func_081a0e0c: draws each line entering the
+/// A task added by Func_081a0e0c: draws each line entering the
 /// credits sixteen rows ahead of the visible top. A line table value of 255
 /// ends the text, and blank rows follow it.
 void Func_081a0d78(void) {
@@ -83,7 +83,7 @@ void Func_081a0d78(void) {
 /// top: counts the line table's 255 page marks up to the page asked for (at
 /// most 500 lines, stopping at the end mark 0) and sets the scroll there, then
 /// builds the sprite table and its tiles, adds Func_081a0cac and Func_081a0d78
-/// to the scheduler and draws the first 32 lines blank.
+/// to the task table and draws the first 32 lines blank.
 void Func_081a0e0c(s32 page) {
   /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 178
    * instructions differ in tla-en. */
@@ -172,8 +172,8 @@ void Func_081a0e0c(s32 page) {
   }
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_081a0cac, 0xc80);
-  Scheduler_AddOrUpdateCallback((s32)Func_081a0d78, 0x480);
+  Task_Add((s32)Func_081a0cac, TASK_PASS_FRAME);
+  Task_Add((s32)Func_081a0d78, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }

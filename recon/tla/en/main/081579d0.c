@@ -81,8 +81,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -116,7 +116,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The balls start above the canvas to the right; no dot is alive yet.
   for (i = 0; i != 32; i++) {
@@ -199,7 +199,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   } while (frame != 96);
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

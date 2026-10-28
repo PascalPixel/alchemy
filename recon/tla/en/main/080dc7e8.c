@@ -70,7 +70,7 @@ void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 void WaitFrames(s32 frames);
 void Func_080dbb40(void);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Remove(void (*callback)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -108,7 +108,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   }
   event->unkcb7 = 0;
   Func_080dbb40();
-  Scheduler_RemoveCallback(BattleEffect_UpdateAllEffectSlots);
+  Task_Remove(BattleEffect_UpdateAllEffectSlots);
   map->x = work->x;
   map->y = work->y;
   map->z = work->z;

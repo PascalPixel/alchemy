@@ -111,7 +111,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -298,7 +298,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     }
 
     // Tear down: the formation bursts where it stands and is released.
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     Func_0816467c(1, focus.x, focus.y);

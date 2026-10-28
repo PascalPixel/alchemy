@@ -21,7 +21,7 @@ struct CloakCaster {
   void (*hook)(void);
 };
 
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Remove(void (*callback)(void));
 void FieldEffect_CheckCloakTile(void);
 void WaitFrames(s32 frames);
 
@@ -41,7 +41,7 @@ void Func_080debd8(void) {
   u32 i;
 
   Sound_PlayFar(SE_CLOAK_END);
-  Scheduler_RemoveCallback(FieldEffect_CheckCloakTile);
+  Task_Remove(FieldEffect_CheckCloakTile);
   Object_SetMode((struct ObjectRuntime *)caster, 0);
   caster->hook = 0;
 

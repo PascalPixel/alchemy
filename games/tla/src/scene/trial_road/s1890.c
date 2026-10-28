@@ -39,7 +39,7 @@ void Func_02001904(void) {
      * load (differ 2 without it). */
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_020007b4, priority);
+    Task_Add(Func_020007b4, priority);
   }
 }
 

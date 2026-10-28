@@ -27,7 +27,7 @@
 #include "battle_effect_work.h"
 #include "battle_display.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -146,7 +146,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
     work->particles[member].variant = 0; // 1 once landed
   work->transferMode = 1;                // clear the canvas on each transfer
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   heights = Data_08196e1c;
   work->shakeFrames = 128;
   Sound_PlayFar(141);
@@ -221,7 +221,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

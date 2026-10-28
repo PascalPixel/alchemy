@@ -29,7 +29,7 @@
 #include "ram_buffer.h"
 #include "system.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "graphics.h"
 #include "transform.h"
 #include "motobj.h"
@@ -155,7 +155,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   } while (i != SHARD_COUNT);
 
   EffectPosition_ProjectScaledBattler(effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75;
 
@@ -252,6 +252,6 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

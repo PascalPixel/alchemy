@@ -52,7 +52,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
@@ -80,8 +80,8 @@ extern char ResourceId_FlashBurstSheet;
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -195,7 +195,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
@@ -439,7 +439,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   // Put the background and the display back.
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;

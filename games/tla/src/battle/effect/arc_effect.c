@@ -10,7 +10,7 @@
 #include "types.h"
 #include "resource.h"
 #include "mem.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "arc_effect.h"
 
@@ -23,13 +23,13 @@ void BattleEffect_StartArcEffect(void) {
   work->age[0] = 999;
   work->age[1] = 999;
   work->target = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_UpdateArcEffect, 1152);
+  Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_EndArcEffect(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->block62;
 
   Resource_ResetEntry(work->resource);
-  Scheduler_RemoveCallback((u32)BattleEffect_UpdateArcEffect);
+  Task_Remove((u32)BattleEffect_UpdateArcEffect);
   Runtime_ReleaseHeapBlock(248);
 }

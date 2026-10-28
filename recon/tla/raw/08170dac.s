@@ -219,7 +219,7 @@ BattleEffect_RunVoidBeam:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_0817100c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #72]
 	movs r3, #239
 	movs r4, #238
@@ -235,7 +235,7 @@ BattleEffect_RunVoidBeam:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08171010
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #140
 	bl Sound_PlayFar
 	movs r3, #238
@@ -832,9 +832,9 @@ BattleEffect_RunVoidBeam:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08171428
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0817142c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #248
 	pop {r3, r5, r6, r7}

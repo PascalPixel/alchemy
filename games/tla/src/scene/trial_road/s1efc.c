@@ -28,7 +28,7 @@ void Func_02001eb0(void) {
       *flags = 3;
       object->y = 0;
     }
-    Scheduler_AddOrUpdateCallback(Func_02001dd4, 0x480);
+    Task_Add(Func_02001dd4, 0x480);
   }
 }
 

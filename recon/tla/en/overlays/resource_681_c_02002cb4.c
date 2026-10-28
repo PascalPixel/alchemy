@@ -15,7 +15,7 @@ struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02004ebc(s32 id, s32 x, s32 z);
 void Func_02002b04(u32 id, s8 mode);
 void Func_02002b8c(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 
 void Func_02002cb4(u8 mode) {
   if (!GameFlag_Test(265)) {
@@ -30,5 +30,5 @@ void Func_02002cb4(u8 mode) {
       Func_02002b04(id, mode);
     }
   }
-  Scheduler_AddOrUpdateCallback(Func_02002b8c, 0x480);
+  Task_Add(Func_02002b8c, 0x480);
 }

@@ -36,5 +36,5 @@ void Func_020026a0(void) {
     leader->update = Func_020023cc;
   }
   Func_020021d4();
-  Scheduler_AddOrUpdateCallback(Func_02001c5c, 0x480);
+  Task_Add(Func_02001c5c, 0x480);
 }

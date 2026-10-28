@@ -6,7 +6,7 @@
 // pointer) keeps 112. Left: in the spawn loop the 1 and the ring counter swap
 // r5 and r7, and scheduling rows (the prologue's heap loads, the palette copy's
 // address shift, the frame-20 block).
-// 2026-10-26: differ 120 of 513, with Scheduler_AddOrUpdateCallback returning
+// 2026-10-26: differ 120 of 513, with Task_Add returning
 // s32 as defined.
 // Draft (tla-en): listing 513 instructions, draft 513, common 442, differ 142.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
@@ -108,8 +108,8 @@ extern const u8 Data_08198df8[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Func_0815f0a0(s32 resourceId);
 void Sound_PlayFar(s32 cue);
@@ -174,7 +174,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     s32 spawned;
     work->transferMode = 2;
     work->transferValue = 75;
-    Scheduler_AddOrUpdateCallback(
+    Task_Add(
         (s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     spawned = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
@@ -344,6 +344,6 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -35,8 +35,8 @@ void RenderOutput_ClearListFar(void *window);
 void ItemMenu_Close(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
-void Scheduler_EnableOverlayCallbacksWithFlags(void);
-void Scheduler_DisableOverlayCallbacksWithFlags(void);
+void Menu_SuspendFieldTasks(void);
+void Menu_ResumeFieldTasks(void);
 void Palette_LightenHighlight(s32 paletteNumber);
 void UiWork_SetAltFlagAndClearTableFar(s32 flag);
 s32 Party_SumDjinnCountsFar(s32 owner);
@@ -75,7 +75,7 @@ s32 Func_080fe274(void) {
   WaitFrames(1);
   saved = *(u16 *)&transition->active;
   transition->active = 17;
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   UiWindow_InitializeWork(0);
   page = &state->page;
   *page = 0;
@@ -103,7 +103,7 @@ s32 Func_080fe274(void) {
   MenuIcon_ReleaseSlots();
   RenderOutput_ClearListFar(state->statusWindow);
   MenuIcon_ReleaseObjects();
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
   UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Func_08038290();

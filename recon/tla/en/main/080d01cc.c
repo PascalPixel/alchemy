@@ -12,7 +12,7 @@
 // the value's operands swapped (50), the push written out with q->count
 // (42) and with the entry taken after the count's store (106).
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "irq.h"
@@ -66,8 +66,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
-    Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
-    Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
+    Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+    Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -83,7 +83,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateDissolve, 0x480);
+    Task_Add(DisplayTransition_UpdateDissolve, TASK_PASS_VBLANK);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     state->start = 0;
@@ -101,14 +101,14 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     display->secondLine = 80;
     WaitFrames(1);
     if (variant == 0) {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0x480);
+      Task_Add(DisplayTransition_Update, TASK_PASS_VBLANK);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0x480);
+      Task_Add(DisplayTransition_UpdateFromCentre, TASK_PASS_VBLANK);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;

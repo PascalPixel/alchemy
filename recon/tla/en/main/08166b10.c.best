@@ -26,7 +26,7 @@
 #include "system.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "effect_step.h"
 #include "battle_effect.h"
@@ -154,7 +154,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // 32 flashes on rings, two pixels apart.
   i = 0;
@@ -429,7 +429,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
     frame++;
   } while (frame != 102);
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

@@ -71,7 +71,7 @@ void Func_02000860(void) {
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_020007d8, priority);
+    Task_Add(Func_020007d8, priority);
   }
   Func_02002170();
   Func_02002170();

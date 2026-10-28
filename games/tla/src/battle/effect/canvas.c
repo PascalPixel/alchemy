@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "battle_work.h"
 #include "battle_display.h"
 #include "bg_scroll.h"
@@ -64,7 +64,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
   WaitFrames(1);
   REG_BG2CNT = bgControl | 0x784;
@@ -158,7 +158,7 @@ void BattleEffect_EndCanvasLayer(void) {
   gCameraSceneParameters[4] = 120;
   REG_BG2CNT = 0x787;
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   REG_BLDCNT = 0;

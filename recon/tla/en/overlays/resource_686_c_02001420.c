@@ -22,7 +22,7 @@ s32 GameFlag_Test();
 s32 Resource_FindFreeEntry();
 s32 VramCache_Load();
 void MemFree();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 
 s32 Func_02001420(void) {
   s32 r7, v0, r6, r8, r5, v1, r2, v2, r0, ip, r3;
@@ -56,7 +56,7 @@ L_0200945e:
   FIELD_AT(r7, s32, 12) = FIELD_AT(r8, s32, 12);
   FIELD_AT(67108938, u16, 0) = 0x1b1f;
   FIELD_AT(67108864, u16, 0) = (FIELD_AT(67108864, u16, 0)) | (32768);
-  Scheduler_AddOrUpdateCallback((s32)Func_020012c4, 0x480);
+  Task_Add((s32)Func_020012c4, 0x480);
   r0 = 0x10000;
   ip = 482 + (s32)(s32)&gAdventure;
   if ((u32)(((FIELD_AT(482 + (s32)(s32)&gAdventure, u16, 0)) - 1) << 16) >

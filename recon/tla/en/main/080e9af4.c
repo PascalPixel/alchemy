@@ -20,7 +20,7 @@
 #include "object_runtime.h"
 #include "adventure.h"
 #include "event_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "effect_sprite.h"
@@ -103,7 +103,7 @@ void Func_080e9af4(void) {
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
-  Scheduler_AddOrUpdateCallback(Func_080e9940, 0x480);
+  Task_Add(Func_080e9940, TASK_PASS_VBLANK);
 
   found = 0;
   if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
@@ -140,7 +140,7 @@ void Func_080e9af4(void) {
       WaitFrames(1);
     }
     WaitFrames(5);
-    Scheduler_RemoveCallback(Func_080e9940);
+    Task_Remove(Func_080e9940);
     Resource_ResetEntry(work->resource);
     Runtime_ReleaseHeapBlock(92);
   } else {

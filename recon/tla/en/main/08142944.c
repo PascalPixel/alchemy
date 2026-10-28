@@ -43,7 +43,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
@@ -101,8 +101,8 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -162,7 +162,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -359,7 +359,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
@@ -368,7 +368,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     gBgScroll[1].y = work->savedBg1Y;
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
   } else {
     BattleEffect_EndCanvasLayer();
   }

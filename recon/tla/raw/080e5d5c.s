@@ -504,7 +504,7 @@ Func_080e5d5c:
 	movs r1, #144
 	ldr r0, .L_080e61a4
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #186
 	movs r4, #0
 	ldrsh r3, [r6, r4]
@@ -540,7 +540,7 @@ Func_080e5d5c:
 	bne .L_080e61a8
 .L_080e61b6:
 	ldr r0, .L_080e62ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r3, #15
 	mov r10, r3
 .L_080e61c0:
@@ -577,7 +577,7 @@ Func_080e5d5c:
 	mov r8, r0
 	lsls r1, r1, #3
 	ldr r0, .L_080e62f0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #186
 	movs r4, #0
 	ldrsh r3, [r6, r4]
@@ -649,7 +649,7 @@ Func_080e5d5c:
 	bne .L_080e622a
 .L_080e629a:
 	ldr r0, .L_080e62f0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #114

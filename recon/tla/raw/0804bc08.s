@@ -226,7 +226,7 @@ Func_0804bc08:
 	movs r1, #144
 	ldr r0, .L_0804bfc8
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0804bdc2:
 	ldr r2, [sp, #88]
 	ldr r3, [sp, #80]
@@ -2046,7 +2046,7 @@ Func_0804bc08:
 	ldr r0, [sp, #52]
 	bl Resource_ResetEntry
 	ldr r0, .L_0804cc84
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r3, [sp, #36]
 	ldr r2, [r3]
 	b .L_0804cc88

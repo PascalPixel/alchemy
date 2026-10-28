@@ -58,7 +58,7 @@ BattleEffect_RunProcne:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814711c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r5, [sp, #100]
 	movs r3, #0
 	str r3, [sp, #60]
@@ -1640,7 +1640,7 @@ BattleEffect_RunProcne:
 	cmp r0, #9
 	bne .L_08147a98
 	ldr r0, .L_08147ad0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

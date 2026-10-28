@@ -78,8 +78,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -186,8 +186,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
-  Scheduler_AddOrUpdateCallback(Display_ApplyBg2Affine, 0xcff);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
+  Task_Add(Display_ApplyBg2Affine, 0xcff);
   projected = work->sheet;
   vertices = work->sheet + 0x800;
   mesh = work->sheet + 0xc00;
@@ -259,8 +259,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       Func_08143354();
     }
     if (frame == 34) {
-      Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-      Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingBlock2Transfer,
+      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+      Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
                                     0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
       Iwram_ClearWords(canvas, 0x3c00);
@@ -271,9 +271,9 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       REG_BG2CNT = 0x784;
     }
     if (frame == 35) {
-      Scheduler_RemoveCallback(Display_ApplyBg2Affine);
-      Scheduler_RemoveCallback(BattleEffect_ProcessPendingBlock2Transfer);
-      Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+      Task_Remove(Display_ApplyBg2Affine);
+      Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
+      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                                     0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
       IO_WRITE_QUEUE_PUSH(0x0400002c, -0x1000, 0x30000);
@@ -469,6 +469,6 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   }
   ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

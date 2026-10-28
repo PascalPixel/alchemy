@@ -47,7 +47,7 @@ BattleEffect_RunFume:
 	lsls r1, r1, #4
 	ldr r0, .L_0817c71c
 	str r5, [sp, #64]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #0
 	str r2, [sp, #52]
 	str r2, [sp, #48]
@@ -686,7 +686,7 @@ BattleEffect_RunFume:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817cc2c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}

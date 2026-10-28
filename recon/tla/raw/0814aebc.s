@@ -128,7 +128,7 @@ BattleEffect_RunSleep:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814b154
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #142
 	bl Sound_PlayFar
 	movs r4, #0
@@ -311,7 +311,7 @@ BattleEffect_RunSleep:
 	b .L_0814afcc
 .L_0814b126:
 	ldr r0, .L_0814b154
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -47,7 +47,7 @@ struct BattleFxScene {
   u8 unk710[0xe4];
 };
 
-/// Scheduler callback: updates the scene's 24 effect slots.
+/// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
   struct BattleFxScene *scene;
   struct EffectSlot *slot;

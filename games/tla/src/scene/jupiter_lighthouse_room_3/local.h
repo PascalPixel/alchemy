@@ -33,7 +33,7 @@ void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void Scene_SetArrivalFlags(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02002360(struct ObjectRuntime *object, s32 a);
 void Func_02002368();
 void Func_020023b0(s32 id, s32 x, s32 z);

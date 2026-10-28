@@ -92,7 +92,7 @@ BattleEffect_RunBolt:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08155630
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #138
 	bl Sound_PlayFar
 	movs r0, #0
@@ -593,7 +593,7 @@ BattleEffect_RunBolt:
 	b .L_08155450
 .L_08155814:
 	ldr r0, .L_08155858
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

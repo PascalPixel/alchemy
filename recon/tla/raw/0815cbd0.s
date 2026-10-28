@@ -69,7 +69,7 @@ BattleEffect_RunSpiderWeb:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815cc98
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #143
 	bl Sound_PlayFar
 	movs r3, #32
@@ -227,7 +227,7 @@ BattleEffect_RunSpiderWeb:
 	b .L_0815cc66
 .L_0815cd9c:
 	ldr r0, .L_0815cdd8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #240
 	ldr r5, .L_0815cddc
 	lsls r1, r1, #6
@@ -243,7 +243,7 @@ BattleEffect_RunSpiderWeb:
 	mov r2, r9
 	str r3, [r2, #28]
 	ldr r0, .L_0815cde4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r0, r9
 	bl SummonEffect_RunCanvasMode1
 	add sp, #20

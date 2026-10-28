@@ -12,9 +12,9 @@ void Func_02000c34(void) {
   Scene_CamBounds(0x12c0000, -1, 0xf80000, 1);
   Scene_SetPositionAndCommit(16, 254, 248);
   Scene_SetPositionAndCommit(16, 352, 240);
-  Scheduler_RemoveCallbackFar(Func_02002180);
+  Task_RemoveFar(Func_02002180);
   FieldEvent_WaitFrames(10);
-  Scheduler_RemoveCallbackFar(Func_02001c5c);
+  Task_RemoveFar(Func_02001c5c);
   WaitFrames(1);
   Func_02004090(17, 0, 0);
   FieldEvent_WaitFrames(40);
@@ -43,9 +43,9 @@ void Func_02000d50(void) {
   Scene_CamBounds(0xf60000, -1, 0x2680000, 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
-  Scheduler_RemoveCallbackFar(Func_02002180);
+  Task_RemoveFar(Func_02002180);
   FieldEvent_WaitFrames(10);
-  Scheduler_RemoveCallbackFar(Func_02001c5c);
+  Task_RemoveFar(Func_02001c5c);
   WaitFrames(1);
   Func_02004090(22, 0, 0);
   FieldEvent_WaitFrames(20);

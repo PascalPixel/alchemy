@@ -24,11 +24,11 @@ Func_081a06e0:
 	strh r2, [r7]
 	strb r2, [r3]
 	adds r6, r0, #0
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_081a0758
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #64
 	movs r5, #128
 	lsls r5, r5, #19

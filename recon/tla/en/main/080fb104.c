@@ -56,7 +56,7 @@ s32 GameFlag_Test(s32 flag);
 void Func_080fac58(void);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 void Func_080fabe0(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
@@ -137,7 +137,7 @@ s32 Func_080fb104(void) {
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
                       menu->paneOwner[0]);
         if (commandIndex == ITEM_COMMAND_GIVE)
-          Scheduler_AddOrUpdateCallback(Func_080fabe0, 0x480);
+          Task_Add(Func_080fabe0, 0x480);
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,

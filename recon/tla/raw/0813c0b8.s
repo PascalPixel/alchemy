@@ -246,7 +246,7 @@ BattleEffect_RunDouse:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0813c594
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r0, r10
 	ldr r1, [r0, #24]
 	cmp r1, #0
@@ -297,7 +297,7 @@ BattleEffect_RunDouse:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0813c598
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #0
 	str r0, [sp, #24]
 	mov r2, r10
@@ -629,9 +629,9 @@ BattleEffect_RunDouse:
 	b .L_0813c308
 .L_0813c564:
 	ldr r0, .L_0813c594
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0813c598
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

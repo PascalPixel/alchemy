@@ -19,5 +19,5 @@ void Func_02000f98(void) {
 
   Func_02001c0c(1, 0, Func_02000ef8);
   priority = 0xc80;
-  Scheduler_AddOrUpdateCallback(Func_02000f58, priority);
+  Task_Add(Func_02000f58, priority);
 }

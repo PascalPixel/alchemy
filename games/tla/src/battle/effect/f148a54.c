@@ -2,7 +2,7 @@
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "motobj.h"
@@ -22,7 +22,6 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 // the particles that hold each target's seat
-#define CALLBACK_ORDER 0xc80
 
 extern char ResourceId_VortexSheet;
 
@@ -103,10 +102,10 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, CALLBACK_ORDER);
+  Task_Add(Camera_ApplyPhasedDelta, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(164);
 
   for (frame = 0; frame != gData_081979a8[effect->variant * 2 + 1]; frame++) {
@@ -182,8 +181,8 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

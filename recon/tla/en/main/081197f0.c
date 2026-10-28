@@ -80,7 +80,7 @@ extern u8 MsgPartyDefeated[];
 extern u8 MsgGoesDownInDefeat[];
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
@@ -92,9 +92,9 @@ void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
 void WaitFrames(s32 frames);
 void BattleParty_AssignMemberSlots(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
-void Scheduler_SuspendTasks(s32 mode);
+s32 Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
+void Task_SuspendAll(s32 mode);
 void Sound_PlayFar(s32 cue);
 void Sound_LoadPresetParameters(s32 preset);
 void Func_08118c68(void);
@@ -179,7 +179,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   Runtime_AllocateBlock(44, 0x280);
   result = 0;
   Iwram_ClearWords(Ram_HeapSlots->unkd0[2], 0x7c8);
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   transition->targetYaw = 0x2000;
   transition->frames = 0;
   transition->flag = 1;
@@ -232,7 +232,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = 0;
   }
-  Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0x47f);
+  Task_Add(BattlePresentation_UpdateCamera, 0x47f);
 
   cue = gAdventure.sceneCue;
   if (cue != 0) {
@@ -281,7 +281,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   Func_08125d74(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Scheduler_AddOrUpdateCallback(Func_0811b9fc, 0x480);
+  Task_Add(Func_0811b9fc, 0x480);
 
   for (round = 1;; round++) {
     if (Func_0811a39c(1, 0) == 0)
@@ -430,7 +430,7 @@ aborted:
   scripted = enemyGroup - 74;
 aborted_scripted:
   BattlePres_ClearLinkPayload();
-  Scheduler_SuspendTasks(0);
+  Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
   GameFlag_SetBit(1000);
@@ -470,7 +470,7 @@ finished:
   Func_08124cc0();
   DjinnRecovery_CountDown();
   gAdventure.battleStart = 0;
-  Scheduler_RemoveCallback(Func_0811b9fc);
+  Task_Remove(Func_0811b9fc);
   Func_081263f0();
   return result;
 }

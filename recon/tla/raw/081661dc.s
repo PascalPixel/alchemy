@@ -116,7 +116,7 @@ BattleEffect_RunAnnihilation:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0816658c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, [sp, #40]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -444,7 +444,7 @@ BattleEffect_RunAnnihilation:
 	b .L_08166300
 .L_08166562:
 	ldr r0, .L_0816658c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}

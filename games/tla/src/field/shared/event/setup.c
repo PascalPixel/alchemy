@@ -11,7 +11,7 @@
 #include "event_work.h"
 #include "adventure.h"
 #include "object_runtime.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "game_flags.h"
 #include "system.h"
 
@@ -50,7 +50,7 @@ void EventRuntime_Start(void) {
   state->messageActor = 0xffff;
   state->choice = -1;
   state->messageState = -1;
-  Scheduler_AddOrUpdateCallback((s32)EventRuntime_UpdateWaitMode, 0x480);
+  Task_Add((s32)EventRuntime_UpdateWaitMode, TASK_PASS_VBLANK);
   GameFlag_ClearBit(0x132);
   {
     struct Adventure *party = &gAdventure;
@@ -63,7 +63,7 @@ void EventRuntime_Start(void) {
 }
 
 void EventRuntime_End(void) {
-  Scheduler_RemoveCallback((u32)EventRuntime_UpdateWaitMode);
+  Task_Remove((u32)EventRuntime_UpdateWaitMode);
   {
     struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pointer handoff keeps its load before the override offset.

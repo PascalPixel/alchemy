@@ -29,7 +29,7 @@
 #include "battle_display.h"
 #include "battle_event.h"
 #include "battle_party.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -166,7 +166,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     }
     if (plan->presentationFlags & 0x20000)
       work.side ^= 1;
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
+    Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
     if (plan->presentationFlags & 0x8000)
       BattleEffect_RunSceneEffectFar((s32 *)&work);
     else if (plan->presentationFlags & 0x4000)

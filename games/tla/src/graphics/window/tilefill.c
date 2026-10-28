@@ -8,16 +8,16 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "window.h"
 
-void Scheduler_ScheduleCallbackAAfterFrames(void) {
-  Scheduler_AddOrUpdateCallback((s32)PaletteGlow_UpdateSine, 0x480);
+void PaletteGlow_Start(void) {
+  Task_Add((s32)PaletteGlow_UpdateSine, TASK_PASS_VBLANK);
 }
 
-void Scheduler_ScheduleCallbackA(void) {
-  Scheduler_RemoveCallback((u32)((s32)PaletteGlow_UpdateSine));
+void PaletteGlow_Stop(void) {
+  Task_Remove((u32)((s32)PaletteGlow_UpdateSine));
 }
 
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,

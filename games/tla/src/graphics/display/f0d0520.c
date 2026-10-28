@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_reg.h"
 #include "irq.h"
 #include "display_transition.h"
@@ -35,8 +35,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
-    Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
-    Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
+    Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+    Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     WaitFrames(1);
     state->start = 32;
     state->end = 64;
@@ -50,7 +50,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateDissolve, 0x480);
+    Task_Add(DisplayTransition_UpdateDissolve, TASK_PASS_VBLANK);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -65,14 +65,14 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
      * constant 0 in each store, 126 of 208 instructions differ in tla-en. */
     ((u8 *)state)[0x53f] = 1;
     if (variant == 0) {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0x480);
+      Task_Add(DisplayTransition_Update, TASK_PASS_VBLANK);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = zero;
       state->end = 80;
       state->duration = frames;
       state->step = zero;
     } else {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0x480);
+      Task_Add(DisplayTransition_UpdateFromCentre, TASK_PASS_VBLANK);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = zero;
       state->end = 80;

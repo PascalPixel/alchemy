@@ -35,7 +35,7 @@ struct Vec3 {
 };
 
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void Func_02002c88(void);
 void Func_02002de4(void);
@@ -55,7 +55,7 @@ void Func_02003164(const struct Vec3 *origin) {
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_02002de4, priority);
+    Task_Add(Func_02002de4, priority);
   }
   Func_0200362c(139);
   state = 0;

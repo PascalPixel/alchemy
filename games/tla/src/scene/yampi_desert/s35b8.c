@@ -36,7 +36,7 @@ void Func_020035d8(void) {
   object->scaleY = 0xb333;
   object->radius = 8;
   Func_02002d40();
-  Scheduler_AddOrUpdateCallback(Func_02001e58, 0x480);
+  Task_Add(Func_02001e58, 0x480);
   if (gAdventure.entrance == 2) {
     GameFlag_ClearBit(0xa29);
     GameFlag_SetBit(0xa2a);

@@ -76,8 +76,8 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
@@ -172,7 +172,7 @@ void Func_080e572c(void) {
   work->paletteMode = 1;
   work->nextBurst = 0;
   work->newBursts = 0;
-  Scheduler_AddOrUpdateCallback(Func_080e4d9c, 0x480);
+  Task_Add(Func_080e4d9c, 0x480);
   kind = scene->fieldKind;
   pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
   frame = 0;
@@ -183,7 +183,7 @@ void Func_080e572c(void) {
     EventRuntime_RunPendingEvent(pending, work->shake, frame);
     frame++;
   }
-  Scheduler_RemoveCallback(Func_080e4d9c);
+  Task_Remove(Func_080e4d9c);
   Resource_ResetEntry(sparkEntry);
   Resource_ResetEntry(burstEntry);
   BattleEffect_PrepareBufferInterpolation();

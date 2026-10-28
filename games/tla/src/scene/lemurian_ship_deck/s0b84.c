@@ -14,7 +14,7 @@ extern const u8 gData_020021e8[];
 extern const u8 gData_0200221c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
@@ -62,7 +62,7 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority) {
   /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
    * arguments up in their own order and keeps each call's constants; a direct
    * call builds the costly constant first or shares it (differ 2 or more). */
-  Scheduler_AddOrUpdateCallback(callback, priority);
+  Task_Add(callback, priority);
 }
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
@@ -101,9 +101,9 @@ void Func_020002cc(void) {
         (s32)gData_0200221c);
   Event_StartScreenTransition();
   gData_020024b4 = 0;
-  Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000258, 0x480);
+  Value2(Task_Add, (s32)Func_02000258, 0x480);
   gData_020024b0 = 0;
-  Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000288, 0x480);
+  Value2(Task_Add, (s32)Func_02000288, 0x480);
   Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x21e0000, 0x2c0000, 0x18c0000,
         1);
@@ -234,9 +234,9 @@ void Func_020006e4(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gData_020024b4 = 0;
-  Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000258, 0x480);
+  Value2(Task_Add, (s32)Func_02000258, 0x480);
   gData_020024b0 = 0;
-  Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000288, 0x480);
+  Value2(Task_Add, (s32)Func_02000288, 0x480);
   Value3(Func_0200204c, 6, 0x102, 30);
   Call2((void (*)())Func_02002044, 6, 0x4000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);

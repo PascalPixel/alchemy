@@ -12,7 +12,7 @@
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 void Sound_PlayFar(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
@@ -56,7 +56,7 @@ void Func_080dd950(void) {
   }
   if (*flag != 0) {
     Sound_PlayFar(167);
-    Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
+    Task_Remove(FieldEffect_WatchLeaderDistance);
     zero = 0;
     *flag = zero;
     *(s16 *)(state + 0xca6) = zero;

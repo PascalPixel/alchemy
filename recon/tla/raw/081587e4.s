@@ -89,7 +89,7 @@ BattleEffect_RunGround:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08158b44
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r5, [sp, #56]
 	movs r7, #0
 	ldr r0, [r5, #8]
@@ -617,7 +617,7 @@ BattleEffect_RunGround:
 	b .L_08158916
 .L_08158cac:
 	ldr r0, .L_08158cdc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

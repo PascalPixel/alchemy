@@ -14,7 +14,7 @@ void Func_020020fc(void) {
       FieldEvent_WaitFrames(10);
       Camera_MoveWithinMapBounds(0xe80000, -1, 0x1880000, 1);
       Func_02002eb4();
-      Scheduler_AddOrUpdateCallback(Func_02001f7c, 0x480);
+      Task_Add(Func_02001f7c, 0x480);
       FieldEvent_WaitFrames(40);
       Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02002eb4();
@@ -37,7 +37,7 @@ void Func_020021d4(void) {
 
     if (Func_02002dcc(callback) == -1) {
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-      Scheduler_AddOrUpdateCallback(callback, 0x480);
+      Task_Add(callback, 0x480);
       AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       AnkohlRuins_FlagSet(381);

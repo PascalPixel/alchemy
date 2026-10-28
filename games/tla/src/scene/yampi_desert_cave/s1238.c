@@ -9,7 +9,7 @@ void GameFlag_ClearBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020011e0(void);
 void Func_020018a8(s32 id, s32 x, s32 z);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void WaitFrames(s32 frames);
 
 /// The chest that follows the step count: when the tracked object stands on
@@ -32,7 +32,7 @@ void Func_02001238(s32 mode) {
   if (px / 16 != x || pz / 16 != z)
     return;
   if (mode == 1) {
-    Scheduler_RemoveCallbackFar(Func_020011e0);
+    Task_RemoveFar(Func_020011e0);
     Func_020018a8(16, 0, 0);
   }
   if (mode == 2) {

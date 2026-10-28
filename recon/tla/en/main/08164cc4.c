@@ -41,7 +41,7 @@
 #include "battle_effect_work.h"
 #include "battle_session.h"
 #include "bg_scroll.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "fixed_math.h"
 #include "input.h"
 #include "io_reg.h"
@@ -249,9 +249,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Func_08163c2c(0, 0);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
   if (mode == 1) {
@@ -310,8 +310,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceBg2OnInterval, 0xcff);
-  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_FRAME + 127);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The ground dissolves: each column starts at its own random row, and the
   // rows go faster and faster.
@@ -356,7 +356,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
     work->transferMode = 3;
     work->transferValue = 0x02020202;
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
+    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
     transition->active = 1;
@@ -534,9 +534,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != STREAM_FRAMES);
     WaitFrames(1);
     transition->active = 0;
-    Scheduler_RemoveCallback(BattleEffect_AdvanceBg2OnInterval);
-    Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
-    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_AdvanceBg2OnInterval);
+    Task_Remove(BattleEffect_ArmPaletteHBlankDma);
+    Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
@@ -583,7 +583,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   work->transferMode = 1;
   work->transferValue = 0x10101010;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != BLAST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
@@ -713,7 +713,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   if (mode == 0)
     ResourceObject_ReleaseFar(work->objects[0]);

@@ -2852,7 +2852,7 @@ Func_02003284:
 	str r7, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_0200b538
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #8
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

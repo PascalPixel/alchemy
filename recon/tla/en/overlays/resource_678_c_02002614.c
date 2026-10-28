@@ -22,7 +22,7 @@ struct SwingPoint {
 extern u8 gData_020023c4[];
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_020025d4(void);
 
 void Func_02002614(u16 *points, u16 *values, s32 arg) {
@@ -65,5 +65,5 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
   }
-  Scheduler_AddOrUpdateCallback(Func_020025d4, 0x480);
+  Task_Add(Func_020025d4, 0x480);
 }

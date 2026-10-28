@@ -13,7 +13,7 @@
 // (here after), and builds -13 after the byte load.
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuIconWork {
   u8 unk000[0x220];
@@ -56,5 +56,5 @@ void Func_081051a8(void) {
     menu->frame[i] = 0x4000;
   }
   menu->active = 1;
-  Scheduler_AddOrUpdateCallback(MenuIcon_UpdateTransforms, 0x480);
+  Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
 }

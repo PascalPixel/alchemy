@@ -35,7 +35,7 @@ struct ObjectRuntime *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct ObjectRuntime *object, const u8 *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02002918(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02002838(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -94,7 +94,7 @@ void Func_02000d2c(void) {
     clod->bounce = 0x8000;
   }
   Func_02002870();
-  Scheduler_AddOrUpdateCallback(Func_02000ca0, 0x480);
+  Task_Add(Func_02000ca0, 0x480);
   WaitFrames(40);
   Func_02002918(0xe666, 0x1ccc);
   Camera_MoveWithinMapBounds(0x1500000, -1, 0x1180000, 1);
@@ -104,9 +104,9 @@ void Func_02000d2c(void) {
     WaitFrames(8);
     row -= 5;
   }
-  Scheduler_AddOrUpdateCallback(Func_02000c24, 0x480);
+  Task_Add(Func_02000c24, 0x480);
   WaitFrames(60);
-  Scheduler_AddOrUpdateCallback(Func_02000cec, 0x480);
+  Task_Add(Func_02000cec, 0x480);
   WaitFrames(24);
   FieldEvent_WaitFrames(120);
   Func_020028a0();

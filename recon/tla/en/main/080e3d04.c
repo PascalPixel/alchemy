@@ -105,8 +105,8 @@ s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -284,7 +284,7 @@ void Func_080e3d04(void) {
   }
   WaitFrames(1);
   work->emitting = 1;
-  Scheduler_AddOrUpdateCallback(Func_080e38c8, 0x480);
+  Task_Add(Func_080e38c8, 0x480);
   for (i = 0; i < 80; i++) {
     WaitFrames(1);
     if (work->hit != 0) {
@@ -312,7 +312,7 @@ void Func_080e3d04(void) {
       break;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_080e38c8);
+  Task_Remove(Func_080e38c8);
   Resource_ResetEntry(dropSlot);
   Resource_ResetEntry(puffSlot);
 end:

@@ -28,7 +28,7 @@
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -82,8 +82,8 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);
@@ -166,7 +166,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != effect->variant * 16 + 86; frame++) {
     // Frame 0: the swords set out from 80 pixels above and beside the
@@ -360,7 +360,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

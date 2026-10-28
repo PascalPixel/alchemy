@@ -73,8 +73,8 @@ extern char ResourceId_SmokeSheet;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
@@ -137,7 +137,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   casterObject = GetBattleObjectSlotFar(effect->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -243,7 +243,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   }
 
   battle[0x866] = 0;
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -2,7 +2,7 @@
 #include "palbuf.h"
 #include "dma.h"
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 
@@ -16,11 +16,11 @@ void PaletteFade_Initialize(void) {
   Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
   Palette_Transform(0x10000, buffer->palette, buffer->target, 0);
   operation = 1152;
-  Scheduler_AddOrUpdateCallback((s32)(PaletteFade_Update), operation);
+  Task_Add((s32)(PaletteFade_Update), operation);
 }
 
 void PaletteFade_Release(void) {
-  Scheduler_RemoveCallback((u32)((s32)&PaletteFade_Update));
+  Task_Remove((u32)((s32)&PaletteFade_Update));
   Runtime_ReleaseHeapBlock(0x80);
 }
 

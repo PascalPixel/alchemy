@@ -3,7 +3,7 @@
 // field (resources 0x1e7, FieldEffect_BowDraw, and 0x1e6,
 // FieldEffect_FlamingArrow): the bow and arrow sprites before the caster, the
 // canvas sprite, palette 14 a ramp of blues, then Func_080e1678 runs as a
-// scheduler callback until its counter reaches 999; a result other than -1 is
+// task until its counter reaches 999; a result other than -1 is
 // stored in the event work at 0xd30. Differ 58 of 370: instruction order
 // only, the native issuing loads earlier than this (the sprite's byte 9, the
 // caster's x, the second half of 0x7c00) at about a dozen places. The entry
@@ -14,7 +14,7 @@
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct BowEntry {
   u8 unk00[24];
@@ -165,10 +165,10 @@ void Func_080e1f2c(void) {
   work->result = -1;
   work->counter = 0;
   work->unk426 = 0;
-  Scheduler_AddOrUpdateCallback(Func_080e1678, 0x480);
+  Task_Add(Func_080e1678, TASK_PASS_VBLANK);
   while (work->counter != 999)
     WaitFrames(1);
-  Scheduler_RemoveCallback(Func_080e1678);
+  Task_Remove(Func_080e1678);
   if (work->done != 0 && work->result != -1)
     event[0xd30] = work->result;
   Resource_ResetEntry(arrowSlot);

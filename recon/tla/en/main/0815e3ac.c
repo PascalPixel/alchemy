@@ -100,8 +100,8 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
@@ -235,7 +235,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   // Each transfer leaves half the last frame behind.
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
   REG_BG1CNT = 0x1f81;
@@ -367,7 +367,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;

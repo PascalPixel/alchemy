@@ -71,7 +71,7 @@ void Func_02005594(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Scheduler_AddOrUpdateCallback(Func_02002ccc, 0x480);
+  Task_Add(Func_02002ccc, 0x480);
   for (i = 0; i <= 7; i++) {
     u8 *field = &Object_GetById(i + 18)->field5c;
     /* FAKEMATCH: the pin keeps the 2 in the loop, built after the field's

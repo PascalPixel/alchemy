@@ -1,7 +1,7 @@
 #include "kibombo.h"
 
 void Func_02003610(void) {
-  Scheduler_RemoveCallbackFar(Func_02002ccc);
+  Task_RemoveFar(Func_02002ccc);
   WaitFrames(1);
   Func_02005bb4();
   FieldEvent_WaitFrames(40);

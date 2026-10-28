@@ -1,5 +1,5 @@
 // Draft of BattleEffect_RunCatastrophe, decompiled from the listing: differ 4796 of
-// 4580 (draft 4586; 2026-10-26, with the loaders' and the scheduler's s32
+// 4580 (draft 4586; 2026-10-26, with the loaders' and Task_Add's s32
 // returns as defined), the same 321 calls and control flow; allocation differs.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the loop's test, which
@@ -73,8 +73,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -258,7 +258,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = Ram_HeapSlots->unk64[1];
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(0, 0);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
@@ -1589,7 +1589,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   } while (frame != 104);
   transition[4] = 0;
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

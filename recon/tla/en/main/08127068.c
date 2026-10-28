@@ -61,7 +61,7 @@ extern u8 ResourceId_BlueRingSheet[];
 extern u8 ResourceId_RedPaletteC[];
 extern u8 ResourceId_VioletPaletteD[];
 
-typedef s32 (*SchedulerCallback)(void);
+typedef s32 (*TaskFunc)(void);
 
 u8 *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -69,7 +69,7 @@ s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 Func_08138048(s32 slot, s32 modeAndFlags);
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
+s32 Task_Add(TaskFunc callback, s32 order);
 s32 Func_08126e00(void);
 s32 Func_08127038(void);
 
@@ -168,6 +168,6 @@ s32 Func_08127068(s32 mode) {
   Io_Write16(0x100, &REG_BG2PD);
   Func_08138048(104, 0x03);
   Func_08138048(188, 0x13);
-  Scheduler_AddOrUpdateCallback(Func_08126e00, 0x480);
-  return Scheduler_AddOrUpdateCallback(Func_08127038, 0x480);
+  Task_Add(Func_08126e00, 0x480);
+  return Task_Add(Func_08127038, 0x480);
 }

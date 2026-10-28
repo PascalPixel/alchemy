@@ -81,7 +81,7 @@ BattleEffect_RunNirvana:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816d3d0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #142
 	bl Sound_PlayFar
 	ldr r0, [sp, #24]
@@ -304,7 +304,7 @@ BattleEffect_RunNirvana:
 	b .L_0816d1ea
 .L_0816d3a4:
 	ldr r0, .L_0816d3d0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

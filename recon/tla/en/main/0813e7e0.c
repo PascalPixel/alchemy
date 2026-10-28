@@ -47,7 +47,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // The battle background's id.
 #define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
@@ -55,8 +55,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
 void Func_08191530(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
@@ -143,7 +143,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
 
@@ -176,7 +176,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   // Put the background and the display back.
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;

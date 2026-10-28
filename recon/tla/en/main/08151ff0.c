@@ -40,7 +40,7 @@
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "graphics.h"
 #include "io_reg.h"
@@ -162,7 +162,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != Data_081983a2[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
@@ -244,7 +244,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

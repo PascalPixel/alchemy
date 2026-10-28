@@ -22,7 +22,7 @@ void ObjectMotion_SetActionVariant();
 s32 Object_GetById();
 void Object_SetModeById();
 void Object_SetWideSprite();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_020000e8();
 void Func_02000a6c();
 void Func_02001b3c();
@@ -34,7 +34,7 @@ s32 Func_02000bdc(void) {
       t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_02000a6c, 0xc80);
+  Call2(Task_Add, (s32)Func_02000a6c, 0xc80);
   Call1(Func_02001cfc, 0);
   t3 = Value1(Object_GetById, 11);
   Call2(ObjectDispatch_SetSingleChildFlags, t3, 0);

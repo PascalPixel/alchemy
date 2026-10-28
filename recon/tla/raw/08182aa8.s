@@ -39,7 +39,7 @@ BattleEffect_RunCoatlicue:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08182c28
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #128
 	ldr r1, [sp, #72]
 	movs r2, #240
@@ -181,7 +181,7 @@ BattleEffect_RunCoatlicue:
 	lsls r1, r1, #4
 	adds r1, #254
 	ldr r0, .L_08182c30
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #32
 	movs r3, #0
 	ldr r0, .L_08182c34
@@ -2837,7 +2837,7 @@ BattleEffect_RunCoatlicue:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_08184274
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r2, .L_08184278
 	movs r3, #120
 	str r3, [r2, #16]
@@ -3234,7 +3234,7 @@ BattleEffect_RunCoatlicue:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081843f8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #164
 	pop {r3, r5, r6, r7}

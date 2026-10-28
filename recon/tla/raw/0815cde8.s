@@ -67,11 +67,11 @@ BattleEffect_RunAzul:
 	str r3, [r2]
 	adds r1, #254
 	ldr r0, .L_0815cffc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0815d000
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r6, #152
 	ldr r5, [r5, #36]
 	movs r2, #224
@@ -2462,9 +2462,9 @@ BattleEffect_RunAzul:
 	bl .L_0815cf8e
 .L_0815e0e2:
 	ldr r0, .L_0815e168
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0815e16c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r2, #238

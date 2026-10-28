@@ -14,13 +14,13 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Task_Add
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+Task_Add:
+	overlay_veneer Task_AddFar
+	.global Task_RemoveFar
 	.thumb_func
-Scheduler_RemoveCallbackFar:
+Task_RemoveFar:
 	overlay_veneer Func_080000d8
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func

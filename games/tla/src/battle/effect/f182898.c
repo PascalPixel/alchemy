@@ -34,8 +34,8 @@ extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
@@ -69,14 +69,14 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   {
     /* FAKEMATCH(pin): the callback pinned to r0 behind an empty asm that
      * holds r1, with work loaded after it, so the pool load comes before
-     * work's; as Scheduler_AddOrUpdateCallback(BattleEffect_..., 0xc80) with work
+     * work's; as Task_Add(BattleEffect_..., 0xc80) with work
      * set at its declaration, 2 of 225 instructions differ in tla-en. */
     register void (*callback)(void) __asm__("r0") =
         BattleEffect_ProcessPendingGraphicsTransfer;
 
     __asm__("" : "+l"(callback) : : "r1");
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    Scheduler_AddOrUpdateCallback(callback, 0xc80);
+    Task_Add(callback, 0xc80);
   }
   work->transferMode = 2;
   work->transferValue = 50;
@@ -146,6 +146,6 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

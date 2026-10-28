@@ -28,7 +28,7 @@
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect.h"
@@ -40,7 +40,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define MARKER_FRAMES 72 // how long each marker stays
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
@@ -87,7 +86,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Each star starts at a random point in its turn.
   for (i = 0; i != effect->count; i++) {
@@ -132,7 +131,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

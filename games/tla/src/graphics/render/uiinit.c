@@ -10,7 +10,7 @@
 #include "types.h"
 #include "mem.h"
 #include "window.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "iwram_call.h"
 #include "io_reg.h"
@@ -36,7 +36,7 @@ void UiWork_InitializeWithResourceCounters(void) {
   FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
   UiWork_InitializeFreeList();
   UiWork_ClearPortraitSlots();
-  Scheduler_AddOrUpdateCallback((s32)UiWork_UploadDirtyBlocks, 0xc80);
+  Task_Add((s32)UiWork_UploadDirtyBlocks, TASK_PASS_FRAME);
   UiWork_InitializeCountersWithResourceAndScheduleRefresh();
 }
 
@@ -60,7 +60,7 @@ void UiWork_Initialize(s32 kind) {
   work->level = 15;
   Iwram_FillWords(work->tilemap, sizeof(work->tilemap), 0xf000f000);
   UiWork_InitializeFreeList();
-  Scheduler_AddOrUpdateCallback((s32)UiWork_UploadDirtyBlocks, 0xc80);
+  Task_Add((s32)UiWork_UploadDirtyBlocks, TASK_PASS_FRAME);
   UiWork_InitializeCountersAndScheduleRefresh(kind);
   UiWork_CopyTileTail(0xf013, 128);
   UiWork_CopyTileTail(0xf014, 129);

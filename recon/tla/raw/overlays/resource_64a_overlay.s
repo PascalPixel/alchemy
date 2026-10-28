@@ -15,7 +15,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_ja_020086a8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -123,7 +123,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_ja_020086c8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -899,7 +899,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_fr_020086a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -1007,7 +1007,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_fr_020086c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -1783,7 +1783,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_de_020086a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -1891,7 +1891,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_de_020086c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -2664,7 +2664,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_es_020086a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2772,7 +2772,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_es_020086c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -3545,7 +3545,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_it_020086a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -3653,7 +3653,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_it_020086c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -4425,7 +4425,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020086a8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -4533,7 +4533,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020086c8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1

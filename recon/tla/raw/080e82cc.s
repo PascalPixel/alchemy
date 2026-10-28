@@ -236,7 +236,7 @@ Func_080e82cc:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080e84dc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	bl WaitFrames
 	strb r6, [r5]
@@ -604,7 +604,7 @@ Func_080e82cc:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080e87c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3

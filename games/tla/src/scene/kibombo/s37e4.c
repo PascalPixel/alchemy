@@ -26,12 +26,12 @@ void Func_020037e4(void) {
 
 void Func_0200384c(void) {
   Func_02005c14(136, 1);
-  Scheduler_AddOrUpdateCallback(Func_020037e4, 0x480);
+  Task_Add(Func_020037e4, 0x480);
   Func_02005c1c(gAdventure.currentOwner, -1);
   Func_02005c34();
   Field_DispatchTypeHandler(1);
   Func_02005c24();
-  Scheduler_RemoveCallbackFar(Func_020037e4);
+  Task_RemoveFar(Func_020037e4);
   Func_02005c2c();
 }
 
@@ -39,11 +39,11 @@ void Func_02003898(void) {
   s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Kibombo4)
-    Scheduler_RemoveCallbackFar(Func_02002c34);
+    Task_RemoveFar(Func_02002c34);
   else if (scene == (s32)&SceneId_Kibombo5)
-    Scheduler_RemoveCallbackFar(Func_02002ccc);
+    Task_RemoveFar(Func_02002ccc);
   else if (scene == (s32)&SceneId_Kibombo6)
-    Scheduler_RemoveCallbackFar(Func_02002d64);
+    Task_RemoveFar(Func_02002d64);
 }
 
 void Func_020038ec(void) {

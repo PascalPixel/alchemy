@@ -115,10 +115,10 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 1;
   work->transferValue = zero;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The image starts off to the side, above the field.
   visible = 1;
@@ -259,8 +259,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);

@@ -1252,7 +1252,7 @@ Func_020013b8:
 	movs r1, #144
 	ldr r0, .L_020097d0
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_020097be:
 	ldr r0, .L_020097d4
 	bl Func_02003168
@@ -4019,7 +4019,7 @@ Func_02002e00:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_0200aeb8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3

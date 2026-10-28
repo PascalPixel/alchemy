@@ -44,8 +44,8 @@ extern const u16 gData_0802f054[8];
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_InitializeHeap(void);
-void Scheduler_ResetTaskTable(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_ResetAll(void);
+void Task_Add(void (*callback)(void), s32 order);
 void VramCache_Reset(void);
 void Func_080230e0(s32 mode);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
@@ -105,7 +105,7 @@ void Func_0802de8c(void) {
 
 restart:
   Runtime_InitializeHeap();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   ring = Runtime_AllocateBlock(36, 160);
   VramCache_Reset();
   Func_080230e0(2);
@@ -134,7 +134,7 @@ restart:
     Ui_FillGridColumnFromMetadata(i, table[i].animationIndex);
   }
   Func_0802e4c8(x, y, ring);
-  Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 0x480);
+  Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
 
 next:
   WaitFrames(1);
@@ -289,7 +289,7 @@ next:
       }
     }
     if (gInput.repeat & 4) {
-      Scheduler_ResetTaskTable();
+      Task_ResetAll();
       Runtime_ConstantZeroResult(0x12, gResource_Data012);
       goto restart;
     }

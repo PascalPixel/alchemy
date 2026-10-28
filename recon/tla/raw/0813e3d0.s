@@ -170,7 +170,7 @@ Func_0813e3d0:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0813e5cc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #104
 	movs r1, #3
 	bl BattleEffect_LoadBlitter
@@ -489,7 +489,7 @@ Func_0813e3d0:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0813e7dc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	movs r0, #100
 	bl Runtime_ReleaseHeapBlock

@@ -81,7 +81,7 @@ BattleEffect_RunIris:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08192d5c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_08192d4c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -5516,7 +5516,7 @@ BattleEffect_RunIris:
 	cmp r6, #36
 	bne .L_08195718
 	ldr r0, .L_08195748
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #420
 	pop {r3, r5, r6, r7}

@@ -3,7 +3,7 @@
 #include "graphics.h"
 #include "mem.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "palbuf.h"
 #include "fxblend.h"
 #include "dma.h"
@@ -123,5 +123,5 @@ void FieldMotes_Start(void) {
     reg++;
     *reg = clear;
   } while (0);
-  Scheduler_AddOrUpdateCallback(Func_080d6c60, 0x480);
+  Task_Add(Func_080d6c60, TASK_PASS_VBLANK);
 }

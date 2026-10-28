@@ -36,7 +36,7 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `GraphicsPalette_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`,
 `ObjectSystem_`, `PaletteFade_`, `PaletteQueue_`, `Projection_`, `Render_`,
 `RenderOutput_`, `RenderResource_`, `Resource_`, `Runtime_`, `SceneTransform_`,
-`Scheduler_`, `StatusMenu_`, `Text_`, `Tile_`, `Title_`, `Transform_`, `Ui_`,
+`StatusMenu_`, `Task_`, `Text_`, `Tile_`, `Title_`, `Transform_`, `Ui_`,
 `UiGlyph_`, `UiIcon_`, `UiMessage_`, `UiText_`, `UiTextResource_`,
 `UiTimedNotice_`, `UiWindow_` and `UiWork_`, with `AnimationObject_` here and
 in `battle/effect`.

@@ -20,7 +20,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "adventure.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 s32 EventRuntime_GetControlledOwner(void);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -37,7 +37,7 @@ void Func_080e9db4(void) {
       Object_GetById(EventRuntime_GetControlledOwner());
   s32 i;
 
-  Scheduler_RemoveCallback(Func_080e9940);
+  Task_Remove(Func_080e9940);
   Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   do {

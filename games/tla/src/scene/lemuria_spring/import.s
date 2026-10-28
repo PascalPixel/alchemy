@@ -14,10 +14,10 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Task_Add
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+Task_Add:
+	overlay_veneer Task_AddFar
 	.global Random16Far
 	.thumb_func
 Random16Far:

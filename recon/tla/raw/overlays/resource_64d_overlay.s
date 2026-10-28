@@ -2869,7 +2869,7 @@ Func_020023a4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a588
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #186
 	movs r1, #0
 	ldrsh r3, [r6, r1]
@@ -2893,7 +2893,7 @@ Func_020023a4:
 	bne .L_0200a544
 .L_0200a560:
 	ldr r0, .L_0200a588
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	mov r0, r8
 	bl Func_02002874
 	mov r0, r11
@@ -3171,7 +3171,7 @@ Func_020026f4:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_0200a7ac
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3

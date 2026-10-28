@@ -27,7 +27,7 @@ void Func_02003d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003ddc(s32 id, s32 x, s32 z);
 void Func_02002ffc(void);
 void Func_02000b5c(void);
-// Returns what its closing Scheduler_AddOrUpdateCallback call leaves in r0.
+// Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
 void Func_02003ecc(s32 value);
 void Func_0200107c(s32 a, s32 b);

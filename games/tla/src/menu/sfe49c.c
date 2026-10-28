@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuRuntimeSelect {
   u8 unk000[0x168];
@@ -29,10 +29,10 @@ s32 Func_080fe49c(void) {
     switch (step) {
     case 0:
       state->selectedSlots[0] = finished;
-      Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
+      Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
       MenuIcon_SetActive(1);
       step = Func_080fe580(0);
-      Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+      Task_Remove(Menu_UpdateEntryObjectTransforms);
       if (step == -1) {
         result = step;
         finished = 1;

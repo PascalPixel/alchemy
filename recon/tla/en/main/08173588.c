@@ -28,7 +28,7 @@
 #include "iwram_call.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "effect_step.h"
@@ -161,7 +161,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - center[0]) << 8;
   if (effect->side == 0)
@@ -286,6 +286,6 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "edition.h"
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_02005398(void);
 s32 Func_020053a0(s32 a, s32 b, s32 c);
 void Func_020053b8(const void *data);
@@ -43,7 +43,7 @@ void Func_0200290c(void) {
   }
   REG_BLDCNT = 0x3f10;
   Func_02005388(245);
-  Scheduler_AddOrUpdateCallback(Func_02000c74, 0x480);
+  Task_Add(Func_02000c74, 0x480);
   Func_02005230(13, 0, 0);
   Func_02005230(14, 0, 0);
   Func_02005230(15, 0, 0);
@@ -63,10 +63,10 @@ void Func_0200290c(void) {
       Func_020037e0();
   }
   if (GameFlag_Test(0x301))
-    Scheduler_AddOrUpdateCallback(Func_02001634, 0x480);
+    Task_Add(Func_02001634, 0x480);
   else if (GameFlag_Test(0x300))
-    Scheduler_AddOrUpdateCallback(Func_02001804, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_02001b50, 0x480);
+    Task_Add(Func_02001804, 0x480);
+  Task_Add(Func_02001b50, 0x480);
   Func_02005338(0);
 }
 

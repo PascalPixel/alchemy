@@ -59,7 +59,7 @@ BattleEffect_RunCharon:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08176008
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	movs r1, #0
 	bl Func_08163c2c
@@ -5022,7 +5022,7 @@ BattleEffect_RunCharon:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817867c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #324
 	pop {r3, r5, r6, r7}

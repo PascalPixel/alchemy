@@ -38,7 +38,7 @@
 #include "iwram_call.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "motobj.h"
@@ -110,7 +110,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
@@ -230,6 +230,6 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(104);
   Runtime_ReleaseHeapBlock(188);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

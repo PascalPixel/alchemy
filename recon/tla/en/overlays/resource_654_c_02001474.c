@@ -36,7 +36,7 @@ void Func_020039c0(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 
 void Func_02001474(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -57,7 +57,7 @@ void Func_02001474(void) {
   leader->motionFlags = 3;
   ObjectMotion_SetActionVariant(14, 3);
   stone->priorityFlags |= 2;
-  Scheduler_AddOrUpdateCallback(Func_02001464, 0x480);
+  Task_Add(Func_02001464, 0x480);
   do
     WaitFrames(1);
   while (*(s32 *)((u8 *)leader + 40) != 0);
@@ -84,7 +84,7 @@ void Func_02001474(void) {
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   WaitFrames(2);
   Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
-  Scheduler_RemoveCallbackFar(Func_02001464);
+  Task_RemoveFar(Func_02001464);
   spin = 0x200;
   for (i = 0; i <= 7;) {
     sprite->rotation += spin;

@@ -7,7 +7,7 @@
 #include "object_runtime.h"
 #include "mem.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "macros.h"
 
 void WaitFrames(s32);
@@ -85,7 +85,7 @@ void Func_080d45d8(void) {
   gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
-    Scheduler_RemoveCallback(Func_080d45d8);
+    Task_Remove(Func_080d45d8);
   }
 }
 
@@ -103,7 +103,7 @@ void Func_080d46a4(s32 zoom, s32 frames) {
   map->zoomTo = result;
   map->zoomFrames = frames;
   map->zoomStep = 0;
-  Scheduler_AddOrUpdateCallback(Func_080d45d8, 0x494);
+  Task_Add(Func_080d45d8, TASK_PASS_VBLANK + 20);
 }
 
 void Func_080d4714(void) {

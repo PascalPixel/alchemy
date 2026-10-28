@@ -87,8 +87,8 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target,
                                                  s32 frames);
@@ -199,7 +199,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The gathering ring, for the larger kinds: the caster holds still while
   // 64 sparks spin in towards it on random axes.
@@ -232,7 +232,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
+    Task_Add(Palette_StepFadeTransfer, 0x480);
     Sound_PlayFar(212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
@@ -265,7 +265,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       WaitFrames(1);
     }
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     ObjectDispatch_SetAnimationSpeedFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
@@ -357,7 +357,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
 
   // Teardown: the background palette steps back over seven frames.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;

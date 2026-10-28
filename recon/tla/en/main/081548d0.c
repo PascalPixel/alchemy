@@ -71,8 +71,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(s32 (*callback)(void));
+s32 Task_Add(s32 (*callback)(void), s32 order);
+s32 Task_Remove(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -188,7 +188,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   frame = 0;
   if (duration != 0) {
@@ -326,7 +326,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     } while (frame != duration);
   }
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

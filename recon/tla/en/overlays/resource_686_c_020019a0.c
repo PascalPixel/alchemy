@@ -28,7 +28,7 @@ void Func_02002eec();
 void Func_02002df4();
 void Func_02002e04();
 s32 Func_02002dfc();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 void GameFlag_SetBit();
 void GameFlag_ClearBit();
 
@@ -113,7 +113,7 @@ L_02009afe:
   FIELD_AT(r4, u8, 0) = 3;
   if ((FIELD_AT(r7, s32, 4)) < 0x200000) {
     FIELD_AT((s32)gData_02003782, u16, 0) = 0;
-    Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020015ac, 0x480);
+    Call2((void (*)())Task_Add, (s32)Func_020015ac, 0x480);
   } else {
     Call6((void (*)())Func_02002e04, 69, 24, 1, 4, 68, 23);
     Call1((void (*)())GameFlag_SetBit, 0x204);

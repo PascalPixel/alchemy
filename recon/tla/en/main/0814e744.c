@@ -28,7 +28,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -140,7 +140,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != effect->count * 20 + 56; frame++) {
     if (frame == 32)
@@ -180,7 +180,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

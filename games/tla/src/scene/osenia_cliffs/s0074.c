@@ -11,7 +11,7 @@ struct MapBits {
 };
 
 void GameFlag_SetBit(s32 flag);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void Func_02000190(void);
@@ -25,7 +25,7 @@ s32 Func_02000074(void) {
   map->mode = 1;
   gData_020001b0[0] = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
-  Scheduler_AddOrUpdateCallback(Func_020000fc, 0x480);
+  Task_Add(Func_020000fc, 0x480);
   {
     u8 *flags = (u8 *)Object_GetById(gAdventure.currentOwner) + 35;
     u32 value = *flags;

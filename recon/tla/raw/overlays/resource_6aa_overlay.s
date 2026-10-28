@@ -1040,7 +1040,7 @@ Func_0200138c:
 	movs r1, #144
 	ldr r0, .L_ja_02009910
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #126
 	adds r0, #255
 	bl GameFlag_SetBit
@@ -1048,7 +1048,7 @@ Func_0200138c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_ja_02009914
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #11
 	bl Object_GetById
 	ldr r3, .L_ja_02009918
@@ -1692,7 +1692,7 @@ Func_0200138c:
 	movs r1, #144
 	ldr r0, .L_02009908
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #126
 	adds r0, #255
 	bl GameFlag_SetBit
@@ -1700,7 +1700,7 @@ Func_0200138c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200990c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #11
 	bl Object_GetById
 	ldr r3, .L_02009910
@@ -2562,7 +2562,7 @@ Func_020022e4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a414
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -5900,7 +5900,7 @@ Func_02003e24:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200c064
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r8
 	movs r2, #10
 	ldrsh r0, [r3, r2]

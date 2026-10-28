@@ -209,8 +209,8 @@ void Runtime_ReleaseHeapBlock(s32);
 void MemFree(void *);
 void *Resource_GetTableEntry(s32);
 void WaitFrames(s32);
-void Scheduler_AddOrUpdateCallback(void *, s32);
-void Scheduler_RemoveCallback(void *);
+void Task_Add(void *, s32);
+void Task_Remove(void *);
 s32 Random16(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32);
@@ -586,7 +586,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     work->unk7784 = 75;
   else
     work->unk7784 = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
+  Task_Add(Func_08143001, 3200);
   EffectPosition_ProjectScaledBattler(action->actor, target);
   EffectPosition_ProjectScaledBattler(action->target, base);
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -715,8 +715,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     CLEAR(BG_VRAM, 0x3c00);
     CLEAR(screen, 0x3c00);
     action->unk1c = 0;
-    Scheduler_RemoveCallback(Func_08143489);
-    Scheduler_RemoveCallback(Func_08143001);
+    Task_Remove(Func_08143489);
+    Task_Remove(Func_08143001);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     Object_SetMode(object, 3);
@@ -738,8 +738,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     CLEAR(BG_VRAM, 0x3c00);
     CLEAR(screen, 0x3c00);
     action->unk1c = 0;
-    Scheduler_RemoveCallback(Func_08143489);
-    Scheduler_RemoveCallback(Func_08143001);
+    Task_Remove(Func_08143489);
+    Task_Remove(Func_08143001);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     action->unk18 = 3;
@@ -861,7 +861,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
   if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
       kind == 72 || kind == 59 || kind == 58 || kind == 69 || kind == 89)
-    Scheduler_AddOrUpdateCallback(Func_08152475, 3200);
+    Task_Add(Func_08152475, 3200);
 
   if (kind == 4 || kind == 5 || kind == 6 || kind == 17 || kind == 53 ||
       kind == 60 || kind == 57 || kind == 14 || kind == 63 || kind == 64 ||
@@ -2285,8 +2285,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     CLEAR(BG_VRAM, 0x3c00);
     CLEAR(screen, 0x3c00);
     action->unk1c = 0;
-    Scheduler_RemoveCallback(Func_08143489);
-    Scheduler_RemoveCallback(Func_08143001);
+    Task_Remove(Func_08143489);
+    Task_Remove(Func_08143001);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
@@ -2299,8 +2299,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   }
   if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
       kind == 72 || kind == 58 || kind == 59 || kind == 69 || kind == 89)
-    Scheduler_RemoveCallback(Func_08152475);
-  Scheduler_RemoveCallback(Func_08143001);
+    Task_Remove(Func_08152475);
+  Task_Remove(Func_08143001);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

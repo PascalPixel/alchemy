@@ -620,7 +620,7 @@ Func_0200020c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020085f0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #246
 	bl Func_020020b4
 	movs r7, #0
@@ -1306,7 +1306,7 @@ Func_0200020c:
 	b .L_02008576
 .L_02008a8c:
 	ldr r0, .L_02008b58
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	mov r1, r11
 	cmp r1, #4
 	beq .L_02008b0e
@@ -1863,7 +1863,7 @@ Func_02001400:
 	ldr r0, .L_02009568
 	movs r1, #144
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	bl Func_02002024
 	movs r0, #0
 	bl Func_02002084
@@ -2354,7 +2354,7 @@ Func_02001400:
 	movs r0, #45
 	bl FieldEvent_WaitFrames
 	ldr r0, .L_020098f4
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	b .L_020098f8
 	.2byte 0x0000
 .L_020098e4:
@@ -2403,7 +2403,7 @@ Func_02001400:
 	movs r0, #45
 	bl FieldEvent_WaitFrames
 	ldr r0, .L_02009960
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	b .L_02009964
 .L_02009950:
 	.4byte 0x00000d00

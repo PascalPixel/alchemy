@@ -6,7 +6,7 @@
 // as struct EffectPosition (2), frame declared first (2), the loop as do
 // while (2); an empty asm after the record's stores or a one-pass block
 // around frame = 0 or record[2] puts the copy after the stores but moves
-// the transfer value's offset and the 0xc80 shift before the scheduler call
+// the transfer value's offset and the 0xc80 shift before the Task_Add call
 // (4); an asm before the call as well (6); alchemy permute 5 minutes,
 // 2 jobs (nothing below 2).
 
@@ -33,7 +33,7 @@
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "graphics.h"
 #include "mem.h"
@@ -92,7 +92,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
@@ -155,7 +155,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

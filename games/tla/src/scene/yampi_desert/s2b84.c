@@ -42,5 +42,5 @@ void Func_02002b84(void) {
     }
   }
   Func_020021d4();
-  Scheduler_AddOrUpdateCallback(Func_02001c5c, 0x480);
+  Task_Add(Func_02001c5c, 0x480);
 }

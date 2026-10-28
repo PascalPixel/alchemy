@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "mem.h"
@@ -11,12 +11,12 @@
 #include "palqueue_add.c"
 
 void PaletteQueue_Stop(void) {
-  Scheduler_RemoveCallback(PaletteQueue_StepCycles);
+  Task_Remove(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(112);
 }
 
 void PaletteQueue_Start(void) {
-  Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0x480);
+  Task_Add(PaletteQueue_StepCycles, TASK_PASS_VBLANK);
 }
 
 void PaletteQueue_StepCycles(void) {

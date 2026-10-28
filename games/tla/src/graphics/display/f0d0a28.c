@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "display_transition.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -25,7 +25,7 @@ void DisplayTransition_UpdateDissolve(void) {
       u16 control;
 
       state->duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_UpdateDissolve);
+      Task_Remove(DisplayTransition_UpdateDissolve);
       dma0 = REG_DMA0;
       control = dma0[5];
       dma0[5] = control & 0xc5ff;

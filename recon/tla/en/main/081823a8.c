@@ -51,8 +51,8 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+void Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 s32 __divsi3(s32 dividend, s32 divisor);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -111,7 +111,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     frames = 72;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -255,7 +255,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

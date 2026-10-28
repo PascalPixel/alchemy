@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -187,9 +187,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(0, 0);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(0xaf, work->sheet, 1, 1);
   Resource_LoadAndDecompress(0xcd, work->sheet + 0x2000, 1, 1);
   Iwram_CopyWords(sprites, work->sheet + 0x1c2, 30);
@@ -207,7 +207,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2CNT = 0x2787;
   Iwram_FillWords(canvas, 0x4000, 0);
   Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
-  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;
   triangles = work->sheet + 0x6340;
@@ -240,7 +240,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   work->transferValue = 0x04040404;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmMeteorBlowPaletteDma, 0xcfe);
+  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, 0xcfe);
   gBgScroll[1].x = 0;
   transition[4] = 1;
   for (i = 0; i != 256; i++) {
@@ -283,8 +283,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
     }
     if (frame == 116) {
-      Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
-      Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+      Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
+      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
     }
@@ -463,11 +463,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   WaitFrames(1);
   transition[4] = 0;
-  Scheduler_RemoveCallback(BattleEffect_ArmMeteorBlowPaletteDma);
+  Task_Remove(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
-    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
   } else {
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   Func_0814cca8();
@@ -486,7 +486,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Resource_LoadAndDecompress(0x134, sprites, 0, 0);
   Resource_LoadAndDecompress(0x13e, work->sheet, 1, 0);
   Resource_LoadAndDecompress(0xda, work->sheet + 0x4000, 0, 0);
@@ -637,7 +637,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   ResourceObject_ReleaseFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();

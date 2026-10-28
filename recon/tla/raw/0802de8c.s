@@ -104,7 +104,7 @@ Func_0802de8c:
 	bl Fade_FromBlack
 .L_0802df54:
 	bl Runtime_InitializeHeap
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	movs r1, #160
 	movs r0, #36
 	bl Runtime_AllocateBlock
@@ -225,7 +225,7 @@ Func_0802de8c:
 	movs r1, #144
 	ldr r0, .L_0802e284
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0802e062:
 	movs r0, #1
 	bl WaitFrames
@@ -721,7 +721,7 @@ Func_0802de8c:
 	ands r2, r3
 	cmp r2, #0
 	beq .L_0802e402
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r0, .L_0802e438
 	ldr r1, .L_0802e43c
 	bl Runtime_ConstantZeroResult

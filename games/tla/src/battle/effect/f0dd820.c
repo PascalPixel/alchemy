@@ -24,7 +24,7 @@ s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
 void Func_080cf554(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 void Func_080dd754(void);
 
 #define FIELD_FX_REVEAL 8
@@ -82,5 +82,5 @@ void Func_080dd820(void) {
     frame++;
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
-    Scheduler_AddOrUpdateCallback(Func_080dd754, 0x480);
+    Task_Add(Func_080dd754, 0x480);
 }

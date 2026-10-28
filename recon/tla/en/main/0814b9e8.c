@@ -31,7 +31,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect.h"
@@ -45,7 +45,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
 
@@ -159,7 +158,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Centre the canvas on the anchor; a copy blitter, or an additive one for
   // side 1.
@@ -288,6 +287,6 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

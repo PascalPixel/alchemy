@@ -4,7 +4,7 @@
 // longer needed under -mthumb-slow-loads, 28 to 26; two tagged one-pass
 // blocks after the arm and fist draws, found by a device sweep, 26 to 20;
 // BattleEffect_LoadBlitter returning s32, as nibble_pair.c defines it, 20 to 16;
-// Scheduler_AddOrUpdateCallback returning s32, as defined, 16 to 14).
+// Task_Add returning s32, as defined, 16 to 14).
 // Written from the listing (☀️'s BattleEffect_RunCounterReveal is only a
 // hint). A large sprite assembled from gMapCellBuffer cells sways on a
 // sine path over 108 frames, faded in and out through BLDALPHA, with two
@@ -74,8 +74,8 @@ extern u8 gData_081993e8[];
 extern u16 gData_081993f0[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);
@@ -128,7 +128,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   draw[1] = ((DrawRectangle *)heap)[47];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
@@ -261,7 +261,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);

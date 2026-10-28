@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "vram_tab.h"
 
 #define ICON_COUNT 15 ///< Number of carried items.

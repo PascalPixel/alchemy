@@ -131,7 +131,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
                              work->sheet + DJINN_SHEET, 1, 0);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The background is shifted so that the target stands at x = 64.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
@@ -236,6 +236,6 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

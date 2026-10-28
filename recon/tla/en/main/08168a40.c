@@ -22,7 +22,7 @@
 #include "io_reg.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "input.h"
 #include "bg_scroll.h"
 #include "effect_step.h"
@@ -153,7 +153,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0x18;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Func_08163c2c(1, 0);
   BattleEffect_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
@@ -505,7 +505,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
     i++;
   } while (i != 9);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

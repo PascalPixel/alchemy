@@ -118,7 +118,7 @@ Func_080e9af4:
 	strh r6, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_080e9dac
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r3, r7, #0
 	movs r1, #0
 	adds r3, #34
@@ -230,7 +230,7 @@ Func_080e9af4:
 	movs r0, #5
 	bl WaitFrames
 	ldr r0, .L_080e9dac
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #44

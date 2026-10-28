@@ -18,7 +18,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "types.h"
 #include "input.h"

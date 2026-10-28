@@ -230,7 +230,7 @@ BattleEffect_RunBurstScene:
 	str r3, [r2]
 	ldr r0, .L_0815a52c
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #40]
 	ldr r2, .L_0815a504
 	adds r3, #7
@@ -239,7 +239,7 @@ BattleEffect_RunBurstScene:
 	bne .L_0815a2f0
 	ldr r0, .L_0815a530
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0815a2f0:
 	ldr r3, [sp, #68]
 	movs r5, #0
@@ -1081,10 +1081,10 @@ BattleEffect_RunBurstScene:
 	cmp r3, #2
 	bne .L_0815a98e
 	ldr r0, .L_0815a9dc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_0815a98e:
 	ldr r0, .L_0815a9e0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}

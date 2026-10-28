@@ -88,12 +88,12 @@ BattleEffect_RunParticleStreams:
 	str r2, [r3]
 	lsls r1, r1, #4
 	adds r0, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #0
 	movs r1, #0
 	bl Func_08163c2c
 	adds r0, r5, #0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r3, [sp, #76]
 	b .L_08164d90
 .L_08164d88:
@@ -364,11 +364,11 @@ BattleEffect_RunParticleStreams:
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_081650b0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #200
 	ldr r0, .L_081650b4
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add r2, sp, #152
 	mov r10, r2
 	add r3, sp, #280
@@ -531,7 +531,7 @@ BattleEffect_RunParticleStreams:
 	str r2, [r3]
 	ldr r0, .L_08165218
 	adds r1, #254
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #60]
 	movs r2, #0
 	ldr r3, [r4]
@@ -1111,11 +1111,11 @@ BattleEffect_RunParticleStreams:
 	movs r5, #0
 	str r5, [r2, #16]
 	ldr r0, .L_081655c4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081655c8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081655cc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	add r4, sp, #56
 	add r0, sp, #52
 	ldrh r4, [r4]
@@ -1281,7 +1281,7 @@ BattleEffect_RunParticleStreams:
 	str r3, [r2]
 	ldr r0, .L_08165970
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #60]
 	mov r4, sp
 	movs r0, #232
@@ -1760,7 +1760,7 @@ BattleEffect_RunParticleStreams:
 	b .L_081656ce
 .L_08165a78:
 	ldr r0, .L_08165ab0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r1, [sp, #76]

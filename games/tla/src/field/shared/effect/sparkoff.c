@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "edition.h"
 #include "io_reg.h"
@@ -99,9 +99,9 @@ void Func_080d6f34(s32 withCue) {
   Io_Write16(0x3f00, &REG_BLDCNT);
   Io_Write16(0x1010, &REG_BLDALPHA);
   Io_Write16(clear, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback(Func_080d6674, 0x480);
+  Task_Add(Func_080d6674, TASK_PASS_VBLANK);
   if (withCue != 0)
     Func_080d2c64(137);
 }
 
-void Func_080d7024(void) { Scheduler_RemoveCallback(Func_080d6674); }
+void Func_080d7024(void) { Task_Remove(Func_080d6674); }

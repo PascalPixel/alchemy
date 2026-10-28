@@ -233,7 +233,7 @@ BattleEffect_RunUlysses:
 	lsls r1, r1, #4
 	ldr r0, .L_0815ba0c
 	add r5, r11
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r1, r5, #0
 	ldr r0, .L_0815ba10
 	movs r2, #0
@@ -280,7 +280,7 @@ BattleEffect_RunUlysses:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_0815ba0c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_0815ba14
@@ -378,12 +378,12 @@ BattleEffect_RunUlysses:
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_0815bac8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_0815bacc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #184
 	lsls r1, r1, #6
 	adds r1, #129
@@ -823,14 +823,14 @@ BattleEffect_RunUlysses:
 	cmp r7, #1
 	bne .L_0815bddc
 	ldr r0, .L_0815be28
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0815be2c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #185
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_0815be30
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #148
 	lsls r1, r1, #6
 	adds r1, #151
@@ -1912,7 +1912,7 @@ BattleEffect_RunUlysses:
 	movs r1, #144
 	ldr r0, .L_0815c710
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #192
 	lsls r2, r2, #3
 	adds r2, #228
@@ -2043,7 +2043,7 @@ BattleEffect_RunUlysses:
 	mov r1, r8
 	strh r3, [r1]
 	ldr r0, .L_0815c76c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -2113,7 +2113,7 @@ BattleEffect_RunUlysses:
 	mov lr, r6
 	.2byte 0xf800
 	ldr r0, .L_0815c810
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r1, .L_0815c814
 	movs r3, #32
 	strh r3, [r5, #6]
@@ -2280,7 +2280,7 @@ BattleEffect_RunUlysses:
 	cmp r2, #1
 	bne .L_0815c922
 	ldr r0, .L_0815c954
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_0815c922:
 	movs r5, #238
 	lsls r5, r5, #7

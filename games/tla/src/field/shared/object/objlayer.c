@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "battle.h"
 #include "system.h"
 #include "mem.h"
@@ -91,8 +91,8 @@ void ObjectSystem_UpdateCameraFixed(void);
 void Graphics_EnableObjLayerAndCallbacks(void) {
   u16 dispcnt;
 
-  Scheduler_SuspendTasks(Func_0802386c);
-  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
+  Task_SuspendAll(Func_0802386c);
+  Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleEffect_StartBufferInterpolationFar(1);
   WaitFrames(1);
@@ -106,8 +106,8 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   u16 dispcnt;
 
-  Scheduler_ResumeTasks(Func_0802386c);
-  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(Func_0802386c);
+  Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
   dispcnt = REG_DISPCNT;
   /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain
    * statement starts the mask first (one pair of instructions swapped). */

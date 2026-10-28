@@ -75,8 +75,8 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -138,7 +138,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
     work->particles[j].variant = -1;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Sound_PlayFar(CUE_THUNDER);
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
@@ -251,7 +251,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

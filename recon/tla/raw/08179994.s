@@ -84,7 +84,7 @@ BattleEffect_RunJuggle:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08179d64
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r7, #0
 	str r7, [sp, #44]
 	ldr r3, .L_08179d68
@@ -602,7 +602,7 @@ BattleEffect_RunJuggle:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08179e68
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}

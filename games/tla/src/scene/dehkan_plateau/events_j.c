@@ -108,8 +108,8 @@ void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
 void FieldEvent_WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);

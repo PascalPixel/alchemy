@@ -45,7 +45,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -284,7 +284,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (effect->side == 1)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
@@ -456,6 +456,6 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

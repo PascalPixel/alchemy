@@ -33,8 +33,8 @@ void Func_02004e30(s32 cue);
 void Func_02004da8(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Func_02004aa8(void *source, void *destination);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02003c50(void);
 void Func_02004c20(void);
 void Func_02004db8(s32 value);
@@ -67,7 +67,7 @@ void Func_02003d44(s32 mode) {
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                           0x80000010);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06001000, (u32)buffer, 0x84000400);
-  Scheduler_AddOrUpdateCallback(Func_02003c50, 0x480);
+  Task_Add(Func_02003c50, 0x480);
   Func_02004c20();
   Func_02004db8(0);
   Func_02004e30(246);
@@ -120,7 +120,7 @@ void Func_02003d44(s32 mode) {
     FieldEvent_WaitFrames(4);
     gData_02006e08 = 0x1000;
     FieldEvent_WaitFrames(45);
-    Scheduler_RemoveCallbackFar(Func_02003c50);
+    Task_RemoveFar(Func_02003c50);
     Func_02004ac8();
     QueueIoWriteDelay2(0x04000052, gData_02006e08);
     QueueIoWriteDelay2(0x04000050, 0);
@@ -133,7 +133,7 @@ void Func_02003d44(s32 mode) {
     FieldEvent_WaitFrames(4);
     gData_02006e08 = 0x1000;
     FieldEvent_WaitFrames(45);
-    Scheduler_RemoveCallbackFar(Func_02003c50);
+    Task_RemoveFar(Func_02003c50);
     Func_02004ac8();
     QueueIoWriteDelay2(0x04000052, gData_02006e08);
     QueueIoWriteDelay2(0x04000050, 0);

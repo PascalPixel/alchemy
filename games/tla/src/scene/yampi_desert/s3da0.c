@@ -19,7 +19,7 @@ void Func_02003f70(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void MemFree(void *block);
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_020039b8(void);
 void Func_02003b80(void);
 s32 Func_020041f0(void);
@@ -39,7 +39,7 @@ void Func_02003da0(s32 unused, s32 value) {
   MemFree(buffer);
   work->block = Runtime_BumpAllocateAlternatePool(0x3c0);
   work->value = value;
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020039b8, 0x48d);
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02003b80, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_020039b8, 0x48d);
+  Value2((s32 (*)())Task_Add, (s32)Func_02003b80, 0x480);
   Object_GetById(Func_020041f0())->priorityFlags |= 0x40;
 }

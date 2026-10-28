@@ -8,21 +8,21 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 s32 GameFlag_ClearBit(s32 flag_no);
 s32 GameFlag_SetBit(s32 flag_no);
 
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
-  Scheduler_ResumeOverlayTasks();
+s32 Menu_ResumeFieldTasks(void) {
+  Task_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
   GameFlag_ClearBit(0x166);
   return GameFlag_ClearBit(0x152);
 }
 
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
+s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBit(0x152);
   GameFlag_SetBit(0x166);
   Map_EnableUpdateCallbackFar();
-  return Scheduler_SuspendOverlayTasks();
+  return Task_SuspendOverlayTasks();
 }

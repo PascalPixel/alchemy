@@ -6,7 +6,7 @@ void Func_02000a68(void);
 void Func_0200538c(void);
 
 void Func_02000be4(void) {
-  Scheduler_AddOrUpdateCallback(Func_02000a68, 0x480);
+  Task_Add(Func_02000a68, 0x480);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   if (GameFlag_Test(0x91b) == 0 || GameFlag_Test(0x310) != 0) {
     GameFlag_SetBit(0x310);

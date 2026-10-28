@@ -94,8 +94,8 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(s32 (*callback)(void));
+s32 Task_Add(s32 (*callback)(void), s32 order);
+s32 Task_Remove(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 // BattleEventRuntime_StartPhase through its far call.
@@ -146,7 +146,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   REG_BG2X = (64 - first.x) << 8;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
@@ -223,7 +223,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

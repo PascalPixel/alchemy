@@ -14,6 +14,6 @@ void Func_02003628(void) {
   VramBlock_LoadCached_(gData_02005970.vramEntry, 0x400, buffer);
   MemFree(buffer);
   priority = 0x41c;
-  Scheduler_AddOrUpdateCallback(Func_020034fc, priority);
+  Task_Add(Func_020034fc, priority);
   Func_02003ef4(220);
 }

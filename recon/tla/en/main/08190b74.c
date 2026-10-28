@@ -79,8 +79,8 @@ void Graphics_LoadGreyRamp(void);
 void BattleEffect_BuildRepeatingTilemap(void);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void EffectPosition_ProjectScaledBattler(s32 id, struct EffectPosition *out);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
@@ -150,7 +150,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f10, 1, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   // The blitter faces the caster's side.
   if (effect->side == 0)
     BattleEffect_LoadBlitter(104, 1 << 4 | 3);
@@ -472,7 +472,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

@@ -34,8 +34,8 @@ void Camera_FollowActor(s32 id, s32 flag);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020049f4(void);
 void Func_020049e4(s32 a, s32 b);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02004864(s32 a, s32 b, s32 c);
 void Func_02004844(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200484c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -121,7 +121,7 @@ void Func_0200057c(void) {
   Func_020049e4(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(168 << 16, -1, 212 << 17, 1);
   Func_020049f4();
-  Scheduler_AddOrUpdateCallback(Func_02000378, 0xc80);
+  Task_Add(Func_02000378, 0xc80);
   Engine_AudioPlayCue(207);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
@@ -139,7 +139,7 @@ void Func_0200057c(void) {
   Func_02004844(2, 83, 36, 64, 16, 16);
   Func_02004844(64, 64, 2, 83, 16, 16);
   *(volatile u16 *)0x0400000a &= ~3;
-  Scheduler_AddOrUpdateCallback(Func_02000420, 0x480);
+  Task_Add(Func_02000420, 0x480);
   for (k = 0; k != 68; k++) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));
     OBJ14_BYTE(0x62) = Random16Far() & 7;
@@ -180,7 +180,7 @@ void Func_0200057c(void) {
     OBJ14_BYTE(0x62) = Random16Far() & 7;
     FieldEvent_WaitFrames(1);
   }
-  Scheduler_RemoveCallbackFar(Func_02000420);
+  Task_RemoveFar(Func_02000420);
   *(volatile u16 *)0x0400000a &= ~3;
   *(volatile u16 *)0x0400000a |= 1;
   Func_02004844(36, 64, 2, 83, 16, 16);
@@ -193,7 +193,7 @@ void Func_0200057c(void) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));
     FieldEvent_WaitFrames(1);
   }
-  Scheduler_RemoveCallbackFar(Func_02000378);
+  Task_RemoveFar(Func_02000378);
   OBJ14_BYTE(0x63) = 0;
   WaitFrames(30);
   Object_GetById(14)->update = 0;

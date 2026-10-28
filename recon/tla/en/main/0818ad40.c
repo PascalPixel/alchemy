@@ -26,7 +26,7 @@
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -98,8 +98,8 @@ extern s32 Data_081991e0[];
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
@@ -237,9 +237,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == CARD_BAFFLE)
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, TRANSFER_CALLBACK_ORDER);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   REG_BG2PA = 0x100;
 
   for (frame = 0; frame != length; frame++) {
@@ -535,8 +535,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   if (mode == CARD_BAFFLE)
-    Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -12,7 +12,7 @@ struct MapBits {
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
@@ -26,11 +26,11 @@ void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void Func_02000ff8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-static __inline__ void Scheduler_AddOrUpdateCallback_(void (*callback)(void),
+static __inline__ void Task_Add_(void (*callback)(void),
                                                       s32 priority) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as The Broken Seal's scene layer does. */
-  Scheduler_AddOrUpdateCallback(callback, priority);
+  Task_Add(callback, priority);
 }
 
 static __inline__ void Func_02001060_(s32 id, s32 x, s32 z) {
@@ -58,8 +58,8 @@ void Func_02000dc4(void) {
    * field offset; unforced the offset starts first (differ 2). */
   asm volatile("" : "+l"(party));
   Object_GetById(party->currentOwner)->priorityFlags |= 32;
-  Scheduler_AddOrUpdateCallback_(Func_02000c14, 0x480);
-  Scheduler_AddOrUpdateCallback_(Func_02000bb8, 0x480);
+  Task_Add_(Func_02000c14, 0x480);
+  Task_Add_(Func_02000bb8, 0x480);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
   *((u8 *)Object_GetById(17) + 85) = 0;
   if (GameFlag_Test(0x9b2)) {
@@ -102,6 +102,6 @@ void Func_02000ed0(void) {
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_02000bf0, priority);
+    Task_Add(Func_02000bf0, priority);
   }
 }

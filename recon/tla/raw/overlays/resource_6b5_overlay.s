@@ -901,7 +901,7 @@ Func_02000864:
 	ldr r5, .L_02008b24
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #5
 	bl Func_0200198c
 	movs r0, #8
@@ -1002,7 +1002,7 @@ Func_02000864:
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #1
 	adds r0, r5, #0
 	bl Func_02001944
@@ -1778,7 +1778,7 @@ Func_0200145c:
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #1
 	adds r0, r5, #0
 	bl Func_02001944

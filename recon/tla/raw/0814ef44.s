@@ -698,7 +698,7 @@ BattleEffect_RunHealingMotes:
 	str r3, [r2]
 	ldr r0, .L_0814f680
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #64]
 	movs r2, #0
 	mov r11, r2
@@ -1393,7 +1393,7 @@ BattleEffect_RunHealingMotes:
 	b .L_0814f4a6
 .L_0814f9c4:
 	ldr r0, .L_0814fa04
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

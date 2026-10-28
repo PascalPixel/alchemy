@@ -1,6 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                    struct ShrineOfTheSeaGodObject *target);
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
@@ -39,7 +39,7 @@ void Func_020016d8(void) {
   leader->motionFlags = 3;
   ObjectMotion_SetActionVariant(15, 3);
   pillar->priorityFlags |= 2;
-  Scheduler_AddOrUpdateCallback(Func_020016c8, 0x480);
+  Task_Add(Func_020016c8, 0x480);
   Func_02001658(leader, 0);
   ObjectMotion_SetActionVariant(9, 1);
   Object_GetById(9)->priorityFlags &= ~2;
@@ -63,7 +63,7 @@ void Func_020016d8(void) {
   ObjectMotion_SetActionVariant(11, 2);
   Object_GetById(11)->priorityFlags |= 2;
   leader->motionFlags = 3;
-  Scheduler_RemoveCallbackFar(Func_020016c8);
+  Task_RemoveFar(Func_020016c8);
   WaitFrames(1);
   Func_020039e0();
   GameFlag_SetBit(0x231);

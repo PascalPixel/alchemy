@@ -1082,7 +1082,7 @@ Func_02001010:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_020092d4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #163
 	bl Func_02003cd8
 	ldr r3, .L_020092ac
@@ -1333,7 +1333,7 @@ Func_02001010:
 	cmp r7, #65
 	bne .L_0200945a
 	ldr r0, .L_02009534
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #8
 	bl Object_GetById
 	movs r5, #0
@@ -3039,7 +3039,7 @@ Func_020026b8:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02003c30
 	ldr r0, .L_0200a984
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r2, #128
 	lsls r2, r2, #19
 	adds r2, #10
@@ -3078,7 +3078,7 @@ Func_020026b8:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0200a988
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #163
 	bl Func_02003cd8
 	movs r1, #128
@@ -3142,11 +3142,11 @@ Func_020026b8:
 	cmp r7, r3
 	bne .L_0200a990
 	ldr r0, .L_0200aa1c
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r1, #200
 	ldr r0, .L_0200aa20
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_0200aa0c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -3253,7 +3253,7 @@ Func_020026b8:
 	cmp r7, #129
 	bne .L_0200aa82
 	ldr r0, .L_0200ab5c
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #12
 	bl Object_GetById
 	movs r5, #0
@@ -4365,7 +4365,7 @@ Func_02002ca0:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200b5c8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #8
 	bl Object_GetById
 	movs r3, #0
@@ -4691,7 +4691,7 @@ Func_02002ca0:
 	movs r1, #200
 	ldr r0, .L_0200b860
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #32]

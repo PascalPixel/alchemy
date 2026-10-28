@@ -45,7 +45,7 @@ BattleEffect_RunFlora:
 	str r3, [r2]
 	ldr r0, .L_0817a0f0
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #0
 	str r6, [sp, #144]
 	str r0, [sp, #160]
@@ -97,7 +97,7 @@ BattleEffect_RunFlora:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0817a0fc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r6, [sp, #152]
 	movs r5, #1
 	str r5, [r6, #16]
@@ -2553,7 +2553,7 @@ BattleEffect_RunFlora:
 	bl .L_0817a332
 .L_0817b2a6:
 	ldr r0, .L_0817b37c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	add r0, sp, #156
 	ldr r3, .L_0817b380
 	ldrh r0, [r0]
@@ -2936,7 +2936,7 @@ BattleEffect_RunFlora:
 	b .L_0817b420
 .L_0817b5a8:
 	ldr r0, .L_0817b5d0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

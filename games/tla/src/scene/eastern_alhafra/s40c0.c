@@ -8,13 +8,13 @@ struct EasternAlhafraSparkWork {
   s16 resource;
 };
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void Func_02003ec4(void);
 
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Scheduler_RemoveCallbackFar(Func_02003ec4);
+  Task_RemoveFar(Func_02003ec4);
   Resource_ResetEntry(work->resource);
   Runtime_ReleaseHeapBlock(220);
 }

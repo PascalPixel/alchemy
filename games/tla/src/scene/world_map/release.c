@@ -26,8 +26,8 @@ void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_02004d40(s32 value);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+void Task_RemoveFar(void (*callback)(void));
 void Func_020036a8(void);
 void Func_020048f4(void);
 s32 Func_02004e10(void);
@@ -47,5 +47,5 @@ void Func_02004a1c(void) {
   Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
   Resource_ResetEntry(*(s16 *)gData_02006e0e);
   *(s16 *)gData_02006e0c = -1;
-  Scheduler_RemoveCallbackFar(Func_020048f4);
+  Task_RemoveFar(Func_020048f4);
 }

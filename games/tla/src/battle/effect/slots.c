@@ -1,7 +1,7 @@
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_slot.h"
 #include "ram_buffer.h"
 #include "motobj.h"
@@ -37,7 +37,7 @@ void BattleEffect_InitializeSlots(void) {
   work =
       Runtime_AllocateHeapBlock(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_UpdateAllSlots, 1152);
+  Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_ClearOwnedSlot(struct EffectSlot *);
@@ -47,7 +47,7 @@ void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct EffectSlot *slot;
   s32 i;
 
-  Scheduler_RemoveCallback((u32)BattleEffect_UpdateAllSlots);
+  Task_Remove((u32)BattleEffect_UpdateAllSlots);
   for (i = 0; i < 24; i++) {
     slot = &scene->slots[i];
     if (slot->active != 0)

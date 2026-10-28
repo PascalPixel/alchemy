@@ -4,7 +4,7 @@
 #include "frame.h"
 #include "bg_scroll.h"
 #include "palbuf.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "mem.h"
 #include "resource.h"
@@ -52,7 +52,7 @@ s32 Func_081a71c8(void) {
   Func_08014b70();
   VramCache_Reset();
   WaitFrames(1);
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   Func_081a6030();
@@ -129,7 +129,7 @@ s32 Func_081a729c(s32 prompt) {
   u32 j;
   u32 holdFrames;
 
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Fade_ToWhite(1);
   Func_08014b70();
   VramCache_Reset();

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "io_reg.h"
@@ -85,13 +85,13 @@ void DisplayBlend_StartScript(u16 *script) {
     started = 1;
   }
   if (started)
-    Scheduler_AddOrUpdateCallback((s32)(DisplayBlend_RunScript), 0x480);
+    Task_Add((s32)(DisplayBlend_RunScript), TASK_PASS_VBLANK);
 }
 
 void DisplayBlend_EnableRunScript(void) {
-  Scheduler_SuspendTasks((u32)DisplayBlend_RunScript);
+  Task_SuspendAll((u32)DisplayBlend_RunScript);
 }
 
 void DisplayBlend_DisableRunScript(void) {
-  Scheduler_ResumeTasks((u32)DisplayBlend_RunScript);
+  Task_ResumeAll((u32)DisplayBlend_RunScript);
 }

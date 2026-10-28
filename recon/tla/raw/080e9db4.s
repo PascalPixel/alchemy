@@ -11,7 +11,7 @@ Func_080e9db4:
 	bl Object_GetById
 	adds r5, r0, #0
 	ldr r0, .L_080e9e84
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]

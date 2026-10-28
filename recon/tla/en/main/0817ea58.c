@@ -140,7 +140,7 @@ void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
-void Scheduler_AddOrUpdateCallback(void *, s32);
+void Task_Add(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -167,7 +167,7 @@ void Render_TransformVertices(const void *, void *, s32);
 void Render_DrawModelList(s32 *);
 void MemFree(void *);
 void ObjectGroup_CountDownMemberTimers(void);
-void Scheduler_RemoveCallback(void *);
+void Task_Remove(void *);
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
 void Palette_LoadBasicObjColors(void);
@@ -238,7 +238,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   camera = 0;
   waveScroll = 0;
   shipY = -0x1d0000;
@@ -276,7 +276,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       work->unk7794 = 5;
       work->unk7798 = -1;
       work->unk779c = 0;
-      Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
+      Task_Add(Func_0813baec, 0x480);
       ctl[4] = 1;
       Resource_LoadAndDecompress(0x134, work->frames, 0, 0);
       for (i = 0; i != 10; i++) {
@@ -955,7 +955,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_0813baec);
+  Task_Remove(Func_0813baec);
   *(u16 *)0x03001124 = savedY;
   ctl[4] = 0;
   Func_0814cca8();
@@ -1082,7 +1082,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

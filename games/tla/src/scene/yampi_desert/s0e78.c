@@ -12,7 +12,7 @@ void Func_02000e78(void) {
   Scene_CamBounds(0xe80000, -1, 0xc80000, 1);
   Scene_SetPositionAndCommit(21, 232, 280);
   Scene_SetPositionAndCommit(21, 232, 168);
-  Scheduler_RemoveCallbackFar(Func_02002180);
+  Task_RemoveFar(Func_02002180);
   Scene_ArmCallback(21, 0x4000, 0);
   ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
   FieldEvent_WaitFrames(20);

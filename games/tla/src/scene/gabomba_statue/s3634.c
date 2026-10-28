@@ -30,7 +30,7 @@ void ObjectDispatch_SetSingleChildFlags();
 s32 Object_GetById();
 void Object_SetModeById();
 void Object_SetPartAttribute();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void WaitFrames();
 void Func_02001ac0();
 void Func_02002074();
@@ -43,7 +43,7 @@ void Func_02003634(void) {
 
   t1 = Value1((s32 (*)())Object_GetById, 10);
   Call2((void (*)())Object_SetPartAttribute, t1, 3);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02002074, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02002074, 0x480);
   t4 = Value1((s32 (*)())Object_GetById, 11);
   Call2((void (*)())Object_SetPartAttribute, t4, 11);
   t6 = Value1((s32 (*)())Object_GetById, 12);
@@ -100,7 +100,7 @@ L_0200b762:
   if (t43 != 0)
     goto L_0200b78e;
   Call1((void (*)())Func_020052a4, 0);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001ac0, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Value0((s32 (*)())Func_02003604);
   /* FAKEMATCH(temporary): the table's address in a local set after the call,

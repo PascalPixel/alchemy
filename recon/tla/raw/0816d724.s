@@ -83,7 +83,7 @@ BattleEffect_RunSoulShatter:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816da10
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #36]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
@@ -635,7 +635,7 @@ BattleEffect_RunSoulShatter:
 	b .L_0816d810
 .L_0816dc24:
 	ldr r0, .L_0816dc4c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}

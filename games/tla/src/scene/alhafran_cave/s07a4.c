@@ -11,7 +11,7 @@ void Func_020015e0(s32 value);
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 void Func_02001220(void);
 s32 Func_02000258(void);
-void Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 priority);
+void Task_Add(s32 (*callback)(void), s32 priority);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -34,7 +34,7 @@ void Func_0200051c(void) {
   data = gData_02001be0;
   Func_020015e0(0);
   Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
-  Scheduler_AddOrUpdateCallback(Func_02000258, 0x480);
+  Task_Add(Func_02000258, 0x480);
   if ((u16)(gAdventure.entrance - 8) <= 1) {
     work = Ram_HeapSlots->eventWork;
     /* FAKEMATCH: a one-pass block loads the event work before its offset is

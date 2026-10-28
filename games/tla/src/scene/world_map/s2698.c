@@ -7,7 +7,7 @@ void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_02002594(void);
 void Func_02002640(s32 a, s32 b, s32 c, s32 d);
 void Func_02003d44(s32 value);
@@ -61,7 +61,7 @@ void Func_02002698(void) {
   Func_02004d80_(0x7fff, 0);
   Func_02004d78_(0x10000, 0);
   Func_02004d88(60);
-  Scheduler_AddOrUpdateCallback(Func_02002594, 0x480);
+  Task_Add(Func_02002594, 0x480);
   Func_02004b78_(0x50000, 0x50000, 0x10000);
   FieldEvent_WaitFrames(30);
   Func_02004b78_(0x70000, 0x60000, 0x10000);

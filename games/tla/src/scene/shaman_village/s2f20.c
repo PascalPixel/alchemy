@@ -30,7 +30,7 @@ void Func_02002f20(s32 modeArg, s32 paramArg) {
   gData_020064b0 = mode;
   *paramPtr = (param << 4);
 
-  Scheduler_AddOrUpdateCallback(Func_02002a20, 0x480);
+  Task_Add(Func_02002a20, 0x480);
 
   handler = (s32)gData_0200515a;
   if (mode == 2) {

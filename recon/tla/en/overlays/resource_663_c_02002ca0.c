@@ -44,7 +44,7 @@ void Func_02003bf8(s32 id, s32 x, s32 z);
 void Func_02003cb0(const u8 *table);
 void Func_020003e8(const u8 *table);
 void Func_02003ca0(const u8 *table);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02002b88(void);
 void Func_020024b0(void);
 void Func_02000620(void);
@@ -205,7 +205,7 @@ s32 Func_02002ca0(void) {
     case 1:
     case 2:
     case 3:
-      Scheduler_AddOrUpdateCallback(Func_02002b88, 0x480);
+      Task_Add(Func_02002b88, 0x480);
       Object_GetById(8)->motionFlags = 0;
       Object_GetById(8)->y = 0xfff80000;
       ObjectMotion_SetActionVariant(8, 2);
@@ -278,7 +278,7 @@ s32 Func_02002ca0(void) {
         REG_BLDCNT = 0x3f42;
         while ((s32)((volatile struct DmaRegisters *)0x040000b0)->control < 0)
           ;
-        Scheduler_AddOrUpdateCallback(Func_020024b0, 0xc80);
+        Task_Add(Func_020024b0, 0xc80);
         beam = BEAM;
         beam[6] = 0x4000;
         beam[7] = 0xffff8000;

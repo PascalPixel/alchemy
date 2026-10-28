@@ -27,7 +27,7 @@ s32 Engine_ObjectCreate();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void WaitFrames();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 void Event_WaitTransitionFrames();
 void FieldEvent_WaitFrames();
 s32 Func_02001928();
@@ -37,7 +37,7 @@ void GameFlag_SetBit();
 s32 Random16Far();
 void Func_0200015c();
 void Func_02001f64();
-void Scheduler_RemoveCallbackFar();
+void Task_RemoveFar();
 void Func_0200204c();
 s32 Func_02001fb4();
 
@@ -57,7 +57,7 @@ s32 Func_02001a14(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1600000, -1, 0xc40000, 0);
   Event_StartScreenTransition();
   Call1((void (*)())WaitFrames, 1);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001650, 0xc80);
+  Call2((void (*)())Task_Add, (s32)Func_02001650, 0xc80);
   Event_WaitTransitionFrames();
   Call1((void (*)())FieldEvent_WaitFrames, 60);
   Call3((void (*)())Func_02001928, 21, 23, 9);
@@ -186,7 +186,7 @@ L_02009c38:
       ((FIELD_AT((s32)gFrameCount, s32, 0)) & 1);
   if (r5 != 0)
     goto L_02009bf0;
-  Scheduler_RemoveCallbackFar((s32)Func_02001650);
+  Task_RemoveFar((s32)Func_02001650);
   Func_0200204c();
   Call1((void (*)())GameFlag_SetBit, 0x940);
   v9 = Func_02001fb4();

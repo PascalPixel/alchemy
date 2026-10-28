@@ -12,7 +12,7 @@ void MemFree(void *block);
 s32 Resource_FindFreeEntry(void);
 void Resource_DecodeType01(const void *source, void *destination);
 s32 VramCache_Load(s32 slot, s32 size, void *tiles);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 void Func_080daab0(void);
 void Func_080dacb8(void);
 
@@ -65,9 +65,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_080daab0, priority);
+    Task_Add(Func_080daab0, priority);
   }
-  Scheduler_AddOrUpdateCallback(Func_080dacb8, 0x48f);
+  Task_Add(Func_080dacb8, 0x48f);
   MemFree(pictures);
   return work;
 }

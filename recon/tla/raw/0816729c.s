@@ -66,7 +66,7 @@ BattleEffect_RunJudgment:
 .L_08167318:
 	.4byte BattleEffect_ProcessPendingGraphicsTransfer
 .L_0816731c:
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	movs r0, #0
 	bl Func_08163c2c
@@ -3038,7 +3038,7 @@ BattleEffect_RunJudgment:
 	cmp r7, #16
 	bne .L_081689fc
 	ldr r0, .L_08168a3c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

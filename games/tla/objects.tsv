@@ -91,8 +91,8 @@ main	rom_main_00	games/tla/src/system/resource/clear_slot_references	.text
 main	rom_main_00	games/tla/src/system/resource/activate_entry	.text
 main	rom_main_00	games/tla/src/system/resource/initialize	.text
 main	rom_main_00	games/tla/src/system/resource/resource_cache	.text
-main	rom_main_00	games/tla/src/system/scheduler/callback_scheduler	.text
-main	rom_main_00	games/tla/src/system/scheduler/disable_callbacks	.text
+main	rom_main_00	games/tla/src/system/task/task	.text
+main	rom_main_00	games/tla/src/system/task/resume_and_run	.text
 main	rom_main_00	games/tla/src/lib/math	.text
 main	rom_main_00	games/tla/src/system/memory/debug_text	.text
 main	rom_main_00	games/tla/src/system/memory/debugnum	.text
@@ -2608,7 +2608,7 @@ main	rom_main_06	games/tla/src/system/far_call/table_38
 main	rom_main_06	games/tla/src/system/far_call/uiicon_2
 main	rom_main_06	games/tla/src/system/far_call/table_39
 main	rom_main_06	games/tla/src/system/far_call/table_40
-main	rom_main_06	games/tla/src/system/scheduler/disable_overlay_callbacks_with_flags	.text
+main	rom_main_06	games/tla/src/system/task/field_tasks	.text
 main	rom_main_06	games/tla/src/graphics/window/initialize_work	.text
 main	rom_main_06	games/tla/src/menu/lifecycle	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000f8170	it
@@ -4339,7 +4339,7 @@ main	rom_main_11	games/tla/src/battle/effect/d01a877a	.rodata
 main	rom_main_11	games/tla/src/battle/effect/d01a87ba	.rodata
 main	rom_main_11	games/tla/src/battle/effect/d01a87fa	.rodata
 main	rom_main_12	games/tla/src/system/far_call/resource_d	.text
-main	rom_main_12	games/tla/src/system/scheduler/blank_display_and_run	.text
+main	rom_main_12	games/tla/src/system/task/blank_display_and_run	.text
 main	rom_main_12	games/tla/src/lib/multiply	.text
 main	rom_main_12	games/tla/src/lib/fixed_8	.text
 main	rom_main_12	games/tla/src/lib/reciprocal	.text

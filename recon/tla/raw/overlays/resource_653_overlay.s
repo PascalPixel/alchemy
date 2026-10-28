@@ -167,7 +167,7 @@ Func_02000f60:
 	movs r3, #1
 	bl Func_02005178
 	ldr r0, .L_020092a8
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	b .L_020090ee
 .L_0200905a:
 	movs r1, #186
@@ -579,7 +579,7 @@ Func_020012c4:
 	movs r3, #1
 	bl Func_02005178
 	ldr r0, .L_02009618
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	b .L_02009456
 .L_020093c2:
 	movs r1, #186
@@ -3250,7 +3250,7 @@ Func_02003e8c:
 	bl Func_02005298
 	ldr r5, .L_0200c4d0
 	adds r0, r5, #0
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #15
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -3282,7 +3282,7 @@ Func_02003e8c:
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	bl Func_020051c8
 	movs r0, #128
 	lsls r0, r0, #4

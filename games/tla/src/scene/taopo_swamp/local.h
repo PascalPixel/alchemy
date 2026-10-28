@@ -67,7 +67,7 @@ void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 
 extern s32 gData_02003458;
 extern s32 gData_0200345c;
@@ -142,7 +142,7 @@ void Func_02002818(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02002820(struct ObjectRuntime *object);
 void Func_02002828(void);
 s32 Func_02002998(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001eb8(void);
 void Func_02001ff0(s32 x, s32 z);
 void Func_0200237c(void);

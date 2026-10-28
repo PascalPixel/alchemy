@@ -21,7 +21,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "metadata_lookup.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct TlaBattleObj {
   struct MotionObject *object;
@@ -83,7 +83,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       }
     }
   }
-  if (gSchedulerStatus == 0)
+  if (gTasksRunning == 0)
     WaitFrames(1);
 
   for (unitIndex = 0; unitIndex < 14 && (unitId = unitIds[unitIndex]) != 255;

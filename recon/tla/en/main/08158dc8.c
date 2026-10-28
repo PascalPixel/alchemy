@@ -1,6 +1,6 @@
 // Draft of BattleEffect_RunThor, Thor (scene kind 12): differ 1410 of 1676
 // (draft 1670; 2026-10-26: the twin's fullWidth barrier and the s32 returns
-// of the blitter loaders and the scheduler, as defined, 1439 to 1410), the
+// of the blitter loaders and Task_Add, as defined, 1439 to 1410), the
 // same 125 calls in the same order. Left: the stack frame is 328 bytes for 324,
 // which shifts every stack offset, and the allocation differs from the
 // prologue on (the native keeps the dimmed-copy counter in r9 and the
@@ -67,8 +67,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Sound_PlayFar(s32 cue);
@@ -187,8 +187,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Scheduler_AddOrUpdateCallback(Func_0813baec, 0xc80);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(Func_0813baec, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 0;
   Func_08163c2c(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
@@ -393,7 +393,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 
   // The lightning part.
   view->busy = 0;
-  Scheduler_RemoveCallback(Func_0813baec);
+  Task_Remove(Func_0813baec);
   Func_0814cca8();
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(9, 0x282, 1);
@@ -627,7 +627,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
 
     Runtime_ReleaseHeapBlock(104);
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     Func_0816467c(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {

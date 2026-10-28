@@ -85,7 +85,7 @@ BattleEffect_RunLightSurge:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08171684
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r5, [r5, #48]
 	ldr r1, [sp, #68]
 	str r5, [sp, #48]
@@ -894,7 +894,7 @@ BattleEffect_RunLightSurge:
 	b .L_0817154c
 .L_08171b4e:
 	ldr r0, .L_08171b70
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

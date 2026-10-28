@@ -38,7 +38,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -176,7 +176,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
   BattleEffect_FetchRectangleBlitters(effect->side, draw = callbacks);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != effect->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -250,7 +250,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

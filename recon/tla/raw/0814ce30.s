@@ -135,7 +135,7 @@ BattleEffect_RunCybele:
 	str r3, [r2]
 	ldr r0, .L_0814d248
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #128
 	ldr r3, .L_0814d24c
 	lsls r2, r2, #19
@@ -1309,7 +1309,7 @@ BattleEffect_RunCybele:
 	str r3, [r2]
 	ldr r0, .L_0814d854
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, [sp, #68]
 	movs r4, #0
 	b .L_0814d858
@@ -1619,7 +1619,7 @@ BattleEffect_RunCybele:
 	bl .L_0814d032
 .L_0814daa0:
 	ldr r0, .L_0814db00
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -71,8 +71,8 @@ extern const u8 gData_08199474[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void *GetBattleObjectSlotFar(s32 id);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -123,7 +123,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   REG_BLDCNT = 0;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Centre the canvas's x 64 on the target.
   GetBattleObjectSlotFar(effect->actors[0]);
@@ -227,6 +227,6 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

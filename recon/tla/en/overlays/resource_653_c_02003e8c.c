@@ -21,8 +21,8 @@ void Func_02001f3c(void);
 void Func_02001c8c(void);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 
 void Func_02003e8c(void) {
   struct ObjectRuntime *object;
@@ -207,7 +207,7 @@ fall15:
   Call1((void (*)())Func_020053d8, 188);
   Func_02001f3c();
   Call2((void (*)())Func_02005298, 12, 0);
-  Scheduler_RemoveCallbackFar(Func_02001c8c);
+  Task_RemoveFar(Func_02001c8c);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 15, 3);
   Call2((void (*)())ObjectMotion_SetActionVariant, 15, 3);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 15, 400, 640);
@@ -215,7 +215,7 @@ fall15:
   Call3((void (*)())Func_02005230, 12, 0, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1900000, 0, 0x2f00000, 1);
   Func_020052e8();
-  Scheduler_AddOrUpdateCallback(Func_02001c8c, 0x480);
+  Task_Add(Func_02001c8c, 0x480);
   Func_020051c8();
   Call1((void (*)())GameFlag_SetBit, 0x848);
 }

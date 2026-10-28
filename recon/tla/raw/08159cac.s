@@ -96,7 +96,7 @@ BattleEffect_RunSpire:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815a01c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #32]
 	ldr r2, .L_0815a020
 	ldr r3, [r1, #24]
@@ -432,7 +432,7 @@ BattleEffect_RunSpire:
 	b .L_08159e2a
 .L_08159ffc:
 	ldr r0, .L_0815a01c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

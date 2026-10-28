@@ -19,14 +19,14 @@ void Func_0200535c();
 void Func_02005364();
 void Func_0200538c();
 s32 GameFlag_Test();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_020002a4();
 void Func_02000a68();
 
 void Func_02000d30(void) {
   s32 t4;
 
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000a68, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02000a68, 0x480);
   Func_0200535c();
   Call3(Func_02005364, 0, 10, 11);
   t4 = Value1(GameFlag_Test, 0x310);
@@ -44,7 +44,7 @@ L_02008d7e:
   Func_0200538c();
   Func_020003d8();
   Call2(Func_020052cc, 0x10000, 1);
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_020002a4, 0xc80);
+  Call2(Task_Add, (s32)Func_020002a4, 0xc80);
   goto L_02008dea;
 L_02008da6:
   Call6(Func_02005184, 20, 7, 9, 7, 5, 5);

@@ -24,6 +24,6 @@ void Func_02001fc4(s32 mode) {
     s32 zero = 0;
 
     gData_02007e20 = zero;
-    Scheduler_AddOrUpdateCallback(Func_02001f08, 0x480);
+    Task_Add(Func_02001f08, 0x480);
   }
 }

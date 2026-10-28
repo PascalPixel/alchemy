@@ -75,7 +75,7 @@ test:
   if ((gInput.held & 11) == 0)
     goto next;
 done:
-  Scheduler_RemoveCallbackFar(Func_02002d64);
+  Task_RemoveFar(Func_02002d64);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

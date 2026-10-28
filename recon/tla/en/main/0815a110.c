@@ -158,8 +158,8 @@ void Sound_PlayFar(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
@@ -285,9 +285,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
@@ -483,7 +483,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // Teardown.
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
-    Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

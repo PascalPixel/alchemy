@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "mem.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "edition.h"
 
 /// The shop's work (heap slot 220), as far as these functions use it.
@@ -73,7 +73,7 @@ void Func_08108148(void) {
   slot = Resource_FindFreeEntry();
   work->statUpIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuArrowTiles);
-  Scheduler_AddOrUpdateCallback(Func_08108130, 0x480);
+  Task_Add(Func_08108130, TASK_PASS_VBLANK);
   Func_0810bdf4();
 }
 
@@ -84,7 +84,7 @@ void Func_0810824c(void) {
 
   state = Ram_HeapSlots->menuRuntime;
   Func_0810be3c();
-  Scheduler_RemoveCallback(Func_08108130);
+  Task_Remove(Func_08108130);
   UiWork_FinalizePendingCoreFar();
   Resource_ResetEntry(state->cursorIcon);
   Resource_ResetEntry(state->previousPageIcon);

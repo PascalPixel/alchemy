@@ -68,7 +68,7 @@ void *MemAlloc(s32 size);
 void MemFree(void *buffer);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_02001074(void);
 
 s32 Func_020011a0(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
@@ -150,6 +150,6 @@ s32 Func_020011a0(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->tile = Resource_FindFreeEntry();
   VramCache_Load(table->tile, 0x100, buffer);
   MemFree(buffer);
-  Scheduler_AddOrUpdateCallback(Func_02001074, 0x480);
+  Task_Add(Func_02001074, 0x480);
   return table->count;
 }

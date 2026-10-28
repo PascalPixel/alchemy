@@ -2,7 +2,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MapAnimationWork {
   u8 unk00[6];
@@ -40,15 +40,15 @@ void Func_080230e0(s32 mode) {
   Dma_Set((const void *)&zero, work, 0x85000000 | (sizeof(*work) / 4),
           REG_DMA3);
   if (mode == 4) {
-    Scheduler_AddOrUpdateCallback(Func_0802493c, 0x48a);
+    Task_Add(Func_0802493c, TASK_PASS_VBLANK + 10);
   } else {
-    Scheduler_AddOrUpdateCallback(Func_08023f9c, 0x48b);
-    Scheduler_AddOrUpdateCallback(Func_080246b8, 0x48a);
+    Task_Add(Func_08023f9c, TASK_PASS_VBLANK + 11);
+    Task_Add(Func_080246b8, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
-    Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0x480);
+    Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
   else
-    Scheduler_AddOrUpdateCallback(Func_0802386c, 0x480);
+    Task_Add(Func_0802386c, TASK_PASS_VBLANK);
   work->unk06 = 15;
   work->unk07 = 0;
 }

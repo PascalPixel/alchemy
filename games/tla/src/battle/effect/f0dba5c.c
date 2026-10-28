@@ -4,7 +4,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct DepthSprite {
   u8 unk00[5];
@@ -77,6 +77,6 @@ void Func_080dba5c(void) {
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Scheduler_AddOrUpdateCallback(BattleEffect_DrawSceneSprite, 0x480);
+    Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_VBLANK);
   }
 }

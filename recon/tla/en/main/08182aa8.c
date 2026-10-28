@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -242,7 +242,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   for (frame = 0; frame != 27; frame++) {
     y += 4;
     REG_BG2X = y << 8;
@@ -260,7 +260,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     *table++ = 0;
   }
   FILL_GRADIENT(table, i, level);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 3326);
+  Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
   Func_081885f0(Data_02014400, Data_02014800, 32);
   list[0] = 255;
@@ -958,7 +958,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   *(volatile u16 *)(BG_PLTT + 0xbc) = *(volatile u16 *)(BG_PLTT + 0x1e8);
   BattleEffect_SelectLivingTargets(work->effect);
   WaitFrames(1);
-  Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
+  Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gCameraSceneParameters[4] = 120;
   WaitFrames(1);
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x130), 512);
@@ -1051,6 +1051,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

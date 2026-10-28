@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "battle_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
@@ -42,5 +42,5 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
   ev->timer = frames;
   ev->phase = BATTLE_PLAYBACK_DISPATCH;
   work->unk670[0x0d] = 0;
-  return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
+  return Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
 }

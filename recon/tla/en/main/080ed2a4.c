@@ -66,7 +66,7 @@ void ObjectTable_Snapshot(void);
 void EventRuntime_StartScreen(void);
 void EventRuntime_FinishScreen(void);
 void EventRuntime_WaitDelay(void);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void UiWork_InitializeWithResourceCountersFar(void);
 void WaitFrames(s32 frames);
 void Func_080ebf94(void);
@@ -133,7 +133,7 @@ full:
   *(s32 *)(event + 428) = 0;
   EventRuntime_FinishScreen();
   EventRuntime_WaitDelay();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   UiWork_InitializeWithResourceCountersFar();
   *(u16 *)(objects + 4) = 1;
   WaitFrames(1);

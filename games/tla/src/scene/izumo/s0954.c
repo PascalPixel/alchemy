@@ -30,7 +30,7 @@ s32 Func_020009d0(void) {
    * as in Func_020006a4 (a direct call: differ 2). */
   GameFlag_ClearBit(0x302);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
-  Scheduler_AddOrUpdateCallback(Func_0200060c, 0xc80);
+  Task_Add(Func_0200060c, 0xc80);
   Func_02000de0(gData_02000e10);
   if (GameFlag_Test(0x927)) {
     BYTE_AT(Object_GetById(15), 90) = 2;

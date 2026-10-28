@@ -6,7 +6,7 @@ struct SparkWork {
   s16 resource;
 };
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void Resource_ResetEntry(s32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_02001538(void);
@@ -14,7 +14,7 @@ void Func_02001538(void);
 void Func_0200185c(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Scheduler_RemoveCallbackFar(Func_02001538);
+  Task_RemoveFar(Func_02001538);
   Resource_ResetEntry(work->resource);
   Runtime_ReleaseHeapBlock(220);
 }

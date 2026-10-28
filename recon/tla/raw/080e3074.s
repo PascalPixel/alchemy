@@ -417,7 +417,7 @@ Func_080e3074:
 	str r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080e3438
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #16
@@ -448,7 +448,7 @@ Func_080e3074:
 	bne .L_080e33f2
 .L_080e340a:
 	ldr r0, .L_080e3438
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r3, [sp, #36]
 	adds r3, #52
 	ldrb r3, [r3]
@@ -561,7 +561,7 @@ Func_080e3074:
 	str r3, [r2]
 	ldr r0, .L_080e3618
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #16
@@ -593,7 +593,7 @@ Func_080e3074:
 	bne .L_080e3518
 .L_080e3530:
 	ldr r0, .L_080e3618
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r7, #15
 .L_080e3538:
 	mov r2, r10

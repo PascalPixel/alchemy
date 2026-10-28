@@ -21,7 +21,7 @@ void Func_02002840(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
 void Func_02002838(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001288(void);
 void Func_02001304(void);
 void Func_02001424(void);
@@ -73,7 +73,7 @@ s32 Func_02001774(void) {
       dummy->scaleY = 0xc000;
       dummy->motionFlags = 0;
     }
-    Scheduler_AddOrUpdateCallback(Func_02001288, 0x480);
+    Task_Add(Func_02001288, 0x480);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
@@ -102,7 +102,7 @@ s32 Func_02001774(void) {
   } else if (scene == (s32)&SceneId_Ov678Room7) {
     *effect = 516;
     Func_02002960(0);
-    Scheduler_AddOrUpdateCallback(Func_02001684, 0x480);
+    Task_Add(Func_02001684, 0x480);
     if (gAdventure.entrance == 3 || gAdventure.entrance == 5)
       Func_02002614(gData_02002abc, 0, Func_02001424);
     piece = Object_GetById(8);
@@ -135,8 +135,8 @@ s32 Func_02001774(void) {
     } else {
       Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
       Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
-      Call2(Scheduler_AddOrUpdateCallback, Func_020016fc, 0x480);
-      Call2(Scheduler_AddOrUpdateCallback, Func_02001618, 0x480);
+      Call2(Task_Add, Func_020016fc, 0x480);
+      Call2(Task_Add, Func_02001618, 0x480);
       object = Object_GetById(10);
       object->motionFlags = 0;
       ObjectDispatch_SetSingleChildFlags(object, 0);

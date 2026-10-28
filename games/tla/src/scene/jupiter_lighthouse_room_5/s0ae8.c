@@ -18,7 +18,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020029c8(void *data);
 void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_020001a4(void);
 
 /// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
@@ -50,7 +50,7 @@ s32 Func_02000ae8(void) {
   if (Flag_IsSet(0xa00)) {
     Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
     Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);
-    Scheduler_AddOrUpdateCallback(Func_020001a4, 0x480);
+    Task_Add(Func_020001a4, 0x480);
   }
   return 0;
 }

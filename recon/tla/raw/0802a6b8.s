@@ -438,7 +438,7 @@ Func_0802a6b8:
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #133
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #2
 	add sp, #8
 	pop {r3, r5, r6, r7}

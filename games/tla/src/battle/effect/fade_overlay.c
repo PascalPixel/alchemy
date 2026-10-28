@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "iowrite.h"
@@ -23,7 +23,7 @@ void BattleEffect_StartFadeOverlay(void *object) {
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
   Runtime_ReleaseHeapBlock(56);
-  Scheduler_AddOrUpdateCallback(Func_080d1840, 0x480);
+  Task_Add(Func_080d1840, TASK_PASS_VBLANK);
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(16, &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
@@ -34,7 +34,7 @@ void BattleEffect_StartFadeOverlay(void *object) {
 }
 
 /// Suspends the fade overlay's drawing callback.
-void FadeOverlay_Suspend(void) { Scheduler_SuspendTasks(Func_080d1840); }
+void FadeOverlay_Suspend(void) { Task_SuspendAll(Func_080d1840); }
 
 /// Resumes the fade overlay's drawing callback.
-void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(Func_080d1840); }
+void FadeOverlay_Resume(void) { Task_ResumeAll(Func_080d1840); }

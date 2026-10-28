@@ -34,7 +34,7 @@ void Func_02000d74(void) {
   Kibombo_ObjWalk(17, 0x108, 0x176);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   FieldEvent_WaitFrames(20);
-  Scheduler_RemoveCallbackFar(Func_02002ccc);
+  Task_RemoveFar(Func_02002ccc);
   Func_020032e0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Func_02005b64(7, 0);
@@ -53,7 +53,7 @@ void Func_02000d74(void) {
   Kibombo_ObjEmoteWait(17, 0x102);
   FieldEvent_WaitFrames(20);
   Func_02005b5c(17, 0, 20);
-  Scheduler_RemoveCallbackFar(Func_02002eb0);
+  Task_RemoveFar(Func_02002eb0);
   WaitFrames(1);
   Func_02005b0c(27, 0, 0);
   Kibombo_ObjArm(17, 0xd000, 0);

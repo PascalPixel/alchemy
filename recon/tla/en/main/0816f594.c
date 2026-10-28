@@ -29,7 +29,7 @@
 #include "iwram_call.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "motobj.h"
@@ -136,7 +136,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -253,7 +253,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

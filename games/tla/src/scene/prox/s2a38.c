@@ -5,7 +5,7 @@
 #include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001c24(s32 value);
 void Func_020045dc(s32 value);
 void Func_02002a08(void);
@@ -25,5 +25,5 @@ void Func_02002a38(void) {
   // The priority in a local is built before the callback's address (passed
   // directly, the address loads first).
   priority = 0x480;
-  Scheduler_AddOrUpdateCallback(Func_02002a08, priority);
+  Task_Add(Func_02002a08, priority);
 }

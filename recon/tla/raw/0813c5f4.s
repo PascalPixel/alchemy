@@ -121,7 +121,7 @@ Func_0813c5f4:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0813c834
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #72]
 	ldr r0, [r1, #8]
 	bl GetBattleObjectSlotFar
@@ -637,7 +637,7 @@ Func_0813c5f4:
 	b .L_0813c7b4
 .L_0813cadc:
 	ldr r0, .L_0813cb0c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

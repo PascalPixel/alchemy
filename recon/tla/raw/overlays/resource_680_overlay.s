@@ -235,7 +235,7 @@ Func_020006ec:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008784
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #8
 	movs r1, #1
 	bl Func_02000f14

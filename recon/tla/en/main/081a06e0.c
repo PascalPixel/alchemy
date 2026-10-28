@@ -1,5 +1,5 @@
 // Draft, differ 108 of 195: the credits and slide show driver. It resets the
-// scheduler, starts the scroll callback and sets up BG2, BG3 and blending;
+// task table, starts the scroll task and sets up BG2, BG3 and blending;
 // mode 1 cross-fades the slides until START or the scroll ends, other modes
 // start the scrolling credits (mode - 2) and wait for their end. Left:
 // register choice in the slide loop (the native keeps the slide counter in
@@ -16,7 +16,7 @@
 #include "system.h"
 #include "frame.h"
 #include "input.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern s16 Data_02007500;
 extern u8 gData_03001110;
@@ -45,9 +45,9 @@ s32 Func_081a06e0(s32 mode) {
   gData_03001110 = 0;
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
-  Scheduler_ResetTaskTable();
-  Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourVBlanks,
-                                3200);
+  Task_ResetAll();
+  Task_Add(DisplayScroll_StepPositionEveryFourVBlanks,
+                                TASK_PASS_FRAME);
   Io_Write16(0x40, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
   DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);

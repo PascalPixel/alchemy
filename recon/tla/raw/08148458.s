@@ -78,7 +78,7 @@ BattleEffect_RunNereid:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08148854
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_08148858
 	ldr r2, .L_0814885c
 	movs r0, #128
@@ -734,7 +734,7 @@ BattleEffect_RunNereid:
 	b .L_081485a6
 .L_081489f6:
 	ldr r0, .L_08148a50
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

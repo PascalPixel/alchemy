@@ -41,7 +41,7 @@ BattleEffect_RunBoreas:
 	str r3, [r6]
 	lsls r1, r1, #4
 	ldr r0, .L_0814db80
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_0814db78
 	movs r2, #128
 	lsls r2, r2, #19
@@ -227,7 +227,7 @@ BattleEffect_RunBoreas:
 	strh r3, [r7]
 	ldr r0, .L_0814dd0c
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0814dcdc:
 	ldr r4, [sp, #24]
 	ldrh r3, [r7]
@@ -239,7 +239,7 @@ BattleEffect_RunBoreas:
 	cmp r5, #15
 	bne .L_0814dd10
 	ldr r0, .L_0814dd0c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	b .L_0814dd10
 	.2byte 0x0000
 .L_0814dcf8:
@@ -1571,7 +1571,7 @@ BattleEffect_RunBoreas:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814e740
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #336
 	pop {r3, r5, r6, r7}

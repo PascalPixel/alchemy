@@ -29,7 +29,7 @@
 #include "dma.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "input.h"
 #include "motobj.h"
@@ -135,7 +135,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
                         cells);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -317,7 +317,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     Func_0816467c(1, focus.x, focus.y);

@@ -150,7 +150,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != effect->count * 16 + 116; frame++) {
     s32 *camera = Ram_HeapSlots->cameraWork;
@@ -272,6 +272,6 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

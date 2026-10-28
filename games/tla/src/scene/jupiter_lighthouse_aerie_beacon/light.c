@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "field_event.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
@@ -37,7 +37,7 @@ void Func_02004990(void) {
   gData_02006a6c = Resource_FindFreeEntry();
   VramLoad(gData_02006a6c, 0xc00, buffer);
   MemFree(buffer);
-  Scheduler_AddOrUpdateCallback(Func_020047d4, 1152);
+  Task_Add(Func_020047d4, TASK_PASS_VBLANK);
   gData_02006a6e = 0;
   gData_02006b70 = 0;
   gData_02006b72 = -1;
@@ -51,7 +51,7 @@ void Func_02004a10(void) {
   gData_02006a6c = Resource_FindFreeEntry();
   VramLoad(gData_02006a6c, 0x800, buffer);
   MemFree(buffer);
-  Scheduler_AddOrUpdateCallback(Func_020047d4, 1152);
+  Task_Add(Func_020047d4, TASK_PASS_VBLANK);
   gData_02006a6e = 0;
   gData_02006b70 = 0;
   gData_02006b72 = -1;
@@ -65,7 +65,7 @@ void Func_02004a90(void) {
   gData_02006a6c = Resource_FindFreeEntry();
   VramLoad(gData_02006a6c, 0x800, buffer);
   MemFree(buffer);
-  Scheduler_AddOrUpdateCallback(Func_020047d4, 1152);
+  Task_Add(Func_020047d4, TASK_PASS_VBLANK);
   gData_02006a6e = 0;
   gData_02006b70 = 1;
   gData_02006b72 = -1;

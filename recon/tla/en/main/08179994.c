@@ -66,8 +66,8 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+void Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -130,7 +130,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   lift = 0;
   {
     s32 *life = Data_02010018;
@@ -258,6 +258,6 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

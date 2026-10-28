@@ -134,8 +134,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(s32 (*callback)(void));
+s32 Task_Add(s32 (*callback)(void), s32 order);
+s32 Task_Remove(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 void Sound_PlayFar(s32 cue);
@@ -318,7 +318,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferMode = 2;
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Where each shot starts and how fast it flies.
   user = GetBattleObjectSlotFar(effect->actor)->object;
@@ -790,7 +790,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

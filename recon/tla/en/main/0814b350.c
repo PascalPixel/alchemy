@@ -29,7 +29,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "motobj.h"
@@ -42,7 +42,6 @@
 
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
-#define CALLBACK_ORDER 0xc80
 
 // The sparks live in the map cell buffer.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -122,7 +121,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -309,7 +308,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

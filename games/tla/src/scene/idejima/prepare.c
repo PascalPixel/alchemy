@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -20,8 +20,8 @@ s32 Func_02002ec8(void) {
   s32 entrance;
 
   Func_0200153c();
-  Scheduler_AddOrUpdateCallback(Func_02001558, 0xc80);
-  Scheduler_AddOrUpdateCallback(Func_020015a0, 0x480);
+  Task_Add(Func_02001558, TASK_PASS_FRAME);
+  Task_Add(Func_020015a0, TASK_PASS_VBLANK);
   {
     /* FAKEMATCH: the party address pinned to r3 for the switch's read, apart
      * from case 4's; unpinned, gcse merges the two into r1 and 8 instructions

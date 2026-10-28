@@ -99,7 +99,7 @@ BattleEffect_RunLegend:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08189cec
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r5, #0
 	str r5, [sp, #40]
 	ldr r6, [sp, #52]
@@ -835,7 +835,7 @@ BattleEffect_RunLegend:
 	b .L_08189c04
 .L_0818a1b6:
 	ldr r0, .L_0818a1ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

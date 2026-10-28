@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "field_event.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -66,7 +66,7 @@ void Func_020001b0(void) {
   Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   WaitFrames(1);
   gData_020007e4 = 0;
-  Scheduler_AddOrUpdateCallback(Func_020000f4, 1152);
+  Task_Add(Func_020000f4, TASK_PASS_VBLANK);
   Variant(8, 2);
   Variant(9, 2);
   WORD_AT(Ram_HeapSlots->eventWork, 436) = 40;

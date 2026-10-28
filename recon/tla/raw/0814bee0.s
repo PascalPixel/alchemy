@@ -41,7 +41,7 @@ BattleEffect_RunZagan:
 	lsls r1, r1, #4
 	str r5, [r3]
 	ldr r0, .L_0814c0d8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #80
 	negs r0, r0
 	movs r1, #0
@@ -1295,7 +1295,7 @@ BattleEffect_RunZagan:
 	bl .L_0814c0b2
 .L_0814c8b4:
 	ldr r0, .L_0814c924
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

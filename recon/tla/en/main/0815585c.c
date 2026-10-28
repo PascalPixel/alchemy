@@ -97,8 +97,8 @@ struct BattleObj *GetBattleObjectSlotFar(s32 id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Sound_PlayFar(s32 cue);
@@ -237,7 +237,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
   base[0] = actor->x;
@@ -430,7 +430,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   ClearWords_((void *)0x06004000, 0x4000);

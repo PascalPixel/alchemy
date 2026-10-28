@@ -26,7 +26,7 @@ void Func_020007d4(void) {
   s32 i;
   s32 j;
 
-  /* FAKEMATCH: the native builds the scheduler priority before loading the
+  /* FAKEMATCH: the native builds the task priority before loading the
    * callback; naming the priority here, before it is set, gives that order, as
    * in Func_0200071c. */
   __asm__ volatile("" : "+r"(priority));
@@ -44,7 +44,7 @@ void Func_020007d4(void) {
   Func_02003d44_(0x10000, 0x30000, 0x10000);
   FieldEvent_WaitFrames(40);
   priority = 0x480;
-  Scheduler_AddOrUpdateCallback(Func_020006d0, priority);
+  Task_Add(Func_020006d0, priority);
   Func_02003e44_(0x28000, 0x4000);
   Camera_MoveWithinMapBounds_(0x1380000, -1, 0x1f80000, 1);
   Func_02003ef4(164);

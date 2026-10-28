@@ -86,7 +86,7 @@ BattleEffect_RunTrident:
 	lsls r1, r1, #4
 	ldr r0, .L_0818cc30
 	str r5, [sp, #40]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r7, #166
 	ldr r4, [sp, #52]
 	lsls r7, r7, #7
@@ -1231,7 +1231,7 @@ BattleEffect_RunTrident:
 	bl .L_0818cd48
 .L_0818d532:
 	ldr r0, .L_0818d58c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r4, #238

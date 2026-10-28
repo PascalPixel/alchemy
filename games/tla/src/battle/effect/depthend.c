@@ -4,7 +4,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct DepthScene {
   u16 mode;
@@ -28,7 +28,7 @@ void Func_080dbb40(void) {
   asm volatile("");
   if (scene->active != 0) {
     scene->active = 0;
-    Scheduler_RemoveCallback(BattleEffect_DrawSceneSprite);
+    Task_Remove(BattleEffect_DrawSceneSprite);
     Resource_ResetEntry(scene->vramSlot);
   }
 }

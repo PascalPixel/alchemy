@@ -1,6 +1,6 @@
 #include "ankohl_ruins.h"
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 
 /// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 /// and the event work's unk1cc object with it while the leader stands on it;
@@ -49,7 +49,7 @@ void Func_02001f7c(void) {
     AnkohlRuins_FlagClear(0x146);
   }
   if (row > 41) {
-    Scheduler_RemoveCallbackFar(Func_02001f7c);
+    Task_RemoveFar(Func_02001f7c);
     AnkohlRuins_Call2e24(-1, -1, 0xe666);
     AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
     GameFlag_SetBit(0x201);

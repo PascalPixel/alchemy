@@ -28,8 +28,8 @@ struct ItemDetailsMenu {
 };
 
 void Menu_UpdateEntryObjectTransforms(void);
-void Scheduler_RemoveCallback(void (*callback)(void));
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_Test(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -57,7 +57,7 @@ s32 Func_080fb780(s32 value) {
   itemIcon->motion = 13;
 #endif
   window = UiWindow_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, 2);
-  Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryObjectTransforms);
 
   {
     struct ItemMenuIcon *cursor = menu->cursor;
@@ -103,7 +103,7 @@ s32 Func_080fb780(s32 value) {
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }
 
   {

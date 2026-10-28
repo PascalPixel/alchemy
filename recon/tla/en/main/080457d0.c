@@ -96,8 +96,8 @@ s32 Party_CountActiveOwnersFar(void);
 s32 *Djinn_GetRecoveryTableFar(s32 kind);
 void Func_08118130(s32 kind, u8 *counts);
 void Func_080456f8(struct CommandRowWork *work, s32 index, s32 kind);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_SetIrqHandler(s32 irq, s32 line, void (*handler)(void));
 void Graphics_SetBg1Priority3(void);
 void Func_08045780(void);
@@ -197,7 +197,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       selectionUi->entries[entryIndex].positionX = x + 171;
     selectionUi->entries[entryIndex].positionY = 136;
   }
-  Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0xc80);
+  Task_Add(Graphics_SetBg1Priority3, 0xc80);
   Runtime_SetIrqHandler(2, 136, Func_08045780);
 
   for (;;) {
@@ -410,7 +410,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   }
   work->dirty = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
+  Task_Remove(Graphics_SetBg1Priority3);
   Runtime_SetIrqHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
   MemFree(selectionUi);

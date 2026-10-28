@@ -28,8 +28,8 @@ void ObjectDispatch_SetSingleChildFlags(struct KibomboObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
 void Object_SetModeById(s32 actor, s32 mode);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

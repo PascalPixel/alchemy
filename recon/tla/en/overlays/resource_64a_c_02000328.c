@@ -44,7 +44,7 @@ s32 Func_020023d8(s32 mode);
 void Func_020023e0(s32 scene, s32 entrance);
 void Func_020023e8(void);
 void Func_02002408(s32 cue);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -84,7 +84,7 @@ s32 Func_02000328(void) {
   s32 result, choice, i, limit, status;
 
   Func_0200005c();
-  Scheduler_AddOrUpdateCallback(Func_020001f4, 0x480);
+  Task_Add(Func_020001f4, 0x480);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -121,7 +121,7 @@ top:
   }
   if (result == 0 && !started) {
     WaitFrames(30);
-    Scheduler_AddOrUpdateCallback(Func_0200015c, 0x480);
+    Task_Add(Func_0200015c, 0x480);
     WaitFrames(1);
     started = 1;
   }

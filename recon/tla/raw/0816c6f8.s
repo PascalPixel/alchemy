@@ -91,7 +91,7 @@ BattleEffect_RunGeode:
 	str r3, [r2]
 	adds r1, #255
 	ldr r0, .L_0816c7c0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #192
 	lsls r1, r1, #4
 	b .L_0816c7c4
@@ -105,7 +105,7 @@ BattleEffect_RunGeode:
 .L_0816c7c4:
 	adds r1, #255
 	ldr r0, .L_0816c924
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #80]
 	movs r2, #224
 	lsls r2, r2, #3
@@ -393,12 +393,12 @@ BattleEffect_RunGeode:
 	cmp r1, #34
 	bne .L_0816cab0
 	ldr r0, .L_0816caa0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #185
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_0816caa4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, .L_0816ca98
 	ldr r2, .L_0816ca9c
 	ldrh r3, [r2]
@@ -488,14 +488,14 @@ BattleEffect_RunGeode:
 	b .L_0816cbaa
 .L_0816cab8:
 	ldr r0, .L_0816cc38
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0816cc3c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #185
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_0816cc40
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, .L_0816cc44
 	ldr r2, .L_0816cc48
 	ldrh r3, [r2]
@@ -1276,7 +1276,7 @@ BattleEffect_RunGeode:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816d12c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}

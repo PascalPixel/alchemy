@@ -73,8 +73,8 @@ extern const u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+void Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
@@ -135,7 +135,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
                   128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   __asm__("");
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
@@ -234,7 +234,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

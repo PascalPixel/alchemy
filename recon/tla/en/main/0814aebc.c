@@ -39,7 +39,7 @@
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "motobj.h"
@@ -56,7 +56,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define SHEEP_COUNT 12
 #define SHEEP_FRAMES 98
 #define GROUND_Y (92 << 16)
@@ -141,8 +140,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   REG_BG2X = -middle.x << 8;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+                                TASK_PASS_FRAME);
   Sound_PlayFar(142);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
@@ -198,7 +197,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

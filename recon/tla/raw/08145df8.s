@@ -97,7 +97,7 @@ BattleEffect_RunBind:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08146258
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #76]
 	mov r3, sp
 	adds r3, #124
@@ -542,7 +542,7 @@ BattleEffect_RunBind:
 	b .L_08145f08
 .L_08146244:
 	ldr r0, .L_08146258
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	b .L_0814626c
 .L_08146250:

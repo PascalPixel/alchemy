@@ -68,7 +68,7 @@ Func_02000098:
 	strb r5, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_0200814c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #4
 	b .L_02008150
 .L_0200812c:

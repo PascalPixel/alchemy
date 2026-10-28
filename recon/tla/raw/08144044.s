@@ -46,7 +46,7 @@ BattleEffect_RunHaunt:
 	bl BattleEffect_FetchRectangleBlitters
 	adds r1, r5, #0
 	ldr r0, .L_08144354
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #36]
 	movs r3, #239
 	lsls r3, r3, #7
@@ -62,7 +62,7 @@ BattleEffect_RunHaunt:
 	str r3, [r2]
 	ldr r0, .L_0814435c
 	ldr r5, .L_08144360
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	mov r10, r1
 	movs r6, #255
@@ -360,9 +360,9 @@ BattleEffect_RunHaunt:
 	b .L_08144114
 .L_0814431e:
 	ldr r0, .L_0814435c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_08144354
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

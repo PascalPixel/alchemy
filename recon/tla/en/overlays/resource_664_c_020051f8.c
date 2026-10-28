@@ -31,7 +31,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
 void WaitFrames(s32 frames);
 void Func_02005d84(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02004f3c(void);
 void Func_02001690(void);
 void Func_02004eb0(void);
@@ -74,7 +74,7 @@ s32 Func_020051f8(void) {
       WaitFrames(1);
     }
     if (gAdventure.entrance <= 11 || gAdventure.entrance == 16) {
-      Scheduler_AddOrUpdateCallback(Func_02004f3c, 0x480);
+      Task_Add(Func_02004f3c, 0x480);
       REG_BLDALPHA = 0x1008;
       REG_BLDCNT = 0x3f10;
       Func_02004eb0();
@@ -133,7 +133,7 @@ s32 Func_020051f8(void) {
     Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Scheduler_AddOrUpdateCallback(Func_02001690, 0x480);
+    Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x89b))
       Call3(Func_02005e6c, 8, 0x1080000, 0x2780000);
     if (GameFlag_Test(0x89c))
@@ -253,7 +253,7 @@ s32 Func_020051f8(void) {
     Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Scheduler_AddOrUpdateCallback(Func_02001690, 0x480);
+    Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x8d1))
       Call3(Func_02005e6c, 8, 0x1180000, 0x1d80000);
     if (GameFlag_Test(0x8d2))

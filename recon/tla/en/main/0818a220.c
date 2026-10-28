@@ -26,7 +26,7 @@
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -110,8 +110,8 @@ extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
@@ -205,7 +205,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != Data_08199d60[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
@@ -517,7 +517,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

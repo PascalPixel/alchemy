@@ -87,9 +87,9 @@ Func_080cf78c:
 	strh r2, [r3]
 .L_080cf82a:
 	ldr r0, .L_080cf860
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_080cf864
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r2, #128
 	lsls r2, r2, #19
 	adds r2, #176

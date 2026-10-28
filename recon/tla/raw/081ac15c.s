@@ -41,7 +41,7 @@ LuckyDice_Run:
 	ldr r0, .L_081ac2e4
 	bl Resource_ReservedNoOp
 	bl Camera_ResetSceneDefaults
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r2, .L_081ac2e8
 	movs r3, #0
 	strb r3, [r2]

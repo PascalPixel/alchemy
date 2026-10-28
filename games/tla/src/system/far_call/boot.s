@@ -5,30 +5,30 @@
 	.thumb_func
 WaitFramesFar:
 	overlay_veneer WaitFrames
-	.global Scheduler_ResetTaskTableFar
+	.global Task_ResetAllFar
 	.thumb_func
-Scheduler_ResetTaskTableFar:
-	overlay_veneer Scheduler_ResetTaskTable
-	.global Scheduler_AddOrUpdateCallbackFar
+Task_ResetAllFar:
+	overlay_veneer Task_ResetAll
+	.global Task_AddFar
 	.thumb_func
-Scheduler_AddOrUpdateCallbackFar:
-	overlay_veneer Scheduler_AddOrUpdateCallback
+Task_AddFar:
+	overlay_veneer Task_Add
 	.global Func_080000d8
 	.thumb_func
 Func_080000d8:
-	overlay_veneer Scheduler_RemoveCallback
-	.global Scheduler_SuspendTasksFar
+	overlay_veneer Task_Remove
+	.global Task_SuspendAllFar
 	.thumb_func
-Scheduler_SuspendTasksFar:
-	overlay_veneer Scheduler_SuspendTasks
-	.global Scheduler_ResumeTasksFar
+Task_SuspendAllFar:
+	overlay_veneer Task_SuspendAll
+	.global Task_ResumeAllFar
 	.thumb_func
-Scheduler_ResumeTasksFar:
-	overlay_veneer Scheduler_ResumeTasks
-	.global Scheduler_RunCallbacksByKeyFar
+Task_ResumeAllFar:
+	overlay_veneer Task_ResumeAll
+	.global Task_RunPassFar
 	.thumb_func
-Scheduler_RunCallbacksByKeyFar:
-	overlay_veneer Scheduler_RunCallbacksByKey
+Task_RunPassFar:
+	overlay_veneer Task_RunPass
 	.global Func_080000f8
 	.thumb_func
 Func_080000f8:
@@ -381,10 +381,10 @@ SerialRuntime_GetActiveTransfersFar:
 	.thumb_func
 SerialRuntime_StepBlockTransferFar:
 	overlay_veneer Func_08016990
-	.global Scheduler_SetTaskFlagsFar
+	.global Task_SetFlagsFar
 	.thumb_func
-Scheduler_SetTaskFlagsFar:
-	overlay_veneer Scheduler_SetTaskFlags
+Task_SetFlagsFar:
+	overlay_veneer Task_SetFlags
 	.global Unit_GetFar
 	.thumb_func
 Unit_GetFar:
@@ -429,10 +429,10 @@ GameFlag_GetNibbleFar:
 	.thumb_func
 Func_08000410:
 	overlay_veneer Func_08016dd0
-	.global Scheduler_FindCallbackFar
+	.global Task_FindFar
 	.thumb_func
-Scheduler_FindCallbackFar:
-	overlay_veneer Scheduler_FindCallback
+Task_FindFar:
+	overlay_veneer Task_Find
 	.global Func_08000420
 	.thumb_func
 Func_08000420:

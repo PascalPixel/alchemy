@@ -89,8 +89,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
@@ -131,7 +131,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // BG2 is placed on the first target.
   object = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -187,7 +187,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

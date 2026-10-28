@@ -9,7 +9,7 @@
 #include "objdisp.h"
 #include "ram_buffer.h"
 #include "battle_effect.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "system.h"
 
 struct FxPosition {
@@ -144,7 +144,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   right->x = p->x - 0x100000;
   right->velocityX = 0;
   target->callback = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_SpawnFallingParticles, 0x480);
+  Task_Add((s32)BattleEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -241,7 +241,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   }
   Object_SetMode(anchors[0], 4);
   Object_SetMode(anchors[1], 4);
-  Scheduler_RemoveCallback((u32)BattleEffect_SpawnFallingParticles);
+  Task_Remove((u32)BattleEffect_SpawnFallingParticles);
   Sound_PlayFar(135);
   WaitFrames(15);
   Sound_PlayFar(135);

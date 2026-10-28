@@ -32,7 +32,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "motobj.h"
@@ -51,7 +51,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define PILLAR_FRAMES 96
 #define SPARK_MAX 1024
 
@@ -141,7 +140,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
@@ -272,6 +271,6 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

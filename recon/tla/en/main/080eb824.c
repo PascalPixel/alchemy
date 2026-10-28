@@ -14,7 +14,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "mem.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "canvas_sprite.h"
 
 #define OBJ_TILES ((u8 *)0x06010000)
@@ -56,6 +56,6 @@ void Func_080eb824(void) {
       *map++ = ((((y >> 3) * 8 + (x >> 3)) * 8) + (y & 7)) * 8 + (x & 7);
   }
 
-  Scheduler_AddOrUpdateCallback(Func_080eb6a0, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_080eb594, 0xc6c);
+  Task_Add(Func_080eb6a0, TASK_PASS_VBLANK);
+  Task_Add(Func_080eb594, TASK_PASS_FRAME - 20);
 }

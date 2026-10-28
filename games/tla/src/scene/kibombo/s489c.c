@@ -41,7 +41,7 @@ void Func_02004978(void) {
   Func_020036e0(1, 0);
   FieldEvent_WaitFrames(20);
   Func_02005c9c(162);
-  Scheduler_AddOrUpdateCallback(Func_02002f34, 0x480);
+  Task_Add(Func_02002f34, 0x480);
   FieldEvent_WaitFrames(120);
   Func_020045d0();
   GameFlag_SetBit(0x8fc);

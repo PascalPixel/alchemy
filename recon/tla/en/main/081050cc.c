@@ -1,4 +1,4 @@
-// First draft of MenuIcon_UpdateTransforms: scheduler callback that, while
+// First draft of MenuIcon_UpdateTransforms: task that, while
 // the menu's byte at 0x50a is set, places its four figures each frame through
 // the projected placement (Func_08020018, depth from a table and mode 250),
 // easing each figure's scale a quarter of the way to 1.0 per frame (a

@@ -85,7 +85,7 @@ Func_081051a8:
 	strb r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_08105260
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_08105264
 .L_08105250:
 	.4byte 0x00000010

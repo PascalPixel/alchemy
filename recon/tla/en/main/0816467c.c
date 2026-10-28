@@ -28,7 +28,7 @@
 #include "system.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_fx_work.h"
@@ -81,7 +81,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
                              0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (i = 0; i != 64; i++) {
     s32 speed = (Random16() & 255) + 256;
@@ -187,7 +187,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);

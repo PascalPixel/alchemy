@@ -38,7 +38,7 @@
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
 // address; the plain store starts the address first. Only a halfword register
@@ -64,8 +64,8 @@ void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -133,7 +133,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
@@ -211,7 +211,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

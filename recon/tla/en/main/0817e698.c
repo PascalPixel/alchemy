@@ -97,8 +97,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
@@ -166,7 +166,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
     Sound_PlayFar(212);
@@ -224,7 +224,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

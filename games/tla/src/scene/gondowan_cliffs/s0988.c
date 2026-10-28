@@ -30,7 +30,7 @@ void Func_02000fcc(s32 a, s32 b);
 u16 *Func_02001068(s32 index, s32 actor, s32 start, s32 low, s32 high);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Object_SetModeById(u32 id, s32 mode);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02000738(void);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs Func_02000768 and returns; with
@@ -96,7 +96,7 @@ s32 Func_02000988(void) {
     Object_GetById(15)->collisionFlags |= 16;
   }
   Iwram_CopyWords(gData_02001ae0, (void *)0x05000018, 8);
-  Scheduler_AddOrUpdateCallback(Func_02000738, 0x480);
+  Task_Add(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
   return 0;

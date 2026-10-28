@@ -71,7 +71,7 @@ void Func_0814355c(void); // the BG2 canvas's registers
 void BattleEffect_DimBackgroundStep(void); // fades the battle background
 void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
 void Func_0813f8d4(void); // BattleEffect_DrawStreaks
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
+s32 Task_Add(void *callback, s32 order);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
@@ -159,9 +159,9 @@ void Func_0813fa88(s32 kind) {
   // every frame.
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_DimBackgroundStep, 0x480);
+  Task_Add(BattleEffect_DimBackgroundStep, 0x480);
   work->halvePending = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_TransferHalvedCanvas, 0xc80);
+  Task_Add(BattleEffect_TransferHalvedCanvas, 0xc80);
   work->frame = 0;
-  Scheduler_AddOrUpdateCallback(Func_0813f8d4, 0x480);
+  Task_Add(Func_0813f8d4, 0x480);
 }

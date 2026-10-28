@@ -42,7 +42,7 @@ void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 sound_id);
 
 void Shop_RestoreSceneTiles(s32 address);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
+s32 Task_Add(void (*callback)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
 void Func_0808a520(struct Effect_080b2f4c *effect,
                    void (*callback)(struct Effect_080b2f4c *));
@@ -50,7 +50,7 @@ void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
 void Sound_WaitForJingle(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Remove(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
 void Shop_InitializeEffect(void);
 void Shop_ResetEffects(void);
@@ -109,7 +109,7 @@ void Func_0810b1b4(s32 member) {
   Func_08009280(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = 0x480;
-  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
+  Task_Add(Shop_ResetEffects, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
   position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
@@ -167,7 +167,7 @@ void Func_0810b1b4(s32 member) {
     }
   }
 
-  Scheduler_RemoveCallback(Shop_ResetEffects);
+  Task_Remove(Shop_ResetEffects);
   Func_08009280(shop->partyMemberIcons[member], 16);
   Shop_InitializeEffect();
   WaitFrames(30);

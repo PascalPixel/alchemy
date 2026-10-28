@@ -397,7 +397,7 @@ Func_0811df70:
 	movs r1, #144
 	ldr r0, .L_0811e28c
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r10
 	ldr r0, [r2, #88]
 	movs r3, #128

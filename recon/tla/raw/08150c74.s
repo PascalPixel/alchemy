@@ -170,7 +170,7 @@ BattleEffect_RunQuake:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08151034
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, sp
 	adds r2, #96
 	str r2, [sp, #40]
@@ -474,7 +474,7 @@ BattleEffect_RunQuake:
 	b .L_08150dfa
 .L_08151010:
 	ldr r0, .L_08151034
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

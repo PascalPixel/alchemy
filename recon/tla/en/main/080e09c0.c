@@ -61,8 +61,8 @@ void WaitFrames(s32 frames);
 void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_Remove(void (*callback)(void));
 void Func_080e0618(void);
 
 extern char ResourceId_SparkleFade;
@@ -141,7 +141,7 @@ void Func_080e09c0(void) {
       work->next = 0;
       work->spawnCount = 1;
       work->hit = 0;
-      Scheduler_AddOrUpdateCallback(Func_080e0618, 0x480);
+      Task_Add(Func_080e0618, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(0x200);
@@ -151,7 +151,7 @@ void Func_080e09c0(void) {
         }
         WaitFrames(1);
       }
-      Scheduler_RemoveCallback(Func_080e0618);
+      Task_Remove(Func_080e0618);
     }
     Resource_ResetEntry(slotA);
     Resource_ResetEntry(slotB);

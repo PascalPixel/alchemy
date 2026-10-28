@@ -8,7 +8,7 @@
 // the first test is kept into that path.
 #include "types.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "audio_engine.h"
 
 struct SoundVBlankState {

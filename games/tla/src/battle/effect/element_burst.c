@@ -34,7 +34,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
@@ -62,8 +62,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
 s32 BattleEffect_ProcessPendingGraphicsTransfer(
     void); // the canvas transfer callback
-s32 Scheduler_AddOrUpdateCallback(void *func, s32 order);
-s32 Scheduler_RemoveCallback(void *func);
+s32 Task_Add(void *func, s32 order);
+s32 Task_Remove(void *func);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -144,8 +144,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+                                TASK_PASS_FRAME);
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                            BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -209,7 +209,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);

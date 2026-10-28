@@ -41,7 +41,7 @@ void Func_02001054(void) {
   struct Adventure *party;
   s16 *entrance;
 
-  Scheduler_AddOrUpdateCallback(Func_020003e8, 0x480);
+  Task_Add(Func_020003e8, 0x480);
   Func_02001dfc();
   Func_02001e04(0, 0x200, 8, 9);
   Func_02001dec(170);
@@ -98,5 +98,5 @@ void Func_020017bc(void) {
   priority = 0x480;
   /* FAKEMATCH: the native builds the priority before loading the callback. */
   __asm__ volatile("" : "+r"(priority));
-  Scheduler_AddOrUpdateCallback(Func_020015f8, priority);
+  Task_Add(Func_020015f8, priority);
 }

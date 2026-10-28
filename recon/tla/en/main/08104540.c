@@ -70,7 +70,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 void Input_ResetKeyRepeat(void);
 void Sound_PlayFar(s32 cue);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
 
@@ -206,7 +206,7 @@ s32 Func_08104540(void) {
     }
     WaitFrames(1);
   }
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   UiWindow_CloseIfOpen(helpWindowSlot, 1);
   WaitFrames(1);

@@ -17,7 +17,7 @@
 #include "battle_work.h"
 #include "battle_display.h"
 #include "battle_event.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "mem.h"
@@ -138,7 +138,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     Func_0812756c();
   } else {
     if (((s32 *)plan)[25] == 0)
-      Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
+      Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
     if (work.kind) {
       if (saved)
         Func_0811e7dc(saved);

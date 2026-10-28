@@ -114,7 +114,7 @@ BattleEffect_CleanupSceneObjects:
 	strb r3, [r2]
 	bl Func_080dbb40
 	ldr r0, .L_080dc950
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r2, r8
 	ldr r3, [r2, #68]
 	mov r0, r9

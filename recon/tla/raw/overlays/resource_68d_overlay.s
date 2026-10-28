@@ -242,7 +242,7 @@ Func_020003a0:
 	strb r1, [r3]
 	movs r1, #144
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r0, r9
 	bl MemFree
 	add sp, #4

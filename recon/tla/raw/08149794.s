@@ -106,7 +106,7 @@ BattleEffect_RunPlasma:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08149b70
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r1, r9
 	ldr r2, [r1, #24]
 	ldr r3, .L_08149b74
@@ -486,7 +486,7 @@ BattleEffect_RunPlasma:
 	b .L_0814988c
 .L_08149b40:
 	ldr r0, .L_08149b70
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

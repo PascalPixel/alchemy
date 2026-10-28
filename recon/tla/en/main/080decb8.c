@@ -41,7 +41,7 @@ struct CloakEvent {
   s16 psynergyRequest;
 };
 
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 void FieldEffect_CheckCloakTile(void);
 void Func_080debd8(void);
 void WaitFrames(s32 frames);
@@ -90,7 +90,7 @@ void Func_080decb8(void) {
   entry->param = 0;
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
-  Scheduler_AddOrUpdateCallback(check, order);
+  Task_Add(check, order);
   gAdventure.cloaked = 1;
   check();
   if (event->psynergyRequest == CLOAK_END) {

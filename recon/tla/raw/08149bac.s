@@ -329,7 +329,7 @@ BattleEffect_RunSparkGroups:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814a000
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r4, #0
 	str r4, [sp, #36]
 	mov r5, r10
@@ -849,7 +849,7 @@ BattleEffect_RunSparkGroups:
 	b .L_08149e64
 .L_0814a222:
 	ldr r0, .L_0814a260
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -26,8 +26,8 @@
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 u32 Runtime_GetBuildStampTimeFar(void);
-void Scheduler_ScheduleCallbackAAfterFrames(void);
-void Scheduler_ScheduleCallbackA(void);
+void PaletteGlow_Start(void);
+void PaletteGlow_Stop(void);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
@@ -157,7 +157,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   }
 
   Dma_Fill32(0, spriteWork, 0xcec);
-  Scheduler_ScheduleCallbackAAfterFrames();
+  PaletteGlow_Start();
   fileList = UiWindow_Create(1, 2, 28, 7, 2);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
@@ -275,7 +275,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   UiWork_Finalize(partyWindow, 2);
   UiWork_Finalize(summaryWindow, 2);
   UiWork_Finalize(fileList, 2);
-  Scheduler_ScheduleCallbackA();
+  PaletteGlow_Stop();
   Runtime_ReleaseHeapBlock(220);
   Func_0803f9c0(gAdventure.unk220[5], gAdventure.unk220[6]);
   WaitFrames(1);

@@ -32,7 +32,7 @@ void Func_02003c8c(void) {
     Object_SetModeById_(15, 5);
   }
   Object_SetModeById_(14, 5);
-  Scheduler_AddOrUpdateCallback(Func_02001c8c, 0x480);
+  Task_Add(Func_02001c8c, 0x480);
   if ((gAdventure.entrance >= 4 && gAdventure.entrance <= 6) ||
       gAdventure.entrance == 14) {
     if (GameFlag_Test_(0x84a)) {

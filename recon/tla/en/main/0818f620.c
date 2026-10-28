@@ -45,8 +45,8 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -127,7 +127,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
@@ -342,12 +342,12 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 0) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);
   } else if (mode == 3) {
     BattleEffect_EndCanvasLayer();
@@ -361,7 +361,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
     WaitFrames(1);

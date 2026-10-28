@@ -148,7 +148,7 @@ Func_08166b10:
 	str r3, [r2]
 	ldr r0, .L_08166e10
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r7, [sp, #40]
 	movs r0, #0
 	mov r8, r0
@@ -953,7 +953,7 @@ Func_08166b10:
 	b .L_08166d0e
 .L_08167264:
 	ldr r0, .L_08167298
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

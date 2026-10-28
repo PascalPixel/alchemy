@@ -91,7 +91,7 @@ Func_08172b00:
 	lsls r1, r1, #4
 	str r3, [r2]
 	ldr r0, .L_08172bd0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #96]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
@@ -1317,7 +1317,7 @@ Func_08172b00:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817356c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #144
 	pop {r3, r5, r6, r7}

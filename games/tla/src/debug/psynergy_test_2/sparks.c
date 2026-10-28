@@ -36,8 +36,8 @@ void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02000560(void *resource, void *destination);
 void Func_020005f0(struct SparkSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_020005f8(struct SparkSprite *sprite, struct Spark *spark);
@@ -48,7 +48,7 @@ void Func_0200015c(void);
 void Func_02000358(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Scheduler_RemoveCallbackFar(Func_0200015c);
+  Task_RemoveFar(Func_0200015c);
   Resource_ResetEntry(work->resource);
   Runtime_ReleaseHeapBlock(220);
 }

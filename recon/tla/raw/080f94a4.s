@@ -73,7 +73,7 @@ Func_080f94a4:
 	adds r3, r5, #0
 	adds r3, #240
 	str r0, [r3]
-	bl Scheduler_EnableOverlayCallbacksWithFlags
+	bl Menu_SuspendFieldTasks
 	ldr r3, .L_080f95f4
 	ldr r1, .L_080f95f8
 	mov r9, r3
@@ -164,7 +164,7 @@ Func_080f94a4:
 	bl MemFree
 	movs r0, #1
 	bl WaitFrames
-	bl Scheduler_DisableOverlayCallbacksWithFlags
+	bl Menu_ResumeFieldTasks
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0

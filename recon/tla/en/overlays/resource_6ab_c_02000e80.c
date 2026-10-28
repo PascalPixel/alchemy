@@ -40,8 +40,8 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
-s32 Scheduler_AddOrUpdateCallback();
-s32 Scheduler_RemoveCallbackFar();
+s32 Task_Add();
+s32 Task_RemoveFar();
 s32 UiText_ShowPositionedMessageAndWait();
 s32 VramCache_Load();
 s32 WaitFrames();
@@ -202,7 +202,7 @@ L_02009112:
   Call2((void (*)())Func_02004404, 0x10006, 0);
   Call1((void (*)())Func_02004414, 80);
   Call1((void (*)())FieldEvent_WaitFrames, 80);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001424, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02001424, 0x480);
   Call2((void (*)())Func_020043c4, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0x1e00000, 1);
   Func_020043d4();
@@ -212,7 +212,7 @@ L_02009112:
   Call2((void (*)())Func_02004404, 0x7fff, 0);
   Call1((void (*)())Func_02004414, 80);
   Call1((void (*)())WaitFrames, 60);
-  Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)Func_02001424);
+  Call1((void (*)())Task_RemoveFar, (s32)Func_02001424);
   Call1((void (*)())WaitFrames, 20);
   Call3((void (*)())Func_02004264, 0, 0, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);

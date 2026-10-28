@@ -853,7 +853,7 @@ Func_0815f16c:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0815fafc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #128]
 	mov r3, sp
 	adds r3, #240
@@ -1383,9 +1383,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r1, #28]
 	ldr r0, .L_0815fe50
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0815fe54
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -1447,9 +1447,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r1, #28]
 	ldr r0, .L_0815fe50
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0815fe54
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -2053,7 +2053,7 @@ Func_0815f16c:
 	movs r1, #200
 	ldr r0, .L_081602a8
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_081601d6:
 	ldr r0, [sp, #124]
 	subs r0, #4
@@ -8945,9 +8945,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r5, #28]
 	ldr r0, .L_081638c4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081638c8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -9007,10 +9007,10 @@ Func_0815f16c:
 	bne .L_08163896
 .L_08163890:
 	ldr r0, .L_081638cc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_08163896:
 	ldr r0, .L_081638c8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

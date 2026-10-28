@@ -67,7 +67,7 @@ void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
+void Task_Add(void *callback, s32 priority);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 
@@ -261,7 +261,7 @@ s32 Func_0200145c(void) {
     LinkLobby_WriteSlotValue(4);
   }
   callback = Func_02000134;
-  Scheduler_AddOrUpdateCallback(callback, 0x480);
+  Task_Add(callback, 0x480);
   Func_02001944(callback, 1);
   if (gAdventure.entrance != 8 || !Flag_IsSet(0x173)) {
     Func_02001a04(1);

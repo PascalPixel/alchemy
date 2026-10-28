@@ -45,7 +45,7 @@ BattleEffect_RunPlumeEdge:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816aa74
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r11
 	movs r2, #36
 	ldrsh r0, [r3, r2]
@@ -484,7 +484,7 @@ BattleEffect_RunPlumeEdge:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ae3c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}

@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 gAdventure[];
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void FieldEffect_CheckCloakTile(void);
 
 void FieldEffect_ResumeCloakCheck(void) {
@@ -16,5 +16,5 @@ void FieldEffect_ResumeCloakCheck(void) {
   } while (0);
   flag = (s8 *)state + 0x26d;
   if (*flag != 0)
-    Scheduler_AddOrUpdateCallback(FieldEffect_CheckCloakTile, 0x480);
+    Task_Add(FieldEffect_CheckCloakTile, 0x480);
 }

@@ -45,7 +45,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 void Func_080e42d4(void);
 void Func_080e4730(void);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -183,7 +183,7 @@ void Func_080e4a34(void) {
   event->phase = 3;
   gAdventure.pendingThird = 1;
   if (event->standing == 0)
-    Scheduler_AddOrUpdateCallback(Func_080e42d4, 0x480);
+    Task_Add(Func_080e42d4, 0x480);
   ObjectGroup_SetActionForOthers(owner, 0, 16);
   Resource_ResetEntry(pictureEntry);
   Resource_ResetEntry(particleEntry);

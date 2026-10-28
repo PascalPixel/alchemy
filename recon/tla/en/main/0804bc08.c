@@ -148,8 +148,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 void Link_DrawShiftedTilePair(u32 address);
 void Func_080451bc(void);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void UpdateLinkSessionCountdown(void);
 s32 Func_0804babc(u16 *actors, struct PartyCommandRecord **cursor,
                   s32 *forcedCount);
@@ -319,7 +319,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
     }
   }
-  Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 0x480);
+  Task_Add(UpdateLinkSessionCountdown, 0x480);
 
   for (;;) {
     commandsOut = commands;
@@ -874,7 +874,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     UiWork_Finalize(state->timerWindow, 1);
   Resource_ResetEntry(smallIconSlot);
   Resource_ResetEntry(largeIconSlot);
-  Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
+  Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     struct PartyLinkBattle *link = Ram_HeapSlots->battleWork;
 

@@ -74,7 +74,7 @@ BattleEffect_RunOdyssey:
 	str r3, [r2]
 	ldr r0, .L_08190c1c
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, [sp, #60]
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -1176,7 +1176,7 @@ BattleEffect_RunOdyssey:
 	movs r0, #1
 	bl BattleBackground_LoadFar
 	ldr r0, .L_0819152c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

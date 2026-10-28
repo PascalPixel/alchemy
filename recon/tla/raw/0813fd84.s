@@ -52,7 +52,7 @@ BattleEffect_RunCruelRuin:
 	lsls r1, r1, #4
 	ldr r0, .L_0813fdf8
 	str r5, [sp, #120]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_0813fdfc
 	ldr r4, [sp, #132]
 	b .L_0813fe00
@@ -2987,7 +2987,7 @@ BattleEffect_RunCruelRuin:
 .L_081414da:
 	bl Palette_LoadBasicObjColors
 	ldr r0, .L_08141538
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

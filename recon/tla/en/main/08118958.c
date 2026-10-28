@@ -20,7 +20,7 @@ extern u16 Data_02000436;
 void Func_080ad090(void);
 void Ui_LoadWindowGraphics(void);
 void Func_08014b70(void);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void Runtime_InitializeHeap(void);
 void VramCache_Reset(void);
 void GameFlag_SetBit(s32 flag);
@@ -42,7 +42,7 @@ void DebugBattle_RunMenu(void) {
 restart:
   Ui_LoadWindowGraphics();
   Func_08014b70();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Runtime_InitializeHeap();
   VramCache_Reset();
   GameFlag_SetBit(362);
@@ -93,7 +93,7 @@ restart:
       gData_03001110 = 1;
       Ui_LoadWindowGraphics();
       Func_08014b70();
-      Scheduler_ResetTaskTable();
+      Task_ResetAll();
       Runtime_InitializeHeap();
       VramCache_Reset();
     }

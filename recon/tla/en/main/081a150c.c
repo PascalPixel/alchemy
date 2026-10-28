@@ -1,5 +1,5 @@
 // Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
-// clears the frame flags and the scroll words, resets the scheduler and adds
+// clears the frame flags and the scroll words, resets the task table and adds
 // Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,
 // with BLDALPHA 16, and calls Func_081a1830. gData_02007520 is cleared after
 // Data_02007524 is set, which puts the native's loads of the scroll words'
@@ -12,7 +12,7 @@
 #include "iowrite.h"
 #include "frame.h"
 #include "display_scroll.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern u8 gData_03001110;
 extern u32 Data_02007518;
@@ -31,7 +31,7 @@ void Func_081a150c(void) {
   gCpuLoadDisplayEnabled = 0;
   gData_03001110 = 0;
   gAutoSleepEnabled = 0;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Data_02007518 = 0;
   gData_0200751c = 0;
   Data_02007528 = 0;
@@ -39,7 +39,7 @@ void Func_081a150c(void) {
   Data_02007524 = 1;
   gData_02007520 = 0;
   Data_02007514 = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_081a133c, 0x480);
+  Task_Add((s32)Func_081a133c, TASK_PASS_VBLANK);
   Io_Write16(0x40, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
   DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);

@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 #include "adventure.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "call.h"
 #include "flag_call.h"
 #include "ram_buffer.h"
@@ -44,7 +44,7 @@ extern const u8 gData_02002120[];
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
@@ -109,7 +109,7 @@ void Func_0200128c(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())Func_020020d4, 220);
   callback = Func_02001188;
-  Scheduler_AddOrUpdateCallback(callback, 0x480);
+  Task_Add(callback, TASK_PASS_VBLANK);
   Call2((void (*)())Func_02002084, 0x10003, 1);
   Call1((void (*)())Func_0200208c, 20);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -121,7 +121,7 @@ void Func_0200128c(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call6((void (*)())Func_02001f2c, 51, 38, 70, 22, 1, 2);
   Flag_Set(0x201);
-  Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)callback);
+  Call1((void (*)())Task_RemoveFar, (s32)callback);
   if (handle != 0)
     Call1((void (*)())Func_02001f14, handle);
   Call1((void (*)())FieldEvent_WaitFrames, 20);

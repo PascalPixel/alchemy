@@ -6,7 +6,7 @@ void Func_0200255c(void) {
 
   gData_02006710 = none;
   priority = 0x480;
-  Scheduler_AddOrUpdateCallback(Func_020024ac, priority);
+  Task_Add(Func_020024ac, priority);
 }
 
 // The cell stampers keep their last cell and the block they copy.

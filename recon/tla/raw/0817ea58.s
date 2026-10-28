@@ -45,7 +45,7 @@ BattleEffect_RunDaedalus:
 	str r3, [r2]
 	ldr r0, .L_0817eb10
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r4, #0
 	str r4, [sp, #124]
 	str r4, [sp, #112]
@@ -171,7 +171,7 @@ BattleEffect_RunDaedalus:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0817ee84
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #132]
 	movs r3, #1
 	str r3, [r1, #16]
@@ -3727,7 +3727,7 @@ BattleEffect_RunDaedalus:
 	bl .L_0817f1f4
 .L_081806f0:
 	ldr r0, .L_081807ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	add r0, sp, #100
 	ldr r3, .L_081807e0
 	ldrh r0, [r0]
@@ -4416,7 +4416,7 @@ BattleEffect_RunDaedalus:
 	cmp r0, #16
 	bne .L_08180c52
 	ldr r0, .L_08180c90
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

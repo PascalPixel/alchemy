@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern u16 gData_02004434;
 extern u16 gData_0200443c;
@@ -17,5 +17,5 @@ void Func_020000f4(void) {
   gData_02004440 = 15;
   gData_0200443c = 16;
   gData_02004434 = 1;
-  Scheduler_AddOrUpdateCallback(Func_020001f8, 0x480);
+  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }

@@ -4694,7 +4694,7 @@ Func_08185b9c:
 	movs r3, #0
 	str r3, [r7, #16]
 	ldr r0, .L_08186df8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

@@ -7,7 +7,7 @@
        ->v)
 
 #include "call.h"
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 Func_020029fc();
 s32 Object_GetById();
 s32 ObjectDispatch_SetSingleChildFlags();
@@ -28,7 +28,7 @@ s32 Func_02000b18(void) {
   s32 t23;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_02000a80, 0xc80);
+  Call2(Task_Add, (s32)Func_02000a80, 0xc80);
   Call1(Func_020029fc, 8);
   Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 0xa), 0);
   Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 0xb), 0);

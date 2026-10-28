@@ -20,7 +20,7 @@ extern u8 Data_0202c001[];
 struct ObjectRuntime *Object_GetById(u32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001b98(void);
 
 #define MARK(at, cellPicture, shape)                                              \
@@ -116,5 +116,5 @@ void Func_02001c10(void) {
       ObjectDispatch_SetSingleChildFlags(object, 0);
     }
   }
-  Scheduler_AddOrUpdateCallback(Func_02001b98, 0x480);
+  Task_Add(Func_02001b98, 0x480);
 }

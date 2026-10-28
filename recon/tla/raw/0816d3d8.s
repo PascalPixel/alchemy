@@ -63,7 +63,7 @@ BattleEffect_RunStoneJustice:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816d710
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #0
 	str r3, [sp, #32]
 	str r3, [sp, #28]
@@ -397,7 +397,7 @@ BattleEffect_RunStoneJustice:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r0, .L_0816d710
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

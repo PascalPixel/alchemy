@@ -33,7 +33,7 @@ void Func_020040cc(void) {
   WaitFrames(1);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   Kibombo_Wait(20);
-  Scheduler_RemoveCallbackFar(Func_02002ccc);
+  Task_RemoveFar(Func_02002ccc);
   Func_020032e0();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
   Kibombo_MessagePut(17, 0);
@@ -45,7 +45,7 @@ void Func_020040cc(void) {
   Func_02003640(1, 1);
   Kibombo_Wait(20);
   Func_02005b5c(17, 0, 40);
-  Scheduler_RemoveCallbackFar(Func_02002ccc);
+  Task_RemoveFar(Func_02002ccc);
   WaitFrames(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_FinishScreenTransition();

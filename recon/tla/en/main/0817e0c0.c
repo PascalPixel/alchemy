@@ -1,7 +1,7 @@
 // 2026-10-26 (round 5): differ 82 of 601 (draft 601). The flash's brightness
 // stored between its texture's two size bytes (a statement-move search): 127 to
 // 82.
-// 2026-10-26: differ 127 of 601, with Scheduler_AddOrUpdateCallback returning
+// 2026-10-26: differ 127 of 601, with Task_Add returning
 // s32 as defined.
 // Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
@@ -12,7 +12,7 @@
 // blitter pair sp+52, screen sp+60, caster sp+72, target sp+84; mode,
 // canvas, frame, camera and the spark cels spilled at sp+40 down to sp+24).
 // Left:
-// - after the scheduler call the native copies the effect argument from
+// - after the Task_Add call the native copies the effect argument from
 // fp into r5 once and loads its fields through r5 for the lunge, the
 // target object and its place; here each load copies fp afresh.
 // - the prologue loads work before camera and sets the sheet offset 0x700
@@ -117,8 +117,8 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
-s32 Scheduler_RemoveCallback(s32 callback);
+s32 Task_Add(s32 callback, s32 priority);
+s32 Task_Remove(s32 callback);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
@@ -212,7 +212,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
@@ -376,7 +376,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

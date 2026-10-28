@@ -19,7 +19,7 @@ extern struct SceneState gSceneState;
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_020038ac(void);
 void Func_02003974(void);
 s32 Func_02003a64(s32 value);
@@ -34,7 +34,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     Func_020038ac();
     Func_02003974();
     count = state->count;
-    Scheduler_AddOrUpdateCallback(Func_02004710, 1152);
+    Task_Add(Func_02004710, 1152);
   } else {
     Iwram_ClearWords(state, sizeof(struct SceneState));
     state->originX = x;
@@ -42,7 +42,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     Func_020038ac();
     count = Func_02003a64(value);
     Func_02004288(id, 0);
-    Scheduler_AddOrUpdateCallback(Func_02004710, 1152);
+    Task_Add(Func_02004710, 1152);
   }
   Object_GetById(id)->unk5c[0] = 2;
   return count;

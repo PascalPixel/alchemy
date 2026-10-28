@@ -70,7 +70,7 @@ BattleEffect_RunHeartbreak:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08178fc4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #12]
 	mov r2, sp
 	adds r2, #24
@@ -554,7 +554,7 @@ BattleEffect_RunHeartbreak:
 	b .L_08178f88
 .L_08179322:
 	ldr r0, .L_08179390
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]

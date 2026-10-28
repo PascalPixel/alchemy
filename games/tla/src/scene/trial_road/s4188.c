@@ -44,7 +44,7 @@ void Func_02004188(s32 a, s32 b) {
   MemFree(buffer);
   gauge->buffer = Runtime_BumpAllocateAlternatePool(0x3c0);
   gauge->field02 = b;
-  Scheduler_AddOrUpdateCallback(Func_02003da0, 0x48d);
-  Scheduler_AddOrUpdateCallback(Func_02003f68, 0x480);
+  Task_Add(Func_02003da0, 0x48d);
+  Task_Add(Func_02003f68, 0x480);
   Object_GetById(Func_02005a40())->priorityFlags |= 0x40;
 }

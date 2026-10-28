@@ -79,7 +79,7 @@ BattleEffect_RunCool:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816ef34
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r10
 	ldr r3, [r2, #24]
 	add r5, sp, #32
@@ -522,7 +522,7 @@ BattleEffect_RunCool:
 	b .L_0816ed56
 .L_0816f058:
 	ldr r0, .L_0816f07c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}

@@ -6,7 +6,7 @@
 #include "battle_work.h"
 #include "battle_display.h"
 
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *destination);
 void Func_08125bb8(void *destination);
@@ -19,7 +19,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade) {
       (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
   if (transition->mode == 0)
-    Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0xcff);
+    Task_Add(BattlePres_UpdateHBlankScroll, 0xcff);
   transition->mode = mode;
 
   if (mode == 1)

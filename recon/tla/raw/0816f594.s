@@ -70,7 +70,7 @@ BattleEffect_RunRadiantFire:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816f908
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r5, [r5, #48]
 	mov r2, r11
 	str r5, [sp, #16]
@@ -406,7 +406,7 @@ BattleEffect_RunRadiantFire:
 	b .L_0816f67e
 .L_0816f8ea:
 	ldr r0, .L_0816f908
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

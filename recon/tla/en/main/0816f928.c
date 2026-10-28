@@ -26,7 +26,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "effect_step.h"
@@ -106,7 +106,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   REG_BG2X = (64 - position.x) << 8;
 
@@ -209,11 +209,11 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   }
 
   // Clear the canvas and its characters and hand the layer over.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   SummonEffect_RunCanvasMode3(effect);
 }

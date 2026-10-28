@@ -12,7 +12,7 @@
 #include "graphics.h"
 #include "mem.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "palbuf.h"
 #include "fxblend.h"
 #include "dma.h"

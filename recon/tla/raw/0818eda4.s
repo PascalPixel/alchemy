@@ -101,7 +101,7 @@ BattleEffect_RunLiquifier:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0818f0b0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #48]
 	mov r2, sp
 	adds r2, #80
@@ -992,7 +992,7 @@ BattleEffect_RunLiquifier:
 	b .L_0818eea4
 .L_0818f596:
 	ldr r0, .L_0818f5c8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

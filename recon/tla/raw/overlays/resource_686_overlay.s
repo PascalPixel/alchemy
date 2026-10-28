@@ -852,7 +852,7 @@ Func_02001420:
 	strh r3, [r1]
 	movs r1, #144
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_020094e4
 	movs r2, #241
 	lsls r2, r2, #1
@@ -1185,7 +1185,7 @@ Func_0200160c:
 	strh r2, [r3]
 	ldr r0, .L_02009998
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_020097d4
 .L_020097b0:
 	movs r3, #68
@@ -1633,7 +1633,7 @@ Func_020019a0:
 	strh r2, [r3]
 	ldr r0, .L_02009d2c
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_02009b6a
 .L_02009b46:
 	movs r3, #68
@@ -2714,7 +2714,7 @@ Func_02002438:
 	movs r1, #144
 	ldr r0, .L_ja_0200ab14
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_ja_0200ab02
 .L_ja_0200a938:
 	ldr r3, .L_ja_0200ab18
@@ -3811,7 +3811,7 @@ Func_02002438:
 	movs r1, #144
 	ldr r0, .L_it_0200ad48
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_it_0200ad34
 .L_it_0200ab6a:
 	ldr r3, .L_it_0200ad4c
@@ -4904,7 +4904,7 @@ Func_02002438:
 	movs r1, #144
 	ldr r0, .L_0200ad3c
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_0200ad2a
 .L_0200ab60:
 	ldr r3, .L_0200ad40

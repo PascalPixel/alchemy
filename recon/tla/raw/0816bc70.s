@@ -109,7 +109,7 @@ BattleEffect_RunDiamondBerg:
 	str r3, [r2]
 	ldr r0, .L_0816be40
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #128
 	negs r2, r2
 	str r2, [sp, #16]
@@ -741,7 +741,7 @@ BattleEffect_RunDiamondBerg:
 	b .L_0816bd60
 .L_0816c250:
 	ldr r0, .L_0816c270
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

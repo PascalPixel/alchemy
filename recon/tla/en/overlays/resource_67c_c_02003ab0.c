@@ -25,11 +25,11 @@ struct WaterWork {
 
 extern u8 gData_020023c4[];
 
-typedef void (*SchedulerCallback)(void);
+typedef void (*TaskFunc)(void);
 
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
+s32 Task_Add(TaskFunc callback, s32 order);
 void Func_02003a70(void);
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
@@ -75,5 +75,5 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
   }
-  Scheduler_AddOrUpdateCallback(Func_02003a70, 0x480);
+  Task_Add(Func_02003a70, 0x480);
 }

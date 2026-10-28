@@ -1,7 +1,7 @@
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_reg.h"
 #include "resource.h"
 #include "ram_buffer.h"
@@ -14,7 +14,7 @@ void *AffineEffect_InitializeWork(void) {
   void *work = Runtime_AllocateBlock(AFFINE_EFFECT_SLOT, 152);
 
   Dma_Fill32(0, work, 152);
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_0804cda8, 0x476);
+  Task_Add((TaskFunc)Func_0804cda8, TASK_PASS_VBLANK - 10);
   return work;
 }
 
@@ -28,7 +28,7 @@ void Menu_EndResourceSelection(void) {
   void *work;
 
   work = Ram_HeapSlots->menuSelectWork;
-  Scheduler_RemoveCallback(Func_0804cda8);
+  Task_Remove(Func_0804cda8);
   child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
   if (child != 0) {
     UiWork_Finalize(child, 2);

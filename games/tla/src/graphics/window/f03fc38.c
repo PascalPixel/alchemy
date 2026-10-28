@@ -2,7 +2,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "adventure.h"
 
 struct OptionMarkerOutput {
@@ -50,6 +50,6 @@ void Func_0803fc38(void) {
   work->optionCount[3] = 2;
   work->option[4] = gAdventure.unk244[6];
   work->optionCount[4] = 2;
-  Scheduler_AddOrUpdateCallback(
-      GraphicsPalette_LoadSelectionResourcesAndAdvance, 0x480);
+  Task_Add(
+      GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
 }

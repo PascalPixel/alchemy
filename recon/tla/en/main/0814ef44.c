@@ -55,7 +55,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -358,7 +358,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
     limit = 16;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 75; // to 3/4
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -517,7 +517,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

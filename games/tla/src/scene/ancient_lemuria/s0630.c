@@ -43,7 +43,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 u8 *Object_GetById(s32 id);
-void Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 priority);
+void Task_Add(s32 (*callback)(void), s32 priority);
 void ObjectDispatch_SetSingleChildFlags(u8 *object, s32 flags);
 void Func_0200195c(s32 id, s32 x, s32 z);
 void Func_02000048(void);
@@ -63,7 +63,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 
 s32 Func_020006bc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
-  Scheduler_AddOrUpdateCallback(Func_02000630, 0xc80);
+  Task_Add(Func_02000630, 0xc80);
   if (gAdventure.entrance != 1)
     GameFlag_ClearBit(0x12f);
   else

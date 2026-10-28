@@ -302,18 +302,18 @@ Func_0813fa88:
 	str r5, [r2, #12]
 	adds r1, r6, #0
 	ldr r0, .L_0813fd34
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r9
 	movs r1, #200
 	str r5, [r3, #4]
 	lsls r1, r1, #4
 	ldr r0, .L_0813fd38
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r9
 	str r5, [r2]
 	adds r1, r6, #0
 	ldr r0, .L_0813fd3c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #8
 	pop {r3, r5, r6, r7}
 	mov r8, r3

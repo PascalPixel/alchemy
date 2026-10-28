@@ -51,7 +51,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002a0c(struct SparkSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_0200258c(void);
 
 void Func_020026f4(void) {
@@ -77,5 +77,5 @@ void Func_020026f4(void) {
     state->frame = -1;
   }
   work->unk2180 = 0;
-  Scheduler_AddOrUpdateCallback(Func_0200258c, 0x480);
+  Task_Add(Func_0200258c, 0x480);
 }

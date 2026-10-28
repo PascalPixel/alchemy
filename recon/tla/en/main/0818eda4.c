@@ -70,8 +70,8 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -138,7 +138,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectBattler(effect->actor, &from);
   EffectPosition_ProjectBattler(effect->actors[0], &to);
 
@@ -364,7 +364,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

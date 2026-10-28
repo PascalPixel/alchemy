@@ -132,7 +132,7 @@ BattleEffect_RunVine:
 	str r3, [r2]
 	ldr r0, .L_08154f80
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r7, #0
 .L_08154e6c:
 	cmp r7, #32
@@ -255,7 +255,7 @@ BattleEffect_RunVine:
 	cmp r7, #70
 	bne .L_08154e6c
 	ldr r0, .L_08154f80
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

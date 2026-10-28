@@ -125,7 +125,7 @@ Func_020001d8:
 	movs r1, #144
 	ldr r0, .L_02008310
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_020082ec:
 	pop {r3, r5}
 	mov r8, r3
@@ -4174,7 +4174,7 @@ Func_02003370:
 	adds r3, #255
 	str r3, [r5]
 	ldr r0, .L_0200b4e4
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	b .L_0200b506
 .L_0200b4c8:
 	.4byte Data_02006ccc
@@ -4305,7 +4305,7 @@ Func_02003370:
 	cmp r3, r2
 	bls .L_0200b5d6
 	ldr r0, .L_0200b5e8
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 .L_0200b5d6:
 	pop {r3, r5}
 	mov r8, r3
@@ -4653,7 +4653,7 @@ Func_02003658:
 	mov r8, r3
 	lsls r1, r1, #3
 	mov r0, r8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #224
 	movs r0, #7
 	lsls r1, r1, #8
@@ -4991,7 +4991,7 @@ Func_02003658:
 	movs r0, #23
 	bl Object_SetActionCallbackAndRefreshById
 	mov r0, r8
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #8
 	bl Object_GetById
 	adds r3, r0, #0
@@ -5016,7 +5016,7 @@ Func_02003658:
 	str r3, [r2]
 	ldr r0, .L_0200bfc8
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0200bcea:
 	movs r0, #1
 	bl WaitFrames
@@ -5943,7 +5943,7 @@ Func_02003ff4:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02005734
 	ldr r0, .L_0200c9d4
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #140
 	bl Func_020057dc
 	movs r0, #8

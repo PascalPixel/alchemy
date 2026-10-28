@@ -13,7 +13,7 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
@@ -40,7 +40,7 @@ void Func_020001b0(void) {
   Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   WaitFrames(1);
   gData_020007e4 = 0;
-  Scheduler_AddOrUpdateCallback(Func_020000f4, 0x480);
+  Task_Add(Func_020000f4, 0x480);
   ObjectMotion_SetActionVariant(8, 2);
   ObjectMotion_SetActionVariant(9, 2);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;

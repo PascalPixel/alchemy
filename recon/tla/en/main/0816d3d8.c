@@ -42,7 +42,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "motobj.h"
@@ -139,7 +139,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
@@ -254,7 +254,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   }
 
   ObjectDispatch_SetAnimationSpeedFar(user, 16);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

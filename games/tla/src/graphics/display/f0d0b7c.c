@@ -3,7 +3,7 @@
 #include "display_transition.h"
 #include "dma.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 

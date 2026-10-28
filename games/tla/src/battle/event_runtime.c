@@ -9,7 +9,7 @@
 #include "system.h"
 #include "battle_work.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 u32 BattleEventRuntime_Reset(void);
 
@@ -48,6 +48,6 @@ s32 BattleEventRuntime_WaitForReady(void) {
       WaitFrames(1U);
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
-  Scheduler_RemoveCallback((u32)BattleEvent_Playback);
+  Task_Remove((u32)BattleEvent_Playback);
   return BattleEventRuntime_Reset();
 }

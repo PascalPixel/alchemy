@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "adventure.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern const u8 gData_02003fb0[];
 extern struct ObjectRuntime *gData_02004420;
@@ -77,5 +77,5 @@ void Func_0200390c(void) {
   }
   gData_0200567c = 0;
   gData_02005678 = 0;
-  Scheduler_AddOrUpdateCallback(Func_02001ee8, 0x480);
+  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
 }

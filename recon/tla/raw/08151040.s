@@ -150,7 +150,7 @@ BattleEffect_RunFire:
 	str r2, [r3]
 	adds r1, r5, #0
 	ldr r0, .L_08151498
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -164,7 +164,7 @@ BattleEffect_RunFire:
 	str r3, [r2]
 	adds r1, r5, #0
 	ldr r0, .L_0815149c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #0
 	str r0, [sp, #28]
 	mov r1, r10
@@ -540,9 +540,9 @@ BattleEffect_RunFire:
 	b .L_081511b8
 .L_0815146e:
 	ldr r0, .L_0815149c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_08151498
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

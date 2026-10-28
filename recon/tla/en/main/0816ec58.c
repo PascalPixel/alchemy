@@ -27,7 +27,7 @@
 #include "iwram_call.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "mem.h"
 #include "effect_step.h"
@@ -117,7 +117,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   stagger = effect->variant * 4;
   sinkFrame = stagger + 32;
 
@@ -242,6 +242,6 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

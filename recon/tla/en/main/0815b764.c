@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -219,7 +219,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blits);
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   cells = work->sheet + 0x1781;
   Resource_LoadAndDecompress(0xb1, cells, 0, 0);
   for (i = 0; i != 0x2300; i++) {
@@ -230,7 +230,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   blits[0](canvas, cells, 24, 8, 80, 112);
   work->transferPending = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(0x178, work->sheet, 1, 0);
   Resource_LoadAndDecompress(0xb3, cells, 1, 1);
   Resource_LoadAndDecompress(0x137, sprites, 0, 0);
@@ -254,8 +254,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       if (!loaded) {
-        Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
-        Scheduler_AddOrUpdateCallback(Display_ApplyBg2Affine, 0xcff);
+        Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
+        Task_Add(Display_ApplyBg2Affine, 0xcff);
         Resource_LoadAndDecompress(0xc7, work->sheet + 0x2781, 1, 0);
         loaded = 1;
       }
@@ -353,9 +353,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
     if (frame == 132) {
       if (loaded == 1) {
-        Scheduler_RemoveCallback(BattleEffect_ProcessPendingBlock2Transfer);
-        Scheduler_RemoveCallback(Display_ApplyBg2Affine);
-        Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
+        Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
+        Task_Remove(Display_ApplyBg2Affine);
+        Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
         Resource_LoadAndDecompress(0x15c, work->sheet + 0x1e97, 1, 0);
         loaded = 0;
       }
@@ -619,7 +619,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 288) {
-      Scheduler_AddOrUpdateCallback(Func_0815b68c, 1152);
+      Task_Add(Func_0815b68c, 1152);
       work->particles[63].x = 0xbc0000;
       work->particles[63].y = 0x600000;
       work->particles[63].velocityX = 0;
@@ -644,7 +644,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   transition[4] = 0;
@@ -659,7 +659,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
   REG_BLDCNT = 0;
@@ -698,7 +698,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   if (dmaArmed == 1) {
-    Scheduler_RemoveCallback(Func_0815b68c);
+    Task_Remove(Func_0815b68c);
   }
   for (i = 0; i != 8; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);

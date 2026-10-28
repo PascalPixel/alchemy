@@ -71,7 +71,7 @@ struct Adventure254 {
   u16 value;
 };
 
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Object_SetModeById(u32 id, s32 mode);

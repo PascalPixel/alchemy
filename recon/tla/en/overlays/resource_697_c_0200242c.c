@@ -204,7 +204,7 @@ s32 Func_0200242c(void) {
       Func_020002a4(state->mirrored);
     Func_020055c4(gAdventure.currentOwner, 8);
     Func_02005688((s16)(state->mirrored ^ 1));
-    Scheduler_AddOrUpdateCallback(Func_0200223c, 0x480);
+    Task_Add(Func_0200223c, 0x480);
   } else {
     Func_02000218(state->mirrored, state->stage);
     GameFlag_SetBit(642);

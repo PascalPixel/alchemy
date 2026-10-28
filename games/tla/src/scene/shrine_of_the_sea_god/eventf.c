@@ -145,7 +145,7 @@ void Func_02003094(void) {
 
     map->mode17 = 1;
     priority = 0x480;
-    Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
+    Task_Add(Func_020010e8, priority);
   }
   Func_02003b18();
   Func_02003b20(0, 515, 10, 11);
@@ -252,7 +252,7 @@ void Func_02003354(void) {
 
     map->mode17 = 1;
     priority = 0x480;
-    Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
+    Task_Add(Func_020010e8, priority);
   }
 }
 

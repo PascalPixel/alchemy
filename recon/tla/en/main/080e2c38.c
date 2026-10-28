@@ -3,7 +3,7 @@
 // the spin store and the end's two offsets; the literal pool also lands one
 // instruction earlier in the native (before the sprite's y store). The spin
 // as a conditional expression measured 28, as if/else 35.
-// The 96-particle burst's scheduler callback (heap slot 0x5c work,
+// The 96-particle burst's task (heap slot 0x5c work,
 // started by Func_080e2acc). Each particle whose delay counter is between 0
 // and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48 units out
 // along its heading, then turns by its spin, rises by its speed and spins

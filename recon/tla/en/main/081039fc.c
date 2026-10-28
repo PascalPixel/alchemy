@@ -140,7 +140,7 @@ void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 s32 Trig_Sin(s32 angle);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void Input_ResetKeyRepeat(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Menu_UpdateEntryObjectTransforms(void);
 
 typedef s32 (*CopyFn)(void *, const void *, s32);
@@ -592,7 +592,7 @@ s32 Func_081039fc(u32 mode) {
 
   Func_08105350(0, 0);
   Func_08105350(1, 0);
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
   UiWindow_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);

@@ -44,7 +44,7 @@ BattleEffect_RunSabreDance:
 	strh r2, [r3]
 	lsls r1, r1, #4
 	ldr r0, .L_0817b71c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r11
 	movs r1, #36
 	ldrsh r0, [r2, r1]
@@ -339,7 +339,7 @@ BattleEffect_RunSabreDance:
 	b .L_0817b700
 .L_0817b930:
 	ldr r0, .L_0817b96c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}

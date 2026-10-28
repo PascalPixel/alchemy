@@ -8,7 +8,7 @@
 
 #include "call.h"
 s32 Func_020045dc();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 GameFlag_Test();
 s32 Func_02001cf0();
 extern u8 gAdventure[];
@@ -18,7 +18,7 @@ void Func_020029c8(void) {
   s32 t2;
 
   Call1(Func_020045dc, 0);
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_020029a4, 0x480);
+  Call2(Task_Add, (s32)Func_020029a4, 0x480);
   if (FIELD_AT(gAdventure, s16, 482) == 0x14) {
     t2 = Value1(GameFlag_Test, 0x9c5);
     if (t2 == 0) {

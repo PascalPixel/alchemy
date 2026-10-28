@@ -45,11 +45,11 @@ void Func_02001650(void) {
   Motion_SetVarCbAndRefresh(7, 2);
   ObjectMotion_SetActionVariant(7, 1);
   LemurianShip_SePlay(220);
-  Scheduler_AddOrUpdateCallback(Func_020015c8, 0x480);
+  Task_Add(Func_020015c8, 0x480);
   LemurianShip_Wait(60);
   LemurianShip_SePlay(390);
   LemurianShip_Wait(20);
-  Scheduler_RemoveCallbackFar(Func_020015c8);
+  Task_RemoveFar(Func_020015c8);
   LemurianShip_SePlay(251);
   LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
   LemurianShip_CamMove(0x3280000, -1, 0x1c00000, 0);

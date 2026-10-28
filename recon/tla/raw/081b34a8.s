@@ -51,7 +51,7 @@ ReelGame_Run:
 	adds r1, #152
 	str r1, [sp, #32]
 	str r3, [r1]
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r5, .L_081b3530
 	ldr r3, .L_081b3544
 	ldr r1, .L_081b3548
@@ -712,13 +712,13 @@ ReelGame_Run:
 	lsls r1, r1, #3
 	lsls r5, r5, #4
 	ldr r0, .L_081b3c6c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r1, r5, #0
 	ldr r0, .L_081b3c70
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, .L_081b3c74
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r7, [sp, #20]
 	movs r2, #0
 	ldr r3, [r7]
@@ -1189,11 +1189,11 @@ ReelGame_Run:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081b3e28
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081b3e2c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081b3e30
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #180
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #96

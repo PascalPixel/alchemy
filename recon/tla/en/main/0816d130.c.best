@@ -19,7 +19,7 @@
 #include "ram_buffer.h"
 #include "system.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "graphics.h"
 #include "transform.h"
@@ -91,7 +91,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(142);
 
   for (frame = 0; frame != 80; frame++) {
@@ -156,7 +156,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

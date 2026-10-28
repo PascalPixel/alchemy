@@ -151,7 +151,7 @@ Func_0815e9f4:
 	str r3, [r2]
 	ldr r0, .L_0815ed78
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	cmp r5, #1
 	beq .L_0815eb44
 	b .L_0815ed04
@@ -250,7 +250,7 @@ Func_0815e9f4:
 	movs r1, #144
 	str r5, [r3]
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #212
 	bl Sound_PlayFar
 .L_0815ec16:
@@ -353,7 +353,7 @@ Func_0815e9f4:
 	cmp r1, #32
 	bne .L_0815ec16
 	ldr r0, .L_0815ed7c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #16
 	mov r0, r8
 	bl ObjectDispatch_SetAnimationSpeedFar
@@ -703,7 +703,7 @@ Func_0815e9f4:
 	b .L_0815ee3e
 .L_0815ef90:
 	ldr r0, .L_0815effc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

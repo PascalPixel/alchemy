@@ -15,7 +15,7 @@ void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000cf8(s32 id, s32 offset, s32 limit);
 s32 Func_02000d18(void);
 void Func_02000d64(void);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 s32 Math_Sine(s32 angle);
 
 void Func_02000f60(void) {
@@ -55,7 +55,7 @@ void Func_02000f60(void) {
       if (t < 600) {
         if (GameFlag_Test(0x208) && *timer == 400) {
           Call6((void (*)())Func_02005178, 22, 0, 1, 1, 13, 13);
-          Scheduler_RemoveCallbackFar(Func_02000f60);
+          Task_RemoveFar(Func_02000f60);
         }
         phase = &gData_020062a8;
         goto bob;

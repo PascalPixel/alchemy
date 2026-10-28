@@ -22,8 +22,8 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void PartyInventory_GiveItem(s32 item, s32 mode);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 s32 Math_Cosine(s32 angle);
 
 void UiText_OpenMessageAtObject(s32 id, s32 flags);

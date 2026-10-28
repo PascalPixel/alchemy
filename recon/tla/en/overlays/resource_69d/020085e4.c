@@ -19,7 +19,7 @@ extern u32 gFrameCount;
 
 s32 __modsi3();
 s32 GameFlag_Test();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 struct FieldActor *Object_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02001e28();

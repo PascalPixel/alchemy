@@ -42,8 +42,8 @@ void Func_0815f0a0(s32 resource);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
 s32 Trig_Sin(s32 angle);
@@ -92,11 +92,11 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   draw(canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
@@ -108,7 +108,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   }
   Func_08196404(104, 8, 7, 3, 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
   transition->active = 1;
   draw(gMapCellBuffer, canvas, 0, 0, 128, 128);
   draw(gMapCellBuffer, canvas, 128, 0, 128, 128);
@@ -152,7 +152,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
 
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
-  Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

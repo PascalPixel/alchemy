@@ -79,7 +79,7 @@ BattleEffect_RunMoloch:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_081920f4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #128
 	lsls r3, r3, #16
 	str r3, [sp, #20]
@@ -952,7 +952,7 @@ BattleEffect_RunMoloch:
 	b .L_08191e36
 .L_081924be:
 	ldr r0, .L_08192538
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

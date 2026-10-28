@@ -23,7 +23,7 @@ Func_08118958:
 	lsls r5, r5, #1
 	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	bl Runtime_InitializeHeap
 	bl VramCache_Reset
 	adds r0, r5, #0
@@ -170,7 +170,7 @@ Func_08118958:
 	strb r2, [r3]
 	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	bl Runtime_InitializeHeap
 	bl VramCache_Reset
 	b .L_081189ae

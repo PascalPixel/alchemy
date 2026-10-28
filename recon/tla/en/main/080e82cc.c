@@ -67,7 +67,7 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Task_Add(void (*callback)(void), s32 order);
 void Func_080e807c(void);
 void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -149,7 +149,7 @@ void Func_080e82cc(void) {
     event[0xcac] = 1;
     event[0xcad] = 1;
     *(s16 *)(event + 0xcae) = 999;
-    Scheduler_AddOrUpdateCallback(Func_080e807c, 0x480);
+    Task_Add(Func_080e807c, 0x480);
     WaitFrames(1);
     work->cycling = 0;
     phase = 0;
@@ -253,5 +253,5 @@ void Func_080e82cc(void) {
   event[0xcac] = 1;
   event[0xcad] = 1;
   *(s16 *)(event + 0xcae) = 600;
-  Scheduler_AddOrUpdateCallback(Func_080e807c, 0x480);
+  Task_Add(Func_080e807c, 0x480);
 }

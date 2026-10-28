@@ -71,7 +71,7 @@ BattleEffect_RunWyrdCurse:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816f494
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r6, [sp, #44]
 	movs r5, #160
 	ldr r0, [r6, #8]
@@ -623,7 +623,7 @@ BattleEffect_RunWyrdCurse:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816f590
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}

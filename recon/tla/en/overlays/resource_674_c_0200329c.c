@@ -34,7 +34,7 @@ void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
 struct ObjectRuntime *Object_GetById(u32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001c4c(void);
 void WaitFrames(s32 frames);
 void Func_02002830(void);
@@ -63,7 +63,7 @@ void Func_0200329c(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
-  Scheduler_AddOrUpdateCallback(Func_02001c4c, 0x480);
+  Task_Add(Func_02001c4c, 0x480);
   if ((u16)(gAdventure.entrance - 4) <= 1) {
     GameFlag_SetBit(0x217);
     if (!GameFlag_Test(265)) {

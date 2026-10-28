@@ -14,7 +14,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "render_input.h"
 #include "save_state.h"
 #include "field_sprite.h"
@@ -55,5 +55,5 @@ void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
     state->scale[i] = 0x10000;
   }
 
-  Scheduler_AddOrUpdateCallback(Func_08043b70, 0x480);
+  Task_Add(Func_08043b70, TASK_PASS_VBLANK);
 }

@@ -3,7 +3,7 @@
 This folder holds what ties The Lost Age's image together, and much of what
 ☀️ keeps in its runtime folder: the cartridge header and entry, the RAM
 layout, the resident IWRAM code, the far-call tables, the overlay streams,
-the resource decoders, the task scheduler (`scheduler/`), the link cable
+the resource decoders, the task table (`task/`), the link cable
 (`link/`) and saving (`save/`). ☀️'s [Cartridge and memory](../../../tbs/src/cartridge/README.md)
 and [Runtime](../../../tbs/src/runtime/README.md) explain why the image is
 linked as it is and how a frame runs; this page says only what differs here.
@@ -11,7 +11,7 @@ linked as it is and how a frame runs; this page says only what differs here.
 ## What differs from ☀️
 
 - **Grouping.** ⚓️ has no runtime folder: power-up (`system.c`), interrupt
-  handlers (`setirq.c`), the scheduler, the link cable and the save records
+  handlers (`setirq.c`), the task table, the link cable and the save records
   are here, beside the resident code they call.
 - **Far-call tables.** ⚓️'s are 105 files under `far_call/`, named by the
   family of their exports (`audio_engine.s`, `object_dispatch_3.s`), where ☀️
@@ -21,7 +21,7 @@ linked as it is and how a frame runs; this page says only what differs here.
 - **Overlays.** `overlay/overlays.s` places the packed streams as ☀️'s does,
   but each overlay is linked by its own script under
   `recon/tla/raw/overlays`, not by one `overlay.ld`.
-- **Scheduler.** 24 tasks at a time (`SCHEDULER_TLA_TASK_COUNT`), not 20.
+- **Tasks.** 24 tasks at a time (`TASK_COUNT`), not 20.
 - **Compilers.** Thumb files take K2's options on top of ☀️'s (`CFLAGS_tla`
   in the `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
   `-mtune=arm9tdmi`, without `-mthumb-interwork`. The flash library
@@ -43,7 +43,7 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Flash_`, `Graphics_`, `Input_`, `IoWriteQueue_`, `ItemIcon_`, `NumberText_`,
 `Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`, `ResourceMetadata_`,
 `ResourceObject_`, `ResourceSlot_`, `Runtime_`, `SaveState_`, `SceneState_`,
-`Scheduler_`, `SerialRuntime_`, `SerialTest_`, `Sound_`, `System_`, `Ui_` and
+`SerialRuntime_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Ui_` and
 `VramCache_`. Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |

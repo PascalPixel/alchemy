@@ -20,7 +20,7 @@ s32 GameFlag_Test();
 void ObjectMotion_SetActionVariant();
 s32 Object_GetById();
 void Object_SetPositionAndResetMotion();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_02000bf4();
 void Func_02000c34();
 void Func_02000f60();
@@ -76,9 +76,9 @@ L_0200ad0a:
   (*(s16 *)0x4000050) = 0x3f10;
   FIELD_AT(gData_02006298, s32, 0) = 0;
   FIELD_AT(gData_0200629c, s32, 0) = 0;
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000bf4, 0x480);
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000c34, 0x480);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001cc4, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02000bf4, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02000c34, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02001cc4, 0x480);
   Call1((void (*)())Func_02000b78, 9);
   Call1((void (*)())Func_02000b78, 10);
   Call1((void (*)())Func_02000bac, 11);
@@ -110,8 +110,8 @@ L_0200adda:
   FIELD_AT(gData_020062a4, s32, 0) = 0xfa0;
   FIELD_AT(gData_020062a8, s16, 0) = 0;
   FIELD_AT(gData_020062aa, s16, 0) = 0;
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000f60, 0x480);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020012c4, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02000f60, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_020012c4, 0x480);
   t44 = Value1((s32 (*)())GameFlag_Test, 0x109);
   if (t44 != 0)
     goto L_0200ae24;
@@ -119,7 +119,7 @@ L_0200adda:
     goto L_0200ae24;
   Func_02002ec4();
 L_0200ae24:
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020019d4, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_020019d4, 0x480);
   Call2((void (*)())ObjectMotion_SetActionVariant, gAdventure.currentOwner, 2);
   Call1((void (*)())Func_02005338, 0);
 }

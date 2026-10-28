@@ -349,7 +349,7 @@ Func_080457d0:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08045afc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_08045b00
 	movs r0, #2
 	movs r1, #136
@@ -1194,7 +1194,7 @@ Func_080457d0:
 	strb r3, [r5, #3]
 	bl WaitFrames
 	ldr r0, .L_08046128
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0

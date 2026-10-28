@@ -75,7 +75,7 @@ BattleEffect_RunTriangleStrike:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08146624
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #80]
 	mov r2, sp
 	adds r2, #120
@@ -449,7 +449,7 @@ BattleEffect_RunTriangleStrike:
 	b .L_08146356
 .L_08146608:
 	ldr r0, .L_08146624
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #132
 	pop {r3, r5, r6, r7}

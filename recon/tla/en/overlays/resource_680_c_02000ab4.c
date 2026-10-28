@@ -12,7 +12,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 
 void Func_02000ab4(void) {
   if (gAdventure.renderMode == 2) {

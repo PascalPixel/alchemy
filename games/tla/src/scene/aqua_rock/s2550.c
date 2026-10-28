@@ -15,5 +15,5 @@ void Func_02002550(void) {
   MemFree(buffer);
   // Use a value-returning call; a void declaration changes argument order
   // (differ 2).
-  ((s32 (*)(void *, s32))Scheduler_AddOrUpdateCallback)(Func_02002534, 0x480);
+  ((s32 (*)(void *, s32))Task_Add)(Func_02002534, 0x480);
 }

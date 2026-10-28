@@ -25,7 +25,7 @@ Func_080dd950:
 	movs r0, #167
 	bl Sound_PlayFar
 	ldr r0, .L_080dda24
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #192
 	lsls r1, r1, #4
 	movs r2, #0

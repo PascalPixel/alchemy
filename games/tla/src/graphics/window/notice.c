@@ -1,7 +1,7 @@
 #include "types.h"
 #include "graphics.h"
 #include "window.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "scene.h"
@@ -52,7 +52,7 @@ void UiTimedNotice_Create(void) {
   work->window = window;
   UiText_DrawResource(resource, window, 0, 0);
   work->countdown = 90;
-  Scheduler_AddOrUpdateCallback(UiTimedNotice_Update, 0x480);
+  Task_Add(UiTimedNotice_Update, TASK_PASS_VBLANK);
 }
 
 void UiTimedNotice_Update(void) {
@@ -70,7 +70,7 @@ void UiTimedNotice_Update(void) {
   *countdown = count;
   if ((count << 16) == 0) {
     UiWork_Finalize(work->window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Update);
+    Task_Remove(UiTimedNotice_Update);
   }
 }
 
@@ -80,6 +80,6 @@ void UiTimedNotice_CloseIfActive(void) {
   window = TIMED_NOTICE_WORK->window;
   if (window != NULL && window->flags != 0) {
     UiWork_Finalize(window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Update);
+    Task_Remove(UiTimedNotice_Update);
   }
 }

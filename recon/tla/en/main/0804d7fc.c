@@ -27,7 +27,7 @@
 #include "types.h"
 #include "resource_menu.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 void Menu_DrawModeLabel(void);
@@ -55,7 +55,7 @@ s32 Func_0804d7fc(s32 mode) {
   }
   Menu_CenterResourceEntries(17, 7, 0);
   if (mode != 0) {
-    Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0x476);
+    Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
     window = UiWindow_Create(8, 0, 14, 4, 2);
     msg = (s32)MsgPasswordEntryX;
@@ -68,7 +68,7 @@ s32 Func_0804d7fc(s32 mode) {
     msg += 2;
     UiText_DrawResource(msg, (s32)work->lowerWindow, 0, 16);
   } else {
-    Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0x476);
+    Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
     window = UiWindow_Create(6, 0, 18, 4, 2);
     upper = &work->upperWindow;
@@ -82,9 +82,9 @@ s32 Func_0804d7fc(s32 mode) {
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != 0)
-    Scheduler_RemoveCallback(Menu_DrawModeLabel);
+    Task_Remove(Menu_DrawModeLabel);
   else
-    Scheduler_RemoveCallback(Menu_DrawModeIndicator);
+    Task_Remove(Menu_DrawModeIndicator);
   RenderOutput_PrepareForRedraw(*upper);
   RenderOutput_PrepareForRedraw(work->lowerWindow);
   UiWork_Finalize(*upper, 2);

@@ -34,7 +34,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect.h"
@@ -49,7 +49,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define TORNADO_FRAMES 80
 #define GLINT_COUNT 16 // four glints for each of up to four funnels
 #define GLINT_CELS 6   // three cels of two frames each
@@ -116,7 +115,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDALPHA = 0x1000;
   WaitFrames(1);
   Sound_PlayFar(141);
@@ -198,6 +197,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

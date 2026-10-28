@@ -15,7 +15,7 @@ void Sound_PlayFar(s32 cue);
 void Func_080ad090(void);
 void Func_08038348(s32 first, s32 second);
 void VramCache_Reset(void);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void Runtime_SetIrqHandler(s32 index, s32 a, s32 b);
 void Runtime_InitializeHeap(void);
 void Func_08014b70(void);
@@ -88,8 +88,8 @@ void ParentSequence_Run(s32 mode) {
   }
   Func_08038348(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   VramCache_Reset();
-  Scheduler_ResetTaskTable();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
+  Task_ResetAll();
   for (;;) {
     if (GameFlag_Test(0x101))
       GameFlag_ClearBit(0x101);
@@ -105,7 +105,7 @@ void ParentSequence_Run(s32 mode) {
       dma0[5];
     }
     gRenderOamEnabled = 1;
-    Scheduler_ResetTaskTable();
+    Task_ResetAll();
     Runtime_SetIrqHandler(1, 0, 0);
     Runtime_SetIrqHandler(2, 0, 0);
     Runtime_InitializeHeap();

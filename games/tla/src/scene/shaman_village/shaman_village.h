@@ -97,8 +97,8 @@ void ObjectDispatch_SetSingleChildFlags(struct ShamanVillageObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
 void Object_SetModeById(s32 actor, s32 mode);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -203,7 +203,7 @@ static inline void ShamanVillage_WaitFrames(s32 frames) {
     /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
      * callback load. */                                                       \
     s32 priority_ = (priority);                                                \
-    Scheduler_AddOrUpdateCallback((callback), priority_);                      \
+    Task_Add((callback), priority_);                      \
   }
 
 static inline void ShamanVillage_ObjEmoteWait(s32 actor, s32 emote) {
@@ -213,7 +213,7 @@ static inline void ShamanVillage_ObjEmoteWait(s32 actor, s32 emote) {
 
 static inline void ShamanVillage_TaskAdd(void (*callback)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Scheduler_AddOrUpdateCallback(callback, priority);
+  Task_Add(callback, priority);
 }
 
 static inline void ShamanVillage_MessagePut(s32 speaker, s32 flags) {

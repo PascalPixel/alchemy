@@ -244,7 +244,7 @@ Func_080ea14c:
 	strb r5, [r3]
 	ldr r0, .L_080ea390
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #0
 	str r2, [sp, #36]
 	mov r10, r2
@@ -791,7 +791,7 @@ Func_080ea14c:
 	movs r0, #10
 	bl EventRuntime_Wait
 	ldr r0, .L_080ea7bc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_PrepareBufferInterpolation
 	ldr r0, [sp, #32]
 	bl Resource_ResetEntry

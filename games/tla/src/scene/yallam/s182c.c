@@ -28,5 +28,5 @@ void Func_0200182c(void) {
   object->unk66 = gData_02002fc0[4].mode;
   BYTE_AT(object, 98) = gData_02002fc0[4].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[4].byte99;
-  Scheduler_AddOrUpdateCallback(Func_02001688, 0x480);
+  Task_Add(Func_02001688, 0x480);
 }

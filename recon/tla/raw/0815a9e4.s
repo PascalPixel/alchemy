@@ -351,7 +351,7 @@ BattleEffect_RunGaia:
 	lsls r1, r1, #4
 	ldr r0, .L_0815aca0
 	str r5, [sp, #36]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #48]
 	b .L_0815aca4
 .L_0815ac84:
@@ -1085,7 +1085,7 @@ BattleEffect_RunGaia:
 	b .L_0815ad64
 .L_0815b20a:
 	ldr r0, .L_0815b248
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

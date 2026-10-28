@@ -319,7 +319,7 @@ Func_080e1f2c:
 	ldr r0, .L_080e2260
 	strh r2, [r3]
 	adds r1, #90
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #0
 	ldrsh r3, [r5, r2]
 	movs r2, #186
@@ -337,7 +337,7 @@ Func_080e1f2c:
 	bne .L_080e21e8
 .L_080e21f6:
 	ldr r0, .L_080e2260
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #50

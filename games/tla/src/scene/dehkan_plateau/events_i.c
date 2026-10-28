@@ -108,8 +108,8 @@ void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
 void FieldEvent_WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -181,11 +181,11 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id) {
 
 void Func_02002bcc(void) {
   Func_02003d50(134, 1);
-  Scheduler_AddOrUpdateCallback(Func_02002b68, 0x480);
+  Task_Add(Func_02002b68, 0x480);
   Func_02003d58(9, gAdventure.currentOwner);
   Func_02003d70();
   Field_DispatchTypeHandler(1);
   Func_02003d60();
-  Scheduler_RemoveCallbackFar(Func_02002b68);
+  Task_RemoveFar(Func_02002b68);
   Func_02003d68();
 }

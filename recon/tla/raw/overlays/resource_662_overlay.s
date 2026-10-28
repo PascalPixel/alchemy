@@ -1667,7 +1667,7 @@ Func_02001418:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_ja_020097c4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #156
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
@@ -2117,7 +2117,7 @@ Func_02001418:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020097d8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #156
 	lsls r0, r0, #2
 	bl GameFlag_SetBit

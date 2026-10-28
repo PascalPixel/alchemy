@@ -36,7 +36,7 @@
 #include "mem.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 
@@ -146,7 +146,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Slide the canvas so that its x = 64 is under the target.
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -236,6 +236,6 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

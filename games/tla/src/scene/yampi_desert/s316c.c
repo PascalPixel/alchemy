@@ -43,5 +43,5 @@ void Func_020031b4(void) {
   }
   if (GameFlag_Test(0x88d))
     Func_02001594();
-  Scheduler_AddOrUpdateCallback(Func_02002010, 0x480);
+  Task_Add(Func_02002010, 0x480);
 }

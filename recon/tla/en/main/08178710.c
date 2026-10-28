@@ -7,7 +7,7 @@
 // endY, texture (the native's 148, 112-147, 104, 96, 88): 695. Every spill
 // slot but the caller-save ones at sp+8 to sp+16 now has the native's place.
 // Left: the native clears endX and endY with a zero register pair (a
-// DImode store, as an initializer would) after the scheduler call; a
+// DImode store, as an initializer would) after the Task_Add call; a
 // block with the two arrays initialized there moves three other spills
 // (734). In the arc loops the native keeps &arcs[dragon * 2] in r11, j * 2
 // as an induction variable at sp+24, the height spilled at sp+40 and the
@@ -80,8 +80,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -172,7 +172,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   endX[0] = 0;
   endX[1] = 0;
   endY[0] = 0;
@@ -400,6 +400,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   }
   ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

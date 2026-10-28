@@ -1867,7 +1867,7 @@ Func_0200242c:
 	movs r1, #144
 	ldr r0, .L_0200ab78
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_0200ac0e
 	.2byte 0x0000
 .L_0200ab64:
@@ -5418,7 +5418,7 @@ Func_020055c4:
 	lsls r1, r1, #3
 	adds r1, #118
 	ldr r0, .L_0200d684
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r0, r7, #0
 	bl MemFree
 	pop {r3, r5, r6}

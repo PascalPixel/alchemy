@@ -46,7 +46,7 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_0802c240(void);
 void Func_0802c088(void);
 
@@ -173,8 +173,8 @@ void Func_0802b998(void) {
   gBgScroll[3].y = 0;
   *(u16 *)(perspective + 0x104) = 0;
   Store16(159, (u16 *)(perspective + 0x106));
-  Scheduler_AddOrUpdateCallback(Func_0802c240, 0x485);
-  Scheduler_AddOrUpdateCallback(Func_0802c088, 0xc80);
+  Task_Add(Func_0802c240, 0x485);
+  Task_Add(Func_0802c088, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
     ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
 }

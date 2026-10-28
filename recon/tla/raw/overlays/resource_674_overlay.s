@@ -3478,7 +3478,7 @@ Func_0200329c:
 	movs r1, #144
 	ldr r0, .L_ja_0200b320
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_ja_0200b31c
 	movs r2, #241
 	lsls r2, r2, #1
@@ -3638,7 +3638,7 @@ Func_0200329c:
 	movs r1, #144
 	ldr r0, .L_0200b404
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_0200b400
 	movs r2, #241
 	lsls r2, r2, #1

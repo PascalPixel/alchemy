@@ -63,7 +63,7 @@ BattleEffect_RunHurricane:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816fa00
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r4, r9
 	add r5, sp, #20
 	movs r3, #36
@@ -395,7 +395,7 @@ BattleEffect_RunHurricane:
 .L_0816fc30:
 	ldr r6, .L_0816fc80
 	adds r0, r6, #0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #240
@@ -410,9 +410,9 @@ BattleEffect_RunHurricane:
 	mov lr, r5
 	.2byte 0xf800
 	ldr r0, .L_0816fc8c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	adds r0, r6, #0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r0, r9
 	bl SummonEffect_RunCanvasMode3
 	add sp, #32

@@ -85,7 +85,7 @@ BattleEffect_RunLifeShear:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08181bbc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #0
 	str r3, [sp, #28]
 	str r3, [sp, #24]
@@ -675,7 +675,7 @@ BattleEffect_RunLifeShear:
 	b .L_081819d6
 .L_08181e56:
 	ldr r0, .L_08181eac
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

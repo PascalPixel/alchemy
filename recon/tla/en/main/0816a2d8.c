@@ -35,7 +35,7 @@
 #include "mem.h"
 #include "system.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "motobj.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -155,7 +155,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
@@ -250,12 +250,12 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode2(effect);
   } else {
     if (variant == 4)

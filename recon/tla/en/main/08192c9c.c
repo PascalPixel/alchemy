@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -530,7 +530,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 2) = 0;
   work->transferMode = 0;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   REG_DISPCNT = 0x7741;
   REG_BG2CNT = 0x784;
   REG_BG2PA = 0x80;
@@ -1472,6 +1472,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != 36; i++)
     ResourceObject_ReleaseFar(objects[i]);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

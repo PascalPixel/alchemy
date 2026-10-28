@@ -83,8 +83,8 @@ gOamBuckets:
 	.global gResourceBlockOwners
 gResourceBlockOwners:
 	.space 0x00000200
-	.global gSchedulerTaskTable
-gSchedulerTaskTable:
+	.global gTasks
+gTasks:
 	.space 0x000000c0
 	.global gData_020036d0
 gData_020036d0:

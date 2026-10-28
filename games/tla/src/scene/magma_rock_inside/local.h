@@ -44,8 +44,8 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 
 extern const u8 gData_02005534[];
 

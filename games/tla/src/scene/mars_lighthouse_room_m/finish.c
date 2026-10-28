@@ -61,7 +61,7 @@ void Func_02001608(void);
 void Func_020032a8(void);
 void FieldEvent_WaitFrames(s32 frames);
 void Func_0200166c(void);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void Func_0200055c(void);
 void Func_0200170c(void);
 
@@ -78,5 +78,5 @@ void Func_02000abc(void) {
   Func_02003238(1);
   FieldEvent_WaitFrames(40);
   Func_0200166c();
-  Scheduler_RemoveCallbackFar(Func_0200055c);
+  Task_RemoveFar(Func_0200055c);
 }

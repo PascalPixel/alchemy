@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "resource.h"
 #include "vram_tab.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuSlotEntry {
   u8 unk00[4];
@@ -53,5 +53,5 @@ void Func_081053a8(void) {
     offset += 2;
   }
   menu->active = 1;
-  Scheduler_AddOrUpdateCallback(MenuIcon_PushSlots, 0x48a);
+  Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }

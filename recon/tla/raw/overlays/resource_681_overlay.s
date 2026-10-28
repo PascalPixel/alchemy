@@ -2478,7 +2478,7 @@ Func_02002cb4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200ad2c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}

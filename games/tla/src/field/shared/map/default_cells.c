@@ -3,7 +3,7 @@
 #include "map.h"
 #include "resource.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern char ResourceId_DefaultMapCells;
 extern void (*gData_030011f8)(void);
@@ -22,6 +22,6 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
       Ram_MapCellBuffer);
   Map_UpdateCurrentTileBlock();
-  Scheduler_ResumeTasks(MapAnimation_Update);
+  Task_ResumeAll(MapAnimation_Update);
   WaitFrames(1);
 }

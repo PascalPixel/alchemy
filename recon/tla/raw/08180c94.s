@@ -82,7 +82,7 @@ BattleEffect_RunDaedalusAlt:
 	str r3, [r2]
 	ldr r0, .L_08180fa4
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #180
@@ -627,7 +627,7 @@ BattleEffect_RunDaedalusAlt:
 	b .L_08180d5a
 .L_08181188:
 	ldr r0, .L_081811d0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r3, #238

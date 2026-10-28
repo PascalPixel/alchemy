@@ -98,7 +98,7 @@ BattleEffect_RunFrost:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815183c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #48]
 	ldr r3, [r1, #4]
 	cmp r3, #1
@@ -825,7 +825,7 @@ BattleEffect_RunFrost:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08151b44
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}

@@ -30,7 +30,7 @@ s32 Func_02000fb8(void) {
   if (scene == (s32)&SceneId_Ov679Room2) {
     Func_02001054();
   } else if (scene == (s32)&SceneId_Ov679Room1) {
-    Scheduler_AddOrUpdateCallback(Func_02000540, 0x480);
+    Task_Add(Func_02000540, 0x480);
     if (GameFlag_Test(0x95e))
       Func_02000974();
   } else if (scene == (s32)&SceneId_Ov679Room3) {

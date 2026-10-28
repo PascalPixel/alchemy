@@ -29,8 +29,8 @@ void GameFlag_ClearBit(s32 flag);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Object_SetWideSprite(s32 actor, s32 value);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 
 void Func_020006ac(void);
@@ -111,7 +111,7 @@ void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer);
 
 static inline void Scene_TaskAdd(void (*callback)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Scheduler_AddOrUpdateCallback(callback, priority);
+  Task_Add(callback, priority);
 }
 
 static inline s32 Scene_FlagTest(s32 flag) {

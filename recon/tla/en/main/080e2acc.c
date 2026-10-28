@@ -16,7 +16,7 @@
 // with a random speed, an alternating spin and a start delayed by half its
 // index; then plays cue 220 and schedules Func_080e2c38.
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"
@@ -112,5 +112,5 @@ void Func_080e2acc(void) {
     particle->delay = -i / 2;
   }
   Sound_PlayFar(220);
-  Scheduler_AddOrUpdateCallback(Func_080e2c38, 0x480);
+  Task_Add(Func_080e2c38, TASK_PASS_VBLANK);
 }

@@ -63,7 +63,7 @@ BattleEffect_RunMegiddo:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0818ff8c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #19
 	movs r0, #104
 	b .L_0818ff90
@@ -1532,7 +1532,7 @@ BattleEffect_RunMegiddo:
 	movs r0, #1
 	bl BattleBackground_LoadFar
 	ldr r0, .L_08190b70
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

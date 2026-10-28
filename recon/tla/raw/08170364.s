@@ -105,7 +105,7 @@ BattleEffect_RunMegaera:
 	str r3, [r2]
 	ldr r0, .L_08170658
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #0
 	adds r3, r7, #0
 	mov r9, r2
@@ -1240,7 +1240,7 @@ BattleEffect_RunMegaera:
 	bl .L_0817052e
 .L_08170d1c:
 	ldr r0, .L_08170d84
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

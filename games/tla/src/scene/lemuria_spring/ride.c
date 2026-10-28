@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "adventure.h"
 
 struct SpringPoint {
@@ -79,7 +79,7 @@ next:
   Func_020012e8(Object_GetById(20), 2);
   Func_020012e8(Object_GetById(21), 2);
 
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_02000904, 0x483);
+  Task_Add((TaskFunc)Func_02000904, TASK_PASS_VBLANK + 3);
 }
 
 /// Runs the spring ride from one side until it ends, and returns its result.

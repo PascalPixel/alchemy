@@ -68,8 +68,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -215,7 +215,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 2) = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(1, 0);
   REG_BLDCNT = 0x3f40;
   REG_BG2X = 0x400;
@@ -225,7 +225,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingStampTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingStampTransfer, 3200);
   morph = 0;
   morphStep = 0;
   dived = 0;
@@ -843,7 +843,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   transition[4] = 0;
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingStampTransfer);
+  Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   Func_0814cca8();
   gCameraSceneParameters[4] = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
@@ -1063,7 +1063,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   for (i = 0; i != 11; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

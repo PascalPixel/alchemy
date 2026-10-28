@@ -114,7 +114,7 @@ void Func_02001e0c(void) {
     Func_02001dc8(14);
   }
   Func_02002db8(gData_0200301e);
-  Scheduler_AddOrUpdateCallback(Func_020013f0, 0x480);
+  Task_Add(Func_020013f0, 0x480);
   if (Flag_IsSet(0x222)) {
     Func_02001944(9, 15);
     Flag_Clear(0x222);

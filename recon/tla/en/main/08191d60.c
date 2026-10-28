@@ -88,8 +88,8 @@ void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -142,7 +142,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   focus.x = 128 << 16;
   focus.y = 64 << 16;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -408,7 +408,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Func_0816467c(5, focus.x, focus.y);

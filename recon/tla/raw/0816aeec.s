@@ -55,7 +55,7 @@ Func_0816aeec:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816af6c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #3
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -985,7 +985,7 @@ Func_0816aeec:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816b6d0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #132
 	pop {r3, r5, r6, r7}

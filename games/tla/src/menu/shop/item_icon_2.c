@@ -4,7 +4,7 @@ void Func_0810be3c(void) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
   s32 i;
 
-  Scheduler_RemoveCallback(Func_0810bdb0);
+  Task_Remove(Func_0810bdb0);
   for (i = 0; i < ICON_COUNT; i++) {
     if (work->resources[i] != ICON_NONE)
       Resource_ResetEntry(work->resources[i]);

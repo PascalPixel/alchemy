@@ -12,7 +12,7 @@ extern u16 gData_02002278[];
 extern u16 gData_0200227c[];
 
 s32 GameFlag_Test();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_020002c8(void);
 struct FieldActor *Object_GetById();
 s32 Map_GetTerrainHeight();
@@ -33,7 +33,7 @@ void Func_02000384(s32 mode) {
                      in r3 */
 
     gData_0200222c = zero;
-    Scheduler_AddOrUpdateCallback(Func_020002c8, 1152);
+    Task_Add(Func_020002c8, 1152);
   } else {
     Dma_Set(gData_0200227c, (void *)0x05000184, 0x84000002, REG_DMA3);
   }

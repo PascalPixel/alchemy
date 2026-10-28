@@ -89,7 +89,7 @@ BattleEffect_RunOceanFist:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0817d048
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #32]
 	mov r2, sp
 	adds r2, #44
@@ -656,7 +656,7 @@ BattleEffect_RunOceanFist:
 	b .L_0817cd02
 .L_0817d146:
 	ldr r0, .L_0817d170
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

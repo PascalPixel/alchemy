@@ -144,7 +144,7 @@ BattleEffect_RunDragonCloud:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0818941c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #36
 	ldrsh r0, [r5, r1]
 	bl GetBattleObjectSlotFar
@@ -1232,7 +1232,7 @@ BattleEffect_RunDragonCloud:
 	b .L_081893aa
 .L_08189ac0:
 	ldr r0, .L_08189b10
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -62,7 +62,7 @@ BattleEffect_RunMars:
 	str r3, [r2]
 	ldr r0, .L_08158400
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #0
 	str r3, [sp, #8]
 	movs r7, #0
@@ -434,7 +434,7 @@ BattleEffect_RunMars:
 	b .L_081581c6
 .L_081583ce:
 	ldr r0, .L_08158400
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

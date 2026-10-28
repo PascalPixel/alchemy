@@ -219,7 +219,7 @@ extern u8 gData_08143001[];
 
 void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
-void Scheduler_AddOrUpdateCallback(void *, s32);
+void Task_Add(void *, s32);
 void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
 void WaitFrames(s32);
@@ -263,7 +263,7 @@ void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
 void Camera_ApplyVerticalShake(s32);
 void ObjectGroup_CountDownMemberTimers(void);
-void Scheduler_RemoveCallback(void *);
+void Task_Remove(void *);
 void BattleEffect_EndCanvasLayer(void);
 
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
@@ -321,7 +321,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   PLTT[0] = (u32)&Value_00000000;
   PLTT[1] = (u32)&Value_00000000;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(gData_08143001, 0xc80);
+  Task_Add(gData_08143001, 0xc80);
   Func_08163c2c(1, 0);
   DISPLAY_11E0->width = 240;
   DISPLAY_1120->unk4 = 0;
@@ -1672,6 +1672,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (i = 0; i != arg->count; i++) {
   }
   Runtime_ReleaseHeapBlock(188);
-  Scheduler_RemoveCallback(gData_08143001);
+  Task_Remove(gData_08143001);
   BattleEffect_EndCanvasLayer();
 }

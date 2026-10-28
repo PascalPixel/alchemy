@@ -31,7 +31,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -147,7 +147,7 @@ void Func_020034d8(void);
 void Func_02003eec(s32 actor, s32 target);
 void Func_02003fac(s32 actor, s32 target);
 void Func_02003fb4(void);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);

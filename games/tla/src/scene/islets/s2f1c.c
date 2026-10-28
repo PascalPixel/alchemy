@@ -31,7 +31,7 @@ void Func_02002f1c(void) {
     *state = 0;
     *next = 0;
   }
-  Scheduler_AddOrUpdateCallback(Func_02002d7c, 0x480);
+  Task_Add(Func_02002d7c, 0x480);
   if (GameFlag_Test(0xa2c)) {
     object = Object_GetById(10);
     Call3((void (*)())Func_02003edc, 10, 0xb00000, 0xa80000);

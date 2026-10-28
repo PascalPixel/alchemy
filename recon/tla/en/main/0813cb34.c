@@ -57,7 +57,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 enum { POOL_SOOTHE, POOL_SLEEP, POOL_SLAVER };
 
@@ -77,8 +77,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
@@ -154,7 +154,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
@@ -264,14 +264,14 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (mode == POOL_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     ClearWords((void *)0x06004000, 0x3c00);
     ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);
   } else {
     BattleEffect_EndCanvasLayer();

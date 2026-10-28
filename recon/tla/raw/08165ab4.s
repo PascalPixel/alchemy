@@ -39,7 +39,7 @@ BattleEffect_RunRamses:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08165b24
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	movs r0, #1
 	bl Func_08163c2c
@@ -884,7 +884,7 @@ BattleEffect_RunRamses:
 	cmp r7, #15
 	bne .L_08166190
 	ldr r0, .L_081661d8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

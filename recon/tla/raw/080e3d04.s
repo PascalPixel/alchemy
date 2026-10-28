@@ -530,7 +530,7 @@ Func_080e3d04:
 	strb r3, [r2]
 	ldr r0, .L_080e418c
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #0
 	mov r9, r3
 .L_080e4132:
@@ -647,7 +647,7 @@ Func_080e3d04:
 	ble .L_080e41da
 .L_080e4210:
 	ldr r0, .L_080e4240
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, [sp, #8]
 	bl Resource_ResetEntry
 	mov r0, r11

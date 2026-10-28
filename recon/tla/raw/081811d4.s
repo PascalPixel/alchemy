@@ -172,7 +172,7 @@ BattleEffect_RunVengeance:
 	lsls r1, r1, #4
 	ldr r0, .L_081813a8
 	str r5, [sp, #44]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #172
 	lsls r2, r2, #15
 	ldr r1, [sp, #52]
@@ -950,7 +950,7 @@ BattleEffect_RunVengeance:
 	adds r3, #2
 	strh r2, [r3]
 	ldr r0, .L_08181900
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "mem.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 void Func_08108030(void *panel);
 
@@ -22,10 +22,10 @@ void Func_0804101c(void) {
   void *work = Runtime_AllocateBlock(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Scheduler_AddOrUpdateCallback(Func_08041004, 1152);
+  Task_Add(Func_08041004, TASK_PASS_VBLANK);
 }
 
 void Func_08041054(void) {
-  Scheduler_RemoveCallback(Func_08041004);
+  Task_Remove(Func_08041004);
   Runtime_ReleaseHeapBlock(208);
 }

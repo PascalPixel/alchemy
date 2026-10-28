@@ -50,7 +50,7 @@ s32 UiWork_IsCompleteFar(void);
 void Func_080f8a44(s32 x, s32 y);
 s32 Resource_ResetEntry(u32 entry);
 void UiWork_FinalizeFar(void *window, s32 mode);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
 extern char MsgDjinnInfoPrompt[], MsgDjinnInfoTopic[], MsgDjinnInfoText[];
@@ -168,6 +168,6 @@ s32 Func_08101d5c(void) {
     RenderOutput_PrepareForRedrawFar(menu->statusWindow);
     ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   }
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   return result;
 }

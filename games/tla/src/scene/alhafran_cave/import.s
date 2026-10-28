@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global Scheduler_AddOrUpdateCallback
+	.global Task_Add
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+Task_Add:
+	overlay_veneer Task_AddFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:

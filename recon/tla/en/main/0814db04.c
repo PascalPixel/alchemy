@@ -28,7 +28,7 @@
 #include "io_reg.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "input.h"
 #include "bg_scroll.h"
 #include "battle_effect.h"
@@ -44,7 +44,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define FORMATION_ICE_BLOCKS 643 // nine objects in a 3x3 block
 
 // Rocks, spray and puffs live in the map cell buffer; the spray's trails
@@ -157,7 +156,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
@@ -213,13 +212,13 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         for (n = 0; n != 128; n++)
           inset[n] = Random16() & 63;
         *edge = 0;
-        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable,
-                                      CALLBACK_ORDER);
+        Task_Add(BattleEffect_BuildWindowEdgeTable,
+                                      TASK_PASS_FRAME);
       }
       *edge += step;
       step += 3;
       if (frame == 15)
-        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
+        Task_Remove(BattleEffect_BuildWindowEdgeTable);
     }
 
     // The rocks still standing.
@@ -547,6 +546,6 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

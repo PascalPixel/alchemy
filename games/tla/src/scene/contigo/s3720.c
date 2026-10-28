@@ -13,7 +13,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -49,7 +49,7 @@ void Func_02003720(void) {
   struct ObjectRuntime *object = Object_GetById(14);
   s32 zero;
 
-  Scheduler_AddOrUpdateCallback(Func_020036f0, 0x480);
+  Task_Add(Func_020036f0, 0x480);
   /* FAKEMATCH(temporary): the second byte's 0 built after the first
    * byte's address; as a plain 0, 21 of 136 instructions differ in tla-en. */
   zero = 0;

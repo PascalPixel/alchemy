@@ -46,7 +46,7 @@ BattleEffect_RunKirin:
 	str r3, [r6]
 	lsls r1, r1, #4
 	ldr r0, .L_08168ab4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #1
 	movs r1, #0
 	bl Func_08163c2c
@@ -1203,7 +1203,7 @@ BattleEffect_RunKirin:
 	cmp r3, #9
 	bne .L_0816936a
 	ldr r0, .L_081693ac
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

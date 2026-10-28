@@ -15,5 +15,5 @@ void Func_020006d0(void) {
   row = count / 8;
   Func_02003d14((count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
   if (gData_02004d84 == 0)
-    Scheduler_RemoveCallbackFar(Func_020006d0);
+    Task_RemoveFar(Func_020006d0);
 }

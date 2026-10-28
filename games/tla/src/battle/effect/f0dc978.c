@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "dma.h"
 #include "ram_buffer.h"
@@ -47,5 +47,5 @@ void Func_080dc978(s32 id, s32 value) {
       (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
   BattleEffect_StartBufferInterpolation(8);
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_080dcb44, 0x480);
+  Task_Add((TaskFunc)Func_080dcb44, TASK_PASS_VBLANK);
 }

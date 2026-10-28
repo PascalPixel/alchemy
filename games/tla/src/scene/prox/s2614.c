@@ -12,7 +12,7 @@ struct EventWork1ac {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Object_SetWideSprite(s32 id, s32 wide);
 void Func_020018e0(void);
 void Func_020027e4(void);
@@ -77,7 +77,7 @@ s32 Func_02002614(void) {
         REG_BLDALPHA = alpha;
       }
       REG_BLDCNT = 0x3f10;
-      Scheduler_AddOrUpdateCallback(Func_020018e0, 0x480);
+      Task_Add(Func_020018e0, 0x480);
       Func_02004414(0);
       Func_02004414(1);
       Func_0200440c(2);

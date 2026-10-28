@@ -1,16 +1,16 @@
 #include "types.h"
 #include "dma.h"
 
-s32 Scheduler_SuspendTasks();
+s32 Task_SuspendAll();
 void Func_080d1ae4();
 
 /// Suspends the Func_080d1ae4 overlay task.
-void Func_080d1d34(void) { Scheduler_SuspendTasks(Func_080d1ae4); }
+void Func_080d1d34(void) { Task_SuspendAll(Func_080d1ae4); }
 
-s32 Scheduler_ResumeTasks();
+s32 Task_ResumeAll();
 
 /// Resumes the Func_080d1ae4 overlay task.
-void Func_080d1d44(void) { Scheduler_ResumeTasks(Func_080d1ae4); }
+void Func_080d1d44(void) { Task_ResumeAll(Func_080d1ae4); }
 
 void *Runtime_AllocateHeapBlock();
 void Runtime_ReleaseHeapBlock();

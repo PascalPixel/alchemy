@@ -10,7 +10,7 @@ Func_081a76f8:
 	movs r3, #1
 	strb r3, [r2]
 	ldr r6, .L_081a7764
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	movs r0, #1
 	bl Fade_ToBlack
 	bl Func_08014b70

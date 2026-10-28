@@ -159,7 +159,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   wave.x = 0x800000;
   wave.y = 0x280000;
   drift.x = 0;
@@ -598,7 +598,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     index++;
   } while (index != COMETS);
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

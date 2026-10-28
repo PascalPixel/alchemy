@@ -11,12 +11,12 @@
    } *)(base))                                                                 \
        ->v)
 
-typedef void (*SchedulerCallback)(void);
+typedef void (*TaskFunc)(void);
 
 u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Func_02002c88(void);
 void Func_02002d34(void);
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
+s32 Task_Add(TaskFunc callback, s32 order);
 void Func_02003434(s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
 void Func_02002de4(void);
@@ -33,7 +33,7 @@ void Func_02002f58(const s32 *position) {
   Func_02002c88();
   Func_02002d34();
   FIELD_AT(work, u16, 4212) = 0;
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, Func_02002de4, 0x480);
+  Call2((void (*)())Task_Add, Func_02002de4, 0x480);
   Call3((void (*)())Func_02003434, 0x40000, 0x40000, 0x10000);
   state = 0;
   do {

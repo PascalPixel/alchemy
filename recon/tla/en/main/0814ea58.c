@@ -40,7 +40,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "graphics.h"
 #include "io_reg.h"
@@ -172,7 +172,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 3;
     work->transferValue = 0x04040404;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
@@ -242,7 +242,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();
 }

@@ -56,12 +56,12 @@ void Func_020043f8(void) {
      * callback is loaded last as the native has; through the inline alone it
      * comes one row early in tla-en. */
     __asm__("" : "+l"(priority) : : "r0");
-    Scheduler_AddOrUpdateCallback(Func_020043c8, priority);
+    Task_Add(Func_020043c8, priority);
   }
   {
     s32 priority = 0x480;
 
-    Scheduler_AddOrUpdateCallback(Func_02004394, priority);
+    Task_Add(Func_02004394, priority);
   }
 }
 

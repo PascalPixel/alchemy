@@ -21,7 +21,7 @@
 extern u8 Func_02000670[];
 s32 Func_02000f0c();
 s32 Object_GetById();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 Func_02000f14();
 s32 GameFlag_Test();
 void ObjectDispatch_SetSingleChildFlags();
@@ -61,7 +61,7 @@ s32 Func_020006ec(s32 a0, s32 a1, s32 a2, s32 a3) {
     goto L_02008744;
   goto L_0200893c;
 L_02008744:
-  Scheduler_AddOrUpdateCallback((s32)Func_02000670, 0x480);
+  Task_Add((s32)Func_02000670, 0x480);
   Call2((void (*)())Func_02000f14, 8, 1);
   Call2((void (*)())Func_02000f14, 9, 1);
   Call2((void (*)())Func_02000f14, 10, 1);

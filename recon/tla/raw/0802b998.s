@@ -356,11 +356,11 @@ Func_0802b998:
 	movs r3, #159
 	strh r3, [r2]
 	adds r1, #133
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0802bd04
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #192
 	movs r1, #164
 	lsls r2, r2, #2

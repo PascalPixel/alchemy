@@ -250,7 +250,7 @@ BattleEffect_RunIce:
 	movs r1, #200
 	ldr r0, .L_0813c0a4
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r2, #239
 	lsls r2, r2, #7
 	movs r3, #2
@@ -277,7 +277,7 @@ BattleEffect_RunIce:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0813c0a8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	str r1, [sp, #20]
 	mov r2, r10
@@ -625,9 +625,9 @@ BattleEffect_RunIce:
 	b .L_0813be06
 .L_0813c074:
 	ldr r0, .L_0813c0a8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_0813c0a4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

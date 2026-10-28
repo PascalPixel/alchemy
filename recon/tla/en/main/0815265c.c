@@ -35,7 +35,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "graphics.h"
@@ -395,7 +395,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   for (i = 0; i != 64; i++)
     work->particles[i].variant = -1;
   if (mode == 8 || mode == 11 || mode == 14)
@@ -752,7 +752,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 11 || mode == 14 || mode == 18) {
@@ -760,7 +760,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     effect->prelude = 0;
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     if (mode == 14)
       SummonEffect_RunCanvasMode1(effect);
     else

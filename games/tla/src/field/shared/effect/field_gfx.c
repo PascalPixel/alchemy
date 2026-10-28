@@ -3,7 +3,7 @@
 #include "graphics.h"
 #include "mem.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "palbuf.h"
 #include "fxblend.h"
 #include "dma.h"
@@ -106,7 +106,7 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Scheduler_AddOrUpdateCallback(Func_080d7034, 0x480);
+  Task_Add(Func_080d7034, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_StartTwelveFrameBlend(void) {
@@ -124,7 +124,7 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Scheduler_AddOrUpdateCallback(Func_080d67e8, 0x480);
+  Task_Add(Func_080d67e8, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_SetBlock30ValuesMaxZero(void) {
@@ -165,5 +165,5 @@ void BattleEffect_StartBufferBlend(s32 from, s32 to) {
   BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Scheduler_AddOrUpdateCallback(Func_080d67e8, 0x480);
+  Task_Add(Func_080d67e8, TASK_PASS_VBLANK);
 }

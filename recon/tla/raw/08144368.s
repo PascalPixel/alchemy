@@ -60,7 +60,7 @@ BattleEffect_RunOrbitingSpirals:
 	ldr r0, .L_081445e8
 	str r3, [r1, #4]
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #32]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -74,7 +74,7 @@ BattleEffect_RunOrbitingSpirals:
 	str r3, [r2]
 	ldr r0, .L_081445ec
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r2, r9
 	ldr r3, [r2, #4]
 	cmp r3, #1
@@ -305,9 +305,9 @@ BattleEffect_RunOrbitingSpirals:
 	b .L_0814442e
 .L_081445be:
 	ldr r0, .L_081445ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_081445e8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

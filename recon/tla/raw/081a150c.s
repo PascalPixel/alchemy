@@ -11,7 +11,7 @@ Func_081a150c:
 	strb r2, [r3]
 	ldr r3, .L_081a1580
 	strb r2, [r3]
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r3, .L_081a1584
 	movs r2, #0
 	str r2, [r3]
@@ -31,7 +31,7 @@ Func_081a150c:
 	strh r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_081a15a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #64
 	movs r5, #128
 	lsls r5, r5, #19

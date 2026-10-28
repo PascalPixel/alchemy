@@ -65,8 +65,8 @@ void Func_02002b68(s32 sound);
 void Func_0200105c(struct ObjectRuntime *object);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02001080(void);
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
@@ -135,10 +135,10 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->unkb02 = 0;
   work->unkb09 = 1;
   work->unkb0a = 0;
-  Scheduler_AddOrUpdateCallback(Func_02001080, 0x480);
+  Task_Add(Func_02001080, 0x480);
   while (work->step != 999)
     WaitFrames(1);
-  Scheduler_RemoveCallbackFar(Func_02001080);
+  Task_RemoveFar(Func_02001080);
   Resource_ResetEntry(largeEntry);
   Resource_ResetEntry(smallEntry);
   Runtime_ReleaseHeapBlock(220);

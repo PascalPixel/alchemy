@@ -59,12 +59,12 @@ BattleEffect_RunMeteorBlow:
 	movs r1, #200
 	adds r0, r5, #0
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	movs r0, #0
 	bl Func_08163c2c
 	adds r0, r5, #0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r2, [sp, #96]
 	movs r3, #224
 	b .L_0818dff4
@@ -192,7 +192,7 @@ BattleEffect_RunMeteorBlow:
 .L_0818e0e4:
 	lsls r1, r1, #4
 	ldr r0, .L_0818e130
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_0818e128
 	movs r2, #128
 	strh r3, [r6]
@@ -333,7 +333,7 @@ BattleEffect_RunMeteorBlow:
 	lsls r1, r1, #4
 	ldr r0, .L_0818e294
 	adds r1, #254
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_0818e298
 	movs r3, #0
 	strh r3, [r2, #4]
@@ -498,7 +498,7 @@ BattleEffect_RunMeteorBlow:
 	cmp r4, #116
 	bne .L_0818e3e6
 	ldr r0, .L_0818e368
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r1, #200
 	b .L_0818e36c
 .L_0818e358:
@@ -514,7 +514,7 @@ BattleEffect_RunMeteorBlow:
 .L_0818e36c:
 	lsls r1, r1, #4
 	ldr r0, .L_0818e470
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, .L_0818e474
 	ldr r6, .L_0818e478
 	ldrh r3, [r6]
@@ -1120,11 +1120,11 @@ BattleEffect_RunMeteorBlow:
 	str r3, [r4, #16]
 	ldr r0, .L_0818e858
 	mov r6, r11
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	cmp r6, #115
 	bgt .L_0818e860
 	ldr r0, .L_0818e85c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	b .L_0818e866
 	.2byte 0x0000
 .L_0818e820:
@@ -1161,7 +1161,7 @@ BattleEffect_RunMeteorBlow:
 	.4byte BattleEffect_FlushPendingGraphicsTransfer
 .L_0818e860:
 	ldr r0, .L_0818e8bc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_0818e866:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
@@ -1247,7 +1247,7 @@ BattleEffect_RunMeteorBlow:
 .L_0818e90c:
 	lsls r1, r1, #4
 	ldr r0, .L_0818ebac
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, .L_0818ebb0
 	ldr r1, [sp, #84]
 	movs r2, #0
@@ -1776,7 +1776,7 @@ BattleEffect_RunMeteorBlow:
 	b .L_0818e990
 .L_0818ed52:
 	ldr r0, .L_0818eda0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r6, #238

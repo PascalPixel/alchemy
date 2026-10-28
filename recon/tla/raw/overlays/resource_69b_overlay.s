@@ -49,7 +49,7 @@ Func_020000d0:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200821c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r0, r8
 	movs r1, #1
 	bl Camera_FollowActor
@@ -152,7 +152,7 @@ Func_020000d0:
 	movs r3, #3
 	strb r3, [r2]
 	ldr r0, .L_0200821c
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	bl Func_02000054
 	bl Func_02002254
 	b .L_02008228
@@ -215,7 +215,7 @@ Func_02000230:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020083e4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r5, #128
 	mov r0, r8
 	movs r1, #1
@@ -372,7 +372,7 @@ Func_02000230:
 	str r3, [r7, #12]
 	str r3, [r7, #20]
 	ldr r0, .L_020083e4
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	bl Func_02000054
 	bl Func_02002254
 	pop {r3}
@@ -1827,7 +1827,7 @@ Func_02001950:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02009b90
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r8
 	movs r2, #10
 	ldrsh r0, [r3, r2]

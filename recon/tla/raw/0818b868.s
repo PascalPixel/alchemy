@@ -44,7 +44,7 @@ BattleEffect_RunTripleChomp:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0818b8d0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #60]
 	movs r3, #80
 	ldr r0, [r1, #8]
@@ -450,7 +450,7 @@ BattleEffect_RunTripleChomp:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0818bc5c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #84
 	pop {r3, r5, r6, r7}

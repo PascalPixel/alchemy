@@ -6,7 +6,7 @@ void MemFree(void *buffer);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02000d18(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 
 /// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own
 /// and starts Func_02000d18.
@@ -29,5 +29,5 @@ fill:
   __asm__("");
   VramCache_Load(gData_020068a2, 0x100, buffer);
   MemFree(buffer);
-  Scheduler_AddOrUpdateCallback(Func_02000d18, 0x480);
+  Task_Add(Func_02000d18, 0x480);
 }

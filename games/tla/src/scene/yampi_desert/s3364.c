@@ -18,7 +18,7 @@ void Func_02003364(void) {
   Func_02003338(14);
   Func_02003338(15);
   if (gAdventure.entrance == 1 || gAdventure.entrance == 2)
-    Scheduler_AddOrUpdateCallback(Func_020020a8, 0x480);
+    Task_Add(Func_020020a8, 0x480);
 }
 
 void Func_020026a0(void);

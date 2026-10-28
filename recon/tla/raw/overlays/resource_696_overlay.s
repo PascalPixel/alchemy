@@ -317,7 +317,7 @@ Func_0200057c:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_02008848
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #207
 	bl Engine_AudioPlayCue
 	ldr r3, .L_02008824
@@ -437,7 +437,7 @@ Func_0200057c:
 	movs r1, #144
 	ldr r0, .L_02008924
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r7, #0
 .L_020088e6:
 	movs r3, #128
@@ -697,7 +697,7 @@ Func_0200057c:
 	cmp r7, #68
 	bne .L_02008aaa
 	ldr r0, .L_02008b50
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r1, #128
 	lsls r1, r1, #19
 	adds r1, #10
@@ -769,7 +769,7 @@ Func_0200057c:
 	cmp r7, #65
 	bne .L_02008b6e
 	ldr r0, .L_02008bac
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	movs r0, #14
 	bl Object_GetById
 	movs r5, #0
@@ -1147,7 +1147,7 @@ Func_02002a20:
 	b .L_0200aa48
 .L_0200ab16:
 	ldr r0, .L_0200abd4
-	bl Scheduler_RemoveCallbackFar
+	bl Task_RemoveFar
 	ldr r3, .L_0200ab90
 	movs r1, #0
 	ldrsh r0, [r3, r1]

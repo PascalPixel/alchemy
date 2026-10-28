@@ -19,8 +19,8 @@ void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Func_02001718(const s32 *from, const s32 *to);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02002870(s32 a, s32 b, s32 c);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -100,7 +100,7 @@ void Func_020002b8(void) {
   Func_02001718(from, to);
   gData_02003274 = 0;
   gData_02003278 = 1;
-  Scheduler_AddOrUpdateCallback(Func_02000294, 0x480);
+  Task_Add(Func_02000294, 0x480);
   i = 0;
 quicken:
   gData_02003274 = 0;
@@ -119,7 +119,7 @@ quicken:
   FieldEvent_WaitFrames(40);
   Bring(23);
   Bring(24);
-  Scheduler_AddOrUpdateCallback(Func_020001a4, 0x480);
+  Task_Add(Func_020001a4, 0x480);
   Func_02002a40(144);
   Call3((void (*)())Func_02002870, 0x60000, 0x60000, 0x10000);
   Call2((void (*)())Func_02002980, 0x10000, 0);
@@ -159,7 +159,7 @@ quicken:
   Call3((void (*)())Func_02002870, 0x20000, 0x20000, 0x10000);
   FieldEvent_WaitFrames(30);
   Call3((void (*)())Func_02002870, 0, 0, 0x10000);
-  Scheduler_RemoveCallbackFar(Func_02000294);
+  Task_RemoveFar(Func_02000294);
   Func_0200185c();
   FieldEvent_WaitFrames(30);
   a->motionFlags = 0;

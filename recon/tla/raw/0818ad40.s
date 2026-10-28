@@ -241,13 +241,13 @@ Func_0818ad40:
 	str r3, [r2]
 	ldr r0, .L_0818af70
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #44]
 	cmp r4, #1
 	bne .L_0818af34
 	ldr r0, .L_0818af74
 	adds r1, r5, #0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_0818af34:
 	movs r2, #128
 	ldr r3, .L_0818af58
@@ -1400,10 +1400,10 @@ Func_0818ad40:
 	cmp r1, #1
 	bne .L_0818b816
 	ldr r0, .L_0818b860
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_0818b816:
 	ldr r0, .L_0818b864
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

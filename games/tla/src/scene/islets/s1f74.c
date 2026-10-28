@@ -16,10 +16,10 @@ void Func_02001f74(void) {
   WaitFrames(1);
   object->y = 0xa00000;
   WaitFrames(1);
-  Scheduler_AddOrUpdateCallback(Func_02001f58, 0x480);
+  Task_Add(Func_02001f58, 0x480);
   Func_02003e0c(object, 0x840000, 0x800000, 0x1400000);
   Func_02003e14(object);
-  Scheduler_RemoveCallbackFar(Func_02001f58);
+  Task_RemoveFar(Func_02001f58);
   Object_SetModeById(10, 5);
   object->motionFlags = 3;
   ObjectMotion_SetActionVariant(10, 2);

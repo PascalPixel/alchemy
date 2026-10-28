@@ -42,7 +42,7 @@ BattleEffect_RunEclipse:
 	lsls r1, r1, #4
 	str r3, [r2]
 	ldr r0, .L_08141790
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r0, #80
 	negs r0, r0
 	movs r1, #0
@@ -96,7 +96,7 @@ BattleEffect_RunEclipse:
 	str r0, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_0814179c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #76]
 	movs r0, #1
 	str r0, [r1, #16]
@@ -1298,7 +1298,7 @@ BattleEffect_RunEclipse:
 	b .L_0814180e
 .L_08141f7a:
 	ldr r0, .L_08142060
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	add r0, sp, #80
 	ldr r3, .L_08142064
 	ldrh r0, [r0]
@@ -2473,7 +2473,7 @@ BattleEffect_RunEclipse:
 	cmp r4, #32
 	bne .L_081428da
 	ldr r0, .L_08142938
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

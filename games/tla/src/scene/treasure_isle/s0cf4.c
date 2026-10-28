@@ -17,7 +17,7 @@ extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_020003fc(void *cells, s32 index);
 void Func_02000ba0(void);
 void Func_02000fec(s32 id, s32 x, s32 z);
@@ -55,7 +55,7 @@ s32 Func_02000cf4(void) {
    * the next; without this one, 27 of 241 instructions differ in tla-en. */
   __asm__("" : : : "memory");
   if (gAdventure.scene == (s32)&SceneId_Ov6afRoom2) {
-    Scheduler_AddOrUpdateCallback(Func_02000ba0, 0x480);
+    Task_Add(Func_02000ba0, 0x480);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
       PlaceObject(10, 0x1080000, 0xb80000);
@@ -74,7 +74,7 @@ s32 Func_02000cf4(void) {
    * tla-en. */
   __asm__("" : : : "memory");
   if (gAdventure.scene == (s32)&SceneId_Ov6afRoom3) {
-    Scheduler_AddOrUpdateCallback(Func_02000ba0, 0x480);
+    Task_Add(Func_02000ba0, 0x480);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
       PlaceObject(10, 0x2980000, 0xf80000);

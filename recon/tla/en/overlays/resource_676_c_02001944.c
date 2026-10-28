@@ -50,7 +50,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Camera_FollowActor();
 void Func_02001904();
 void Func_02001688(void);
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_02001730(void);
 s32 UiText_OpenMessageAtObject();
 s32 Event_AskYesNoWithActorAnimation();
@@ -132,7 +132,7 @@ void Func_02001944(void) {
   Call1(Func_02001904, 9);
   Call1(Func_02001904, 11);
   Call1(Func_02001904, gAdventure.currentOwner);
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_02001688, 0x480);
+  Call2(Task_Add, (s32)Func_02001688, 0x480);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:

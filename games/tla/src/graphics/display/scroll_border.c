@@ -2,7 +2,7 @@
 #include "dma.h"
 #include "mem.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct BucketEntry {
   void *next;
@@ -48,5 +48,5 @@ void Func_081a1830(void) {
     *words++ = (i << 21) | 0x40004098;
     *words++ = tile | 0x800;
   }
-  Scheduler_AddOrUpdateCallback(Func_081a1810, 0x480);
+  Task_Add(Func_081a1810, TASK_PASS_VBLANK);
 }

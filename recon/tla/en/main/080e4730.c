@@ -26,7 +26,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_080dc954(void);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Remove(void (*callback)(void));
 void Func_080e42d4(void);
 void *Resource_GetTableEntry(u16 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -78,7 +78,7 @@ void Func_080e4730(void) {
   Func_080dc954();
   gAdventure[620] = 0;
   ObjectGroup_SetActionForOthers(owner, 1, 0);
-  Scheduler_RemoveCallback(Func_080e42d4);
+  Task_Remove(Func_080e42d4);
   Resource_DecodeType01(Resource_GetTableEntry(0x1e1), work);
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);

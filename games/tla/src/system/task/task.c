@@ -1,52 +1,52 @@
 #include "irqlock.h"
 #include "types.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "string.h"
 
-void Scheduler_ResetTaskTable(void) {
-  struct SchedulerTask *task;
+void Task_ResetAll(void) {
+  struct Task *task;
   s32 remaining;
   u32 zero;
 
-  gSchedulerReady = 0;
-  task = gSchedulerTaskTable;
-  gSchedulerStatus = 0;
+  gTasksInitialized = 0;
+  task = gTasks;
+  gTasksRunning = 0;
   zero = 0;
   remaining = 23;
   do {
     task->func = zero;
-    task->state |= 0xffff;
-    task->mask = zero;
+    task->priority |= 0xffff;
+    task->flags = zero;
     task++;
     remaining--;
   } while (remaining >= 0);
-  gSchedulerReady = 1;
+  gTasksInitialized = 1;
 }
 
-void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count) {
+void Task_CopyWords(u32 *destination, u32 *source, u32 byte_count) {
   u32 index;
   byte_count >>= 2;
   for (index = 0; index < byte_count; index++)
     *destination++ = *source++;
 }
 
-void Scheduler_SortTasks(void) {
-  struct SchedulerTask saved;
-  struct SchedulerTask *base = gSchedulerTaskTable;
-  struct SchedulerTask *task;
+void Task_Sort(void) {
+  struct Task saved;
+  struct Task *base = gTasks;
+  struct Task *task;
   s32 pass = 23;
   s32 remaining;
   goto sort_pass;
 next_pass:
-  base = gSchedulerTaskTable;
+  base = gTasks;
 sort_pass:
   task = base;
   if (pass <= 0)
     goto finish_pass;
   remaining = pass;
 next_task:
-  if ((s16)task[1].state > (s16)task->state) {
+  if ((s16)task[1].priority > (s16)task->priority) {
     memcpy(&saved, task, sizeof(saved));
     base = task;
     task++;
@@ -62,13 +62,13 @@ finish_pass:
     goto next_pass;
 }
 
-s32 Scheduler_FindCallback(SchedulerCallback func) {
+s32 Task_Find(TaskFunc func) {
   s32 result;
-  struct SchedulerTask *task;
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
@@ -81,19 +81,19 @@ s32 Scheduler_FindCallback(SchedulerCallback func) {
   return result;
 }
 
-s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order) {
+s32 Task_Add(TaskFunc func, s32 order) {
   u32 saved_interrupt_state;
   s32 index;
-  struct SchedulerTask *task;
+  struct Task *task;
   s32 i;
 
-  task = gSchedulerTaskTable;
-  (void)gSchedulerStatus;
+  task = gTasks;
+  (void)gTasksRunning;
   index = -1;
   IRQ_LOCK(saved_interrupt_state);
   i = 0;
   if (task->func == (u32)func) {
-    task->state = order;
+    task->priority = order;
     index = 0;
   } else {
   find_existing:
@@ -101,20 +101,20 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order) {
     task++;
     if (i <= 23) {
       if (task->func == (u32)func) {
-        task->state = order;
+        task->priority = order;
         index = i;
       } else {
         goto find_existing;
       }
     }
   }
-  task = gSchedulerTaskTable;
+  task = gTasks;
   if (index == -1) {
     i = 0;
     if (task->func == 0) {
       task->func = (u32)func;
-      task->state = order;
-      task->mask = 0;
+      task->priority = order;
+      task->flags = 0;
       index = 0;
     } else {
     find_empty:
@@ -123,8 +123,8 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order) {
       if (i <= 23) {
         if (task->func == 0) {
           task->func = (u32)func;
-          task->state = order;
-          task->mask = 0;
+          task->priority = order;
+          task->flags = 0;
           index = i;
         } else {
           goto find_empty;
@@ -132,28 +132,28 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback func, s32 order) {
       }
     }
   }
-  Scheduler_SortTasks();
+  Task_Sort();
   IRQ_UNLOCK(saved_interrupt_state);
   return index;
 }
 
-void Scheduler_Idle(void) {}
+void Task_Idle(void) {}
 
-void Scheduler_EmptyCallback(void) {}
+void Task_Empty(void) {}
 
-s32 Scheduler_RemoveCallback(SchedulerCallback func) {
-  struct SchedulerTask *task;
+s32 Task_Remove(TaskFunc func) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
     if (task->func == (u32)func) {
       task->func = 0;
-      task->state = 0x7fff;
+      task->priority = 0x7fff;
       result = i;
       break;
     }
@@ -162,13 +162,13 @@ s32 Scheduler_RemoveCallback(SchedulerCallback func) {
   return result;
 }
 
-s32 Scheduler_SuspendTasks(SchedulerCallback func) {
-  struct SchedulerTask *task;
+s32 Task_SuspendAll(TaskFunc func) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
@@ -177,8 +177,8 @@ s32 Scheduler_SuspendTasks(SchedulerCallback func) {
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
-    /* FAKEMATCH: the result copy follows the state byte store, as in
-     * Scheduler_SuspendOverlayTasks. */
+    /* FAKEMATCH: the result copy follows the priority's high byte store, as in
+     * Task_SuspendOverlayTasks. */
     __asm__ volatile("");
     result = i;
   }
@@ -186,20 +186,20 @@ s32 Scheduler_SuspendTasks(SchedulerCallback func) {
   return result;
 }
 
-s32 Scheduler_SuspendOverlayTasks(void) {
-  struct SchedulerTask *task;
+s32 Task_SuspendOverlayTasks(void) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
-    if ((task->func >> 24) == 2 && (task->mask & 1) == 0) {
+    if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
       /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the
-       * state byte's load delay; native stores the byte first. */
+       * priority byte's load delay; native stores the byte first. */
       __asm__ volatile("");
       result = i;
     }
@@ -208,25 +208,25 @@ s32 Scheduler_SuspendOverlayTasks(void) {
   return result;
 }
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
-extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerReady;
-extern struct SchedulerTask gSchedulerTaskTable[24];
+#define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
+extern volatile u8 gTasksRunning;
+extern u8 gTasksInitialized;
+extern struct Task gTasks[24];
 
-s32 Scheduler_SetTaskFlags(SchedulerCallback func, u32 mask) {
-  struct SchedulerTask *task;
+s32 Task_SetFlags(TaskFunc func, u32 mask) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   /* FAKEMATCH: ⚓️ loads the task table before it builds the -1 result */
   __asm__ volatile("" : "+l"(task));
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
     if (task->func == (u32)func) {
-      task->mask = mask;
+      task->flags = mask;
       result = i;
       break;
     }

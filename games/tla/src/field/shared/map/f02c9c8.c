@@ -5,7 +5,7 @@
 #include "system.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern void (*gData_030011f8)(void);
 extern char ResourceId_DefaultMapCells;
@@ -48,7 +48,7 @@ s32 Func_0802c9c8(void) {
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), buffer);
   Map_UpdateCurrentTileBlock();
   state->animationActive = 0;
-  Scheduler_ResumeTasks(MapAnimation_Update);
+  Task_ResumeAll(MapAnimation_Update);
   state->picturePending = 0;
   state->pictureShown = 0;
   Func_0802d088(state->area, 0);

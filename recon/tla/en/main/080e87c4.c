@@ -13,7 +13,7 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "adventure.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "resource.h"
 #include "effect_sprite.h"
 #include "bg_scroll.h"
@@ -78,7 +78,7 @@ void Func_080e87c4(void) {
   event->pending = 0;
   event->unkcad = 0;
   event->unkcae = 0;
-  Scheduler_RemoveCallback(Func_080e807c);
+  Task_Remove(Func_080e807c);
   WaitFrames(1);
   Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);

@@ -3,7 +3,7 @@
 #include "battle_display.h"
 #include "battle_party.h"
 #include "battle_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "iowrite.h"
@@ -23,7 +23,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
   u32 i;
 
   if (mode == 0) {
-    Scheduler_RemoveCallback(Graphics_AdvancePaletteCycle);
+    Task_Remove(Graphics_AdvancePaletteCycle);
     Io_Write16(mode, &REG_BLDY);
     BattlePres_ClearAllActorRecordModes();
     WaitFrames(1);
@@ -56,6 +56,6 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
     }
     WaitFrames(1);
     QueueIoWriteDelay2(0x04000050, 0);
-    Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0xc80);
+    Task_Add(Graphics_AdvancePaletteCycle, TASK_PASS_FRAME);
   }
 }

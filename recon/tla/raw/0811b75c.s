@@ -119,7 +119,7 @@ Func_0811b75c:
 .L_0811b830:
 	.4byte 0x00000fff
 .L_0811b834:
-	.4byte gSchedulerStatus
+	.4byte gTasksRunning
 .L_0811b838:
 	adds r2, #2
 	cmp r3, r2

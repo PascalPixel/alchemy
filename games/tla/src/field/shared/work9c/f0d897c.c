@@ -1,7 +1,7 @@
 #include "work9c.h"
 #include "mem.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 
 // XXX: what the work block in heap slot 39 holds, and what this family does;
@@ -20,7 +20,7 @@ void Func_080d897c(void) {
   work->vramEntry = Resource_FindFreeEntry();
   Resource_DecodeType01(gData_080f0c04, buffer);
   VramCache_Load(work->vramEntry, 0x100, buffer);
-  Scheduler_AddOrUpdateCallback(Func_080d8a00, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_080d8c10, 0x48f);
+  Task_Add(Func_080d8a00, TASK_PASS_VBLANK);
+  Task_Add(Func_080d8c10, TASK_PASS_VBLANK + 15);
   MemFree(buffer);
 }

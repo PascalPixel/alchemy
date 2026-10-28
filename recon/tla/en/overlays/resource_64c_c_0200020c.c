@@ -49,8 +49,8 @@ void Func_02002074(void);
 void Func_02001f54(void *source, void *destination);
 void Func_02002024(void);
 void Func_02002084(s32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_0200005c(void);
 void Func_020020b4(s32 cue);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
@@ -140,7 +140,7 @@ void Func_0200020c(s32 stage) {
   }
   Func_02002024();
   Func_02002084(0);
-  Scheduler_AddOrUpdateCallback(Func_0200005c, 0x480);
+  Task_Add(Func_0200005c, 0x480);
   Func_020020b4(246);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
@@ -267,7 +267,7 @@ void Func_0200020c(s32 stage) {
     }
     WaitFrames(1);
   }
-  Scheduler_RemoveCallbackFar(Func_0200005c);
+  Task_RemoveFar(Func_0200005c);
   if (stage != 4) {
     Func_02002044(0x60000, 0xc000);
     Func_0200207c();

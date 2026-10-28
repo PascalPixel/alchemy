@@ -18,7 +18,7 @@ void Func_02002968(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02002958(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02000740(void);
 void Func_02000580(void);
 
@@ -57,6 +57,6 @@ void Func_02000844(void) {
     GameFlag_ClearBit(513);
 OPEN(0, 0x200);
   OPEN(1, 513);
-  Scheduler_AddOrUpdateCallback(Func_02000740, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_02000580, 0x480);
+  Task_Add(Func_02000740, 0x480);
+  Task_Add(Func_02000580, 0x480);
 }

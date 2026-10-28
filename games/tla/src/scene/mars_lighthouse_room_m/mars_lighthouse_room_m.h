@@ -64,7 +64,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 
 void Func_02003118(struct ObjectRuntime *object, s32 value);
 void Func_02003120(struct ObjectRuntime *object, const void *script);

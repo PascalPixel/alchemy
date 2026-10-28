@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "display_transition.h"
 #include "frame.h"
 #include "io_reg.h"
@@ -72,7 +72,7 @@ void DisplayTransition_Update(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_Update);
+      Task_Remove(DisplayTransition_Update);
       Runtime_SetIrqHandler(1, 0, 0);
       window->extraTiles = 3;
       return;
@@ -121,7 +121,7 @@ void DisplayTransition_UpdateFromCentre(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_UpdateFromCentre);
+      Task_Remove(DisplayTransition_UpdateFromCentre);
       Runtime_SetIrqHandler(1, 0, 0);
       return;
     } else {

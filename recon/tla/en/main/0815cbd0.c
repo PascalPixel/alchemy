@@ -94,8 +94,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void SummonEffect_RunCanvasMode1(void *action);
 
@@ -130,7 +130,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Sound_PlayFar(143);
   blend = &REG_BLDALPHA;
 
@@ -164,11 +164,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   } while (frame != 63);
 
   // Teardown: clear both canvases and hand over to the summon canvas.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   ClearWords_((void *)0x06004000, 0x3c00);
   ClearWords_(canvas, 0x3c00);
   effect->prelude = 0;
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
   SummonEffect_RunCanvasMode1(effect);
 }
 

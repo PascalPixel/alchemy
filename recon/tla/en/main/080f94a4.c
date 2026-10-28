@@ -47,8 +47,8 @@ void Resource_LoadPairedBlocks(void);
 void Palette_LightenHighlight(s32 palette);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
+s32 Menu_SuspendFieldTasks(void);
+s32 Menu_ResumeFieldTasks(void);
 void UiWork_SetAltFlagAndClearTableFar(s32 flag);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
@@ -82,7 +82,7 @@ s32 Func_080f94a4(void) {
   Palette_LightenHighlight(14);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
   Iwram_FillWords((void *)0x06004000, size, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
@@ -110,7 +110,7 @@ s32 Func_080f94a4(void) {
   Ram_HeapSlots->windowTiles[6] = 0;
   MemFree(backup);
   WaitFrames(1);
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;

@@ -70,7 +70,7 @@ BattleEffect_RunUndeadSword:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816a9f8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, [sp, #20]
 	add r5, sp, #32
 	movs r2, #36
@@ -341,7 +341,7 @@ BattleEffect_RunUndeadSword:
 	b .L_0816a854
 .L_0816a9e0:
 	ldr r0, .L_0816a9f8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}

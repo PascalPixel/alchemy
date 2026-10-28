@@ -38,7 +38,7 @@
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
 // address; the plain store starts the address first (one reordered pair,
@@ -67,8 +67,8 @@ extern u8 gHelmSplitter_CellHeights[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
@@ -143,7 +143,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   }
   work->transferMode = 2;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
 
   // No spark is alive yet.
@@ -260,7 +260,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

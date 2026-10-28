@@ -87,7 +87,7 @@ commands:
       gData_020064bc = *gData_020064c0++;
       break;
     case -1:
-      Scheduler_RemoveCallbackFar(Func_02002a20);
+      Task_RemoveFar(Func_02002a20);
       Resource_ResetEntry(gData_02005158[0]);
       return;
     }

@@ -48,8 +48,8 @@ s32 Object_SetPartAttribute();
 s32 PartyInventory_Remove();
 s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
-s32 Scheduler_AddOrUpdateCallback();
-s32 Scheduler_RemoveCallbackFar();
+s32 Task_Add();
+s32 Task_RemoveFar();
 s32 UiText_ShowPositionedMessageAndWait();
 s32 VramCache_Load();
 s32 WaitFrames();
@@ -308,7 +308,7 @@ L_020089ca:
         (s32)gData_02006338);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 32,
         (s32)gData_02006338);
-  Scheduler_AddOrUpdateCallback((s32)Func_020004c8, 0x480);
+  Task_Add((s32)Func_020004c8, 0x480);
   Call3((void (*)())Func_02005884, 9, 0, 0);
   Call3((void (*)())Func_02005884, 10, 0, 0);
   Call3((void (*)())Func_02005884, 23, 0, 0);
@@ -324,7 +324,7 @@ L_020089ca:
   Call1((void (*)())Func_02005964, 60);
   Call1((void (*)())Func_020059f4, 141);
   Call1((void (*)())WaitFrames, 60);
-  Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)Func_020004c8);
+  Call1((void (*)())Task_RemoveFar, (s32)Func_020004c8);
   Call1((void (*)())GameFlag_SetBit, 0x11a);
   Call1((void (*)())Func_02005934, 2);
 L_02008ca8:

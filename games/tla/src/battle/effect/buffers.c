@@ -9,7 +9,7 @@
 #include "system.h"
 #include "mem.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "types.h"
 #include "palbuf.h"
 #include "ram_buffer.h"
@@ -26,11 +26,11 @@ void BattleEffect_InitializeBuffers(void) {
   Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
           REG_DMA3);
   BattleEffect_BuildBuffer(0x10000, buffer, buffer->target, 0);
-  Scheduler_AddOrUpdateCallback((s32)BattlePalette_UpdateBlend, 0x48f);
+  Task_Add((s32)BattlePalette_UpdateBlend, TASK_PASS_VBLANK + 15);
 }
 
 void BattlePalette_StopBlendAndReleaseBuffer(void) {
-  Scheduler_RemoveCallback((s32)&BattlePalette_UpdateBlend);
+  Task_Remove((s32)&BattlePalette_UpdateBlend);
   Runtime_ReleaseHeapBlock(128);
 }
 

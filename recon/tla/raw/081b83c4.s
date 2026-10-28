@@ -36,7 +36,7 @@ Func_081b83c4:
 	ldr r0, .L_081b8610
 	bl Resource_ReservedNoOp
 	bl Camera_ResetSceneDefaultsB
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r2, .L_081b8614
 	movs r3, #0
 	strb r3, [r2]

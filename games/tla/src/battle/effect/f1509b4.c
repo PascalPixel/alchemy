@@ -1,7 +1,7 @@
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "io_reg.h"
@@ -100,7 +100,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(136);
   frame = 0;
   do {
@@ -144,6 +144,6 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     frame += 1;
   } while (frame != 60);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -36,7 +36,7 @@ BattleEffect_RunNeptune:
 	strh r2, [r3]
 	adds r1, r6, #0
 	ldr r0, .L_0816944c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_08169450
 	movs r0, #2
 	movs r1, #0
@@ -49,7 +49,7 @@ BattleEffect_RunNeptune:
 	str r3, [r2]
 	adds r1, r6, #0
 	ldr r0, .L_08169454
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r3, .L_08169444
 	movs r2, #128
 	lsls r2, r2, #19
@@ -477,7 +477,7 @@ BattleEffect_RunNeptune:
 	strh r3, [r7]
 	ldr r0, .L_081697e0
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 .L_081697a8:
 	ldr r1, [sp, #52]
 	ldrh r3, [r7]
@@ -489,7 +489,7 @@ BattleEffect_RunNeptune:
 	cmp r2, #15
 	bne .L_081697c0
 	ldr r0, .L_081697e0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 .L_081697c0:
 	mov r3, r8
 	cmp r3, #21
@@ -1393,7 +1393,7 @@ BattleEffect_RunNeptune:
 	adds r2, #188
 	strh r3, [r2]
 	ldr r0, .L_08169eb8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r3, .L_08169ea8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1841,7 +1841,7 @@ BattleEffect_RunNeptune:
 	cmp r3, #8
 	bne .L_0816a1d4
 	ldr r0, .L_0816a214
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

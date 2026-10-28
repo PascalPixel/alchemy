@@ -13,7 +13,7 @@ struct AffineStepWork {
   s32 y;
 };
 
-/// Scheduler callback: every period frames, writes the BG2 reference point to
+/// A task: every period frames, writes the BG2 reference point to
 /// the hardware, then moves it by (stepX, stepY).
 void BattleEffect_AdvanceBg2OnInterval(void) {
   struct AffineStepWork *work;
@@ -42,7 +42,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
   }
 }
 
-/// Scheduler callback: restarts DMA0's HBlank copy of one WIN0H value per
+/// A task: restarts DMA0's HBlank copy of one WIN0H value per
 /// scanline from the map cell buffer.
 void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *dma = (volatile u16 *)0x040000b0;

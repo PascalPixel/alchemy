@@ -22,7 +22,7 @@ extern s16 gData_02003a82;
 void Func_0200055c(void);
 void Func_02003158(void);
 void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 
 void Func_02000934(s32 entrance) {
   s32 cell = -1;
@@ -66,5 +66,5 @@ void Func_02000934(s32 entrance) {
   IO_WRITE_QUEUE_PUSH(0x04000052, Data_02003a7c | (16 - Data_02003a7c) << 8,
                       0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f42, 0x20000);
-  Scheduler_AddOrUpdateCallback(Func_0200055c, 0x480);
+  Task_Add(Func_0200055c, 0x480);
 }

@@ -37,7 +37,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_020015ac(void);
 void Func_02002df4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002dfc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -97,7 +97,7 @@ step:
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gData_02003782 = 0;
-    Scheduler_AddOrUpdateCallback(Func_020015ac, 0x480);
+    Task_Add(Func_020015ac, 0x480);
   } else {
     Func_02002e04(69, 6, 1, 2, 68, 5);
     GameFlag_SetBit(0x204);

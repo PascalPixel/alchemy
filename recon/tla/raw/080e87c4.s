@@ -46,7 +46,7 @@ Func_080e87c4:
 	adds r3, r6, r2
 	strh r5, [r3]
 	ldr r0, .L_080e8978
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #167

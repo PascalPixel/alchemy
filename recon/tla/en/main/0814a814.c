@@ -28,7 +28,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "effect_step.h"
 #include "motobj.h"
@@ -47,7 +47,6 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define CALLBACK_ORDER 0xc80
 #define MOTE_MAX 512
 
 // The motes live in the map cell buffer, 64 for each target.
@@ -174,10 +173,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
   else
     total = effect->count * 8 + 32;
   if (!(mode <= 1 || mode == 3))
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, CALLBACK_ORDER);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(142);
 
   for (frame = 0; frame != total; frame++) {
@@ -323,8 +322,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (!(mode <= 1 || mode == 3))
-    Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+    Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }

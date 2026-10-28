@@ -101,8 +101,8 @@ void Resource_ResetEntry(s32 slot);
 s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 void Camera_WorldToScreen(s32 *position);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
@@ -333,7 +333,7 @@ void Func_080e68d0(void) {
 
   work->phase = 0;
   work->timer = 0;
-  Scheduler_AddOrUpdateCallback(Func_080e6400, 0x480);
+  Task_Add(Func_080e6400, 0x480);
   if (work->mode == 1) {
     i = 0;
     while (work->phase != 999) {
@@ -360,7 +360,7 @@ void Func_080e68d0(void) {
     }
     EventRuntime_RunPendingEvent(pending, 999, i);
   }
-  Scheduler_RemoveCallback(Func_080e6400);
+  Task_Remove(Func_080e6400);
   Sound_PlayFar(114);
   Func_080dbf94(object, object->x, object->y, object->z);
   if (particleEntry != 96)

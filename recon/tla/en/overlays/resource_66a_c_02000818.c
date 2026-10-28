@@ -48,7 +48,7 @@ void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetVariantCallback();
 void Camera_FollowActor();
 void Object_LinkObjectAndSetCallback();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void UpdateRisingParticleBurst();
 void Vector_AddPolarOffsetFar();
 void Func_02000814(void);
@@ -258,7 +258,7 @@ void Func_02000818(void) {
   Call2((void (*)())Func_020014f0, 21, 0x101);
   Call3((void (*)())Func_020014c8, 21, 0, 20);
   gData_02001c08 = 0;
-  Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000814, 0x480);
+  Value2((s32 (*)())Task_Add, (s32)Func_02000814, 0x480);
   Value3((s32 (*)())Func_020014e8, 24, 0x102, 30);
   Call3((void (*)())Func_020014c8, 24, 0, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, 22, 0xb000, 0);

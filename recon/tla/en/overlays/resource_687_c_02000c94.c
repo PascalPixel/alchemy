@@ -24,7 +24,7 @@ void Func_02002044();
 void GameFlag_SetBit();
 void Func_02002054();
 void WaitFrames();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 Func_02001fb4();
 
 s32 Func_02000c94(s32 a0) {
@@ -93,7 +93,7 @@ L_02008cfc:
     goto L_02008cb2;
   FIELD_AT(r1, s32, 0) = 0x168;
   FIELD_AT((s32)gData_020022c8, s32, 0) = r0;
-  v0 = Scheduler_AddOrUpdateCallback((s32)Func_02000c50, 0x480);
+  v0 = Task_Add((s32)Func_02000c50, 0x480);
   v1 = Func_02001fb4();
   return v1;
 }

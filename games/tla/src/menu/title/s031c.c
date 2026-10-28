@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
 
@@ -22,7 +22,7 @@ void Func_0200031c(void) {
   FieldEvent_WaitFrames(30);
   gData_020006dc = 0;
   Title_LoadSprites(0);
-  Scheduler_AddOrUpdateCallback(Func_02000278, 0x480);
+  Task_Add(Func_02000278, TASK_PASS_VBLANK);
   IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);

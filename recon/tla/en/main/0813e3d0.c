@@ -62,7 +62,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
@@ -79,8 +79,8 @@ extern char ResourceId_VioletPaletteA;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
-s32 Scheduler_RemoveCallback(void *callback);
+s32 Task_Add(void *callback, s32 order);
+s32 Task_Remove(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -154,7 +154,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;   // each transfer leaves 3/4 of the old picture,
   work->transferValue = 75; // a trail
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   effect->variant++;
@@ -232,7 +232,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);

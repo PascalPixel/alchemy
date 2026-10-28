@@ -4,7 +4,7 @@
 #include "resource.h"
 #include "types.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "system.h"
 #include "dma.h"
 #include "ram_buffer.h"
@@ -36,7 +36,7 @@ s32 Title_ShowAnimatedSplash(void) {
 
   gRenderOamEnabled = 1;
   resource = (s32)&ResourceId_CamelotLogo;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Fade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);

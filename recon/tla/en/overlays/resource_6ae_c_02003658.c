@@ -59,8 +59,8 @@ s32 Object_SetPositionAndResetMotion();
 s32 PartyInventory_Remove();
 s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
-s32 Scheduler_AddOrUpdateCallback();
-s32 Scheduler_RemoveCallbackFar();
+s32 Task_Add();
+s32 Task_RemoveFar();
 s32 UiText_ShowPositionedMessageAndWait();
 s32 VramCache_Load();
 s32 WaitFrames();
@@ -193,7 +193,7 @@ L_0200b8ac:
   FIELD_AT(t70, u8, 85) = v_r10;
   Call4((void (*)())Object_SetPositionAndResetMotion, t70, 0x2000000, 0x600000,
         0xcc0000);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_0200326c, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_0200326c, 0x480);
   Call3((void (*)())ObjectMotion_ArmCallback, 7, 0xe000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xe000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 0);
@@ -313,7 +313,7 @@ L_0200bb54:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Object_SetActionCallbackAndRefreshById, 23,
         (s32)gData_02006150);
-  Call1((void (*)())Scheduler_RemoveCallbackFar, v_r8);
+  Call1((void (*)())Task_RemoveFar, v_r8);
   t162 = Value1((s32 (*)())Object_GetById, 8);
   FIELD_AT(t162, u8, 85) = v_r10;
   Call2((void (*)())Animation_SetStateFlags, t162, 1);
@@ -322,7 +322,7 @@ L_0200bb54:
   Call2((void (*)())ObjectMotion_SetActionVariant, 8, 2);
   *(s32 *)(s32)Data_02006ccc = v_r10;
   *(s32 *)(s32)Data_02006b68 = 240;
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02003370, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02003370, 0x480);
 L_0200bcea:
   Call1((void (*)())WaitFrames, 1);
   t169 = *(s32 *)(s32)Data_02006ccc;

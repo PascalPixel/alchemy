@@ -11,7 +11,7 @@
 // ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/overworld/
 // overworld/transition.c) with this game's state (heap slot 0x7c, s8
 // steps), its map work's view at 0xe4, the controlled owner in place of the
-// leader, the scheduler, and one addition: a transition that ends with no
+// leader, the task table, and one addition: a transition that ends with no
 // next mode also opens WINOUT's layers when the object window is on.
 // Left: the draft is six instructions shorter, the DISPCNT masks load
 // REG_DISPCNT before the end test, and instruction order.
@@ -43,7 +43,7 @@ extern const s8 Data_080f01e6[];
 extern struct TransitionShape Data_080f2e9c[];
 extern u32 gFrameCount;
 
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Remove(void (*callback)(void));
 void BattleEffect_StartWindowHBlankDma(void);
 void UiWindow_FillFromSceneFar(u16 *pairs);
 s32 EventRuntime_GetControlledOwner(void);
@@ -83,8 +83,8 @@ void Func_080cf78c(void) {
           REG_DISPCNT &= 0x9fff;
         if (REG_DISPCNT & 0x8000)
           REG_WINOUT |= 0x1f;
-        Scheduler_RemoveCallback(BattleEffect_StartWindowHBlankDma);
-        Scheduler_RemoveCallback(Func_080cf78c);
+        Task_Remove(BattleEffect_StartWindowHBlankDma);
+        Task_Remove(Func_080cf78c);
         {
           volatile u16 *dma0 = (volatile u16 *)0x040000b0;
 

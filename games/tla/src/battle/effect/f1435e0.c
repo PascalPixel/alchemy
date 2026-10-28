@@ -8,7 +8,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "battle_work.h"
 #include "battle_display.h"
 #include "bg_scroll.h"
@@ -59,7 +59,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   WaitFrames(1);

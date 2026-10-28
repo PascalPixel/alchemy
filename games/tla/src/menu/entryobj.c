@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct MenuEntryWork {
   u8 unk000[0xf8];
@@ -23,7 +23,7 @@ void Menu_ReleaseEntryObjects(void) {
     if (object != NULL)
       ResourceObject_ReleaseFar(object);
   }
-  Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
 
 void Menu_SetEntryObjectsHidden(s32 hidden) {

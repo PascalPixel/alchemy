@@ -1,7 +1,7 @@
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct DisplayScrollObject {
   u32 attr01;
@@ -88,8 +88,8 @@ void Func_081a0a70(void) {
   gDisplayScroll_Position = 0;
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_081a08c4, 0xc80);
-  Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0x480);
+  Task_Add((s32)Func_081a08c4, TASK_PASS_FRAME);
+  Task_Add((s32)DisplayScroll_RenderEnteringLine, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }

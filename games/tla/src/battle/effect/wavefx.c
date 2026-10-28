@@ -1,5 +1,5 @@
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 #include "ram_buffer.h"
 
@@ -16,7 +16,7 @@ void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
   Func_080dcadc();
-  Scheduler_RemoveCallback((SchedulerCallback)Func_080dcb44);
+  Task_Remove((TaskFunc)Func_080dcb44);
   BattleEffect_ApplyFlickerValue(Object_GetById(*(u16 *)(work + 0x290)), 1);
   BattleEffect_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(WAVE_FX_SLOT);
@@ -55,5 +55,5 @@ void Ui_FillBank15PaletteGrey(void) {
   *p = GREY28;
   p += 1;
   *p = GREY28;
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleEffect_ArmBg0HBlankDma, 0xc6c);
+  Task_Add((TaskFunc)BattleEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }

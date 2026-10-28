@@ -128,7 +128,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
@@ -256,7 +256,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

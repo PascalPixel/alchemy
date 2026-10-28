@@ -248,7 +248,7 @@ Func_0200029c:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_02008354
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3

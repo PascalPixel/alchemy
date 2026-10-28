@@ -1,5 +1,5 @@
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "input.h"
 #include "oam.h"
 #include "serial_runtime.h"
@@ -44,9 +44,9 @@ void WaitFrames(s32 frames) {
   s16 backdrop;
 
   for (i = 0; i < (u32)frames; i++) {
-    gSchedulerStatus = 1;
-    Scheduler_RunCallbacksByKey(0x480);
-    gSchedulerStatus = 0;
+    gTasksRunning = 1;
+    Task_RunPass(TASK_PASS_VBLANK);
+    gTasksRunning = 0;
     if (gRenderOamEnabled) {
       Render_BuildOamList(Runtime_AllocateHeapBlock(80, 0x400));
     } else {

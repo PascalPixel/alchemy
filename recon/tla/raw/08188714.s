@@ -105,7 +105,7 @@ BattleEffect_RunDeathPlunge:
 	lsls r1, r1, #4
 	ldr r0, .L_08188af0
 	str r3, [sp, #36]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r1, [sp, #56]
 	ldr r0, [r1, #8]
 	bl GetBattleObjectSlotFar
@@ -674,7 +674,7 @@ BattleEffect_RunDeathPlunge:
 	b .L_081888a6
 .L_08188c76:
 	ldr r0, .L_08188cac
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

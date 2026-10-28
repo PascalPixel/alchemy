@@ -58,8 +58,8 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void Object_Destroy(struct ObjectRuntime *object);
 void BattleEffect_EndX(void);
 
@@ -166,14 +166,14 @@ void Func_080e3074(void) {
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
-    Scheduler_AddOrUpdateCallback(Func_080e2ec0, 0x480);
+    Task_Add(Func_080e2ec0, 0x480);
     while (work->state != 999) {
       if (frame == 30)
         Func_080e249c();
       WaitFrames(1);
       frame++;
     }
-    Scheduler_RemoveCallback(Func_080e2ec0);
+    Task_Remove(Func_080e2ec0);
     if (*(s8 *)(effect + 52) == 0)
       owner->scaleX = 0;
     ring->scaleX = 0;
@@ -195,7 +195,7 @@ void Func_080e3074(void) {
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
     work->to[1] = owner->y;
     work->to[2] = *(s16 *)(event + 0xd3e) << 16;
-    Scheduler_AddOrUpdateCallback(Func_080e2d64, 0x480);
+    Task_Add(Func_080e2d64, 0x480);
     frame = 0;
     while (work->state != 999) {
       if (frame == 30)
@@ -203,7 +203,7 @@ void Func_080e3074(void) {
       WaitFrames(1);
       frame++;
     }
-    Scheduler_RemoveCallback(Func_080e2d64);
+    Task_Remove(Func_080e2d64);
     for (i = 0; i < 16; i++) {
       owner->scaleX += -0x800;
       owner->scaleY = owner->scaleX;

@@ -11,7 +11,7 @@ extern u16 gData_02002bb8[];
 extern u16 gData_02002bbc[];
 
 s32 GameFlag_Test();
-void Scheduler_AddOrUpdateCallback();
+void Task_Add();
 void Func_020009e8(void);
 
 void Func_02000aa4(s32 mode) {
@@ -25,7 +25,7 @@ void Func_02000aa4(s32 mode) {
                      in r3 */
 
     gData_02002b34 = zero;
-    Scheduler_AddOrUpdateCallback(Func_020009e8, 1152);
+    Task_Add(Func_020009e8, 1152);
   } else {
     Dma_Set(gData_02002bbc, (void *)0x05000184, 0x84000002, REG_DMA3);
   }

@@ -29,7 +29,7 @@
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
 // The transfer callback runs at this order, where ☀️'s runs at 0x480.
-#define TRANSFER_CALLBACK_ORDER 0xc80
+#define TASK_PASS_FRAME 0xc80
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -70,8 +70,8 @@ struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Remove(void (*callback)(void));
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -159,7 +159,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
@@ -469,7 +469,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

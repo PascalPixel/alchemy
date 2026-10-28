@@ -92,10 +92,10 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
@@ -169,8 +169,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

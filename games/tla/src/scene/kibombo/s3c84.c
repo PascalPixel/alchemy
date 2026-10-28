@@ -19,7 +19,7 @@ void Func_02003c84(void) {
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   WaitFrames(60);
-  Scheduler_RemoveCallbackFar(Func_02002d64);
+  Task_RemoveFar(Func_02002d64);
   WaitFrames(1);
 
   Func_02005c9c(212);
@@ -37,7 +37,7 @@ void Func_02003c84(void) {
   WaitFrames(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   WaitFrames(60);
-  Scheduler_RemoveCallbackFar(Func_02002d64);
+  Task_RemoveFar(Func_02002d64);
   WaitFrames(1);
 
   Func_02005c9c(212);
@@ -55,7 +55,7 @@ void Func_02003c84(void) {
   WaitFrames(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   WaitFrames(180);
-  Scheduler_RemoveCallbackFar(Func_02002d64);
+  Task_RemoveFar(Func_02002d64);
   WaitFrames(1);
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;

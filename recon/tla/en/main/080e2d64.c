@@ -5,7 +5,7 @@
 // interleave a little differently (the timer and state addresses, the radius
 // and angle addresses, the timer restart, the follower's address at the end).
 // Barriers after the radius store and the timer step measured 95.
-// A scheduler callback for the heap slot 0x5c work. In state 0 it
+// A task for the heap slot 0x5c work. In state 0 it
 // carries the effect owner from one point to another over 128 frames, lifted
 // on a 64-unit half sine and circling the path at a radius that swells and
 // shrinks on a 32-unit sine while the angle turns 0x500 a frame; at the end

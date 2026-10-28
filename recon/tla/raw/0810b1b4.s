@@ -59,7 +59,7 @@ Func_0810b1b4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0810b36c
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r3, r10
 	movs r0, #140
 	lsls r2, r3, #1
@@ -180,7 +180,7 @@ Func_0810b1b4:
 	cmp r7, #0
 	bge .L_0810b310
 	ldr r0, .L_0810b36c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r3, r9
 	adds r3, #248
 	mov r2, r8

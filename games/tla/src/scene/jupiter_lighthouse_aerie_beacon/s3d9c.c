@@ -14,7 +14,7 @@ s32 GameFlag_Test();
 s32 Func_02004644();
 s32 Func_02005884();
 s32 ObjectDispatch_SetSingleChildFlags();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 Func_02000cd0();
 s32 Party_AddActiveOwner();
 s32 Func_02001388();
@@ -65,7 +65,7 @@ s32 Func_02003d9c(void) {
   }
   Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 0x24), 0);
   Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 0x24), 0);
-  Call2(Scheduler_AddOrUpdateCallback, (s32)Func_020005b8, 0x480);
+  Call2(Task_Add, (s32)Func_020005b8, 0x480);
   if (FIELD_AT(gAdventure, s16, 482) == 9) {
     Func_02000cd0();
     /* FAKEMATCH: a one-pass block orders the message store after the call

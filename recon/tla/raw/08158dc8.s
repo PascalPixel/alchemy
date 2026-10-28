@@ -155,10 +155,10 @@ BattleEffect_RunThor:
 	lsls r5, r5, #4
 	adds r1, r5, #0
 	ldr r0, .L_08158f60
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r1, r5, #0
 	ldr r0, .L_08158f64
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, [sp, #112]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -958,7 +958,7 @@ BattleEffect_RunThor:
 	movs r3, #0
 	str r3, [r1, #16]
 	ldr r0, .L_081595d4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl Func_0814cca8
 	movs r4, #240
 	ldr r2, [sp, #112]
@@ -1855,7 +1855,7 @@ BattleEffect_RunThor:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08159ca8
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #0
 	ldr r1, [sp, #68]
 	ldr r2, [sp, #64]

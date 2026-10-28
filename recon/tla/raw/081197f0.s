@@ -46,7 +46,7 @@ Func_081197f0:
 	ldr r3, .L_08119ab0
 	mov lr, r3
 	.2byte 0xf800
-	bl Scheduler_ResetTaskTable
+	bl Task_ResetAll
 	ldr r1, [sp, #36]
 	movs r3, #128
 	lsls r3, r3, #6
@@ -215,7 +215,7 @@ Func_081197f0:
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_08119acc
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r5, #128
 	ldr r3, .L_08119ab8
 	lsls r5, r5, #2
@@ -385,7 +385,7 @@ Func_081197f0:
 	strb r2, [r3]
 	ldr r0, .L_08119cd0
 	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r5, #1
 	str r5, [sp, #32]
 .L_08119b32:
@@ -900,7 +900,7 @@ Func_081197f0:
 .L_08119f4c:
 	bl BattlePres_ClearLinkPayload
 	movs r0, #0
-	bl Scheduler_SuspendTasks
+	bl Task_SuspendAll
 	ldr r3, .L_08119f70
 	movs r2, #128
 	lsls r2, r2, #19
@@ -983,7 +983,7 @@ Func_081197f0:
 	movs r2, #0
 	strb r2, [r3]
 	ldr r0, .L_0811a034
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl Func_081263f0
 	adds r0, r7, #0
 	add sp, #44

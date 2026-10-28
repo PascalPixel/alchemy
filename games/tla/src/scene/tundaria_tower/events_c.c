@@ -3,7 +3,7 @@
 void Func_02000fb8(s32 mode, s32 cue) {
   if (cue == 0) {
     Func_02002e00();
-    Scheduler_RemoveCallbackFar(Func_0200137c);
+    Task_RemoveFar(Func_0200137c);
   }
   if (mode == 1) {
     Func_02002fc0(13, 26, 13, 16, 3, 3);

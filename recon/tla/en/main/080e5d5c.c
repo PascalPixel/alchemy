@@ -91,8 +91,8 @@ s32 Trig_Cos(s32 angle);
 void WaitFrames(s32 frames);
 void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void BattleEffect_SinkAndShrinkObject(void);
 struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
@@ -250,10 +250,10 @@ void Func_080e5d5c(void) {
   work->timer = 0;
   work->sparkles = 0;
   if (!inReach) {
-    Scheduler_AddOrUpdateCallback(BattleEffect_SinkAndShrinkObject, 0x480);
+    Task_Add(BattleEffect_SinkAndShrinkObject, 0x480);
     while (work->state != 999)
       WaitFrames(1);
-    Scheduler_RemoveCallback(BattleEffect_SinkAndShrinkObject);
+    Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
     Sound_PlayFar(114);
@@ -261,7 +261,7 @@ void Func_080e5d5c(void) {
   } else {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080ce31c(scene->fieldKind));
-    Scheduler_AddOrUpdateCallback(Func_080e5a64, 0x480);
+    Task_Add(Func_080e5a64, 0x480);
     frame = 0;
     while (work->state != 999) {
       WaitFrames(1);
@@ -272,7 +272,7 @@ void Func_080e5d5c(void) {
       EventRuntime_RunPendingEvent(pending, work->fading, frame);
       frame++;
     }
-    Scheduler_RemoveCallback(Func_080e5a64);
+    Task_Remove(Func_080e5a64);
     WaitFrames(10);
     Sound_PlayFar(114);
     Func_080dbf94(shine, shine->x, shine->y, shine->z);

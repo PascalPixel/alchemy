@@ -257,10 +257,10 @@ Func_08127068:
 	bl Func_08138048
 	adds r1, r5, #0
 	ldr r0, .L_081272a8
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	adds r1, r5, #0
 	ldr r0, .L_081272ac
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	add sp, #8
 	pop {r3, r5, r6, r7}
 	mov r8, r3

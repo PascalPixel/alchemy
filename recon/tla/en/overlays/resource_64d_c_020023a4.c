@@ -79,8 +79,8 @@ void Func_0200285c(struct ObjectRuntime *object, s32 mode);
 void Func_02002874(struct ObjectRuntime *object);
 void Engine_AudioPlayCue(s32 cue);
 void WaitFrames(s32 frames);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+s32 Task_Add(void (*callback)(void), s32 order);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {
@@ -127,14 +127,14 @@ void Func_020023a4(s32 id) {
   work->height = 0;
   work->follow = 1;
   Engine_AudioPlayCue(221);
-  Scheduler_AddOrUpdateCallback(Func_02001fd0, 0x480);
+  Task_Add(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:
     WaitFrames(1);
     if (work->stage != 999)
       goto wait;
   }
-  Scheduler_RemoveCallbackFar(Func_02001fd0);
+  Task_RemoveFar(Func_02001fd0);
   Func_02002874(effect);
   Resource_ResetEntry(resource);
   Runtime_ReleaseHeapBlock(220);

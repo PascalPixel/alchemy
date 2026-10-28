@@ -19,12 +19,12 @@ struct SparkWork {
   s16 resource;
 };
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_RemoveFar(void (*callback)(void));
 
 void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Scheduler_RemoveCallbackFar(Func_0200258c);
+  Task_RemoveFar(Func_0200258c);
   Resource_ResetEntry(work->resource);
   Runtime_ReleaseHeapBlock(220);
 }

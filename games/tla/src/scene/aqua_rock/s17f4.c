@@ -66,7 +66,7 @@ s32 Func_020017f4(void) {
     if (z != 0)
       Func_020029d8(24, (x << 20) + 0x80000, (z << 20) + 0x80000);
     Object_GetById(Func_02002a68())->priorityFlags |= 32;
-    Scheduler_AddOrUpdateCallback(Func_020013f8, 0x480);
+    Task_Add(Func_020013f8, 0x480);
     ObjectMotion_SetActionVariant(28, 1);
     Value2((s32 (*)())ObjectMotion_SetActionVariant, 24, 1);
     Func_02002550();

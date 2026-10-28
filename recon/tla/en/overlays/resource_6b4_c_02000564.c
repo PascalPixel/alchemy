@@ -50,8 +50,8 @@ s32 Object_GetById();
 s32 Object_SetActionById();
 s32 Object_SetModeById();
 s32 Runtime_BumpAllocateAlternatePool();
-s32 Scheduler_AddOrUpdateCallback();
-s32 Scheduler_RemoveCallbackFar();
+s32 Task_Add();
+s32 Task_RemoveFar();
 s32 WaitFrames();
 extern u8 Func_02000394[];
 extern u8 IwramCopyWords[];
@@ -397,7 +397,7 @@ L_02008b62:
   *(u16 *)v_r4 = v_r5;
   Call1((void (*)())Func_02001594, 212);
   Call1((void (*)())WaitFrames, 1);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000394, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02000394, 0x480);
   v_r6 = 0;
 L_02008b7c:
   Call3((void (*)())Func_020002a4, 0x5000000, v_r9, 224);
@@ -701,7 +701,7 @@ L_020092ea:
   Call1((void (*)())FieldEvent_WaitFrames, 32);
   Call1((void (*)())Func_02001594, 208);
   Call1((void (*)())FieldEvent_WaitFrames, 120);
-  Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)Func_02000394);
+  Call1((void (*)())Task_RemoveFar, (s32)Func_02000394);
   Call2((void (*)())Func_0200153c, 0x7fff, 0);
   Call1((void (*)())Func_02001544, 1);
   Call1((void (*)())WaitFrames, 1);

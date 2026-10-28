@@ -18,7 +18,7 @@
 extern u8 Func_02000c50[];
 extern u8 gData_020022cc[];
 extern u8 gData_020026c0[];
-void Scheduler_RemoveCallbackFar();
+void Task_RemoveFar();
 void Func_02001fac();
 void Func_02002044();
 void Func_02002054();
@@ -29,7 +29,7 @@ s32 Func_02001fb4();
 s32 Func_02000da0(s32 a0) {
   s32 v0, r4, r9, r11, r10, r8, r5, r6, r7, r1, r0, r2, r3, ip, v1, v2, lr;
 
-  Scheduler_RemoveCallbackFar((s32)Func_02000c50);
+  Task_RemoveFar((s32)Func_02000c50);
   Func_02001fac();
   Call1((void (*)())Func_02002044, 0);
   Call1((void (*)())Func_02002054, 0x22c);

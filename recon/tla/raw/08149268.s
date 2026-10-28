@@ -70,7 +70,7 @@ BattleEffect_RunPrism:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08149618
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_0814961c
 	movs r1, #0
 	str r2, [sp, #12]
@@ -546,7 +546,7 @@ BattleEffect_RunPrism:
 	b .L_0814939a
 .L_0814969a:
 	ldr r0, .L_081496c4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

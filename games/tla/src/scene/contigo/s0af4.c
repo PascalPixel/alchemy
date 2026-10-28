@@ -22,8 +22,8 @@ struct ContigoGlow *Func_02003fec(s32 type, s32 x, s32 y, s32 z);
 void Func_02003fdc(struct ContigoGlow *object, s32 mode);
 void Func_02003ff4(struct ContigoGlow *object);
 void ObjectDispatch_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 priority);
+void Task_RemoveFar(void (*callback)(void));
 void Func_02000a80(void);
 
 static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y,
@@ -76,9 +76,9 @@ void Func_02000af4(void) {
     if (i < 28)
       goto grow;
   }
-  Scheduler_AddOrUpdateCallback(Func_02000a80, 0x480);
+  Task_Add(Func_02000a80, 0x480);
   Contigo_Wait(120);
-  Scheduler_RemoveCallbackFar(Func_02000a80);
+  Task_RemoveFar(Func_02000a80);
   if (effect != 0) {
     i = 0;
   shrink:

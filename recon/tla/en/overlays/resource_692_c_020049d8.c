@@ -39,7 +39,7 @@ void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02004c58(void *resource, void *destination);
 void Func_02004f10(struct RockSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02004f18(struct RockSprite *sprite, struct Rock *rock);

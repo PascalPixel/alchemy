@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "window.h"
 #include "resource.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "uiflow.h"
 
 void UiWork_ProcessAll(void);
@@ -17,7 +17,7 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   state->outline = 0;
   state->colour = 15;
   state->count = 0;
-  Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, 0x480);
+  Task_Add(UiWork_ProcessAll, TASK_PASS_VBLANK);
 }
 
 void UiWork_ProcessAll(void);
@@ -35,9 +35,9 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 initialize) {
   state->colour = 15;
   state->count = 0;
   if (initialize != 0)
-    Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, 0x480);
+    Task_Add(UiWork_ProcessAll, TASK_PASS_VBLANK);
   else
-    Scheduler_AddOrUpdateCallback(UiWork_ProcessAllOrChannels, 0x480);
+    Task_Add(UiWork_ProcessAllOrChannels, TASK_PASS_VBLANK);
 }
 
 struct UiMessageSlot {

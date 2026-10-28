@@ -101,7 +101,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void Func_080d793c();
 void Func_08020110(void);
 void Func_08020108(void);
@@ -213,7 +213,7 @@ s32 SceneSequence_Run(void) {
   gAdventure.pair1f2[0] = -1;
   gAdventure.pair1f2[1] = -1;
   gAdventure.unk2c3 = 0;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Func_080d793c(0);
   if (gAdventure.map == (s32)&SceneId_WorldMap) {
     Func_08020110();

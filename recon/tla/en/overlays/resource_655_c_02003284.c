@@ -12,7 +12,7 @@
 #include "object_runtime.h"
 #include "adventure.h"
 #include "map.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 extern const u8 gData_02003f80[];
 extern const u8 gData_02003fc4[];
@@ -178,5 +178,5 @@ void Func_02003284(void) {
   object->y = zero;
   gData_0200567c = zero;
   gData_02005678 = zero;
-  Scheduler_AddOrUpdateCallback(Func_02001ee8, 0x480);
+  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
 }

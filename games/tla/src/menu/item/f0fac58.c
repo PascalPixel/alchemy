@@ -9,7 +9,7 @@ struct ItemMenuIcons {
 };
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Remove(void (*callback)(void));
 void Func_080fabe0(void);
 
 void Func_080fac58(void) {
@@ -18,5 +18,5 @@ void Func_080fac58(void) {
 
   for (i = 0; i < menu->partyCount; i++)
     Animation_ApplyChildArgumentFar(menu->ownerIcons[i], 1);
-  Scheduler_RemoveCallback(Func_080fabe0);
+  Task_Remove(Func_080fabe0);
 }

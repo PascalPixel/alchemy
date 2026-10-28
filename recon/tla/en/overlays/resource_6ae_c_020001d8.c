@@ -23,7 +23,7 @@ void WaitFrames(s32 frames);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_0200567c(s32 id, s32 a, s32 b);
 void Func_020004a4(void);
@@ -71,5 +71,5 @@ next:
   object->priorityFlags |= 2;
   Animation_SetStateFlags(object, 1);
   Data_0200eb60 = 0;
-  Scheduler_AddOrUpdateCallback(Func_020004a4, 0x480);
+  Task_Add(Func_020004a4, 0x480);
 }

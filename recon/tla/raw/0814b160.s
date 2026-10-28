@@ -77,7 +77,7 @@ BattleEffect_RunCurse:
 	ldr r0, .L_0814b34c
 	lsls r1, r1, #4
 	str r5, [sp, #12]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	mov r0, r10
 	ldr r2, [r0, #20]
 	movs r4, #0
@@ -235,7 +235,7 @@ BattleEffect_RunCurse:
 	bne .L_0814b230
 .L_0814b32c:
 	ldr r0, .L_0814b34c
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

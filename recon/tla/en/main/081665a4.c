@@ -20,7 +20,7 @@
 #include "io_reg.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "motobj.h"
 #include "battle_session.h"
 #include "battle_effect.h"
@@ -168,7 +168,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   frame = 0;
   do {
@@ -313,7 +313,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   } while (frame != BLADE_FRAMES);
 
   ObjectDispatch_SetAnimationSpeedFar(user, 16);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

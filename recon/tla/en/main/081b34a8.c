@@ -10,7 +10,7 @@
 // 184; the tile buffer as tiles = Ram_MapCellBuffer, a constant, as The
 // Broken Seal writes it: 51; the blitters read through Ram_HeapSlots'
 // fields, so the heap base stays in r5 across the second build: 28; the
-// scheduler, Resource_FarCall00C and Graphics_ScaleRgb555 returning s32:
+// Task_Add, Resource_FarCall00C and Graphics_ScaleRgb555 returning s32:
 // 8. Left, both scheduling: the store of gRenderOamEnabled comes before the
 // loop constants load in the native (an empty asm after it gives 6), and
 // in the sparks' draw call the native stores both stack arguments before it
@@ -85,9 +85,9 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Resource_ReservedNoOp(s32 id);
-void Scheduler_ResetTaskTable(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_ResetAll(void);
+s32 Task_Add(void (*callback)(void), s32 priority);
+void Task_Remove(void (*callback)(void));
 u8 *Resource_GetTableEntry(s32 id);
 void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
@@ -151,7 +151,7 @@ void ReelGame_Run(void) {
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gRenderOamEnabled = 0;
 
   count = 0;
@@ -299,9 +299,9 @@ void ReelGame_Run(void) {
       UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Scheduler_AddOrUpdateCallback(Func_081b243c, 0x480);
-    Scheduler_AddOrUpdateCallback(Func_081b3294, 0xc80);
-    Scheduler_AddOrUpdateCallback(BattlePres_ProcessPendingTileTransfer,
+    Task_Add(Func_081b243c, 0x480);
+    Task_Add(Func_081b3294, 0xc80);
+    Task_Add(BattlePres_ProcessPendingTileTransfer,
                                   0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
@@ -429,9 +429,9 @@ void ReelGame_Run(void) {
     }
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
-    Scheduler_RemoveCallback(BattlePres_ProcessPendingTileTransfer);
-    Scheduler_RemoveCallback(Func_081b243c);
-    Scheduler_RemoveCallback(Func_081b3294);
+    Task_Remove(BattlePres_ProcessPendingTileTransfer);
+    Task_Remove(Func_081b243c);
+    Task_Remove(Func_081b3294);
     Runtime_ReleaseHeapBlock(180);
     Runtime_ReleaseHeapBlock(96);
     Runtime_ReleaseHeapBlock(92);

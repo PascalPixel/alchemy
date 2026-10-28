@@ -95,7 +95,7 @@ BattleEffect_RunSerac:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816df34
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, .L_0816df38
 	ldr r1, .L_0816df3c
 	movs r2, #0
@@ -1203,7 +1203,7 @@ BattleEffect_RunSerac:
 	bl .L_0816dda0
 .L_0816e5dc:
 	ldr r0, .L_0816e640
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

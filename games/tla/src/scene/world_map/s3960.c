@@ -6,7 +6,7 @@
 
 extern u8 gData_02006c08[];
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Task_Add(void (*callback)(void), s32 order);
 void Func_020036a8(void);
 
 /// While the object system runs, the world map's blend is queued for the
@@ -27,5 +27,5 @@ static inline void ClearWords(void *destination, s32 size) {
 
 void Func_02003960(void) {
   ClearWords(gData_02006c08, 0x200);
-  Scheduler_AddOrUpdateCallback(Func_020036a8, 0x480);
+  Task_Add(Func_020036a8, 0x480);
 }

@@ -43,7 +43,7 @@
 #include "io_reg.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "input.h"
 #include "iwram_call.h"
 #include "bg_scroll.h"
@@ -202,11 +202,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   tiles = Ram_MapCellBuffer;
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
-  Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0xc80);
+  Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
   Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+                                TASK_PASS_FRAME);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
@@ -316,12 +316,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         for (k = 0; k != 128; k++)
           noise[k] = Random16() & 63;
         *phase = 0;
-        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable, 0xc80);
+        Task_Add(BattleEffect_BuildWindowEdgeTable, TASK_PASS_FRAME);
       }
       *phase += openStep;
       openStep += 3;
       if (frame == 15)
-        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
+        Task_Remove(BattleEffect_BuildWindowEdgeTable);
     }
 
     // The serpent rises, slows, then glides back right and settles.
@@ -558,7 +558,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;
-  Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
+  Task_Remove(Graphics_ResetBg2Pa);
   REG_WIN0H = 0xf0;
   work->transferMode = 2;
   work->transferValue = 75;
@@ -660,7 +660,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   BattleEffect_EndCanvasLayer();

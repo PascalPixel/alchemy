@@ -69,7 +69,7 @@ BattleEffect_RunAstralBlast:
 	lsls r1, r1, #4
 	ldr r0, .L_081469b8
 	str r5, [sp, #60]
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r4, [sp, #80]
 	ldr r0, [r4, #8]
 	bl GetBattleObjectSlotFar
@@ -515,7 +515,7 @@ BattleEffect_RunAstralBlast:
 	b .L_08146754
 .L_08146a42:
 	ldr r0, .L_08146a68
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -5,7 +5,7 @@
 // 0x90000 is set in two steps so that it is not rematerialized at each use
 // (assigned once, 62). Left: instruction order in the palette store and in
 // the switch's stores.
-// A scheduler callback for the heap slot 0x5c work. In state 1 it
+// A task for the heap slot 0x5c work. In state 1 it
 // cycles object palette 14's 32 colours, each a blue with red and green
 // waving on the same sine; while the sparkles are on, each of the 12
 // particles younger than 16 frames shows its sprite and drifts. State 0

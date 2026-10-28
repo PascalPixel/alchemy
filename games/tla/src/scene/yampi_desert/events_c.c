@@ -7,7 +7,7 @@ void Func_02002ca0(void) {
   Func_020041b0();
   Field_DispatchTypeHandler(1);
   Func_020041a0();
-  Scheduler_RemoveCallbackFar(Func_02002c6c);
+  Task_RemoveFar(Func_02002c6c);
   Func_020041a8();
 }
 

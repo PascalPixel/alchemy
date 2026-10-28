@@ -47,7 +47,7 @@ s32 Func_020056c0();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
 s32 Object_GetById();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 extern u8 Func_02000514[];
 extern u8 Func_02000e68[];
 extern u8 Func_02001468[];
@@ -217,7 +217,7 @@ L_02009120:
     goto L_02009130;
   Func_02000d80();
 L_02009130:
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000e68, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02000e68, 0x480);
   goto L_020093e0;
 L_0200913c:
   if (v_r5 == 0x126)

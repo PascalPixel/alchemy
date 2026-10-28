@@ -5,7 +5,7 @@
 #include "dma.h"
 #include "mem.h"
 #include "irq.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_write_queue.h"
 #include "oam.h"
 #include "frame.h"
@@ -46,7 +46,7 @@ void Func_0801319c(void) {
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Sound_InitializeFar();
   VramCache_Reset();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gCartridgeResetMarker = 0;
   gRenderOamEnabled = 1;
   gOamUsage.limit = 0x100;

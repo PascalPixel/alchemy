@@ -36,7 +36,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);

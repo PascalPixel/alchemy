@@ -62,7 +62,7 @@ BattleEffect_RunRisingDragon:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_081787a0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #0
 	movs r4, #0
 	str r3, [sp, #104]
@@ -973,7 +973,7 @@ BattleEffect_RunRisingDragon:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08178ee0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	add sp, #164
 	pop {r3, r5, r6, r7}

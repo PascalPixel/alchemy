@@ -236,7 +236,7 @@ Func_0813e7e0:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0813e9e0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #35
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -357,7 +357,7 @@ Func_0813e7e0:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0813eb64
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	mov r1, r11
 	movs r3, #36
 	ldrsh r0, [r1, r3]

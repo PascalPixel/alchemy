@@ -21,7 +21,7 @@
 #include "battle_party.h"
 #include "motobj.h"
 #include "bg_scroll.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -99,8 +99,8 @@ void Func_08125d74(s32 arg, s32 kind) {
     QueueIoWriteDelay2(0x04000000, 0x7741);
     BattlePres_SetupTransitionScene(0, 0, 0, 180);
     *timer = 0;
-    Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 0x480);
-    Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0xc80);
+    Task_Add(BattlePres_AdvanceTransitionTimer, TASK_PASS_VBLANK);
+    Task_Add(BattlePres_DrawTransitionRows, TASK_PASS_FRAME);
     Runtime_SetIrqHandler(2, 32, Func_08125d68);
     gBgScroll[0].y = 32;
     WaitFrames(1);
@@ -112,8 +112,8 @@ void Func_08125d74(s32 arg, s32 kind) {
       WaitFrames(60);
     else
       Func_08118bcc(arg);
-    Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
-    Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
+    Task_Remove(BattlePres_AdvanceTransitionTimer);
+    Task_Remove(BattlePres_DrawTransitionRows);
     gBgScroll[0].y = 0;
     Runtime_SetIrqHandler(2, 0, 0);
   } else {

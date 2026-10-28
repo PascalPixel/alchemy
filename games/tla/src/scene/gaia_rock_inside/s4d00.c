@@ -7,9 +7,9 @@
        ->v)
 
 #include "call.h"
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 extern u8 Func_020049e4[];
 
 void Func_02004d00(void) {
-  Scheduler_AddOrUpdateCallback((s32)Func_020049e4, 0x480);
+  Task_Add((s32)Func_020049e4, 0x480);
 }

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "mem.h"
 
 void Func_0813f8d4(void);
@@ -10,9 +10,9 @@ void BattleEffect_DimBackgroundStep(void);
 /// Ends the light-streak backdrop: removes its three callbacks, clears the
 /// canvas in VRAM and frees heap blocks 96 and 92.
 void BattleEffect_EndElementStreaks(void) {
-  Scheduler_RemoveCallback(Func_0813f8d4);
-  Scheduler_RemoveCallback(BattleEffect_TransferHalvedCanvas);
-  Scheduler_RemoveCallback(BattleEffect_DimBackgroundStep);
+  Task_Remove(Func_0813f8d4);
+  Task_Remove(BattleEffect_TransferHalvedCanvas);
+  Task_Remove(BattleEffect_DimBackgroundStep);
   {
     s32 size = 0x4000;
 

@@ -63,7 +63,7 @@ BattleEffect_RunCatastrophe:
 	str r5, [r3]
 	lsls r1, r1, #4
 	ldr r0, .L_08184490
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	b .L_08184494
 	.2byte 0x0000
 .L_08184484:

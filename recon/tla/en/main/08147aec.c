@@ -129,7 +129,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
                     128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   {
     struct Point2D focus;
     s32 dir;
@@ -459,7 +459,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // Tear down: the formation bursts where it stands and is released.
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     if (mode == 0) {

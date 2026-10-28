@@ -65,8 +65,8 @@ void Sound_PlayFar(s32 cue);
 void EventRuntime_Wait(s32 frames);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const void *script);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+void Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*callback)(void));
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -157,7 +157,7 @@ void Func_080ea14c(s32 targetId) {
   EventRuntime_Wait(80);
   ObjectDispatch_InitializeFar(target, Data_080f1040);
   work->moving = 0;
-  Scheduler_AddOrUpdateCallback(Func_080e9f68, 0x480);
+  Task_Add(Func_080e9f68, 0x480);
   state = 0;
   timer = 0;
   do {
@@ -306,7 +306,7 @@ void Func_080ea14c(s32 targetId) {
   owner->scaleX = 0x10000;
   owner->scaleY = 0x10000;
   EventRuntime_Wait(10);
-  Scheduler_RemoveCallback(Func_080e9f68);
+  Task_Remove(Func_080e9f68);
   BattleEffect_PrepareBufferInterpolation();
   Resource_ResetEntry(moteEntry);
   Resource_ResetEntry(sparkEntry);

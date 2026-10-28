@@ -45,7 +45,7 @@ BattleEffect_RunHaures:
 	lsls r1, r1, #4
 	ldr r0, .L_08186e78
 	mov r8, r1
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #0
 	movs r0, #1
 	bl Func_08163c2c
@@ -90,7 +90,7 @@ BattleEffect_RunHaures:
 	str r5, [r3]
 	mov r1, r8
 	ldr r0, .L_08187078
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #202
 	movs r2, #0
 	lsls r1, r1, #1
@@ -2160,7 +2160,7 @@ BattleEffect_RunHaures:
 	movs r3, #0
 	str r3, [r4, #16]
 	ldr r0, .L_08187ffc
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	bl Func_0814cca8
 	ldr r2, .L_08188000
 	movs r1, #202
@@ -3036,7 +3036,7 @@ BattleEffect_RunHaures:
 	cmp r4, #11
 	bne .L_081885bc
 	ldr r0, .L_081885ec
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl BattleEffect_EndCanvasLayer

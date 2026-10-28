@@ -44,8 +44,8 @@ s32 GameFlag_Test(s32 flag);
 void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 mode);
-void Scheduler_EnableOverlayCallbacksWithFlags(void);
-void Scheduler_DisableOverlayCallbacksWithFlags(void);
+void Menu_SuspendFieldTasks(void);
+void Menu_ResumeFieldTasks(void);
 void UiWork_SetAltFlagAndClearTableFar(s32 flag);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
@@ -102,7 +102,7 @@ s32 Func_08100e7c(void) {
         backdrop->tutorialStep = 28;
     }
   }
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   UiWork_SetAltFlagAndClearTableFar(1);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
@@ -130,7 +130,7 @@ s32 Func_08100e7c(void) {
   CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
   CopyWords_((void *)0x05000080, backdrop->palette, 128);
   WaitFrames(1);
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   MemFree(menu->backdrop);
   Runtime_ReleaseHeapBlock(220);

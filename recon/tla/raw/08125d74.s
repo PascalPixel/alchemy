@@ -223,11 +223,11 @@ Func_08125d74:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08125fb0
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08125fb4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r2, .L_08125fb8
 	movs r1, #32
 	movs r0, #2
@@ -270,9 +270,9 @@ Func_08125d74:
 	bl Func_08118bcc
 .L_08125f92:
 	ldr r0, .L_08125fb0
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r0, .L_08125fb4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	ldr r2, .L_08125fbc
 	movs r3, #0
 	strh r3, [r2, #2]

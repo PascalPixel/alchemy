@@ -18,7 +18,7 @@
        ->v)
 
 void WaitFrames(s32 frames);
-void Scheduler_RemoveCallbackFar(void *callback);
+void Task_RemoveFar(void *callback);
 void Func_02003434(s32 x, s32 y, s32 z);
 s32 Resource_ResetEntry(u32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -59,7 +59,7 @@ void Func_02003078(void) {
     WaitFrames(1);
     time++;
   } while (state != 999);
-  Scheduler_RemoveCallbackFar(Func_02002de4);
+  Task_RemoveFar(Func_02002de4);
   Func_02003434(0, 0, 0);
   Resource_ResetEntry(FIELD_AT(work, s16, 4188));
   Resource_ResetEntry(FIELD_AT(work, s16, 4192));

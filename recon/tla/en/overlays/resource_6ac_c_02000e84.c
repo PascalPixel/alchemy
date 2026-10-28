@@ -27,7 +27,7 @@ void Func_020031f8(s32 id, s32 a, s32 b);
 void Func_02003270(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020032b0(s32 a);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 
 static __inline__ void SetValue(s32 id, s32 value) {
   /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
@@ -81,7 +81,7 @@ s32 Func_02000e84(void) {
     object = Object_GetById(10);
     object->motionFlags = 0;
     object->z = 0x680000;
-    Scheduler_AddOrUpdateCallback(Func_020000c0, 0x480);
+    Task_Add(Func_020000c0, 0x480);
   } else if (scene == (s32)&SceneId_Ov6ACRoom1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
@@ -95,7 +95,7 @@ s32 Func_02000e84(void) {
         s32 priority = 0x480;
 
         asm volatile("" : "+l"(priority));
-        Scheduler_AddOrUpdateCallback(Func_020003c4, priority);
+        Task_Add(Func_020003c4, priority);
       }
       Func_02000058(12, 4);
       Func_02000058(13, 5);

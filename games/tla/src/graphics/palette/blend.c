@@ -3,7 +3,7 @@
 #include "display_transition.h"
 #include "dma.h"
 #include "system.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 
@@ -15,7 +15,7 @@ void DisplayTransition_InitializeState(s32 value) {
   DisplayTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateDissolve), 0x480);
+  Task_Add((s32)(DisplayTransition_UpdateDissolve), TASK_PASS_VBLANK);
   WaitFrames(0x78);
 }
 

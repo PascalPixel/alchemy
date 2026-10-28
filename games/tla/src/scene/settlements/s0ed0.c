@@ -19,7 +19,7 @@ void Func_02000ed0(void) {
 
   Func_02001fa8(1, 0, Func_02000e30);
   priority = 0xc80;
-  Scheduler_AddOrUpdateCallback(Func_02000e90, priority);
+  Task_Add(Func_02000e90, priority);
 }
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }

@@ -22,7 +22,7 @@
 #include "io_reg.h"
 #include "system.h"
 #include "fixed_math.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "input.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -160,7 +160,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Func_08163c2c(1, 0);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
@@ -392,7 +392,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   Func_0814cca8();
   for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

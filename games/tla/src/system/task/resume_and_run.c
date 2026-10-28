@@ -1,19 +1,19 @@
 #include "types.h"
 #include "io_reg.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "system.h"
 #include "irqlock.h"
 
 /// Keyed callbacks return a value (the target address is left in r0).
-typedef s32 (*KeyCallbackFn)(void);
+typedef s32 (*TaskIntFunc)(void);
 
-s32 Scheduler_ResumeTasks(SchedulerCallback func) {
-  struct SchedulerTask *task;
+s32 Task_ResumeAll(TaskFunc func) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
@@ -26,13 +26,13 @@ s32 Scheduler_ResumeTasks(SchedulerCallback func) {
   return result;
 }
 
-s32 Scheduler_ResumeOverlayTasks(void) {
-  struct SchedulerTask *task;
+s32 Task_ResumeOverlayTasks(void) {
+  struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
   s32 i;
 
-  task = gSchedulerTaskTable;
+  task = gTasks;
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
@@ -45,20 +45,20 @@ s32 Scheduler_ResumeOverlayTasks(void) {
   return result;
 }
 
-void Scheduler_RunCallbacksByKey(s32 key) {
-  struct SchedulerTask *task = gSchedulerTaskTable;
+void Task_RunPass(s32 key) {
+  struct Task *task = gTasks;
   s32 remaining;
 
   key >>= 8;
-  if (gSchedulerReady == 1) {
-    remaining = SCHEDULER_TLA_TASK_COUNT + 1;
+  if (gTasksInitialized == 1) {
+    remaining = TASK_COUNT + 1;
     task--;
   next_task:
     remaining--;
     if (remaining != 0) {
       task++;
       if (TASK_STATE_HIGH(task) == key) {
-        KeyCallbackFn func = *(KeyCallbackFn *)&task->func;
+        TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
         func();
       }
@@ -67,20 +67,20 @@ void Scheduler_RunCallbacksByKey(s32 key) {
   }
 }
 
-s32 Scheduler_CountCallbacksByKey(s32 key) {
+s32 Task_CountInPass(s32 key) {
   /* FAKEMATCH: plain typed scans use bottom-tested loops. The native
    * preincrement countdown uses an unsigned cursor so no before-array C pointer
    * is formed. */
   u32 cursor;
-  struct SchedulerTask *task;
+  struct Task *task;
   s32 count;
   s32 i;
-  u8 *status = &gSchedulerReady;
+  u8 *status = &gTasksInitialized;
   u32 observed;
 
   count = 0;
   observed = *status;
-  cursor = (u32)gSchedulerTaskTable;
+  cursor = (u32)gTasks;
   key >>= 8;
   if (observed == 1) {
     i = 25;
@@ -95,7 +95,7 @@ s32 Scheduler_CountCallbacksByKey(s32 key) {
   count_task:
     {
       cursor += sizeof(*task);
-      task = (struct SchedulerTask *)cursor;
+      task = (struct Task *)cursor;
       if (TASK_STATE_HIGH(task) == key) {
         count++;
       }
@@ -106,13 +106,13 @@ finish:
   return key;
 }
 
-void Scheduler_RunCallbacksBeforeBoundary(s32 key) {
-  struct SchedulerTask *task = gSchedulerTaskTable;
+void Task_RunPassBeforeVBlankTasks(s32 key) {
+  struct Task *task = gTasks;
   s32 remaining;
 
   key >>= 8;
-  if (gSchedulerReady == 1) {
-    remaining = SCHEDULER_TLA_TASK_COUNT + 1;
+  if (gTasksInitialized == 1) {
+    remaining = TASK_COUNT + 1;
     task--;
   next_task:
     remaining--;
@@ -122,7 +122,7 @@ void Scheduler_RunCallbacksBeforeBoundary(s32 key) {
         return;
       }
       if (TASK_STATE_HIGH(task) == key) {
-        KeyCallbackFn func = *(KeyCallbackFn *)&task->func;
+        TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
         func();
       }

@@ -132,7 +132,7 @@ BattleEffect_RunRagingHeat:
 	str r3, [r2]
 	ldr r0, .L_081797e0
 	lsls r1, r1, #4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	ldr r0, [sp, #40]
 	mov r7, sp
 	movs r6, #0
@@ -734,7 +734,7 @@ BattleEffect_RunRagingHeat:
 	b .L_081794b6
 .L_08179956:
 	ldr r0, .L_08179990
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

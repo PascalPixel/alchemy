@@ -17,7 +17,7 @@
 #include "bg_scroll.h"
 #include "serial_runtime.h"
 #include "io_write_queue.h"
-#include "callback_scheduler.h"
+#include "task.h"
 
 struct SoundVBlankState {
   u8 lastVBlank;
@@ -77,7 +77,7 @@ void Func_0801399c(void) {
     gData_030011f8 = 0;
     hook();
   }
-  Scheduler_RunCallbacksBeforeBoundary(0xc80);
+  Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
 
   keys = REG_KEYINPUT ^ 0x3ff;
   {

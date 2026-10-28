@@ -5,7 +5,7 @@
 #include "system.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "io_write_queue.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -88,8 +88,8 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+                                TASK_PASS_FRAME);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.
@@ -145,7 +145,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   // offsets move it.
   draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
 
   for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
     // Fade in, and the sway grows with the frame.
@@ -188,8 +188,8 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();

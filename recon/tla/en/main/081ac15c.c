@@ -71,7 +71,7 @@ void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Camera_ResetSceneDefaults(void);
-void Scheduler_ResetTaskTable(void);
+void Task_ResetAll(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
@@ -163,7 +163,7 @@ void LuckyDice_Run(void) {
   camera = Runtime_AllocateBlock(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetSceneDefaults();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gRenderOamEnabled = 0;
 
   index = 0;

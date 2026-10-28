@@ -42,7 +42,7 @@ s32 GameFlag_Test();
 s32 ObjectMotion_EnableActionAndSetCallback();
 s32 ObjectMotion_SetActionVariant();
 s32 Object_GetById();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Task_Add();
 s32 WaitFrames();
 extern u8 Data_02006878[];
 extern u8 Func_02001254[];
@@ -289,10 +289,10 @@ L_020097c0:
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11,
         (s32)gData_02005314);
   Func_0200246c(0, 3);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001254, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02001254, 0x480);
   Call1((void (*)())GameFlag_SetBit, 0x17d);
 L_020097fa:
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001378, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02001378, 0x480);
   t93 = Value1((s32 (*)())Object_GetById, 11);
   FIELD_AT(t93, s32, 108) = (s32)Func_020012bc;
   Call1((void (*)())Func_020022d8, 1);

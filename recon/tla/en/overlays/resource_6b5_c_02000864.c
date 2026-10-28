@@ -26,7 +26,7 @@
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "serial_runtime.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "text/msg_ids.h"
 
 struct LobbyEventWork {
@@ -50,7 +50,7 @@ void Func_02001a8c(s32 a, s32 b);
 void Func_02001ab4(s32 skip);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Scheduler_RemoveCallbackFar(void *callback);
+void Task_RemoveFar(void *callback);
 struct UiWindow *UiText_OpenMessageWindow(const u8 *message, s32 x, s32 y,
                                           s32 flags);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
@@ -129,7 +129,7 @@ s32 Func_02000864(void) {
   }
   if (!failed) {
     buf = Runtime_AllocateBlock(216, 0x7c8);
-    Scheduler_RemoveCallbackFar(Func_02000134);
+    Task_RemoveFar(Func_02000134);
     Func_0200198c(5);
     WaitFrames(8);
     Func_02001994(5);
@@ -159,7 +159,7 @@ s32 Func_02000864(void) {
         Runtime_ReleaseHeapBlock(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
-        Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_02000134, 0x480);
+        Task_Add((TaskFunc)Func_02000134, TASK_PASS_VBLANK);
         Func_02001944(Func_02000134, 1);
         Flag_Clear(0x201);
         Flag_Clear(0x202);

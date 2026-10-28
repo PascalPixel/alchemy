@@ -865,7 +865,7 @@ Func_080e68d0:
 	lsls r1, r1, #3
 	strh r2, [r3]
 	ldr r0, .L_080e70f4
-	bl Scheduler_AddOrUpdateCallback
+	bl Task_Add
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #56
@@ -971,7 +971,7 @@ Func_080e68d0:
 	bl EventRuntime_RunPendingEvent
 .L_080e709c:
 	ldr r0, .L_080e70f4
-	bl Scheduler_RemoveCallback
+	bl Task_Remove
 	movs r0, #114
 	bl Sound_PlayFar
 	mov r2, r11

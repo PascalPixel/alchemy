@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-void Scheduler_RemoveCallback(s32);
+void Task_Remove(s32);
 void Func_08043b70(void);
 void ResourceObject_ReleaseFar(void *);
 
@@ -11,7 +11,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   s32 zero;
   s32 count;
 
-  Scheduler_RemoveCallback((s32)Func_08043b70);
+  Task_Remove((s32)Func_08043b70);
   zero = 0;
   offset = 248;
   count = 3;

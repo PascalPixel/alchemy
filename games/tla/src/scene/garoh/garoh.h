@@ -12,7 +12,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void FieldEvent_WaitFrames(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Task_Add(void (*callback)(void), s32 priority);
 void Event_WaitTransitionFrames(void);
 
 void Func_02005184(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,

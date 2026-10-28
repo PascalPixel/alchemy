@@ -408,7 +408,7 @@ BattleEffect_RunLifeShear:
 	cmp r6, #1
 	bne .L_08181b1c
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -652,9 +652,9 @@ BattleEffect_RunLifeShear:
 	bne .L_08181dd6
 .L_08181e20:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
@@ -677,7 +677,7 @@ BattleEffect_RunLifeShear:
 	ldr r0, .L_08181eac
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}

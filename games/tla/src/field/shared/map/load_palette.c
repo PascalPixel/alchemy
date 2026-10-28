@@ -22,11 +22,11 @@ void Func_0802a650(s32 map, void *destination) {
   /* FAKEMATCH: the barrier of the table load above. */
   asm("" : "+l"(table), "+l"(map));
   entry = (const u16 *)(map * 12 + table);
-  buffer = MemAlloc(0x200);
+  buffer = Heap_Alloc(0x200);
   backdrop = *(s16 *)0x05000000;
   Resource_DecodeType01(
       Resource_GetTableEntry(entry[1] + (u32)&ResourceId_Map000), buffer);
   buffer[0] = backdrop;
   Dma_Set(buffer, destination, 0x84000070, REG_DMA3);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

@@ -20,7 +20,7 @@ void Func_02002068(void) {
 
   Func_020048c4();
   Func_02004a24(0);
-  Engine_AudioPlayCue(78);
+  Import_SoundPlay(78);
   angle = 0xc000;
   Object_GetById(gAdventure.currentOwner)->facing = angle;
   WaitFrames(1);
@@ -36,7 +36,7 @@ void Func_02002068(void) {
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
   ShamanVillage_ObjSpeed(15, 0x26666, 0x13333);
   ShamanVillage_ObjWalk(15, 120, 242);
-  Engine_AudioPlayCue(29);
+  Import_SoundPlay(29);
   Func_0200498c((s32)MsgShamanRecognizeShamanRod);
   ShamanVillage_MessagePut(15, 0);
   FieldEvent_WaitFrames(20);
@@ -201,7 +201,7 @@ void Func_02002068(void) {
   FieldEvent_WaitFrames(20);
   ObjectMotion_EnableActionAndSetCallback(17, gData_02004e5c);
   ObjectMotion_EnableActionAndSetCallback(16, gData_02004eac);
-  Engine_AudioPlayCue(78);
+  Import_SoundPlay(78);
   do {
     WaitFrames(1);
   } while (object->unk63 == 0);

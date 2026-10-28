@@ -37,8 +37,8 @@ extern s32 gFrameCount;
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;
 extern const u8 gData_02003d1c[];
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void Func_02003bc8(void);
 void Func_02003bd0(void);
 void Func_02003c88(s32 skip);
@@ -85,7 +85,7 @@ void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
 
 void Func_02001010(void) {
-  u16 *buffer = MemAlloc(0x680);
+  u16 *buffer = Heap_Alloc(0x680);
   u16 *cell;
   struct ObjectRuntime *spark;
   u32 i;
@@ -98,7 +98,7 @@ void Func_02001010(void) {
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
-  MemFree(buffer);
+  Heap_Release(buffer);
   ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   ObjectMotion_SetActionVariant(8, 1);
   do {
@@ -109,7 +109,7 @@ void Func_02001010(void) {
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
-  buffer = MemAlloc(0x240);
+  buffer = Heap_Alloc(0x240);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
@@ -128,14 +128,14 @@ row:
   cell += 16;
   if (i != 18)
     goto row;
-  MemFree(buffer);
+  Heap_Release(buffer);
   Func_02003cd8(246);
   ((u8 *)Object_GetById(8))[98] = 9;
   ((u8 *)Object_GetById(8))[99] = 1;
   Object_GetById(8)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct ObjectRuntime *)Engine_ObjectCreate(
+      spark = (struct ObjectRuntime *)Import_ActorCreate(
           0x2a0, Object_GetById(8)->x, Object_GetById(8)->y,
           Object_GetById(8)->z);
       {

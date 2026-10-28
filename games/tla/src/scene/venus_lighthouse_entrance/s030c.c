@@ -15,7 +15,7 @@ s32 Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 Object_SetModeById();
-s32 Engine_AudioPlayCue();
+s32 Import_SoundPlay();
 s32 Func_02002884();
 s32 Func_02002864();
 s32 FieldEvent_WaitFrames();
@@ -48,7 +48,7 @@ void Func_0200030c(void) {
   Event_WaitTransitionFrames();
   t9 = Value1(Object_GetById, 0xa);
   Call2(Object_SetModeById, 0xa, 4);
-  Call1(Engine_AudioPlayCue, 0xa5);
+  Call1(Import_SoundPlay, 0xa5);
   Call4(Func_02002884, t9, 0x1600000, 0x80000, 0xb00000);
   Call2(Func_02002864, t9, (s32)gData_0200b000);
   Call1(FieldEvent_WaitFrames, 0x19);
@@ -58,7 +58,7 @@ void Func_0200030c(void) {
   Call4(Func_02002884, t16, 0x1a00000, 0x80000, 0x980000);
   Call2(Func_02002864, t16, (s32)gData_0200b000);
   Call1(FieldEvent_WaitFrames, 0x3c);
-  Call1(Engine_AudioPlayCue, 0xa5);
+  Call1(Import_SoundPlay, 0xa5);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0xa);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0xb);
   Func_0200298c();

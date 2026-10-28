@@ -75,7 +75,7 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
@@ -212,6 +212,6 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -43,8 +43,8 @@ extern const u32 IwramIrqModeWord;
 extern const u8 IwramRuntime_Rom[];
 extern void *gIrqVector;
 
-void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
-void Runtime_InstallIwramAndIrqs(void);
-void Runtime_IgnoreInterrupt(void);
+void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler);
+void System_InstallIwramAndIrqs(void);
+void Irq_Ignore(void);
 
 #endif

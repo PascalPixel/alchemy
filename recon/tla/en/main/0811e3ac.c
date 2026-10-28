@@ -46,7 +46,7 @@ struct SavedBattleObj {
 extern u32 Data_02018000[];
 
 void WaitFrames(s32 frames);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 void BattleObject_Reset();
 void Object_SetMode(struct MotionObject *object, s32 mode);
@@ -74,7 +74,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
     u8 sides = (plan->actorId ^ plan->targetIds[0]) & 0x80;
     single = sides != 0;
   }
-  saved = Runtime_BumpAllocateAlternatePool(sizeof(struct SavedBattleObj));
+  saved = Heap_AllocEwram(sizeof(struct SavedBattleObj));
   saved->single = single;
   saved->reactivate = 0;
   switch (plan->abilityId) {
@@ -220,7 +220,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
   BattleObject_Get(saved->unitId)->scale = 0x13333;
   if (single)
-    saved->buffer = Runtime_BumpAllocateAlternatePool(0x8000);
+    saved->buffer = Heap_AllocEwram(0x8000);
   else
     saved->buffer = Data_02018000;
   i = ResourceSlot_LoadFar(7, saved->buffer,
@@ -233,7 +233,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   } else {
     battleObject->resource = BattleClass_GetSprite(saved->classId);
     if (single)
-      MemFree(saved->buffer);
+      Heap_Release(saved->buffer);
     saved->buffer = (u32 *)i;
   }
   ids[0] = saved->unitId;

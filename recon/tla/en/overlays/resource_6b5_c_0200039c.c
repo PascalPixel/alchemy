@@ -31,7 +31,7 @@ s32 Func_0200039c(void) {
   s32 nameIndex;
 
   size = 0x154;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = Heap_AllocEwram(size);
   result = 0;
   timeout = 900;
   slot = 0;
@@ -127,9 +127,9 @@ testRecovery:
   }
   goto done;
 second:
-  MemFree(heap);
+  Heap_Release(heap);
   size = 0x154;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = Heap_AllocEwram(size);
   tries = 0;
   if ((transferResult =
            Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
@@ -138,6 +138,6 @@ second:
 failed:
   result = transferResult;
 done:
-  MemFree(heap);
+  Heap_Release(heap);
   return result;
 }

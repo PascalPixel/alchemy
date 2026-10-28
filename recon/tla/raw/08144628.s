@@ -560,9 +560,9 @@ Func_08144628:
 	ldr r0, .L_08144aa4
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08144aa8
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

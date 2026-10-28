@@ -13,13 +13,13 @@
 #include "battle_unit.h"
 #include "battle_session.h"
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
 void *Unit_Get(s32 owner);
 
 s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
                   s32 *forcedCount) {
-  u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
+  u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
   s32 count = BattleParty_ListLivingUnitsFar(1, unitIds);
   s32 readyCount = 0;

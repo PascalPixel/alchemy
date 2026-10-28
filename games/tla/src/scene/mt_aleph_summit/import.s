@@ -30,13 +30,13 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Runtime_BumpAllocateAlternatePool
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001454
 	.thumb_func
@@ -113,7 +113,7 @@ Object_SetPartAttribute:
 	.global Func_020014e4
 	.thumb_func
 Func_020014e4:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_020014ec
 	.thumb_func
 Func_020014ec:
@@ -121,7 +121,7 @@ Func_020014ec:
 	.global Func_020014f4
 	.thumb_func
 Func_020014f4:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

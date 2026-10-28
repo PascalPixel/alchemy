@@ -143,7 +143,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame += 1;
   } while (frame != 60);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

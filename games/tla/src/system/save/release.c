@@ -5,5 +5,5 @@
 
 void PartyStatus_Close(void) {
   Window_Close(*(void **)Ram_HeapSlots->windowLayout, 1);
-  Runtime_ReleaseHeapBlock(64);
+  HeapSlot_Release(64);
 }

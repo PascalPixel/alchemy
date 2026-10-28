@@ -73,7 +73,7 @@ Func_080fae8c:
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -115,7 +115,7 @@ Func_080fae8c:
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -169,7 +169,7 @@ Func_080fae8c:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	b .L_080fb08a
 .L_080faff8:
 	cmp r6, r5
@@ -192,7 +192,7 @@ Func_080fae8c:
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -243,7 +243,7 @@ Func_080fae8c:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 .L_080fb08a:
 	add sp, #4
 	pop {r3, r5, r6, r7}

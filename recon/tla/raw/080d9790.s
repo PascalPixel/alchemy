@@ -39,7 +39,7 @@ Func_080d9790:
 	movs r0, #128
 	lsls r0, r0, #2
 	str r2, [sp, #20]
-	bl MemAlloc
+	bl Heap_Alloc
 	str r0, [sp, #4]
 	adds r6, r0, #0
 	movs r3, #8
@@ -229,7 +229,7 @@ Func_080d9790:
 	b .L_080d982e
 .L_080d9956:
 	ldr r0, [sp, #4]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #0
 .L_080d995e:
 	add sp, #36

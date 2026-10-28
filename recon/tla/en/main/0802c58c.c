@@ -109,7 +109,7 @@ void Func_0802c58c(void) {
     return;
   if (busy != 0)
     return;
-  buffer = MemAlloc(0x200);
+  buffer = Heap_Alloc(0x200);
   switch (window->reloadSteps) {
   case 12: {
     s16 backdropColor = *(s16 *)0x05000000;
@@ -155,5 +155,5 @@ void Func_0802c58c(void) {
     break;
   }
   window->reloadSteps--;
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

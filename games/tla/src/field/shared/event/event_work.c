@@ -15,27 +15,27 @@
 #include "object_runtime.h"
 #include "display_transition.h"
 
-void EventRuntime_StartScreen(void) {
+void Event_StartScreenTransition(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   ScreenTransition_Start(event->screenEffect, event->delay);
   event->screenStatus = 1;
 }
 
-void EventRuntime_FinishScreen(void) {
+void Event_FinishScreenTransition(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   ScreenTransition_Finish(event->screenEffect, event->delay);
   event->screenStatus = 0;
 }
 
-void EventRuntime_WaitDelay(void) {
+void Event_WaitTransitionFrames(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   WaitFrames(event->delay);
 }
 
-void EventRuntime_SetDestination(s32 scene, s32 entrance) {
+void Event_SetDestination(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Adventure *party;
 
@@ -47,7 +47,7 @@ void EventRuntime_SetDestination(s32 scene, s32 entrance) {
   party->entrance = entrance;
 }
 
-void EventRuntime_SetSavedDestination(s32 scene, s32 entrance) {
+void Event_SetRestartPoint(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Adventure *party;
 
@@ -59,7 +59,7 @@ void EventRuntime_SetSavedDestination(s32 scene, s32 entrance) {
   party->savedEntrance = entrance;
 }
 
-void EventRuntime_SetCountdown(u16 frames) {
+void Event_SetExitRequest(u16 frames) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   event->countdown = frames;
@@ -74,6 +74,6 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   __asm__("");
   if (event->controlMode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        (u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
+        (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);
 }

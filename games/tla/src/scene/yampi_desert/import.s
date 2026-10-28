@@ -38,21 +38,21 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Runtime_BumpAllocateAlternatePool
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02003f70
 	.thumb_func
@@ -161,11 +161,11 @@ FieldEvent_WaitFrames:
 	.global Func_02004040
 	.thumb_func
 Func_02004040:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02004048
 	.thumb_func
 Func_02004048:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -229,11 +229,11 @@ Object_SetPartAttribute:
 	.global Func_020040c8
 	.thumb_func
 Func_020040c8:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_020040d0
 	.thumb_func
 Func_020040d0:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_020040d8
 	.thumb_func
 Func_020040d8:
@@ -285,7 +285,7 @@ Func_02004130:
 	.global Func_02004138
 	.thumb_func
 Func_02004138:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02004140
 	.thumb_func
 Func_02004140:
@@ -349,7 +349,7 @@ Func_020041b0:
 	.global Func_020041b8
 	.thumb_func
 Func_020041b8:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -377,7 +377,7 @@ Func_020041e8:
 	.global Func_020041f0
 	.thumb_func
 Func_020041f0:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_020041f8
 	.thumb_func
 Func_020041f8:

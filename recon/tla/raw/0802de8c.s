@@ -23,7 +23,7 @@ Func_0802de8c:
 	mov r8, r3
 	str r2, [sp, #12]
 	str r3, [sp, #8]
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	ldr r2, .L_0802df3c
 	movs r3, #3
 	str r0, [sp, #4]
@@ -103,11 +103,11 @@ Func_0802de8c:
 	movs r0, #1
 	bl Fade_FromBlack
 .L_0802df54:
-	bl Runtime_InitializeHeap
+	bl Heap_Initialize
 	bl Task_ResetAll
 	movs r1, #160
 	movs r0, #36
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	str r0, [sp, #4]
 	bl VramCache_Reset
 	movs r0, #2
@@ -724,7 +724,7 @@ Func_0802de8c:
 	bl Task_ResetAll
 	ldr r0, .L_0802e438
 	ldr r1, .L_0802e43c
-	bl Runtime_ConstantZeroResult
+	bl System_ReturnZero
 	b .L_0802df54
 .L_0802e402:
 	ldr r2, [r6, #4]

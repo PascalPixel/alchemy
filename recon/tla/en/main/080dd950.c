@@ -22,7 +22,7 @@ void BattleEffect_ApplyColorToSourceBuffer(u32 value, s32 enabled);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 
 struct EffectWork_080dd950 {
   u8 unk00[24];
@@ -69,7 +69,7 @@ void Func_080dd950(void) {
     WaitFrames(1);
     ev = Func_080ce458(0x40000005, 8, Func_080ce31c(8));
     if (ev != NULL)
-      EventRuntime_RunPendingEvent(ev, work->value18, work->value1a);
+      Field_RunPsynergyEvent(ev, work->value18, work->value1a);
     if (work->childOption == 0) {
       scene[0x53e] = 0;
       scene[0x53c] = 1;

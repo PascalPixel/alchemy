@@ -50,9 +50,9 @@ Func_02001f4c:
 	.thumb_func
 Func_02001f54:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02001f64
 	.thumb_func
@@ -93,11 +93,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001fac
 	.thumb_func
 Func_02001fac:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001fb4
 	.thumb_func
 Func_02001fb4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -137,7 +137,7 @@ Func_02001ffc:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
@@ -169,7 +169,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_0200204c
 	.thumb_func
 Func_0200204c:

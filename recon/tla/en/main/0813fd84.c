@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -162,7 +162,7 @@ void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -420,7 +420,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         p->variant++;
       }
     }
-    verts = Runtime_BumpAllocateAlternatePool(32);
+    verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
@@ -571,8 +571,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     if (work->shakeFrames > 0) {
       gBgScroll[1].y = (Random16() & 7) + 28;
       work->shakeFrames--;
@@ -702,7 +702,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       work->transferMode = 4;
       work->transferValue = 0x04040404;
     }
-    verts = Runtime_BumpAllocateAlternatePool(528);
+    verts = Heap_AllocEwram(528);
     model = Render_AllocateModelList(1);
     texture2.logWidth = 5;
     texture2.logHeight = 2;
@@ -737,11 +737,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           half = r / 2;
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet,
                                                    x - half, y, half, r);
-          Runtime_ReleaseHeapBlock(SLOT_ALT);
+          HeapSlot_Release(SLOT_ALT);
           BattleEffect_LoadBlitter(SLOT_ALT, 23);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, x, y,
                                                    half, r);
-          Runtime_ReleaseHeapBlock(SLOT_ALT);
+          HeapSlot_Release(SLOT_ALT);
         }
       }
     }
@@ -834,8 +834,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         }
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     req = Data_08196dd8;
     place[3] = 0;
     place[1] = 0xff0000;
@@ -970,7 +970,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         if (frame > 47) {
           blit(canvas, work->sheet, 216 - frame * 2, 0, 120, 120);
         }
-        verts = Runtime_BumpAllocateAlternatePool(32);
+        verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture3.logWidth = 5;
         texture3.logHeight = 2;
@@ -1005,8 +1005,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Render_TransformVertices(Data_081976e0, verts, 4);
           Render_DrawModelList(model);
         }
-        MemFree(model);
-        MemFree(verts);
+        Heap_Release(model);
+        Heap_Release(verts);
       }
       {
         s32 r = 8;
@@ -1026,6 +1026,6 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   Palette_LoadBasicObjColors();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

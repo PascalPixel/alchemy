@@ -159,8 +159,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       if (frame <= 3)
         draw[1](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE,
                 DJINN_SIZE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_BLITTER);
     }
 
     // A fresh pair of max blitters each frame, the second flipped.
@@ -230,8 +230,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
     work->transferPending = 1;
     WaitFrames(1);
   }

@@ -27,7 +27,7 @@ void Func_020046e8(s32 spread) {
   u32 i = 0;
 
   do {
-    effect = (struct FieldEffect *)Engine_ObjectCreate(
+    effect = (struct FieldEffect *)Import_ActorCreate(
         285, leader->x + (i << 17) - 0x80000,
         leader->y - (((Random16Far() * 14) >> 16) << 16) - 0x20000, leader->z);
     if (effect != 0) {

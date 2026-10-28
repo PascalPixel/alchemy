@@ -82,7 +82,7 @@ void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
@@ -148,8 +148,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   s32 cx;
   s32 cy;
 
-  work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
+  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -437,8 +437,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   }
 
   // Put the background and the display back.
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
@@ -446,7 +446,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   BattlePresentation_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
   WaitFrames(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }

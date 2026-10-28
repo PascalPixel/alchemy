@@ -17,7 +17,7 @@ Func_08043cd8:
 	adds r1, #236
 	movs r0, #220
 	sub sp, #40
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r3, #192
 	lsls r3, r3, #18
 	movs r1, #0
@@ -29,7 +29,7 @@ Func_08043cd8:
 	str r1, [sp, #28]
 	str r1, [sp, #24]
 	str r2, [sp, #12]
-	bl Runtime_GetBuildStampTimeFar
+	bl BuildStamp_GetTimeFar
 	mov r3, r8
 	str r0, [sp, #8]
 	cmp r3, #0
@@ -805,7 +805,7 @@ Func_08043cd8:
 	bl Window_Close
 	bl PaletteGlow_Stop
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, .L_08044340
 	movs r1, #147
 	lsls r1, r1, #1

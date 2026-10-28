@@ -10,11 +10,11 @@ struct DisplayBlock {
   u8 *object;
 };
 
-struct DisplayBlock *Runtime_AllocateBlock(s32 slot, s32 size);
+struct DisplayBlock *HeapSlot_AllocEwram(s32 slot, s32 size);
 void Func_08020270(void);
 
 void Func_080cb8a4(void) {
-  struct DisplayBlock *block = Runtime_AllocateBlock(108, 0xd50);
+  struct DisplayBlock *block = HeapSlot_AllocEwram(108, 0xd50);
 
   if (block->mode == 3 && block->pending != 0) {
     block->pending = 0;

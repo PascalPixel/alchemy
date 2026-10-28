@@ -302,8 +302,8 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {

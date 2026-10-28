@@ -9,10 +9,10 @@ void Func_08126e00(void);
 
 void Func_081272b0(void) {
   Iwram_ClearWords((void *)0x06004000, 0x4000);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
   REG_DISPCNT = 0x1341;
   Task_Remove(Func_08127038);
   Task_Remove(Func_08126e00);

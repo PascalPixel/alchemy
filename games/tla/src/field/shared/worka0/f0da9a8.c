@@ -6,9 +6,9 @@ extern const u8 Data_080f0c1c[], Data_080f0c63[], Data_080f0cb8[];
 extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
 extern const u8 Data_080f0e00[];
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Resource_DecodeType01(const void *source, void *destination);
 s32 VramCache_Load(s32 slot, s32 size, void *tiles);
@@ -36,9 +36,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   u8 *pictures;
   s32 size;
 
-  work = Runtime_AllocateBlock(TILE_EFFECT_SLOT, sizeof(struct TileEffectWork));
+  work = HeapSlot_AllocEwram(TILE_EFFECT_SLOT, sizeof(struct TileEffectWork));
   size = 4 * PICTURE_SIZE;
-  pictures = MemAlloc(size);
+  pictures = Heap_Alloc(size);
   Dma_Fill32(0, work, sizeof(struct TileEffectWork));
   work->vramEntry = Resource_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
@@ -68,6 +68,6 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Task_Add(Func_080daab0, priority);
   }
   Task_Add(Func_080dacb8, 0x48f);
-  MemFree(pictures);
+  Heap_Release(pictures);
   return work;
 }

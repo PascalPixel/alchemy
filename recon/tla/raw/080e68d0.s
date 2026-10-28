@@ -16,7 +16,7 @@ Func_080e68d0:
 	adds r1, #60
 	movs r0, #92
 	sub sp, #44
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -952,7 +952,7 @@ Func_080e68d0:
 	adds r2, r6, #0
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #40
@@ -968,7 +968,7 @@ Func_080e68d0:
 	adds r1, #255
 	adds r0, r7, #0
 	adds r2, r6, #0
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080e709c:
 	ldr r0, .L_080e70f4
 	bl Task_Remove
@@ -998,7 +998,7 @@ Func_080e68d0:
 	bl Object_Destroy
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3

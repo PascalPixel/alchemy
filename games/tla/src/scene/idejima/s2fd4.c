@@ -24,7 +24,7 @@ void Func_02002fd4(void) {
     actor->motionFlags = 0;
     actor->y = 0xc0000;
     actor->collisionFlags = 0;
-    Engine_ActorSetAnimation(8, 5);
+    Import_ActorSetAnimation(8, 5);
   }
   if (!GameFlag_Test(0x864)) {
     struct ObjectRuntime *actor;
@@ -37,7 +37,7 @@ void Func_02002fd4(void) {
     actor->motionFlags = 0;
     actor->y = 0xc0000;
     actor->collisionFlags = 0;
-    Engine_ActorSetAnimation(5, 18);
+    Import_ActorSetAnimation(5, 18);
   }
   flag = GameFlag_Test(0x865);
   if (flag == 0) {
@@ -46,12 +46,12 @@ void Func_02002fd4(void) {
     actor = Object_GetById(6);
     Call3(Func_02003228, 6, 0xf00000, 0x2880000);
     Call6(Func_02003190, 38, 34, 2, 1, 14, 40);
-    Engine_ActorSetAnimation(6, 19);
+    Import_ActorSetAnimation(6, 19);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
     actor->motionFlags = 0;
     actor->y = 0xc0000;
   }
-  Engine_MapCopyCellsTo(72, 42, 75, 40, 1, 1);
+  Import_MapCopyCellPictureIndicesRect(72, 42, 75, 40, 1, 1);
   Task_Wait(1);
   if (!GameFlag_Test(0x844))
     Func_02002c64();

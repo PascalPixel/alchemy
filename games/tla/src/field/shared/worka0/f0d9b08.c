@@ -13,8 +13,8 @@ void Func_080d9b80(void);
 void Func_080d9d40(void);
 
 void Func_080d9b08(void) {
-  struct WorkA0 *work = Runtime_AllocateBlock(160, sizeof(struct WorkA0));
-  void *buffer = MemAlloc(0x900);
+  struct WorkA0 *work = HeapSlot_AllocEwram(160, sizeof(struct WorkA0));
+  void *buffer = Heap_Alloc(0x900);
 
   Dma_Fill32(0, work, sizeof(struct WorkA0));
   work->vramEntry = Resource_FindFreeEntry();
@@ -22,5 +22,5 @@ void Func_080d9b08(void) {
   VramCache_Load(work->vramEntry, 64, buffer);
   Task_Add(Func_080d9b80, TASK_PASS_VBLANK);
   Task_Add(Func_080d9d40, TASK_PASS_VBLANK + 15);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

@@ -70,7 +70,7 @@ void Func_0803dc1c(void) {
   s32 i;
   u16 clear = 0;
 
-  work = Runtime_AllocateBlock(72, 996);
+  work = HeapSlot_AllocEwram(72, 996);
   work->field348 = clear;
   work->field34c = clear;
   work->field350 = clear;

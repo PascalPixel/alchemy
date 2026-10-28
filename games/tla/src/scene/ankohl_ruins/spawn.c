@@ -1,6 +1,6 @@
 #include "ankohl_ruins.h"
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -9,7 +9,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
                                                       s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Engine_ObjectCreate(type, x, y, z);
+  return Import_ActorCreate(type, x, y, z);
 }
 
 struct ObjectRuntime *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {

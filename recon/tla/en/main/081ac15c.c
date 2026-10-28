@@ -66,9 +66,9 @@ extern const u8 gLuckyDice_LabelTiles[];
 extern const u8 gLuckyDice_FaceTiles[];
 extern const s16 gLuckyDice_FaceHeights[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Camera_ResetSceneDefaults(void);
 void Task_ResetAll(void);
@@ -156,11 +156,11 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
-  Runtime_AllocateHeapBlock(100, 0x60e);
-  spritePalette = Runtime_AllocateHeapBlock(96, 0x200);
-  diceWork = Runtime_AllocateBlock(92, 0x7b7c);
-  sprites = Runtime_AllocateBlock(180, 0x614);
-  camera = Runtime_AllocateBlock(48, 76);
+  HeapSlot_Alloc(100, 0x60e);
+  spritePalette = HeapSlot_Alloc(96, 0x200);
+  diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
+  sprites = HeapSlot_AllocEwram(180, 0x614);
+  camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetSceneDefaults();
   Task_ResetAll();
@@ -734,9 +734,9 @@ void LuckyDice_Run(void) {
     Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(48);
-  Runtime_ReleaseHeapBlock(180);
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
-  Runtime_ReleaseHeapBlock(100);
+  HeapSlot_Release(48);
+  HeapSlot_Release(180);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
 }

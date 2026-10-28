@@ -66,7 +66,7 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
     if (character != ' ') {
       RamCode_Load(draw, Data_080385e0, Text_DrawGlyphCodeSize);
       result = draw(window, character, x, y, font);
-      MemFree(draw);
+      Heap_Release(draw);
       return result;
     }
   } else if (character == ' ') {

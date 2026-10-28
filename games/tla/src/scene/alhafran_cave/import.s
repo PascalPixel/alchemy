@@ -57,11 +57,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001438
 	.thumb_func
 Func_02001438:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -125,7 +125,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_020014b8
 	.thumb_func
 Func_020014b8:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -137,7 +137,7 @@ Func_020014c8:
 	.global Func_020014d0
 	.thumb_func
 Func_020014d0:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -181,7 +181,7 @@ Func_02001520:
 	.global Func_02001528
 	.thumb_func
 Func_02001528:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global BattleEffect_StartItemBreak
 	.thumb_func
 BattleEffect_StartItemBreak:
@@ -233,7 +233,7 @@ Func_02001588:
 	.global Func_02001590
 	.thumb_func
 Func_02001590:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001598
 	.thumb_func
 Func_02001598:

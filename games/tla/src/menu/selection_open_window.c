@@ -98,5 +98,5 @@ void Resource_ResetOwnerEntries(void) {
     }
   }
   Resource_ResetEntry(state->records[14].slot);
-  Runtime_ReleaseHeapBlock(72);
+  HeapSlot_Release(72);
 }

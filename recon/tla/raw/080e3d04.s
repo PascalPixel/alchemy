@@ -16,7 +16,7 @@ Func_080e3d04:
 	adds r1, #168
 	movs r0, #92
 	sub sp, #32
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -568,7 +568,7 @@ Func_080e3d04:
 	ldrsh r1, [r2, r3]
 	movs r3, #0
 	ldrsh r2, [r5, r3]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 	b .L_080e4190
 .L_080e4180:
 	.4byte 0x00000100
@@ -655,7 +655,7 @@ Func_080e3d04:
 .L_080e4222:
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3

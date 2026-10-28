@@ -28,8 +28,8 @@ struct SparkParticleWork {
   struct SparkParticle particles[64];
 };
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
@@ -44,7 +44,7 @@ extern const u8 Data_080f3901[];
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays cue 137 (Func_080d2c64).
 void Func_080d6f34(s32 withCue) {
-  struct SparkParticleWork *work = Runtime_AllocateBlock(116, 0x814);
+  struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH: the register variable builds the fill word's zero in r1
@@ -60,11 +60,11 @@ void Func_080d6f34(s32 withCue) {
 
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
-  tiles = Runtime_AllocateBlock(56, 0x400);
+  tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(Data_080f3901, tiles);
   work->vramEntry = Resource_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   i = 0;
   slots = Ram_HeapSlots;
   for (; i < 64; i++, particle++) {

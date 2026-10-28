@@ -38,7 +38,7 @@ void Message_ShowAndWaitCoreFar(s32 message);
 void BattlePresentation_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 s32 Func_0811a24c(s32 side, u16 *units);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct BattleUnit *Unit_Get(s32 unitId);
 void Sound_PlayFar(s32 cue);
 void MessageArgument_ClearAllFar(void);
@@ -76,7 +76,7 @@ void Battle_AwardSpoils(void) {
   list = units;
   living = BattleParty_ListLivingUnits(1, list);
   count = Func_0811a24c(1, list);
-  backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+  backup = Heap_AllocEwram(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
     unit = Unit_Get(unitId);
@@ -143,7 +143,7 @@ void Battle_AwardSpoils(void) {
       }
     }
   }
-  MemFree(backup);
+  Heap_Release(backup);
   if (spoils->coins != 0) {
     MessageArgument_PushFar(spoils->coins, 5);
     Message_ShowAndWaitCoreFar((s32)Msg03207);

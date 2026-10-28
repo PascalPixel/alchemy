@@ -50,17 +50,17 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global Runtime_BumpAllocateAlternatePool
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_020055cc
 	.thumb_func
@@ -181,11 +181,11 @@ FieldEvent_WaitFrames:
 	.global Func_020056b4
 	.thumb_func
 Func_020056b4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020056bc
 	.thumb_func
 Func_020056bc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -261,7 +261,7 @@ Object_SetPartAttribute:
 	.global Func_02005754
 	.thumb_func
 Func_02005754:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -269,7 +269,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02005764
 	.thumb_func
 Func_02005764:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -317,7 +317,7 @@ Func_020057bc:
 	.global Func_020057c4
 	.thumb_func
 Func_020057c4:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_020057cc
 	.thumb_func
 Func_020057cc:
@@ -325,7 +325,7 @@ Func_020057cc:
 	.global Func_020057d4
 	.thumb_func
 Func_020057d4:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_020057dc
 	.thumb_func
 Func_020057dc:
@@ -353,7 +353,7 @@ Event_WaitTransitionFrames:
 	.global Func_0200580c
 	.thumb_func
 Func_0200580c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -385,7 +385,7 @@ Func_02005844:
 	.global Func_0200584c
 	.thumb_func
 Func_0200584c:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02005854
 	.thumb_func
 Func_02005854:

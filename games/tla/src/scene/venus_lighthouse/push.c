@@ -8,36 +8,36 @@ void SceneState_RunActor13AtColumn42Setup(void) {
   s32 a;
   s32 b;
 
-  obj = Engine_ActorGet(10);
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  obj = Import_ActorGet(10);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
-    Engine_EventWait(30);
-    Engine_AudioPlayCue(188);
+    Import_EventWaitFrames(30);
+    Import_SoundPlay(188);
     obj->motionFlags = 0;
     val = 0xfffe0000;
     obj->terrainHeight = val;
     obj->y = val;
-    Engine_GameFlagSet(0x200);
+    Import_GameFlagSet(0x200);
     a = 3;
     b = 5;
-    Engine_MapCopyCellsTo(44, 117, 41, 117, a, b);
+    Import_MapCopyCellPictureIndicesRect(44, 117, 41, 117, a, b);
   }
-  Engine_EventEnd();
+  Import_EventEnd();
 }
 
 void VenusLighthouse_ReadRelief(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
-  Engine_MessageShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
-  Engine_EventEnd();
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_ActorSetAnimation(Import_PartyGetLeaderActor(), 1);
+  Import_FieldMessageShow((s32)MsgVenusLighthouseReliefWords, 1);
+  Import_EventEnd();
 }
 
 void VenusLighthouse_ReadTrueHeart(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
-  Engine_MessageShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
-  Engine_EventEnd();
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_ActorSetAnimation(Import_PartyGetLeaderActor(), 1);
+  Import_FieldMessageShow((s32)MsgVenusLighthouseTrueHeart, 1);
+  Import_EventEnd();
 }

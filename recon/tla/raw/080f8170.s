@@ -249,7 +249,7 @@ Func_080f8170:
 	movs r5, #166
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_080f8564
 	mov r1, r10
 	adds r2, r5, #0
@@ -370,7 +370,7 @@ Func_080f8170:
 	movs r5, #166
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_080f8564
 	mov r1, r10
 	adds r2, r5, #0
@@ -416,7 +416,7 @@ Func_080f8170:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	b .L_080f85fe
 .L_080f84dc:
 	ldr r2, [sp, #12]

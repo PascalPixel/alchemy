@@ -6,7 +6,7 @@ void Func_02003ce4(void) {
   if (GameFlag_Test(0x202)) {
     Func_020048c4();
     Func_02004a24(0);
-    Engine_AudioPlayCue(123);
+    Import_SoundPlay(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004a04(13);

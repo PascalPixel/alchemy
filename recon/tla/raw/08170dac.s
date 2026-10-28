@@ -828,9 +828,9 @@ BattleEffect_RunVoidBeam:
 	b .L_08170fa6
 .L_081713fa:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08171428
 	bl Task_Remove
 	ldr r0, .L_0817142c

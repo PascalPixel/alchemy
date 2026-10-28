@@ -15,9 +15,9 @@ Func_080ea14c:
 	adds r5, r0, #0
 	movs r0, #92
 	sub sp, #64
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	mov r9, r0
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	str r0, [sp, #48]
 	bl ObjectTable_Get
 	str r0, [sp, #44]
@@ -220,7 +220,7 @@ Func_080ea14c:
 	ldr r0, [sp, #40]
 	bl Object_SetMode
 	movs r0, #60
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	ldr r2, [sp, #40]
 	movs r3, #0
 	adds r2, #100
@@ -231,7 +231,7 @@ Func_080ea14c:
 	str r3, [r1, #108]
 	bl Sound_PlayFar
 	movs r0, #80
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	ldr r1, .L_080ea38c
 	ldr r0, [sp, #40]
 	bl ObjectDispatch_InitializeFar
@@ -789,7 +789,7 @@ Func_080ea14c:
 	str r3, [r2, #24]
 	str r3, [r2, #28]
 	movs r0, #10
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	ldr r0, .L_080ea7bc
 	bl Task_Remove
 	bl BattleEffect_PrepareBufferInterpolation
@@ -798,7 +798,7 @@ Func_080ea14c:
 	ldr r0, [sp, #28]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3

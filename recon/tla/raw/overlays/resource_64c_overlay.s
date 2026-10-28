@@ -231,7 +231,7 @@ Func_0200020c:
 	str r0, [sp, #8]
 	movs r0, #192
 	lsls r0, r0, #7
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #8
 	bl Object_GetById
@@ -1371,7 +1371,7 @@ Func_0200020c:
 	strh r3, [r2, #2]
 .L_02008b16:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	bl Func_02001f74
 	ldr r3, .L_02008b60
 	movs r0, #128
@@ -1802,7 +1802,7 @@ Func_02001400:
 	bl Func_02002074
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	adds r1, r7, #0
 	ldr r0, .L_02009548
@@ -2430,7 +2430,7 @@ Func_02001400:
 	bl QueueIoWriteDelay2
 .L_02009982:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #2
 	adds r0, #255
 	bl GameFlag_SetBit

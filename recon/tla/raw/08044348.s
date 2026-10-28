@@ -14,7 +14,7 @@ Func_08044348:
 	lsls r0, r0, #2
 	ldr r5, [r3, #60]
 	mov r8, r1
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	mov r1, r10
 	mov r0, r8
@@ -68,7 +68,7 @@ Func_08044348:
 	blt .L_08044394
 .L_080443c4:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

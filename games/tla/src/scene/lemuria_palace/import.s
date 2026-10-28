@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Task_RemoveFar:
 	overlay_veneer Func_080000d8
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001f6c
 	.thumb_func
@@ -81,11 +81,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001fcc
 	.thumb_func
 Func_02001fcc:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001fd4
 	.thumb_func
 Func_02001fd4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -153,7 +153,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_0200205c
 	.thumb_func
 Func_0200205c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -197,7 +197,7 @@ Func_020020ac:
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
@@ -209,7 +209,7 @@ Event_WaitTransitionFrames:
 	.global Func_020020cc
 	.thumb_func
 Func_020020cc:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020020d4
 	.thumb_func
 Func_020020d4:

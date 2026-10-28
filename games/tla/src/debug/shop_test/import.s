@@ -219,7 +219,7 @@ Object_SetModeById:
 	.global Func_02000e08
 	.thumb_func
 Func_02000e08:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -227,7 +227,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02000e18
 	.thumb_func
 Func_02000e18:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_02000e20
 	.thumb_func
 Func_02000e20:
@@ -239,7 +239,7 @@ Func_02000e28:
 	.global Func_02000e30
 	.thumb_func
 Func_02000e30:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:

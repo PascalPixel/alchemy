@@ -103,7 +103,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer c
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
@@ -148,8 +148,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   s32 frame;
   s32 i;
 
-  work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
+  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -284,7 +284,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         }
       }
 
-      corners = Runtime_BumpAllocateAlternatePool(0x200);
+      corners = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       model->depthBias = 0;
       texture.logWidth = 5;
@@ -349,8 +349,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           }
         }
       }
-      MemFree(model);
-      MemFree(corners);
+      Heap_Release(model);
+      Heap_Release(corners);
     }
 
     Func_08158ce0(8, 8);
@@ -360,7 +360,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
     Sound_PlayFar(390);
@@ -372,6 +372,6 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   } else {
     BattleEffect_EndCanvasLayer();
   }
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }

@@ -821,9 +821,9 @@ BattleEffect_RunFrost:
 	b .L_081515bc
 .L_08151b00:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08151b44
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

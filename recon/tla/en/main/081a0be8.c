@@ -18,7 +18,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   s32 row;
   s32 offset;
 
-  canvas = Runtime_BumpAllocateAlternatePool(0x900);
+  canvas = Heap_AllocEwram(0x900);
   Iwram_ClearWords(canvas, 0xc00);
   busy = Func_08038418(message, canvas, align);
   dst = canvas;
@@ -51,6 +51,6 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
     offset += 32;
     top++;
   }
-  MemFree(canvas);
+  Heap_Release(canvas);
   return busy;
 }

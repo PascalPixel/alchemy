@@ -212,7 +212,7 @@ BattleEffect_RunSabreDance:
 	bl BattleEffect_StartActorMotion
 .L_0817b81c:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -312,9 +312,9 @@ BattleEffect_RunSabreDance:
 	cmp r7, #8
 	bne .L_0817b862
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r2, .L_0817b948
 	movs r3, #120
 	str r3, [r2, #12]

@@ -21,7 +21,7 @@ Func_08125d74:
 	movs r0, #168
 	movs r1, #4
 	ldr r6, [r3]
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	adds r3, r7, #0
 	subs r3, #78
 	str r0, [sp, #4]
@@ -231,7 +231,7 @@ Func_08125d74:
 	ldr r2, .L_08125fb8
 	movs r1, #32
 	movs r0, #2
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	strh r6, [r5, #2]
 	movs r0, #1
 	bl WaitFrames
@@ -279,7 +279,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	b .L_081261b8
 .L_08125fb0:
 	.4byte BattlePres_AdvanceTransitionTimer
@@ -415,7 +415,7 @@ Func_08125d74:
 	str r3, [r0]
 	movs r1, #32
 	movs r0, #2
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	movs r0, #1
 	b .L_081260e0
 .L_081260cc:
@@ -528,7 +528,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 .L_081261b8:
 	ldr r5, .L_081261f4
 	movs r6, #128
@@ -537,7 +537,7 @@ Func_08125d74:
 	movs r2, #0
 	adds r6, #10
 	movs r0, #2
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	strh r5, [r6]
 	movs r0, #1
 	bl WaitFrames
@@ -568,7 +568,7 @@ Func_08125d74:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #168
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #156
 	pop {r3, r5, r6, r7}
 	mov r8, r3

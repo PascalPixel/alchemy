@@ -3,7 +3,7 @@
 // then schedules Func_020002b4. Left: the native builds 0x3f40 and 0x1000 with
 // movs and shifts and rebuilds 0x1000 for each call, where this form loads the
 // halfwords from the pool and keeps 0x1000 in r8; forwarding wrappers for
-// MemAlloc and VramCache_Load make it 99.
+// Heap_Alloc and VramCache_Load make it 99.
 #include "types.h"
 #include "io_reg.h"
 
@@ -35,8 +35,8 @@ extern s32 Data_02003024;
 extern s32 Data_02003098;
 extern u8 gData_0200308c;
 
-void *MemAlloc(s32 size);
-void MemFree(void *p);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *p);
 void Func_02001f6c(const u8 *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
@@ -46,7 +46,7 @@ s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_020002b4(void);
 
 void Func_020003a0(void) {
-  void *buffer = MemAlloc(0x1000);
+  void *buffer = Heap_Alloc(0x1000);
 
   REG_BLDCNT = 0x3f40;
   REG_BLDALPHA = 0x1000;
@@ -73,5 +73,5 @@ void Func_020003a0(void) {
   Data_02003098 = 0;
   gData_0200308c = 0;
   Task_Add(Func_020002b4, 0x480);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

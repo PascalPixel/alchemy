@@ -473,8 +473,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     // Switch to the explosion: the blast sheet, max blitters, and ten
     // embers 72 degrees apart around each target.
     if (frame == 302) {
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_BLITTER);
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -571,8 +571,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   Func_081180e8(134);
   // Tear down.
   Func_0816467c(2, 128 << 16, height);

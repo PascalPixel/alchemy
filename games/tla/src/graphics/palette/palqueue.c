@@ -12,7 +12,7 @@
 
 void PaletteQueue_Stop(void) {
   Task_Remove(PaletteQueue_StepCycles);
-  Runtime_ReleaseHeapBlock(112);
+  HeapSlot_Release(112);
 }
 
 void PaletteQueue_Start(void) {

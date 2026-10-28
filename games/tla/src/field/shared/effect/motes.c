@@ -65,7 +65,7 @@ void FieldMotes_Start(void) {
   register s32 clear asm("r6");
 
   size = sizeof(struct MoteWork);
-  work = Runtime_AllocateBlock(116, size);
+  work = HeapSlot_AllocEwram(116, size);
   mote = work->motes;
   /* FAKEMATCH: reusing the allocation size for the cleared word keeps it in
    * r1 (differ 8 without it). */
@@ -73,11 +73,11 @@ void FieldMotes_Start(void) {
   zero = size;
   Dma_Set((void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
-  tiles = Runtime_AllocateBlock(56, 0x400);
+  tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
   work->vramEntry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   i = 0;
   slots = Ram_HeapSlots;
   for (; i < 64; i++) {

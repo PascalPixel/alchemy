@@ -81,9 +81,9 @@ typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
 extern u8 Data_0200024c[];
 extern const u16 gReelGame_SparkCellOffsets[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Task_ResetAll(void);
 s32 Task_Add(void (*callback)(void), s32 priority);
@@ -141,10 +141,10 @@ void ReelGame_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = Runtime_AllocateHeapBlock(100, 0x60e);
-  canvas = Runtime_AllocateHeapBlock(96, 0x8000);
-  work = Runtime_AllocateBlock(92, 0x7b7c);
-  state = Runtime_AllocateBlock(180, 0x61c);
+  sheet = HeapSlot_Alloc(100, 0x60e);
+  canvas = HeapSlot_Alloc(96, 0x8000);
+  work = HeapSlot_AllocEwram(92, 0x7b7c);
+  state = HeapSlot_AllocEwram(180, 0x61c);
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
@@ -427,14 +427,14 @@ void ReelGame_Run(void) {
                            0x10000 - (j << 12), 0x100);
       WaitFrames(1);
     }
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     Task_Remove(BattlePres_ProcessPendingTileTransfer);
     Task_Remove(Func_081b243c);
     Task_Remove(Func_081b3294);
-    Runtime_ReleaseHeapBlock(180);
-    Runtime_ReleaseHeapBlock(96);
-    Runtime_ReleaseHeapBlock(92);
-    Runtime_ReleaseHeapBlock(100);
+    HeapSlot_Release(180);
+    HeapSlot_Release(96);
+    HeapSlot_Release(92);
+    HeapSlot_Release(100);
   }
 }

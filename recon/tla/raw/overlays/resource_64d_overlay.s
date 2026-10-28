@@ -981,7 +981,7 @@ Func_02000510:
 	movs r1, #2
 	bl Func_02002a5c
 	movs r0, #178
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #20
 	bl FieldEvent_WaitFrames
 	movs r1, #128
@@ -993,7 +993,7 @@ Func_02000510:
 	bl FieldEvent_WaitFrames
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r1, #0
 	movs r0, #12
 	bl ObjectMotion_SetActionVariant
@@ -1435,7 +1435,7 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #133
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	ldr r3, [r7, #8]
 	movs r2, #128
 	lsls r2, r2, #12
@@ -1483,19 +1483,19 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #135
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl FieldEvent_WaitFrames
 	movs r0, #135
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl FieldEvent_WaitFrames
 	movs r0, #135
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl FieldEvent_WaitFrames
 	movs r0, #135
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl FieldEvent_WaitFrames
 	movs r0, #20
@@ -2290,7 +2290,7 @@ Func_02001fd0:
 	adds r3, r6, r0
 	strb r1, [r3]
 	movs r0, #134
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 .L_0200a0bc:
 	movs r3, #128
 	lsls r3, r3, #4
@@ -2396,7 +2396,7 @@ Func_02001fd0:
 	bne .L_0200a17c
 	movs r0, #155
 	lsls r0, r0, #1
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 .L_0200a17c:
 	movs r2, #0
 	ldrsh r3, [r5, r2]
@@ -2424,7 +2424,7 @@ Func_02001fd0:
 	cmp r3, #0
 	bne .L_0200a1c2
 	movs r0, #144
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #192
 	movs r1, #192
 	movs r2, #128
@@ -2693,7 +2693,7 @@ Func_020023a4:
 	lsls r1, r1, #4
 	movs r0, #220
 	sub sp, #4
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r7, r0, #0
 	adds r0, r5, #0
 	bl Object_GetById
@@ -2865,7 +2865,7 @@ Func_020023a4:
 .L_0200a524:
 	.4byte 0xfff40000
 .L_0200a528:
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a588
@@ -2899,7 +2899,7 @@ Func_020023a4:
 	mov r0, r11
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #4
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -3102,7 +3102,7 @@ Func_020026f4:
 	adds r1, #136
 	movs r0, #220
 	sub sp, #4
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r6, r0, #0
 	ldr r0, .L_0200a7a8
 	bl Resource_GetTableEntry

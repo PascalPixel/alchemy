@@ -17,10 +17,10 @@
 s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
   GlyphTransfer *work;
 
-  work = Runtime_AllocateHeapBlock(0x44, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(0x44, sizeof(GlyphTransfer));
   Icon_DrawMisc(no);
   VramCache_Load(slot, 0x80, work->tiles);
-  Runtime_ReleaseHeapBlock(0x44);
+  HeapSlot_Release(0x44);
   return 1;
 }
 

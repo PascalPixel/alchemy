@@ -34,7 +34,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   positionY = requestedY;
   shouldUseSetter = useSetter;
   positionZ = requestedZ;
-  runtimeBlock = Runtime_AllocateBlock(108, 0xd50);
+  runtimeBlock = HeapSlot_AllocEwram(108, 0xd50);
   object = runtimeBlock->viewCenter;
   map = Ram_HeapSlots->mapWork;
   minimumX = map->minX + 0x780000;

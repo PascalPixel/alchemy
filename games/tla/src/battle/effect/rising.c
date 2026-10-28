@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "mem.h"
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
@@ -28,7 +28,7 @@ void Func_080cf350(struct ObjectRuntime *object) {
      * after the motion byte's store; as an ordinary local, 2 of 40
      * instructions differ in tla-en. */
     register struct ObjectRuntime *found asm("r0") =
-        ObjectTable_Get(EventRuntime_GetControlledOwner());
+        ObjectTable_Get(Party_GetLeaderActor());
     object->acceleration = 0x10000;
     object->speedLimit = 0x20000;
     object->motionFlags = 0;
@@ -50,7 +50,7 @@ void EffectRuntime_RunObjectRiseAndDescent(struct ObjectRuntime *object, s32 fla
   struct ObjectRuntime *owner;
 
   if (object != 0) {
-    owner = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    owner = ObjectTable_Get(Party_GetLeaderActor());
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gData_080effd8);
@@ -86,8 +86,8 @@ void Object_Destroy(struct ObjectRuntime *object);
 
 void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectRuntime *owner =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
-  u8 *buffer = Runtime_AllocateHeapBlock(68, 0x608);
+      ObjectTable_Get(Party_GetLeaderActor());
+  u8 *buffer = HeapSlot_Alloc(68, 0x608);
   struct ObjectRuntime *object =
       Func_080200c0(489, owner->x, owner->y + 0x240000, owner->z);
 
@@ -113,7 +113,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
 
     Func_08038248(item);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
 
     if (flags & 1)
       object->update = Marker_MoveLeaderAwayFromEmitter;

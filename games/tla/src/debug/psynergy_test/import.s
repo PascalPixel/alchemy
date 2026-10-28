@@ -165,11 +165,11 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000e94
 	.thumb_func
 Func_02000e94:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_02000e9c
 	.thumb_func
 Func_02000e9c:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

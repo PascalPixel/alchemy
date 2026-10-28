@@ -554,7 +554,7 @@ BattleEffect_RunFirePuppet:
 	adds r0, r6, #0
 	bl Render_DrawModelList
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_0817c202:
 	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #4
@@ -577,7 +577,7 @@ BattleEffect_RunFirePuppet:
 	b .L_0817bed4
 .L_0817c22e:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0817c278
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

@@ -12,7 +12,7 @@ extern char SceneId_Ov6B0Room4;
 extern const s32 gData_02003574[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
@@ -34,7 +34,7 @@ void Func_020034b8(s32 sound);
 static __inline__ struct ObjectRuntime *Create(s32 type, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
    * of 159 instructions differ in tla-en. */
-  return Engine_ObjectCreate(type, x, y, z);
+  return Import_ActorCreate(type, x, y, z);
 }
 
 /// An event handler from the sanctum's event table (data.c): changes the

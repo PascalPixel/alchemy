@@ -34,7 +34,7 @@ s32 Task_Add(void (*callback)(void), s32 order);
 /// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move
 /// them; the overlay's copy of FieldEffect_InitializeSparkles.
 void Func_02001ad8(void) {
-  struct DustWork *work = Runtime_AllocateBlock(116, sizeof(struct DustWork));
+  struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
@@ -48,11 +48,11 @@ void Func_02001ad8(void) {
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work, 0x85000205, REG_DMA3);
-  buf = Runtime_AllocateBlock(56, 0x400);
+  buf = HeapSlot_AllocEwram(56, 0x400);
   Func_02001c24(gField_Tiles679, buf);
   work->vramEntry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   work->field808 = size;
   i = 0;
 loop:

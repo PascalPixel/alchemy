@@ -26,21 +26,21 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateBlock
+	.global HeapSlot_AllocEwram
 	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_ReleaseHeapBlock
+HeapSlot_AllocEwram:
+	overlay_veneer HeapSlot_AllocEwramFar
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global MemAlloc
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_020028b0
 	.thumb_func
@@ -98,9 +98,9 @@ Func_02002910:
 	.thumb_func
 Func_02002918:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02002928
 	.thumb_func
@@ -161,11 +161,11 @@ FieldEvent_WaitFrames:
 	.global Func_02002998
 	.thumb_func
 Func_02002998:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020029a0
 	.thumb_func
 Func_020029a0:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -225,7 +225,7 @@ Func_02002a10:
 	.global Func_02002a18
 	.thumb_func
 Func_02002a18:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02002a20
 	.thumb_func
 Func_02002a20:
@@ -249,7 +249,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002a48
 	.thumb_func
 Func_02002a48:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -265,7 +265,7 @@ Func_02002a60:
 	.global Func_02002a68
 	.thumb_func
 Func_02002a68:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02002a70
 	.thumb_func
 Func_02002a70:

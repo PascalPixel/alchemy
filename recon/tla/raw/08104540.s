@@ -55,11 +55,11 @@ Func_08104540:
 	str r7, [sp, #72]
 	str r7, [r0, #4]
 	movs r0, #96
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r5, r0, #0
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22
@@ -79,9 +79,9 @@ Func_08104540:
 	str r0, [sp, #72]
 	str r0, [r1, #4]
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #72]
 	movs r1, #6
 	subs r0, #1

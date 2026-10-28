@@ -12,7 +12,7 @@
 void Window_DrawTilemapResource(struct Window *window,
                                   const void *resource) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  u16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
+  u16 *buffer = Heap_AllocEwram(0x300);
   s32 offset;
   u16 *map;
   u16 *vram;
@@ -35,5 +35,5 @@ void Window_DrawTilemapResource(struct Window *window,
     vram += 32 - window->width;
     map += 32 - window->width;
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

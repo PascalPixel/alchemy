@@ -3,30 +3,30 @@
 #include "adventure.h"
 #include "item.h"
 
-void EventRuntime_RunMessage(s32 actor, s32 message) {
-  EventRuntime_Start();
-  EventRuntime_SetMessage(message);
-  EventRuntime_ShowMessageAndWait(actor, 0);
-  EventRuntime_End();
+void Event_RunMessage(s32 actor, s32 message) {
+  Event_Start();
+  Event_SetMessageId(message);
+  Event_ShowMessageAndWait(actor, 0);
+  Event_End();
 }
 
-void EventRuntime_ResolveAllPendingActions(void) {
-  EventRuntime_ResolvePendingActions(0);
+void Event_ResolveAllPendingActions(void) {
+  Event_ResolvePendingActions(0);
 }
 
-void EventRuntime_ResolvePendingActions(s32 skip) {
+void Event_ResolvePendingActions(s32 skip) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
 
   state->actionCounter = 0;
   if (state->pendingFirst != 0 && !(skip & 1))
-    EventRuntime_ExecutePackedAction(0x2090);
+    Event_ExecutePackedAction(0x2090);
   if (state->pendingSecond != 0 && !(skip & 2))
-    EventRuntime_ExecutePackedAction(0x209b);
+    Event_ExecutePackedAction(0x209b);
   if (gAdventure.pendingThird != 0 && !(skip & 4))
-    EventRuntime_ExecutePackedAction(0x208b);
+    Event_ExecutePackedAction(0x208b);
 }
 
-s32 EventRuntime_GetControlledOwner(void) {
+s32 Party_GetLeaderActor(void) {
   struct Adventure *state = &gAdventure;
   s32 actor;
 

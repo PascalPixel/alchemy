@@ -798,7 +798,7 @@ BattleEffect_RunCruelRuin:
 	bne .L_08140360
 .L_081403aa:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #64]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1250,13 +1250,13 @@ BattleEffect_RunCruelRuin:
 	bl Render_DrawModelList
 .L_08140760:
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	movs r5, #238
 	lsls r5, r5, #7
 	adds r5, #168
 	ldr r0, [sp, #64]
 	add r5, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r3, [r5]
 	cmp r3, #0
 	ble .L_081407a0
@@ -1796,7 +1796,7 @@ BattleEffect_RunCruelRuin:
 .L_08140b96:
 	movs r0, #132
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #56]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1909,7 +1909,7 @@ BattleEffect_RunCruelRuin:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -1928,7 +1928,7 @@ BattleEffect_RunCruelRuin:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08140cb0:
 	movs r2, #1
 	add r10, r2
@@ -2246,9 +2246,9 @@ BattleEffect_RunCruelRuin:
 	b .L_08140de8
 .L_08140f24:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #56]
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_0814109c
 	ldr r2, [sp, #40]
 	ldr r4, [r3, #4]
@@ -2819,7 +2819,7 @@ BattleEffect_RunCruelRuin:
 	.2byte 0xf800
 .L_08141380:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2936,9 +2936,9 @@ BattleEffect_RunCruelRuin:
 	bl Render_DrawModelList
 .L_08141478:
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_08141484:
 	ldr r0, [sp, #116]
 	movs r1, #8
@@ -2989,7 +2989,7 @@ BattleEffect_RunCruelRuin:
 	ldr r0, .L_08141538
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #196
 	pop {r3, r5, r6, r7}

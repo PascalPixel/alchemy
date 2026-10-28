@@ -659,9 +659,9 @@ BattleEffect_RunVolcano:
 	b .L_0814a3ac
 .L_0814a76e:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0814a7a4
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

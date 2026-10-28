@@ -14,7 +14,7 @@ struct VenusActor {
 void Func_02001c1c(s32 message);
 void Camera_FollowActor(s32 actor, s32 target);
 void Func_02001c4c(void);
-void Engine_EventWait(s32 frames);
+void Import_EventWaitFrames(s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -24,7 +24,7 @@ void Func_02001c34(s32 actor, s32 height, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Func_02001c24(s32 actor, s32 value);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 void Func_02001be4(s32 actor, s32 x, s32 z);
 void Func_02001cd4(s32 actor);
 void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
@@ -32,11 +32,11 @@ void Object_TurnToFaceEachOther(s32 first, s32 second, s32 distance);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
-struct VenusActor *Engine_ActorGet(s32 id);
+void Import_ActorSetAnimation(s32 actor, s32 animation);
+struct VenusActor *Import_ActorGet(s32 id);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Func_02001ccc(s32 actor, s32 value);
-void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
 void GameFlag_ClearBit(s32 flag);
 void Party_RemoveActiveOwner(s32 owner);
@@ -59,7 +59,7 @@ static inline void Venus_ObjAttach(s32 actor, s32 target) {
 
 static inline void Venus_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_EventWait(frames);
+  Import_EventWaitFrames(frames);
 }
 
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
@@ -113,7 +113,7 @@ static inline void Venus_MessagePut(s32 actor, s32 value) {
 
 static inline void Venus_Se(s32 cue) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_AudioPlayCue(cue);
+  Import_SoundPlay(cue);
 }
 
 static inline void Venus_ObjSetPos(s32 actor, s32 x, s32 z) {
@@ -153,7 +153,7 @@ static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
 
 static inline void Venus_ObjAnim(s32 actor, s32 animation) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_ActorSetAnimation(actor, animation);
+  Import_ActorSetAnimation(actor, animation);
 }
 
 static inline void Venus_ObjPlace(s32 actor, s32 x, s32 z) {
@@ -169,7 +169,7 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 static inline void Venus_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_MapCopyCellsTo(srcX, srcY, destX, destY, width, height);
+  Import_MapCopyCellPictureIndicesRect(srcX, srcY, destX, destY, width, height);
 }
 
 static inline void Venus_FlagClr(s32 flag) {
@@ -623,14 +623,14 @@ void Func_02000d30(void) {
   Venus_Wait(20);
   Venus_ObjSpeed(8, 0x13333, 0x9999);
   Venus_ObjAnim(8, 2);
-  actor = Engine_ActorGet(5);
+  actor = Import_ActorGet(5);
   if (actor != NULL)
     ObjectMotion_ResetAndSetPosition(8, actor->xPixel, actor->zPixel);
   Venus_ObjCommitHere(8);
   Venus_ObjSetPos(8, 0, 0);
   Venus_ObjSpeed(9, 0x13333, 0x9999);
   Venus_ObjAnim(9, 2);
-  actor = Engine_ActorGet(5);
+  actor = Import_ActorGet(5);
   if (actor != NULL)
     ObjectMotion_ResetAndSetPosition(9, actor->xPixel, actor->zPixel);
   Venus_ObjCommitHere(9);

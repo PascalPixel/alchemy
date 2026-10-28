@@ -190,7 +190,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -15,7 +15,7 @@ Func_080eb960:
 	adds r5, r0, #0
 	movs r0, #92
 	sub sp, #48
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	str r0, [sp, #32]
 	adds r0, r5, #0
 	bl ObjectTable_Get
@@ -349,7 +349,7 @@ Func_080eb960:
 	ldr r0, [sp, #24]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #48
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -97,7 +97,7 @@ void Sound_PlayFar(s32 cue);
 // than 2,048 pixels gets no sway.
 void Func_080e8db0(void) {
   struct ShakeWork *work =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
+      HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *target = scene->target;
@@ -224,5 +224,5 @@ void Func_080e8db0(void) {
   Resource_ResetEntry(tiles);
   BattleEffect_PrepareBufferInterpolation();
 release:
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }

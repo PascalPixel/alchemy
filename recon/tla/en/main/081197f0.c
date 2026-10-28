@@ -79,7 +79,7 @@ extern u8 MsgDowned[];
 extern u8 MsgPartyDefeated[];
 extern u8 MsgGoesDownInDefeat[];
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void Task_ResetAll(void);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
@@ -172,11 +172,11 @@ s32 Func_081197f0(s32 enemyGroup) {
   s16 cue;
   s32 scripted;
 
-  camera = Runtime_AllocateBlock(48, sizeof(struct BattleCamera));
-  battle = Runtime_AllocateBlock(36, sizeof(struct EncounterWork));
-  Runtime_AllocateBlock(216, 0x7c8);
-  transition = Runtime_AllocateBlock(176, 32);
-  Runtime_AllocateBlock(44, 0x280);
+  camera = HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
+  battle = HeapSlot_AllocEwram(36, sizeof(struct EncounterWork));
+  HeapSlot_AllocEwram(216, 0x7c8);
+  transition = HeapSlot_AllocEwram(176, 32);
+  HeapSlot_AllocEwram(44, 0x280);
   result = 0;
   Iwram_ClearWords(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
@@ -194,11 +194,11 @@ s32 Func_081197f0(s32 enemyGroup) {
   Iwram_FillWords(battle, sizeof(struct EncounterWork), 0);
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
-  Runtime_AllocateBlock(148, 12);
+  HeapSlot_AllocEwram(148, 12);
   Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);
   battle->background = Event_GetSpecialValueFar();
-  Runtime_AllocateBlock(16, 0xe00);
-  Runtime_AllocateBlock(12, 0x600);
+  HeapSlot_AllocEwram(16, 0xe00);
+  HeapSlot_AllocEwram(12, 0x600);
   ObjectSystem_InitializeFar(4);
   if (GameFlag_Test(0x16e) != 0)
     WindowSystem_InitBattleFar(1);

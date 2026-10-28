@@ -53,7 +53,7 @@ Map_WriteLayerCellTile:
 	strh r5, [r2]
 	movs r0, #56
 	adds r1, r6, #0
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	lsls r3, r5, #2
 	mov r2, r11
 	adds r7, r0, #0
@@ -133,7 +133,7 @@ Map_WriteLayerCellTile:
 	bls .L_0802b948
 .L_0802b970:
 	movs r0, #56
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #1
 .L_0802b978:
 	pop {r3, r5, r6, r7}

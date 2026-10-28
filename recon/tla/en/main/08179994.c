@@ -90,7 +90,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -256,8 +256,8 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     spin += 256;
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

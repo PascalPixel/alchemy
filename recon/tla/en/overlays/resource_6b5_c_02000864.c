@@ -128,7 +128,7 @@ s32 Func_02000864(void) {
     WaitFrames(5);
   }
   if (!failed) {
-    buf = Runtime_AllocateBlock(216, 0x7c8);
+    buf = HeapSlot_AllocEwram(216, 0x7c8);
     Task_RemoveFar(Func_02000134);
     Func_0200198c(5);
     WaitFrames(8);
@@ -156,7 +156,7 @@ s32 Func_02000864(void) {
         WaitFrames(8);
         Func_02001994(5);
         ObjectMotion_CommitCurrentPositionAndActivate(4);
-        Runtime_ReleaseHeapBlock(216);
+        HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)Func_02000134, TASK_PASS_VBLANK);
@@ -212,7 +212,7 @@ s32 Func_02000864(void) {
       if (i <= last)
         goto copy;
     }
-    Runtime_ReleaseHeapBlock(216);
+    HeapSlot_Release(216);
   }
   Func_02001a1c();
 }

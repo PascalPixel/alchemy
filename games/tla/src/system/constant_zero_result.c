@@ -56,4 +56,4 @@ void Func_080132c4(void) {}
 
 void Func_080132c8(void) {}
 
-int Runtime_ConstantZeroResult(void) { return 0; }
+int System_ReturnZero(void) { return 0; }

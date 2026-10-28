@@ -66,12 +66,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -334,7 +334,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       s32 k;
 
-      vertices = Runtime_BumpAllocateAlternatePool(0x400);
+      vertices = Heap_AllocEwram(0x400);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
@@ -416,8 +416,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(vertices);
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
 
     // The strike: flashes and a fountain of sparks.
@@ -492,7 +492,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + gData_08197486[k], x, y, gData_08197492[k],
             gData_08197498[k]);
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
       }
     }
     Func_08158ce0(16, 16);
@@ -501,7 +501,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   for (i = 0; i != 4; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }

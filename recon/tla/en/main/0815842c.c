@@ -101,7 +101,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 void EffectPosition_ProjectBattler(s32 id, s32 *position);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
@@ -223,7 +223,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

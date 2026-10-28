@@ -49,9 +49,9 @@ extern const u8 Data_080f1040[];
 extern const u8 gData_080f3614[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-s32 EventRuntime_GetControlledOwner(void);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
+s32 Party_GetLeaderActor(void);
 void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -62,7 +62,7 @@ void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-void EventRuntime_Wait(s32 frames);
+void Event_WaitFrames(s32 frames);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const void *script);
 void Task_Add(void (*callback)(void), s32 order);
@@ -74,8 +74,8 @@ void Func_080e9e8c(void);
 void Func_080e9f68(void);
 
 void Func_080ea14c(s32 targetId) {
-  struct MoteWork *work = Runtime_AllocateHeapBlock(92, 0x1d60);
-  s32 ownerId = EventRuntime_GetControlledOwner();
+  struct MoteWork *work = HeapSlot_Alloc(92, 0x1d60);
+  s32 ownerId = Party_GetLeaderActor();
   struct ObjectRuntime *owner = ObjectTable_Get(ownerId);
   struct ObjectRuntime *target = ObjectTable_Get(targetId);
   struct EffectSprite *sprite;
@@ -150,11 +150,11 @@ void Func_080ea14c(s32 targetId) {
   WaitFrames(1);
   Sound_PlayFar(139);
   Object_SetMode(target, 2);
-  EventRuntime_Wait(60);
+  Event_WaitFrames(60);
   target->action = 0;
   target->update = Func_080e9e8c;
   Sound_PlayFar(142);
-  EventRuntime_Wait(80);
+  Event_WaitFrames(80);
   ObjectDispatch_InitializeFar(target, Data_080f1040);
   work->moving = 0;
   Task_Add(Func_080e9f68, 0x480);
@@ -305,10 +305,10 @@ void Func_080ea14c(s32 targetId) {
   Object_ResetMotion(owner);
   owner->scaleX = 0x10000;
   owner->scaleY = 0x10000;
-  EventRuntime_Wait(10);
+  Event_WaitFrames(10);
   Task_Remove(Func_080e9f68);
   BattleEffect_PrepareBufferInterpolation();
   Resource_ResetEntry(moteEntry);
   Resource_ResetEntry(sparkEntry);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

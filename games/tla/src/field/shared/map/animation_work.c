@@ -31,8 +31,8 @@ void Func_080230e0(s32 mode) {
      52). */
   volatile u32 zero;
 
-  work = Runtime_AllocateBlock(24, sizeof(*work));
-  buffer = Runtime_AllocateBlock(20, 0x2000);
+  work = HeapSlot_AllocEwram(24, sizeof(*work));
+  buffer = HeapSlot_AllocEwram(20, 0x2000);
   ObjectSystem_Configure(mode);
   zero = 0;
   Dma_Set((const void *)&zero, buffer, 0x85000000 | (0x2000 / 4), REG_DMA3);

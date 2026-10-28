@@ -8,15 +8,15 @@ struct SceneState {
 extern struct SceneState gSceneState;
 extern const u8 gField_CachedTilesA[];
 
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 handle, s32 size, void *source);
 void Func_020055cc(const u8 *data, void *buffer);
 
 static __inline__ void *Mem_Alloc(s32 size) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return MemAlloc(size);
+  return Heap_Alloc(size);
 }
 
 static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {
@@ -33,5 +33,5 @@ void Func_020038ac(void) {
   handle = Resource_FindFreeEntry();
   Vram_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

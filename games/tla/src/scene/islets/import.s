@@ -26,10 +26,10 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateBlock
+	.global HeapSlot_AllocEwram
 	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
+HeapSlot_AllocEwram:
+	overlay_veneer HeapSlot_AllocEwramFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -109,11 +109,11 @@ FieldEvent_WaitFrames:
 	.global Func_02003e64
 	.thumb_func
 Func_02003e64:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02003e6c
 	.thumb_func
 Func_02003e6c:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -205,11 +205,11 @@ Object_SetPartAttribute:
 	.global Func_02003f24
 	.thumb_func
 Func_02003f24:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_02003f2c
 	.thumb_func
 Func_02003f2c:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -249,7 +249,7 @@ Func_02003f74:
 	.global Func_02003f7c
 	.thumb_func
 Func_02003f7c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02003f84
 	.thumb_func
 Func_02003f84:
@@ -269,7 +269,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003fa4
 	.thumb_func
 Func_02003fa4:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003fac
 	.thumb_func
 Func_02003fac:

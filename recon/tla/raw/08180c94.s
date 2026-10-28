@@ -506,7 +506,7 @@ BattleEffect_RunDaedalusAlt:
 	bl Resource_LoadAndDecompress
 .L_08181080:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -600,9 +600,9 @@ BattleEffect_RunDaedalusAlt:
 	cmp r6, #6
 	bne .L_081810cc
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 .L_08181158:
 	movs r0, #8
 	movs r1, #8
@@ -629,7 +629,7 @@ BattleEffect_RunDaedalusAlt:
 	ldr r0, .L_081811d0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #220

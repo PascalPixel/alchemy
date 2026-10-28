@@ -91,7 +91,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
@@ -470,7 +470,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

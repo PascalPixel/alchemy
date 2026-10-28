@@ -39,7 +39,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   s32 message;
 
   window = Window_Create(0, 0, 30, 20, 0);
-  tiles = Runtime_BumpAllocateAlternatePool(0x100);
+  tiles = Heap_AllocEwram(0x100);
   Resource_DecodeType01(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)0x06001000, 0x84000040, REG_DMA3);
   switch (kind) {
@@ -59,7 +59,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   Sound_SetBgmVolumeTargetFar(0, 30);
   Sound_PlayFar(298);
   WaitFrames(10);
-  MemFree(tiles);
+  Heap_Release(tiles);
   return window;
 }
 

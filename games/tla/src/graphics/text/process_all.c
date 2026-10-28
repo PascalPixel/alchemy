@@ -23,7 +23,7 @@ struct Work;
 s32 Text_GetMessageSize(s32 no, s32 arg1, s32 arg2, s32 arg3,
                                  s32 arg4);
 struct Work *Message_OpenWindow(s32 no, s32 x, s32 y, s32 flags);
-s32 EventRuntime_GetControlledOwnerFar(void);
+s32 Party_GetLeaderActorFar(void);
 s32 Func_080c82a8(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 void Window_Close(struct Work *work, s32 release);
@@ -68,7 +68,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   } else {
     s32 dy;
 
-    Func_080c82a8(EventRuntime_GetControlledOwnerFar(), pos);
+    Func_080c82a8(Party_GetLeaderActorFar(), pos);
     dy = pos[1] >> 3;
     if (dy > 9) {
       y = dy - 5;

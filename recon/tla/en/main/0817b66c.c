@@ -83,7 +83,7 @@ void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
@@ -92,7 +92,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -179,7 +179,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     }
 
     // One textured quad, drawn once for each dagger.
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     quad->unk14 = 0;
     texture.size = (texture.size & ~0xff) | 5;
@@ -216,8 +216,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       else
         BattleEffectKernels_IntegrateVector3(dagger, 64, -0x1000);
     }
-    MemFree(quad);
-    MemFree(vertices);
+    Heap_Release(quad);
+    Heap_Release(vertices);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 

@@ -2,7 +2,7 @@
 // SpriteViewer_Run (games/tbs/src/field/field/sprite_viewer.c), which never
 // returns. This game's changes: a blue backdrop; L and R step the sprite
 // number by ten in one call with Start held; Select passes only the first
-// resource set (no B choice) to Runtime_ConstantZeroResult; a press of B
+// resource set (no B choice) to System_ReturnZero; a press of B
 // cycles the backdrop through eight colours (gData_0802f054); a press of
 // Start toggles the shadows of the ten copies, whose sprites sit 56 bytes
 // apart from heap slot 4. Left: the native reads the held keys afresh for
@@ -42,8 +42,8 @@ extern u32 Data_02018000[];
 extern u8 gResource_Data012[];
 extern const u16 gData_0802f054[8];
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_InitializeHeap(void);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void Heap_Initialize(void);
 void Task_ResetAll(void);
 void Task_Add(void (*callback)(void), s32 order);
 void VramCache_Reset(void);
@@ -61,7 +61,7 @@ void Func_0802e4c8(s32 x, s32 y, void *ring);
 void Battle_PlaceActorsByFormationKind(void);
 void Fade_FromBlack(s32 vblanks);
 void WaitFrames(s32 frames);
-s32 Runtime_ConstantZeroResult(s32 resource, void *table);
+s32 System_ReturnZero(s32 resource, void *table);
 
 void Func_0802de8c(void) {
   s32 x;
@@ -83,7 +83,7 @@ void Func_0802de8c(void) {
   selectedLayer = 0;
   shadowsEnabled = 1;
   backdrop = 0;
-  ring = Runtime_AllocateBlock(36, 160);
+  ring = HeapSlot_AllocEwram(36, 160);
   gDecodeFillByte = 3;
   zero = backdrop;
   Dma_Set((const void *)&zero, ring, 0x85000000 | 1, REG_DMA3);
@@ -104,9 +104,9 @@ void Func_0802de8c(void) {
   Fade_FromBlack(1);
 
 restart:
-  Runtime_InitializeHeap();
+  Heap_Initialize();
   Task_ResetAll();
-  ring = Runtime_AllocateBlock(36, 160);
+  ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
   Func_080230e0(2);
   ResourceSlot_Load(0, gMapCellBuffer, table[0].spriteId, 0);
@@ -290,7 +290,7 @@ next:
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      Runtime_ConstantZeroResult(0x12, gResource_Data012);
+      System_ReturnZero(0x12, gResource_Data012);
       goto restart;
     }
     if (gInput.pressed & 2) {

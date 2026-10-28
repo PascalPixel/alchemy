@@ -492,7 +492,7 @@ BattleEffect_RunOdyssey:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08190f62:
 	mov r3, r11
 	cmp r3, #89
@@ -797,7 +797,7 @@ BattleEffect_RunOdyssey:
 	cmp r7, #1
 	bne .L_081911b2
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081911b2:
 	ldr r0, [sp, #16]
 	ldr r1, [sp, #12]
@@ -816,7 +816,7 @@ BattleEffect_RunOdyssey:
 	b .L_08190fd4
 .L_081911d0:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1135,9 +1135,9 @@ BattleEffect_RunOdyssey:
 	bne .L_08191416
 .L_0819147a:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
 	bl ObjectGroup_CountDownMemberTimers
@@ -1178,7 +1178,7 @@ BattleEffect_RunOdyssey:
 	ldr r0, .L_0819152c
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #136
 	pop {r3, r5, r6, r7}

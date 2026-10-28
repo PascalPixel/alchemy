@@ -34,13 +34,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_BumpAllocateAlternatePool
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001184
 	.thumb_func
@@ -74,9 +74,9 @@ Func_020011b4:
 	.thumb_func
 Func_020011bc:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -113,11 +113,11 @@ FieldEvent_WaitFrames:
 	.global Func_0200120c
 	.thumb_func
 Func_0200120c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001214
 	.thumb_func
 Func_02001214:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -177,11 +177,11 @@ Object_SetPartAttribute:
 	.global Func_0200128c
 	.thumb_func
 Func_0200128c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_02001294
 	.thumb_func
 Func_02001294:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -201,7 +201,7 @@ Func_020012b4:
 	.global Func_020012bc
 	.thumb_func
 Func_020012bc:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_020012c4
 	.thumb_func
 Func_020012c4:
@@ -221,7 +221,7 @@ Event_WaitTransitionFrames:
 	.global Func_020012e4
 	.thumb_func
 Func_020012e4:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -245,7 +245,7 @@ Func_0200130c:
 	.global Func_02001314
 	.thumb_func
 Func_02001314:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_0200131c
 	.thumb_func
 Func_0200131c:

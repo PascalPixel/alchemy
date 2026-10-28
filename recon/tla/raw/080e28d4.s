@@ -14,7 +14,7 @@ Func_080e28d4:
 	adds r6, r1, #0
 	sub sp, #24
 	adds r5, r0, #0
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	mov r9, r0
 	bl Object_GetById
 	mov r10, r0
@@ -83,7 +83,7 @@ Func_080e28d4:
 	adds r3, #100
 	strh r2, [r3]
 	movs r0, #10
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	mov r0, r9
 	movs r1, #3
 	bl ObjectMotion_SetVariantCallback
@@ -92,7 +92,7 @@ Func_080e28d4:
 	mov r0, r9
 	bl Func_080d489c
 	movs r0, #32
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	str r5, [r7, #72]
 	movs r5, #192
 	lsls r5, r5, #11
@@ -100,12 +100,12 @@ Func_080e28d4:
 	str r5, [r7, #40]
 	bl Sound_PlayFar
 	movs r0, #15
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	movs r0, #152
 	str r5, [r7, #40]
 	bl Sound_PlayFar
 	movs r0, #23
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	movs r0, #146
 	bl Sound_PlayFar
 	ldr r3, [r7, #8]

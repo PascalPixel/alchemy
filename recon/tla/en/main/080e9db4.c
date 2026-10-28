@@ -22,19 +22,19 @@
 #include "adventure.h"
 #include "task.h"
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void WaitFrames(s32 frames);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
 
 void Func_080e9db4(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   struct ObjectRuntime *object =
-      Object_GetById(EventRuntime_GetControlledOwner());
+      Object_GetById(Party_GetLeaderActor());
   s32 i;
 
   Task_Remove(Func_080e9940);
@@ -70,5 +70,5 @@ void Func_080e9db4(void) {
     object->gravity = 0x10000;
   } while (0);
   Resource_ResetEntry(*(s16 *)(work + 0x102c));
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

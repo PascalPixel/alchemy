@@ -4,7 +4,7 @@
 
 extern char ResourceId_BuildStamp;
 
-u16 Runtime_GetBuildStampTime(void) {
+u16 BuildStamp_GetTime(void) {
   u8 *digits;
   s32 hourTens;
   s32 hourUnits;

@@ -16,7 +16,7 @@ Func_080e7844:
 	adds r1, #96
 	movs r0, #92
 	sub sp, #100
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r5, #192
 	str r0, [sp, #72]
 	lsls r5, r5, #18
@@ -911,7 +911,7 @@ Func_080e7844:
 	movs r3, #26
 	ldrsh r2, [r0, r3]
 	ldr r0, [sp, #20]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080e7f5c:
 	ldr r0, [sp, #48]
 	bl Resource_ResetEntry
@@ -925,7 +925,7 @@ Func_080e7844:
 	bl BattleEffect_PrepareBufferInterpolation
 .L_080e7f74:
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #100
 	pop {r3, r5, r6, r7}
 	mov r8, r3

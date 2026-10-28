@@ -52,8 +52,8 @@ extern void (*gData_08197aa0[])(s32 *script);
 extern struct FxBgScroll gBgScroll[];
 extern u32 gCameraSceneParameters[];
 
-void *Runtime_AllocateHeapBlock(s32 block, s32 size);
-void Runtime_ReleaseHeapBlock(s32 block);
+void *HeapSlot_Alloc(s32 block, s32 size);
+void HeapSlot_Release(s32 block);
 void *Unit_Get(s32 owner);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);

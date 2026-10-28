@@ -19,10 +19,10 @@ void Camera_MoveWithinMapBounds();
 void Object_SetPositionAndResetMotion();
 void WaitFrames();
 void Func_02001e18();
-s32 Runtime_AllocateHeapBlockFar();
+s32 HeapSlot_AllocFar();
 void Func_02001d90();
 void VramCache_Load();
-void Runtime_ReleaseHeapBlock();
+void HeapSlot_Release();
 void Func_02001010(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -89,10 +89,10 @@ void Func_020010d4(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     ((u8 *)statue)[0x5c] = 1;
-    block = (u8 *)Value2(Runtime_AllocateHeapBlockFar, 68, 0x608);
+    block = (u8 *)Value2(HeapSlot_AllocFar, 68, 0x608);
     Call1(Func_02001d90, 242);
     Call3(VramCache_Load, sprite->vramBlock, 0x80, (s32)(block + 0x400));
-    Call1(Runtime_ReleaseHeapBlock, 68);
+    Call1(HeapSlot_Release, 68);
   }
   Func_02001010();
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;

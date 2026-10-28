@@ -27,7 +27,7 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 
-  work = (struct WindowWork *)Runtime_AllocateBlock(
+  work = (struct WindowWork *)HeapSlot_AllocEwram(
       60, sizeof(struct WindowWork));
   Iwram_ClearWords(work, sizeof(struct WindowWork));
   work->dirty = 1;
@@ -51,7 +51,7 @@ void WindowSystem_InitBattle(s32 kind) {
     return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
   }
 
-  work = (struct WindowWork *)Runtime_AllocateBlock(
+  work = (struct WindowWork *)HeapSlot_AllocEwram(
       60, sizeof(struct WindowWork));
   Iwram_ClearWords(work, sizeof(struct WindowWork));
   work->dirty = 1;

@@ -67,8 +67,8 @@ struct FxEvent {
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
@@ -97,12 +97,12 @@ void BattleEffect_SinkAndShrinkObject(void);
 struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e5a64(void);
 
 void Func_080e5d5c(void) {
-  struct ShineWork *work = Runtime_AllocateHeapBlock(92, 0x18b4);
+  struct ShineWork *work = HeapSlot_Alloc(92, 0x18b4);
   struct FxEvent *event = Ram_HeapSlots->eventWork;
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *child = scene->child;
@@ -269,7 +269,7 @@ void Func_080e5d5c(void) {
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1))
         Func_080eb01c(&work->glow);
-      EventRuntime_RunPendingEvent(pending, work->fading, frame);
+      Field_RunPsynergyEvent(pending, work->fading, frame);
       frame++;
     }
     Task_Remove(Func_080e5a64);
@@ -283,5 +283,5 @@ void Func_080e5d5c(void) {
   BattleEffect_EndCanvasSprite();
 end:
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

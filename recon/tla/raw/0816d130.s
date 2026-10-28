@@ -306,7 +306,7 @@ BattleEffect_RunNirvana:
 	ldr r0, .L_0816d3d0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}

@@ -41,7 +41,7 @@ s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(u32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
@@ -75,7 +75,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = Engine_ObjectCreate(0x8000, object->x, object->y, object->z);
+  rider = Import_ActorCreate(0x8000, object->x, object->y, object->z);
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= 128;

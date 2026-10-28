@@ -29,7 +29,7 @@ extern const s16 gData_0802ec5c[16];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d87c(struct ObjectRuntime *object, struct FieldPosition *position);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values);
 s16 ArcTan2(s32 y, s32 x);
 s32 GameFlag_Test(s32 flag);
@@ -236,7 +236,7 @@ push_objects:
       continue;
     if (other == object)
       continue;
-    if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x,
+    if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
                                    other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {

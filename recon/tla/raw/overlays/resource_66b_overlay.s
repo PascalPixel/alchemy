@@ -795,7 +795,7 @@ Func_02001068:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r1, r0, #0
 	adds r2, r1, #0
 	movs r3, #0

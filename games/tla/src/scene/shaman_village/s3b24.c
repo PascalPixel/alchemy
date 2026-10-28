@@ -2,7 +2,7 @@
 
 void Func_02003b24(void) {
   ObjectMotion_SetActionVariant(6, 1);
-  Engine_AudioPlayCue(131);
+  Import_SoundPlay(131);
   Func_02004a54();
   Func_02004a6c(Object_GetById(6), 2);
   FieldEvent_WaitFrames(40);

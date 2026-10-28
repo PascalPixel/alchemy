@@ -10,13 +10,13 @@ WaitFrames:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Runtime_BumpAllocateAlternatePool
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Resource_DecodeType01
 	.thumb_func

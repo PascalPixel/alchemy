@@ -237,7 +237,7 @@ BattleEffect_RunUndeadSword:
 	mov lr, r12
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -306,9 +306,9 @@ BattleEffect_RunUndeadSword:
 	cmp r2, #16
 	bne .L_0816a92c
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	mov r3, r9
 	cmp r3, #7
 	bgt .L_0816a9b0

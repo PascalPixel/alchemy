@@ -93,7 +93,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
@@ -101,12 +101,12 @@ void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
@@ -279,7 +279,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     if (effect->variant == 1) {
       // The jaw, twice, a quarter turn apart: it grows from frame 56 and
       // fades out from frame 64.
-      vertices = Runtime_BumpAllocateAlternatePool(512);
+      vertices = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame > 55) {
         s32 scale = ((frame - 56) << 13) + 0x4000;
@@ -311,8 +311,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           }
         }
       }
-      MemFree(model);
-      MemFree(vertices);
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
 
     // Frame 64: both land the right way up.
@@ -342,6 +342,6 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

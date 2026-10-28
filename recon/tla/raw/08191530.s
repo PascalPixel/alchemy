@@ -143,7 +143,7 @@ Func_08191530:
 	adds r0, r5, #0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0819191c
 	mov r1, r9
 	movs r2, #1
@@ -490,7 +490,7 @@ Func_08191530:
 	ldr r0, .L_0819192c
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #28
 	pop {r3, r5, r6, r7}

@@ -55,35 +55,35 @@ void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
                             s32 destX, s32 destY);
 void Sound_PlayFar(s32 cue);
 
-void Engine_EventStart(void);
-void Engine_EventEnd(void);
-void Engine_EventWait(s32 frames);
-void Engine_EventResolvePendingActions(s32 skip);
-void Engine_EventSetMessage(s32 message);
-s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
-void Engine_EventShowMessage(s32 speaker, s32 flags);
-s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
-void Engine_EventSetCountdown(s32 countdown);
-void Engine_EventCloseScreen(void);
-void Engine_EventWaitDelay(void);
-s32 Engine_PartyGetLeaderActor(void);
-struct FieldActor *Engine_ActorGet(s32 actor);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
-void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
-void Engine_ActorReturnHome(s32 mode, s32 actor, s32 flag);
-s32 Engine_GameFlagIsSet(s32 flag);
-void Engine_GameFlagSet(s32 flag);
-void Engine_ShopOpen(s32 shop, s32 keeper);
-void Engine_AudioPlayCue(s32 cue);
-void Engine_MessageShowCentered(s32 message, s32 flags);
-void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Import_EventStart(void);
+void Import_EventEnd(void);
+void Import_EventWaitFrames(s32 frames);
+void Import_EventResolvePendingActions(s32 skip);
+void Import_EventSetMessageId(s32 message);
+s32 Import_FieldMessageShowAtActor(s32 speaker, s32 flags);
+void Import_EventShowMessageAndWait(s32 speaker, s32 flags);
+s32 Import_EventAskYesNoWithActorAnimation(s32 actor, s32 flags);
+void Import_EventSetExitRequest(s32 countdown);
+void Import_EventFinishScreenTransition(void);
+void Import_EventWaitTransitionFrames(void);
+s32 Import_PartyGetLeaderActor(void);
+struct FieldActor *Import_ActorGet(s32 actor);
+void Import_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Import_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+void Import_ActorSetAnimation(s32 actor, s32 animation);
+void Import_ActorSetSpritePriority(s32 actor, s32 priority);
+void Import_ActorReturnHome(s32 mode, s32 actor, s32 flag);
+s32 Import_GameFlagIsSet(s32 flag);
+void Import_GameFlagSet(s32 flag);
+void Import_ShopOpen(s32 shop, s32 keeper);
+void Import_SoundPlay(s32 cue);
+void Import_FieldMessageShow(s32 message, s32 flags);
+void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
-void Engine_MapCopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
+void Import_MapCopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                   s32 destX, s32 destY);
-struct FieldActor *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
-void Engine_ObjectSetMode(struct FieldActor *object, s32 mode);
-void Engine_ObjectSetScript(struct FieldActor *object, const void *script);
+struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Import_ActorSetMode(struct FieldActor *object, s32 mode);
+void Import_ActorSetScript(struct FieldActor *object, const void *script);
 
 #endif

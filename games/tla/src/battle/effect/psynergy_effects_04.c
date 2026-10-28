@@ -17,7 +17,7 @@ void Func_080e9af4(void);
 void Func_080e74d8(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 
 /// Psynergy effect 23 cast on a target: runs its effect.
 void BattleEffect_CallEffect23(void) { Func_080e4a34(); }

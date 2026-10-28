@@ -176,7 +176,7 @@ BattleEffect_CleanupSceneObjects:
 .L_080dc938:
 	bl Event_NoOp
 	movs r0, #224
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_080dc942:
 	add sp, #4
 	pop {r3, r5, r6, r7}

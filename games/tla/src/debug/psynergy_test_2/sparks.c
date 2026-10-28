@@ -30,8 +30,8 @@ struct SparkWork {
 
 s32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);
@@ -50,5 +50,5 @@ void Func_02000358(void) {
 
   Task_RemoveFar(Func_0200015c);
   Resource_ResetEntry(work->resource);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

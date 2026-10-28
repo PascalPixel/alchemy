@@ -33,7 +33,7 @@ void WaitFrames();
 void FieldEvent_WaitFrames();
 s32 Random16Far();
 void Func_0200015c();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 void Func_02001f4c();
 void Party_SetFields1eeAnd1f0();
 s32 Func_0200200c();
@@ -199,7 +199,7 @@ L_02009354:
   r8 = r8 + 1;
   if (r8 != 16)
     goto L_02009354;
-  v6 = Engine_ObjectCreate(159, 0x15c0000, 0, 0xb80000);
+  v6 = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
   r5 = v6;
   FIELD_AT(r5, s32, 108) = (s32)Func_020010a8;
   Call1((void (*)())FieldEvent_WaitFrames, 60);

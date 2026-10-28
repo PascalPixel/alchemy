@@ -57,7 +57,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void Func_080eb298(struct EffectSprite *sprite, struct BurstMote *mote);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_080e807c(void);
 extern char ResourceId_SparkleFade;
 
@@ -141,5 +141,5 @@ void Func_080e87c4(void) {
   Resource_ResetEntry(slot);
   Resource_ResetEntry(work->resource);
   Func_080eb930();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

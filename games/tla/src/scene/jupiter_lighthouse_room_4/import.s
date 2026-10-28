@@ -30,13 +30,13 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001d68
 	.thumb_func
@@ -153,11 +153,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001e48
 	.thumb_func
 Func_02001e48:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001e50
 	.thumb_func
 Func_02001e50:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -205,7 +205,7 @@ Func_02001ea8:
 	.global Func_02001eb0
 	.thumb_func
 Func_02001eb0:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -221,7 +221,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001ed0
 	.thumb_func
 Func_02001ed0:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001ed8
 	.thumb_func
 Func_02001ed8:

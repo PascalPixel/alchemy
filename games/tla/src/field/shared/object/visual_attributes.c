@@ -33,7 +33,7 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
     object->action = angle;
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  (u32)gObjectMotion_StepAngleScript);
-    EventRuntime_Wait(wait);
+    Event_WaitFrames(wait);
   }
 }
 

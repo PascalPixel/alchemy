@@ -37,7 +37,7 @@ Func_0811e3ac:
 	orrs r2, r3
 	lsrs r2, r2, #31
 	str r2, [sp, #4]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	add r2, sp, #4
 	mov r9, r0
 	ldrb r2, [r2]
@@ -380,7 +380,7 @@ Func_0811e3ac:
 	beq .L_0811e6bc
 	movs r0, #128
 	lsls r0, r0, #8
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r3, r9
 	str r0, [r3, #44]
 	b .L_0811e6c2
@@ -437,7 +437,7 @@ Func_0811e3ac:
 	beq .L_0811e72e
 	mov r2, r9
 	ldr r0, [r2, #44]
-	bl MemFree
+	bl Heap_Release
 .L_0811e72e:
 	mov r3, r9
 	str r5, [r3, #44]

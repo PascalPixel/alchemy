@@ -22,9 +22,9 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   u32 start;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Engine_ObjectCreate(options->type, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Engine_ObjectCreate(285, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
   if (effect == 0)
     return;
 

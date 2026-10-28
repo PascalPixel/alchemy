@@ -5,10 +5,10 @@
 	.thumb_func
 Func_080c8770:
 	overlay_veneer Func_080dbd48
-	.global EventRuntime_GetControlledOwnerFar
+	.global Party_GetLeaderActorFar
 	.thumb_func
-EventRuntime_GetControlledOwnerFar:
-	overlay_veneer EventRuntime_GetControlledOwner
+Party_GetLeaderActorFar:
+	overlay_veneer Party_GetLeaderActor
 	.global Func_080c8780
 	.thumb_func
 Func_080c8780:

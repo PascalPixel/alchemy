@@ -14,7 +14,7 @@
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
-  u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
   while (*text != 0) {
@@ -28,7 +28,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   *output = 0;
   y >>= 3;
   Text_RenderWideStringInWindow(buffer, arg1, x, y);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }
 
 /// The number writers format the value in a 16-byte buffer and draw it with

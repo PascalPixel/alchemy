@@ -535,7 +535,7 @@ Func_020006b0:
 	adds r1, #88
 	movs r0, #220
 	str r2, [sp, #20]
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	movs r1, #0
 	mov r9, r0
 	ldr r0, .L_020088fc
@@ -633,12 +633,12 @@ Func_020006b0:
 	ble .L_02008706
 	movs r0, #192
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r5, #128
 	lsls r5, r5, #5
 	mov r10, r0
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	ldr r0, .L_02008900
 	bl Resource_GetTableEntry
@@ -652,7 +652,7 @@ Func_020006b0:
 	bl VramCache_Load
 	str r0, [sp, #4]
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	mov r5, r10
 	movs r1, #95
 	adds r5, #12
@@ -861,7 +861,7 @@ Func_020006b0:
 	mov r0, r11
 	bl Resource_ResetEntry
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r1, #0
@@ -871,7 +871,7 @@ Func_020006b0:
 	ldr r0, [sp, #16]
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #28
 	pop {r3, r5, r6, r7}
 	mov r8, r3

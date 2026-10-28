@@ -47,17 +47,17 @@ void Func_080d690c(void) {
   /* FAKEMATCH: as in The Broken Seal, one pointer, words, holds the fill's
    * zero, the decode buffer and each particle's cell cursor, all in r6 as the
    * native keeps them; a plain zero for the fill differs 6. */
-  work = Runtime_AllocateBlock(116, sizeof(struct GroundParticleWork));
+  work = HeapSlot_AllocEwram(116, sizeof(struct GroundParticleWork));
   leader = Ram_HeapSlots->mapWork->origin;
   Func_080d2c64(170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
-  words = Runtime_AllocateBlock(56, 0x400);
+  words = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f3798, words);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   for (i = 0; i < 64; i++) {
     s32 x;
     s32 z;

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "irq.h"
 
-void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
+void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {
     volatile u16 *ime_reg = &REG_IME;
     u32 ime;
@@ -44,7 +44,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
     if (handler != 0)
       gIrqHandlers[irq] = handler;
     else
-      gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
+      gIrqHandlers[irq] = Irq_Ignore;
     REG_IME = ime;
   }
 }

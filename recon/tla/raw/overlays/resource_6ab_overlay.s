@@ -458,7 +458,7 @@ Func_02000ae4:
 	strb r5, [r6, #26]
 	strb r5, [r6, #27]
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r5, r0, #0
 	movs r0, #247
 	bl Func_020042ac
@@ -470,7 +470,7 @@ Func_02000ae4:
 	adds r2, r5, #0
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	cmp r7, #0
 	beq .L_02008b92
 	movs r0, #1
@@ -766,7 +766,7 @@ Func_02000e80:
 	movs r1, #193
 	lsls r1, r1, #3
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r5, r0, #0
 	movs r0, #247
 	bl Func_020042ac
@@ -778,7 +778,7 @@ Func_02000e80:
 	adds r2, r5, #0
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_ja_02008f20:
 	movs r0, #20
 	bl FieldEvent_WaitFrames
@@ -1174,7 +1174,7 @@ Func_02000e80:
 	movs r1, #193
 	lsls r1, r1, #3
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r5, r0, #0
 	movs r0, #247
 	bl Func_020042ac
@@ -1186,7 +1186,7 @@ Func_02000e80:
 	adds r2, r5, #0
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_02008f48:
 	movs r0, #20
 	bl FieldEvent_WaitFrames
@@ -1376,7 +1376,7 @@ Func_02000e80:
 	movs r1, #193
 	lsls r1, r1, #3
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r5, r0, #0
 	movs r0, #247
 	bl Func_020042ac
@@ -1388,7 +1388,7 @@ Func_02000e80:
 	adds r2, r5, #0
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_02009112:
 	movs r0, #20
 	bl FieldEvent_WaitFrames
@@ -5609,7 +5609,7 @@ Func_02003930:
 .L_0200bb0c:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -5629,7 +5629,7 @@ Func_02003930:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200bb70

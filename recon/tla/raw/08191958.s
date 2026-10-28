@@ -191,7 +191,7 @@ Func_08191958:
 	bne .L_08191a98
 .L_08191ac2:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #140
 	pop {r3, r5, r6, r7}
 	mov r8, r3

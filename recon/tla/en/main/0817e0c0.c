@@ -125,7 +125,7 @@ void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -133,7 +133,7 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
@@ -143,7 +143,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -263,7 +263,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
     // The streak, on the caster for its first 15 frames.
     EffectPosition_ProjectBattler(effect->actor, &caster);
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     TEXTURE_SIZE(texture, 5, 6);
     texture.pixels = work->sheet;
@@ -312,8 +312,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(quad);
     }
-    MemFree(quad);
-    MemFree(vertices);
+    Heap_Release(quad);
+    Heap_Release(vertices);
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
@@ -377,7 +377,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

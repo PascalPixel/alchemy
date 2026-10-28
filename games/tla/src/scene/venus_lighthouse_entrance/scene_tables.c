@@ -13,7 +13,7 @@
 
 struct ObjectRuntime *Object_GetById(u32 id);
 void FieldEvent_WaitFrames(s32 frames);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -40,5 +40,5 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
 void VenusLighthouseEntrance_UpdateSparkTrail(struct ObjectRuntime *object) {
   Func_0200260c(object, object->x, object->y, object->z);
   if (++object->action % 8 == 0)
-    Engine_AudioPlayCue(125);
+    Import_SoundPlay(125);
 }

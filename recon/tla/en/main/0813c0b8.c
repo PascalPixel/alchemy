@@ -65,7 +65,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer c
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
@@ -258,8 +258,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
   Func_0813ba50();
 }

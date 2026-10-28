@@ -39,7 +39,7 @@ Func_080fc2e0:
 	lsls r5, r5, #1
 	bl Func_080fae8c
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_080fc470
 	ldr r1, [sp, #4]
 	adds r2, r5, #0
@@ -180,7 +180,7 @@ Func_080fc2e0:
 	adds r5, #255
 	mov r0, r11
 	add r5, r9
-	bl MemFree
+	bl Heap_Release
 	ldrb r0, [r5]
 	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]

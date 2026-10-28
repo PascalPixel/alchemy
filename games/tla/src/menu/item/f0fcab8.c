@@ -52,7 +52,7 @@ s32 Func_080fcab8(void) {
   s32 owner;
   s32 result;
 
-  screen = Runtime_AllocateHeapBlock(220, 0xcec);
+  screen = HeapSlot_Alloc(220, 0xcec);
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -79,7 +79,7 @@ s32 Func_080fcab8(void) {
   Ram_HeapSlots->windowTiles[6] = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
   WaitFrames(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);

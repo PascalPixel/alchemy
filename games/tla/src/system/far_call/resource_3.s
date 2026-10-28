@@ -21,10 +21,10 @@ SetMapCellCollisionFar:
 	.thumb_func
 Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
-	.global Runtime_RemapBytesByTableFar
+	.global SpriteColor_RemapPixelsFar
 	.thumb_func
-Runtime_RemapBytesByTableFar:
-	overlay_veneer Runtime_RemapBytesByTable
+SpriteColor_RemapPixelsFar:
+	overlay_veneer SpriteColor_RemapPixels
 	.global Map_EnableUpdateCallbackFar
 	.thumb_func
 Map_EnableUpdateCallbackFar:

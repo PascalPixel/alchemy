@@ -1121,7 +1121,7 @@ BattleEffect_RunZagan:
 .L_0814c748:
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1220,9 +1220,9 @@ BattleEffect_RunZagan:
 	cmp r7, #4
 	bne .L_0814c78c
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 .L_0814c828:
 	mov r3, r9
 	cmp r3, #156
@@ -1297,9 +1297,9 @@ BattleEffect_RunZagan:
 	ldr r0, .L_0814c924
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #44]
 	movs r3, #0
 	movs r5, #238

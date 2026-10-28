@@ -14,7 +14,7 @@ void Func_0200187c(struct Panel_02001804 *panel) {
   /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 23 of 43
    * instructions differ in tla-en. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
-  void *work = Runtime_BumpAllocateAlternatePool(0x300);
+  void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
   s32 offset;
   /* FAKEMATCH(pin): the row in r6; as a plain local, 16 of 43 instructions
@@ -44,5 +44,5 @@ next_column:
   row++;
   if (row <= 7)
     goto next_row;
-  MemFree(work);
+  Heap_Release(work);
 }

@@ -49,7 +49,7 @@ void Func_02003dfc(struct ObjectRuntime *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-u8 *Runtime_AllocateBlock(s32 slot, s32 size);
+u8 *HeapSlot_AllocEwram(s32 slot, s32 size);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Func_02001278(void);
@@ -185,7 +185,7 @@ void Func_020014e0(void) {
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003f2c(9, 0);
-      Runtime_AllocateBlock(88, 664)[661] = 99;
+      HeapSlot_AllocEwram(88, 664)[661] = 99;
       Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
       Func_02003f3c(9, 0x5000);
       Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,

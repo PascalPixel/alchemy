@@ -1124,7 +1124,7 @@ BattleEffect_RunParticleStreams:
 	strh r4, [r3, #4]
 	strh r0, [r3, #6]
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Func_0814cca8
 	ldr r3, .L_081655b0
 	movs r2, #128
@@ -1762,7 +1762,7 @@ BattleEffect_RunParticleStreams:
 	ldr r0, .L_08165ab0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #76]
 	cmp r1, #0
 	bne .L_08165a9c

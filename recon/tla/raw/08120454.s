@@ -26,7 +26,7 @@ BattleTarget_Execute:
 	movs r0, #166
 	lsls r0, r0, #1
 	str r3, [sp, #64]
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r1, #156
 	lsls r1, r1, #1
 	str r0, [sp, #20]
@@ -4071,7 +4071,7 @@ BattleTarget_Execute:
 	bl BattleEvent_Push
 .L_08122446:
 	ldr r0, [sp, #20]
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
 	bl Unit_CalculateFar
 	movs r3, #192

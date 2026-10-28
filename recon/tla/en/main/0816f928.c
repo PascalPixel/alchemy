@@ -210,7 +210,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
 
   // Clear the canvas and its characters and hand the layer over.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   Task_Remove(Palette_StepFadeTransfer);

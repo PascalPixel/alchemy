@@ -224,7 +224,7 @@ Func_0812561c:
 	movs r5, #166
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r2, r5, #0
 	ldr r3, .L_08125a84
 	ldr r1, [sp, #8]
@@ -314,7 +314,7 @@ Func_0812561c:
 	cmp r6, #3
 	ble .L_08125804
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r1, [sp, #4]
 	cmp r1, #0
 	bne .L_08125890

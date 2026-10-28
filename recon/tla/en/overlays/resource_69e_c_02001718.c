@@ -50,7 +50,7 @@ struct SparkWork {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_ColouredOrbs;
 void Func_020027b8(void *resource, void *destination);
@@ -65,7 +65,7 @@ void Func_02001538(void);
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work =
-      Runtime_AllocateHeapBlockFar(220, sizeof(struct SparkWork));
+      HeapSlot_AllocFar(220, sizeof(struct SparkWork));
   struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;

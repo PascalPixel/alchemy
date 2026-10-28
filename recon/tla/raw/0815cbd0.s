@@ -123,7 +123,7 @@ BattleEffect_RunSpiderWeb:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #39
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -142,7 +142,7 @@ BattleEffect_RunSpiderWeb:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #43
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -161,7 +161,7 @@ BattleEffect_RunSpiderWeb:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #47
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -180,7 +180,7 @@ BattleEffect_RunSpiderWeb:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	cmp r7, #32
 	bne .L_0815cd4e
 	movs r0, #143

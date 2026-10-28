@@ -30,14 +30,14 @@ ArcTan2:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global Func_02004384
 	.thumb_func
 Func_02004384:
@@ -145,7 +145,7 @@ Func_0200444c:
 	.global Func_02004454
 	.thumb_func
 Func_02004454:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:
@@ -153,11 +153,11 @@ FieldEvent_WaitFrames:
 	.global Func_02004464
 	.thumb_func
 Func_02004464:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_0200446c
 	.thumb_func
 Func_0200446c:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -245,7 +245,7 @@ Object_SetPartAttribute:
 	.global Func_0200451c
 	.thumb_func
 Func_0200451c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -257,7 +257,7 @@ Func_0200452c:
 	.global Func_02004534
 	.thumb_func
 Func_02004534:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_0200453c
 	.thumb_func
 Func_0200453c:
@@ -301,11 +301,11 @@ Func_02004584:
 	.global Func_0200458c
 	.thumb_func
 Func_0200458c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02004594
 	.thumb_func
 Func_02004594:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_0200459c
 	.thumb_func
 Func_0200459c:
@@ -345,11 +345,11 @@ Func_020045dc:
 	.global Func_020045e4
 	.thumb_func
 Func_020045e4:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_020045ec
 	.thumb_func
 Func_020045ec:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020045f4
 	.thumb_func
 Func_020045f4:

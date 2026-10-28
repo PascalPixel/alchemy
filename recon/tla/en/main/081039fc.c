@@ -110,8 +110,8 @@ void WindowSprite_PrepareForRedrawFar(s32 window);
 void Window_CloseIfOpen(void *window, s32 mode);
 s32 Window_UpdateOrCreate(void *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void MemFree(void *buffer);
+void *Heap_AllocEwram(s32 size);
+void Heap_Release(void *buffer);
 void *Unit_Get(s32 owner);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
@@ -226,9 +226,9 @@ s32 Func_081039fc(u32 mode) {
     s32 gainedCount;
     s32 size;
 
-    diffWork = Runtime_BumpAllocateAlternatePool(96);
+    diffWork = Heap_AllocEwram(96);
     size = 332;
-    original = Runtime_BumpAllocateAlternatePool(size);
+    original = Heap_AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
     memberId = menu->shownMember[0];
@@ -263,8 +263,8 @@ s32 Func_081039fc(u32 mode) {
     pageCounts[1] = Func_08101860((u16 *)(original + 88), (u16 *)(unit + 88),
                                   diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, original, size);
-    MemFree(original);
-    MemFree(diffWork);
+    Heap_Release(original);
+    Heap_Release(diffWork);
   } else if (mode == 2 || mode == 3) {
     u16 *diffWork;
     u8 *original;
@@ -276,8 +276,8 @@ s32 Func_081039fc(u32 mode) {
     s32 lostCount;
     s32 gainedCount;
 
-    diffWork = Runtime_BumpAllocateAlternatePool(96);
-    original = Runtime_BumpAllocateAlternatePool(332);
+    diffWork = Heap_AllocEwram(96);
+    original = Heap_AllocEwram(332);
     memberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & 31;
@@ -293,8 +293,8 @@ s32 Func_081039fc(u32 mode) {
     Iwram_CopyWords(unit, original, 332);
     pageCounts[1] = pageCounts[0];
     page = 0;
-    MemFree(original);
-    MemFree(diffWork);
+    Heap_Release(original);
+    Heap_Release(diffWork);
   }
   pageCounts[0] = (pageCounts[0] - 1) / 5 + 1;
   if (pageCounts[0] == 0)
@@ -350,7 +350,7 @@ s32 Func_081039fc(u32 mode) {
       s32 size;
 
       size = 0x200;
-      saved = Runtime_BumpAllocateAlternatePool(size);
+      saved = Heap_AllocEwram(size);
       pressed = 0;
       repeat = 0;
       backdrop->tutorialTimer++;
@@ -431,7 +431,7 @@ s32 Func_081039fc(u32 mode) {
         }
         break;
       }
-      MemFree(saved);
+      Heap_Release(saved);
     }
 
     if (redraw != 0) {

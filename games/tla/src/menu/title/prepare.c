@@ -155,7 +155,7 @@ void Title_LoadSprites(s32 unused) {
   u8 *buffer;
   volatile s32 *dma;
 
-  buffer = Runtime_BumpAllocateAlternatePool(0x520);
+  buffer = Heap_AllocEwram(0x520);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = Resource_FindFreeEntry();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
@@ -165,7 +165,7 @@ void Title_LoadSprites(s32 unused) {
   dma = (volatile s32 *)REG_DMA3;
   while (dma[2] < 0)
     ;
-  MemFree(buffer);
+  Heap_Release(buffer);
 }
 
 /// Rebuilds the row of 18 sprites under the logo and pushes those the reveal

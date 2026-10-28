@@ -141,8 +141,8 @@ extern u8 gDebugMode;
 extern u8 Msg_0c59[];
 
 s32 VramCache_AllocEntry(s32 size);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 void Link_DrawShiftedTilePair(u32 address);
@@ -163,8 +163,8 @@ void Func_08118158(void);
 void Sound_PlayFar(s32 cue);
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 Func_0804b8b8(s32 slot);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 BattleParty_ListActorIdsFar(s32 side, u16 *units);
 s32 BattleParty_PrepareReserveOwnersFar(u16 *units);
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member);
@@ -253,7 +253,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = Runtime_AllocateBlock(228, 272);
+  state = HeapSlot_AllocEwram(228, 272);
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
@@ -386,7 +386,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     // Status: the summary screens of the party and the reserve, or in the
     // debug build with Start held the enemies'.
     if (mode == 7) {
-      u16 *block = MemAlloc(18);
+      u16 *block = Heap_Alloc(18);
       s32 side;
       s32 count;
 
@@ -399,7 +399,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         count += BattleParty_PrepareReserveOwnersFar(block + count);
       WaitFrames(1);
       Func_08046b08(block, count, block[0]);
-      MemFree(block);
+      Heap_Release(block);
       continue;
     }
     // Flee: one command 99 for the party, first in the round.
@@ -463,14 +463,14 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       mode = Func_080457d0(1, 0);
       WaitFrames(1);
       if (mode == -2) {
-        u16 *block = MemAlloc(12);
+        u16 *block = Heap_Alloc(12);
         s32 count = BattleParty_ListActorIdsFar(1, block);
 
         state->iconShown[2] = 0;
         WaitFrames(1);
         Func_08046b08(block, count, actorId);
         state->iconShown[2] = 1;
-        MemFree(block);
+        Heap_Release(block);
         continue;
       }
       BattlePres_SetActorModesFar(signatureHeader, 0);
@@ -914,7 +914,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       Window_Close(state->timerWindow, 1);
   }
   Camera_ConfigureSceneFar(0);
-  Runtime_ReleaseHeapBlock(228);
+  HeapSlot_Release(228);
   if (commandCount >= 0)
     commandCount += forcedCount;
   return commandCount;

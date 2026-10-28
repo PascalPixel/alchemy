@@ -32,18 +32,18 @@ void Func_080d452c(s32 id, s32 use_setter) {
 
 void Func_080d4548(void) {
   Object_CommitPosition(
-      ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter);
-  EventRuntime_Wait(2);
+      ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
+  Event_WaitFrames(2);
 }
 
 struct ObjectRuntime *Func_080d4568(void) {
-  return ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter;
+  return ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
 }
 
 void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition) {
   struct ObjectRuntime *object;
 
-  object = ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter;
+  object = ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
   if (target != NULL) {
     ObjectDispatch_StartCameraFar(object, NULL);
     object->watchedObject = target;
@@ -70,7 +70,7 @@ void Func_080d45d8(void) {
   s32 offset;
   s32 delta;
 
-  if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))
           ->viewCenter->movementState != 0)
     return;
   duration = &map->zoomFrames;
@@ -93,7 +93,7 @@ void Func_080d46a4(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 result;
 
-  if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->controlMode != 3)
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode != 3)
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
@@ -110,7 +110,7 @@ void Func_080d4714(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 frames;
 
-  if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->controlMode ==
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode ==
       3) {
     frames = 0;
     if (map->zoomFrames != 0) {

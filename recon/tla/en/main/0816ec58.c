@@ -208,8 +208,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
           draw[Data_08198bc4[i] & 1](canvas, work->sheet + SLIM_COLUMN_OFFSET,
                                      x - 9, 108 - height, 17, height);
       }
-      Runtime_ReleaseHeapBlock(104);
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(104);
+      HeapSlot_Release(188);
     }
 
     // Spark i rises from frame 8 + 2i through seven pictures, three frames
@@ -233,8 +233,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
         BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
       }
     }
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
 
     Func_08158ce0(4, 4);
     ObjectGroup_CountDownMemberTimers();

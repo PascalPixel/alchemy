@@ -88,10 +88,10 @@ void Func_02004a24(s32 skip);
 void Func_02004a74(s32 shop, s32 keeper);
 void Func_02004a7c(s32 keeper);
 void Func_02004a84(s32 shop, s32 keeper);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 void Func_02004934(s32 actor, s32 x, s32 z);
-struct ShamanVillageObject *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
-void Engine_ObjectSetMode(struct ShamanVillageObject *object, s32 mode);
+struct ShamanVillageObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Func_0200481c(struct ShamanVillageObject *object);
 void ObjectDispatch_SetSingleChildFlags(struct ShamanVillageObject *object,
                                         u32 value);
@@ -190,7 +190,7 @@ static inline void ShamanVillage_Wait(s32 frames) {
 
 static inline void ShamanVillage_SePlay(s32 cue) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_AudioPlayCue(cue);
+  Import_SoundPlay(cue);
 }
 
 static inline void ShamanVillage_WaitFrames(s32 frames) {

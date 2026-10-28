@@ -49,8 +49,8 @@ struct BeamWork {
   struct ObjectRuntime *second;
 };
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 struct ObjectRuntime *Object_GetById(s32 id);
 void *Resource_GetTableEntry(s32 id);
 void Func_020029a0(void *resource, void *destination);
@@ -71,7 +71,7 @@ void Func_02001080(void);
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork *work =
-      Runtime_AllocateHeapBlockFar(220, sizeof(struct BeamWork));
+      HeapSlot_AllocFar(220, sizeof(struct BeamWork));
   struct ObjectRuntime *carrier =
       *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 460);
   struct BeamSprite *sprite;
@@ -141,5 +141,5 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   Task_RemoveFar(Func_02001080);
   Resource_ResetEntry(largeEntry);
   Resource_ResetEntry(smallEntry);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

@@ -363,7 +363,7 @@ Func_0802632c:
 	adds r0, #8
 	subs r3, #2
 	mov r2, r8
-	bl Runtime_CheckRadiusOverlap
+	bl Field_CheckSpheresOverlap
 	cmp r0, #0
 	blt .L_08026622
 	ldr r0, [sp, #12]

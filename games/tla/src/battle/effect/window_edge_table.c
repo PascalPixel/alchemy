@@ -50,9 +50,9 @@ extern u8 gMapCellBuffer[];
 void BattleEffect_RunSceneEffect(s32 *arg) {
   struct FxRunWork *work;
 
-  Runtime_AllocateHeapBlock(100, 0x302);
-  Runtime_AllocateHeapBlock(92, 0x7b7c);
-  Runtime_AllocateHeapBlock(96, 0x4000);
+  HeapSlot_Alloc(100, 0x302);
+  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(96, 0x4000);
   /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
    * offset is started, as in BattleEffect_RunTableEffect (differ 2 without it). */
   do {
@@ -153,9 +153,9 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
       break;
     }
   }
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
-  Runtime_ReleaseHeapBlock(100);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
 }
 
 /// Runs one battle effect script: takes the effect's three work blocks, calls
@@ -163,9 +163,9 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
 void BattleEffect_RunTableEffect(s32 *script) {
   struct FxRunWork *work;
 
-  Runtime_AllocateHeapBlock(100, 0x302);
-  Runtime_AllocateHeapBlock(92, 0x7b7c);
-  Runtime_AllocateHeapBlock(96, 0x4000);
+  HeapSlot_Alloc(100, 0x302);
+  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(96, 0x4000);
   /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
    * offset is started (differ 2 without it). */
   do {
@@ -178,9 +178,9 @@ void BattleEffect_RunTableEffect(s32 *script) {
   do {
     gData_08197aa0[*script - 1](script);
   } while (0);
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
-  Runtime_ReleaseHeapBlock(100);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
 }
 
 void BattleEffect_BuildWindowEdgeTable(void) {

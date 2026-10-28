@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Runtime_InstallIwramAndIrqs
+	.global System_InstallIwramAndIrqs
 	.thumb_func
-Runtime_InstallIwramAndIrqs:
+System_InstallIwramAndIrqs:
 	push {r5, lr}
 	ldr r5, .L_08013414
 	movs r4, #0

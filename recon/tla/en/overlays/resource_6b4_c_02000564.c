@@ -38,7 +38,7 @@ s32 Func_0200157c();
 s32 Func_02001584();
 s32 Func_0200158c();
 s32 Func_02001594();
-s32 MemFree();
+s32 Heap_Release();
 s32 Motion_SetVarCbAndRefresh();
 s32 ObjectDispatch_SetSingleChildFlags();
 s32 ObjectMotion_ArmCallback();
@@ -49,7 +49,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 Object_SetActionById();
 s32 Object_SetModeById();
-s32 Runtime_BumpAllocateAlternatePool();
+s32 Heap_AllocEwram();
 s32 Task_Add();
 s32 Task_RemoveFar();
 s32 WaitFrames();
@@ -73,7 +73,7 @@ s32 Func_02000564(s32 p0, s32 p1, s32 p2, s32 p3) {
   s32 t240, t241, t243, t244, t245, t253, t294, t297, t298, t299;
   s32 t300, t304, t305, t306, t321, t324, t327, t328;
 
-  t0 = Value4((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x200, p1, p2, p3);
+  t0 = Value4((s32 (*)())Heap_AllocEwram, 0x200, p1, p2, p3);
   Func_02001454();
   t2 = FIELD_AT((s32)gAdventure, u8, 549);
   t3 = FIELD_AT((s32)gAdventure, u8, 550);
@@ -743,6 +743,6 @@ L_020093c4:
 L_020093ce:
   Call2((void (*)())Func_02001534, 3, 0);
 L_020093d6:
-  Call4((void (*)())MemFree, v_r9, v_r1, v_r2, v_r3);
+  Call4((void (*)())Heap_Release, v_r9, v_r1, v_r2, v_r3);
   return 0;
 }

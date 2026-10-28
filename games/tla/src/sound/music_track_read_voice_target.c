@@ -11,7 +11,7 @@ union PackedWord {
   } part;
 };
 
-void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player,
+void System_CallWorkEntryWithArgs(struct SoundPlayer *player,
                                    struct SoundTrack *track) {
   SoundCommand func = *(&gSound_CommandTable[0]);
 

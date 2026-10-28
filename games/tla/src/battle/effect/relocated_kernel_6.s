@@ -320,7 +320,7 @@ AlchemyUncreditedEnd_0813a2c0:
 	stm	r9, {r3, r4, r5}
 	ldr	r0, [r0, #8]
 	b	.L_08139f88
-	.4byte	Runtime_ReciprocalTable + 1
+	.4byte	System_ReciprocalTable + 1
 AlchemyUncredited_0813a42c:
 	.4byte	0x00000000
 	.4byte	0x00000000

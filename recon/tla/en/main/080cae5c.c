@@ -45,7 +45,7 @@ void ObjectTable_Restore(void) {
       priority = *priorities;
       sprite->priority = priority;
       sprite->partPriority = priority;
-      if (index == EventRuntime_GetControlledOwner()) {
+      if (index == Party_GetLeaderActor()) {
         camera = ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
         view = Ram_HeapSlots->mapWork->origin;
         y = object->y;

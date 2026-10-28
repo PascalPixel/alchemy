@@ -37,7 +37,7 @@ extern char ResourceId_ColouredOrbs;
 void WaitFrames(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
@@ -46,9 +46,9 @@ void Sound_PlayFar(s32 cue);
 void Func_080dc954(void);
 
 void Func_080e7238(void) {
-  struct WhirlWork *work = Runtime_AllocateHeapBlock(92, sizeof(*work));
+  struct WhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
   struct ObjectRuntime *object =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
+      ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 position[3];
@@ -159,6 +159,6 @@ void Func_080e7238(void) {
     frame++;
   } while (state != 999);
   Resource_ResetEntry(entry);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
   Func_080dc954();
 }

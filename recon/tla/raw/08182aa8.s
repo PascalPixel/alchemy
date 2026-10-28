@@ -1888,7 +1888,7 @@ BattleEffect_RunCoatlicue:
 	bne .L_08183826
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #36]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2719,9 +2719,9 @@ BattleEffect_RunCoatlicue:
 	b .L_08183d86
 .L_08183f9a:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #36]
-	bl MemFree
+	bl Heap_Release
 	movs r3, #240
 	ldr r1, [sp, #72]
 	lsls r3, r3, #7
@@ -3115,7 +3115,7 @@ BattleEffect_RunCoatlicue:
 .L_081842c2:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -3211,9 +3211,9 @@ BattleEffect_RunCoatlicue:
 	cmp r2, #3
 	bne .L_0818430e
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #72]
@@ -3232,7 +3232,7 @@ BattleEffect_RunCoatlicue:
 	b .L_081840d6
 .L_081843c4:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_081843f8
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

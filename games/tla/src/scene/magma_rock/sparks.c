@@ -16,5 +16,5 @@ void Func_02003998(void) {
 
   Task_RemoveFar(Func_0200379c);
   Resource_ResetEntry(work->resource);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

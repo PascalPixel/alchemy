@@ -9,10 +9,10 @@ GameFlag_RefreshLureCapFar:
 	.thumb_func
 Equipment_GetUnleashRateBonusFar:
 	overlay_veneer Equipment_GetUnleashRateBonus
-	.global Runtime_GetBuildStampTimeFar
+	.global BuildStamp_GetTimeFar
 	.thumb_func
-Runtime_GetBuildStampTimeFar:
-	overlay_veneer Runtime_GetBuildStampTime
+BuildStamp_GetTimeFar:
+	overlay_veneer BuildStamp_GetTime
 	.global PartyInventory_CountFreeSlotsFar
 	.thumb_func
 PartyInventory_CountFreeSlotsFar:

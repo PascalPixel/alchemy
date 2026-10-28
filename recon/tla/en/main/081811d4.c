@@ -73,12 +73,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -374,7 +374,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   REG_WIN0V = 0x1088;
   REG_WIN1V = 0x1088;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

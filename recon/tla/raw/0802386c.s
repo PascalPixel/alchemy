@@ -31,7 +31,7 @@ Func_0802386c:
 	str r3, [sp, #52]
 	ldr r1, .L_08023bf4
 	movs r0, #80
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	ldr r2, .L_08023bf8
 	adds r1, r0, #0
 	ldr r0, .L_08023bfc
@@ -662,7 +662,7 @@ Func_0802386c:
 	b .L_080238dc
 .L_08023d60:
 	movs r0, #80
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #144
 	pop {r3, r5, r6, r7}
 	mov r8, r3

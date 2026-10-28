@@ -19,7 +19,7 @@ void Func_08040c60(void) {
 }
 
 void Func_08040c78(void) {
-  void *work = Runtime_AllocateBlock(208, 0x628);
+  void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(Func_08040c60, TASK_PASS_VBLANK);
@@ -27,7 +27,7 @@ void Func_08040c78(void) {
 
 void Func_08040cb0(void) {
   Task_Remove(Func_08040c60);
-  Runtime_ReleaseHeapBlock(208);
+  HeapSlot_Release(208);
 }
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))

@@ -90,11 +90,11 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 angle);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 
 // Radiant Fire: eight bursts of fire bloom one after another around the
@@ -216,7 +216,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
 
       // The square of flame turns over each burst for 24 frames, fading
       // over the last eight.
-      vertices = Runtime_BumpAllocateAlternatePool(32);
+      vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
@@ -243,8 +243,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(vertices);
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
 
     Func_08158ce0(4, 4);
@@ -254,6 +254,6 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

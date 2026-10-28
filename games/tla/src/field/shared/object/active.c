@@ -32,13 +32,13 @@ void Func_080d3b28(u32 id, s32 resource) {
       sprite = object->animation;
       if (resource & 0x8000)
         resource = 0;
-      buffer = Runtime_AllocateHeapBlock(68, 0x608);
+      buffer = HeapSlot_Alloc(68, 0x608);
       zero = 0;
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
       Func_08038248(resource, buffer);
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
-      Runtime_ReleaseHeapBlock(68);
+      HeapSlot_Release(68);
       object->unk5c[0] = kind;
       ResourceMetadata_ClearRecordFar(sprite->record);
       sprite->record = NULL;
@@ -51,7 +51,7 @@ void Func_080d3b28(u32 id, s32 resource) {
   }
 }
 
-void EventRuntime_SetMessage(s32 message) {
+void Event_SetMessageId(s32 message) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   event->messageId = message;

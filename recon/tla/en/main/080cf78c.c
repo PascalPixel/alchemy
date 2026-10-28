@@ -46,7 +46,7 @@ extern u32 gFrameCount;
 void Task_Remove(void (*callback)(void));
 void BattleEffect_StartWindowHBlankDma(void);
 void Window_FillFromSceneFar(u16 *pairs);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 u32 Random16(void);
 
 void Func_080cf78c(void) {
@@ -231,7 +231,7 @@ void Func_080cf78c(void) {
     view = &map->viewX;
     cameraX = view[0] & 0xffff0000;
     cameraY = view[1] & 0xffff0000;
-    object = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object = ObjectTable_Get(Party_GetLeaderActor());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     *scanlineData++ = state->active;
@@ -316,7 +316,7 @@ void Func_080cf78c(void) {
     view = &map->viewX;
     cameraX = view[0] & 0xffff0000;
     cameraY = view[1] & 0xffff0000;
-    object = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object = ObjectTable_Get(Party_GetLeaderActor());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     *scanlineData++ = state->mask;
@@ -351,7 +351,7 @@ void Func_080cf78c(void) {
     view = &map->viewX;
     cameraX = view[0] & 0xffff0000;
     cameraY = view[1] & 0xffff0000;
-    object = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object = ObjectTable_Get(Party_GetLeaderActor());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
     *scanlineData++ = state->mask;

@@ -17,12 +17,12 @@
 
 extern const s32 gData_02004ae0[];
 
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200479c(void *resource, void *destination);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 struct ObjectRuntime *Object_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
@@ -67,12 +67,12 @@ void Func_0200057c(void) {
   u32 j;
   s32 k;
 
-  buffer = MemAlloc(0x680);
+  buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~0x100;
   Func_0200479c(Resource_GetTableEntry(0x1be), buffer);
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
-  MemFree(buffer);
+  Heap_Release(buffer);
   ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   ObjectMotion_SetActionVariant(14, 1);
   *(volatile u16 *)0x04000008 = 0x40d;
@@ -80,15 +80,15 @@ void Func_0200057c(void) {
   *(volatile u16 *)0x04000008 |= 1;
   zero = 16;
   Dma_Set(&zero, (void *)0x06002000, 0x81000280, REG_DMA3);
-  buffer = MemAlloc(576);
+  buffer = Heap_Alloc(576);
   Func_0200479c(Resource_GetTableEntry(0x1bf), buffer);
   for (i = 0; i != 288; i++)
     buffer[i] = ((buffer[i] - 0xc0) & 0xfff) | 0x1000;
   for (i = 0; i != 18; i++)
     Dma_Set(buffer + i * 16, (void *)(0x0600200f + (i << 6)), 0x84000008,
             REG_DMA3);
-  MemFree(buffer);
-  Engine_AudioPlayCue(246);
+  Heap_Release(buffer);
+  Import_SoundPlay(246);
   OBJ14_BYTE(0x62) = 9;
   OBJ14_BYTE(0x63) = 1;
   Object_GetById(14)->update = Func_02000458;
@@ -96,7 +96,7 @@ void Func_0200057c(void) {
     u32 frame = gFrameCount & 3;
 
     if (frame == 0) {
-      effect = (struct FieldEffect *)Engine_ObjectCreate(
+      effect = (struct FieldEffect *)Import_ActorCreate(
           672, Object_GetById(14)->x, Object_GetById(14)->y,
           Object_GetById(14)->z);
       source = Object_GetById(14);
@@ -108,8 +108,8 @@ void Func_0200057c(void) {
       effect->velocity.y = 0x18000;
       effect->velocity.z = effect->z;
       effect->scaleRateX = Random16Far() & 0xffff;
-      Engine_ObjectSetMode((struct FieldActor *)effect, 7);
-      Engine_ObjectSetScript((struct FieldActor *)effect, gData_02004ae0);
+      Import_ActorSetMode((struct FieldActor *)effect, 7);
+      Import_ActorSetScript((struct FieldActor *)effect, gData_02004ae0);
       ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
       Object_SetPartAttribute(effect, 2);
       effect->update = Effect_CircleAndBlink;
@@ -122,7 +122,7 @@ void Func_0200057c(void) {
   Camera_MoveWithinMapBounds(168 << 16, -1, 212 << 17, 1);
   Func_020049f4();
   Task_Add(Func_02000378, 0xc80);
-  Engine_AudioPlayCue(207);
+  Import_SoundPlay(207);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
@@ -187,7 +187,7 @@ void Func_0200057c(void) {
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   Func_02004864(-1, -1, 0xe666);
-  Engine_AudioPlayCue(390);
+  Import_SoundPlay(390);
   OBJ14_BYTE(0x62) = 6;
   for (k = 0; k != 65; k++) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));

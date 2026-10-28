@@ -13,7 +13,7 @@
 extern char ResourceId_CommandIcons;
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
-  GlyphTransfer *buffer = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+  GlyphTransfer *buffer = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   u8 **slot = &buffer->encoded;
   void *target = (void *)((u32)base + base[arg1]);
@@ -22,7 +22,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   *slot = target;
   Resource_DecodeByteLzInRam(target, buffer);
   ret = VramCache_Reload(arg0, (s32)buffer);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   return ret;
 }
 
@@ -38,11 +38,11 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   u32 vram;
   s32 offset;
 
-  decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(*decoded));
+  decoded = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Resource_DecodeByteLzInRam(decoded->encoded, decoded);
-  remapped = MemAlloc(0x400);
+  remapped = Heap_Alloc(0x400);
   src = decoded->input;
   dst = remapped;
   for (i = 0; i < 0x400; i++) {
@@ -69,6 +69,6 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   /* FAKEMATCH: keeps the offset in r1 and the base in r2 (differ 6 without) */
   __asm__("" : : "r"(offset));
   Dma_Set(remapped, (void *)(offset + vram), 0x84000100, REG_DMA3);
-  MemFree(remapped);
-  Runtime_ReleaseHeapBlock(68);
+  Heap_Release(remapped);
+  HeapSlot_Release(68);
 }

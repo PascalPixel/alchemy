@@ -145,7 +145,7 @@ void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -365,7 +365,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                    targetPosition.y - (Data_081975e8[picture] / 2),
                    Data_081975e2[picture], Data_081975e8[picture]);
         }
-        Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+        HeapSlot_Release(SLOT_BLITTER);
 
         // A star sounds four frames before its hit.
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
@@ -451,12 +451,12 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08196404(SLOT_BLITTER, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
-      Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+      HeapSlot_Release(SLOT_BLITTER);
       Func_08196404(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                     RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
-      Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+      HeapSlot_Release(SLOT_BLITTER);
 
       // The hit, on each column's fourth picture.
       if (frame % (RECORD(mode, RECORD_RATE) * 4) ==
@@ -523,7 +523,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                       Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
                           gData_08197492[image], gData_08197498[image]);
-        Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
+        HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       }
     }
 
@@ -623,13 +623,13 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+    HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+    HeapSlot_Release(SLOT_BLITTER);
 
     // The star: a textured square, swelling on a sine from frame 8 to 17
     // over the target's middle (the canvas is cleared to colour 0x3f first).
     if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR) {
-      void *corners = Runtime_BumpAllocateAlternatePool(32);
+      void *corners = Heap_AllocEwram(32);
       struct ModelDraw *model = Render_AllocateModelList(1);
 
       model->unk14 = 0;
@@ -654,8 +654,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         Render_TransformVertices(gData_08199210, corners, 4);
         Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(corners);
+      Heap_Release(model);
+      Heap_Release(corners);
     }
 
     if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY)

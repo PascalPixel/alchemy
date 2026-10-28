@@ -90,7 +90,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -244,6 +244,6 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 
   battle[0x866] = 0;
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

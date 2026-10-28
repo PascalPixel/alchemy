@@ -27,7 +27,7 @@ void Func_081a0a70(void) {
   u32 j;
 
   void *objects =
-      Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+      Heap_AllocEwram(128 * sizeof(struct DisplayScrollObject));
   void **cell = (void **)&gDisplayScroll_Objects;
   *cell = objects;
   fill = 0;

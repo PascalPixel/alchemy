@@ -8,7 +8,7 @@
 // own allocation.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
-      Runtime_AllocateBlock(48, sizeof(struct BattleCamera));
+      HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
   s32 *focus = camera->pos;
 
   SET_VECTOR(focus, 0, 0x400000, 0);

@@ -34,14 +34,14 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global Func_02003a14
 	.thumb_func
 Func_02003a14:
@@ -82,9 +82,9 @@ Func_02003a54:
 	.thumb_func
 Func_02003a5c:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02003a6c
 	.thumb_func
@@ -153,11 +153,11 @@ FieldEvent_WaitFrames:
 	.global Func_02003aec
 	.thumb_func
 Func_02003aec:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02003af4
 	.thumb_func
 Func_02003af4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -225,7 +225,7 @@ Func_02003b74:
 	.global Func_02003b7c
 	.thumb_func
 Func_02003b7c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02003b84
 	.thumb_func
 Func_02003b84:
@@ -265,7 +265,7 @@ Func_02003bc4:
 	.global Func_02003bcc
 	.thumb_func
 Func_02003bcc:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003bd4
 	.thumb_func
 Func_02003bd4:

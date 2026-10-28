@@ -16,7 +16,7 @@ Func_080e8db0:
 	adds r1, #84
 	movs r0, #92
 	sub sp, #56
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	str r0, [sp, #52]
 	movs r2, #192
 	lsls r2, r2, #18
@@ -353,7 +353,7 @@ Func_080e8db0:
 	bl BattleEffect_PrepareBufferInterpolation
 .L_080e9064:
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3

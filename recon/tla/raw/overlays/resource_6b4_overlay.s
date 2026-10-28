@@ -359,7 +359,7 @@ Func_02000564:
 	push {r5, r6, r7}
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	bl Func_02001454
 	ldr r5, .L_020085bc
@@ -1984,7 +1984,7 @@ Func_02000564:
 	bl Func_02001534
 .L_020093d6:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	movs r0, #0
 	pop {r3, r5, r6}
 	mov r8, r3

@@ -9,7 +9,7 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -26,13 +26,13 @@ void Func_02002518(u16 id) {
   if (Object_GetById(id)->update != Func_020015e4)
     return;
   anchor = Object_GetById(id)->watchedObject;
-  parts[0] = Engine_ObjectCreate(0x15f, anchor->x + 0x10000,
+  parts[0] = Import_ActorCreate(0x15f, anchor->x + 0x10000,
                                  anchor->y + 0x200000, anchor->z);
   i = 1;
 next:
   {
     u8 *first = parts[0]->animation;
-    struct ObjectRuntime *part = Engine_ObjectCreate(0x15f, 0, 0, 0);
+    struct ObjectRuntime *part = Import_ActorCreate(0x15f, 0, 0, 0);
     u8 *sprite = part->animation;
 
     sprite[16] = first[16];

@@ -28,7 +28,7 @@ struct ChampaCliffCavesWork {
   u8 unk1076[2];
 };
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
 void Task_Add(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void Func_02002d34(void);
@@ -36,7 +36,7 @@ void Func_02002de4(void);
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork *work =
-      Runtime_AllocateHeapBlockFar(220, sizeof(struct ChampaCliffCavesWork));
+      HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
   Func_02002d34();

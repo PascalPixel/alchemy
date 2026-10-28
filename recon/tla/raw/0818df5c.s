@@ -820,7 +820,7 @@ BattleEffect_RunMeteorBlow:
 	cmp r7, #5
 	bne .L_0818e566
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	b .L_0818e6f8
 .L_0818e5c8:
 	mov r3, r11
@@ -1164,7 +1164,7 @@ BattleEffect_RunMeteorBlow:
 	bl Task_Remove
 .L_0818e866:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Func_0814cca8
 	ldr r3, .L_0818e8a8
 	movs r2, #128
@@ -1461,7 +1461,7 @@ BattleEffect_RunMeteorBlow:
 .L_0818eac6:
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #28]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1706,9 +1706,9 @@ BattleEffect_RunMeteorBlow:
 	cmp r7, #3
 	bne .L_0818ec36
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #28]
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_0818ed98
 	ldr r5, .L_0818ed9c
 	movs r7, #0
@@ -1778,7 +1778,7 @@ BattleEffect_RunMeteorBlow:
 	ldr r0, .L_0818eda0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r6, #238
 	ldr r4, [sp, #96]
 	lsls r6, r6, #7

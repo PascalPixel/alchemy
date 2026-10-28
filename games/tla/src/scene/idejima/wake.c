@@ -52,13 +52,13 @@ void Func_02002c64(void) {
   s32 leader;
 
   FelixWake_StartStep();
-  Engine_EventStart();
+  Import_EventStart();
   Func_02003310(0);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Task_Wait(1);
   Call4(Camera_MoveWithinMapBounds, 0x1800000, -1, 0x2d80000, 0);
   Task_Wait(1);
-  Engine_ActorSetAnimation(gAdventure.currentOwner, 41);
+  Import_ActorSetAnimation(gAdventure.currentOwner, 41);
   Task_Wait(1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
@@ -79,50 +79,50 @@ void Func_02002c64(void) {
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Engine_ActorSetAnimation(gAdventure.currentOwner, 42);
+  Import_ActorSetAnimation(gAdventure.currentOwner, 42);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Engine_ActorSetAnimation(gAdventure.currentOwner, 1);
+  Import_ActorSetAnimation(gAdventure.currentOwner, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   Task_Wait(1);
   ObjectMotion_Launch(gAdventure.currentOwner, 4, 20);
-  Engine_EventSetMessage((s32)MsgIdejimaCheckForInjuries);
+  Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);
   Value2(FieldMessage_ShowAtActor, 11, 0);
   Task_Wait(1);
   answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   leader = gAdventure.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(leader);
-    Engine_ActorSetAnimation(gAdventure.currentOwner, 45);
+    Import_ActorSetAnimation(gAdventure.currentOwner, 45);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gAdventure.currentOwner, 46);
+    Import_ActorSetAnimation(gAdventure.currentOwner, 46);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_EventShowMessage(11, 0);
+    Import_EventShowMessageAndWait(11, 0);
     Task_Wait(1);
     Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gAdventure.currentOwner, 47);
+    Import_ActorSetAnimation(gAdventure.currentOwner, 47);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gAdventure.currentOwner, 48);
+    Import_ActorSetAnimation(gAdventure.currentOwner, 48);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_EventShowMessage(11, 0);
+    Import_EventShowMessageAndWait(11, 0);
     Task_Wait(1);
     Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   } else {
@@ -133,12 +133,12 @@ void Func_02002c64(void) {
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
     FelixWake_StartStep();
-    Engine_EventShowMessage(11, 0);
+    Import_EventShowMessageAndWait(11, 0);
     Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   }
   Func_02003228(11, 0, 0);
   GameFlag_ClearBit(0x12f);
   GameFlag_SetBit(0x844);
-  Engine_EventEnd();
+  Import_EventEnd();
   FelixWake_EndStep();
 }

@@ -51,10 +51,10 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   sprite = owner->sprite;
   if (sprite == 0)
     return;
-  buffer = Runtime_AllocateHeapBlock(68, 0x608);
+  buffer = HeapSlot_Alloc(68, 0x608);
   Func_08038248(id);
   tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   sprite->unk1b = 0;
   sprite->unk19 = 0;
   sprite->width = 16;

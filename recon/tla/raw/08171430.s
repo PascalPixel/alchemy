@@ -374,7 +374,7 @@ BattleEffect_RunLightSurge:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -395,7 +395,7 @@ BattleEffect_RunLightSurge:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r4, [sp, #52]
 	cmp r4, #15
 	ble .L_081717c2
@@ -419,7 +419,7 @@ BattleEffect_RunLightSurge:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -440,7 +440,7 @@ BattleEffect_RunLightSurge:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081717c2:
 	ldr r2, [sp, #52]
 	movs r1, #28
@@ -452,7 +452,7 @@ BattleEffect_RunLightSurge:
 	b .L_081716b2
 .L_081717d2:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -870,9 +870,9 @@ BattleEffect_RunLightSurge:
 	b .L_081719fc
 .L_08171b16:
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
@@ -896,7 +896,7 @@ BattleEffect_RunLightSurge:
 	ldr r0, .L_08171b70
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}

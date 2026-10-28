@@ -50,7 +50,7 @@ void Camera_WorldToScreen(s32 *position);
 
 void Func_080eb960(s32 objectId) {
   struct SparkWork *work =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
+      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   u16 angle = object->angle;
@@ -158,5 +158,5 @@ void Func_080eb960(s32 objectId) {
     frame++;
   } while (phase != PHASE_DONE);
   Resource_ResetEntry(entry);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_SPARKS);
+  HeapSlot_Release(HEAP_SLOT_SPARKS);
 }

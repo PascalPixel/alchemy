@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -375,7 +375,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         angle += 0x1800;
         scroll += 20;
       }
-      MemFree(model);
+      Heap_Release(model);
     } else {
       if (frame <= 159) {
         pitch = (s16)(pitch + 256);
@@ -469,7 +469,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   } else {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   Func_0814cca8();
   hx = 200;
   hz = 0;
@@ -550,7 +550,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
     }
 
-    verts = Runtime_BumpAllocateAlternatePool(1024);
+    verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     model->texture = &texture2;
     model->vertices = verts;
@@ -617,8 +617,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         }
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
 
     p = (struct EffectStep *)gMapCellBuffer;
     for (i = 0; i != 256; i++, p++) {
@@ -638,7 +638,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   ResourceObject_ReleaseFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }

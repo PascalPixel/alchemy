@@ -72,7 +72,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 
 #define VINE_COUNT 16
 #define VINE_FRAMES 70
@@ -184,7 +184,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 
   // Tear down: stop the transfer, free both blitters, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

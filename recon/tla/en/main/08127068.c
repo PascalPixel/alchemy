@@ -100,8 +100,8 @@ s32 Func_08127068(s32 mode) {
   s32 zero;
 
   ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
-  work = Runtime_AllocateBlock(92, sizeof *work);
-  Runtime_AllocateHeapBlock(96, 0x4000);
+  work = HeapSlot_AllocEwram(92, sizeof *work);
+  HeapSlot_Alloc(96, 0x4000);
   for (i = 0; i < 16; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + 0x10000;

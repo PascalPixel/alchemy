@@ -20,13 +20,13 @@ s32 Item_MatchesFilter(s32 item, s32 filter);
 /// filter takes source (when given), and whose target is the actor the leader
 /// can talk to (flag 0x10) or the object it is touching; 0 when none does.
 /// Rewritten from The Broken Seal's form: The Lost Age asks
-/// EventRuntime_GetControlledOwner for the actor and Item_MatchesFilter for
+/// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the event's item.
 s32 Event_FindFacingTrigger(s32 source) {
   struct FieldStepWork *runtime = Ram_HeapSlots->eventWork;
   const struct SceneEvent *trigger = runtime->events;
-  s32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->angle;
-  s32 selected = Field_FindNearbyTalkTarget(EventRuntime_GetControlledOwner());
+  s32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
+  s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
 
   source &= 0x1ff;

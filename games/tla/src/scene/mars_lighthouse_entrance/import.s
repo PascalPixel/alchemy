@@ -42,13 +42,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Resource_ResetEntry
 	.thumb_func
@@ -189,7 +189,7 @@ Func_02004c70:
 	.global Func_02004c78
 	.thumb_func
 Func_02004c78:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02004c80
 	.thumb_func
 Func_02004c80:
@@ -213,11 +213,11 @@ FieldEvent_WaitFrames:
 	.global Func_02004ca8
 	.thumb_func
 Func_02004ca8:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02004cb0
 	.thumb_func
 Func_02004cb0:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -281,7 +281,7 @@ Func_02004d28:
 	.global Func_02004d30
 	.thumb_func
 Func_02004d30:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02004d38
 	.thumb_func
 Func_02004d38:
@@ -293,7 +293,7 @@ Func_02004d40:
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_02004d50
 	.thumb_func
 Func_02004d50:
@@ -333,11 +333,11 @@ BattleEffect_PrepareBufferInterpolation:
 	.global Func_02004d98
 	.thumb_func
 Func_02004d98:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_02004da0
 	.thumb_func
 Func_02004da0:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02004da8
 	.thumb_func
 Func_02004da8:
@@ -353,7 +353,7 @@ Func_02004db8:
 	.global Func_02004dc0
 	.thumb_func
 Func_02004dc0:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02004dc8
 	.thumb_func
 Func_02004dc8:

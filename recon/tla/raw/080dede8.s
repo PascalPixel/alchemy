@@ -281,7 +281,7 @@ FieldEffect_RunDouse:
 	ldrsh r1, [r2, r4]
 	movs r3, #26
 	ldrsh r2, [r2, r3]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080df028:
 	movs r4, #1
 	add r10, r4

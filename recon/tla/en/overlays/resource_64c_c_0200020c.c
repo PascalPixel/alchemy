@@ -36,7 +36,7 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02002034(s32 id, s32 x, s32 z);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -59,7 +59,7 @@ void Func_02000138(u8 *grid, s32 count, s32 scale);
 void Func_02002044(s32 a, s32 b);
 void Func_0200207c(void);
 void Func_02001f74(void);
-void MemFree(void *pointer);
+void Heap_Release(void *pointer);
 
 #define MAP_WORD(map, offset) (*(u16 *)((map) + (offset)))
 
@@ -75,7 +75,7 @@ void Func_0200020c(s32 stage) {
   GameFlag_ClearBit(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
-  buffer = Runtime_BumpAllocateAlternatePool(0x6000);
+  buffer = Heap_AllocEwram(0x6000);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
   if (stage == 4)
     palette = 0;
@@ -287,7 +287,7 @@ void Func_0200020c(s32 stage) {
     gBgScroll[0].x = 0;
     gBgScroll[0].y = 0;
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
   Func_02001f74();
   QueueIoWriteDelay2(0x04000052, gData_02003dbc);
   QueueIoWriteDelay2(0x04000050, 0);

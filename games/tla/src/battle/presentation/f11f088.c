@@ -151,7 +151,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     }
     if (saved) {
       Func_0811e830(saved);
-      MemFree(saved);
+      Heap_Release(saved);
     }
     if (((s32 *)plan)[25] == 0)
       BattleEventRuntime_WaitForReady();

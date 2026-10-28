@@ -42,7 +42,7 @@ void Func_0802be4c(s32 x, s32 z) {
   s32 row;
   s32 column;
 
-  buffer = MemAlloc(0x200);
+  buffer = Heap_Alloc(0x200);
   view = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   block = &gMapBlocks[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
   Func_0802d088((*block << 2) >> 26, 0);
@@ -103,5 +103,5 @@ void Func_0802be4c(s32 x, s32 z) {
       tilePair += 0x20002;
     }
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

@@ -52,7 +52,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -2149,7 +2149,7 @@ Func_02001108:
 	lsls r1, r1, #17
 	lsls r3, r3, #16
 	movs r0, #159
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	ldr r3, .L_02009410
 	adds r5, r0, #0
 	str r3, [r5, #108]
@@ -2533,7 +2533,7 @@ Func_02001a14:
 	movs r2, #0
 	lsls r3, r3, #16
 	movs r0, #159
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	ldr r3, .L_02009b14
 	mov r8, r0
 	str r3, [r0, #108]

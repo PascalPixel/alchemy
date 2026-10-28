@@ -24,15 +24,15 @@ struct EffectVisual {
 extern const u8 gData_080effd8[];
 extern const u8 gBattleEffect_ParticleScript[];
 extern const u8 Data_080f01b8[];
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 void Object_Destroy(struct ObjectRuntime *object);
 void WaitFrames(s32 frames);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const u8 *script);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *picture);
 void BattleEffect_SpawnRandomParticleAtPosition(void);
@@ -58,7 +58,7 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
   position[0] = picture->x;
   position[1] = picture->y;
   position[2] = picture->z;
-  if (actor == EventRuntime_GetControlledOwner()) {
+  if (actor == Party_GetLeaderActor()) {
     Vector_AddPolarOffset(0x100000, picture->angle, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
@@ -101,11 +101,11 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
   picture->terrainHeight = position[1];
   picture->velocityY = 0x20000;
   picture->gravity = 0x4000;
-  buffer = Runtime_AllocateHeapBlock(68, 0x608);
+  buffer = HeapSlot_Alloc(68, 0x608);
   Func_08038248(item);
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
   visual->tile = tile;
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   picture->update = Marker_MoveLeaderAwayFromEmitter;
   if (work->revealActive != 0) {
     struct ObjectRuntime *marker = Ram_HeapSlots->scriptObjects;

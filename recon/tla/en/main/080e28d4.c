@@ -12,7 +12,7 @@
 #include "fixed_math.h"
 #include "object_runtime.h"
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct ObjectRuntime *Object_GetById(u32 actor);
 struct ObjectRuntime *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
@@ -20,12 +20,12 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void WaitFrames(s32 frames);
 void FacingObject_TurnPairToFaceEachOther(struct ObjectRuntime *first,
                                           struct ObjectRuntime *second);
-void EventRuntime_Wait(s32 frames);
+void Event_WaitFrames(s32 frames);
 void ObjectMotion_SetVariantCallback(s32 actor, s32 variant);
 void Func_080d489c(s32 actor, s32 value);
 
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
-  s32 ownerId = EventRuntime_GetControlledOwner();
+  s32 ownerId = Party_GetLeaderActor();
   struct ObjectRuntime *owner = Object_GetById(ownerId);
   struct ObjectRuntime *object = Func_080200c0(sprite, x << 16, 0, z << 16);
   s32 from[3];
@@ -48,17 +48,17 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   Object_SetMode(owner, 1);
   FacingObject_TurnPairToFaceEachOther(object, owner);
   owner->action = owner->angle;
-  EventRuntime_Wait(10);
+  Event_WaitFrames(10);
   ObjectMotion_SetVariantCallback(ownerId, 3);
   Func_080d489c(ownerId, 258);
-  EventRuntime_Wait(32);
+  Event_WaitFrames(32);
   object->gravity = 0x10000;
   object->velocityY = 0x60000;
   Sound_PlayFar(152);
-  EventRuntime_Wait(15);
+  Event_WaitFrames(15);
   object->velocityY = 0x60000;
   Sound_PlayFar(152);
-  EventRuntime_Wait(23);
+  Event_WaitFrames(23);
   Sound_PlayFar(146);
 
   from[0] = object->x;

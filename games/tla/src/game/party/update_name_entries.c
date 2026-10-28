@@ -27,7 +27,7 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 len;
   s32 i;
 
-  buffer = Runtime_BumpAllocateAlternatePool(340);
+  buffer = Heap_AllocEwram(340);
   named_count = 0;
   index = 0;
   while (index <= 2) {
@@ -66,13 +66,13 @@ s32 LinkBattle_ReceiveParty(void) {
     name_entry[14] = 0;
     index += 1;
   }
-  MemFree(buffer);
-  buffer = Runtime_BumpAllocateAlternatePool(340);
+  Heap_Release(buffer);
+  buffer = Heap_AllocEwram(340);
   if (Serial_StartReceive(Resource_FarCall005(1)) != -1) {
     Serial_WaitForReceive();
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
   return named_count;
 }
 
@@ -114,7 +114,7 @@ s32 LinkBattle_SendParty(void) {
   u16 owners[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  buffer = (u8 *)Heap_AllocEwram(size);
   mark = 0xff;
   work = Ram_HeapSlots->battleWork;
   for (i = 7; i >= 0; i--)
@@ -137,8 +137,8 @@ s32 LinkBattle_SendParty(void) {
     WaitFrames(2);
   }
   size = LINK_PARTY_OFFER_BYTES;
-  MemFree(buffer);
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  Heap_Release(buffer);
+  buffer = (u8 *)Heap_AllocEwram(size);
   /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy
    * is emitted before the count's address as in the reference (differ 4 without
    * it), as The Broken Seal's LinkBattle_SendParty. */
@@ -160,5 +160,5 @@ s32 LinkBattle_SendParty(void) {
     WaitFrames(1);
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

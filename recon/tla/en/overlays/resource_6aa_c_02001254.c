@@ -33,8 +33,8 @@ extern s16 gData_020068a0;
 extern u16 gData_020068a2;
 extern u8 gMapCellBuffer[];
 
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Task_Add(void (*callback)(void), s32 priority);

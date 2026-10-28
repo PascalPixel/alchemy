@@ -13,7 +13,7 @@
 
 typedef void (*TaskFunc)(void);
 
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02002c88(void);
 void Func_02002d34(void);
 s32 Task_Add(TaskFunc callback, s32 order);
@@ -22,7 +22,7 @@ void WaitFrames(s32 frames);
 void Func_02002de4(void);
 
 void Func_02002f58(const s32 *position) {
-  u8 *work = Runtime_AllocateHeapBlockFar(220, 0x1078);
+  u8 *work = HeapSlot_AllocFar(220, 0x1078);
   s32 time;
   s32 state;
 

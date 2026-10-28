@@ -148,7 +148,7 @@ Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
 void WaitFrames(s32);
-void Runtime_ReleaseHeapBlock(s32);
+void HeapSlot_Release(s32);
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
 s32 Trig_Cos(s32);
@@ -165,7 +165,7 @@ void SceneTransform_ApplyPitch(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *, void *, s32);
 void Render_DrawModelList(s32 *);
-void MemFree(void *);
+void Heap_Release(void *);
 void ObjectGroup_CountDownMemberTimers(void);
 void Task_Remove(void *);
 void Func_0814cca8(void);
@@ -378,7 +378,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   Iwram_Clear(dest, 0x3c00);
   Iwram_Clear((void *)0x06004000, 0x4000);
   *(vu16 *)0x0400000c = 0x786;
@@ -771,7 +771,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       s32 *beam;
       void *buffer;
 
-      buffer = Runtime_BumpAllocateAlternatePool(512);
+      buffer = Heap_AllocEwram(512);
       beam = Render_AllocateModelList(1);
       bitmap.width = 7;
       bitmap.height = 7;
@@ -795,8 +795,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         Render_TransformVertices(gUlysses_BeamPalette, buffer, 4);
         Render_DrawModelList(beam);
       }
-      MemFree(beam);
-      MemFree(buffer);
+      Heap_Release(beam);
+      Heap_Release(buffer);
     }
     if (frame == 568) {
       work->particles[30].x = 0;
@@ -1083,7 +1083,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

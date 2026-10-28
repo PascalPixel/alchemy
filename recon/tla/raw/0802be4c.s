@@ -11,7 +11,7 @@ Func_0802be4c:
 	lsls r0, r0, #2
 	sub sp, #4
 	adds r6, r1, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #32]
@@ -227,7 +227,7 @@ Func_0802be4c:
 	cmp r1, #3
 	ble .L_0802c010
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	add sp, #4
 	pop {r3}
 	mov r8, r3

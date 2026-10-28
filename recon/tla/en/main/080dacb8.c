@@ -42,7 +42,7 @@ struct ChainWork {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 
 #define CHAIN_WORK ((struct ChainWork *)Ram_HeapSlots->unk84[8])
 
@@ -61,7 +61,7 @@ void Func_080dacb8(void) {
   s32 angle;
 
   i = 0;
-  leader = Object_GetById(EventRuntime_GetControlledOwner());
+  leader = Object_GetById(Party_GetLeaderActor());
   target = 0x100;
   for (slot = work->slots; i <= 7; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)

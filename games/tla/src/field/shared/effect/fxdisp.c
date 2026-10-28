@@ -71,9 +71,9 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;
 
-  Runtime_AllocateBlock(100, 0x60e);
-  Runtime_AllocateHeapBlock(92, 0x7b7c);
-  Runtime_AllocateHeapBlock(96, 0x4000);
+  HeapSlot_AllocEwram(100, 0x60e);
+  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(96, 0x4000);
   /* FAKEMATCH: the one-pass block loads the effect work before the effect
    * offset is started; assigned directly the offset is started first (differ
    * 2). */
@@ -93,7 +93,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   } else {
     Func_0815e3ac(effect);
   }
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
-  Runtime_ReleaseHeapBlock(100);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
 }

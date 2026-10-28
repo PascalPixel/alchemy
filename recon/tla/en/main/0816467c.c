@@ -189,6 +189,6 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
 }

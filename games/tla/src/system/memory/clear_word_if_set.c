@@ -5,7 +5,7 @@
 #include "scene.h"
 
 /// Clears *p if nonzero and returns p.
-s32 *Runtime_ClearWordIfSet(s32 *p) {
+s32 *Memory_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;
   }

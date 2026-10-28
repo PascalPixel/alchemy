@@ -27,7 +27,7 @@ Func_08021a84:
 	bne .L_08021ada
 	ldr r1, .L_08021e00
 	movs r0, #80
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	ldr r2, .L_08021e04
 	adds r1, r0, #0
 	ldr r0, .L_08021e08
@@ -303,7 +303,7 @@ Func_08021a84:
 	muls r4, r2
 	adds r0, r4, #0
 	str r4, [sp, #20]
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_08021e2c
 	ldr r1, [sp, #20]
 	mov r9, r0
@@ -432,7 +432,7 @@ Func_08021a84:
 	beq .L_08021e30
 	movs r0, #128
 	lsls r0, r0, #3
-	bl MemAlloc
+	bl Heap_Alloc
 	ldrb r3, [r6, #22]
 	ldr r2, [r6, #8]
 	adds r5, r0, #0
@@ -446,7 +446,7 @@ Func_08021a84:
 	mov lr, r3
 	.2byte 0xf800
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	b .L_08021e62
 .L_08021e00:
 	.4byte 0x000002c8
@@ -518,7 +518,7 @@ Func_08021a84:
 	beq .L_08021eb8
 	ldr r5, .L_08021f54
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -541,7 +541,7 @@ Func_08021a84:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	ldrb r2, [r7, #26]
 .L_08021eb8:
 	movs r3, #8
@@ -702,13 +702,13 @@ Func_08021a84:
 	adds r3, r3, r1
 	strh r3, [r2]
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 .L_08021fe0:
 	ldr r3, [sp, #8]
 	cmp r3, #0
 	bne .L_08022000
 	movs r0, #80
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	b .L_08022000
 	.2byte 0x0000
 .L_08021ff0:

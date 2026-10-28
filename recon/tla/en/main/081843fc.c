@@ -70,12 +70,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -181,7 +181,7 @@ void Func_08164b2c(s32 r, s32 g, s32 b);
 void Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -263,7 +263,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   gCameraSceneParameters[4] = 240;
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleBackground_LoadFar(1, 0x72, 0);
   Func_08164b2c(-31, -31, -31);
   transition[4] = 1;
@@ -655,7 +655,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
       }
     }
-    verts = Runtime_BumpAllocateAlternatePool(512);
+    verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
     texture.logWidth = 5;
     shade = 0;
@@ -991,8 +991,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     if ((u32)(frame - 554) <= 51) {
       s32 r = frame - 553;
       s32 y = 90 - (frame - 554) / 2;
@@ -1140,10 +1140,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
               gData_08197492[n], gData_08197498[n]);
-          Runtime_ReleaseHeapBlock(SLOT_ALT);
+          HeapSlot_Release(SLOT_ALT);
         }
       }
-      verts = Runtime_BumpAllocateAlternatePool(512);
+      verts = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame <= 127) {
         s32 s = 85536;
@@ -1282,8 +1282,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
       if (frame > 133) {
         if (frame == 134) {
           p = &work->particles[16];
@@ -1517,7 +1517,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       Func_080151e4(0x21170, 105536, 0x10000);
       Render_TransformVertices(Data_081991e0, Data_02011000, 4);
       Render_DrawModelList(model);
-      MemFree(model);
+      Heap_Release(model);
       if (frame <= 87) {
         s32 lim = 16;
 
@@ -1590,6 +1590,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   } while (frame != 104);
   transition[4] = 0;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

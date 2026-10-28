@@ -89,7 +89,7 @@ void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -270,7 +270,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         BattleEffect_LoadBlitter(188, 1 << 4 | 15);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
     }
 
     // Until frame 89: the sparks of the claws' hits, shrinking.
@@ -349,11 +349,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         }
         draw[k](canvas, work->sheet, x - 20, y, 40, 80);
         if (k == 1)
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
       }
     }
 
-    projected = Runtime_BumpAllocateAlternatePool(32);
+    projected = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
@@ -458,8 +458,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         step++;
       }
     }
-    MemFree(model);
-    MemFree(projected);
+    Heap_Release(model);
+    Heap_Release(projected);
 
     Camera_ApplyVerticalShake(8);
     ObjectGroup_CountDownMemberTimers();
@@ -473,6 +473,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   transition->active = 0;
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

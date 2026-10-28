@@ -161,7 +161,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

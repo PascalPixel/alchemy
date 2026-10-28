@@ -1087,9 +1087,9 @@ BattleEffect_RunGaia:
 	ldr r0, .L_0815b248
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #238
 	ldr r7, [sp, #48]
 	lsls r0, r0, #7

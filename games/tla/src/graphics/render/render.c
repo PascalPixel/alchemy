@@ -37,7 +37,7 @@ void Render_EmptyHook(void) {}
 
 /// Allocates the matrix-save storage and sets the current matrix to identity.
 void Render_ResetTransformState(void) {
-  gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
+  gTransformStackTop = HeapSlot_AllocEwram(8, sizeof(gTransform));
   gTransformStackDepth = 0;
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();

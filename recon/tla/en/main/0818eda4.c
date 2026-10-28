@@ -74,7 +74,7 @@ s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -242,7 +242,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
     }
 
-    projected = Runtime_BumpAllocateAlternatePool(32);
+    projected = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
 
     // Eight flashes turn about the caster, each for 16 frames from its
@@ -355,8 +355,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         work->shakeFrames = 4;
       }
     }
-    MemFree(model);
-    MemFree(projected);
+    Heap_Release(model);
+    Heap_Release(projected);
 
     Func_08158ce0(8, 8);
     ObjectGroup_CountDownMemberTimers();
@@ -365,7 +365,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

@@ -14,7 +14,7 @@
 
 void BattleEffect_CleanupSceneObjects(void);
 
-s32 EventRuntime_ExecutePackedAction(u32 packed) {
+s32 Event_ExecutePackedAction(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;
 
@@ -30,11 +30,11 @@ s32 EventRuntime_ExecutePackedAction(u32 packed) {
       target = selector & 255;
   }
   BattleEffect_LoadActionEffectResources(action, 0);
-  BattleEffect_SetupObjectPair(EventRuntime_GetControlledOwner(), target);
-  EventRuntime_RunPendingEvent(first, mode, target);
+  BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
+  Field_RunPsynergyEvent(first, mode, target);
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();
-  EventRuntime_RunPendingEvent(second, mode, target);
+  Field_RunPsynergyEvent(second, mode, target);
   BattleEffect_CleanupSceneObjects();
   return 0;
 }

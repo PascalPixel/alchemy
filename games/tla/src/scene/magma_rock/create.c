@@ -8,7 +8,7 @@ struct EventObjects {
   struct ObjectRuntime *objects[64];
 };
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -16,7 +16,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02003b84(s32 a, s32 b);
 
 struct ObjectRuntime *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
-  struct ObjectRuntime *object = Engine_ObjectCreate(kind, x, y, z);
+  struct ObjectRuntime *object = Import_ActorCreate(kind, x, y, z);
 
   if (object != NULL) {
     Object_SetSpritePriority(object, 1);

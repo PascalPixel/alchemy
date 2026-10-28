@@ -203,7 +203,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
-  Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
+  Irq_SetHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                                 TASK_PASS_FRAME);
@@ -377,7 +377,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 152) {
-      Runtime_SetIrqHandler(2, 96, Graphics_SetBg2AffineScaleHalf);
+      Irq_SetHandler(2, 96, Graphics_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
@@ -552,7 +552,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // Act two: restore the display; a pillar waits above each target.
   gBgScroll[1].x = savedScrollX;
   transition[4] = 0;
-  Runtime_SetIrqHandler(2, 0, 0);
+  Irq_SetHandler(2, 0, 0);
   Func_0814cca8();
   Palette_LoadBasicObjColors();
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
@@ -661,7 +661,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

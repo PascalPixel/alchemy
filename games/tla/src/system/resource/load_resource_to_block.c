@@ -21,8 +21,8 @@ void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
   if (entryId > 95)
     return;
   source = Resource_GetTableEntry(resourceId);
-  buffer = MemAlloc(size);
+  buffer = Heap_Alloc(size);
   Resource_DecodeByteLzInRam(source, buffer);
   VramCache_Load(entryId, size, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

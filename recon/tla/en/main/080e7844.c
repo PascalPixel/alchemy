@@ -69,8 +69,8 @@ struct ObjectAnimation {
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
@@ -94,12 +94,12 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value);
 void ObjectMotion_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e7844(void) {
-  struct PuffWork *work = Runtime_AllocateHeapBlock(92, 0x2160);
+  struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   u8 *vramWork = Ram_HeapSlots->windowTiles;
   struct ObjectRuntime *caster = scene->mainObject;
@@ -389,12 +389,12 @@ loaded:
     ObjectMotion_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)
-    EventRuntime_RunPendingEvent(pending, scene->firstObjectId,
+    Field_RunPsynergyEvent(pending, scene->firstObjectId,
                                  scene->secondObjectId);
   Resource_ResetEntry(entry);
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);
   else
     BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

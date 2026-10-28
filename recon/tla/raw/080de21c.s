@@ -369,7 +369,7 @@ Func_080de21c:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080de520:
 	movs r0, #10
 	bl WaitFrames

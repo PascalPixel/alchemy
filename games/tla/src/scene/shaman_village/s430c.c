@@ -3,7 +3,7 @@
 void Func_020042c8(struct ShamanVillageObject *object);
 
 void Func_0200430c(s32 x, s32 y, s32 z) {
-  struct ShamanVillageObject *object = Engine_ObjectCreate(285, x, y, z);
+  struct ShamanVillageObject *object = Import_ActorCreate(285, x, y, z);
 
   if (object != NULL) {
     object->field5c = 2;
@@ -18,7 +18,7 @@ void Func_0200430c(s32 x, s32 y, s32 z) {
     object->scaleY = 0x8000;
     object->field68 = 60;
     object->update = Func_020042c8;
-    Engine_ObjectSetMode(object, 5);
+    Import_ActorSetMode(object, 5);
     Animation_SetStateFlags(object, 1);
   }
 }

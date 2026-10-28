@@ -248,10 +248,10 @@ void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *, void *, s32);
 void Render_DrawModelList(struct Model *);
-void MemFree(void *);
+void Heap_Release(void *);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b434(void *, s32, s32);
-void Runtime_ReleaseHeapBlock(s32);
+void HeapSlot_Release(s32);
 void Func_0818caa8(void *, s32, s32, s32);
 void BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
@@ -744,7 +744,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuCopy(PLTT, source, 128);
       }
       if (frame >= 200 && frame < 302) {
-        texture = Runtime_BumpAllocateAlternatePool(32);
+        texture = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         t = frame - 200;
         depth = t * 4 - 64;
@@ -804,8 +804,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
         }
-        MemFree(model);
-        MemFree(texture);
+        Heap_Release(model);
+        Heap_Release(texture);
       }
       if (frame >= 244 && frame < 310) {
         s32 scale136[2] = {0x10000, 0x10000};
@@ -913,7 +913,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           s32 depth2;
           s32 size;
 
-          texture = Runtime_BumpAllocateAlternatePool(32);
+          texture = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
           desc128.a = 7;
           desc128.b = 7;
@@ -949,8 +949,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               Render_DrawModelList(model);
             }
           }
-          MemFree(model);
-          MemFree(texture);
+          Heap_Release(model);
+          Heap_Release(texture);
         }
       }
       if (frame == 330) {
@@ -1005,7 +1005,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           t = 104;
         }
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
         Func_0818caa8(work->buffer + 0x1000, height, 58, t);
         BattleEffect_LoadBlitter(188, 3);
         blit[1] = SYSTEM_WORK->blitBc;
@@ -1167,7 +1167,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame < 132) {
       s32 scale112;
 
-      texture = Runtime_BumpAllocateAlternatePool(32);
+      texture = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       work->transferMode = 2;
       work->transferValue = 50;
@@ -1242,8 +1242,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(texture);
+      Heap_Release(model);
+      Heap_Release(texture);
       while (work->frameSync <= 1) {
       }
     }
@@ -1262,8 +1262,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (i = 0; i != 48; i++) {
     ResourceObject_ReleaseFar((struct ResourceObjectWork *)SPRITES[i]);
   }
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   Palette_LoadBasicObjColors();
   REG_DISPCNT = 0x141;
   WaitFrames(1);
@@ -1460,7 +1460,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           p->timer--;
         }
       }
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(104);
     }
     if (frame < 120) {
       for (i = 0; i != 3; i++) {
@@ -1582,13 +1582,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (i == 3) {
             column->x -= 8;
             column->y = i * 30 - 26;
-            Runtime_ReleaseHeapBlock(104);
+            HeapSlot_Release(104);
             BattleEffect_LoadBlitter(104, 19);
           }
           SYSTEM_WORK->blit(canvas, work->buffer, column->x - 28, column->y, 28,
                             56);
         }
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(104);
         for (i = 0; i != 12; i++) {
           struct Particle *drop = &work->drops[i];
 
@@ -1618,7 +1618,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                     width, 30);
           }
         }
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 47);
         blit[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 96; i++) {
@@ -1633,9 +1633,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             p->timer--;
           }
         }
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(104);
       }
-      texture = Runtime_BumpAllocateAlternatePool(32);
+      texture = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       desc104.a = 6;
       desc104.b = 6;
@@ -1660,8 +1660,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(texture);
+      Heap_Release(model);
+      Heap_Release(texture);
     }
     Camera_ApplyVerticalShake(8);
     ObjectGroup_CountDownMemberTimers();
@@ -1671,7 +1671,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   } while (frame != 180);
   for (i = 0; i != arg->count; i++) {
   }
-  Runtime_ReleaseHeapBlock(188);
+  HeapSlot_Release(188);
   Task_Remove(gData_08143001);
   BattleEffect_EndCanvasLayer();
 }

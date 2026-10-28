@@ -32,7 +32,7 @@ Func_0802a6b8:
 	adds r1, r5, #0
 	movs r0, #32
 	str r3, [sp, #0]
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	adds r1, r5, #0
 	ldr r3, .L_0802a8fc
 	mov r8, r0
@@ -357,7 +357,7 @@ Func_0802a6b8:
 	lsls r2, r2, #7
 	mov r10, r2
 	mov r0, r10
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_0802aa24
@@ -421,7 +421,7 @@ Func_0802a6b8:
 	ldr r1, .L_0802aa6c
 	bl Resource_DecodeType2
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 .L_0802aa24:
 	movs r3, #128
 	lsls r3, r3, #19

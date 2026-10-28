@@ -137,11 +137,11 @@ FieldEvent_WaitFrames:
 	.global Func_02002898
 	.thumb_func
 Func_02002898:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020028a0
 	.thumb_func
 Func_020028a0:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -213,7 +213,7 @@ Func_02002928:
 	.global Func_02002930
 	.thumb_func
 Func_02002930:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02002938
 	.thumb_func
 Func_02002938:
@@ -243,7 +243,7 @@ Func_02002960:
 	.global Func_02002968
 	.thumb_func
 Func_02002968:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -267,7 +267,7 @@ Func_02002990:
 	.global Func_02002998
 	.thumb_func
 Func_02002998:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_020029a0
 	.thumb_func
 Func_020029a0:

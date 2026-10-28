@@ -1867,7 +1867,7 @@ Func_08171bb0:
 	str r3, [r2, #12]
 .L_08172a08:
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r5, [sp, #88]
 	cmp r5, #2
 	beq .L_08172a18
@@ -1952,7 +1952,7 @@ Func_08171bb0:
 	str r3, [r2, #28]
 .L_08172ab4:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08172ae4
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

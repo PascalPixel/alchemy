@@ -14,7 +14,7 @@ Func_080db0b0:
 	movs r0, #0
 	sub sp, #20
 	mov r9, r0
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Object_GetById
 	mov r8, r0
 	adds r0, r5, #0

@@ -46,9 +46,9 @@ Func_02001074:
 	.thumb_func
 Func_0200107c:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_0200108c
 	.thumb_func
@@ -93,11 +93,11 @@ FieldEvent_WaitFrames:
 	.global Func_020010dc
 	.thumb_func
 Func_020010dc:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020010e4
 	.thumb_func
 Func_020010e4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -137,11 +137,11 @@ Camera_FollowActor:
 	.global Func_02001134
 	.thumb_func
 Func_02001134:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_0200113c
 	.thumb_func
 Func_0200113c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:

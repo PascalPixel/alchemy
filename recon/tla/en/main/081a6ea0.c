@@ -44,8 +44,8 @@ extern u8 Data_02017080[];
 extern char ResourceId_IntroLighthousePicture;
 extern char ResourceId_IntroGullSprites;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 void WaitFrames(s32 frames);
@@ -66,7 +66,7 @@ s32 Func_081a6ea0(void) {
   s32 column;
   s32 i;
 
-  logo = Runtime_AllocateHeapBlock(172, 112);
+  logo = HeapSlot_Alloc(172, 112);
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
@@ -169,7 +169,7 @@ stopped:
 done:
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
   Task_Remove(Func_081a6b50);
-  Runtime_ReleaseHeapBlock(172);
+  HeapSlot_Release(172);
   WaitFrames(1);
   return 1;
 }

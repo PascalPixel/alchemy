@@ -127,7 +127,7 @@ void Unit_Calculate(s32 owner) {
   s32 ppCap;
   s16 old;
 
-  work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+  work = Heap_AllocEwram(sizeof(struct StatWork));
   st = Unit_Get(owner);
   work->hp = st->baseHp;
   work->pp = st->basePp;
@@ -444,5 +444,5 @@ void Unit_Calculate(s32 owner) {
     st->pp = value;
   }
 
-  MemFree(work);
+  Heap_Release(work);
 }

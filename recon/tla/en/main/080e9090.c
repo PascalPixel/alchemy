@@ -62,7 +62,7 @@ void Sound_PlayFar(s32 cue);
 // and the sprites come back.
 void Func_080e9090(void) {
   struct ViewMoveWork *work =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
+      HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 frameCount;
@@ -145,5 +145,5 @@ void Func_080e9090(void) {
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }

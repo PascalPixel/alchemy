@@ -30,7 +30,7 @@
 #include "battle_effect_work.h"
 
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 
 // Summon 25's screen wipe: a soft-edged grey band, drawn once into the
@@ -95,5 +95,5 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
     if (i == half && midpoint != NULL)
       midpoint();
   }
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
 }

@@ -25,8 +25,8 @@ struct DjinniSprite {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Start(void);
-void EventRuntime_End(void);
+void Event_Start(void);
+void Event_End(void);
 void WaitFrames(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
@@ -57,7 +57,7 @@ void Func_080d7524(s32 djinniId) {
   djinni = Object_GetById(djinniId);
   leader = Object_GetById(gAdventure.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
-  EventRuntime_Start();
+  Event_Start();
   WaitFrames(10);
   Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -138,5 +138,5 @@ void Func_080d7524(s32 djinniId) {
   Object_SetMode(djinni, 0);
   ((struct DjinniSprite *)djinni->animation)->priority = 2;
   djinni->gravity = 0x10000;
-  EventRuntime_End();
+  Event_End();
 }

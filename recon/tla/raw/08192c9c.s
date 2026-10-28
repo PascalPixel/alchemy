@@ -272,7 +272,7 @@ BattleEffect_RunIris:
 	str r5, [sp, #168]
 	movs r0, #188
 	str r3, [r5]
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Render_ResetTransformState
 	ldr r6, [sp, #184]
 	str r6, [sp, #164]
@@ -940,7 +940,7 @@ BattleEffect_RunIris:
 	bne .L_0819338a
 .L_081933ce:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r4, .L_08193440
 	ldr r6, [sp, #64]
 	movs r3, #18
@@ -3052,7 +3052,7 @@ BattleEffect_RunIris:
 	bl Func_08192894
 .L_08194420:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, [sp, #168]
 	movs r1, #185
 	ldr r3, [r0]
@@ -3845,7 +3845,7 @@ BattleEffect_RunIris:
 	b .L_08194d7a
 .L_08194a08:
 	movs r0, #80
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #112]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -4267,9 +4267,9 @@ BattleEffect_RunIris:
 	bl Render_DrawModelList
 .L_08194d6e:
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #112]
-	bl MemFree
+	bl Heap_Release
 .L_08194d7a:
 	ldr r5, [sp, #168]
 	ldr r6, .L_08194dcc
@@ -5045,7 +5045,7 @@ BattleEffect_RunIris:
 	b .L_081955e6
 .L_08195362:
 	movs r0, #64
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r6, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -5113,9 +5113,9 @@ BattleEffect_RunIris:
 	adds r0, r5, #0
 	bl Render_DrawModelList
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	add r3, sp, #420
 	mov r9, r3
 	bl Func_0819284c
@@ -5450,7 +5450,7 @@ BattleEffect_RunIris:
 	ldr r2, [sp, #192]
 	movs r0, #104
 	strh r1, [r2, #54]
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Func_08191cc4
 	ldr r2, [sp, #176]
 	movs r1, #128

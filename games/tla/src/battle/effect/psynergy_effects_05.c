@@ -17,7 +17,7 @@ void Func_080e9af4(void);
 void Func_080e74d8(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 
 /// Runs field Psynergy animation 21 for the dispatcher's targeted path.
 void BattleEffect_CallEffect21(void) { Func_080e572c(); }

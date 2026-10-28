@@ -11,5 +11,5 @@ struct ObjectRuntime *Event_RunObjectHookAndWait(s32 object) {
   Event_EmptyObjectHook();
   Func_080caa4c(object);
   WaitFrames(1);
-  return ObjectTable_Get(EventRuntime_GetControlledOwner());
+  return ObjectTable_Get(Party_GetLeaderActor());
 }

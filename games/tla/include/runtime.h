@@ -10,6 +10,6 @@ enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_SPANISH
 };
 
-int Runtime_ConstantZeroResult(void);
+int System_ReturnZero(void);
 
 #endif

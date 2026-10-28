@@ -31,7 +31,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   s32 overlay;
 
   overlay = 0;
-  work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
 
   if (glyph >= Icon_CountItemIcons())
     glyph = 0;
@@ -76,5 +76,5 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     *cacheSlot = Resource_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
 }

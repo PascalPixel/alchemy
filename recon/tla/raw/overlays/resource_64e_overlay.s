@@ -18,7 +18,7 @@ Func_0200038c:
 	adds r3, r3, r0
 	ldr r0, [r3]
 	sub sp, #12
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	ldrh r3, [r0, #6]
 	ldr r1, .L_02008508
 	lsrs r3, r3, #12
@@ -136,7 +136,7 @@ Func_0200038c:
 	bl WaitFrames
 	adds r5, #51
 	movs r0, #185
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	str r5, [r6, #48]
 	str r5, [r6, #52]
 	ldr r1, [r7]
@@ -225,52 +225,52 @@ VenusLighthouse_Start:
 	adds r2, r1, r3
 	movs r3, #22
 	strh r3, [r2]
-	bl Engine_EventStart
+	bl Import_EventStart
 	movs r0, #0
-	bl Engine_EventResolvePendingActions
+	bl Import_EventResolvePendingActions
 	bl Func_02000b2c
 	bl Func_02000d30
-	bl Engine_EventEnd
+	bl Import_EventEnd
 	b .L_02008b1a
 .L_02008aa2:
 	movs r0, #10
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #17
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #18
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #19
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #20
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #21
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #22
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #23
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #24
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 	movs r0, #25
-	bl Engine_ActorGet
+	bl Import_ActorGet
 	movs r1, #6
 	bl Object_SetPartAttribute
 .L_02008b1a:

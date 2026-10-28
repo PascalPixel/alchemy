@@ -36,7 +36,7 @@
 
 s32 Serial_StartSend(void *source, s32 size);
 s32 Serial_GetActiveTransfers(void);
-void MemFree(void *block);
+void Heap_Release(void *block);
 
 extern volatile u16 gLinkStatus;
 
@@ -53,7 +53,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 result = 0;
   s32 allocationSize = (u32)(count * 16 + 19) / 20 * 20;
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
+      (struct BattleLinkedActionState *)Heap_AllocEwram(40);
   s32 index;
 
   s32 BattleLink_SendActions(void) {
@@ -196,13 +196,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       action->target = action->target ^ 0x80;
     }
 
-    MemFree(state);
+    Heap_Release(state);
     return result;
   }
 
 fail:
   BattleLink_ResetTransferState();
   Serial_RemoveIrqHandlers();
-  MemFree(state);
+  Heap_Release(state);
   return -1;
 }

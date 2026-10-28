@@ -383,7 +383,7 @@ Func_08028aac:
 	ldrh r1, [r5, #32]
 	ldrh r3, [r7, #32]
 	ldr r2, [sp, #0]
-	bl Runtime_CheckRadiusOverlap
+	bl Field_CheckSpheresOverlap
 	cmp r0, #0
 	blt .L_08028dc4
 	ldr r1, [sp, #12]

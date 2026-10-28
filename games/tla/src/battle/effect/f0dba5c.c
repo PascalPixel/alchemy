@@ -53,7 +53,7 @@ void Func_080dba5c(void) {
   mainObject = scene->mainObject;
   if (scene->mode == 0xc000) {
     scene->active = 1;
-    buffer = MemAlloc(0x200);
+    buffer = Heap_Alloc(0x200);
     /* FAKEMATCH(one-pass): an empty once-only block, so the frame's zero is
      * not the active flag's; as plain statements, 12 of 103 instructions
      * differ in tla-en. */
@@ -63,7 +63,7 @@ void Func_080dba5c(void) {
     slot = Resource_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
     scene->vramSlot = slot;
-    MemFree(buffer);
+    Heap_Release(buffer);
     sprite = &scene->sprite;
     Func_080eaf98(sprite, 16, 31, 0x80000000, tiles);
     sprite->frame = 0;

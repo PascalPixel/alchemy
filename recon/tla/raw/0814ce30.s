@@ -1248,9 +1248,9 @@ BattleEffect_RunCybele:
 	b .L_0814d8e2
 .L_0814d7b0:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #64]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -1621,9 +1621,9 @@ BattleEffect_RunCybele:
 	ldr r0, .L_0814db00
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #134
 	bl Func_081180e8
 	movs r1, #128

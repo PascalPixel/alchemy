@@ -489,9 +489,9 @@ Func_0816a2d8:
 	b .L_0816a50e
 .L_0816a68e:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816a70c
 	bl Task_Remove
 	ldr r1, [sp, #12]

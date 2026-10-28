@@ -890,7 +890,7 @@ BattleEffect_RunEclipse:
 	bl Resource_LoadAndDecompress
 .L_08141c16:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1109,9 +1109,9 @@ BattleEffect_RunEclipse:
 	bl Render_DrawModelList
 .L_08141df2:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 .L_08141dfe:
 	ldr r3, [sp, #84]
 	subs r3, #148
@@ -1265,7 +1265,7 @@ BattleEffect_RunEclipse:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #1
 	add r10, r0
 	mov r1, r10
@@ -1274,7 +1274,7 @@ BattleEffect_RunEclipse:
 	b .L_08141e18
 .L_08141f48:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r4, #240
 	ldr r3, [sp, #96]
 	lsls r4, r4, #7
@@ -1609,7 +1609,7 @@ BattleEffect_RunEclipse:
 	cmp r7, #109
 	bgt .L_081422e2
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1720,9 +1720,9 @@ BattleEffect_RunEclipse:
 	bl Render_DrawModelList
 .L_081422d6:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 .L_081422e2:
 	ldr r3, [sp, #84]
 	movs r1, #8
@@ -2391,7 +2391,7 @@ BattleEffect_RunEclipse:
 	cmp r2, #4
 	bne .L_0814278c
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	movs r4, #240
 	ldr r3, [sp, #96]
 	lsls r4, r4, #7
@@ -2475,7 +2475,7 @@ BattleEffect_RunEclipse:
 	ldr r0, .L_08142938
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #184
 	pop {r3, r5, r6, r7}

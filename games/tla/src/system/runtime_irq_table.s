@@ -12,17 +12,17 @@ gIrqHandlers:
 	.balign 4
 	.global gRuntime_IrqHandlers
 gRuntime_IrqHandlers:
-	.4byte Runtime_IgnoreInterrupt	@ VBlank
-	.4byte Runtime_IgnoreInterrupt	@ HBlank
-	.4byte Runtime_IgnoreInterrupt	@ VCount
-	.4byte Runtime_IgnoreInterrupt	@ Timer0
-	.4byte Runtime_IgnoreInterrupt	@ Timer1
-	.4byte Runtime_IgnoreInterrupt	@ Timer2
-	.4byte Runtime_IgnoreInterrupt	@ Timer3
-	.4byte Runtime_IgnoreInterrupt	@ Serial
-	.4byte Runtime_IgnoreInterrupt	@ Dma0
-	.4byte Runtime_IgnoreInterrupt	@ Dma1
-	.4byte Runtime_IgnoreInterrupt	@ Dma2
-	.4byte Runtime_IgnoreInterrupt	@ Dma3
+	.4byte Irq_Ignore	@ VBlank
+	.4byte Irq_Ignore	@ HBlank
+	.4byte Irq_Ignore	@ VCount
+	.4byte Irq_Ignore	@ Timer0
+	.4byte Irq_Ignore	@ Timer1
+	.4byte Irq_Ignore	@ Timer2
+	.4byte Irq_Ignore	@ Timer3
+	.4byte Irq_Ignore	@ Serial
+	.4byte Irq_Ignore	@ Dma0
+	.4byte Irq_Ignore	@ Dma1
+	.4byte Irq_Ignore	@ Dma2
+	.4byte Irq_Ignore	@ Dma3
 	.4byte Input_HandleKeyInterrupt	@ Keypad
-	.4byte Runtime_IgnoreInterrupt	@ GamePak
+	.4byte Irq_Ignore	@ GamePak

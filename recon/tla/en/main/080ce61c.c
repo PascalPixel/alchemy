@@ -44,7 +44,7 @@ extern char MsgNotEnoughPp, MsgNothingHappened, MsgUseAbilityConfirm,
 struct BattleAct *BattleAction_Get(s32 actionId);
 struct FieldUnit *Unit_Get(s32 unitId);
 void Unit_AddPpFar(s32 unitId, s32 amount);
-void EventRuntime_PrepareCurrentObject(void);
+void Leader_StopMoving(void);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
@@ -54,9 +54,9 @@ s32 Func_080d295c(s32 cursor);
 void Message_CloseFinishedWindowsFar(void);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 a, s32 b);
-s32 EventRuntime_ExecutePackedAction(u32 action);
-s32 EventRuntime_GetControlledOwner(void);
+void Field_RunPsynergyEvent(struct PendingEvent *event, s32 a, s32 b);
+s32 Event_ExecutePackedAction(u32 action);
+s32 Party_GetLeaderActor(void);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 mode);
 void BattleEffect_SetupObjectPair(s32 caster, s32 target);
@@ -88,7 +88,7 @@ s32 Func_080ce61c(u32 code) {
   s32 hit;
   u8 *effect;
 
-  EventRuntime_PrepareCurrentObject();
+  Leader_StopMoving();
   event[0xd30] = 255;
   *(s16 *)(event + 0xd48) = retreat;
   GameFlag_ClearBit(325);
@@ -147,10 +147,10 @@ s32 Func_080ce61c(u32 code) {
     target = -1;
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
-    EventRuntime_RunPendingEvent(pending, userId, target);
+    Field_RunPsynergyEvent(pending, userId, target);
   }
   if (code & 0x2000)
-    return EventRuntime_ExecutePackedAction(code);
+    return Event_ExecutePackedAction(code);
 
   selector = Func_080ce31c(group);
   before = Func_080ce458(0x10000005, group, selector);
@@ -172,7 +172,7 @@ s32 Func_080ce61c(u32 code) {
     Unit_AddPpFar(userId, -cost);
   }
   if (group == 23) {
-    object = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object = ObjectTable_Get(Party_GetLeaderActor());
     if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0) {
       before = NULL;
       after = NULL;
@@ -208,9 +208,9 @@ s32 Func_080ce61c(u32 code) {
     effect[34] = 0;
     effect[35] = 0;
   }
-  BattleEffect_SetupObjectPair(EventRuntime_GetControlledOwner(), target);
+  BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
   Func_080dc6d8();
-  EventRuntime_RunPendingEvent(before, userId, target);
+  Field_RunPsynergyEvent(before, userId, target);
   if (GameFlag_Test(320)) {
     if (GameFlag_Test(321))
       BattleEffect_DispatchRequestKind();
@@ -222,9 +222,9 @@ s32 Func_080ce61c(u32 code) {
   if (hit != -1) {
     pending = Func_080ce458(0x20000005, group, hit | 0x100);
     if (pending != NULL)
-      EventRuntime_RunPendingEvent(pending, userId, ((s8 *)event)[0xd30]);
+      Field_RunPsynergyEvent(pending, userId, ((s8 *)event)[0xd30]);
   }
-  EventRuntime_RunPendingEvent(after, userId, target);
+  Field_RunPsynergyEvent(after, userId, target);
   if (GameFlag_Test(320))
     BattleEffect_ClearChildValueOnMismatch();
   event[0xcb6] = 0;

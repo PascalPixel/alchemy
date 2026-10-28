@@ -120,7 +120,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -128,11 +128,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -292,7 +292,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
 
       // The column, for the first 40 frames.
       if (frame < GEYSER_DRAW_FRAMES) {
-        vertices = Runtime_BumpAllocateAlternatePool(512);
+        vertices = Heap_AllocEwram(512);
         column = Render_AllocateModelList(1);
         texture.size = (texture.size & ~0xff) | 5;
         texture.size = (texture.size & ~0xff00) | 5 << 8;
@@ -332,8 +332,8 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         Func_080151e4(scale * 2, 7 << 16, scale * 2);
         Render_TransformVertices(gData_08198c6c, vertices, 16);
         Render_DrawModelList(column);
-        MemFree(column);
-        MemFree(vertices);
+        Heap_Release(column);
+        Heap_Release(vertices);
       }
 
       Func_08158ce0(4, 16);
@@ -342,8 +342,8 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       WaitFrames(1);
     }
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

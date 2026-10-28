@@ -9,14 +9,14 @@
 #include "types.h"
 #include "text/msg_ids.h"
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 u32 Random16Far(void);
 s32 Func_02000b60(s32 group);
 s32 Func_02000ba0(s32 limit, s32 group, s32 *out);
 
 u8 *Func_02000c04(void) {
-  s32 *hints = Runtime_AllocateBlock(252, 320);
+  s32 *hints = HeapSlot_AllocEwram(252, 320);
   s32 limits[4];
   s32 count = 0;
   s32 lowest = 9999;
@@ -40,7 +40,7 @@ u8 *Func_02000c04(void) {
     for (group = 0; group <= 3; group++)
       count += Func_02000ba0(18, group, hints + count);
     if (count == 0) {
-      Runtime_ReleaseHeapBlock(252);
+      HeapSlot_Release(252);
       return MsgInTheItem;
     }
     Func_02000ba0(18, lowestGroup, hints);
@@ -176,6 +176,6 @@ u8 *Func_02000c04(void) {
     message = MsgInTheItem;
     break;
   }
-  Runtime_ReleaseHeapBlock(252);
+  HeapSlot_Release(252);
   return message;
 }

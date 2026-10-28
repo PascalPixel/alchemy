@@ -10,7 +10,7 @@ void PaletteFade_Initialize(void) {
   struct PaletteFade *buffer;
   s32 operation;
 
-  buffer = Runtime_AllocateBlock(128, sizeof(*buffer));
+  buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
   Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
@@ -21,7 +21,7 @@ void PaletteFade_Initialize(void) {
 
 void PaletteFade_Release(void) {
   Task_Remove((u32)((s32)&PaletteFade_Update));
-  Runtime_ReleaseHeapBlock(0x80);
+  HeapSlot_Release(0x80);
 }
 
 void PaletteFade_SetTarget(s32 index, s32 transform) {

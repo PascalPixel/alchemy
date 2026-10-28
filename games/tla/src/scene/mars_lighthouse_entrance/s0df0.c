@@ -1,8 +1,8 @@
 #include "room.h"
 
 extern u16 gData_020068a2;
-void *MemAlloc(s32 size);
-void MemFree(void *buffer);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02000d18(void);
@@ -11,7 +11,7 @@ s32 Task_Add(void (*callback)(void), s32 priority);
 /// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own
 /// and starts Func_02000d18.
 void Func_02000df0(void) {
-  u32 *buffer = MemAlloc(0x100);
+  u32 *buffer = Heap_Alloc(0x100);
   /* FAKEMATCH: ⚓️ keeps the fill pointer in r1 and the count in r2;
    * unpinned, the pointer takes r2 and 10 instructions differ in tla-en. */
   register u32 *word asm("r1") = buffer;
@@ -28,6 +28,6 @@ fill:
    * comes first. */
   __asm__("");
   VramCache_Load(gData_020068a2, 0x100, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Task_Add(Func_02000d18, 0x480);
 }

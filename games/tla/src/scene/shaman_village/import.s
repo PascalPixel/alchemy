@@ -34,25 +34,25 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global MemAlloc
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global Runtime_BumpAllocateAlternatePool
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_0200479c
 	.thumb_func
@@ -106,17 +106,17 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Engine_ObjectSetMode
+	.global Import_ActorSetMode
 	.thumb_func
-Engine_ObjectSetMode:
+Import_ActorSetMode:
 	overlay_veneer Object_SetMode
-	.global Engine_ObjectSetScript
+	.global Import_ActorSetScript
 	.thumb_func
-Engine_ObjectSetScript:
+Import_ActorSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_0200481c
 	.thumb_func
@@ -205,11 +205,11 @@ FieldEvent_WaitFrames:
 	.global Func_020048c4
 	.thumb_func
 Func_020048c4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020048cc
 	.thumb_func
 Func_020048cc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -305,7 +305,7 @@ Object_SetPartAttribute:
 	.global Func_0200498c
 	.thumb_func
 Func_0200498c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -317,7 +317,7 @@ Func_0200499c:
 	.global Func_020049a4
 	.thumb_func
 Func_020049a4:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_020049ac
 	.thumb_func
 Func_020049ac:
@@ -365,7 +365,7 @@ Func_020049fc:
 	.global Func_02004a04
 	.thumb_func
 Func_02004a04:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -381,7 +381,7 @@ Event_WaitTransitionFrames:
 	.global Func_02004a24
 	.thumb_func
 Func_02004a24:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02004a2c
 	.thumb_func
 Func_02004a2c:
@@ -438,7 +438,7 @@ Func_02004a8c:
 	.thumb_func
 Func_02004a94:
 	overlay_veneer Inn_PlaySleepFar
-	.global Engine_AudioPlayCue
+	.global Import_SoundPlay
 	.thumb_func
-Engine_AudioPlayCue:
+Import_SoundPlay:
 	overlay_veneer Sound_PlayFar

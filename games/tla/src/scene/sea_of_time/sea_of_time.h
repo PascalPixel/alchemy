@@ -66,7 +66,7 @@ extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 
 struct SeaOfTimeObject *Object_GetById(s32 id);
-struct SeaOfTimeObject *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct SeaOfTimeObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct SeaOfTimeObject *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct SeaOfTimeObject *object,
                                         s32 value);

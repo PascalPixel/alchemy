@@ -107,7 +107,7 @@ void Func_081a0e0c(s32 page) {
   gDisplayScroll_Position = i * 8;
 
   {
-    void *objects = Runtime_BumpAllocateAlternatePool(
+    void *objects = Heap_AllocEwram(
         128 * sizeof(struct DisplayScrollObject));
     void **cell = (void **)&gDisplayScroll_Objects;
 

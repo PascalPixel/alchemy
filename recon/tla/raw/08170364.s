@@ -849,7 +849,7 @@ BattleEffect_RunMegaera:
 	b .L_08170cee
 .L_08170a0a:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #238
 	movs r6, #192
 	lsls r0, r0, #7
@@ -1107,7 +1107,7 @@ BattleEffect_RunMegaera:
 	.2byte 0xf800
 	add r11, r6
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	mov r0, r11
 	cmp r0, #2
 	bne .L_08170b8a
@@ -1242,9 +1242,9 @@ BattleEffect_RunMegaera:
 	ldr r0, .L_08170d84
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #60]
 	ldr r2, [sp, #64]
 	movs r0, #4

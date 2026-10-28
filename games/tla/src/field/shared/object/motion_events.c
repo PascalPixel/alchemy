@@ -62,7 +62,7 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId) {
     } else {
       Sound_PlayFar(0x98);
     }
-    EventRuntime_Wait(eventId);
+    Event_WaitFrames(eventId);
   }
 }
 

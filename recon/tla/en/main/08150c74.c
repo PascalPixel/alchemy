@@ -222,6 +222,6 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

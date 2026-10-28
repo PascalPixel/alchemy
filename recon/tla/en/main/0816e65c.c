@@ -83,12 +83,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -212,7 +212,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       ObjectDispatch_SetAnimationSpeedFar(caster, 32);
     }
 
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(effect->actor, &source);
     EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -309,8 +309,8 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
         BattleEffectKernels_IntegrateVector3(axe, 64, 0);
       }
     }
-    MemFree(model);
-    MemFree(vertices);
+    Heap_Release(model);
+    Heap_Release(vertices);
 
     if (frame == Data_08198b96[mode]) {
       Func_081180e8(144);
@@ -346,7 +346,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
   ObjectDispatch_SetAnimationSpeedFar(caster, 16);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

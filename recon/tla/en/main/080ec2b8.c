@@ -36,7 +36,7 @@ struct WorldMapWork {
 extern struct WorldMapWork gWorldMapWork;
 extern s16 Data_0202a648[2];
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct WorldMapPlace *FlagEntries_GetTable(void);
 u32 Func_080ec298(struct WorldMapPlace *place);
 s32 GameFlag_Test(s32 flag);
@@ -58,7 +58,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   s32 wraps;
   struct WorldMapWork *work = &gWorldMapWork;
 
-  EventRuntime_GetControlledOwner();
+  Party_GetLeaderActor();
   places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;

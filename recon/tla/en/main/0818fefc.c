@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -443,7 +443,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           angle += 0x1800;
         }
       }
-      MemFree(model);
+      Heap_Release(model);
     }
 
     if (frame == 8) {
@@ -496,7 +496,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       }
     }
 
-    verts = Runtime_BumpAllocateAlternatePool(32);
+    verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture2.logWidth = 7;
     texture2.logHeight = 7;
@@ -577,8 +577,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
 
     while (*(volatile s32 *)&work->vblanksSinceTransfer <= 1) {
     }
@@ -594,6 +594,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

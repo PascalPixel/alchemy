@@ -32,7 +32,7 @@ s32 Func_0801596c(void) {
   struct SaveSlotHeader *slot;
   u32 index;
 
-  work = Runtime_AllocateBlock(204, sizeof(*work));
+  work = HeapSlot_AllocEwram(204, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(2, &gIrqHandlers[5]);
 

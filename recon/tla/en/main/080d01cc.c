@@ -102,14 +102,14 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_VBLANK);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;

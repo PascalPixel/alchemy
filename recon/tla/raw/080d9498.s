@@ -56,7 +56,7 @@ Func_080d9498:
 	lsls r0, r0, #2
 	str r3, [sp, #52]
 	str r2, [sp, #4]
-	bl MemAlloc
+	bl Heap_Alloc
 	str r0, [sp, #28]
 	adds r3, r0, #0
 	ldr r0, [sp, #52]
@@ -304,7 +304,7 @@ Func_080d9498:
 	bl GameFlag_SetBit
 .L_080d96f2:
 	ldr r0, [sp, #28]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #0
 .L_080d96fa:
 	add sp, #88

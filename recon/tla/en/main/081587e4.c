@@ -102,7 +102,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
 // Closes the canvas layer.
@@ -201,7 +201,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
                                                    x, y, 20, 40);
-        Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+        HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
       }
 
@@ -263,7 +263,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               draw[1](canvas, work->sheet + Data_0819853a[chip->velocityX],
                       chipX, chipY, Data_08198528[chip->velocityX],
                       Data_08198531[chip->velocityX]);
-              Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+              HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
             }
             rock->x += rock->velocityX;
             rock->y += rock->velocityY;
@@ -299,6 +299,6 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

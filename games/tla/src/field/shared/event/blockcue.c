@@ -85,7 +85,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
 
   if (decode == NULL) {
     Dma_Set(BattleEffect_DecodePictureCode,
-            Runtime_AllocateHeapBlock(HEAP_SLOT_PICTURE_DECODER,
+            HeapSlot_Alloc(HEAP_SLOT_PICTURE_DECODER,
                                       (s32)BattleEffect_DecodePictureBlockSize),
             0x84000000 | ((u32)(BattleEffect_DecodePictureCopyEnd -
                                 BattleEffect_DecodePictureCode) >>
@@ -109,5 +109,5 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
   }
 
   if (!decoderLoaded)
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_PICTURE_DECODER);
+    HeapSlot_Release(HEAP_SLOT_PICTURE_DECODER);
 }

@@ -11,7 +11,7 @@ Func_02000098:
 	movs r0, #128
 	lsls r0, r0, #4
 	sub sp, #4
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19
@@ -61,7 +61,7 @@ Func_02000098:
 	orrs r2, r3
 	strb r2, [r6, #9]
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r5, .L_0200812c
 	ldr r3, .L_02008148
 	movs r1, #144

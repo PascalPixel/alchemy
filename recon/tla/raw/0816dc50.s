@@ -419,7 +419,7 @@ BattleEffect_RunSerac:
 .L_0816df80:
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1174,9 +1174,9 @@ BattleEffect_RunSerac:
 	bne .L_0816e50a
 .L_0816e598:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_0816e63c
 	ldr r4, [sp, #32]
 	movs r1, #8
@@ -1205,9 +1205,9 @@ BattleEffect_RunSerac:
 	ldr r0, .L_0816e640
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #160
 	pop {r3, r5, r6, r7}

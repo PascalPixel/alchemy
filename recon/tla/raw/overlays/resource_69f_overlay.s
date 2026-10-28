@@ -1348,7 +1348,7 @@ Func_02001250:
 .L_0200942c:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -1368,7 +1368,7 @@ Func_02001250:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02009490

@@ -11,13 +11,13 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void *ObjectTable_Get(s32 id);
 
 void Func_080ec1d0(s32 *screenX, s32 *screenY) {
-  s32 x = EventRuntime_GetControlledOwner();
+  s32 x = Party_GetLeaderActor();
   u8 *state = Ram_HeapSlots->eventWork;
   u8 *object;
   s32 z;

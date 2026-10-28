@@ -16,7 +16,7 @@ Func_080e4730:
 	adds r1, #44
 	movs r0, #92
 	sub sp, #40
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -297,7 +297,7 @@ Func_080e4730:
 	movs r6, #24
 	ldrsh r1, [r5, r6]
 	negs r2, r2
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080e49b2:
 	movs r6, #144
 	movs r5, #128
@@ -338,7 +338,7 @@ Func_080e4730:
 	ldr r0, [sp, #28]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3

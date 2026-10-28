@@ -939,7 +939,7 @@ BattleEffect_RunRisingDragon:
 	b .L_08178ce4
 .L_08178e66:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_08178e6c:
 	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #2
@@ -971,7 +971,7 @@ BattleEffect_RunRisingDragon:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08178ee0
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

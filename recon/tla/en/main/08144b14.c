@@ -174,8 +174,8 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_BLITTER);
     }
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -266,8 +266,8 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
     work->transferPending = 1;
     WaitFrames(1);
   }

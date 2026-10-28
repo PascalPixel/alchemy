@@ -96,8 +96,8 @@ void Func_0813fa88(s32 kind) {
   s32 j;
   s32 k;
 
-  work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, sizeof *work);
-  canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
+  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, sizeof *work);
+  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 

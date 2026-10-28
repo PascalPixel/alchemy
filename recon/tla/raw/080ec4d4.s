@@ -11,7 +11,7 @@ Func_080ec4d4:
 	mov r7, r8
 	push {r7}
 	sub sp, #84
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	ldr r0, .L_080ec794
 	ldr r1, .L_080ec794
 	adds r0, #32

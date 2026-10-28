@@ -56,10 +56,10 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   u8 *work;
 
-  work = Runtime_AllocateBlock(0x44, 0x608);
+  work = HeapSlot_AllocEwram(0x44, 0x608);
   Icon_DrawMisc(resource);
   result = VramCache_Reload(index, (s32)(work + 0x400));
-  Runtime_ReleaseHeapBlock(0x44);
+  HeapSlot_Release(0x44);
   return result;
 }
 
@@ -67,10 +67,10 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   u8 *work;
 
-  work = Runtime_AllocateBlock(0x44, 0x608);
+  work = HeapSlot_AllocEwram(0x44, 0x608);
   ItemIcon_Compose(resource, 0x1a);
   result = VramCache_Reload(index, (s32)(work + 0x400));
-  Runtime_ReleaseHeapBlock(0x44);
+  HeapSlot_Release(0x44);
   return result;
 }
 
@@ -80,10 +80,10 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 ret;
   u8 *work;
 
-  work = Runtime_AllocateBlock(0x44, 0x608);
+  work = HeapSlot_AllocEwram(0x44, 0x608);
   cur = index;
   Ability_LoadGlyph(resource, 0, &cur, &out, 1);
   ret = VramCache_Reload(index, (s32)(work + 0x400));
-  Runtime_ReleaseHeapBlock(0x44);
+  HeapSlot_Release(0x44);
   return ret;
 }

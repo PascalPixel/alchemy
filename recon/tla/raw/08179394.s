@@ -519,7 +519,7 @@ BattleEffect_RunRagingHeat:
 	bne .L_08179742
 .L_0817979c:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #28]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -710,9 +710,9 @@ BattleEffect_RunRagingHeat:
 	cmp r1, #2
 	bne .L_08179822
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #28]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
@@ -736,9 +736,9 @@ BattleEffect_RunRagingHeat:
 	ldr r0, .L_08179990
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #172
 	pop {r3, r5, r6, r7}

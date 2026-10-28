@@ -105,5 +105,5 @@ void Func_0802dd08(s32 arg0, s32 arg1) {
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
   routine(arg0, arg1, gData_0203c000, tiles + 0x1000);
-  MemFree(routine);
+  Heap_Release(routine);
 }

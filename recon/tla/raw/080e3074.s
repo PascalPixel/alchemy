@@ -15,7 +15,7 @@ Func_080e3074:
 	adds r1, #56
 	movs r0, #92
 	sub sp, #56
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r3, #192
 	lsls r3, r3, #18
 	mov r9, r0
@@ -757,7 +757,7 @@ Func_080e3074:
 	strh r3, [r2, #6]
 	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -9,7 +9,7 @@
        ->v)
 s32 Animation_SetStateFlags();
 s32 ArcTan2();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 s32 Func_020006f8();
 s32 Func_020032e0();
 s32 Func_020032e8();
@@ -31,7 +31,7 @@ void Func_0200088c(s32 p0, s32 p1, s32 p2) {
   t0 = FIELD_AT(p0, s32, 4);
   t1 = *(s32 *)p0;
   t2 = FIELD_AT(p0, s32, 8);
-  t3 = Engine_ObjectCreate(0x2a0, t1, t0, t2);
+  t3 = Import_ActorCreate(0x2a0, t1, t0, t2);
   t4 = *(s32 *)p1;
   t5 = *(s32 *)p0;
   t6 = FIELD_AT(p0, s32, 8);

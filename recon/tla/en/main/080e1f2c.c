@@ -61,8 +61,8 @@ struct BowScene {
 
 extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
@@ -73,7 +73,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e1678(void);
 
 void Func_080e1f2c(void) {
-  struct BowWork *work = Runtime_AllocateHeapBlock(92, sizeof(struct BowWork));
+  struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   struct CanvasSpriteWork *canvas;
@@ -94,7 +94,7 @@ void Func_080e1f2c(void) {
     sprite = (struct EffectSprite *)((struct BowEntry *)sprite + 1);
   }
 
-  work->tiles = Runtime_AllocateHeapBlock(96, 0x1800);
+  work->tiles = HeapSlot_Alloc(96, 0x1800);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_BowDraw),
                         work->tiles);
   bowSlot = Resource_FindFreeEntry();
@@ -135,7 +135,7 @@ void Func_080e1f2c(void) {
   vector->x = pos.x;
   vector->y = 0x100000;
   vector->z = pos.z;
-  Runtime_ReleaseHeapBlock(96);
+  HeapSlot_Release(96);
 
   Func_080eb824();
   canvas = Ram_HeapSlots->unkec[1];
@@ -175,5 +175,5 @@ void Func_080e1f2c(void) {
   Resource_ResetEntry(bowSlot);
   BattleEffect_PrepareBufferInterpolation();
   BattleEffect_EndCanvasSprite();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

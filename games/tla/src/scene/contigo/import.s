@@ -141,11 +141,11 @@ FieldEvent_WaitFrames:
 	.global Func_0200406c
 	.thumb_func
 Func_0200406c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02004074
 	.thumb_func
 Func_02004074:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -237,7 +237,7 @@ Object_SetPartAttribute:
 	.global Func_0200412c
 	.thumb_func
 Func_0200412c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -249,7 +249,7 @@ Func_0200413c:
 	.global Func_02004144
 	.thumb_func
 Func_02004144:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_0200414c
 	.thumb_func
 Func_0200414c:
@@ -305,7 +305,7 @@ Func_020041ac:
 	.global Func_020041b4
 	.thumb_func
 Func_020041b4:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:
@@ -345,7 +345,7 @@ Func_020041fc:
 	.global Func_02004204
 	.thumb_func
 Func_02004204:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_0200420c
 	.thumb_func
 Func_0200420c:

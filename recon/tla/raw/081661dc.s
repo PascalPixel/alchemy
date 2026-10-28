@@ -220,7 +220,7 @@ BattleEffect_RunAnnihilation:
 	.2byte 0xf800
 .L_08166398:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0816639e:
 	ldr r2, [sp, #32]
 	subs r2, #16
@@ -278,7 +278,7 @@ BattleEffect_RunAnnihilation:
 	adds r0, #16
 	bl BattleEffect_CallDoNothing
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08166412:
 	ldr r1, [sp, #32]
 	cmp r1, #8
@@ -370,9 +370,9 @@ BattleEffect_RunAnnihilation:
 	cmp r2, #64
 	bne .L_08166452
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081664d4:
 	ldr r3, [sp, #32]
 	cmp r3, #8

@@ -55,7 +55,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  canvas = MemAlloc(0x800);
+  canvas = Heap_Alloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
   ClearWords(pens, 16);
@@ -191,6 +191,6 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
     tiles++;
     mirror++;
   }
-  MemFree(canvas);
+  Heap_Release(canvas);
   return count;
 }

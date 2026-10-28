@@ -32,11 +32,11 @@ struct EventWork15a {
 };
 
 void Func_080d2cc4(s32 message) {
-  EventRuntime_Start();
-  EventRuntime_ResolvePendingActions(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   FieldMessage_ShowFar(message, 1);
   GameFlag_ClearBit(0x142);
-  EventRuntime_End();
+  Event_End();
   if (Party_FindOwnerWithActionFar(136) != -1)
     ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }

@@ -29,7 +29,7 @@ struct PendingAction {
 };
 
 const struct PendingAction *BattleAction_Get(s32 action);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 Func_080cb09c(void);
 s32 Func_080cb144(void);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -38,7 +38,7 @@ s32 Func_080cdac0(s32 kind, s32 owner, s32 target);
 s32 Func_080ce31c(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
-  u32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->angle;
+  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
   s32 focused = Func_080cb09c();
   s32 special = Func_080cb144();
   s32 best = 9999;
@@ -68,7 +68,7 @@ s32 Func_080ce31c(s32 kind) {
         fallback = 0x200;
       } else if (event->control & 0x10) {
         s32 distance =
-            Func_080cdac0(kind, EventRuntime_GetControlledOwner(), target);
+            Func_080cdac0(kind, Party_GetLeaderActor(), target);
 
         if (distance != -1 && best > distance) {
           nearby = 0x100;

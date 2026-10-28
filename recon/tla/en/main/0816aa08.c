@@ -228,8 +228,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(104);
-  Runtime_ReleaseHeapBlock(188);
+  HeapSlot_Release(104);
+  HeapSlot_Release(188);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

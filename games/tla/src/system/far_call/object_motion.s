@@ -125,10 +125,10 @@ Object_SetPartAttributeFar:
 	.thumb_func
 Func_080c8178:
 	overlay_veneer Object_SetTargetAndCallback
-	.global EventRuntime_SetMessageFar
+	.global Event_SetMessageIdFar
 	.thumb_func
-EventRuntime_SetMessageFar:
-	overlay_veneer EventRuntime_SetMessage
+Event_SetMessageIdFar:
+	overlay_veneer Event_SetMessageId
 	.global FieldMessage_ShowAtActorFar
 	.thumb_func
 FieldMessage_ShowAtActorFar:
@@ -140,19 +140,19 @@ Func_080c8190:
 	.global Func_080c8198
 	.thumb_func
 Func_080c8198:
-	overlay_veneer EventRuntime_ShowMessageThenWait
-	.global EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageThenWait
+	.global Event_ShowMessageAndWaitFar
 	.thumb_func
-EventRuntime_ShowMessageAndWaitFar:
-	overlay_veneer EventRuntime_ShowMessageAndWait
+Event_ShowMessageAndWaitFar:
+	overlay_veneer Event_ShowMessageAndWait
 	.global Func_080c81a8
 	.thumb_func
 Func_080c81a8:
-	overlay_veneer EventRuntime_PromptInventoryMessage
+	overlay_veneer Event_AskYesNoAndShowResponse
 	.global Func_080c81b0
 	.thumb_func
 Func_080c81b0:
-	overlay_veneer EventRuntime_Noop
+	overlay_veneer Event_NoOpUpdate
 	.global Func_080c81b8
 	.thumb_func
 Func_080c81b8:
@@ -160,7 +160,7 @@ Func_080c81b8:
 	.global Func_080c81c0
 	.thumb_func
 Func_080c81c0:
-	overlay_veneer EventRuntime_ShowCounter
+	overlay_veneer Event_ShowCounter
 	.global Event_ShowCounterAtPositionFar
 	.thumb_func
 Event_ShowCounterAtPositionFar:

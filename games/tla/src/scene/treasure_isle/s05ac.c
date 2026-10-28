@@ -4,7 +4,7 @@
 #include "scene_ids.h"
 #include "field_event.h"
 
-// Import stubs: the event runtime's begin and end, and the pending
+// Import stubs: Event_Start and Event_End, and the pending
 // actions' resolution.
 void Func_02000fcc(void);
 void Func_02000fd4(void);
@@ -14,7 +14,7 @@ extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
 /// For each of cells 0 to 3 of gData_0200117c whose flag (0x303 to 0x306) is
-/// still clear, calls Func_0200043c and sets the flag; the event runtime is
+/// still clear, calls Func_0200043c and sets the flag; the event is
 /// begun before the first and ended after the last.
 void Func_020005ac(void) {
   s16 count = 0;
@@ -55,7 +55,7 @@ void Func_020005ac(void) {
 }
 
 /// For each of cells 0 to 2 of gData_020011cc whose flag (0x30a to 0x30c) is
-/// still clear, calls Func_0200043c and sets the flag; the event runtime is
+/// still clear, calls Func_0200043c and sets the flag; the event is
 /// begun before the first and ended after the last.
 void Func_02000684(void) {
   s16 count = 0;

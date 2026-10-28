@@ -35,7 +35,7 @@ void VenusLighthouse_RunSetupStep(void) {
   Func_02001c84(4, 10);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
   Func_02001c9c();
-  Engine_EventWait(10);
+  Import_EventWaitFrames(10);
   Field_DispatchTypeHandler(1);
   Func_02001c8c();
   Func_02001c94();
@@ -52,22 +52,22 @@ struct AerieEventWork {
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gAdventure.entrance == ENTRANCE_OPENING) {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
     Func_02000b2c();
     Func_02000d30();
-    Engine_EventEnd();
+    Import_EventEnd();
   } else {
-    Object_SetPartAttribute(Engine_ActorGet(10), 6);
-    Object_SetPartAttribute(Engine_ActorGet(17), 6);
-    Object_SetPartAttribute(Engine_ActorGet(18), 6);
-    Object_SetPartAttribute(Engine_ActorGet(19), 6);
-    Object_SetPartAttribute(Engine_ActorGet(20), 6);
-    Object_SetPartAttribute(Engine_ActorGet(21), 6);
-    Object_SetPartAttribute(Engine_ActorGet(22), 6);
-    Object_SetPartAttribute(Engine_ActorGet(23), 6);
-    Object_SetPartAttribute(Engine_ActorGet(24), 6);
-    Object_SetPartAttribute(Engine_ActorGet(25), 6);
+    Object_SetPartAttribute(Import_ActorGet(10), 6);
+    Object_SetPartAttribute(Import_ActorGet(17), 6);
+    Object_SetPartAttribute(Import_ActorGet(18), 6);
+    Object_SetPartAttribute(Import_ActorGet(19), 6);
+    Object_SetPartAttribute(Import_ActorGet(20), 6);
+    Object_SetPartAttribute(Import_ActorGet(21), 6);
+    Object_SetPartAttribute(Import_ActorGet(22), 6);
+    Object_SetPartAttribute(Import_ActorGet(23), 6);
+    Object_SetPartAttribute(Import_ActorGet(24), 6);
+    Object_SetPartAttribute(Import_ActorGet(25), 6);
   }
   return 0;
 }

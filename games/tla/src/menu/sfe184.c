@@ -30,7 +30,7 @@ void ItemMenu_Close(void);
 
 s32 Func_080fe184(void) {
   struct OwnerMenuState *state =
-      (struct OwnerMenuState *)Runtime_AllocateHeapBlock(220, 0x0cec);
+      (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
   s32 result;
   s32 index;
 
@@ -62,7 +62,7 @@ s32 Func_080fe184(void) {
   ItemMenu_Close();
   Ram_HeapSlots->objectSystem->suspended = 0;
   WaitFrames(1);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
   return result;
 }
 

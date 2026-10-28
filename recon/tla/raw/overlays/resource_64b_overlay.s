@@ -4054,7 +4054,7 @@ Func_02003d44:
 	bl Func_02004da8
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	adds r1, r7, #0
 	ldr r0, .L_0200be8c
@@ -4682,7 +4682,7 @@ Func_02003d44:
 	bl QueueIoWriteDelay2
 .L_0200c2c6:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #2
 	adds r0, #255
 	bl GameFlag_SetBit
@@ -4701,7 +4701,7 @@ Func_020042e0:
 	push {r7}
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	adds r1, r7, #0
 	ldr r0, .L_0200c4d4

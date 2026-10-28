@@ -5,7 +5,7 @@
 
 extern const u8 gData_080f1140[];
 
-void EventRuntime_PrepareCurrentObject(void);
+void Leader_StopMoving(void);
 void WaitFrames(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
@@ -13,7 +13,7 @@ void BattleEffect_RunVisibilityTransition(void) {
   struct Adventure *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
-    EventRuntime_PrepareCurrentObject();
+    Leader_StopMoving();
     Func_080d46a4(0x9d89, 6);
     while (gInput.held & 0x200)
       WaitFrames(1);

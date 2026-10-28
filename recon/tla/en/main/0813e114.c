@@ -53,7 +53,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -185,7 +185,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

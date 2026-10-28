@@ -13,7 +13,7 @@ DisplayScroll_DrawMessageLine:
 	adds r6, r2, #0
 	sub sp, #32
 	mov r8, r1
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r1, #192
 	adds r7, r0, #0
 	ldr r3, .L_081a0ca0
@@ -89,7 +89,7 @@ DisplayScroll_DrawMessageLine:
 	cmp r6, #23
 	ble .L_081a0c6e
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
 	add sp, #32
 	pop {r3, r5}

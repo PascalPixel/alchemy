@@ -90,11 +90,11 @@ void Func_081a15dc(s32 resource, u8 *map, s32 position) {
     Dma_Set(&word, tiles, 0x85000200, (volatile u32 *)0x040000d4);
     data = Resource_GetTableEntry(resource);
     size = (u32)BattleEffect_Expand2CodeSize;
-    code = MemAlloc(size);
+    code = Heap_Alloc(size);
     Dma_Set(BattleEffect_Expand2Code, code, 0x84000000 | (size >> 2),
             (volatile u32 *)0x040000d4);
     ((void (*)(u8 *, u8 *, u32))code)(data + 0x100, map, fill);
-    MemFree(code);
+    Heap_Release(code);
     IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data, 0x84000040);
   }
   Data_02007528 = map;

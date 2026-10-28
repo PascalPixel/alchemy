@@ -34,13 +34,13 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02003af0
 	.thumb_func
@@ -82,9 +82,9 @@ ObjectDispatch_SetAnimationSpeed:
 	.thumb_func
 Func_02003b38:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02003b48
 	.thumb_func
@@ -153,11 +153,11 @@ FieldEvent_WaitFrames:
 	.global Func_02003bc8
 	.thumb_func
 Func_02003bc8:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02003bd0
 	.thumb_func
 Func_02003bd0:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -217,7 +217,7 @@ Func_02003c40:
 	.global Func_02003c48
 	.thumb_func
 Func_02003c48:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02003c50
 	.thumb_func
 Func_02003c50:
@@ -249,7 +249,7 @@ Func_02003c80:
 	.global Func_02003c88
 	.thumb_func
 Func_02003c88:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003c90
 	.thumb_func
 Func_02003c90:
@@ -281,7 +281,7 @@ Func_02003cc0:
 	.global Func_02003cc8
 	.thumb_func
 Func_02003cc8:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02003cd0
 	.thumb_func
 Func_02003cd0:

@@ -24,7 +24,7 @@ static __inline__ void DisplayScroll_CopyWords(void *destination, void *source,
 }
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
-  u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
+  u8 *buf = (u8 *)Heap_AllocEwram(0x900);
   s32 x = 0;
   s32 width = 192;
   const u8 *font = gDisplayScroll_Font;
@@ -120,6 +120,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
     *(u32 *)(0x06010018 + tile * 32) = words[0x180];
     *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
   }
-  MemFree(buf);
+  Heap_Release(buf);
   return 0;
 }

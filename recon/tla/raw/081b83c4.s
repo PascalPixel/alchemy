@@ -15,23 +15,23 @@ Func_081b83c4:
 	lsls r1, r1, #2
 	movs r0, #96
 	add sp, r5
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #246
 	lsls r1, r1, #7
 	str r0, [sp, #128]
 	adds r1, #124
 	movs r0, #92
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #192
 	lsls r1, r1, #3
 	str r0, [sp, #124]
 	adds r1, #20
 	movs r0, #180
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #76
 	str r0, [sp, #120]
 	movs r0, #48
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	str r0, [sp, #116]
 	ldr r0, .L_081b8610
 	bl Resource_ReservedNoOp
@@ -3971,15 +3971,15 @@ Func_081b83c4:
 	cmp r0, #17
 	bne .L_081ba28a
 	movs r0, #48
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #180
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #96
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #100
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #189
 	lsls r3, r3, #2
 	add sp, r3

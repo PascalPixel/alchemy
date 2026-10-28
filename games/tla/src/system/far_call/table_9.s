@@ -5,10 +5,10 @@
 	.thumb_func
 Func_08020340:
 	overlay_veneer Func_080237e8
-	.global Runtime_CheckRadiusOverlapFar
+	.global Field_CheckSpheresOverlapFar
 	.thumb_func
-Runtime_CheckRadiusOverlapFar:
-	overlay_veneer Runtime_CheckRadiusOverlap
+Field_CheckSpheresOverlapFar:
+	overlay_veneer Field_CheckSpheresOverlap
 	.global Func_08020350
 	.thumb_func
 Func_08020350:

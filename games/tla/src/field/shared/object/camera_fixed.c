@@ -110,7 +110,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   do {
     Dma_Set(
         Render_DecodePictureCode,
-        Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
+        HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
         (DMA_ENABLE | DMA_32BIT) << 16 |
             ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
@@ -138,5 +138,5 @@ void ObjectSystem_UpdateCameraFixed(void) {
     if (object->active != 0)
       Func_08023d80(object, angle);
   }
-  Runtime_ReleaseHeapBlock(80);
+  HeapSlot_Release(80);
 }

@@ -45,7 +45,7 @@ s32 Func_080202f0(s32 layer);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
                                  s32 target);
 void EffectRuntime_StopCurrentObject(void);
 void UpdateRisingParticleBurst(void *object);
@@ -225,7 +225,7 @@ void Func_080dd054(void) {
     Object_SetMode(pusher, 4);
     Object_SetPositionAndResetMotionFar(pusher, pusher->x, pusher->y,
                                         pusher->z);
-    EventRuntime_RunPendingEvent(event, scene->firstObjectId,
+    Field_RunPsynergyEvent(event, scene->firstObjectId,
                                  scene->secondObjectId);
   }
   EffectRuntime_StopCurrentObject();

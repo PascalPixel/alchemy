@@ -20,7 +20,7 @@ void Object_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
 
   if (first != NULL && second != NULL) {
     FacingObject_TurnPairToFaceEachOther(first, second);
-    EventRuntime_Wait(wait);
+    Event_WaitFrames(wait);
   }
 }
 

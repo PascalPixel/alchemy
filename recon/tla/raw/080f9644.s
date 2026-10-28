@@ -945,10 +945,10 @@ Func_080f9644:
 	lsls r5, r5, #1
 	str r0, [sp, #8]
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	mov r11, r0
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r2, r5, #0
 	ldr r1, [sp, #12]
 	mov r8, r0
@@ -1247,9 +1247,9 @@ Func_080f9644:
 	bl InventoryMenu_ShowModalMessage
 .L_080fa09a:
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 .L_080fa0a6:
 	bl Event_ClearInvalidPackedValuesFar
 	movs r2, #0

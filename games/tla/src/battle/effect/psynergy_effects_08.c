@@ -17,7 +17,7 @@ void Func_080e9af4(void);
 void Func_080e74d8(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 
 /// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
 /// 10 frames.
@@ -32,7 +32,7 @@ void Func_080e7818(void) {}
 
 /// Field Psynergy kind 30.
 void BattleEffect_RunEffect30(void) {
-  ObjectTable_Get(EventRuntime_GetControlledOwner());
+  ObjectTable_Get(Party_GetLeaderActor());
   ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 

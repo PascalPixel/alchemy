@@ -31,7 +31,7 @@ void Func_02001dc4(s32 x, s32 z) {
   struct Vector3 v;
   s32 i;
 
-  first = (struct ObjectRuntime *)Engine_ObjectCreate(255, x, 0, z);
+  first = (struct ObjectRuntime *)Import_ActorCreate(255, x, 0, z);
   options.priority = 1;
   options.startScaleX = 0x20000;
   options.startScaleY = 0x20000;
@@ -56,7 +56,7 @@ rocks:
   {
     rock = first;
     if (i != 0) {
-      rock = (struct ObjectRuntime *)Engine_ObjectCreate(255, x, 0, z);
+      rock = (struct ObjectRuntime *)Import_ActorCreate(255, x, 0, z);
       Func_02003c90(rock->animation, first->animation);
     }
     ObjectDispatch_SetSingleChildFlags(rock, 0);

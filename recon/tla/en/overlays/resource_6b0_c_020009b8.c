@@ -21,7 +21,7 @@
 
 extern s32 gData_02003584[];
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 part);
@@ -41,7 +41,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
 
 loop:
   {
-    struct ObjectRuntime *object = Engine_ObjectCreate(0x2a0, x, y, 0x980000);
+    struct ObjectRuntime *object = Import_ActorCreate(0x2a0, x, y, 0x980000);
     s32 angle = i << 12;
 
     Vector_AddPolarOffsetFar_(0x200000, angle, &object->x);

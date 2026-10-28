@@ -104,12 +104,12 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
 
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
-  void *buffer = (void *)MemAlloc(size);
+  void *buffer = (void *)Heap_Alloc(size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
   VramCache_Load(slot, size, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }
 
 void Menu_AppendResourceEntry(s32 no) {

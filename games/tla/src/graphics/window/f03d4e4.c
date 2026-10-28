@@ -13,7 +13,7 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                   s32 flag) {
   GlyphTransfer *work;
 
-  work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+  work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
   work->encoded = gIcon_BasePointerTable[no1];
   work->width = 2;
   work->height = 2;
@@ -25,5 +25,5 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
   if (flag == 0)
     *slot = Resource_FindFreeEntry();
   *ret = VramCache_Load(*slot, 0x80, work->tiles);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
 }

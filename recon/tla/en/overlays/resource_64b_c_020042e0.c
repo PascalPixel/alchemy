@@ -24,7 +24,7 @@ extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
 void WaitFrames(s32 frames);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Func_02004aa8(void *source, void *destination);
 void Func_02004ac8(void);
 void Func_02004ad8(void);
@@ -36,7 +36,7 @@ void Func_02004e30(s32 cue);
 void Func_020042e0(void) {
   s32 scrollX;
   volatile u16 *ime;
-  u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
+  u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
   s32 x, y, i, t;
 

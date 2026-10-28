@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -351,7 +351,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     if (frame <= 63) {
       s32 bolt;
 
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
       for (bolt = 0; bolt != 2; bolt++) {
         s32 start = bolt * 16;
         s32 strike = bolt * 16 + 10;
@@ -419,7 +419,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, gData_02014000 + gData_08197486[k], gx - 4, gy + 40,
               gData_08197492[k], gData_08197498[k]);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
         }
       }
       BattleEffect_LoadBlitter(188, 3);
@@ -449,8 +449,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   Func_0816467c(4, x, y);
   for (i = 0; i != 11; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);

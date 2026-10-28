@@ -299,8 +299,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
     Func_0816467c(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       ResourceObject_ReleaseFar(work->objects[k]);

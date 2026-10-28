@@ -12,7 +12,7 @@ void Func_02002550(void) {
    * without) */
   __asm__("");
   VramBlock_LoadCached_(work->vramEntry, 0x100, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   // Use a value-returning call; a void declaration changes argument order
   // (differ 2).
   ((s32 (*)(void *, s32))Task_Add)(Func_02002534, 0x480);

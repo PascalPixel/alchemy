@@ -90,7 +90,7 @@ void Sound_PlayFar(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -323,7 +323,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     // From frame 136: four rings, each starting at its own frame, grow and
     // fade out over eight frames.
     if (frame > 135) {
-      projected = Runtime_BumpAllocateAlternatePool(1024);
+      projected = Heap_AllocEwram(1024);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 5;
@@ -356,8 +356,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         Render_TransformVertices(Data_08198cac, projected, 32);
         Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(projected);
+      Heap_Release(model);
+      Heap_Release(projected);
     }
 
     if (frame > 139)
@@ -409,8 +409,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   Func_0816467c(5, focus.x, focus.y);
   for (i = 0; i != 12; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

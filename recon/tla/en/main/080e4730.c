@@ -21,8 +21,8 @@ struct PendingEvent;
 extern u8 gAdventure[];
 extern u8 Data_02000452;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
@@ -53,11 +53,11 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
                                  s32 argument);
 
 void Func_080e4730(void) {
-  u8 *work = Runtime_AllocateHeapBlock(92, 0x192c);
+  u8 *work = HeapSlot_Alloc(92, 0x192c);
   u8 *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 pictureEntry;
@@ -141,7 +141,7 @@ void Func_080e4730(void) {
         *motionFlags = 3;
       }
       if (*(s16 *)(event + 0xd48) == 0)
-        EventRuntime_RunPendingEvent(
+        Field_RunPsynergyEvent(
             Func_080ce458(0x40000005, *(s16 *)(effect + 30),
                           Func_080ce31c(*(s16 *)(effect + 30))),
             *(s16 *)(effect + 24), -1);
@@ -159,5 +159,5 @@ void Func_080e4730(void) {
   ObjectGroup_SetActionForOthers(owner, 0, 16);
   Resource_ResetEntry(pictureEntry);
   Resource_ResetEntry(particleEntry);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

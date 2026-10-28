@@ -140,16 +140,16 @@ Func_080ce0ac:
 	lsls r0, r0, #9
 	cmp r3, r0
 	bge .L_080ce1de
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Field_FindNearbyTalkTarget
 	adds r5, r0, #0
-	bl EventRuntime_Start
+	bl Event_Start
 	ldr r0, [r6, #8]
-	bl EventRuntime_SetMessage
+	bl Event_SetMessageId
 	adds r0, r5, #0
 	movs r1, #0
-	bl EventRuntime_ShowMessageAndWait
-	bl EventRuntime_End
+	bl Event_ShowMessageAndWait
+	bl Event_End
 	b .L_080ce1e8
 .L_080ce1de:
 	mov r0, r11

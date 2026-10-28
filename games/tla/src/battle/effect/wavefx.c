@@ -19,7 +19,7 @@ void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   Task_Remove((TaskFunc)Func_080dcb44);
   BattleEffect_ApplyFlickerValue(Object_GetById(*(u16 *)(work + 0x290)), 1);
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(WAVE_FX_SLOT);
+  HeapSlot_Release(WAVE_FX_SLOT);
 }
 
 #define BG_PLTT_COLOR(bank, color)                                             \

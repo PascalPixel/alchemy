@@ -9,7 +9,7 @@ void PaletteQueue_Initialize(void) {
   u16 i;
   u16 j;
 
-  queue = Runtime_AllocateBlock(112, sizeof(struct PaletteSnapshotWork));
+  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
   entry = queue->entries;
   for (i = 0; i != 4; i++) {
     entry->source = 0;

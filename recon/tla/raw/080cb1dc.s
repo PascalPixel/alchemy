@@ -88,7 +88,7 @@ Func_080cb1dc:
 	movs r0, #123
 	strh r2, [r3]
 	bl Sound_PlayFar
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	b .L_080cb2a4
 .L_080cb28e:
 	movs r3, #192

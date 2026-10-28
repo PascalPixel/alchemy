@@ -40,7 +40,7 @@ Func_081284c0:
 	str r0, [sp, #12]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	ldr r0, [sp, #12]
 	movs r3, #0
@@ -259,7 +259,7 @@ Func_081284c0:
 	b .L_0812852c
 .L_081286ec:
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r2, [sp, #24]
 	ldr r0, [r2]
 	cmp r0, #0

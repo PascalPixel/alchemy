@@ -19,15 +19,15 @@ s32 Func_02000b40();
 s32 Func_02000b48();
 s32 Func_02000b50();
 s32 Func_02000b58();
-s32 MemAlloc();
-s32 MemFree();
+s32 Heap_Alloc();
+s32 Heap_Release();
 s32 Random16Far();
 s32 Resource_FindFreeEntry();
 s32 Resource_GetTableEntry();
 s32 Resource_ResetEntry();
-s32 Runtime_AllocateHeapBlockFar();
-s32 Runtime_BumpAllocateAlternatePool();
-s32 Runtime_ReleaseHeapBlock();
+s32 HeapSlot_AllocFar();
+s32 Heap_AllocEwram();
+s32 HeapSlot_Release();
 s32 VramCache_Load();
 s32 WaitFrames();
 s32 __divsi3();
@@ -44,7 +44,7 @@ void Func_020006b0(s32 p0, s32 p1, s32 p2) {
   s32 t44, t46, t47, t53;
 
   FIELD_AT(sp_, s32, 16) = p2;
-  t0 = Value2((s32 (*)())Runtime_AllocateHeapBlockFar, 220, 0x1e58);
+  t0 = Value2((s32 (*)())HeapSlot_AllocFar, 220, 0x1e58);
   FIELD_AT(sp_, s32, 4) = 0;
   t1 = Value2((s32 (*)())Resource_GetTableEntry, 0x1f2, 0);
   Call2((void (*)())Func_020009f0, t1, t0);
@@ -85,14 +85,14 @@ L_02008706:
   v_r6 = (v_r6 + 40);
   if (v_r8 <= 53)
     goto L_02008706;
-  t16 = Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x600);
-  t17 = Value1((s32 (*)())MemAlloc, 0x1000);
+  t16 = Value1((s32 (*)())Heap_AllocEwram, 0x600);
+  t17 = Value1((s32 (*)())Heap_Alloc, 0x1000);
   t18 = Value1((s32 (*)())Resource_GetTableEntry, 0x1e8);
   Call2((void (*)())Func_020009f0, t18, t17);
   t20 = Value0((s32 (*)())Resource_FindFreeEntry);
   t21 = Value3((s32 (*)())VramCache_Load, t20, 0x400, t17);
   *(s32 *)sp_ = t21;
-  Call1((void (*)())MemFree, t17);
+  Call1((void (*)())Heap_Release, t17);
   v_r11 = t20;
   v_r10 = t16;
   v_r5 = (t16 + 12);
@@ -197,11 +197,11 @@ L_02008958:
   goto L_02008810;
 L_02008972:
   Call1((void (*)())Resource_ResetEntry, v_r11);
-  Call1((void (*)())MemFree, v_r10);
+  Call1((void (*)())Heap_Release, v_r10);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   Func_02000a50(0, 0, 0);
   t53 = FIELD_AT(sp_, s32, 12);
   Call1((void (*)())Resource_ResetEntry, t53);
-  Call1((void (*)())Runtime_ReleaseHeapBlock, 220);
+  Call1((void (*)())HeapSlot_Release, 220);
   return;
 }

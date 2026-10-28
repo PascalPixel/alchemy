@@ -94,7 +94,7 @@ FieldMessage_ShowAtActor:
 	cmp r6, #7
 	bgt .L_080d3d82
 	str r6, [sp, #24]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl ObjectTable_Get
 	ldr r1, [sp, #28]
 	movs r2, #197
@@ -113,7 +113,7 @@ FieldMessage_ShowAtActor:
 	movs r7, #1
 	b .L_080d3d7c
 .L_080d3d66:
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	add r5, sp, #52
 	adds r1, r5, #0
 .L_080d3d6e:

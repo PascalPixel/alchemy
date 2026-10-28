@@ -7,7 +7,7 @@ Func_080e9db4:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r7, [r3, #92]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Object_GetById
 	adds r5, r0, #0
 	ldr r0, .L_080e9e84
@@ -98,7 +98,7 @@ Func_080e9db4:
 	ldrsh r0, [r3, r1]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e9e84:

@@ -15,7 +15,7 @@ SceneSequence_Run:
 	adds r1, r5, #0
 	movs r0, #108
 	sub sp, #12
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	adds r1, r5, #0
 	ldr r3, .L_080cb9bc
 	mov r8, r0
@@ -313,10 +313,10 @@ SceneSequence_Run:
 	ldrsb r3, [r6, r3]
 	cmp r3, #2
 	bne .L_080cbbc8
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Object_GetById
 	str r7, [r0, #24]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Object_GetById
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildFlagsFar
@@ -359,11 +359,11 @@ SceneSequence_Run:
 	lsls r1, r1, #5
 	adds r1, #184
 	movs r0, #92
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r0, #20
 	bl WaitFrames
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_080cbc2a:
 	mov r1, r11
 	mov r2, r9
@@ -381,11 +381,11 @@ SceneSequence_Run:
 	lsls r1, r1, #5
 	adds r1, #184
 	movs r0, #92
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r0, #20
 	bl WaitFrames
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_080cbc5c:
 	movs r3, #160
 	lsls r3, r3, #19
@@ -465,7 +465,7 @@ SceneSequence_Run:
 	ldrsh r0, [r2, r4]
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl EventRuntime_SetDestination
+	bl Event_SetDestination
 	b .L_080cbd14
 .L_080cbcfe:
 	movs r3, #0
@@ -615,7 +615,7 @@ SceneSequence_Run:
 	beq .L_080cbe28
 	b .L_080cbf84
 .L_080cbe28:
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	bl Func_080cb82c
 	movs r3, #182
 	lsls r3, r3, #1
@@ -789,7 +789,7 @@ SceneSequence_Run:
 	ldr r4, .L_080cc110
 	cmp r3, r4
 	bne .L_080cbfb4
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	movs r0, #1
 	bl Func_080ed2a4
 	ldr r2, .L_080cc114
@@ -813,7 +813,7 @@ SceneSequence_Run:
 	ldr r0, .L_080cc118
 	cmp r3, r0
 	bne .L_080cbfd0
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	movs r5, #0
 	movs r6, #1
 .L_080cbfc2:
@@ -832,7 +832,7 @@ SceneSequence_Run:
 	ldr r2, .L_080cc11c
 	cmp r0, r2
 	bne .L_080cbfea
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	bl BattleEffect_RunVisibilityTransition
 	b .L_080cc0b6
 .L_080cbfea:
@@ -1013,7 +1013,7 @@ SceneSequence_Run:
 	cmp r3, #0
 	beq .L_080cc192
 	str r1, [sp, #4]
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	bl ObjectTable_Snapshot
 	movs r3, #128
 	ldr r0, [sp, #8]
@@ -1143,7 +1143,7 @@ SceneSequence_Run:
 	cmp r7, #0
 	beq .L_080cc2c6
 	bl UiTimedNotice_CloseIfActiveFar
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	movs r0, #111
 	bl Sound_PlayFar
 	bl Func_080cb82c
@@ -1296,7 +1296,7 @@ SceneSequence_Run:
 	beq .L_080cc47e
 	movs r0, #111
 	bl Sound_PlayFar
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	bl Func_080cb82c
 	movs r0, #131
 	lsls r0, r0, #1
@@ -1339,7 +1339,7 @@ SceneSequence_Run:
 	strh r3, [r2]
 	b .L_080cc468
 .L_080cc3f0:
-	bl EventRuntime_ResolveAllPendingActions
+	bl Event_ResolveAllPendingActions
 	bl UiTimedNotice_CloseIfActiveFar
 	bl Sound_GetCurrentBgmFar
 	movs r2, #128
@@ -1491,7 +1491,7 @@ SceneSequence_Run:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #108
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	adds r0, r6, #0
 	add sp, #12
 	pop {r3, r5, r6, r7}

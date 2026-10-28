@@ -41,7 +41,7 @@ extern char ResourceId_ColouredOrbs;
 void WaitFrames(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectGroup_ApplyRandomChildValues(void);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
@@ -52,10 +52,10 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Sound_PlayFar(s32 cue);
 
 void Func_080e74d8(void) {
-  struct SparkWork *work = Runtime_AllocateHeapBlock(92, sizeof(*work));
-  s32 owner = EventRuntime_GetControlledOwner();
+  struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
+  s32 owner = Party_GetLeaderActor();
   struct ObjectRuntime *object =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
+      ObjectTable_Get(Party_GetLeaderActor());
   struct SparkParticle *particle;
   struct EffectSprite *sprite;
   s32 entry;
@@ -179,5 +179,5 @@ void Func_080e74d8(void) {
     frame++;
   } while (state != 999);
   Resource_ResetEntry(entry);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

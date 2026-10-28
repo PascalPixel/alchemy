@@ -125,7 +125,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
@@ -136,11 +136,11 @@ void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
@@ -383,7 +383,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // This frame's models: the card, then the pictures.
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 5;
     texture.logHeight = 6;
@@ -485,8 +485,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(vertices);
+    Heap_Release(model);
+    Heap_Release(vertices);
 
     // The sparks bounce once on the ground at y = 104.
     for (i = 0; i != SPARK_COUNT; i++) {
@@ -518,6 +518,6 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -34,7 +34,7 @@ Func_08046b08:
 	lsls r0, r0, #1
 	str r4, [sp, #92]
 	str r4, [sp, #88]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #84]
 	movs r0, #0
 	str r0, [sp, #80]
@@ -3070,7 +3070,7 @@ Func_08046b08:
 .L_080482ba:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, [sp, #444]
 	str r0, [sp, #52]
 	cmp r3, #13
@@ -3095,7 +3095,7 @@ Func_08046b08:
 	lsls r1, r1, #1
 	mov r8, r1
 	mov r0, r8
-	bl MemAlloc
+	bl Heap_Alloc
 	mov r2, r8
 	ldr r1, [sp, #64]
 	ldr r3, .L_08048434
@@ -3148,7 +3148,7 @@ Func_08046b08:
 	mov lr, r3
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r3, [sp, #48]
 	subs r3, #8
 	cmp r3, #10
@@ -3272,7 +3272,7 @@ Func_08046b08:
 	movs r3, #4
 	bl Text_DrawWideStringAtOffset
 	ldr r0, [sp, #52]
-	bl MemFree
+	bl Heap_Release
 .L_08048464:
 	ldr r4, [sp, #140]
 	movs r2, #0
@@ -3534,7 +3534,7 @@ Func_08046b08:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #84]
-	bl MemFree
+	bl Heap_Release
 	movs r3, #185
 	lsls r3, r3, #2
 	movs r0, #0

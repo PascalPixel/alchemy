@@ -23,7 +23,7 @@ void Func_02001fac();
 void Func_02002044();
 void Func_02002054();
 void Func_02001f74();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void WaitFrames();
@@ -51,7 +51,7 @@ s32 Func_02001a14(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call1((void (*)())Func_02002044, 0);
   Call1((void (*)())Func_02002054, 0);
   Call6((void (*)())Func_02001f74, 49, 70, 19, 73, 6, 6);
-  v0 = Engine_ObjectCreate(159, 0x15c0000, 0, 0xb80000);
+  v0 = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
   r8 = v0;
   FIELD_AT(v0, s32, 108) = (s32)Func_020010a8;
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1600000, -1, 0xc40000, 0);

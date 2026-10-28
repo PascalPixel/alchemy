@@ -2060,7 +2060,7 @@ Resource_DirectoryTable:
 	resource , 0
 
 @ The time of each edition's build: year, month, day, hour, minute and second,
-@ two digits each. Runtime_GetBuildStampTime reads its digits.
+@ two digits each. BuildStamp_GetTime reads its digits.
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.ifdef TLA_EDITION_JA

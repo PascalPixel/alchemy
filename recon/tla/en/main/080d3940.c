@@ -16,8 +16,8 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 value);
 void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-u8 *Runtime_AllocateHeapBlock(s32 block, s32 size);
-void Runtime_ReleaseHeapBlock(s32 block);
+u8 *HeapSlot_Alloc(s32 block, s32 size);
+void HeapSlot_Release(s32 block);
 void Func_08038248(s32 resource, u8 *buffer);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void ResourceMetadata_ClearRecordFar(void *record);

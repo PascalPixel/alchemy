@@ -50,7 +50,7 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
-  struct DustWork *work = Runtime_AllocateBlock(116, size);
+  struct DustWork *work = HeapSlot_AllocEwram(116, size);
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
@@ -63,11 +63,11 @@ void FieldEffect_InitializeSparkles(void) {
   size = 0;
   zero = size;
   Dma_Set(&zero, work, 0x85000205, REG_DMA3);
-  buf = Runtime_AllocateBlock(56, 0x400);
+  buf = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f38b2, buf);
   work->vramEntry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
 
   i = 0;
   slots = Ram_HeapSlots;
@@ -114,7 +114,7 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;
 
-  work = Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
+  work = HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x850007e2, REG_DMA3);
@@ -129,21 +129,21 @@ void BattleEffect_StartTwelveFrameBlend(void) {
 
 void BattleEffect_SetBlock30ValuesMaxZero(void) {
   struct FieldBlendWork *state =
-      Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 0x7fff;
   state->enabled = 0;
 }
 
 void BattleEffect_SetBlock30Values12Zero(void) {
   struct FieldBlendWork *state =
-      Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
 void BattleEffect_SetBlock30Values128One(void) {
   struct FieldBlendWork *state =
-      Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
+      HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -154,7 +154,7 @@ void BattleEffect_StartBufferBlend(s32 from, s32 to) {
   volatile u32 zero;
   s16 *target;
 
-  work = Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
+  work = HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   buffers = Ram_HeapSlots->block32;
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x850007e2, REG_DMA3);

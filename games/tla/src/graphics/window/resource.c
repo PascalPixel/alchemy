@@ -19,15 +19,15 @@ extern char ResourceId_CommandIcons;
 
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
   s32 size = 1024;
-  void *buffer = Runtime_AllocateBlock(56, size);
+  void *buffer = HeapSlot_AllocEwram(56, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   if (value <= 95) {
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
-      Runtime_RemapBytesByTableFar(buffer, 768);
+      SpriteColor_RemapPixelsFar(buffer, 768);
     VramCache_Load(value, size, buffer);
-    Runtime_ReleaseHeapBlock(56);
+    HeapSlot_Release(56);
   }
 }
 

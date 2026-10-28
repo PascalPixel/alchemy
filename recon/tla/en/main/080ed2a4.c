@@ -63,9 +63,9 @@ extern s32 Data_0202a634;
 extern u16 Data_02000500;
 
 void ObjectTable_Snapshot(void);
-void EventRuntime_StartScreen(void);
-void EventRuntime_FinishScreen(void);
-void EventRuntime_WaitDelay(void);
+void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
 void Task_ResetAll(void);
 void WindowSystem_InitFieldFar(void);
 void WaitFrames(s32 frames);
@@ -112,8 +112,8 @@ s32 Func_080ed2a4(s32 mode) {
   }
   savedMode = *(s32 *)(event + 436);
   *(s32 *)(event + 436) = 6;
-  EventRuntime_FinishScreen();
-  EventRuntime_WaitDelay();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   layer = (struct MapLayerFlags *)(mapWork + 24);
   for (saved = savedFlags; saved <= &savedFlags[15]; saved++) {
     *saved = layer->flag;
@@ -131,8 +131,8 @@ full:
   savedMode = *(s32 *)(event + 436);
   *(s32 *)(event + 436) = 6;
   *(s32 *)(event + 428) = 0;
-  EventRuntime_FinishScreen();
-  EventRuntime_WaitDelay();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   Task_ResetAll();
   WindowSystem_InitFieldFar();
   *(u16 *)(objects + 4) = 1;
@@ -260,8 +260,8 @@ redraw:
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
     mapWork[0x972] = 0;
-    EventRuntime_StartScreen();
-    EventRuntime_WaitDelay();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     *(s32 *)(event + 436) = savedMode;
     (*(u8 **)(event + 460))[91] = 0;
   } else {

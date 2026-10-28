@@ -64,7 +64,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(
     void); // the canvas transfer callback
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -92,9 +92,9 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
-  sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
+  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
   work->vblanksSinceTransfer = 1;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -180,7 +180,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + (picture << 10), Data_081976d2[i] + 32,
                 ground.y + Data_081976d6[i] - 32, 32, 32);
-        Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
+        HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       }
     }
 
@@ -208,10 +208,10 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }

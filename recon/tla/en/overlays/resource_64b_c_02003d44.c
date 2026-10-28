@@ -31,7 +31,7 @@ void Event_WaitTransitionFrames(void);
 void Func_02004b78(s32 a, s32 b, s32 c);
 void Func_02004e30(s32 cue);
 void Func_02004da8(void);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Func_02004aa8(void *source, void *destination);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
@@ -39,7 +39,7 @@ void Func_02003c50(void);
 void Func_02004c20(void);
 void Func_02004db8(s32 value);
 void Func_02004ac8(void);
-void MemFree(void *pointer);
+void Heap_Release(void *pointer);
 
 #define PUSH_PICTURE(offset)                                                     \
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -60,7 +60,7 @@ void Func_02003d44(s32 mode) {
     Func_02004e30(141);
   }
   Func_02004da8();
-  buffer = Runtime_BumpAllocateAlternatePool(0x4000);
+  buffer = Heap_AllocEwram(0x4000);
   ime = &REG_IME;
   Func_02004aa8(gWorldMapPackedTiles, buffer);
   Func_02004aa8(gWorldMapPackedPictures, buffer + 0x1000);
@@ -138,6 +138,6 @@ void Func_02003d44(s32 mode) {
     QueueIoWriteDelay2(0x04000052, gData_02006e08);
     QueueIoWriteDelay2(0x04000050, 0);
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
   GameFlag_SetBit(0x101);
 }

@@ -38,7 +38,7 @@ extern char MsgFieldInvalidPassword[];
 
 #define MSGNO(name) ((s32)(name))
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                               s32 mode);
@@ -111,7 +111,7 @@ s32 Func_02000e44(void) {
   if (mode == -1)
     return -1;
   Func_02002408(71);
-  work = Runtime_BumpAllocateAlternatePool(476);
+  work = Heap_AllocEwram(476);
   Func_02002320((void *)0x06006000);
   length = 260;
   if (mode != 0) {

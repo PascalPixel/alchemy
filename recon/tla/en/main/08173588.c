@@ -92,11 +92,11 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 
 // Rime and Haze: the Djinni rises swaying through the canvas over the
@@ -211,7 +211,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 6;
     texture.logHeight = 6;
@@ -275,8 +275,8 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
         star->variant++;
       }
     }
-    MemFree(model);
-    MemFree(vertices);
+    Heap_Release(model);
+    Heap_Release(vertices);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 
@@ -285,7 +285,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

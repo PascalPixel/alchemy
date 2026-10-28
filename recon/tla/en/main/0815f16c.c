@@ -205,8 +205,8 @@ s32 __divsi3(s32, s32);
 s32 __modsi3(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void Runtime_ReleaseHeapBlock(s32);
-void MemFree(void *);
+void HeapSlot_Release(s32);
+void Heap_Release(void *);
 void *Resource_GetTableEntry(s32);
 void WaitFrames(s32);
 void Task_Add(void *, s32);
@@ -717,8 +717,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Task_Remove(Func_08143489);
     Task_Remove(Func_08143001);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     Object_SetMode(object, 3);
     if (kind == 45)
       BattleEffect_RunProjectileVolley(action, 9);
@@ -740,8 +740,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Task_Remove(Func_08143489);
     Task_Remove(Func_08143001);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     action->unk18 = 3;
     BattleEffect_RunSparkGroups(action, 2);
     return;
@@ -1142,12 +1142,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((amp * Trig_Cos(angle)) >> 16) + off - gData_08197498[m] / 2;
-          Runtime_ReleaseHeapBlock(188);
-          Runtime_ReleaseHeapBlock(104);
+          HeapSlot_Release(188);
+          HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
@@ -1159,12 +1159,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          Runtime_ReleaseHeapBlock(188);
-          Runtime_ReleaseHeapBlock(104);
+          HeapSlot_Release(188);
+          HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
@@ -1185,8 +1185,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 6)
         Sound_PlayFar(221);
     } else if (kind == 44) {
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(188);
+      HeapSlot_Release(104);
       if (frame >= 0 && frame < 24) {
         x = target[0] / 2;
         top = frame * 32 - 232;
@@ -1199,7 +1199,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll - 104, 17, 104);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll, 17, 104 - scroll);
         IWRAM_SLOT_BC(screen, EWRAM_BUF + 0x6e8, x - 17, top + 47, 34, 65);
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
         if (frame == 8)
           work->unk77a8 = 8;
         if (frame > 1) {
@@ -1223,16 +1223,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 61) {
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(188);
+      HeapSlot_Release(104);
       if (frame >= 4 && frame < 24) {
         x = target[0] / 2;
         BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 24, 48, 24, 48);
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
         BattleEffect_LoadBlitter(188, 23);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x, 48, 24, 48);
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 60) {
@@ -1308,8 +1308,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       REG_BLDCNT = 0;
       work->unk7780 = 1;
       work->unk7784 = 0;
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(188);
+      HeapSlot_Release(104);
       BattleEffect_LoadBlitter(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
@@ -1360,7 +1360,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           break;
         }
       }
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(104);
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 96 || kind == 97 || kind == 98) {
       if (frame < 20) {
@@ -1368,15 +1368,15 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           m = gData_08198886[frame / 2];
         else
           m = 3;
-        Runtime_ReleaseHeapBlock(188);
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(188);
+        HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 3);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2 - 18, 56, 18,
                       48);
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 7);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2, 56, 18, 48);
-        Runtime_ReleaseHeapBlock(104);
+        HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       }
       if ((kind == 97 || kind == 98) && frame < 24) {
@@ -1402,8 +1402,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     } else if (kind == 86) {
       work->unk7780 = 1;
       work->unk7784 = 0;
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(188);
+      HeapSlot_Release(104);
       if (action->side == 0)
         BattleEffect_LoadBlitter(104, 35);
       else
@@ -1436,7 +1436,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             gData_081988da[m], gData_0819889e[m],
                             gData_081988b2[m]);
       }
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(104);
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 88) {
       work->unk7780 = 1;
@@ -1449,8 +1449,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         Sound_PlayFar(134);
       if (frame == 15)
         Sound_PlayFar(134);
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(188);
+      HeapSlot_Release(104);
       if (action->side == 0)
         BattleEffect_LoadBlitter(104, 35);
       else
@@ -1497,7 +1497,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                               gData_0819893a[m], gData_0819893d[m]);
         }
       }
-      Runtime_ReleaseHeapBlock(104);
+      HeapSlot_Release(104);
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 62) {
       scrollA += scrollB;
@@ -1752,17 +1752,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          Runtime_ReleaseHeapBlock(188);
-          Runtime_ReleaseHeapBlock(104);
+          HeapSlot_Release(188);
+          HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       if (frame > 3) {
-        matrix = Runtime_BumpAllocateAlternatePool(32);
+        matrix = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
@@ -1791,11 +1791,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             Render_DrawModelList(model);
           }
         }
-        MemFree(model);
-        MemFree(matrix);
+        Heap_Release(model);
+        Heap_Release(matrix);
       }
     } else if (kind == 71 || kind == 80 || kind == 82) {
-      matrix = Runtime_BumpAllocateAlternatePool(0x200);
+      matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       fade = 0;
       if (frame > 39)
@@ -1835,8 +1835,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(matrix);
+      Heap_Release(model);
+      Heap_Release(matrix);
       if (kind == 82) {
         m = frame / 4;
         size = 0x10000;
@@ -1844,13 +1844,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           size = 0x38000 - (frame << 12);
         if (m * 2 > 1 && size > 0) {
           Func_0815b434(work->frames, m * 4, size);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
           BattleEffect_LoadBlitter(188, 15);
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
-      matrix = Runtime_BumpAllocateAlternatePool(0x200);
+      matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture148.width = 7;
       texture148.height = 7;
@@ -1922,8 +1922,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      MemFree(model);
-      MemFree(matrix);
+      Heap_Release(model);
+      Heap_Release(matrix);
       if (kind != 92 && kind != 93) {
         if (frame == 4) {
           p = SPARKS;
@@ -1952,7 +1952,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 91) {
-      matrix = Runtime_BumpAllocateAlternatePool(0x200);
+      matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture140.width = 7;
       texture140.height = 7;
@@ -2005,12 +2005,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      MemFree(model);
-      MemFree(matrix);
+      Heap_Release(model);
+      Heap_Release(matrix);
       if (frame == 4)
         work->unk77a8 = 8;
     } else if (kind == 90) {
-      matrix = Runtime_BumpAllocateAlternatePool(0x200);
+      matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture132.width = 6;
       texture132.height = 6;
@@ -2044,8 +2044,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      MemFree(model);
-      MemFree(matrix);
+      Heap_Release(model);
+      Heap_Release(matrix);
       if (frame == 4)
         work->unk77a8 = 20;
     } else if (kind == 15) {
@@ -2287,8 +2287,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Task_Remove(Func_08143489);
     Task_Remove(Func_08143001);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
       SummonEffect_RunCanvasMode1(action);
     else if (kind == 9 || kind == 67)
@@ -2301,7 +2301,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       kind == 72 || kind == 58 || kind == 59 || kind == 69 || kind == 89)
     Task_Remove(Func_08152475);
   Task_Remove(Func_08143001);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

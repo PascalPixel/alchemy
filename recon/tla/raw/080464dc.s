@@ -59,15 +59,15 @@ Func_080464dc:
 	b .L_08046ae2
 .L_0804654a:
 	movs r0, #128
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r5, #166
 	lsls r5, r5, #1
 	str r0, [sp, #48]
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	str r0, [sp, #52]
 	movs r0, #96
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r2, r5, #0
 	str r0, [sp, #24]
 	ldr r3, .L_080467f4
@@ -729,11 +729,11 @@ Func_080464dc:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, [sp, #24]
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #52]
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #48]
-	bl MemFree
+	bl Heap_Release
 	mov r2, r10
 	ldr r0, [r2]
 .L_08046ae2:

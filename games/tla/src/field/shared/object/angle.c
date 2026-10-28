@@ -90,6 +90,6 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   second = ObjectTable_Get(secondId);
   if (first != 0 && second != 0) {
     first->angle = ArcTan2(second->z - first->z, second->x - first->x);
-    EventRuntime_Wait(wait);
+    Event_WaitFrames(wait);
   }
 }

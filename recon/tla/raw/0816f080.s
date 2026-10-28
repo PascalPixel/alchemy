@@ -356,7 +356,7 @@ BattleEffect_RunWyrdCurse:
 	bne .L_0816f2ba
 .L_0816f33e:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -551,9 +551,9 @@ BattleEffect_RunWyrdCurse:
 	cmp r6, #6
 	bne .L_0816f42a
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	ldr r6, [sp, #28]
 	cmp r6, #64
 	bne .L_0816f4f0
@@ -621,7 +621,7 @@ BattleEffect_RunWyrdCurse:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816f590
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

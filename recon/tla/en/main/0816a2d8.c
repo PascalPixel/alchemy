@@ -248,8 +248,8 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.

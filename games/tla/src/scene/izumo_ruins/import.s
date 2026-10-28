@@ -81,11 +81,11 @@ Func_02001480:
 	.global Func_02001488
 	.thumb_func
 Func_02001488:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001490
 	.thumb_func
 Func_02001490:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -129,7 +129,7 @@ Func_020014e0:
 	.global Func_020014e8
 	.thumb_func
 Func_020014e8:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020014f0
 	.thumb_func
 Func_020014f0:

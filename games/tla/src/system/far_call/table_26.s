@@ -41,10 +41,10 @@ Func_080c82e8:
 	.thumb_func
 Func_080c82f0:
 	overlay_veneer Func_080d53b8
-	.global EventRuntime_PrepareCurrentObjectFar
+	.global Leader_StopMovingFar
 	.thumb_func
-EventRuntime_PrepareCurrentObjectFar:
-	overlay_veneer EventRuntime_PrepareCurrentObject
+Leader_StopMovingFar:
+	overlay_veneer Leader_StopMoving
 	.global Func_080c8300
 	.thumb_func
 Func_080c8300:

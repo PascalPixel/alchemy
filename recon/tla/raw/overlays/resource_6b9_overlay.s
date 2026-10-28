@@ -179,7 +179,7 @@ Func_0200029c:
 	adds r1, #8
 	movs r0, #220
 	sub sp, #4
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r6, r0, #0
 	ldr r0, .L_02008350
 	bl Resource_GetTableEntry

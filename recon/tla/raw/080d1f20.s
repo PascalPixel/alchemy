@@ -14,10 +14,10 @@ Func_080d1f20:
 	adds r7, r0, #0
 	movs r0, #16
 	mov r10, r0
-	bl EventRuntime_WaitDelay
+	bl Event_WaitTransitionFrames
 	movs r0, #130
 	lsls r0, r0, #5
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	lsls r5, r5, #2
 	ldr r3, [r5, r7]
 	ldr r6, .L_080d2028
@@ -41,7 +41,7 @@ Func_080d1f20:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	movs r1, #128
 	lsls r1, r1, #19
 	ldrh r2, [r1]

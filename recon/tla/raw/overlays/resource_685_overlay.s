@@ -1702,7 +1702,7 @@ Func_020029f8:
 	str r0, [sp, #4]
 	lsls r1, r1, #3
 	movs r0, #220
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	mov r10, r0
 	ldr r0, [sp, #4]
 	bl Object_GetById
@@ -1951,7 +1951,7 @@ Func_020029f8:
 	mov r0, r11
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #20
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2330,7 +2330,7 @@ Func_02002f58:
 	adds r5, r0, #0
 	adds r1, #120
 	movs r0, #220
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	ldr r3, [r5]
 	movs r1, #128
 	adds r6, r0, #0
@@ -2579,7 +2579,7 @@ Func_02003078:
 	ldrsh r0, [r3, r2]
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #12
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -2601,7 +2601,7 @@ Func_02003164:
 	adds r5, r0, #0
 	adds r1, #120
 	movs r0, #220
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	ldr r3, [r5]
 	movs r1, #128
 	adds r6, r0, #0
@@ -2685,7 +2685,7 @@ Func_0200320c:
 	lsls r1, r1, #5
 	adds r1, #120
 	movs r0, #220
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r6, r0, #0
 	bl Func_02002d34
 	movs r1, #144
@@ -2881,7 +2881,7 @@ Func_020032a4:
 	ldrsh r0, [r3, r2]
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b398:

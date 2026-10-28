@@ -17,11 +17,11 @@
 extern u8 Data_02004030[];
 extern u8 IwramClearWords[];
 extern u8 Func_020012c4[];
-s32 MemAlloc();
+s32 Heap_Alloc();
 s32 GameFlag_Test();
 s32 Resource_FindFreeEntry();
 s32 VramCache_Load();
-void MemFree();
+void Heap_Release();
 s32 Task_Add();
 
 s32 Func_02001420(void) {
@@ -30,7 +30,7 @@ s32 Func_02001420(void) {
 
   /* sub (s32)stack, #4 */
   r7 = (s32)Data_02004030;
-  v0 = MemAlloc(128);
+  v0 = Heap_Alloc(128);
   r6 = v0;
   stack[0] = r6;
   r8 = 320 + ((s32)Ram_HeapSlots->mapWork);
@@ -51,7 +51,7 @@ L_0200945e:
   v2 = Resource_FindFreeEntry();
   FIELD_AT(r7, u16, 2) = v2;
   VramCache_Load((v2 << 16) >> 16, 128, r6);
-  MemFree(r6);
+  Heap_Release(r6);
   FIELD_AT(r7, s32, 8) = FIELD_AT(r8, s32, 8);
   FIELD_AT(r7, s32, 12) = FIELD_AT(r8, s32, 12);
   FIELD_AT(67108938, u16, 0) = 0x1b1f;

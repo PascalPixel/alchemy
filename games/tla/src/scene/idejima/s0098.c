@@ -6,7 +6,7 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void Import_ActorSetAnimation(s32 actor, s32 animation);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Task_Wait(s32 frames);
@@ -19,7 +19,7 @@ struct ActorSprite {
 void Func_02000098(s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 
-  Engine_ActorSetAnimation(id, 1);
+  Import_ActorSetAnimation(id, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
   object->x -= 0xc0000;
   ((struct ActorSprite *)object->animation)->rotation = 0;
@@ -30,10 +30,10 @@ void Func_02000098(s32 id) {
   Task_Wait(40);
 }
 
-void Engine_EventStart();
-void Engine_EventEnd();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
+void Import_EventStart();
+void Import_EventEnd();
+void Import_EventSetMessageId();
+void Import_EventShowMessageAndWait();
 void GameFlag_SetBit();
 void FieldEvent_WaitFrames();
 void ObjectMotion_SetSpeedParameters();
@@ -42,8 +42,8 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_SetAngleToward();
 void ObjectMotion_ArmCallback();
-s32 Engine_ActorShowEmote();
-void Engine_ActorSetAttachedEffect();
+s32 Import_ActorShowEmote();
+void Import_ActorSetAttachedEffect();
 void Func_02003310();
 void Func_02003190();
 void Func_02003228();
@@ -62,46 +62,46 @@ void Func_020000f0(void) {
   struct ObjectRuntime *actor;
   struct ObjectRuntime *leader;
 
-  Engine_EventStart();
+  Import_EventStart();
   Func_02003310(0);
   Call2(Motion_SetVarCbAndRefresh, 8, 1);
   message = (s32)MsgIdejimaGroan;
-  Engine_EventSetMessage(message);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Import_EventSetMessageId(message);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   Call2(Motion_SetVarCbAndRefresh, 8, 2);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   Call6(Func_02003190, 38, 31, 2, 1, 25, 42);
   actor = Object_GetById(8);
-  Call2((void (*)())Engine_ActorSetAnimation, 8, 1);
+  Call2((void (*)())Import_ActorSetAnimation, 8, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
   Task_Wait(1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
   actor->velocityY = 0x40000;
   actor->motionFlags = 3;
   Task_Wait(40);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
-  Call2(Engine_ActorSetAttachedEffect, 8, 0x102);
+  Call2(Import_ActorSetAttachedEffect, 8, 0x102);
   Call1(FieldEvent_WaitFrames, 20);
   Call3(Func_02003298, 8, 0, 20);
-  Engine_ActorShowEmote(8, 0x101, 20);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Import_ActorShowEmote(8, 0x101, 20);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x5000, 40);
   Call3(ObjectMotion_ArmCallback, 8, 0xb000, 40);
   Call3(ObjectMotion_ArmCallback, 8, 0x8000, 40);
-  Engine_ActorShowEmote(8, 0x100, 20);
+  Import_ActorShowEmote(8, 0x100, 20);
   Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndReset, 8, 0x1a0, 0x2a8);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 20);
-  Call2(Engine_ActorSetAttachedEffect, gAdventure.currentOwner, 0x102);
+  Call2(Import_ActorSetAttachedEffect, gAdventure.currentOwner, 0x102);
   Call1(FieldEvent_WaitFrames, 20);
-  Call2(Engine_EventShowMessage, 8, 0);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
   ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   Call1(FieldEvent_WaitFrames, 20);
   ObjectMotion_SetAngleToward(gAdventure.currentOwner, 8, 0);
-  Call2(Engine_EventShowMessage, 8, 0);
-  Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
+  Call2(Import_EventShowMessageAndWait, 8, 0);
+  Call2((void (*)())Import_ActorSetAnimation, 8, 2);
   leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
@@ -110,7 +110,7 @@ void Func_020000f0(void) {
   Call3(Func_02003228, 8, 0, 0);
   FieldMessage_Show(message + 8, 1);
   Call1(GameFlag_SetBit, 0x863);
-  Engine_EventEnd();
+  Import_EventEnd();
 }
 
 /// A scene of actor 5 and the leader that ends by setting flag 0x864.
@@ -118,50 +118,50 @@ void Func_020002b4(void) {
   struct ObjectRuntime *actor;
   struct ObjectRuntime *leader;
 
-  Engine_EventStart();
+  Import_EventStart();
   Func_02003310(0);
   Motion_SetVarCbAndRefresh(5, 1);
   FieldEvent_WaitFrames(40);
   Motion_SetVarCbAndRefresh(5, 2);
   FieldEvent_WaitFrames(20);
-  Engine_EventSetMessage(MsgIdejimaAwakeningExclamation);
+  Import_EventSetMessageId(MsgIdejimaAwakeningExclamation);
   Func_02003298(5, 0, 40);
-  Value3(Engine_ActorShowEmote, 5, 0x101, 20);
-  Engine_EventShowMessage(5, 0);
+  Value3(Import_ActorShowEmote, 5, 0x101, 20);
+  Import_EventShowMessageAndWait(5, 0);
   Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
   actor = Object_GetById(5);
-  Engine_ActorSetAnimation(5, 1);
+  Import_ActorSetAnimation(5, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
   Task_Wait(1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
   actor->velocityY = 0x40000;
   actor->motionFlags = 3;
   Task_Wait(40);
-  Engine_ActorShowEmote(5, 0x100, 20);
-  Engine_EventShowMessage(5, 0);
+  Import_ActorShowEmote(5, 0x100, 20);
+  Import_EventShowMessageAndWait(5, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x6000, 20);
   Call3(ObjectMotion_ArmCallback, 5, 0xa000, 20);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 40);
   ObjectMotion_Launch(5, 4, 20);
-  Engine_EventShowMessage(5, 0);
+  Import_EventShowMessageAndWait(5, 0);
   ObjectMotion_SetAngleToward(5, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   ObjectMotion_SetAngleToward(gAdventure.currentOwner, 5, 0);
-  Engine_ActorShowEmote(5, 0x108, 0);
-  Engine_EventShowMessage(5, 0);
+  Import_ActorShowEmote(5, 0x108, 0);
+  Import_EventShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   FieldEvent_WaitFrames(40);
-  Value3(Engine_ActorShowEmote, 5, 0x101, 0);
+  Value3(Import_ActorShowEmote, 5, 0x101, 0);
   Value2(FieldMessage_ShowAtActor, 5, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
-    Engine_ActorSetAnimation(5, 3);
-    Engine_EventShowMessage(5, 0);
+    Import_ActorSetAnimation(5, 3);
+    Import_EventShowMessageAndWait(5, 0);
   } else {
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
-    Engine_EventShowMessage(5, 0);
+    Import_EventShowMessageAndWait(5, 0);
   }
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
-  Engine_ActorSetAnimation(5, 2);
+  Import_ActorSetAnimation(5, 2);
   leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
@@ -170,5 +170,5 @@ void Func_020002b4(void) {
   Func_02003228(5, 0, 0);
   Event_PrepareObjectAndApplyValue(5, 1);
   GameFlag_SetBit(0x864);
-  Engine_EventEnd();
+  Import_EventEnd();
 }

@@ -4519,7 +4519,7 @@ Func_02003658:
 	str r3, [r7, #72]
 	lsls r1, r1, #3
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r5, r0, #0
 	movs r0, #247
 	bl Func_020055ec
@@ -4531,7 +4531,7 @@ Func_02003658:
 	ldrb r0, [r6, #16]
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	mov r2, r10
 	mov r3, r8
 	strb r2, [r3]

@@ -5,7 +5,7 @@ void Func_02001140(struct ObjectRuntime *object) {
 
   if (phase == 0) {
     struct ObjectRuntime *child =
-        Engine_ObjectCreate_(0x10d, object->x, object->y, object->z);
+        Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {
       struct FieldSprite *sprite = child->animation;

@@ -235,7 +235,7 @@ Func_080fd000:
 	strb r3, [r2]
 .L_080fd1e0:
 	movs r0, #64
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r6, r0, #0
 	adds r1, r6, #0
 	movs r2, #1
@@ -247,7 +247,7 @@ Func_080fd000:
 	lsls r5, r5, #24
 	adds r0, r6, #0
 	asrs r5, r5, #24
-	bl MemFree
+	bl Heap_Release
 	cmp r5, #0
 	bne .L_080fd212
 	mov r3, r10

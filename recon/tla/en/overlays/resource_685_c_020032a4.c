@@ -14,7 +14,7 @@
 void WaitFrames(s32 frames);
 void Task_RemoveFar(void *callback);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_02002de4(void);
 
 void Func_020032a4(void) {
@@ -58,5 +58,5 @@ void Func_020032a4(void) {
   Task_RemoveFar(Func_02002de4);
   Resource_ResetEntry(FIELD_AT(work, s16, 4188));
   Resource_ResetEntry(FIELD_AT(work, s16, 4192));
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

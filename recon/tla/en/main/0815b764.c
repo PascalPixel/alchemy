@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -398,7 +398,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 133) <= 132) {
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       sparks = (struct EffectStep *)(work->sheet + 0x4c18);
       if (frame > 196) {
@@ -523,12 +523,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           q->variant--;
         }
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
 
     if (draw && frame <= 131) {
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       model->shade = 0;
       work->transferMode = 2;
@@ -571,8 +571,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model);
         }
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
 
     if ((u32)(frame - 108) <= 179) {
@@ -645,8 +645,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(188);
+  HeapSlot_Release(SLOT_BLITTER);
   transition[4] = 0;
   battle = Ram_HeapSlots->battleWork;
   Sound_PlayFar(390);

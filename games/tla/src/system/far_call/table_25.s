@@ -4,15 +4,15 @@
 	.global Event_SetDestinationFar
 	.thumb_func
 Event_SetDestinationFar:
-	overlay_veneer EventRuntime_SetDestination
-	.global EventRuntime_SetSavedDestinationFar
+	overlay_veneer Event_SetDestination
+	.global Event_SetRestartPointFar
 	.thumb_func
-EventRuntime_SetSavedDestinationFar:
-	overlay_veneer EventRuntime_SetSavedDestination
-	.global EventRuntime_SetCountdownFar
+Event_SetRestartPointFar:
+	overlay_veneer Event_SetRestartPoint
+	.global Event_SetExitRequestFar
 	.thumb_func
-EventRuntime_SetCountdownFar:
-	overlay_veneer EventRuntime_SetCountdown
+Event_SetExitRequestFar:
+	overlay_veneer Event_SetExitRequest
 	.global Field_RequestBattleFromEncounterTableFar
 	.thumb_func
 Field_RequestBattleFromEncounterTableFar:

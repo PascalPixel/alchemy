@@ -14,8 +14,6 @@ s32 ObjectMotion_EnableActionAndResetMotion();
 s32 WaitFrames();
 s32 Func_020044cc();
 s32 Func_020044d4();
-s32 Event_StartScreenTransition();
-s32 Event_WaitTransitionFrames();
 s32 Func_0200456c();
 void Func_0200457c(void);
 s32 FieldEvent_WaitFrames();

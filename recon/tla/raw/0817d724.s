@@ -816,7 +816,7 @@ BattleEffect_RunRisingDragonEnemy:
 	bl Render_DrawModelList
 .L_0817dd80:
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
 	cmp r0, #134
 	bne .L_0817ddf4
@@ -1180,7 +1180,7 @@ BattleEffect_RunRisingDragonEnemy:
 	bl .L_0817d83e
 .L_0817e056:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0817e074
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

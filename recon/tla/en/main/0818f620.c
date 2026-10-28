@@ -49,7 +49,7 @@ s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -74,7 +74,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
     BattleEffect_LoadBlitter(188, 1 << 4 | (flags));                                      \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *disc,   \
                                              (left), (top), half, size);       \
-    Runtime_ReleaseHeapBlock(188);                                             \
+    HeapSlot_Release(188);                                             \
   } while (0)
 
 // The canvas burst family (wrappers in canvas_modes.c). A glowing ball (or
@@ -343,7 +343,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   if (mode == 0) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);

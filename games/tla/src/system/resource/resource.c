@@ -85,11 +85,11 @@ void Resource_LoadCode(u32 index, void *destination) {
   do {
     size = (u32)Resource_PatchThumbBranchCodeSize;
   } while (0);
-  routine = (void (*)(void *, s32))MemAlloc(size);
+  routine = (void (*)(void *, s32))Heap_Alloc(size);
   Dma_Set(Resource_PatchThumbBranchCode, routine, 0x84000000 | (size >> 2),
           REG_DMA3);
   routine(destination, end);
-  MemFree(routine);
+  Heap_Release(routine);
 }
 
-void Runtime_IgnoreInterrupt(void) {}
+void Irq_Ignore(void) {}

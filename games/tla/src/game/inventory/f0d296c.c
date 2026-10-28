@@ -10,7 +10,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void EventRuntime_Wait(s32 frames);
+void Event_WaitFrames(s32 frames);
 void ObjectMotion_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 void GameFlag_SetBit(s32 flag);
@@ -28,7 +28,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
     Object_GetById(actor)->scaleX = 0x10000;
     ObjectMotion_SetAngleToward(gAdventure.currentOwner, actor, 0);
-    EventRuntime_Wait(20);
+    Event_WaitFrames(20);
     return -1;
   }
   ObjectMotion_SetHorizontalPositionWithTerrain(actor, 0, 0);

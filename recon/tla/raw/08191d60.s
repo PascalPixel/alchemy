@@ -667,7 +667,7 @@ BattleEffect_RunMoloch:
 	ble .L_0819235c
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -770,9 +770,9 @@ BattleEffect_RunMoloch:
 	cmp r3, #4
 	bne .L_081922be
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 .L_0819235c:
 	mov r4, r9
 	cmp r4, #139
@@ -954,9 +954,9 @@ BattleEffect_RunMoloch:
 	ldr r0, .L_08192538
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r5, #238
 	ldr r1, [sp, #20]
 	movs r0, #5

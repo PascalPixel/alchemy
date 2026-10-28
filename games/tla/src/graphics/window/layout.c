@@ -36,7 +36,7 @@ void Window_FillFromScene(void *dst) {
     /* FAKEMATCH: the barrier keeps the second argument's add ahead of the
        first argument's copy; without it they trade places (differ 2). */
     asm("");
-    MemFree(code);
+    Heap_Release(code);
   }
 }
 
@@ -112,7 +112,7 @@ void PartyStatus_CreateWindow(s32 flags) {
   struct UiWindowBounds *window;
   u8 *tiles;
 
-  window = Runtime_AllocateBlock(64, sizeof(struct UiWindowBounds));
+  window = HeapSlot_AllocEwram(64, sizeof(struct UiWindowBounds));
   tiles = Ram_HeapSlots->windowTiles;
   zero = 0;
   tiles[6] = 1;

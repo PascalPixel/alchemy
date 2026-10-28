@@ -15,7 +15,7 @@ Func_080e1f2c:
 	adds r1, #52
 	movs r0, #92
 	sub sp, #32
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -39,7 +39,7 @@ Func_080e1f2c:
 	lsls r5, r5, #5
 	adds r1, r5, #0
 	movs r0, #96
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	str r0, [r6]
 	ldr r0, .L_080e2254
 	bl Resource_GetTableEntry
@@ -197,7 +197,7 @@ Func_080e1f2c:
 	str r3, [r7, #4]
 	ldr r3, [r5, #8]
 	str r3, [r7, #8]
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Func_080eb824
 	movs r3, #192
 	mov r1, r11
@@ -370,7 +370,7 @@ Func_080e1f2c:
 	bl BattleEffect_PrepareBufferInterpolation
 	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/aqua_rock/local.h"
 
 void Func_02001d30(struct ObjectRuntime *object) {
-  struct ObjectRuntime *child = Engine_ObjectCreate(
+  struct ObjectRuntime *child = Import_ActorCreate(
       14, object->x, object->y + 0x40000, object->z + 0x40000);
   struct FieldSprite *parentSprite = object->animation;
 

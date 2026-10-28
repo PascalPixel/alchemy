@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -231,7 +231,7 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color);
 void SceneTransform_ResetMatrix(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -454,7 +454,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
         if (work->particles[i].variant & 256) {
-          void *verts = Runtime_BumpAllocateAlternatePool(32);
+          void *verts = Heap_AllocEwram(32);
           struct RenderModel *model = Render_AllocateModelList(1);
           s32 age;
 
@@ -480,8 +480,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           model->vertices = verts;
           Render_TransformVertices(Data_08199f88, verts, 4);
           Render_DrawModelList(model);
-          MemFree(model);
-          MemFree(verts);
+          Heap_Release(model);
+          Heap_Release(verts);
           if (offset == 0x3800)
             work->particles[i].variant = 0;
         } else {
@@ -564,7 +564,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   Func_0815b434(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
-  Runtime_ReleaseHeapBlock(SLOT_ALT);
+  HeapSlot_Release(SLOT_ALT);
   Render_ResetTransformState();
 
   for (;;) {
@@ -698,7 +698,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
       }
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
       {
         s32 size = HI(SCENE->radius) * 2;
 
@@ -968,7 +968,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 279) <= 132 || frame > 446)
       UpdateSparks();
-    Runtime_ReleaseHeapBlock(SLOT_ALT);
+    HeapSlot_Release(SLOT_ALT);
 
     // The pillars of light.
     if (frame == 370) {
@@ -1148,7 +1148,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame > 446)
       DrawParticles();
     if ((u32)(frame - 447) <= 194) {
-      void *verts = Runtime_BumpAllocateAlternatePool(80);
+      void *verts = Heap_AllocEwram(80);
       struct RenderModel *model = Render_AllocateModelList(1);
       s32 scroll;
 
@@ -1230,8 +1230,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Render_TransformVertices(Data_0819a0ac, verts, 10);
         Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
 
     // The five light bars sweeping in from the edges.
@@ -1368,7 +1368,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 758) {
-      void *verts = Runtime_BumpAllocateAlternatePool(64);
+      void *verts = Heap_AllocEwram(64);
       struct RenderModel *model = Render_AllocateModelList(1);
       s32 place[3];
       s32 grow[3];
@@ -1395,8 +1395,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       model->vertices = verts;
       Render_TransformVertices(Data_0819a140, verts, 8);
       Render_DrawModelList(model);
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
       s = FindFreeSpark();
       if (s != -1) {
         sparks->life[s] = (Random16() & 15) << 15;
@@ -1460,7 +1460,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   }
 
   camera[27] = savedZoom;
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   Func_08191cc4();
   Iwram_FillWords(canvas, 0x4000, 0);
   while (*(volatile u32 *)(0x040000d4 + 8) & 0x80000000) {

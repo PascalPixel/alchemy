@@ -11,7 +11,7 @@
 #define EVENT_MODE_NO_CELL_TEST 3
 
 s32 Func_08020308(s32 x, s32 z, s32 layer, s32 height);
-s32 Runtime_CheckRadiusOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// Func_08020308 reports its cell, ORed with 2 when it overlaps any other
@@ -31,7 +31,7 @@ s32 Func_080e4244(struct ObjectRuntime *object) {
   for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object) {
-      if (Runtime_CheckRadiusOverlapFar(&object->x, object->radius - 2,
+      if (Field_CheckSpheresOverlapFar(&object->x, object->radius - 2,
                                         &other->x, other->radius - 2) >= 0)
         result |= 2;
     }

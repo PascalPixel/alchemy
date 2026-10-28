@@ -51,7 +51,7 @@ struct GlowWork {
 #include "iwram_call.h"
 
 s32 Math_Sine(s32 angle);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 void Func_02002894(s32 a, s32 b, s32 c);
 void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state);
 
@@ -86,7 +86,7 @@ void Func_02001fd0(void) {
       object->motionFlags = 3;
       object->velocityY = 0x180000;
       work->follow = 0;
-      Engine_AudioPlayCue(134);
+      Import_SoundPlay(134);
     }
     work->height += 8;
     if (work->height > 79) {
@@ -118,7 +118,7 @@ void Func_02001fd0(void) {
       effect->scaleX = 0;
     effect->scaleY = effect->scaleX;
     if (work->timer == 10)
-      Engine_AudioPlayCue(310);
+      Import_SoundPlay(310);
     if (work->timer == 90) {
       work->stage++;
       work->timer = -1;
@@ -126,7 +126,7 @@ void Func_02001fd0(void) {
     break;
   case 7:
     if (work->timer == 0) {
-      Engine_AudioPlayCue(144);
+      Import_SoundPlay(144);
       Func_02002894(0x30000, 0x30000, 0x10000);
     }
     if (work->timer == 30) {

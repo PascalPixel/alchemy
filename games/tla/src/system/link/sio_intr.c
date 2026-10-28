@@ -103,8 +103,8 @@ receive_loop:
 
 void Serial_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
-  Runtime_SetIrqHandler(7, 0, 0);
-  Runtime_SetIrqHandler(6, 0, 0);
+  Irq_SetHandler(7, 0, 0);
+  Irq_SetHandler(6, 0, 0);
 }
 
 u32 Serial_WaitForStatusMask(s32 mask) {

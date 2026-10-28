@@ -45,8 +45,8 @@ struct OrbitObject {
 void Func_02002180(s32 a, s32 b, s32 c, s32 d);
 void Func_02002058(s32 item);
 void Func_02002170(void);
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_020007d8(void);
 s32 Func_020007fc(s32 *p);
@@ -93,11 +93,11 @@ void Func_02000860(void) {
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
-  transfer = Runtime_AllocateHeapBlockFar(68, 0x608);
+  transfer = HeapSlot_AllocFar(68, 0x608);
   Func_02002058(193);
   transfer += 0x400;
   VramCache_Load(sprite->palette, 128, transfer);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;

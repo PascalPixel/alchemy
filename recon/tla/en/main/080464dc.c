@@ -58,9 +58,9 @@ extern const u8 gDjinnMenu_ArrowDownTiles[];
 struct PreviewUnit *Unit_Get(s32 member);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 flags);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
+void *Heap_AllocEwram(s32 size);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
 void Djinn_ActivateFar(s32 member, s32 element, s32 index);
@@ -167,10 +167,10 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   if (window == NULL)
     return NULL;
 
-  numberText = MemAlloc(64 * sizeof(*numberText));
-  savedUnit = MemAlloc(sizeof(*savedUnit));
+  numberText = Heap_Alloc(64 * sizeof(*numberText));
+  savedUnit = Heap_Alloc(sizeof(*savedUnit));
   changedAbilities =
-      Runtime_BumpAllocateAlternatePool(48 * sizeof(*changedAbilities));
+      Heap_AllocEwram(48 * sizeof(*changedAbilities));
   Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
 
   element = (encodedDjinn >> 8) & 15;
@@ -337,8 +337,8 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   }
 
   Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
-  MemFree(changedAbilities);
-  MemFree(savedUnit);
-  MemFree(numberText);
+  Heap_Release(changedAbilities);
+  Heap_Release(savedUnit);
+  Heap_Release(numberText);
   return window;
 }

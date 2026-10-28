@@ -25,7 +25,7 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   s32 dst;
   s32 phase;
 
-  buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  buffer = Heap_AllocEwram(0x200);
   canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   output = buffer;
   while (*text != 0) {
@@ -46,6 +46,6 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
     src = (s32)canvas->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, phase);
-    MemFree(buffer);
+    Heap_Release(buffer);
   }
 }

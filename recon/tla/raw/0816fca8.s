@@ -563,7 +563,7 @@ Func_0816fca8:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	add r9, r3
 	mov r0, r9
@@ -665,7 +665,7 @@ Func_0816fca8:
 	b .L_081702e2
 .L_081701cc:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -796,9 +796,9 @@ Func_0816fca8:
 	cmp r2, #40
 	bne .L_08170218
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 .L_081702e2:
 	movs r0, #4
 	movs r1, #4
@@ -822,7 +822,7 @@ Func_0816fca8:
 	ldr r0, .L_08170360
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}

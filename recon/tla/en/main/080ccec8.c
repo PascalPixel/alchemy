@@ -49,9 +49,9 @@ extern const u8 gObjectMotion_StepAngleScript[];
 struct ActorPlacement *Scene_FindActorPlacement(s32 id);
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ContainerRow *Func_080ceba8(void);
-void EventRuntime_Start(void);
-void EventRuntime_End(void);
-void EventRuntime_PrepareCurrentObject(void);
+void Event_Start(void);
+void Event_End(void);
+void Leader_StopMoving(void);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 kind);
 s32 GameFlag_Test(s32 flag);
@@ -70,8 +70,8 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void PartyStatus_CreateWindowFar(s32 layout);
 s32 Party_CountActiveOwnersFar(void);
 void PartyStatus_CloseFar(void);
-void EventRuntime_Wait(s32 frames);
-void EventRuntime_ResolvePendingActions(s32 skip);
+void Event_WaitFrames(s32 frames);
+void Event_ResolvePendingActions(s32 skip);
 void Func_080ea14c(s32 targetId);
 void Func_08038340(s32 value);
 void Func_080ad2f8(s32 value);
@@ -90,7 +90,7 @@ s32 PartyInventory_AddFar(s32 item);
 struct TalkEvent *Func_080ccd78(s32 kind, s32 target);
 s32 BattleEffect_GetFlags(s32 id);
 u32 Random16(void);
-void EventRuntime_RunMessage(s32 actor, s32 message);
+void Event_RunMessage(s32 actor, s32 message);
 void ObjectDispatch_SetAnimationSpeedFar(struct ObjectRuntime *object,
                                          s32 value);
 void Object_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
@@ -161,7 +161,7 @@ s32 Func_080ccec8(s32 id) {
         found = 26;
       if (type == 133)
         found = 32;
-      EventRuntime_Start();
+      Event_Start();
       busy = &((u8 *)object)[91];
       *busy = 1;
       if (silent == 0)
@@ -200,7 +200,7 @@ s32 Func_080ccec8(s32 id) {
         shown->update = NULL;
         Object_SetMode(shown, 2);
         Sound_PlayFar(246);
-        EventRuntime_Wait(30);
+        Event_WaitFrames(30);
         FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
@@ -208,15 +208,15 @@ s32 Func_080ccec8(s32 id) {
         goto done;
       }
       if (type == 132) {
-        EventRuntime_Start();
-        EventRuntime_ResolvePendingActions(0);
+        Event_Start();
+        Event_ResolvePendingActions(0);
         Func_080ea14c(index);
         Func_08038340(contents);
         Func_080ad2f8(contents);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_SetBit(flag);
-        EventRuntime_End();
+        Event_End();
         goto done;
       }
       if (type == 129) {
@@ -320,7 +320,7 @@ s32 Func_080ccec8(s32 id) {
                                              1);
     done:
       *busy = 0;
-      EventRuntime_End();
+      Event_End();
       if (result != 0)
         return result;
     }
@@ -335,7 +335,7 @@ s32 Func_080ccec8(s32 id) {
       if (talk == NULL)
         return result;
       if (talk->script >= 0x10000) {
-        EventRuntime_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
+        Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
                                         ((Random16() << 1) >> 16) + 0x137f);
         goto resume;
       }
@@ -362,9 +362,9 @@ s32 Func_080ccec8(s32 id) {
   }
   if (talk->script < 0x10000) {
     Window_SetBusyFlagsFar(busyFlags);
-    EventRuntime_RunMessage(id, talk->script);
+    Event_RunMessage(id, talk->script);
   } else {
-    EventRuntime_PrepareCurrentObject();
+    Leader_StopMoving();
     ((void (*)(s32))talk->script)(id);
   }
   if (!paused) {

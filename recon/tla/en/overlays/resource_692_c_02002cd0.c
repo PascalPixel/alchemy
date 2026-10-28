@@ -58,7 +58,7 @@ void Func_02002cd0(s32 a, s32 b) {
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   for (i = 0; i != 16; i++) {
-    object = Engine_ObjectCreate(672, first->x, first->y, first->z);
+    object = Import_ActorCreate(672, first->x, first->y, first->z);
     Func_02004f30(246);
     object->x += ((Random16Far() & 31) - 16) << 16;
     object->y += ((Random16Far() & 15) - 8) << 16;
@@ -83,7 +83,7 @@ void Func_02002cd0(s32 a, s32 b) {
   REG_BLDALPHA = 0x1008;
   WaitFrames(30);
   for (i = 0; i != 16; i++) {
-    object = Engine_ObjectCreate(672, second->x, second->y, second->z);
+    object = Import_ActorCreate(672, second->x, second->y, second->z);
     Func_02004f30(195);
     object->action = (Random16Far() & 0x7fff) + 0x8000;
     object->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
@@ -110,7 +110,7 @@ void Func_02002cd0(s32 a, s32 b) {
   Func_02004f30(220);
   WaitFrames(16);
   for (i = 2; i != 32; i += 2) {
-    object = Engine_ObjectCreate(672, second->x,
+    object = Import_ActorCreate(672, second->x,
                                  second->y + (i << 16) - 0x80000, second->z);
     object->action = Random16Far();
     object->unk66 = 0x800;

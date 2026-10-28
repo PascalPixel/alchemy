@@ -85,7 +85,7 @@ extern s16 Data_0202a63c;
 extern s16 Data_0202a63e;
 extern struct WorldMapMarker Data_0202a620;
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct WorldMapPlace *FlagEntries_GetTable(void);
 s32 FixedSqrt(s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -139,7 +139,7 @@ void Func_080ec4d4(void) {
   s32 x;
   s32 y;
 
-  EventRuntime_GetControlledOwner();
+  Party_GetLeaderActor();
   marker = gWorldMapWork.markers;
   tileBase = gResourceTableEntries[gWorldMapWork.vramBlock].offset >> 5;
   nearest = -1;

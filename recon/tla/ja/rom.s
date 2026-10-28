@@ -1,9 +1,9 @@
 	.section .rom.000133c4, "ax"
 	.balign 4
-	.global Runtime_InstallIwramAndIrqs
-	.type Runtime_InstallIwramAndIrqs, %function
+	.global System_InstallIwramAndIrqs
+	.type System_InstallIwramAndIrqs, %function
 	.thumb_func
-Runtime_InstallIwramAndIrqs:
+System_InstallIwramAndIrqs:
 	.incbin "baserom.gba", 0x000133c4, 0x00000074
 	.section .rom.000134b0, "ax"
 	.global System_WaitForFrameInterrupt

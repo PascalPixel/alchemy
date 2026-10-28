@@ -37,15 +37,15 @@ Vector_AddPolarOffsetFar:
 	.global Func_02001fa8
 	.thumb_func
 Func_02001fa8:
-	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Runtime_AllocateHeapBlockFar
+	overlay_veneer Irq_SetHandlerFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
@@ -121,7 +121,7 @@ Func_02002048:
 	.global Func_02002050
 	.thumb_func
 Func_02002050:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02002058
 	.thumb_func
 Func_02002058:
@@ -133,11 +133,11 @@ FieldEvent_WaitFrames:
 	.global Func_02002068
 	.thumb_func
 Func_02002068:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02002070
 	.thumb_func
 Func_02002070:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -193,7 +193,7 @@ Object_SetPartAttribute:
 	.global Func_020020e0
 	.thumb_func
 Func_020020e0:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -201,7 +201,7 @@ FieldMessage_ShowAtActor:
 	.global Func_020020f0
 	.thumb_func
 Func_020020f0:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -217,11 +217,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02002110
 	.thumb_func
 Func_02002110:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02002118
 	.thumb_func
 Func_02002118:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
@@ -245,11 +245,11 @@ Func_02002140:
 	.global Func_02002148
 	.thumb_func
 Func_02002148:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_02002150
 	.thumb_func
 Func_02002150:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02002158
 	.thumb_func
 Func_02002158:
@@ -293,7 +293,7 @@ Func_020021a0:
 	.global Func_020021a8
 	.thumb_func
 Func_020021a8:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_020021b0
 	.thumb_func
 Func_020021b0:

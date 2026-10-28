@@ -4,7 +4,7 @@
 #include "serial_runtime.h"
 
 void Message_DecodeRawUnboundedFar(s32, u16 *);
-void MemFree(void *);
+void Heap_Release(void *);
 void WaitFrames(s32);
 void *Resource_FarCall005(s32);
 
@@ -19,7 +19,7 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 len;
   s32 i;
 
-  buffer = Runtime_BumpAllocateAlternatePool(340);
+  buffer = Heap_AllocEwram(340);
   named_count = 0;
   index = 0;
   while (index <= 2) {
@@ -52,12 +52,12 @@ s32 LinkBattle_ReceiveParty(void) {
     name_entry[14] = 0;
     index += 1;
   }
-  MemFree(buffer);
-  buffer = Runtime_BumpAllocateAlternatePool(340);
+  Heap_Release(buffer);
+  buffer = Heap_AllocEwram(340);
   if (Serial_StartReceive(Resource_FarCall005(1)) != -1) {
     Serial_WaitForReceive();
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Heap_Release(buffer);
   return named_count;
 }

@@ -1717,7 +1717,7 @@ BattleEffect_RunCharon:
 	b .L_08176e16
 .L_08176c96:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1893,9 +1893,9 @@ BattleEffect_RunCharon:
 	bl Render_DrawModelList
 .L_08176e0a:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_08176e16:
 	ldr r3, [sp, #80]
 	subs r3, #244
@@ -2258,7 +2258,7 @@ BattleEffect_RunCharon:
 	cmp r0, r1
 	ble .L_081771ca
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2373,9 +2373,9 @@ BattleEffect_RunCharon:
 	cmp r4, #3
 	bne .L_08177130
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 .L_081771ca:
 	ldr r5, [sp, #80]
 	movs r6, #165
@@ -2593,7 +2593,7 @@ BattleEffect_RunCharon:
 	movs r5, #104
 .L_08177366:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r4, [sp, #92]
 	movs r7, #184
 	lsls r7, r7, #5
@@ -3085,7 +3085,7 @@ BattleEffect_RunCharon:
 	b .L_081778f4
 .L_08177700:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -3299,9 +3299,9 @@ BattleEffect_RunCharon:
 	bl Render_DrawModelList
 .L_081778d6:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	movs r0, #240
 	ldr r7, [sp, #92]
 	lsls r0, r0, #7
@@ -3415,9 +3415,9 @@ BattleEffect_RunCharon:
 	cmp r3, #48
 	bne .L_081779b0
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Palette_LoadBasicObjColors
 	ldr r3, .L_08177a08
 	movs r2, #128
@@ -4212,7 +4212,7 @@ BattleEffect_RunCharon:
 	cmp r5, #128
 	bne .L_08177f80
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08177ffc:
 	ldr r6, [sp, #80]
 	cmp r6, #119
@@ -4681,7 +4681,7 @@ BattleEffect_RunCharon:
 	movs r0, #104
 	str r3, [r5]
 	str r2, [r5, #4]
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
 	movs r1, #19
 	bl BattleEffect_LoadBlitter
@@ -4722,7 +4722,7 @@ BattleEffect_RunCharon:
 	cmp r1, #4
 	bne .L_0817835c
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #92]
 	movs r2, #0
 	movs r6, #160
@@ -4835,7 +4835,7 @@ BattleEffect_RunCharon:
 	cmp r1, #4
 	bne .L_08178482
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
 	movs r1, #47
 	bl BattleEffect_LoadBlitter
@@ -4888,10 +4888,10 @@ BattleEffect_RunCharon:
 	cmp r1, #96
 	bne .L_081784d0
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08178524:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -4976,9 +4976,9 @@ BattleEffect_RunCharon:
 	bl Render_DrawModelList
 .L_081785dc:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r5, [sp, #100]
 	movs r4, #1
 	ldr r3, [r5, #20]
@@ -5020,7 +5020,7 @@ BattleEffect_RunCharon:
 	bne .L_08178630
 .L_08178638:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0817867c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

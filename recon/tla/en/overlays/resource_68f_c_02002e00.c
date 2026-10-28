@@ -38,7 +38,7 @@ struct RockWork {
   s16 resource;
 };
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_FallingRock;
 void Func_02002f40(void *source, void *destination);
@@ -51,7 +51,7 @@ void Func_02002cc0(void);
 
 void Func_02002e00(void) {
   struct RockWork *work =
-      Runtime_AllocateHeapBlockFar(220, sizeof(struct RockWork));
+      HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 resource;
   s32 tile;
   struct Rock *rock;

@@ -14,7 +14,7 @@ void Func_02003410(void) {
   s16 i;
   u16 j;
 
-  queue = Runtime_AllocateBlock(112, sizeof(struct PaletteSnapshotWork));
+  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
   i = 0;
   entry = queue->entries;
 outer:

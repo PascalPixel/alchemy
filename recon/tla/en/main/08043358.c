@@ -22,7 +22,7 @@ extern u8 gData_02000000[];
 extern u32 gData_02001000;
 extern u32 gGameFlagBytes[];
 
-u32 Runtime_GetBuildStampTimeFar(s32);
+u32 BuildStamp_GetTimeFar(s32);
 s32 GameFlag_Test(s32 flag);
 
 // Builds the save header.
@@ -37,7 +37,7 @@ s32 Save_BuildFileSummary(void) {
   u32 sum = 0;
 
   summary = (struct SaveSummary *)(gData_02000000 - 16);
-  SAVE_GAME_WORDS->buildStamp = Runtime_GetBuildStampTimeFar(0);
+  SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000 = gFrameWaitCount;
   gAdventure.unk244[6] = gAutoSleepEnabled;

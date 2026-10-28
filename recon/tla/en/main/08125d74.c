@@ -53,7 +53,7 @@ void Func_08125d74(s32 arg, s32 kind) {
   s32 i;
 
   view = Ram_HeapSlots->transitionWork;
-  timer = Runtime_AllocateHeapBlock(168, 4);
+  timer = HeapSlot_Alloc(168, 4);
   if ((u32)(kind - 78) > 2) {
     u32 row;
 
@@ -101,7 +101,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     *timer = 0;
     Task_Add(BattlePres_AdvanceTransitionTimer, TASK_PASS_VBLANK);
     Task_Add(BattlePres_DrawTransitionRows, TASK_PASS_FRAME);
-    Runtime_SetIrqHandler(2, 32, Func_08125d68);
+    Irq_SetHandler(2, 32, Func_08125d68);
     gBgScroll[0].y = 32;
     WaitFrames(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
@@ -115,7 +115,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     Task_Remove(BattlePres_AdvanceTransitionTimer);
     Task_Remove(BattlePres_DrawTransitionRows);
     gBgScroll[0].y = 0;
-    Runtime_SetIrqHandler(2, 0, 0);
+    Irq_SetHandler(2, 0, 0);
   } else {
     u16 *owner;
 
@@ -141,7 +141,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     Func_08138028(&work);
     BattlePres_SetupTransitionScene(0, 0, 0, 100);
     *timer = 0;
-    Runtime_SetIrqHandler(2, 32, Func_08125d68);
+    Irq_SetHandler(2, 32, Func_08125d68);
     WaitFrames(1);
     WaitFrames(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
@@ -163,14 +163,14 @@ void Func_08125d74(s32 arg, s32 kind) {
     Func_08118bcc(arg);
     gBgScroll[0].y = 0;
     WaitFrames(1);
-    Runtime_SetIrqHandler(2, 0, 0);
+    Irq_SetHandler(2, 0, 0);
   }
-  Runtime_SetIrqHandler(2, 0, 0);
+  Irq_SetHandler(2, 0, 0);
   REG_BG1CNT = 0x1f83;
   WaitFrames(1);
   REG_BG1CNT = 0x1f83;
   REG_BG0CNT &= 0xfffd;
   gBgScroll[1].x = 8;
   REG_DISPCNT = 0x1541;
-  Runtime_ReleaseHeapBlock(168);
+  HeapSlot_Release(168);
 }

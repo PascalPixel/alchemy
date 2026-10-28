@@ -464,9 +464,9 @@ BattleEffect_RunWhirlwind:
 	b .L_08148f70
 .L_08149230:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08149264
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

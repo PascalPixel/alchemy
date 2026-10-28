@@ -318,7 +318,7 @@ Func_0817e0c0:
 	ldr r1, [sp, #8]
 	bl EffectPosition_ProjectBattler
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -476,9 +476,9 @@ Func_0817e0c0:
 	bl Render_DrawModelList
 .L_0817e48a:
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r5, [sp, #32]
 	cmp r5, #8
 	bne .L_0817e522
@@ -685,9 +685,9 @@ Func_0817e0c0:
 	ldr r0, .L_0817e664
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}

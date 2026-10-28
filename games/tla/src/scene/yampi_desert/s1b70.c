@@ -15,8 +15,8 @@ struct YampiDesertVisual {
 
 struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02004030(s32 item);
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 
 struct ObjectRuntime *Func_02001b70(void) {
@@ -51,10 +51,10 @@ struct ObjectRuntime *Func_02001b70(void) {
     object->unk5c[0] = 1;
     visual->value1a = 0;
     visual->value1b = 0;
-    buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
+    buffer = HeapSlot_AllocFar(68, 0x608);
     Func_02004030(209);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
   }
   return object;
 }

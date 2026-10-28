@@ -26,5 +26,5 @@ void VenusLighthouseEntrance_StopSparks(void) {
 
   Task_RemoveFar(Func_0200258c);
   Resource_ResetEntry(work->resource);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

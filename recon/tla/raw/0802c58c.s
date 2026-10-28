@@ -176,7 +176,7 @@ Func_0802c58c:
 .L_0802c6d0:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, [r5]
 	mov r8, r0
 	subs r3, #1
@@ -312,7 +312,7 @@ Func_0802c58c:
 	mov r0, r8
 	subs r3, #1
 	str r3, [r2]
-	bl MemFree
+	bl Heap_Release
 .L_0802c80c:
 	add sp, #24
 	pop {r3, r5, r6, r7}

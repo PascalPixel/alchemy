@@ -144,7 +144,7 @@ AlchemyUncreditedEnd_0813b7a2:
 	bne	.L_0813b8b0
 	pop	{r0, r1, r9}
 	b	.L_0813b7cc
-	.4byte	Runtime_ReciprocalTable + 1
+	.4byte	System_ReciprocalTable + 1
 .L_0813b998:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr

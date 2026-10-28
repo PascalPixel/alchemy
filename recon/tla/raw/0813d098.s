@@ -688,7 +688,7 @@ Func_0813d098:
 	.2byte 0xf800
 .L_0813d5fe:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #80]
 	ldr r4, .L_0813d7b4
@@ -1108,7 +1108,7 @@ Func_0813d098:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, .L_0813dad4
 	mov r2, r10
 	ldrb r3, [r1, r2]
@@ -1137,7 +1137,7 @@ Func_0813d098:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r4, .L_0813dad4
 	mov r6, r9
 	adds r7, r6, #4
@@ -1523,7 +1523,7 @@ Func_0813d098:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	add r10, r3
 	mov r5, r10
@@ -1912,9 +1912,9 @@ Func_0813d098:
 	b .L_0813dcde
 .L_0813df8c:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #28]
 	ldr r6, [sp, #80]
 	ldr r4, .L_0813e0ec
@@ -1926,7 +1926,7 @@ Func_0813d098:
 	cmp r3, #0
 	beq .L_0813e07e
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2016,9 +2016,9 @@ Func_0813d098:
 	bl Render_DrawModelList
 .L_0813e070:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r4, .L_0813e0ec
 .L_0813e07e:
 	ldr r2, [sp, #28]

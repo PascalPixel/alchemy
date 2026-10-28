@@ -15,7 +15,7 @@ Func_080e92b4:
 	lsls r1, r1, #5
 	movs r0, #92
 	sub sp, #88
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r3, #192
 	str r0, [sp, #84]
 	lsls r3, r3, #18
@@ -646,7 +646,7 @@ Func_080e92b4:
 	bl Resource_ResetEntry
 .L_080e97a6:
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3

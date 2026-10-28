@@ -21,7 +21,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
 
-s32 Runtime_BlankDisplayAndRunScene(void) {
+s32 Func_081b83c4_Start(void) {
   REG_DISPCNT = 0x40;
   Func_081b83c4();
   return 0;

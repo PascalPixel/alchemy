@@ -449,9 +449,9 @@ Func_0816467c:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3

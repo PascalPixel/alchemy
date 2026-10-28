@@ -25,6 +25,6 @@ s32 Save_LoadExtraSummary(void) {
 }
 
 void Save_ReleaseWork(void) {
-  Runtime_SetIrqHandler(5, 0, NULL);
-  Runtime_ReleaseHeapBlock(204);
+  Irq_SetHandler(5, 0, NULL);
+  HeapSlot_Release(204);
 }

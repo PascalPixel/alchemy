@@ -314,7 +314,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -335,7 +335,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #27
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -356,7 +356,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -377,7 +377,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	b .L_0818fa44
 .L_0818f918:
 	ldr r3, [sp, #44]
@@ -465,7 +465,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -485,7 +485,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #27
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -505,7 +505,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -525,7 +525,7 @@ Func_0818f620:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0818fa44:
 	ldr r6, [sp, #56]
 	cmp r6, #0
@@ -968,7 +968,7 @@ Func_0818f620:
 	ldr r0, .L_0818fde8
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r6, [sp, #56]
 	cmp r6, #0
 	bne .L_0818fdd6

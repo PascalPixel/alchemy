@@ -10,7 +10,7 @@
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 
-  state = Runtime_AllocateBlock(0x7c, sizeof(*state));
+  state = HeapSlot_AllocEwram(0x7c, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;

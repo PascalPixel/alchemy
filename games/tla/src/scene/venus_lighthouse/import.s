@@ -18,9 +18,9 @@ Random16Far:
 	.thumb_func
 GameFlag_Test:
 	overlay_veneer GameFlag_TestFar
-	.global Engine_GameFlagSet
+	.global Import_GameFlagSet
 	.thumb_func
-Engine_GameFlagSet:
+Import_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
@@ -34,9 +34,9 @@ Func_02001b2c:
 	.thumb_func
 Func_02001b34:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02001b44
 	.thumb_func
@@ -46,13 +46,13 @@ Func_02001b44:
 	.thumb_func
 Func_02001b4c:
 	overlay_veneer Object_CommitPosition
-	.global Engine_MapCopyCellsTo
+	.global Import_MapCopyCellPictureIndicesRect
 	.thumb_func
-Engine_MapCopyCellsTo:
+Import_MapCopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Engine_MapCopyCellAttributes
+	.global Import_MapCopyCellAttributeRect
 	.thumb_func
-Engine_MapCopyCellAttributes:
+Import_MapCopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Func_02001b64
 	.thumb_func
@@ -66,29 +66,29 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 Animation_SetStateFlags:
 	overlay_veneer Animation_SetStateFlagsFar
-	.global Engine_MessageShowCentered
+	.global Import_FieldMessageShow
 	.thumb_func
-Engine_MessageShowCentered:
+Import_FieldMessageShow:
 	overlay_veneer FieldMessage_ShowFar
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Engine_EventWait
+	.global Import_EventWaitFrames
 	.thumb_func
-Engine_EventWait:
+Import_EventWaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventStart
+	.global Import_EventStart
 	.thumb_func
-Engine_EventStart:
-	overlay_veneer EventRuntime_StartFar
-	.global Engine_EventEnd
+Import_EventStart:
+	overlay_veneer Event_StartFar
+	.global Import_EventEnd
 	.thumb_func
-Engine_EventEnd:
-	overlay_veneer EventRuntime_EndFar
-	.global Engine_ActorGet
+Import_EventEnd:
+	overlay_veneer Event_EndFar
+	.global Import_ActorGet
 	.thumb_func
-Engine_ActorGet:
+Import_ActorGet:
 	overlay_veneer Object_GetByIdFar
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
@@ -122,9 +122,9 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.thumb_func
 Func_02001be4:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Engine_ActorSetAnimation
+	.global Import_ActorSetAnimation
 	.thumb_func
-Engine_ActorSetAnimation:
+Import_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
@@ -149,11 +149,11 @@ Object_SetPartAttribute:
 	.global Func_02001c1c
 	.thumb_func
 Func_02001c1c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_02001c24
 	.thumb_func
 Func_02001c24:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -177,7 +177,7 @@ Func_02001c4c:
 	.global Func_02001c54
 	.thumb_func
 Func_02001c54:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -214,10 +214,10 @@ Func_02001c94:
 	.thumb_func
 Func_02001c9c:
 	overlay_veneer EventObject_InitializeFar
-	.global Engine_EventResolvePendingActions
+	.global Import_EventResolvePendingActions
 	.thumb_func
-Engine_EventResolvePendingActions:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+Import_EventResolvePendingActions:
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -230,10 +230,10 @@ Object_LinkObjectAndSetCallback:
 	.thumb_func
 Func_02001cbc:
 	overlay_veneer Event_NoOpFar
-	.global Engine_PartyGetLeaderActor
+	.global Import_PartyGetLeaderActor
 	.thumb_func
-Engine_PartyGetLeaderActor:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+Import_PartyGetLeaderActor:
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
@@ -242,7 +242,7 @@ Func_02001ccc:
 	.thumb_func
 Func_02001cd4:
 	overlay_veneer Func_080c87a0
-	.global Engine_AudioPlayCue
+	.global Import_SoundPlay
 	.thumb_func
-Engine_AudioPlayCue:
+Import_SoundPlay:
 	overlay_veneer Sound_PlayFar

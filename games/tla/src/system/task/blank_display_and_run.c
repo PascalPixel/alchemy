@@ -22,7 +22,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
 
-s32 Runtime_BlankDisplayAndRun(void) {
+s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Sound_PlayFar(2);
   LuckyDice_Run();

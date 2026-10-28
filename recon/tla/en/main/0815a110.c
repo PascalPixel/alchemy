@@ -160,7 +160,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 height);
@@ -394,8 +394,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         draw[0](canvas, ORB_CELS + ((frame - start - 2) / 2) * 960,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
 
     // The motes, until their life runs out, bouncing off the ground.
     Render_ResetTransformState();
@@ -423,8 +423,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         mote->variant--;
       }
     }
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
 
     if (frame > 3) {
       // The glints: three a frame around the target, each with its own
@@ -452,7 +452,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, work->sheet + gData_08197486[cel], x, y,
               gData_08197492[cel], gData_08197498[cel]);
-          Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+          HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }
       // The smoke: sixteen puffs rise from the target's feet, six cels of
@@ -472,7 +472,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           }
           puff->variant++;
         }
-        Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+        HeapSlot_Release(HEAP_BLITTER);
       }
     }
     Func_08158ce0(8, 8);

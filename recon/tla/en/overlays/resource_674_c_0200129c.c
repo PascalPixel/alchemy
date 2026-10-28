@@ -42,7 +42,7 @@ void Func_02003de4(struct ObjectRuntime *object, s32 mode);
 void Func_02003e0c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02003e14(struct ObjectRuntime *object);
 void PartyInventory_Remove(s32 item);
-u8 *Runtime_AllocateBlock(s32 block, s32 size);
+u8 *HeapSlot_AllocEwram(s32 block, s32 size);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetPositionAndCommit(u32 id, s32 x, s32 z);
@@ -85,7 +85,7 @@ void Func_0200129c(struct ObjectRuntime *gift) {
   gift->update = 0;
   PartyInventory_Remove(455);
   Func_02003f2c(9, 0);
-  Runtime_AllocateBlock(88, 664)[661] = 99;
+  HeapSlot_AllocEwram(88, 664)[661] = 99;
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
   leader->update = Func_02000df8;

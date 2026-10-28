@@ -46,7 +46,7 @@ extern struct Task gTasks[];
 
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
-void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
+void System_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
 void PaletteQueue_Start(void);
 
 void Task_ResetAll(void);

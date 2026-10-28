@@ -61,8 +61,8 @@ struct GlowAnimation {
 
 extern u8 gField_Tiles64D[];
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -77,14 +77,14 @@ s32 Func_02002a2c(struct ObjectRuntime *object);
 struct ObjectRuntime *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
 void Func_0200285c(struct ObjectRuntime *object, s32 mode);
 void Func_02002874(struct ObjectRuntime *object);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 void WaitFrames(s32 frames);
 s32 Task_Add(void (*callback)(void), s32 order);
 void Task_RemoveFar(void (*callback)(void));
 void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {
-  struct GlowWork *work = Runtime_AllocateHeapBlockFar(220, 0x860);
+  struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
   struct ObjectRuntime *object = Object_GetById(id);
   struct ObjectRuntime *effect;
   struct GlowSprite *sprite;
@@ -126,7 +126,7 @@ void Func_020023a4(s32 id) {
   work->timer = 0;
   work->height = 0;
   work->follow = 1;
-  Engine_AudioPlayCue(221);
+  Import_SoundPlay(221);
   Task_Add(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:
@@ -137,5 +137,5 @@ void Func_020023a4(s32 id) {
   Task_RemoveFar(Func_02001fd0);
   Func_02002874(effect);
   Resource_ResetEntry(resource);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

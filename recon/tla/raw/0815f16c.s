@@ -1387,9 +1387,9 @@ Func_0815f16c:
 	ldr r0, .L_0815fe54
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	adds r0, r7, #0
 	movs r1, #3
 	bl Object_SetMode
@@ -1451,9 +1451,9 @@ Func_0815f16c:
 	ldr r0, .L_0815fe54
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #128]
 	movs r3, #3
 	str r3, [r2, #24]
@@ -3374,9 +3374,9 @@ Func_0815f16c:
 	movs r0, #188
 	mov r10, r1
 	subs r5, r5, r3
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Random16
 	ldr r3, .L_08160e80
 	ands r0, r7
@@ -3412,7 +3412,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
@@ -3475,9 +3475,9 @@ Func_0815f16c:
 	movs r0, #188
 	asrs r5, r5, #16
 	subs r5, r5, r3
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Random16
 	ldr r3, .L_08160e8c
 	ands r0, r7
@@ -3514,7 +3514,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [sp, #128]
 	movs r5, #1
 	ldr r0, [r3, #4]
@@ -3620,9 +3620,9 @@ Func_0815f16c:
 	b .L_08160fd8
 .L_08160ea0:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #112]
 	cmp r5, #23
 	bls .L_08160eb6
@@ -3706,7 +3706,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, [sp, #112]
 	cmp r0, #8
 	bne .L_08160f64
@@ -3777,9 +3777,9 @@ Func_0815f16c:
 	cmp r0, #61
 	bne .L_08161064
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [sp, #112]
 	subs r3, #4
 	cmp r3, #19
@@ -3813,7 +3813,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -3829,7 +3829,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl .L_08161ab4
 	.2byte 0x0000
 .L_0816105c:
@@ -4270,9 +4270,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r2]
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
 	movs r1, #35
 	bl BattleEffect_LoadBlitter
@@ -4500,7 +4500,7 @@ Func_0815f16c:
 	.2byte 0xf800
 .L_0816156a:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r2, #4]
@@ -4529,9 +4529,9 @@ Func_0815f16c:
 	movs r6, #3
 .L_081615a2:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #3
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -4564,7 +4564,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #7
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -4586,7 +4586,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #128]
 	ldr r0, [r1, #4]
 	ldr r1, [sp, #84]
@@ -4695,9 +4695,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r2]
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #128]
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -4886,7 +4886,7 @@ Func_0815f16c:
 	.2byte 0xf800
 .L_08161868:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0816186e:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
@@ -4936,9 +4936,9 @@ Func_0815f16c:
 	bl Sound_PlayFar
 .L_081618cc:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #128]
 	ldr r3, [r1, #4]
 	cmp r3, #0
@@ -5184,7 +5184,7 @@ Func_0815f16c:
 	cmp r2, #3
 	bne .L_08161a2c
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08161ab4:
 	ldr r3, [sp, #128]
 	ldr r1, [sp, #84]
@@ -6586,9 +6586,9 @@ Func_0815f16c:
 	movs r0, #188
 	asrs r5, r5, #16
 	subs r5, r5, r3
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Random16
 	ldr r3, .L_08162730
 	ands r0, r7
@@ -6625,7 +6625,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [sp, #128]
 	movs r5, #1
 	ldr r0, [r3, #4]
@@ -6642,7 +6642,7 @@ Func_0815f16c:
 	bl .L_0816342a
 .L_081625f0:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -6749,9 +6749,9 @@ Func_0815f16c:
 	cmp r0, #20
 	bne .L_0816263a
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	bl .L_0816342a
 .L_081626de:
 	ldr r1, [sp, #124]
@@ -6765,7 +6765,7 @@ Func_0815f16c:
 .L_081626ee:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -6919,9 +6919,9 @@ Func_0815f16c:
 	bl Render_DrawModelList
 .L_0816283c:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r2, [sp, #124]
 	cmp r2, #82
 	beq .L_08162852
@@ -6962,7 +6962,7 @@ Func_0815f16c:
 	adds r0, r5, #0
 	bl Func_0815b434
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #12]
 	adds r0, r5, #0
 	ldr r1, [r2]
@@ -6990,7 +6990,7 @@ Func_0815f16c:
 .L_081628ce:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -7231,9 +7231,9 @@ Func_0815f16c:
 	bne .L_08162a50
 .L_08162ad0:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	ldr r1, [sp, #20]
 	cmp r1, #1
 	bhi .L_08162ae6
@@ -7363,7 +7363,7 @@ Func_0815f16c:
 .L_08162bd2:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -7542,9 +7542,9 @@ Func_0815f16c:
 	cmp r0, #2
 	bne .L_08162c8a
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	ldr r1, [sp, #112]
 	cmp r1, #4
 	beq .L_08162d60
@@ -7596,7 +7596,7 @@ Func_0815f16c:
 .L_08162db4:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -7733,9 +7733,9 @@ Func_0815f16c:
 	cmp r1, #4
 	bne .L_08162dea
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r2, [sp, #112]
 	cmp r2, #4
 	beq .L_08162ee4
@@ -8949,9 +8949,9 @@ Func_0815f16c:
 	ldr r0, .L_081638c8
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, [sp, #124]
 	cmp r0, #51
 	beq .L_08163840
@@ -9012,9 +9012,9 @@ Func_0815f16c:
 	ldr r0, .L_081638c8
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 .L_081638ac:
 	add sp, #264

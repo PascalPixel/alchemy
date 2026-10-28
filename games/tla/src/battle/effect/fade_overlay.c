@@ -18,11 +18,11 @@ void BattleEffect_StartFadeOverlay(void *object) {
   u8 *tiles;
   volatile u32 fill;
 
-  work = Runtime_AllocateBlock(144, 28);
-  tiles = Runtime_AllocateHeapBlock(56, 0x400);
+  work = HeapSlot_AllocEwram(144, 28);
+  tiles = HeapSlot_Alloc(56, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   Task_Add(Func_080d1840, TASK_PASS_VBLANK);
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(16, &REG_BLDALPHA);

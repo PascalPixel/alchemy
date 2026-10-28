@@ -25,7 +25,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 }
 
 void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
-  struct DmaFxWork *work = Runtime_AllocateBlock(136, sizeof(struct DmaFxWork));
+  struct DmaFxWork *work = HeapSlot_AllocEwram(136, sizeof(struct DmaFxWork));
   volatile u32 zero;
 
   zero = 0;

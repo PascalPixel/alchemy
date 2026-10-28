@@ -12,7 +12,7 @@ struct AnemosInnerSanctumEventWork {
 extern const s32 gData_02003594[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void GameFlag_ClearBit(s32 flag);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -54,7 +54,7 @@ void Func_020017b4(struct ObjectRuntime *self) {
   ahead[1] = leader->y;
   ahead[2] = next[1] = self->z + (leader->z - self->acceleration);
   if (self->unk4c != leader->x || self->acceleration != leader->z) {
-    dust = Engine_ObjectCreate(0x2a0, self->x, self->y, self->z);
+    dust = Import_ActorCreate(0x2a0, self->x, self->y, self->z);
     dust->x += ((Random16Far() & 15) - 8) << 16;
     dust->y += ((Random16Far() & 31) - 4) << 16;
     dust->motionFlags = 0;

@@ -71,7 +71,7 @@ Func_080da6e0:
 	adds r3, #36
 	lsls r0, r0, #2
 	ldr r7, [r1, r3]
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r2, [sp, #28]
 	adds r5, #32
 	mov r1, r9
@@ -262,7 +262,7 @@ Func_080da6e0:
 	b .L_080da7ba
 .L_080da8ea:
 	ldr r0, [sp, #8]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #0
 	add sp, #44
 	pop {r3, r5, r6, r7}

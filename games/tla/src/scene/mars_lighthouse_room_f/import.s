@@ -38,13 +38,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02005420
 	.thumb_func
@@ -189,7 +189,7 @@ Func_02005530:
 	.global Func_02005538
 	.thumb_func
 Func_02005538:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02005540
 	.thumb_func
 Func_02005540:
@@ -209,11 +209,11 @@ FieldEvent_WaitFrames:
 	.global Func_02005560
 	.thumb_func
 Func_02005560:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02005568
 	.thumb_func
 Func_02005568:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -281,7 +281,7 @@ Func_020055e8:
 	.global Func_020055f0
 	.thumb_func
 Func_020055f0:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_020055f8
 	.thumb_func
 Func_020055f8:
@@ -293,7 +293,7 @@ Func_02005600:
 	.global Func_02005608
 	.thumb_func
 Func_02005608:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_02005610
 	.thumb_func
 Func_02005610:
@@ -321,11 +321,11 @@ Func_02005638:
 	.global Func_02005640
 	.thumb_func
 Func_02005640:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_02005648
 	.thumb_func
 Func_02005648:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02005650
 	.thumb_func
 Func_02005650:
@@ -361,7 +361,7 @@ Func_02005688:
 	.global Func_02005690
 	.thumb_func
 Func_02005690:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02005698
 	.thumb_func
 Func_02005698:

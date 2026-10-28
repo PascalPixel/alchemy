@@ -19,7 +19,7 @@ extern u8 Func_02000d40[];
 extern u8 gFrameCount[];
 extern u8 Func_020011b8[];
 extern u8 gData_02003d50[];
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 s32 Math_Cosine();
 void Func_02003a54();
 void ObjectDispatch_SetSingleChildFlags();
@@ -49,7 +49,7 @@ s32 Func_020011e4(s32 a0, s32 a1, s32 a2, s32 a3) {
 
   r8 = a0;
   /* sub (s32)stack, #68 */
-  v0 = Engine_ObjectCreate(0x193, FIELD_AT(a0, s32, 8), FIELD_AT(a0, s32, 12),
+  v0 = Import_ActorCreate(0x193, FIELD_AT(a0, s32, 8), FIELD_AT(a0, s32, 12),
                            FIELD_AT(a0, s32, 16));
   r6 = v0;
   v1 = Math_Cosine(FIELD_AT(r8, u16, 6));

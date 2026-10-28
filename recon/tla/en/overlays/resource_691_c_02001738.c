@@ -29,7 +29,7 @@ void Func_02003c4c();
 void Object_SetPartAttribute();
 s32 Random16Far();
 s32 Func_0200015c();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 void ObjectDispatch_SetSingleChildFlags();
 void Func_02003a54();
 void Object_SetSpritePriority();
@@ -91,7 +91,7 @@ L_020097e6:
 L_020097ec:
   Call2((void (*)())Func_02003c4c, r8, 144);
   r4 = r8;
-  v4 = Engine_ObjectCreate(0x15f, (FIELD_AT(r4, s32, 8)) + 65536,
+  v4 = Import_ActorCreate(0x15f, (FIELD_AT(r4, s32, 8)) + 65536,
                            (FIELD_AT(r4, s32, 12)) + 2097152,
                            FIELD_AT(r4, s32, 16));
   r7 = (s32)((u8 *)stack + 16);
@@ -100,7 +100,7 @@ L_020097ec:
   r10 = r4;
 L_02009818:
   r6 = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 80);
-  v5 = Engine_ObjectCreate(0x15f, 0, 0, 0);
+  v5 = Import_ActorCreate(0x15f, 0, 0, 0);
   r5 = r10 << 2;
   FIELD_AT(FIELD_AT(v5, s32, 80), u8, 16) = FIELD_AT(r6, u8, 16);
   *(s32 *)(r7 + r5) = v5;

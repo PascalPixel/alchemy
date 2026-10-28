@@ -6395,7 +6395,7 @@ Func_02000e44:
 	str r3, [sp, #60]
 	str r3, [sp, #52]
 	str r3, [sp, #48]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r4, #0
 	str r0, [sp, #36]
 	ldr r0, .L_ja_02008e98
@@ -7714,7 +7714,7 @@ Func_02000e44:
 	str r3, [sp, #60]
 	str r3, [sp, #52]
 	str r3, [sp, #48]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r4, #0
 	str r0, [sp, #36]
 	ldr r0, .L_fr_02008ed0
@@ -8938,7 +8938,7 @@ Func_02000e44:
 	str r3, [sp, #60]
 	str r3, [sp, #52]
 	str r3, [sp, #48]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r4, #0
 	str r0, [sp, #36]
 	ldr r0, .L_02008ed8

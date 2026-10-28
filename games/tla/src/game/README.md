@@ -33,5 +33,5 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Battle_`, `BattleAction_`, `BattleEffect_`, `BattleSpoils_`, `Character_`,
 `Class_`, `Djinn_`, `DjinnRecovery_`, `Enemy_`, `Equipment_`, `Event_`,
 `GameFlag_`, `Item_`, `ItemCounter_`, `LinkBattle_`, `Object_`, `Owner_`,
-`Party_`, `PartyInventory_`, `Runtime_`, `Summon_`, `SummonDefinition_` and
+`Party_`, `PartyInventory_`, `Heap_`, `Summon_`, `SummonDefinition_` and
 `Unit_`. Only `FlagBits_`, testing a flag's bits, is The Lost Age's own so far.

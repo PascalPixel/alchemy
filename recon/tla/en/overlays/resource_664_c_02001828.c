@@ -100,7 +100,7 @@ void Func_02001828(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(207);
-  gust = (struct ObjectRuntime *)Engine_ObjectCreate(280, leader->x, leader->y,
+  gust = (struct ObjectRuntime *)Import_ActorCreate(280, leader->x, leader->y,
                                                      leader->z);
   Func_02005d5c(gust, 2);
   ObjectDispatch_SetSingleChildFlags(gust, 0);
@@ -120,7 +120,7 @@ void Func_02001828(void) {
   gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct ObjectRuntime *)Engine_ObjectCreate(
+      spark = (struct ObjectRuntime *)Import_ActorCreate(
           0x2a0, TARGET(effect)->x, TARGET(effect)->y, TARGET(effect)->z);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;

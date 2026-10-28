@@ -15,13 +15,13 @@ Func_080f94a4:
 	adds r1, #236
 	movs r0, #220
 	sub sp, #16
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #128
 	lsls r1, r1, #6
 	mov r10, r1
 	adds r5, r0, #0
 	mov r0, r10
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r7, #192
 	ldr r3, .L_080f9510
 	lsls r7, r7, #18
@@ -130,7 +130,7 @@ Func_080f94a4:
 	bl Window_DrawBorderFar
 	bl Menu_ResetTwoResourceEntries
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [r7, #24]
 	movs r3, #0
 	strh r3, [r2, #4]
@@ -161,7 +161,7 @@ Func_080f94a4:
 .L_080f9604:
 	strb r2, [r3, #6]
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #1
 	bl WaitFrames
 	bl Menu_ResumeFieldTasks

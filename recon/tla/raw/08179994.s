@@ -598,9 +598,9 @@ BattleEffect_RunJuggle:
 	b .L_08179a68
 .L_08179e32:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08179e68
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

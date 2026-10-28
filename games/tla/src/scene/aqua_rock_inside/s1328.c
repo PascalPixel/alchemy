@@ -8,7 +8,7 @@ void Func_02001328(void) {
 
 void Func_02001364(struct ObjectRuntime *object) {
   struct ObjectRuntime *child =
-      Engine_ObjectCreate_(0x2a0, object->x, object->y, object->z);
+      Import_ActorCreate_(0x2a0, object->x, object->y, object->z);
 
   child->scaleY = 0x6666;
   child->scaleX = 0x6666;

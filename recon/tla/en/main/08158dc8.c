@@ -69,7 +69,7 @@ void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -350,7 +350,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
             dotSize * 2);
       }
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
     }
 
     // The beam: rows of the ramp narrowing at its top, and the light fan
@@ -381,11 +381,11 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
       BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
       BLITTER_ALTERNATE(canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32,
                         96);
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
     }
     work->transferPending = 1;
     WaitFrames(1);
@@ -503,7 +503,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
               BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
                                 boltY, 72, 72);
-              Runtime_ReleaseHeapBlock(188);
+              HeapSlot_Release(188);
             }
             if (frame == i * 2 + 80) {
               s32 spawned = 0;
@@ -585,7 +585,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           }
         }
       }
-      Runtime_ReleaseHeapBlock(188);
+      HeapSlot_Release(188);
 
       // The formation is pushed back from frame 32.
       if (frame > 15) {
@@ -613,7 +613,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           Func_08196404(188, 7, 7, 3 | Data_08198562[Random16() & 3], 1);
           BLITTER_ALTERNATE(canvas, Ram_MapCellBuffer + gData_08197486[cell], x,
                             y + 56, gData_08197492[cell], gData_08197498[cell]);
-          Runtime_ReleaseHeapBlock(188);
+          HeapSlot_Release(188);
         }
       }
       if (frame <= 31) {
@@ -626,7 +626,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
 
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(104);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     Func_0816467c(0, formationX, formationY);
   }

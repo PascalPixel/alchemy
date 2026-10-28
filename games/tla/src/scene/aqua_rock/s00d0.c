@@ -1,7 +1,7 @@
 #include "local.h"
 
 struct ObjectRuntime *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
-  struct ObjectRuntime *object = Engine_ObjectCreate(kind, x, y, z);
+  struct ObjectRuntime *object = Import_ActorCreate(kind, x, y, z);
 
   if (object != 0) {
     Object_SetSpritePriority(object, 1);

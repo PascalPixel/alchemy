@@ -57,11 +57,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001084
 	.thumb_func
 Func_02001084:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_0200108c
 	.thumb_func
 Func_0200108c:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -121,11 +121,11 @@ ObjectMotion_SetAngleToward:
 	.global Func_02001104
 	.thumb_func
 Func_02001104:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_0200110c
 	.thumb_func
 Func_0200110c:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -169,7 +169,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001164
 	.thumb_func
 Func_02001164:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -185,7 +185,7 @@ Func_0200117c:
 	.global Func_02001184
 	.thumb_func
 Func_02001184:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_0200118c
 	.thumb_func
 Func_0200118c:

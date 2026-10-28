@@ -34,13 +34,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02003c7c
 	.thumb_func
@@ -86,9 +86,9 @@ Func_02003cc4:
 	.thumb_func
 Func_02003ccc:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02003cdc
 	.thumb_func
@@ -173,11 +173,11 @@ FieldEvent_WaitFrames:
 	.global Func_02003d7c
 	.thumb_func
 Func_02003d7c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02003d84
 	.thumb_func
 Func_02003d84:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Party_LearnAbility
 	.thumb_func
 Party_LearnAbility:
@@ -249,11 +249,11 @@ Object_SetPartAttribute:
 	.global Func_02003e14
 	.thumb_func
 Func_02003e14:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_02003e1c
 	.thumb_func
 Func_02003e1c:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -285,7 +285,7 @@ Func_02003e54:
 	.global Func_02003e5c
 	.thumb_func
 Func_02003e5c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02003e64
 	.thumb_func
 Func_02003e64:
@@ -325,7 +325,7 @@ Func_02003ea4:
 	.global Func_02003eac
 	.thumb_func
 Func_02003eac:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003eb4
 	.thumb_func
 Func_02003eb4:

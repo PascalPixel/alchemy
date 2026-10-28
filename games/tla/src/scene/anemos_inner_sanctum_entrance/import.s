@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02000c24
 	.thumb_func
@@ -66,9 +66,9 @@ Func_02000c5c:
 	.thumb_func
 Func_02000c64:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02000c74
 	.thumb_func
@@ -105,11 +105,11 @@ FieldEvent_WaitFrames:
 	.global Func_02000cb4
 	.thumb_func
 Func_02000cb4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -177,7 +177,7 @@ Event_WaitTransitionFrames:
 	.global Func_02000d44
 	.thumb_func
 Func_02000d44:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:

@@ -40,7 +40,7 @@ BattleEffect_RunNeptune:
 	ldr r2, .L_08169450
 	movs r0, #2
 	movs r1, #0
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	ldr r4, [sp, #60]
 	movs r7, #239
 	lsls r7, r7, #7
@@ -738,7 +738,7 @@ BattleEffect_RunNeptune:
 	ldr r2, .L_08169a7c
 	movs r0, #2
 	movs r1, #96
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	movs r6, #238
 	ldr r5, [sp, #60]
 	lsls r6, r6, #7
@@ -1371,7 +1371,7 @@ BattleEffect_RunNeptune:
 	movs r1, #0
 	str r2, [r0, #16]
 	movs r0, #2
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	bl Func_0814cca8
 	bl Palette_LoadBasicObjColors
 	movs r3, #128
@@ -1843,9 +1843,9 @@ BattleEffect_RunNeptune:
 	ldr r0, .L_0816a214
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}

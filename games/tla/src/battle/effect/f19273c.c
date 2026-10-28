@@ -58,7 +58,7 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   struct ModelTexture texture;
   struct Vector3 position;
 
-  projected = Runtime_BumpAllocateAlternatePool(48);
+  projected = Heap_AllocEwram(48);
   model = Render_AllocateModelList(1);
   memcpy(vertices, Data_08196f30, sizeof(vertices));
 
@@ -89,6 +89,6 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   model->vertices = projected;
   Render_TransformVertices(vertices, projected, 6);
   Render_DrawModelList(model);
-  MemFree(model);
-  MemFree(projected);
+  Heap_Release(model);
+  Heap_Release(projected);
 }

@@ -68,7 +68,7 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
     return;
   slot->active = 0;
   segments = slot->segments;
-  cursor = nodes = MemAlloc(0x200);
+  cursor = nodes = Heap_Alloc(0x200);
   slot->unk18 = 0;
   if (slot->flag != 0)
     GameFlag_ClearBit(slot->flag);
@@ -113,6 +113,6 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
     }
     WaitFrames(1);
   }
-  MemFree(nodes);
+  Heap_Release(nodes);
   return 0;
 }

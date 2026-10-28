@@ -412,8 +412,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       source = Unit_GetFar(menu->itemOwner);
       target = Unit_GetFar(menu->targetOwner);
-      sourceCopy = MemAlloc(0x14c);
-      targetCopy = MemAlloc(0x14c);
+      sourceCopy = Heap_Alloc(0x14c);
+      targetCopy = Heap_Alloc(0x14c);
       Iwram_CopyWords(sourceCopy, source, 0x14c);
       Iwram_CopyWords(targetCopy, target, 0x14c);
       movedSource = 0;
@@ -504,8 +504,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      MemFree(targetCopy);
-      MemFree(sourceCopy);
+      Heap_Release(targetCopy);
+      Heap_Release(sourceCopy);
       Event_ClearInvalidPackedValuesFar();
       state = 0;
       break;

@@ -22,11 +22,11 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);
-  routine = (void (*)(s32, s32, s32))MemAlloc(size);
+  routine = (void (*)(s32, s32, s32))Heap_Alloc(size);
   Dma_Set((const void *)Data_0813b9a0, routine, 0x84000000 | (size >> 2),
           REG_DMA3);
   routine(arg0, arg1, arg2);
-  MemFree(routine);
+  Heap_Release(routine);
 }
 
 /// Projects count packed s8 vertices (four bytes each) through
@@ -50,12 +50,12 @@ struct PoolEntry {
   s32 tail;
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 
 /// Allocates count model entries plus a cleared one that ends the list.
 struct PoolEntry *Render_AllocateModelList(s32 count) {
   struct PoolEntry *entries =
-      Runtime_BumpAllocateAlternatePool((count + 1) * sizeof(struct PoolEntry));
+      Heap_AllocEwram((count + 1) * sizeof(struct PoolEntry));
   s32 i;
 
   for (i = 0; i < count + 1; i++) {
@@ -73,8 +73,8 @@ struct Texture {
   u32 pixels;
 };
 
-u32 Runtime_GetRemainingIwram(void);
-void *MemAlloc(s32 size);
+u32 Heap_GetRemainingIwram(void);
+void *Heap_Alloc(s32 size);
 
 /// Copies a texture's pixels into a heap block when IWRAM has room for them;
 /// returns 1 with copy set up, 0 when there is no room.
@@ -84,10 +84,10 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   s32 misalign;
   s32 mask;
 
-  if (Runtime_GetRemainingIwram() < size + 8)
+  if (Heap_GetRemainingIwram() < size + 8)
     return 0;
   *(u16 *)copy = *(u16 *)source;
-  copy->pixels = (u32)MemAlloc(size + 8);
+  copy->pixels = (u32)Heap_Alloc(size + 8);
   /* FAKEMATCH: ⚓️ stores the allocation before it starts the mask; without the
    * barrier the forced mask below is scheduled before the store */
   asm volatile("");
@@ -156,7 +156,7 @@ extern u8 Data_0813b2ecCodeWords[];
 // the size is built in three instructions.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
-    (to) = MemAlloc((u32)(bytes));                                             \
+    (to) = Heap_Alloc((u32)(bytes));                                             \
     Dma_Set((code), (to), 0x84000000 + (u32)(words), REG_DMA3);                \
   }
 
@@ -181,7 +181,7 @@ void Render_DrawModelList(struct Model *model) {
   for (;;) {
     texture = model->texture;
     if (model->kind != lastKind && code != NULL)
-      MemFree(code);
+      Heap_Release(code);
     if (model->kind == 0)
       break;
     switch (model->kind) {
@@ -253,7 +253,7 @@ void Render_DrawModelList(struct Model *model) {
     }
     lastKind = model->kind;
     if (model->texture == &copy) {
-      MemFree((void *)(model->texture->pixels & ~3));
+      Heap_Release((void *)(model->texture->pixels & ~3));
       model->texture = texture;
     }
     model++;

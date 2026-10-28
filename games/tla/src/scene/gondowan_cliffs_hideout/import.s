@@ -17,11 +17,11 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_020001b4
 	.thumb_func
 Func_020001b4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020001bc
 	.thumb_func
 Func_020001bc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -41,11 +41,11 @@ ObjectMotion_SetAngleToward:
 	.global Func_020001e4
 	.thumb_func
 Func_020001e4:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_020001ec
 	.thumb_func
 Func_020001ec:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_020001f4
 	.thumb_func
 Func_020001f4:
@@ -65,8 +65,8 @@ Func_0200020c:
 	.global Func_02000214
 	.thumb_func
 Func_02000214:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_0200021c
 	.thumb_func
 Func_0200021c:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar

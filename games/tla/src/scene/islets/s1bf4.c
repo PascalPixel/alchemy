@@ -2,7 +2,7 @@
 
 void Func_02003fbc(void);
 void Func_02003fc4(void);
-void *Runtime_AllocateBlock(s32 id, s32 size);
+void *HeapSlot_AllocEwram(s32 id, s32 size);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 extern const u8 gData_020045a4[];
 extern const u8 gData_020045f0[];
@@ -32,7 +32,7 @@ void Func_02001a68(void) {
     ((struct {
       u8 unk000[0x295];
       u8 unk295;
-    } *)Runtime_AllocateBlock(88, 0x298))
+    } *)HeapSlot_AllocEwram(88, 0x298))
         ->unk295 = 99;
     Call3((void (*)())ObjectMotion_Launch, gAdventure.currentOwner, 6, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,

@@ -2073,9 +2073,9 @@ BattleEffect_RunProjectileVolleyB:
 	lsrs r3, r3, #1
 	subs r5, r5, r3
 	mov r8, r2
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Random16
 	ldr r3, .L_081536f0
 	movs r1, #3
@@ -2113,7 +2113,7 @@ BattleEffect_RunProjectileVolleyB:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #84]
 	ldr r1, [sp, #36]
 	ldr r0, [r5, #4]
@@ -2520,9 +2520,9 @@ BattleEffect_RunProjectileVolleyB:
 	ldr r0, .L_081539c0
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	mov r2, r11
 	cmp r2, #11
 	beq .L_0815396e

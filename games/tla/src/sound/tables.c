@@ -48,7 +48,7 @@ void ply_xiecv(struct SoundPlayer *player, struct SoundTrack *track);
 void ply_xiecl(struct SoundPlayer *player, struct SoundTrack *track);
 void ply_xleng(struct SoundPlayer *player, struct SoundTrack *track);
 void ply_xswee(struct SoundPlayer *player, struct SoundTrack *track);
-void Runtime_CallWorkEntryWithArgs();
+void System_CallWorkEntryWithArgs();
 
 /// Sequence commands copied for each player, and driver entry points.
 // clang-format off
@@ -166,10 +166,10 @@ const u8 gSound_ClockLengths[] = {
 
 /// Extended commands; entries zero and three do nothing.
 const SoundCommand gSound_ExtendedCommandTable[] = {
-    (SoundCommand)Runtime_CallWorkEntryWithArgs,
+    (SoundCommand)System_CallWorkEntryWithArgs,
     ply_xwave,
     ply_xtype,
-    (SoundCommand)Runtime_CallWorkEntryWithArgs,
+    (SoundCommand)System_CallWorkEntryWithArgs,
     ply_xatta,
     ply_xdeca,
     ply_xsust,

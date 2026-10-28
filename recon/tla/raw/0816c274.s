@@ -443,7 +443,7 @@ BattleEffect_RunCrystal:
 	movs r3, #104
 	str r3, [r2, #16]
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -501,9 +501,9 @@ BattleEffect_RunCrystal:
 	bl Render_DrawModelList
 .L_0816c67c:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r2, .L_0816c6d8
 	movs r3, #120
 	str r3, [r2, #12]
@@ -528,7 +528,7 @@ BattleEffect_RunCrystal:
 	ldr r0, .L_0816c6f4
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}

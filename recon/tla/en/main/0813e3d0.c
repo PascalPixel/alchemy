@@ -81,7 +81,7 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
@@ -115,9 +115,9 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   void *palette;
   s32 i;
 
-  work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
-  sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
+  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
   work->effect = effect;
@@ -190,7 +190,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       } while (0);
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
-      Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
+      HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -199,7 +199,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,
               43);
-      Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
+      HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
     }
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
@@ -231,10 +231,10 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }

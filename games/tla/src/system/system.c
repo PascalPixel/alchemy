@@ -48,7 +48,7 @@ void WaitFrames(s32 frames) {
     Task_RunPass(TASK_PASS_VBLANK);
     gTasksRunning = 0;
     if (gRenderOamEnabled) {
-      Render_BuildOamList(Runtime_AllocateHeapBlock(80, 0x400));
+      Render_BuildOamList(HeapSlot_Alloc(80, 0x400));
     } else {
       gOamUsage.used = 0;
       gOamUsage.limit = 256;
@@ -110,7 +110,7 @@ void WaitFrames(s32 frames) {
     gLastFrameVBlanks = gFrameVBlanks;
     gFrameVBlanks = 0;
     System_WaitForFrameInterrupt();
-    Runtime_ReleaseHeapBlock(80);
+    HeapSlot_Release(80);
     Render_ResetFrame();
     gFrameCount++;
     gFrameWaitCount++;

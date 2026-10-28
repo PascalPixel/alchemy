@@ -46,8 +46,8 @@ s32 Object_GetById();
 s32 Object_SetModeById();
 s32 Object_SetPartAttribute();
 s32 PartyInventory_Remove();
-s32 Runtime_AllocateHeapBlockFar();
-s32 Runtime_ReleaseHeapBlock();
+s32 HeapSlot_AllocFar();
+s32 HeapSlot_Release();
 s32 Task_Add();
 s32 Task_RemoveFar();
 s32 FieldMessage_Show();
@@ -123,14 +123,14 @@ L_020086c4:
   FIELD_AT(v_r7, u8, 92) = 1;
   FIELD_AT(v_r7, s32, 48) = 0x6666;
   FIELD_AT(v_r7, s32, 52) = 0xccc;
-  t32 = Value2((s32 (*)())Runtime_AllocateHeapBlockFar, 68, 0x608);
+  t32 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
   FIELD_AT(sp_, s32, 4) = t32;
   Call1((void (*)())Func_020057d4, 246);
   t34 = FIELD_AT(sp_, s32, 4);
   t35 = FIELD_AT(t28, u8, 16);
   *(s32 *)sp_ = (t34 + 0x400);
   Call3((void (*)())VramCache_Load, t35, 128, (t34 + 0x400));
-  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
+  Call1((void (*)())HeapSlot_Release, 68);
 L_020087f4:
   Call2((void (*)())ObjectMotion_SetActionVariant, 37, 1);
   t39 = Value1((s32 (*)())Object_GetById, 37);

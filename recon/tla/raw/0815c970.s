@@ -274,7 +274,7 @@ Func_0815c970:
 	ldr r0, .L_0815cbb8
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #28
 	pop {r3, r5, r6, r7}

@@ -112,7 +112,7 @@ BattleEffect_RunTripleChomp:
 	bne .L_0818b93a
 .L_0818b946:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #32]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -424,9 +424,9 @@ BattleEffect_RunTripleChomp:
 	cmp r9, r2
 	bne .L_0818bb46
 	ldr r0, [sp, #28]
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #32]
-	bl MemFree
+	bl Heap_Release
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
@@ -448,7 +448,7 @@ BattleEffect_RunTripleChomp:
 	b .L_0818b926
 .L_0818bc02:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0818bc5c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

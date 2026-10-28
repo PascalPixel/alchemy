@@ -13,7 +13,7 @@
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                      s32 y);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
 
 extern u8 Msg_0c59[];
 
@@ -23,7 +23,7 @@ struct Func_0804bc08Work {
 };
 
 // Stand-in for the parent, Func_0804bc08, whose work block (from
-// Runtime_AllocateBlock(228, 272)) the nested function reads.
+// HeapSlot_AllocEwram(228, 272)) the nested function reads.
 void Func_0804bc08(void) {
   struct Func_0804bc08Work *work;
 
@@ -34,6 +34,6 @@ void Func_0804bc08(void) {
     Text_DrawWideStringAtOffset(text, work->window, 0, 4);
   }
 
-  work = Runtime_AllocateBlock(228, 272);
+  work = HeapSlot_AllocEwram(228, 272);
   Func_0804bbd0();
 }

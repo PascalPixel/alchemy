@@ -26,7 +26,7 @@ Func_020000c4:
 	strh r2, [r3]
 	movs r0, #128
 	lsls r0, r0, #4
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	ldr r0, .L_02008150
 	bl Resource_GetTableEntry
@@ -42,7 +42,7 @@ Func_020000c4:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_02008148
 	mov r0, sp
 	adds r0, #10
@@ -55,7 +55,7 @@ Func_020000c4:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #128
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	ldr r0, .L_02008160
 	bl Resource_GetTableEntry
@@ -109,7 +109,7 @@ Func_020000c4:
 	cmp r6, #16
 	bne .L_0200817c
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_020081e0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -4734,7 +4734,7 @@ Func_02003e70:
 .L_0200c04c:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -4754,7 +4754,7 @@ Func_02003e70:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200c0b0

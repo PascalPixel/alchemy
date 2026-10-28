@@ -37,15 +37,15 @@ Random16Far:
 	.global Func_02001c0c
 	.thumb_func
 Func_02001c0c:
-	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Runtime_AllocateBlock
+	overlay_veneer Irq_SetHandlerFar
+	.global HeapSlot_AllocEwram
 	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_ReleaseHeapBlock
+HeapSlot_AllocEwram:
+	overlay_veneer HeapSlot_AllocEwramFar
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global Func_02001c24
 	.thumb_func
 Func_02001c24:
@@ -90,9 +90,9 @@ Func_02001c6c:
 	.thumb_func
 Func_02001c74:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02001c84
 	.thumb_func
@@ -129,11 +129,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001cc4
 	.thumb_func
 Func_02001cc4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -193,7 +193,7 @@ Object_SetPartAttribute:
 	.global Func_02001d44
 	.thumb_func
 Func_02001d44:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -201,7 +201,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02001d54
 	.thumb_func
 Func_02001d54:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -233,7 +233,7 @@ Func_02001d8c:
 	.global Func_02001d94
 	.thumb_func
 Func_02001d94:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02001d9c
 	.thumb_func
 Func_02001d9c:
@@ -261,7 +261,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001dcc
 	.thumb_func
 Func_02001dcc:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001dd4
 	.thumb_func
 Func_02001dd4:
@@ -297,7 +297,7 @@ Func_02001e0c:
 	.global Func_02001e14
 	.thumb_func
 Func_02001e14:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001e1c
 	.thumb_func
 Func_02001e1c:

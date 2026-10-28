@@ -12,14 +12,14 @@ s32 Task_ResumeAll();
 /// Resumes the Func_080d1ae4 overlay task.
 void Func_080d1d44(void) { Task_ResumeAll(Func_080d1ae4); }
 
-void *Runtime_AllocateHeapBlock();
-void Runtime_ReleaseHeapBlock();
+void *HeapSlot_Alloc();
+void HeapSlot_Release();
 void VramCache_Load();
 
 /// Fills the overlay's 512 bytes of sprite tiles (VRAM cache slot 94) with
 /// colour 1 when solid is set, else clears them.
 void BattleEffect_FillOverlayTiles(s32 solid) {
-  void *buffer = Runtime_AllocateHeapBlock(56, 0x400);
+  void *buffer = HeapSlot_Alloc(56, 0x400);
 
   if (solid == 0) {
     Dma_Fill32(0, buffer, 0x200);
@@ -27,5 +27,5 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
     Dma_Fill32(0x01010101, buffer, 0x200);
   }
   VramCache_Load(94, 0x200, buffer);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
 }

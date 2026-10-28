@@ -34,13 +34,13 @@ Math_Sine:
 Math_Cosine:
 	overlay_veneer Math_CosineFar
 	.endif
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global VramCache_Load
 	.thumb_func
@@ -78,9 +78,9 @@ Func_02002dd4:
 	.thumb_func
 Func_02002ddc:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02002dec
 	.thumb_func
@@ -131,11 +131,11 @@ FieldEvent_WaitFrames:
 	.global Func_02002e44
 	.thumb_func
 Func_02002e44:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02002e4c
 	.thumb_func
 Func_02002e4c:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -191,7 +191,7 @@ Func_02002eb4:
 	.global Func_02002ebc
 	.thumb_func
 Func_02002ebc:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -209,7 +209,7 @@ Func_02002ed4:
 	.global Func_02002edc
 	.thumb_func
 Func_02002edc:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02002ee4
 	.thumb_func
 Func_02002ee4:

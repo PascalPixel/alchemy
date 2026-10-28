@@ -46,7 +46,7 @@ void Func_02003d30(void) {
     ShamanVillage_MessageOpen(0x200f, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
       Motion_SetModeAndWaitAnimation(15, 3);
-      Engine_AudioPlayCue(76);
+      Import_SoundPlay(76);
       ShamanVillage_MessagePut(0x200f, 0);
       GameFlag_SetBit(0x200);
       Func_02001380();

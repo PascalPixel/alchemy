@@ -15,7 +15,7 @@ void Func_0200052c(struct ObjectRuntime *object) {
     /* FAKEMATCH: keeps the bias load before the kind is built (differ 4
      * without) */
     __asm__("" : : "r"(bias));
-    child = Engine_ObjectCreate(0x2a2, x + bias, object->y, object->z);
+    child = Import_ActorCreate(0x2a2, x + bias, object->y, object->z);
     if (child != 0) {
       ObjectDispatch_SetSingleChildFlags(child, 0);
       child->update = (void (*)(void))Func_020004e4;

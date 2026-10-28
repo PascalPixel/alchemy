@@ -4,18 +4,18 @@
 #include "edition.h"
 #include "types.h"
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-void *MemAlloc(s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(void *buffer);
-void MemFree(void *buffer);
-void Runtime_FillFreeHeapWords(u32 value);
-void Runtime_InitializeHeap(void);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
+void *Heap_Alloc(s32 size);
+void *Heap_AllocEwram(s32 size);
+void Heap_ReleaseEwram(void *buffer);
+void Heap_Release(void *buffer);
+void Heap_FillFreeWords(u32 value);
+void Heap_Initialize(void);
 
-static __inline__ void *Runtime_CallAlternatePool(void *(*allocate)(s32),
-                                                  s32 size) {
+static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
+                                               s32 size) {
   /* FAKEMATCH: the inline call prevents size sharing, avoiding 12 extra fade
    * bytes and changed gauge registers. */
   return allocate(size);

@@ -37,7 +37,7 @@ void Func_0803fc38(void) {
   struct OptionWork *work;
   volatile u32 zero;
 
-  work = (struct OptionWork *)Runtime_AllocateBlock(208, 0x628);
+  work = (struct OptionWork *)HeapSlot_AllocEwram(208, 0x628);
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
   work->option[0] = gAdventure.paletteGlow[0];

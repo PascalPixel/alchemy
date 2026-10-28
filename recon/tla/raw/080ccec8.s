@@ -123,7 +123,7 @@ Func_080ccec8:
 	bne .L_080ccfae
 	movs r5, #32
 .L_080ccfae:
-	bl EventRuntime_Start
+	bl Event_Start
 	ldr r2, [sp, #24]
 	movs r3, #1
 	adds r2, #91
@@ -232,7 +232,7 @@ Func_080ccec8:
 	movs r0, #246
 	bl Sound_PlayFar
 	movs r0, #30
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	ldr r0, .L_080cd178
 	movs r1, #1
 	bl FieldMessage_ShowFar
@@ -251,9 +251,9 @@ Func_080ccec8:
 	mov r1, r8
 	cmp r1, #132
 	bne .L_080cd106
-	bl EventRuntime_Start
+	bl Event_Start
 	movs r0, #0
-	bl EventRuntime_ResolvePendingActions
+	bl Event_ResolvePendingActions
 	mov r0, r10
 	bl Func_080ea14c
 	adds r0, r7, #0
@@ -269,7 +269,7 @@ Func_080ccec8:
 	mov r0, r9
 	bl GameFlag_SetBit
 .L_080cd100:
-	bl EventRuntime_End
+	bl Event_End
 	b .L_080cd39e
 .L_080cd106:
 	mov r3, r8
@@ -589,7 +589,7 @@ Func_080ccec8:
 	ldr r1, [sp, #0]
 	movs r3, #0
 	strb r3, [r1]
-	bl EventRuntime_End
+	bl Event_End
 	ldr r2, [sp, #28]
 	adds r0, r2, #0
 	cmp r2, #0
@@ -640,7 +640,7 @@ Func_080ccec8:
 	adds r5, r5, r3
 	mov r0, r11
 	adds r1, r5, #0
-	bl EventRuntime_RunMessage
+	bl Event_RunMessage
 	b .L_080cd546
 .L_080cd416:
 	movs r0, #0
@@ -707,7 +707,7 @@ Func_080ccec8:
 	bl Window_SetBusyFlagsFar
 	ldr r1, [r6, #8]
 	mov r0, r11
-	bl EventRuntime_RunMessage
+	bl Event_RunMessage
 	b .L_080cd4d4
 .L_080cd49c:
 	.4byte gAdventure
@@ -732,7 +732,7 @@ Func_080ccec8:
 .L_080cd4c4:
 	.4byte 0x0000137f
 .L_080cd4c8:
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	ldr r3, [r6, #8]
 	mov r0, r11
 	mov lr, r3

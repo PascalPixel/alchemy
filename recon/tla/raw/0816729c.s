@@ -1007,7 +1007,7 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #7
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -1025,13 +1025,13 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08167a94:
 	mov r3, r9
 	cmp r3, #15
 	bhi .L_08167b26
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r6, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1088,9 +1088,9 @@ BattleEffect_RunJudgment:
 	adds r0, r5, #0
 	bl Render_DrawModelList
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_08167b26:
 	ldr r3, [sp, #88]
 	movs r4, #240
@@ -1195,7 +1195,7 @@ BattleEffect_RunJudgment:
 	cmp r7, #16
 	bne .L_08167bba
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #19
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -1958,7 +1958,7 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -1975,7 +1975,7 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #27
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -1993,7 +1993,7 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -2010,7 +2010,7 @@ BattleEffect_RunJudgment:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0816824e:
 	ldr r3, [sp, #72]
 	subs r3, #64
@@ -2238,7 +2238,7 @@ BattleEffect_RunJudgment:
 	cmp r3, #15
 	bhi .L_08168490
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r6, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2296,9 +2296,9 @@ BattleEffect_RunJudgment:
 	adds r0, r5, #0
 	bl Render_DrawModelList
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_08168490:
 	ldr r3, [sp, #72]
 	cmp r3, #85
@@ -2996,7 +2996,7 @@ BattleEffect_RunJudgment:
 	bne .L_08168936
 .L_081689ae:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #72]
 	cmp r5, #63
 	ble .L_081689c8
@@ -3040,7 +3040,7 @@ BattleEffect_RunJudgment:
 	ldr r0, .L_08168a3c
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #188
 	pop {r3, r5, r6, r7}

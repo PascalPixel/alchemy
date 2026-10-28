@@ -27,7 +27,7 @@ void Func_0811e7dc(struct Work0811e7dc *work) {
   if (work->buffer != NULL) {
     Func_080219ccFar(GetMotionRecord(object, 0));
     WaitFrames(1);
-    MemFree(work->buffer);
+    Heap_Release(work->buffer);
     work->buffer = NULL;
     {
       struct Record0811e7dc *record = GetMotionRecord(object, 0);

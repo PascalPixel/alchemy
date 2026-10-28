@@ -40,6 +40,6 @@ void Func_080d2b4c(u32 flags, u32 djinn) {
   *(s16 *)(work + 356) = Encounter_GetDjinnEnemyGroup(djinn);
   if (*(s8 *)(work + 394) == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        &ObjectTable_Get(EventRuntime_GetControlledOwner())->x);
+        &ObjectTable_Get(Party_GetLeaderActor())->x);
   BattleEffect_SelectBattleCue(0, 0);
 }

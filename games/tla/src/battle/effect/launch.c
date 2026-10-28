@@ -36,7 +36,7 @@ struct SpinVector {
   s32 z;
 };
 
-void EventRuntime_Start(void);
+void Event_Start(void);
 void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void WaitFrames(s32 frames);
@@ -64,7 +64,7 @@ void FieldEffect_RunRetreat(void) {
   u8 last;
   u32 i;
 
-  EventRuntime_Start();
+  Event_Start();
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_InitializeSharedScene();
   WaitFrames(10);

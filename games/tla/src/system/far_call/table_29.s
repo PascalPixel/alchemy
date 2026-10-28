@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global EventRuntime_ResolveAllPendingActionsFar
+	.global Event_ResolveAllPendingActionsFar
 	.thumb_func
-EventRuntime_ResolveAllPendingActionsFar:
-	overlay_veneer EventRuntime_ResolveAllPendingActions
-	.global EventRuntime_ResolvePendingActionsFar
+Event_ResolveAllPendingActionsFar:
+	overlay_veneer Event_ResolveAllPendingActions
+	.global Event_ResolvePendingActionsFar
 	.thumb_func
-EventRuntime_ResolvePendingActionsFar:
-	overlay_veneer EventRuntime_ResolvePendingActions
+Event_ResolvePendingActionsFar:
+	overlay_veneer Event_ResolvePendingActions
 	.global Func_080c84e8
 	.thumb_func
 Func_080c84e8:

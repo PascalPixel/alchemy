@@ -315,8 +315,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
-      Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
-      Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+      HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
+      HeapSlot_Release(BLITTER_SLOT);
     }
 
     for (member = 0; member != effect->count; member++) {
@@ -382,8 +382,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
               }
             }
           }
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+          HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
+          HeapSlot_Release(BLITTER_SLOT);
         }
       }
 
@@ -401,7 +401,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         LOAD_BLITTER(draw[0], flags, BLIT_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
-        Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+        HeapSlot_Release(BLITTER_SLOT);
       }
 
       // From frame 80, the mode's picture.
@@ -413,7 +413,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+          HeapSlot_Release(BLITTER_SLOT);
         }
       } else if (mode == 3 || mode == 5 || mode == 8 || mode == 12) {
         // Six 32x64 pictures, four frames apart.
@@ -423,7 +423,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+          HeapSlot_Release(BLITTER_SLOT);
         }
       } else if (mode == 4 || mode == 9) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
@@ -436,8 +436,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
                   screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 32, screen.y + 8, 64, 32);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+          HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
+          HeapSlot_Release(BLITTER_SLOT);
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
@@ -447,7 +447,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
           LOAD_BLITTER(draw[0], flags, BLIT_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
-          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
+          HeapSlot_Release(BLITTER_SLOT);
         }
       }
     }

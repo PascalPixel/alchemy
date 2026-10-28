@@ -11,7 +11,7 @@
 void Func_0804cda8(void);
 
 void *AffineEffect_InitializeWork(void) {
-  void *work = Runtime_AllocateBlock(AFFINE_EFFECT_SLOT, 152);
+  void *work = HeapSlot_AllocEwram(AFFINE_EFFECT_SLOT, 152);
 
   Dma_Fill32(0, work, 152);
   Task_Add((TaskFunc)Func_0804cda8, TASK_PASS_VBLANK - 10);
@@ -39,6 +39,6 @@ void Menu_EndResourceSelection(void) {
     Resource_ResetEntry(*entry);
     i += 1;
   }
-  Runtime_ReleaseHeapBlock(232);
+  HeapSlot_Release(232);
   WaitFrames(1U);
 }

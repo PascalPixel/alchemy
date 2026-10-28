@@ -21,7 +21,7 @@ struct BattleUnit *Unit_Get(s32 unitId);
 /// block, then recalculates its stats.
 // No ☀️ twin found.
 void Func_08127a0c(s32 unitId) {
-  struct UnitBaseStats *saved = Runtime_BumpAllocateAlternatePool(36);
+  struct UnitBaseStats *saved = Heap_AllocEwram(36);
   struct BattleUnit *unit = Unit_Get(unitId);
   s32 value;
   s32 floor;
@@ -49,5 +49,5 @@ void Func_08127a0c(s32 unitId) {
     value = 999;
   unit->baseDefense = value;
   Unit_CalculateFar(unitId);
-  MemFree(saved);
+  Heap_Release(saved);
 }

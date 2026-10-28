@@ -85,8 +85,8 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void *SideObject_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
                            s32 a, s32 b);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void Unit_UpdateClassFar(s32 owner);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Unit_CalculateFar(s32 owner);
@@ -180,7 +180,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
       break;
     }
-    backup = MemAlloc(sizeof(struct BattleUnit));
+    backup = Heap_Alloc(sizeof(struct BattleUnit));
     Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit));
     if (state->equipPreview) {
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -193,7 +193,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     value = unit->classIndex + MESSAGE_CLASS_NAME;
     Text_DrawCharacterAtOffsetFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
-    MemFree(backup);
+    Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
   experience:
@@ -215,7 +215,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 0, 48);
       break;
     }
-    backup = MemAlloc(sizeof(struct BattleUnit));
+    backup = Heap_Alloc(sizeof(struct BattleUnit));
     Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit));
     if (state->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -224,7 +224,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     Unit_CalculateFar(owner);
     Text_DrawStatComparison(unit, backup, window);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
-    MemFree(backup);
+    Heap_Release(backup);
     break;
   case STATUS_PANEL_LEARN: {
     s32 psynergy = def->actionId;

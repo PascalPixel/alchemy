@@ -437,7 +437,7 @@ Func_080dd054:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080dd3ec:
 	bl EffectRuntime_StopCurrentObject
 	ldr r0, [sp, #24]

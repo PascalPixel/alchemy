@@ -1005,7 +1005,7 @@ BattleEffect_RunMegiddo:
 	bne .L_08190680
 .L_081906e2:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 .L_081906e8:
 	ldr r3, [sp, #84]
 	cmp r3, #8
@@ -1205,7 +1205,7 @@ BattleEffect_RunMegiddo:
 	bne .L_08190838
 .L_0819086c:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r11, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1477,9 +1477,9 @@ BattleEffect_RunMegiddo:
 	b .L_0819097c
 .L_08190a92:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
-	bl MemFree
+	bl Heap_Release
 	movs r1, #240
 	ldr r0, [sp, #92]
 	lsls r1, r1, #7
@@ -1534,7 +1534,7 @@ BattleEffect_RunMegiddo:
 	ldr r0, .L_08190b70
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #220
 	pop {r3, r5, r6, r7}

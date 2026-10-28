@@ -22,7 +22,7 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
-struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -52,8 +52,8 @@ void Task_RemoveFar(void *callback);
 s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 extern u32 gFrameCount;
@@ -138,8 +138,8 @@ struct FieldSpriteFlags {
 
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void FieldMessage_Show(const u8 *message, s32 mode);
 s32 PartyInventory_FindOwner(s32 item);
@@ -239,10 +239,10 @@ static __inline__ void Object_SetModeById_(u32 id, s32 mode) {
   Object_SetModeById(id, mode);
 }
 
-static __inline__ struct ObjectRuntime *Engine_ObjectCreate_(s32 kind, s32 x,
+static __inline__ struct ObjectRuntime *Import_ActorCreate_(s32 kind, s32 x,
                                                              s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Engine_ObjectCreate(kind, x, y, z);
+  return Import_ActorCreate(kind, x, y, z);
 }
 
 static __inline__ void Object_SetPartAttribute_(struct ObjectRuntime *object,
@@ -383,7 +383,7 @@ static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void *MemAlloc_(s32 size) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return MemAlloc(size);
+  return Heap_Alloc(size);
 }
 
 static __inline__ s32 VramBlock_LoadCached_(s32 entry, s32 size, void *data) {

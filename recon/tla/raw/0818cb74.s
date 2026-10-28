@@ -644,7 +644,7 @@ BattleEffect_RunTrident:
 .L_0818d080:
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #24]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -885,9 +885,9 @@ BattleEffect_RunTrident:
 	bne .L_0818d1cc
 .L_0818d270:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #24]
-	bl MemFree
+	bl Heap_Release
 .L_0818d27c:
 	mov r1, r11
 	cmp r1, #63
@@ -1203,7 +1203,7 @@ BattleEffect_RunTrident:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	add r9, r3
 	mov r4, r9
@@ -1233,7 +1233,7 @@ BattleEffect_RunTrident:
 	ldr r0, .L_0818d58c
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r4, #238
 	lsls r4, r4, #7
 	movs r3, #0

@@ -15,7 +15,7 @@ Func_0804babc:
 	movs r0, #9
 	str r1, [sp, #12]
 	str r2, [sp, #8]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	ldr r2, [sp, #12]
 	adds r5, r0, #0
 	ldr r2, [r2]

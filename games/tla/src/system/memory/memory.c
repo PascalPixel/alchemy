@@ -91,7 +91,7 @@ void Palette_LoadBasicObjColors(void) {
           0x800000e0, REG_DMA3);
 }
 
-void Runtime_InitializeHeap(void) {
+void Heap_Initialize(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
   Dma_Fill32(0, work, sizeof(struct HeapSlots));
@@ -101,19 +101,19 @@ void Runtime_InitializeHeap(void) {
 
 extern u8 IwramSoundMixWorkspace[];
 
-s32 Runtime_GetRemainingIwram(void) {
+s32 Heap_GetRemainingIwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
   return (s32)IwramSoundMixWorkspace - (s32)work->nextIwram;
 }
 
-s32 Runtime_GetRemainingEwram(void) {
+s32 Heap_GetRemainingEwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
   return 0x02040000 - (s32)work->nextEwram;
 }
 
-void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
+void *HeapSlot_Alloc(s32 kind, s32 size) {
   u32 *allocator_state;
   s32 kind_offset;
   s32 aligned_size;
@@ -146,7 +146,7 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   return (void *)cached_address;
 }
 
-void *Runtime_AllocateBlock(s32 kind, s32 size) {
+void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   u32 *allocator_state;
   s32 kind_offset;
   u32 aligned_size;
@@ -182,7 +182,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size) {
   return (void *)cached_address;
 }
 
-void Runtime_FillFreeHeapWords(u32 value) {
+void Heap_FillFreeWords(u32 value) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 address;
 
@@ -192,7 +192,7 @@ void Runtime_FillFreeHeapWords(u32 value) {
   Iwram_FillWords((void *)address, 0x02040000U - address, value);
 }
 
-void *MemAlloc(s32 size) {
+void *Heap_Alloc(s32 size) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 other;
   u32 next;
@@ -228,7 +228,7 @@ finish:
   return (void *)address;
 }
 
-void *Runtime_BumpAllocateAlternatePool(s32 size) {
+void *Heap_AllocEwram(s32 size) {
   u32 *state = (u32 *)Ram_HeapSlots;
   u32 other;
   u32 next;

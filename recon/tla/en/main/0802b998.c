@@ -73,7 +73,7 @@ void Func_0802b998(void) {
 
   REG_DISPCNT &= 0xc1ff;
   Fade_FromBlack(0);
-  perspective = Runtime_AllocateHeapBlock(32, 0x978);
+  perspective = HeapSlot_Alloc(32, 0x978);
   Dma_Fill32Cell(fill, 0, perspective, 0x978);
   *(s32 *)(perspective + 0xe4) = 0;
   *(s32 *)(perspective + 0xe8) = 0;
@@ -109,8 +109,8 @@ void Func_0802b998(void) {
   REG_BG3X = 0;
   Io_Write16(0, &REG_BG3Y);
 
-  camera = Runtime_AllocateBlock(48, 76);
-  affineWork = Runtime_AllocateHeapBlock(28, 0x3484);
+  camera = HeapSlot_AllocEwram(48, 76);
+  affineWork = HeapSlot_Alloc(28, 0x3484);
   affinePages = affineWork + 0xc80;
   farPlane = 0x1fe0000;
   *(s32 *)(perspective + 0x95c) = farPlane;

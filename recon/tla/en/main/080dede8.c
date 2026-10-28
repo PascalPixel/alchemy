@@ -168,7 +168,7 @@ void FieldEffect_RunDouse(void) {
       if (n == 12) {
         ev = Func_080ce458(0x50000005, 5, Func_080ce31c(5));
         if (ev != 0)
-          EventRuntime_RunPendingEvent(ev, work->firstObjectId,
+          Field_RunPsynergyEvent(ev, work->firstObjectId,
                                        work->secondObjectId);
       }
     }

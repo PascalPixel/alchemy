@@ -32,7 +32,7 @@ Func_080ce61c:
 	movs r3, #0
 	str r0, [sp, #4]
 	str r3, [sp, #0]
-	bl EventRuntime_PrepareCurrentObject
+	bl Leader_StopMoving
 	ldr r0, [sp, #12]
 	movs r1, #211
 	lsls r1, r1, #4
@@ -249,7 +249,7 @@ Func_080ce61c:
 .L_080ce826:
 	adds r1, r7, #0
 	mov r2, r10
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080ce82e:
 	movs r3, #128
 	lsls r3, r3, #6
@@ -257,7 +257,7 @@ Func_080ce61c:
 	ands r3, r0
 	cmp r3, #0
 	beq .L_080ce840
-	bl EventRuntime_ExecutePackedAction
+	bl Event_ExecutePackedAction
 	b .L_080ceaee
 .L_080ce840:
 	ldr r0, [sp, #4]
@@ -366,7 +366,7 @@ Func_080ce61c:
 	ldr r2, [sp, #4]
 	cmp r2, #23
 	bne .L_080ce948
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl ObjectTable_Get
 	ldr r3, [r0, #8]
 	ldr r1, [r0, #16]
@@ -504,14 +504,14 @@ Func_080ce61c:
 	strb r2, [r1]
 	strb r2, [r3]
 .L_080cea3e:
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	mov r1, r10
 	bl BattleEffect_SetupObjectPair
 	bl Func_080dc6d8
 	adds r1, r7, #0
 	ldr r0, [sp, #8]
 	mov r2, r10
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 	movs r0, #160
 	lsls r0, r0, #1
 	bl GameFlag_Test
@@ -551,14 +551,14 @@ Func_080ce61c:
 	movs r2, #0
 	ldrsb r2, [r5, r2]
 	adds r1, r7, #0
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080ceab0:
 	movs r5, #160
 	mov r0, r8
 	adds r1, r7, #0
 	mov r2, r10
 	lsls r5, r5, #1
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 	adds r0, r5, #0
 	bl GameFlag_Test
 	cmp r0, #0

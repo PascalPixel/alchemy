@@ -249,7 +249,7 @@ Func_080e87c4:
 	bl Resource_ResetEntry
 	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_080e89d6:
 	add sp, #8
 	pop {r3, r5, r6, r7}

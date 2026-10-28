@@ -34,7 +34,7 @@ void Menu_LoadSelectedResource(void) {
     return;
 
   buffer =
-      (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+      (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(GlyphTransfer));
   transfer = &state->records[15];
   no = selection->base;
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -53,7 +53,7 @@ void Menu_LoadSelectedResource(void) {
   transfer->scale = 40;
   transfer->scaleStep = 40;
   transfer->scaleEnd = 240;
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
 }
 
 void Resource_ResetPendingTransfer(void) {

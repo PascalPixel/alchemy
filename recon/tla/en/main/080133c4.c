@@ -1,4 +1,4 @@
-// Draft, differ 12 of 40 (was 28): ☀️'s Runtime_InstallIwramAndIrqs with
+// Draft, differ 12 of 40 (was 28): ☀️'s System_InstallIwramAndIrqs with
 // ⚓️'s 0x400-word runtime copy and the gamepak interrupt enabled. The native
 // pool holds IwramIrqMain twice: the copy's destination and the vector's
 // value are two entries, which agscc's pool merges whenever both are the
@@ -15,7 +15,7 @@
 #include "iowrite.h"
 #include "irq.h"
 
-void Runtime_InstallIwramAndIrqs(void) {
+void System_InstallIwramAndIrqs(void) {
   u8 *iwram;
 
   Io_Write16(0, &REG_IME);

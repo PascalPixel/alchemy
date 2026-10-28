@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -129,7 +129,7 @@ void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_LoadBasicObjColors(void);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 // The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
@@ -520,7 +520,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     // The model layer.
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
-    verts = Runtime_BumpAllocateAlternatePool(0x400);
+    verts = Heap_AllocEwram(0x400);
     model = Render_AllocateModelList(1);
     model->texture = &texture;
     model->vertices = verts;
@@ -1303,8 +1303,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
     ObjectGroup_CountDownMemberTimers();
@@ -1313,7 +1313,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   if (mode == 0 || mode == 6)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

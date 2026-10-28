@@ -436,7 +436,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   } while (frame != 102);
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

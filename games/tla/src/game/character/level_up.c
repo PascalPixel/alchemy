@@ -49,7 +49,7 @@ struct LevelUpWork {
   u8 unused0c[0x20];
 };
 
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct OwnerGrowth *Character_GetDefinition(s32 owner);
 s32 Unit_RefreshPsynergy(s32 owner);
@@ -67,7 +67,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
   s32 level;
 
   st = Unit_Get(owner);
-  work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
+  work = Heap_AllocEwram(sizeof(struct LevelUpWork));
   work->classId = st->classId;
   level = st->level;
   work->level = level;
@@ -123,6 +123,6 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
     Unit_RefreshPsynergy(owner);
     Unit_Calculate(owner);
   }
-  MemFree(work);
+  Heap_Release(work);
   return res;
 }

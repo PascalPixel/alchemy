@@ -24,7 +24,7 @@ Func_08118958:
 	bl Window_LoadGraphics
 	bl Func_08014b70
 	bl Task_ResetAll
-	bl Runtime_InitializeHeap
+	bl Heap_Initialize
 	bl VramCache_Reset
 	adds r0, r5, #0
 	movs r6, #69
@@ -171,7 +171,7 @@ Func_08118958:
 	bl Window_LoadGraphics
 	bl Func_08014b70
 	bl Task_ResetAll
-	bl Runtime_InitializeHeap
+	bl Heap_Initialize
 	bl VramCache_Reset
 	b .L_081189ae
 .L_08118ab8:

@@ -55,7 +55,7 @@ struct DmaRegisters {
  * its address at each call. Returning that channel and chaining the first
  * two window transfers matches all 66 instructions in TLA's window loader,
  * but the twelve ROMs differ: other callers also derive nearby I/O addresses
- * from the known DMA channel. Runtime_InstallIwramAndIrqs loses its final
+ * from the known DMA channel. System_InstallIwramAndIrqs loses its final
  * channel-to-DISPSTAT subtraction. Those uses must be preserved together;
  * the partial return-and-chain change is not adopted. */
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "

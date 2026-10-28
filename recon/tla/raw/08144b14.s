@@ -281,9 +281,9 @@ Func_08144b14:
 	.2byte 0xf800
 .L_08144d3e:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08144d4a:
 	movs r1, #19
 	movs r0, #104
@@ -681,9 +681,9 @@ Func_08144b14:
 	b .L_08144eae
 .L_08145050:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r5, #240
 	ldr r3, [sp, #56]
 	lsls r5, r5, #7

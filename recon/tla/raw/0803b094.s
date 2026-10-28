@@ -57,7 +57,7 @@ Message_Decode:
 	ldr r5, .L_0803b1e0
 	movs r0, #200
 	adds r1, r5, #0
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #132
 	movs r3, #128
 	lsrs r5, r5, #2
@@ -938,7 +938,7 @@ Message_Decode:
 	adds r2, r0, r1
 	strh r3, [r2]
 	movs r0, #200
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r5, #152
 	ldr r2, [sp, #44]
 	add r0, sp, #32

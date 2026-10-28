@@ -43,7 +43,7 @@ s32 Func_08043534(void) {
   s32 token;
 
   result = 0;
-  buffer = Runtime_BumpAllocateAlternatePool(0x3000);
+  buffer = Heap_AllocEwram(0x3000);
   value = gData_020036d0;
   if (value != -1) {
     found = Func_0801596c();
@@ -70,7 +70,7 @@ s32 Func_08043534(void) {
       }
     }
     Save_ReleaseWork();
-    MemFree(buffer);
+    Heap_Release(buffer);
     value = result;
   }
   return value;

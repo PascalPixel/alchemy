@@ -26,25 +26,25 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Engine_ObjectSetMode
+	.global Import_ActorSetMode
 	.thumb_func
-Engine_ObjectSetMode:
+Import_ActorSetMode:
 	overlay_veneer Object_SetMode
-	.global Engine_ObjectSetScript
+	.global Import_ActorSetScript
 	.thumb_func
-Engine_ObjectSetScript:
+Import_ActorSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
+	.global Import_ActorCreate
 	.thumb_func
-Engine_ObjectCreate:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02003180
 	.thumb_func
 Func_02003180:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Engine_MapCopyCellsTo
+	.global Import_MapCopyCellPictureIndicesRect
 	.thumb_func
-Engine_MapCopyCellsTo:
+Import_MapCopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_02003190
 	.thumb_func
@@ -66,14 +66,14 @@ Func_020031a8:
 	.thumb_func
 FieldEvent_WaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventStart
+	.global Import_EventStart
 	.thumb_func
-Engine_EventStart:
-	overlay_veneer EventRuntime_StartFar
-	.global Engine_EventEnd
+Import_EventStart:
+	overlay_veneer Event_StartFar
+	.global Import_EventEnd
 	.thumb_func
-Engine_EventEnd:
-	overlay_veneer EventRuntime_EndFar
+Import_EventEnd:
+	overlay_veneer Event_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
@@ -130,13 +130,13 @@ Func_02003228:
 	.thumb_func
 Func_02003230:
 	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Engine_ActorPlaceAtActor
+	.global Import_ActorPlaceAtActor
 	.thumb_func
-Engine_ActorPlaceAtActor:
+Import_ActorPlaceAtActor:
 	overlay_veneer ObjectMotion_MoveToObjectFar
-	.global Engine_ActorSetAnimation
+	.global Import_ActorSetAnimation
 	.thumb_func
-Engine_ActorSetAnimation:
+Import_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
@@ -170,10 +170,10 @@ Object_TurnToFaceEachOther:
 	.thumb_func
 Object_SetPartAttribute:
 	overlay_veneer Object_SetPartAttributeFar
-	.global Engine_EventSetMessage
+	.global Import_EventSetMessageId
 	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer EventRuntime_SetMessageFar
+Import_EventSetMessageId:
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -182,13 +182,13 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Func_02003298:
 	overlay_veneer Func_080c8198
-	.global Engine_EventShowMessage
+	.global Import_EventShowMessageAndWait
 	.thumb_func
-Engine_EventShowMessage:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
-	.global Engine_EventChooseYesNo
+Import_EventShowMessageAndWait:
+	overlay_veneer Event_ShowMessageAndWaitFar
+	.global Import_EventAskYesNoWithActorAnimation
 	.thumb_func
-Engine_EventChooseYesNo:
+Import_EventAskYesNoWithActorAnimation:
 	overlay_veneer Func_080c81a8
 	.global ObjectMotion_ArmCallback
 	.thumb_func
@@ -198,17 +198,17 @@ ObjectMotion_ArmCallback:
 	.thumb_func
 Func_020032b8:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
-	.global Engine_ActorShowEmote
+	.global Import_ActorShowEmote
 	.thumb_func
-Engine_ActorShowEmote:
+Import_ActorShowEmote:
 	overlay_veneer Func_080c8210
-	.global Engine_ActorSetAttachedEffect
+	.global Import_ActorSetAttachedEffect
 	.thumb_func
-Engine_ActorSetAttachedEffect:
+Import_ActorSetAttachedEffect:
 	overlay_veneer Func_080c8218
-	.global Engine_CameraSetSpeed
+	.global Import_CameraSetSpeed
 	.thumb_func
-Engine_CameraSetSpeed:
+Import_CameraSetSpeed:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
@@ -221,7 +221,7 @@ Func_020032e0:
 	.global Func_020032e8
 	.thumb_func
 Func_020032e8:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_020032f0
 	.thumb_func
 Func_020032f0:
@@ -241,7 +241,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003310
 	.thumb_func
 Func_02003310:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -250,7 +250,7 @@ Object_LinkObjectAndSetCallback:
 	.thumb_func
 Func_02003320:
 	overlay_veneer Func_080c8930
-	.global Engine_AudioPlayCue
+	.global Import_SoundPlay
 	.thumb_func
-Engine_AudioPlayCue:
+Import_SoundPlay:
 	overlay_veneer Sound_PlayFar

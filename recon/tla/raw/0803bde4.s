@@ -64,7 +64,7 @@ Func_0803bde4:
 .L_0803be5a:
 	ldr r5, .L_0803bf7c
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -87,7 +87,7 @@ Func_0803bde4:
 	.2byte 0xf800
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r5, #0
 	b .L_0803c05a
 .L_0803be96:

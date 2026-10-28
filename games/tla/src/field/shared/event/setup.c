@@ -15,15 +15,15 @@
 #include "game_flags.h"
 #include "system.h"
 
-void EventRuntime_Wait(s32 frames) {
+void Event_WaitFrames(s32 frames) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
   if (state->waitMode == 0 && frames != 0)
     WaitFrames(frames);
 }
 
-void EventRuntime_PrepareCurrentObject(void) {
+void Leader_StopMoving(void) {
   struct ObjectRuntime *object =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
+      ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -36,12 +36,12 @@ void EventRuntime_PrepareCurrentObject(void) {
     Object_SetMode(object, 1);
 }
 
-void EventRuntime_Start(void) {
+void Event_Start(void) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
   UiTimedNotice_CloseIfActiveFar();
-  EventRuntime_PrepareCurrentObject();
+  Leader_StopMoving();
   if (state->actionCounter != 0)
-    EventRuntime_ResolveAllPendingActions();
+    Event_ResolveAllPendingActions();
   state->unkcb0 = 0;
   state->unkcb2 = 0;
   state->unkcb4 = 0;
@@ -50,7 +50,7 @@ void EventRuntime_Start(void) {
   state->messageActor = 0xffff;
   state->choice = -1;
   state->messageState = -1;
-  Task_Add((s32)EventRuntime_UpdateWaitMode, TASK_PASS_VBLANK);
+  Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
   GameFlag_ClearBit(0x132);
   {
     struct Adventure *party = &gAdventure;
@@ -62,8 +62,8 @@ void EventRuntime_Start(void) {
   }
 }
 
-void EventRuntime_End(void) {
-  Task_Remove((u32)EventRuntime_UpdateWaitMode);
+void Event_End(void) {
+  Task_Remove((u32)Event_UpdateDebugSkip);
   {
     struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pointer handoff keeps its load before the override offset.
@@ -77,4 +77,4 @@ void EventRuntime_End(void) {
   }
 }
 
-void EventRuntime_EmptyHook(void) {}
+void Event_EmptyCallback(void) {}

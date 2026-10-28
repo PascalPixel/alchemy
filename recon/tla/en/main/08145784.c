@@ -263,7 +263,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

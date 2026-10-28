@@ -1567,9 +1567,9 @@ BattleEffect_RunBoreas:
 	b .L_0814e3a6
 .L_0814e71c:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0814e740
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

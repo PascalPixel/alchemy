@@ -71,8 +71,8 @@ void WindowSprite_RedrawSavedRectFar(s32 window);
 void Text_DrawWorkValueWithLabel(s32 window);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
@@ -142,9 +142,9 @@ s32 Func_080fd000(u16 *ownerIds) {
         menu->mode = 1;
       else
         menu->mode = 2;
-      actions = MemAlloc(32 * sizeof(u16));
+      actions = Heap_Alloc(32 * sizeof(u16));
       fieldCount = Func_080fd6f0(unit, actions, 1);
-      MemFree(actions);
+      Heap_Release(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
         menu->mode = shortcutCount;

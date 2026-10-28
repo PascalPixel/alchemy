@@ -468,7 +468,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   skip = 0;
   aff = 0;
   size = sizeof(struct BattleUnit);
-  bak = MemAlloc(size);
+  bak = Heap_Alloc(size);
 
   if (abilityId == 312 || abilityId == 316)
     aid = plan->actorId2;
@@ -1795,7 +1795,7 @@ done:
         MESSAGE_PUSH(MsgWakes);
       }
   }
-  MemFree(bak);
+  Heap_Release(bak);
   Unit_CalculateFar(tid);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   if (target->hp != 0)

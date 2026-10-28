@@ -22,13 +22,13 @@ Func_08127068:
 	str r3, [r2, #8]
 	adds r1, #208
 	movs r0, #92
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #128
 	mov r9, r0
 	lsls r1, r1, #7
 	movs r0, #96
 	movs r7, #142
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	lsls r7, r7, #5
 	movs r1, #1
 	movs r2, #15

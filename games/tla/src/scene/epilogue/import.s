@@ -10,13 +10,13 @@ WaitFrames:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_020007ac
 	.thumb_func

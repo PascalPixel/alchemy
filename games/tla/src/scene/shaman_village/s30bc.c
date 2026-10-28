@@ -27,7 +27,7 @@ void Func_020030bc(void) {
   work[35] = 0;
   Func_020048c4();
   Func_02004a24(0);
-  Engine_AudioPlayCue(0);
+  Import_SoundPlay(0);
   ShamanVillage_CamMove(-1, -1, -1, 0);
   ShamanVillage_CamSpeed(0x6666, 0xccc);
   ShamanVillage_CamMove(0xa80000, -1, 0x2100000, 1);
@@ -65,7 +65,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(16, 0xc000, 0);
   ShamanVillage_CamSpeed(0x19999, 0x3333);
   Func_02003b24();
-  Engine_AudioPlayCue(29);
+  Import_SoundPlay(29);
   ShamanVillage_CamSpeed(0x4cccc, 0x9999);
   ShamanVillage_CamMove(0xa80000, -1, 0x21c0000, 1);
   Func_020049f4();
@@ -282,7 +282,7 @@ void Func_020030bc(void) {
   FieldEvent_WaitFrames(20);
   ObjectMotion_EnableActionAndSetCallback(17, gData_0200504c);
   ObjectMotion_EnableActionAndSetCallback(16, gData_0200504c);
-  Engine_AudioPlayCue(78);
+  Import_SoundPlay(78);
   do {
     WaitFrames(1);
   } while (*done == 0);

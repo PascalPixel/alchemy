@@ -633,9 +633,9 @@ BattleEffect_RunDouse:
 	ldr r0, .L_0813c598
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	bl Func_0813ba50
 	add sp, #36

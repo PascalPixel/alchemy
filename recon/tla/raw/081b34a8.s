@@ -15,24 +15,24 @@ ReelGame_Run:
 	adds r1, #14
 	movs r0, #100
 	sub sp, #120
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #128
 	str r0, [sp, #48]
 	lsls r1, r1, #8
 	movs r0, #96
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #246
 	lsls r1, r1, #7
 	str r0, [sp, #44]
 	adds r1, #124
 	movs r0, #92
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #192
 	lsls r1, r1, #3
 	str r0, [sp, #40]
 	adds r1, #28
 	movs r0, #180
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	str r0, [sp, #36]
 	ldr r0, .L_081b353c
 	ldr r5, .L_081b3540
@@ -1185,9 +1185,9 @@ ReelGame_Run:
 	cmp r1, #17
 	bne .L_081b3daa
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_081b3e28
 	bl Task_Remove
 	ldr r0, .L_081b3e2c
@@ -1195,13 +1195,13 @@ ReelGame_Run:
 	ldr r0, .L_081b3e30
 	bl Task_Remove
 	movs r0, #180
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #96
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #100
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3

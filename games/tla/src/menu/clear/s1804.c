@@ -24,7 +24,7 @@ void Func_02001804(struct Panel_02001804 *panel, s32 sourceArg) {
   /* FAKEMATCH(pin): the source copied into r6 after the shadow load; as the
    * plain parameter, 2 of 53 instructions differ in tla-en. */
   register s32 source asm("r6") = sourceArg;
-  void *work = Runtime_BumpAllocateAlternatePool(0x300);
+  void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
   s32 offset;
   s32 row;
@@ -65,5 +65,5 @@ next_column:
   row++;
   if (row <= 7)
     goto next_row;
-  MemFree(work);
+  Heap_Release(work);
 }

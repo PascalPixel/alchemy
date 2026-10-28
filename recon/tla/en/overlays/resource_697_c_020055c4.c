@@ -19,17 +19,17 @@ struct TrialRoadLink {
 
 extern const u8 gData_020062d4[];
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void *Heap_AllocEwram(s32 size);
 void Func_02005770(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_020051a0(void);
 
 void Func_020055c4(s32 a, s32 b) {
-  struct TrialRoadLink *link = Runtime_AllocateBlock(236, 0x3934);
-  void *buffer = Runtime_BumpAllocateAlternatePool(576);
+  struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
+  void *buffer = Heap_AllocEwram(576);
 
   link->a = a;
   link->b = b;
@@ -46,5 +46,5 @@ void Func_020055c4(s32 a, s32 b) {
   link->vramEntry = Resource_FindFreeEntry();
   VramCache_Load(link->vramEntry, 576, buffer);
   Task_Add(Func_020051a0, 0x476);
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

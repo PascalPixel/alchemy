@@ -53,11 +53,11 @@ FieldEvent_WaitFrames:
 	.global Func_0200055c
 	.thumb_func
 Func_0200055c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02000564
 	.thumb_func
 Func_02000564:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -85,7 +85,7 @@ Object_SetModeById:
 	.global Func_0200059c
 	.thumb_func
 Func_0200059c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_020005a4
 	.thumb_func
 Func_020005a4:
@@ -93,7 +93,7 @@ Func_020005a4:
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -109,7 +109,7 @@ Event_WaitTransitionFrames:
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global BattleEffect_GetResourceId
 	.thumb_func
 BattleEffect_GetResourceId:

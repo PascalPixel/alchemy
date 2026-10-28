@@ -26,14 +26,14 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
@@ -101,11 +101,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001f5c
 	.thumb_func
 Func_02001f5c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001f64
 	.thumb_func
 Func_02001f64:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -197,7 +197,7 @@ Object_TurnToFaceEachOther:
 	.global Func_0200201c
 	.thumb_func
 Func_0200201c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -209,7 +209,7 @@ Func_0200202c:
 	.global Func_02002034
 	.thumb_func
 Func_02002034:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -245,7 +245,7 @@ Func_02002074:
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
@@ -269,7 +269,7 @@ Event_WaitTransitionFrames:
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:

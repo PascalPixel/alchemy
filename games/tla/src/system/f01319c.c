@@ -31,8 +31,8 @@ void Func_0801319c(void) {
   }
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
-  Runtime_InitializeHeap();
-  Runtime_InstallIwramAndIrqs();
+  Heap_Initialize();
+  System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;
   gData_03001110[0] = 0;
   gDebugMode = 0;
@@ -41,8 +41,8 @@ void Func_0801319c(void) {
   Window_LoadGraphics();
   Func_08014b70();
   REG_DISPCNT = 0x140;
-  Runtime_SetIrqHandler(0, 1, Func_0801399c);
-  Runtime_SetIrqHandler(13, 1, Iwram_Halt);
+  Irq_SetHandler(0, 1, Func_0801399c);
+  Irq_SetHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Sound_InitializeFar();
   VramCache_Reset();

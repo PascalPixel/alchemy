@@ -15,7 +15,7 @@ struct EventWork {
   u16 state;
 };
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct OwnerObject *ObjectTable_Get(s32 id);
 s32 Func_080dbca8(s32 x, s32 z, s32 layer);
 
@@ -24,7 +24,7 @@ s32 Func_080dbca8(s32 x, s32 z, s32 layer);
 void FieldEffect_CheckCloakTile(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct OwnerObject *owner =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
+      ObjectTable_Get(Party_GetLeaderActor());
 
   if (Func_080dbca8(owner->x, owner->z, owner->layer) == 0)
     event->state = 0x2092;

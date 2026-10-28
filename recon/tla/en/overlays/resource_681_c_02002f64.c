@@ -33,7 +33,7 @@ void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void FieldEvent_WaitFrames();
 void ObjectDispatch_SetSingleChildFlags();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 void Func_02004dac();
 void Func_02004d9c();
 void Animation_ApplyChildValues();
@@ -165,7 +165,7 @@ L_0200bfc8:
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v12, 0);
   v13 = Object_GetById(11);
   r6 = v13;
-  v14 = Engine_ObjectCreate(0x144, FIELD_AT(r6, s32, 8), FIELD_AT(r6, s32, 12),
+  v14 = Import_ActorCreate(0x144, FIELD_AT(r6, s32, 8), FIELD_AT(r6, s32, 12),
                             FIELD_AT(r6, s32, 16));
   r5 = v14;
   r0 = v14;

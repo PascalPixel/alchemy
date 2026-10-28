@@ -19,7 +19,7 @@ void BattleEffect_InitializeBuffers(void) {
   volatile s32 zero;
   struct BattleEffectBuffers *buffer;
 
-  buffer = Runtime_AllocateBlock(128, sizeof(*buffer));
+  buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
   zero = 0;
   Dma_Set(&zero, buffer, 0x85000a81, REG_DMA3);
   Dma_Set((void *)0x05000000, buffer, 0x84000070, REG_DMA3);
@@ -31,7 +31,7 @@ void BattleEffect_InitializeBuffers(void) {
 
 void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Task_Remove((s32)&BattlePalette_UpdateBlend);
-  Runtime_ReleaseHeapBlock(128);
+  HeapSlot_Release(128);
 }
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode) {

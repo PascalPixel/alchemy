@@ -658,14 +658,14 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
             s32 y = ((Trig_Cos(angle) << 4) >> 16) + targets[member].y -
                     (gData_08197498[cel] >> 1);
 
-            Runtime_ReleaseHeapBlock(188);
-            Runtime_ReleaseHeapBlock(104);
+            HeapSlot_Release(188);
+            HeapSlot_Release(104);
             Func_08196404(188, 7, 7, Data_081983c8[Random16() & 3] | CLIP,
                           BLIT_ADDITIVE);
             ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                 canvas, work->sheet + gData_08197486[cel], x, y,
                 gData_08197492[cel], gData_08197498[cel]);
-            Runtime_ReleaseHeapBlock(188);
+            HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(effect->side, draw);
           }
         }
@@ -753,8 +753,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   if (mode == 11 || mode == 14 || mode == 18) {
     // Hand over to the canvas effect: clear both canvases first.
     Iwram_ClearWords((void *)0x06004000, 0x3c00);

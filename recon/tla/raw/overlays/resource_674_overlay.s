@@ -1341,7 +1341,7 @@ Func_0200129c:
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #88
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r3, #203
 	lsls r3, r3, #1
 	adds r3, #255
@@ -1593,7 +1593,7 @@ Func_0200129c:
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #88
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r3, #203
 	lsls r3, r3, #1
 	adds r3, #255
@@ -2200,7 +2200,7 @@ Func_020014e0:
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #88
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r2, #203
 	lsls r2, r2, #1
 	adds r2, #255
@@ -2817,7 +2817,7 @@ Func_020014e0:
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #88
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r2, #203
 	lsls r2, r2, #1
 	adds r2, #255
@@ -3723,7 +3723,7 @@ Func_02003410:
 	push {r5, lr}
 	movs r0, #112
 	movs r1, #180
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r5, #0
 	adds r4, r0, #0
 .L_0200b41e:

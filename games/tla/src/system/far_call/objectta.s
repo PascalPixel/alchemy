@@ -4,15 +4,15 @@
 	.global Event_StartScreenTransitionFar
 	.thumb_func
 Event_StartScreenTransitionFar:
-	overlay_veneer EventRuntime_StartScreen
+	overlay_veneer Event_StartScreenTransition
 	.global Event_FinishScreenTransitionFar
 	.thumb_func
 Event_FinishScreenTransitionFar:
-	overlay_veneer EventRuntime_FinishScreen
+	overlay_veneer Event_FinishScreenTransition
 	.global Event_WaitTransitionFramesFar
 	.thumb_func
 Event_WaitTransitionFramesFar:
-	overlay_veneer EventRuntime_WaitDelay
+	overlay_veneer Event_WaitTransitionFrames
 	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
 DisplayScroll_InitializeHBlankDmaFar:

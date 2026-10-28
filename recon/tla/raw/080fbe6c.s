@@ -23,7 +23,7 @@ Func_080fbe6c:
 	mov r11, r0
 	movs r0, #56
 	mov r9, r3
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r2, #1
 	movs r3, #0
 	str r2, [sp, #12]
@@ -306,7 +306,7 @@ Func_080fbe6c:
 	adds r0, r7, #0
 	bl WindowSprite_ClearListFar
 	movs r0, #56
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9

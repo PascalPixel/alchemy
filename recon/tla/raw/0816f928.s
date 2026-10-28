@@ -397,7 +397,7 @@ BattleEffect_RunHurricane:
 	adds r0, r6, #0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #240
 	ldr r5, .L_0816fc84
 	lsls r1, r1, #6

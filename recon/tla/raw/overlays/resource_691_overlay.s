@@ -47,7 +47,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -1368,7 +1368,7 @@ Func_020011e4:
 	movs r0, #148
 	adds r0, #255
 	sub sp, #68
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r1, r8
 	adds r6, r0, #0
 	ldrh r0, [r1, #6]
@@ -2022,7 +2022,7 @@ Func_02001738:
 	adds r2, r2, r3
 	adds r0, #255
 	ldr r3, [r4, #16]
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	add r7, sp, #16
 	str r0, [r7]
 	movs r4, #1
@@ -2035,7 +2035,7 @@ Func_02001738:
 	movs r2, #0
 	movs r3, #0
 	adds r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r1, r10
 	ldrb r3, [r6, #16]
 	lsls r5, r1, #2
@@ -3002,7 +3002,7 @@ Func_02002518:
 	movs r0, #96
 	ldr r3, [r3, #16]
 	adds r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r7, sp
 	str r0, [r7]
 	movs r3, #1
@@ -3015,7 +3015,7 @@ Func_02002518:
 	movs r2, #0
 	movs r3, #0
 	adds r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r3, r10
 	ldr r1, [r0, #80]
 	lsls r5, r3, #2
@@ -4746,7 +4746,7 @@ Func_020034ac:
 	adds r2, r2, r3
 	adds r0, #255
 	ldr r3, [r7, #16]
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0200b5a2
@@ -4884,7 +4884,7 @@ Func_020035e0:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	adds r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_0200b6ca
@@ -5244,7 +5244,7 @@ Func_020038dc:
 	adds r1, #8
 	movs r0, #220
 	sub sp, #4
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	adds r6, r0, #0
 	ldr r0, .L_0200b990
 	bl Resource_GetTableEntry

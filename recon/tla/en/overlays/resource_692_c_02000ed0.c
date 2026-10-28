@@ -46,7 +46,7 @@ void Func_02001350(void);
 void Func_02000ce4(u16 id);
 
 void Func_02000ed0(struct ObjectRuntime *source) {
-  struct ObjectRuntime *flame = (struct ObjectRuntime *)Engine_ObjectCreate(
+  struct ObjectRuntime *flame = (struct ObjectRuntime *)Import_ActorCreate(
       403, source->x, source->y, source->z);
   struct ObjectRuntime *other;
   struct EffectOptions options;

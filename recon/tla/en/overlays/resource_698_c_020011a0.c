@@ -64,8 +64,8 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02001a44(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
                    s32 dstZ);
-void *MemAlloc(s32 size);
-void MemFree(void *buffer);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Task_Add(void (*callback)(void), s32 priority);
@@ -137,7 +137,7 @@ s32 Func_020011a0(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
         table->current = i;
     }
   }
-  buffer = MemAlloc(0x100);
+  buffer = Heap_Alloc(0x100);
   {
     u32 *word = buffer;
     s32 count = 63;
@@ -149,7 +149,7 @@ s32 Func_020011a0(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   }
   table->tile = Resource_FindFreeEntry();
   VramCache_Load(table->tile, 0x100, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Task_Add(Func_02001074, 0x480);
   return table->count;
 }

@@ -127,7 +127,7 @@ void Func_0802386c(void) {
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
   Dma_Set(Render_DecodePictureCode,
-          Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
+          HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
           (DMA_ENABLE | DMA_32BIT) << 16 |
               ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
           REG_DMA3);
@@ -284,5 +284,5 @@ void Func_0802386c(void) {
     VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = kind;
   }
-  Runtime_ReleaseHeapBlock(80);
+  HeapSlot_Release(80);
 }

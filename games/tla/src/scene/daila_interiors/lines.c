@@ -35,33 +35,33 @@ void Func_02000150(s32 unused, s32 actor) {
   ObjectMotion_Launch(actor, 6, 15);
   ObjectMotion_Launch(actor, 6, 15);
   FieldEvent_WaitFrames(10);
-  Engine_EventSetMessage((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Engine_EventShowMessage(actor, 0);
+  Import_EventSetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Import_EventShowMessageAndWait(actor, 0);
   FieldEvent_WaitFrames(10);
 }
 
 s32 DailaInteriors_TalkScamps(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_EventSetMessage((s32)MsgDailaInteriorsScamps);
-  Engine_EventShowMessage(19, 0);
-  Engine_EventEnd();
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_EventSetMessageId((s32)MsgDailaInteriorsScamps);
+  Import_EventShowMessageAndWait(19, 0);
+  Import_EventEnd();
   return 0;
 }
 
 s32 DailaInteriors_TalkMazeTreasure(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_EventSetMessage((s32)MsgDailaInteriorsMazeTreasure);
-  Engine_EventShowMessage(19, 0);
-  Engine_EventEnd();
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_EventSetMessageId((s32)MsgDailaInteriorsMazeTreasure);
+  Import_EventShowMessageAndWait(19, 0);
+  Import_EventEnd();
   return 0;
 }
 
 void DailaInteriors_StartLeaderEvent(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_ActorSetSpritePriority(gAdventure.currentOwner, 1);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_ActorSetSpritePriority(gAdventure.currentOwner, 1);
 }
 
 extern const u8 gData_020016e4[];

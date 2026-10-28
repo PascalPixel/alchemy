@@ -23,9 +23,9 @@ extern u8 gRandomState[];
 extern u8 gData_020023c4[];
 extern u8 IwramClearWords[];
 s32 GameFlag_Test();
-s32 Runtime_BumpAllocateAlternatePool();
+s32 Heap_AllocEwram();
 s32 Random16Far();
-void MemFree();
+void Heap_Release();
 void GameFlag_SetBit();
 
 s32 Func_020044f8(s32 a0, s32 a1) {
@@ -52,7 +52,7 @@ L_0200c524:
 L_0200c532:
   FIELD_AT(r6, s32, 0) = r5;
 L_0200c534:
-  v2 = Runtime_BumpAllocateAlternatePool(0xc40);
+  v2 = Heap_AllocEwram(0xc40);
   r5 = v2;
   Call2((void (*)())Iwram_ClearWords, v2, 0xc40);
   r4 = r5;
@@ -296,7 +296,7 @@ L_0200c81e:
   FIELD_AT(r11, u8, 117) = 251;
   FIELD_AT(r11, u8, 10) = 250;
   FIELD_AT((s32)gData_020023c4 + 0x288, s32, 0) = 1;
-  MemFree(r5);
+  Heap_Release(r5);
   Call1((void (*)())GameFlag_SetBit, 0x3f0);
   FIELD_AT((s32)gRandomState, s32, 0) = stack[1];
   r0 = v4;

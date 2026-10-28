@@ -186,7 +186,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2, user.y - 24, 48, 72);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER);
     }
 
     // The burst on the target; the stronger variant has its own pictures.
@@ -206,7 +206,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
       BattleEffect_CallDoNothing(10000);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -233,8 +233,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
           shard->variant--;
         }
       }
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_BLITTER);
     }
 
     // The hit's knock-back, and the target's flashes.

@@ -35,7 +35,7 @@ extern char ResourceId_FallingRock;
 
 s32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);

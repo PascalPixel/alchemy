@@ -651,7 +651,7 @@ Func_0816b6ec:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
@@ -678,7 +678,7 @@ Func_0816b6ec:
 	b .L_0816b830
 .L_0816bc34:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816bc6c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

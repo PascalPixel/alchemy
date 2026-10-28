@@ -80,7 +80,7 @@ void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Object_ResetMotion(struct MotionObject *object);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -285,7 +285,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         if (caster->y > 0)
           draw(canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52, 40, 64);
       } else {
-        projected = Runtime_BumpAllocateAlternatePool(1024);
+        projected = Heap_AllocEwram(1024);
         model = Render_AllocateModelList(1);
         if (frame == 40)
           work->shakeFrames = 14;
@@ -380,8 +380,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
             }
           }
         }
-        MemFree(model);
-        MemFree(projected);
+        Heap_Release(model);
+        Heap_Release(projected);
       }
     }
 
@@ -418,6 +418,6 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

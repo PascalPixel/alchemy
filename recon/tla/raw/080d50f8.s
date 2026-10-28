@@ -47,7 +47,7 @@ Func_080d50f8:
 	movs r2, #8
 	add r2, r8
 	mov r9, r2
-	bl EventRuntime_Start
+	bl Event_Start
 	adds r3, r7, #0
 	adds r3, #84
 	ldrb r3, [r3]
@@ -215,7 +215,7 @@ Func_080d50f8:
 	mov r1, r10
 	adds r2, r6, #0
 	str r4, [sp, #0]
-	bl Runtime_CheckRadiusOverlapFar
+	bl Field_CheckSpheresOverlapFar
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	blt .L_080d52a0
@@ -317,7 +317,7 @@ Func_080d50f8:
 	str r2, [sp, #8]
 	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #6
-	bl EventRuntime_Wait
+	bl Event_WaitFrames
 	movs r5, #0
 	mov r3, r11
 	strb r5, [r3]
@@ -337,11 +337,11 @@ Func_080d50f8:
 .L_080d5394:
 	.4byte 0x00000001
 .L_080d5398:
-	bl EventRuntime_End
+	bl Event_End
 	movs r0, #0
 	b .L_080d53a8
 .L_080d53a0:
-	bl EventRuntime_End
+	bl Event_End
 	movs r0, #1
 	negs r0, r0
 .L_080d53a8:

@@ -225,7 +225,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
           draw[0](canvas, work->sheet, x, 104 - height, 14, height);
-          Runtime_ReleaseHeapBlock(104);
+          HeapSlot_Release(104);
         }
       }
     }
@@ -293,8 +293,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       }
     }
 
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     if (frame <= 7)
       Func_08158ce0(4, 4);
     else

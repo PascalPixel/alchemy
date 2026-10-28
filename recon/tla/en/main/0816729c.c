@@ -72,12 +72,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -423,17 +423,17 @@ void BattleEffect_RunJudgment(void) {
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 36, y, 24,
                                                64);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
       BattleEffect_LoadBlitter(SLOT_ALT, 7);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 60, y, 24,
                                                64);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
     }
 
     if ((u32)(frame - 144) <= 15) {
       s32 s;
 
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
@@ -453,8 +453,8 @@ void BattleEffect_RunJudgment(void) {
       SceneTransform_ApplyPitch(3000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
 
     work->transferPending = 1;
@@ -486,7 +486,7 @@ void BattleEffect_RunJudgment(void) {
       ((struct JudgmentObject *)work->objects[i])->flags &= ~12;
     }
   }
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress(0x126, work->sheet + 0x4000, 1, 1);
@@ -651,19 +651,19 @@ void BattleEffect_RunJudgment(void) {
       BattleEffect_LoadBlitter(SLOT_ALT, 19);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 36, top - 24, 24,
                                                24);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
       BattleEffect_LoadBlitter(SLOT_ALT, 23);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 59, top - 24, 24,
                                                24);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
       BattleEffect_LoadBlitter(SLOT_ALT, 27);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 36, top - 1, 24,
                                                24);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
       BattleEffect_LoadBlitter(SLOT_ALT, 31);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cells, 59, top - 1, 24,
                                                24);
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
     }
     if ((u32)(frame - 64) <= 1) {
       blit(canvas, work->sheet + 0x6000, 52, 51, 16, 17);
@@ -697,7 +697,7 @@ void BattleEffect_RunJudgment(void) {
     if ((u32)(frame - 72) <= 15) {
       s32 s;
 
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       s = (frame << 13) - 0x8f800;
       glare.logWidth = 7;
@@ -717,8 +717,8 @@ void BattleEffect_RunJudgment(void) {
       SceneTransform_ApplyPitch(5000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
 
     if (frame > 85 && frame <= 213) {
@@ -881,7 +881,7 @@ void BattleEffect_RunJudgment(void) {
         }
       }
     }
-    Runtime_ReleaseHeapBlock(SLOT_ALT);
+    HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
       gBgScroll[1].y = (Random16() & 3) + 30;
     }
@@ -894,6 +894,6 @@ void BattleEffect_RunJudgment(void) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

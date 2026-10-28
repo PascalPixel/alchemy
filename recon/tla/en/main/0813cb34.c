@@ -79,7 +79,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
@@ -265,8 +265,8 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(SLOT_BLITTER);
   if (mode == POOL_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     ClearWords((void *)0x06004000, 0x3c00);

@@ -73,7 +73,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   s32 slot;
   struct WindowSprite *sprite;
 
-  buf = Runtime_AllocateBlock(56, 0x400);
+  buf = HeapSlot_AllocEwram(56, 0x400);
   sprite = 0;
   Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
   Shop_CopyGlyphs(value % 10, buf, 0);
@@ -100,7 +100,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
     sprite = WindowSprite_CreateFar(slot, 0x80008000,
                                     (struct RenderInput *)window, x, y);
   }
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   return sprite;
 }
 

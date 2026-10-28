@@ -69,7 +69,7 @@ struct PartyStepView {
 extern struct MapCell gMapBlocks[];
 extern struct MapCell gMapCellBuffer[];
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct ObjectRuntime *Func_080cb8e8(void);
 u32 Party_CountActiveOwnersFar(void);
 struct UnitStepView *Unit_Get(s32 owner);
@@ -87,7 +87,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent);
 
 void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 leaderId = EventRuntime_GetControlledOwner();
+  s32 leaderId = Party_GetLeaderActor();
   struct StepWork *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *leader = Func_080cb8e8();
   s16 previousHp[8];

@@ -63,7 +63,7 @@ Func_08103218:
 	lsls r2, r2, #16
 	lsrs r2, r2, #16
 	str r2, [sp, #20]
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_0810362c
 	ldr r1, [sp, #48]
 	str r0, [sp, #44]
@@ -958,7 +958,7 @@ Func_08103218:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, [sp, #44]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #1
 	add sp, #168
 	pop {r3, r5, r6, r7}

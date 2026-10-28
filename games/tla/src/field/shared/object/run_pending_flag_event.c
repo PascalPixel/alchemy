@@ -48,7 +48,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         Sound_PlayFar(159);
         object->y = object->terrainHeight;
         Object_SetMode(object, 22);
-        EventRuntime_Wait(15);
+        Event_WaitFrames(15);
         Camera_FollowActor(id, 1);
         result = 3;
       }

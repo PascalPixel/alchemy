@@ -95,9 +95,9 @@ extern u16 Data_02000422;
 extern s32 Data_02000498;
 extern s8 Data_020004ac;
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
@@ -124,7 +124,7 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void Func_080ca2fc(void);
 void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
@@ -136,7 +136,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 void Func_080e7804(void);
 s32 Func_080c9e1c(s32 scene);
-void EventRuntime_SetDestination(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_080e7238(void);
 void Func_08038200(s32 scene);
 void Func_080cb82c(void);
@@ -144,7 +144,7 @@ void Func_080cb8a4(void);
 s32 Func_080d25c8(s32 item);
 void PartyInventory_GiveItem(s32 item, s32 mode);
 struct ObjectRuntime *Func_080cb8e8(void);
-void EventRuntime_PrepareCurrentObject(void);
+void Leader_StopMoving(void);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void Sound_PlayFar(s32 cue);
@@ -174,7 +174,7 @@ s32 Func_080ce61c(u32 code);
 void Func_080ce0ac(s32 item, s32 argument);
 void Menu_RunSelectionFar(void);
 void Func_080cc9fc(void);
-void EventRuntime_ResolveAllPendingActions(void);
+void Event_ResolveAllPendingActions(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
 void Func_080200b0(void);
@@ -203,7 +203,7 @@ s32 SceneSequence_Run(void) {
   s8 *arrival;
   s16 zero;
 
-  work = Runtime_AllocateBlock(108, 0xd50);
+  work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWords(work, 0xd50);
   GameFlag_ClearBit(259);
   gAdventure.primary = gAdventure.scene;
@@ -279,9 +279,9 @@ s32 SceneSequence_Run(void) {
   work->sceneAttributeLow = attributes & 15;
   arrival = (s8 *)&gAdventure.unk2c2;
   if (*arrival == 2) {
-    Object_GetById(EventRuntime_GetControlledOwner())->scaleX = zero;
+    Object_GetById(Party_GetLeaderActor())->scaleX = zero;
     ObjectDispatch_SetSingleChildFlagsFar(
-        Object_GetById(EventRuntime_GetControlledOwner()), 0);
+        Object_GetById(Party_GetLeaderActor()), 0);
   }
   Func_080cb05c();
   WaitFrames(2);
@@ -296,16 +296,16 @@ s32 SceneSequence_Run(void) {
     n = work->transitionActive;
     if (n == 0) {
       if (*arrival == 1) {
-        Runtime_AllocateHeapBlock(92, 0x1938);
+        HeapSlot_Alloc(92, 0x1938);
         WaitFrames(20);
-        Runtime_ReleaseHeapBlock(92);
+        HeapSlot_Release(92);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (*arrival == 1) {
-        Runtime_AllocateHeapBlock(92, 0x1938);
+        HeapSlot_Alloc(92, 0x1938);
         WaitFrames(20);
-        Runtime_ReleaseHeapBlock(92);
+        HeapSlot_Release(92);
       }
       *(volatile u16 *)0x05000000 = n;
       if (!ObjectEffect_RunPendingFlagEvent())
@@ -320,7 +320,7 @@ s32 SceneSequence_Run(void) {
         gAdventure.ownerOverride = 0;
       else if (flags & 32)
         gAdventure.ownerOverride = 1;
-      EventRuntime_SetDestination(*(s16 *)gAdventure.unk2be,
+      Event_SetDestination(*(s16 *)gAdventure.unk2be,
                                   *(s16 *)&gAdventure.unk2be[2]);
     } else if (n == 2) {
       gAdventure.unk2c2 = 0;
@@ -362,7 +362,7 @@ s32 SceneSequence_Run(void) {
       if (work->raisedEvent != 0) {
         work->busy = 1;
         if (work->raisedEvent == -1) {
-          EventRuntime_PrepareCurrentObject();
+          Leader_StopMoving();
           Func_080cb82c();
           for (i = 0; i < work->fallenCount; i++) {
             Object_SetMode(leader, 22);
@@ -403,17 +403,17 @@ s32 SceneSequence_Run(void) {
           }
           Func_080cb8a4();
         } else if (work->raisedEvent == -0x377) {
-          EventRuntime_PrepareCurrentObject();
+          Leader_StopMoving();
           Func_080ed2a4(1);
           if (*(s16 *)gAdventure.unk2be != -1)
             gAdventure.unk2c2 = 1;
         } else if (work->raisedEvent == -0x378) {
-          EventRuntime_PrepareCurrentObject();
+          Leader_StopMoving();
           n = 0;
           while (Func_080ed2a4(n))
             n ^= 1;
         } else if (work->raisedEvent == -0x379) {
-          EventRuntime_PrepareCurrentObject();
+          Leader_StopMoving();
           BattleEffect_RunVisibilityTransition();
         } else if (work->raisedEvent == -0x37b) {
           if (work->keys == gInput.held) {
@@ -465,7 +465,7 @@ s32 SceneSequence_Run(void) {
         Func_080cd680(work->pushCell);
         work->pushCell = 0;
       } else if (work->battle != 0) {
-        EventRuntime_PrepareCurrentObject();
+        Leader_StopMoving();
         ObjectTable_Snapshot();
         party->returnCue = -1;
         party->scene = 510;
@@ -497,7 +497,7 @@ s32 SceneSequence_Run(void) {
         work->examine = 0;
       } else if (work->menu != 0) {
         UiTimedNotice_CloseIfActiveFar();
-        EventRuntime_PrepareCurrentObject();
+        Leader_StopMoving();
         Sound_PlayFar(111);
         Func_080cb82c();
         GameFlag_SetBit(262);
@@ -543,7 +543,7 @@ s32 SceneSequence_Run(void) {
         work->item = 0;
       } else if (work->start != 0) {
         Sound_PlayFar(111);
-        EventRuntime_PrepareCurrentObject();
+        Leader_StopMoving();
         Func_080cb82c();
         GameFlag_SetBit(262);
         if (gDebugMode && (gInput.held & 2)) {
@@ -553,7 +553,7 @@ s32 SceneSequence_Run(void) {
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
-          EventRuntime_ResolveAllPendingActions();
+          Event_ResolveAllPendingActions();
           UiTimedNotice_CloseIfActiveFar();
           party->returnCue = Sound_GetCurrentBgmFar();
           if (!GameFlag_Test(382)) {
@@ -600,6 +600,6 @@ done:
     WaitFrames(work->transitionFrames);
   }
   WaitFrames(1);
-  Runtime_ReleaseHeapBlock(108);
+  HeapSlot_Release(108);
   return result;
 }

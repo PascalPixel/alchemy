@@ -35,8 +35,8 @@ extern char MsgPreviewStatLabel[], MsgClassName[], MsgAbilityName[],
 
 struct BattleUnit *Unit_Get(s32 owner);
 void Unit_CalculateFar(s32 owner);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 struct BattleAct *BattleAction_Get(s32 actionId);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
@@ -80,7 +80,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   takeElement = menu->pairElement[addPairSlot];
   takeIndex = menu->pairIndex[addPairSlot];
   takeSet = menu->pairEntries[addPairSlot] & 0x8000;
-  originalUnit = MemAlloc(sizeof(struct BattleUnit));
+  originalUnit = Heap_Alloc(sizeof(struct BattleUnit));
   Iwram_CopyWords(originalUnit, unit, sizeof(struct BattleUnit));
 
   if (page == 0) {
@@ -283,6 +283,6 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
   Iwram_CopyWords(unit, originalUnit, sizeof(struct BattleUnit));
-  MemFree(originalUnit);
+  Heap_Release(originalUnit);
   return 1;
 }

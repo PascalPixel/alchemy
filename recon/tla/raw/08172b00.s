@@ -1289,7 +1289,7 @@ Func_08172b00:
 	movs r3, #120
 	str r3, [r2, #12]
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 .L_081734fe:
 	movs r1, #8
 	movs r0, #8
@@ -1315,7 +1315,7 @@ Func_08172b00:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0817356c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

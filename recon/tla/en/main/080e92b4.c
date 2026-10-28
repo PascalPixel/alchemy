@@ -64,8 +64,8 @@ struct PendingEvent {
 
 extern char ResourceId_WaterSplash;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -92,7 +92,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e92b4(void) {
-  struct SplashWork *work = Runtime_AllocateHeapBlock(92, 0x1920);
+  struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *child = scene->child;
   struct ObjectRuntime *caster = scene->mainObject;
@@ -287,5 +287,5 @@ void Func_080e92b4(void) {
   BattleEffect_PrepareBufferInterpolation();
   Resource_ResetEntry(entry);
 end:
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

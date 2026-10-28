@@ -1248,7 +1248,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r5
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08156ac2:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
@@ -1697,7 +1697,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r7, [sp, #148]
 	ldr r3, [r7, #4]
 	cmp r3, #1
@@ -1732,7 +1732,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	b .L_08157058
 .L_08156e72:
 	mov r0, r9
@@ -2096,7 +2096,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -2129,7 +2129,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	b .L_081571fc
 .L_0815716a:
 	movs r1, #19
@@ -2166,7 +2166,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #31
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -2200,7 +2200,7 @@ BattleEffect_RunProjectileVolley:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081571fc:
 	ldr r3, [r7, #8]
 	adds r3, #1
@@ -2513,7 +2513,7 @@ BattleEffect_RunProjectileVolley:
 	.2byte 0xf800
 	mov r6, r11
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [r6, #24]
 	adds r3, #1
 	str r3, [r6, #24]
@@ -2550,7 +2550,7 @@ BattleEffect_RunProjectileVolley:
 	ldr r0, .L_081574dc
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #200
 	pop {r3, r5, r6, r7}

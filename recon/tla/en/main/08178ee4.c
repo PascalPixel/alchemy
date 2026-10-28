@@ -85,7 +85,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -264,7 +264,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

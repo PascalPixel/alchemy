@@ -42,6 +42,6 @@ void DriftScene_Prepare(void) {
 
   layer->unk18 = 0x4000;
   layer->unk1c = 0x2000;
-  Engine_MapCopyCellsTo(72, 10, 75, 8, 1, 1);
-  Engine_ActorSetAnimation(9, 2);
+  Import_MapCopyCellPictureIndicesRect(72, 10, 75, 8, 1, 1);
+  Import_ActorSetAnimation(9, 2);
 }

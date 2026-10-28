@@ -12,7 +12,7 @@ void Func_02003278(void) {
    * the barrier the size's first half comes first (differ 2). */
   __asm__("");
   VramBlock_LoadCached_(gData_0200536c.vramEntry, 0xc80, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   priority = 0x41c;
   Task_Add(Func_020030f4, priority);
 }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 ArcTan2(s32 y, s32 x);
 void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
 
@@ -12,7 +12,7 @@ void Func_080cf050(void) {
   s32 dz;
   s32 i;
 
-  leader = ObjectTable_Get(EventRuntime_GetControlledOwner());
+  leader = ObjectTable_Get(Party_GetLeaderActor());
   for (i = 0; i <= 15; i++) {
     other = ObjectTable_Get(i + 64);
     dx = leader->x - other->x;

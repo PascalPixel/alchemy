@@ -10,7 +10,7 @@
 s32 GameFlag_SetBit();
 s32 Func_020028b4();
 s32 Func_020029cc();
-s32 Engine_AudioPlayCue();
+s32 Import_SoundPlay();
 s32 Object_SetModeById();
 s32 FieldEvent_WaitFrames();
 s32 Object_GetById();
@@ -26,7 +26,7 @@ void Func_02000440(void) {
   Call1(GameFlag_SetBit, 0x892);
   Func_020028b4();
   Call1(Func_020029cc, 0);
-  Call1(Engine_AudioPlayCue, 0xa5);
+  Call1(Import_SoundPlay, 0xa5);
   Call2(Object_SetModeById, 0xa, 3);
   Call2(Object_SetModeById, 0xb, 3);
   Call1(FieldEvent_WaitFrames, 0x15);

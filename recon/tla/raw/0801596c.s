@@ -15,7 +15,7 @@ Func_0801596c:
 	adds r1, #68
 	movs r0, #204
 	sub sp, #36
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r3, #0
 	mov r11, r0
 	add r0, sp, #16

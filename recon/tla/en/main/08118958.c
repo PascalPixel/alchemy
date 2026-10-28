@@ -21,7 +21,7 @@ void Func_080ad090(void);
 void Window_LoadGraphics(void);
 void Func_08014b70(void);
 void Task_ResetAll(void);
-void Runtime_InitializeHeap(void);
+void Heap_Initialize(void);
 void VramCache_Reset(void);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -43,7 +43,7 @@ restart:
   Window_LoadGraphics();
   Func_08014b70();
   Task_ResetAll();
-  Runtime_InitializeHeap();
+  Heap_Initialize();
   VramCache_Reset();
   GameFlag_SetBit(362);
   encounter = 69;
@@ -94,7 +94,7 @@ restart:
       Window_LoadGraphics();
       Func_08014b70();
       Task_ResetAll();
-      Runtime_InitializeHeap();
+      Heap_Initialize();
       VramCache_Reset();
     }
   }

@@ -599,7 +599,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   } while (index != COMETS);
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

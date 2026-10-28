@@ -44,7 +44,7 @@ struct SparkWork {
 
 extern char ResourceId_DustPuffA;
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -55,7 +55,7 @@ s32 Task_Add(void (*callback)(void), s32 order);
 void Func_0200258c(void);
 
 void Func_020026f4(void) {
-  struct SparkWork *work = Runtime_AllocateHeapBlockFar(220, 0x2188);
+  struct SparkWork *work = HeapSlot_AllocFar(220, 0x2188);
   s32 resource;
   s32 tileBase;
   s32 i;

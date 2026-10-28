@@ -31,7 +31,7 @@ s32 Func_080cdc74(void);
 void Func_080cdd80(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 struct SceneEventEntry *Func_080ccd78(s32 kind, s32 target);
-void EventRuntime_RunMessage(s32 actor, s32 message);
+void Event_RunMessage(s32 actor, s32 message);
 
 /// The field's push and button handler for keys, idle while
 /// gAdventure.pendingThird is set. After the leader has pushed for more than
@@ -80,7 +80,7 @@ s32 Func_080cd680(s32 keys) {
       event = Func_080ccd78(8, target);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
-          EventRuntime_RunMessage(-1, result);
+          Event_RunMessage(-1, result);
         else
           ((void (*)(s32, s32))result)(keys, target);
       }
@@ -88,7 +88,7 @@ s32 Func_080cd680(s32 keys) {
       event = Func_080ccd78(9, keys);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
-          EventRuntime_RunMessage(-1, result);
+          Event_RunMessage(-1, result);
         else
           ((void (*)(s32, s32))result)(keys, target);
       }

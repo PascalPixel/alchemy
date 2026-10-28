@@ -22,7 +22,7 @@ void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void Func_080cf554(void);
 void Task_Add(void (*callback)(void), s32 order);
 void Func_080dd754(void);
@@ -59,7 +59,7 @@ void Func_080dd820(void) {
   pending = Func_080ce458(REVEAL_EVENT_START, FIELD_FX_REVEAL,
                           Func_080ce31c(FIELD_FX_REVEAL));
   if (pending != 0)
-    EventRuntime_RunPendingEvent(pending, scene->firstObjectId,
+    Field_RunPsynergyEvent(pending, scene->firstObjectId,
                                  scene->secondObjectId);
   // Leave the centre (in pixels) and the time in the event work, and put
   // up the markers nearby.

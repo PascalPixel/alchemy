@@ -16,7 +16,7 @@
 #include "field_sprite.h"
 #include "system/io_reg.h"
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -40,7 +40,7 @@ void Func_02003b7c(s32 x, s32 y) {
   struct FieldSprite *sprite;
   s32 i, cellX, cellY;
 
-  marker = Engine_ObjectCreate(288, x << 16, 0, y << 16);
+  marker = Import_ActorCreate(288, x << 16, 0, y << 16);
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f44;
   Object_SetSpritePriority(marker, 0);

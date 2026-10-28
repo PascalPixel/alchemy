@@ -22,7 +22,7 @@ void Func_02005210(void);
 void Func_0200525c(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void *Resource_GetTableEntry(s32 index);
 void Func_020055cc(const void *data, void *buffer);
 s32 Resource_FindFreeEntry(void);
@@ -39,7 +39,7 @@ void Func_020052a4(s32 mode) {
     clock->timer = 3600;
     clock->ringing = 1;
   }
-  tiles = Runtime_BumpAllocateAlternatePool(0x400);
+  tiles = Heap_AllocEwram(0x400);
   Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;

@@ -93,11 +93,11 @@ PartyInventory_HasSpace:
 	.global Func_020006e4
 	.thumb_func
 Func_020006e4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020006ec
 	.thumb_func
 Func_020006ec:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -117,19 +117,19 @@ ObjectMotion_WaitForAnimationChange:
 	.global Func_02000714
 	.thumb_func
 Func_02000714:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_0200071c
 	.thumb_func
 Func_0200071c:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_02000724
 	.thumb_func
 Func_02000724:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_0200072c
 	.thumb_func
 Func_0200072c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:

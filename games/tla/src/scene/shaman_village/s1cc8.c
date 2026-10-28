@@ -13,7 +13,7 @@ void Func_02001cc8(void) {
        * speed r6; without it, 14 instructions differ in tla-en. */
       __asm__("" : : "l"(object));
     } while (object->velocityY != 0);
-    Engine_AudioPlayCue(188);
+    Import_SoundPlay(188);
     WaitFrames(10);
     object->motionFlags = 0;
     ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
@@ -26,7 +26,7 @@ void Func_02001cc8(void) {
 void Func_02001d3c(void) {
   Func_020048c4();
   Func_02004a24(0);
-  Engine_AudioPlayCue(158);
+  Import_SoundPlay(158);
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
   FieldEvent_WaitFrames(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);

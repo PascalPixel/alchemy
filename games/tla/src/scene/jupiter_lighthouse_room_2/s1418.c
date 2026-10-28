@@ -12,16 +12,16 @@ extern struct FieldActor *gData_02002bdc[];
 extern s16 gData_02002cdc;
 extern s16 gData_02002cde;
 
-void *MemAlloc(s32 size);
+void *Heap_Alloc(s32 size);
 void Func_02002174(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_0200125c(void);
 
 static inline void *BumpAlloc(s32 size) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return MemAlloc(size);
+  return Heap_Alloc(size);
 }
 
 static inline void VramLoad(s32 entry, s32 size, void *source) {
@@ -36,7 +36,7 @@ void Func_02001418(void) {
   Func_02002174(gField_CachedTilesA, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   VramLoad(gData_02002bd8, 0xc00, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Task_Add(Func_0200125c, TASK_PASS_VBLANK);
   gData_02002bda = 0;
   gData_02002cdc = 0;
@@ -50,7 +50,7 @@ void Func_02001498(void) {
   Func_02002174(gField_CachedTilesB, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   VramLoad(gData_02002bd8, 0x800, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Task_Add(Func_0200125c, TASK_PASS_VBLANK);
   gData_02002bda = 0;
   gData_02002cdc = 0;
@@ -64,7 +64,7 @@ void Func_02001518(void) {
   Func_02002174(gField_CachedTilesC, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   VramLoad(gData_02002bd8, 0x800, buffer);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Task_Add(Func_0200125c, TASK_PASS_VBLANK);
   gData_02002bda = 0;
   gData_02002cdc = 1;

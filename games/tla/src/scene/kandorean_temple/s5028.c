@@ -19,10 +19,10 @@ void Func_02004fb4(void) {
     object->unk5c[0] = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
+    buffer = HeapSlot_AllocFar(68, 0x608);
     Func_020051b0(198);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
   }
 }
 

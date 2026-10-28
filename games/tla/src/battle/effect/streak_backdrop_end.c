@@ -21,6 +21,6 @@ void BattleEffect_EndElementStreaks(void) {
     __asm__("" : "+r"(size));
     Iwram_ClearWords((void *)0x06004000, size);
   }
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
 }

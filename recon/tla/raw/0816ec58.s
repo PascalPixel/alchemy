@@ -417,9 +417,9 @@ BattleEffect_RunCool:
 	b .L_0816ee28
 .L_0816ef80:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0816ef8c:
 	mov r4, r10
 	ldr r0, [r4, #4]
@@ -499,9 +499,9 @@ BattleEffect_RunCool:
 	bne .L_0816efaa
 .L_0816f022:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0

@@ -27,7 +27,7 @@ s32 Func_08127588(s32 formation);
 // As The Broken Seal's function of the same name, which has no flag setup.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
+  struct FormationCandidate *pool = Heap_AllocEwram(128);
   u16 party[8];
   s32 targetLevel = 0;
   s32 unitCount = BattleParty_PrepareActiveOwners(party);
@@ -125,6 +125,6 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     result = 1;
   }
 
-  MemFree(pool);
+  Heap_Release(pool);
   return result;
 }

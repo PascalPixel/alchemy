@@ -20,7 +20,7 @@ struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
 void Func_02005d8c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Event_StartScreenTransition(void);
@@ -49,7 +49,7 @@ void Func_02004cc8(void) {
   ObjectDispatch_SetSingleChildFlags(leader, 0);
   leader->speedLimit = 0x18000;
   leader->acceleration = 0x18000;
-  lift = Engine_ObjectCreate(280, leader->x, leader->y - 0x80000, leader->z);
+  lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
   Func_02005d5c(lift, 2);
   ObjectDispatch_SetSingleChildFlags(lift, 0);
   lift->motionFlags = 0;

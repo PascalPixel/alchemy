@@ -393,7 +393,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

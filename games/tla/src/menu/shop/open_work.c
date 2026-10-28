@@ -30,7 +30,7 @@ extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
 void ShopCursor_Advance(void *work);
-void EventRuntime_ResolveAllPendingActionsFar(void);
+void Event_ResolveAllPendingActionsFar(void);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
@@ -49,8 +49,8 @@ void Func_08108148(void) {
   struct ShopRuntime *work;
   s32 slot;
 
-  work = Runtime_AllocateHeapBlock(220, 0xcec);
-  EventRuntime_ResolveAllPendingActionsFar();
+  work = HeapSlot_Alloc(220, 0xcec);
+  Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, work, 0xcec);
   work->mode = 12;
   work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
@@ -92,5 +92,5 @@ void Func_0810824c(void) {
   Resource_ResetEntry(state->gemIcon);
   Resource_ResetEntry(state->statUpIcon);
   Resource_ResetEntry(state->statDownIcon);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

@@ -20,6 +20,6 @@ void Func_08045794(void) {
   /* FAKEMATCH: a one-pass block loads the handler before the interrupt number
    * is built; called straight the two rows trade places (differ 2). */
   do {
-    Runtime_SetIrqHandler(2, 136, Func_08045780);
+    Irq_SetHandler(2, 136, Func_08045780);
   } while (0);
 }

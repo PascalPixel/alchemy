@@ -34,13 +34,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02002a8c
 	.thumb_func
@@ -157,11 +157,11 @@ FieldEvent_WaitFrames:
 	.global Func_02002b6c
 	.thumb_func
 Func_02002b6c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02002b74
 	.thumb_func
 Func_02002b74:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -237,7 +237,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002c0c
 	.thumb_func
 Func_02002c0c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02002c14
 	.thumb_func
 Func_02002c14:

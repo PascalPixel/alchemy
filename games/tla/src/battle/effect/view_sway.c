@@ -41,7 +41,7 @@ void BattleEffect_RunViewSway(void) {
   s32 state;
   s32 frames;
 
-  Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
+  HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->effectWork;
   BattleEffect_InitializeSharedScene();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
@@ -87,7 +87,7 @@ void BattleEffect_RunViewSway(void) {
 
   Func_080e8c9c();
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
+  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
 
 /// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),

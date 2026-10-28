@@ -1,6 +1,6 @@
 // Draft of Func_081263fc, The Broken Seal's BattleBackground_Load
 // (games/tbs/src/battle/battle.c). The Lost Age copies the decoder into a
-// heap block of its own (RamCode_Load and MemFree) instead of work slot 49,
+// heap block of its own (RamCode_Load and Heap_Release) instead of work slot 49,
 // scales the palette with ColorBuffer_Scale, and skips the backdrop's palette
 // copy while the battle work's byte at 0x867 is set (summons 4, 6 and 24 set
 // it).
@@ -74,7 +74,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
     vram = (void *)0x06008000;
     decode(data + offset, vram);
   }
-  MemFree(decode);
+  Heap_Release(decode);
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)

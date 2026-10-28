@@ -14,7 +14,7 @@ Func_081197f0:
 	str r0, [sp, #40]
 	movs r1, #76
 	movs r0, #48
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	mov r10, r0
 	movs r0, #128
 	lsls r0, r0, #4
@@ -22,23 +22,23 @@ Func_081197f0:
 	mov r8, r0
 	mov r1, r8
 	movs r0, #36
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r5, #249
 	lsls r5, r5, #3
 	adds r1, r5, #0
 	mov r9, r0
 	movs r0, #216
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #32
 	movs r0, #176
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r6, #192
 	movs r1, #160
 	str r0, [sp, #36]
 	lsls r1, r1, #2
 	lsls r6, r6, #18
 	movs r0, #44
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	adds r3, r6, #0
 	adds r3, #216
 	adds r1, r5, #0
@@ -86,7 +86,7 @@ Func_081197f0:
 	movs r1, #12
 	str r3, [r2]
 	movs r0, #148
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	adds r6, #148
 	ldr r0, [r6]
 	movs r1, #12
@@ -101,11 +101,11 @@ Func_081197f0:
 	strh r0, [r3]
 	lsls r1, r1, #4
 	movs r0, #16
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #192
 	lsls r1, r1, #3
 	movs r0, #12
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r0, #4
 	bl ObjectSystem_InitializeFar
 	movs r0, #183

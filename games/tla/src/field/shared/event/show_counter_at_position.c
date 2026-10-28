@@ -15,7 +15,7 @@
 
 void Event_ShowCounterAtPosition();
 
-void EventRuntime_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
+void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowCounterAtPosition(a, b, c, d);
 }
 

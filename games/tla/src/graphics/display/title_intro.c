@@ -121,7 +121,7 @@ void Func_080140d8(void *entry, s32 slot);
 s32 Func_081a729c(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
-  struct TitleScreenWork *work = Runtime_AllocateBlock(172, 0x70);
+  struct TitleScreenWork *work = HeapSlot_AllocEwram(172, 0x70);
   u8 *data;
   u16 *tilemap;
   s16 tile;
@@ -202,7 +202,7 @@ column:
   Window_LoadGraphics();
   Func_08014b70();
   if (prompt != 0) {
-    u8 *buffer = Runtime_AllocateBlock(56, 0x400);
+    u8 *buffer = HeapSlot_AllocEwram(56, 0x400);
     struct TitleSprite *sprite = work->sprites;
 
     Resource_DecodeByteLzInRam(gTitle_PromptTiles, buffer);
@@ -216,7 +216,7 @@ column:
       *spriteWords++ = 0x40004000;
       *spriteWords = vramBlock;
     }
-    Runtime_ReleaseHeapBlock(56);
+    HeapSlot_Release(56);
   }
   Fade_FromWhite(30);
   Fade_Wait();
@@ -254,7 +254,7 @@ column:
     Random16();
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(172);
+  HeapSlot_Release(172);
   {
     /* FAKEMATCH(pin): the native loads the zero from the pool before it
      * starts the register address; as REG_BLDCNT = 0 and REG_BLDALPHA = 0, 2

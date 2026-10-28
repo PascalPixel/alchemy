@@ -9,7 +9,7 @@ void ReelGame_Run(void);
 /// Blanks the display but for 1D objects, seeds the random state from the
 /// play time, plays cue 709 and runs the reel game.
 // As The Broken Seal's.
-s32 Runtime_BlankDisplayLoadValueAndRun(void) {
+s32 ReelGame_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomState = gAdventure.playTime;
   Sound_PlayFar(709);

@@ -1706,7 +1706,7 @@ Func_08173aac:
 	movs r0, #128
 	str r3, [r2, #16]
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #20]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -4560,9 +4560,9 @@ Func_08173aac:
 	bl Render_DrawModelList
 .L_08175edc:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #20]
-	bl MemFree
+	bl Heap_Release
 	ldr r2, .L_08175f68
 	movs r3, #120
 	str r3, [r2, #12]
@@ -4599,7 +4599,7 @@ Func_08173aac:
 	bl .L_0817414a
 .L_08175f2e:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #52]
 	cmp r1, #0
 	beq .L_08175f3e

@@ -11,7 +11,7 @@
 s32 Animation_SetStateFlags();
 s32 Camera_FollowActor();
 s32 Camera_MoveWithinMapBounds();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 s32 Event_WaitTransitionFrames();
 s32 FieldEvent_WaitFrames();
 s32 Func_0200088c();
@@ -168,7 +168,7 @@ L_02008c06:
   t24 = FIELD_AT(v_r8, s32, 12);
   t25 = FIELD_AT(v_r8, s32, 8);
   t26 = FIELD_AT(v_r8, s32, 16);
-  t27 = Value4((s32 (*)())Engine_ObjectCreate, ((u32)(v_r10 << 16) >> 16), t25,
+  t27 = Value4((s32 (*)())Import_ActorCreate, ((u32)(v_r10 << 16) >> 16), t25,
                (t24 + 0x80000), t26);
   FIELD_AT(t27, u8, 85) = 0;
   FIELD_AT(t27, s32, 28) = 0x1999;

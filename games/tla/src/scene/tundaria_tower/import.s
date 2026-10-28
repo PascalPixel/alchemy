@@ -38,14 +38,14 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global Func_02002f40
 	.thumb_func
 Func_02002f40:
@@ -165,7 +165,7 @@ Func_02003020:
 	.global Func_02003028
 	.thumb_func
 Func_02003028:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02003030
 	.thumb_func
 Func_02003030:
@@ -181,11 +181,11 @@ FieldEvent_WaitFrames:
 	.global Func_02003048
 	.thumb_func
 Func_02003048:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02003050
 	.thumb_func
 Func_02003050:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -261,7 +261,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_020030e8
 	.thumb_func
 Func_020030e8:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_020030f0
 	.thumb_func
 Func_020030f0:
@@ -273,7 +273,7 @@ Func_020030f8:
 	.global Func_02003100
 	.thumb_func
 Func_02003100:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_02003108
 	.thumb_func
 Func_02003108:
@@ -305,11 +305,11 @@ ObjectTable_Get:
 	.global Func_02003140
 	.thumb_func
 Func_02003140:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_02003148
 	.thumb_func
 Func_02003148:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003150
 	.thumb_func
 Func_02003150:

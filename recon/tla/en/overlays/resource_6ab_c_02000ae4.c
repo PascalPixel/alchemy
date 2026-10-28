@@ -12,8 +12,8 @@ extern struct ObjectRuntime *Data_02004cec;
 
 void Func_02000ab4(void);
 void Func_020042ac(s32 sound);
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void VramCache_Load(s32 slot, s32 size, const u8 *tiles);
 
 void Func_02000ae4(s32 rise) {
@@ -34,11 +34,11 @@ void Func_02000ae4(s32 rise) {
   object->update = Func_02000ab4;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  block = Runtime_AllocateHeapBlockFar(68, 0x608);
+  block = HeapSlot_AllocFar(68, 0x608);
   Func_020042ac(247);
   block += 0x400;
   VramCache_Load(sprite->vramBlock, 128, block);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   if (rise) {
     WaitFrames(1);
     Data_02004cec->velocityY = 0x28000;

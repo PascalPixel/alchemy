@@ -1664,7 +1664,7 @@ BattleEffect_RunAzul:
 	b .L_0815db98
 .L_0815da72:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1797,9 +1797,9 @@ BattleEffect_RunAzul:
 	cmp r4, #31
 	bne .L_0815dab4
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_0815db98:
 	ldr r6, [sp, #64]
 	cmp r6, #78
@@ -2044,7 +2044,7 @@ BattleEffect_RunAzul:
 	cmp r1, #2
 	bne .L_0815dd30
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0815dd86:
 	ldr r2, [sp, #64]
 	cmp r2, #185
@@ -2218,7 +2218,7 @@ BattleEffect_RunAzul:
 	bl Render_DrawModelList
 .L_0815defc:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_0815df02:
 	ldr r2, [sp, #64]
 	cmp r2, #185
@@ -2466,7 +2466,7 @@ BattleEffect_RunAzul:
 	ldr r0, .L_0815e16c
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r2, #238
 	lsls r2, r2, #7
 	movs r1, #0

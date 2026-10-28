@@ -132,6 +132,6 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

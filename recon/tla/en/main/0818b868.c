@@ -97,7 +97,7 @@ void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 perce
 void WaitFrames(s32 frames);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -119,10 +119,10 @@ void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_CountDownMemberTimers(void);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
@@ -177,7 +177,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
     // This frame's jaw: one model drawing the quad with the 128 x 128
     // texture.
-    vertices = Runtime_BumpAllocateAlternatePool(32);
+    vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(effect->actors[0], &position);
     texture.logWidth = 7;
@@ -265,15 +265,15 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       spark++;
     }
 
-    MemFree(model);
-    MemFree(vertices);
+    Heap_Release(model);
+    Heap_Release(vertices);
     Func_08158ce0(8, 8);
     ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

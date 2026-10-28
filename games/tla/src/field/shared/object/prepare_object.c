@@ -17,7 +17,7 @@
   ((void (*)(struct FieldActor *, s32))Object_SetPartAttribute)
 
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
-  struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+  struct FieldActor *object = Import_ActorCreate(type, x, y, z);
 
   if (object != NULL) {
     Object_SetSpritePriority(object, 0);

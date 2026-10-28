@@ -57,12 +57,12 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void MessageArgument_PushFar(s32 value, s32 slot);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
-void EventRuntime_Start(void);
-void EventRuntime_SetMessage(s32 message);
-void EventRuntime_ShowMessageAndWait(s32 actor, s32 flags);
-void EventRuntime_End(void);
+void Event_Start(void);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 actor, s32 flags);
+void Event_End(void);
 struct ItemDefinitionView *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
 void Message_CloseFinishedWindowsFar(void);
@@ -132,12 +132,12 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 objref = Field_FindNearbyTalkTarget(EventRuntime_GetControlledOwner());
+      s32 objref = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
 
-      EventRuntime_Start();
-      EventRuntime_SetMessage(event->value);
-      EventRuntime_ShowMessageAndWait(objref, 0);
-      EventRuntime_End();
+      Event_Start();
+      Event_SetMessageId(event->value);
+      Event_ShowMessageAndWait(objref, 0);
+      Event_End();
     } else {
       ((ItemTriggerCallback)event->value)(itemId, actor, slot);
     }

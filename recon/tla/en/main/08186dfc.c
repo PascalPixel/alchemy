@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -156,7 +156,7 @@ void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
 void Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
 void BattleEffect_ProcessPendingStampTransfer(void); // copies the 0x6780 canvas to the stamp's tiles
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_FLAGS(obj, n) (((u8 *)(obj))[n])
@@ -454,7 +454,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           s32 sh;
           s32 s;
 
-          verts = Runtime_BumpAllocateAlternatePool(32);
+          verts = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
           texture.logWidth = 6;
           texture.logHeight = 6;
@@ -543,8 +543,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->shade = (s32)Data_02010fa0;
           Render_TransformVertices(Data_020104f0, gMapCellBuffer, 64);
           Render_DrawModelList(model);
-          MemFree(model);
-          MemFree(verts);
+          Heap_Release(model);
+          Heap_Release(verts);
         }
         req = Data_08196f00;
         place2[3] = 0;
@@ -591,7 +591,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                 p->y = Random16() & 7;
               }
             }
-            Runtime_ReleaseHeapBlock(SLOT_ALT);
+            HeapSlot_Release(SLOT_ALT);
           }
           req.a = frame * 1128 - 103664;
           if (req.a > 0x40000) {
@@ -636,7 +636,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           work->transferMode = 1;
           work->transferValue = 0x01010101;
         }
-        verts = Runtime_BumpAllocateAlternatePool(32);
+        verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture2.logWidth = 7;
         texture2.logHeight = 7;
@@ -677,8 +677,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             Render_DrawModelList(model);
           }
         }
-        MemFree(model);
-        MemFree(verts);
+        Heap_Release(model);
+        Heap_Release(verts);
       }
       if (frame > 276) {
         u8 *cells;
@@ -737,7 +737,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Render_ApplyProjectedPlacementFar(work->objects[i], place2,
                                             (s32 *)&req3, 0);
         }
-        verts = Runtime_BumpAllocateAlternatePool(32);
+        verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         cells = work->sheet;
         mesh = work->sheet + 0x800;
@@ -813,8 +813,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           BattleEffectKernels_IntegrateVector3(p, 62, 0);
           p->x += 0x40000;
         }
-        MemFree(model);
-        MemFree(verts);
+        Heap_Release(model);
+        Heap_Release(verts);
       }
       ObjectGroup_CountDownMemberTimers();
       work->transferPending = 1;
@@ -988,7 +988,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         work->shakeFrames = 8;
       }
     }
-    verts = Runtime_BumpAllocateAlternatePool(32);
+    verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     model->shade = -8;
     model->kind = 7;
@@ -1053,8 +1053,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       corner[13] = v + 60;
       Render_DrawModelList(model);
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     Func_08158ce0(8, 8);
     ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
@@ -1064,6 +1064,6 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

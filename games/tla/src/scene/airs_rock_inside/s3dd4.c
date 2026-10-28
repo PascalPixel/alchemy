@@ -18,7 +18,7 @@ void Func_02003e28(void) {
 
 void Func_02003e7c(struct FieldActor *source) {
   struct FieldActor *object = (struct FieldActor *)Value4(
-      (s32 (*)())Engine_ObjectCreate, 0x2a0, source->x, source->y, source->z);
+      (s32 (*)())Import_ActorCreate, 0x2a0, source->x, source->y, source->z);
 
   WORD_AT(object, 28) = 0x6666;
   WORD_AT(object, 24) = 0x6666;

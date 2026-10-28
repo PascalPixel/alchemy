@@ -38,22 +38,22 @@ s32 VenusLighthouse_Start(void) {
     // The international editions also save this scene and entrance 22.
     gAdventure.savedScene = (s32)&SceneId_VenusLighthouse;
     gAdventure.savedEntrance = 22;
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
     Func_02000b2c();
     Func_02000d30();
-    Engine_EventEnd();
+    Import_EventEnd();
   } else {
-    Object_SetPartAttribute(Engine_ActorGet(10), 6);
-    Object_SetPartAttribute(Engine_ActorGet(17), 6);
-    Object_SetPartAttribute(Engine_ActorGet(18), 6);
-    Object_SetPartAttribute(Engine_ActorGet(19), 6);
-    Object_SetPartAttribute(Engine_ActorGet(20), 6);
-    Object_SetPartAttribute(Engine_ActorGet(21), 6);
-    Object_SetPartAttribute(Engine_ActorGet(22), 6);
-    Object_SetPartAttribute(Engine_ActorGet(23), 6);
-    Object_SetPartAttribute(Engine_ActorGet(24), 6);
-    Object_SetPartAttribute(Engine_ActorGet(25), 6);
+    Object_SetPartAttribute(Import_ActorGet(10), 6);
+    Object_SetPartAttribute(Import_ActorGet(17), 6);
+    Object_SetPartAttribute(Import_ActorGet(18), 6);
+    Object_SetPartAttribute(Import_ActorGet(19), 6);
+    Object_SetPartAttribute(Import_ActorGet(20), 6);
+    Object_SetPartAttribute(Import_ActorGet(21), 6);
+    Object_SetPartAttribute(Import_ActorGet(22), 6);
+    Object_SetPartAttribute(Import_ActorGet(23), 6);
+    Object_SetPartAttribute(Import_ActorGet(24), 6);
+    Object_SetPartAttribute(Import_ActorGet(25), 6);
   }
   return 0;
 }

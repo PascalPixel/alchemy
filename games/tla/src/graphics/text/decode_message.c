@@ -84,6 +84,6 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    Runtime_ReleaseHeapBlock(TEXT_DECODER_SLOT);
+    HeapSlot_Release(TEXT_DECODER_SLOT);
   *text = 0;
 }

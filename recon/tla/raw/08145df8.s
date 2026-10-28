@@ -218,9 +218,9 @@ BattleEffect_RunBind:
 	.2byte 0xf800
 .L_08145fb0:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_08145fbc:
 	movs r1, #19
 	movs r0, #104
@@ -515,9 +515,9 @@ BattleEffect_RunBind:
 	b .L_08146022
 .L_0814620a:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #240
 	ldr r2, [sp, #72]
 	lsls r1, r1, #7

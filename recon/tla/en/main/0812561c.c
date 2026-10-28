@@ -135,7 +135,7 @@ void Func_0812561c(struct BattlePlan *plan) {
     struct BattleUnit *before;
     s32 i;
 
-    before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+    before = Heap_AllocEwram(sizeof(struct BattleUnit));
     Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
     for (i = 0; i <= 3; i++) {
       if (counts[i] > 4)
@@ -163,7 +163,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEventRuntime_WaitForReady();
       }
     }
-    MemFree(before);
+    Heap_Release(before);
   }
   if (battleContinues != 0 && BattleObject_Get(unitId)->object != 0) {
     s8 *poison;

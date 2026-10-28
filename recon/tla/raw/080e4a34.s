@@ -16,7 +16,7 @@ Func_080e4a34:
 	adds r1, #44
 	movs r0, #92
 	sub sp, #48
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -390,7 +390,7 @@ Func_080e4a34:
 	bl BattleEffect_PrepareBufferInterpolation
 .L_080e4d60:
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #208
 	ldr r6, [sp, #40]
 	lsls r0, r0, #4

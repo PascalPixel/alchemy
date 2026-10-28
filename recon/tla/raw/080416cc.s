@@ -22,7 +22,7 @@ Text_DrawStringAsTiles:
 	adds r6, r0, #0
 	adds r0, r5, #0
 	mov r11, r3
-	bl MemAlloc
+	bl Heap_Alloc
 	str r0, [sp, #8]
 	ldr r0, .L_080419cc
 	bl Resource_GetTableEntry
@@ -504,7 +504,7 @@ Text_DrawStringAsTiles:
 	b .L_08041954
 .L_08041aa6:
 	ldr r0, [sp, #8]
-	bl MemFree
+	bl Heap_Release
 	adds r0, r6, #0
 	add sp, #68
 	pop {r3, r5, r6, r7}

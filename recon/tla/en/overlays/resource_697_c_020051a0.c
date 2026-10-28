@@ -32,11 +32,11 @@ extern struct ResourceTableEntry gResourceTableEntries[];
 extern const u16 Data_020062b4[];
 extern const u8 gData_020062d4[];
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Func_02005770(const void *source, void *destination);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void VramCache_ReleaseVram(s32 entry);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_02005790(u32 *entry, s32 value);
 struct ObjectRuntime *ObjectTable_Get(u32 id);
 s32 Func_02002ce8(s32 value);
@@ -91,10 +91,10 @@ void Func_020051a0(void) {
   } else if (work->fade <= 1) {
     if (++work->fade == 2) {
       Dma_Set(Data_020062b4, (void *)0x050003c0, 0x84000010, REG_DMA3);
-      buffer = Runtime_BumpAllocateAlternatePool(576);
+      buffer = Heap_AllocEwram(576);
       Func_02005770(gData_020062d4, buffer);
       VramCache_Load(work->vramEntry, 576, buffer);
-      MemFree(buffer);
+      Heap_Release(buffer);
     }
   }
   if (work->fade == 0) {

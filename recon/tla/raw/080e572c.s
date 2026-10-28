@@ -16,7 +16,7 @@ Func_080e572c:
 	adds r1, #16
 	movs r0, #92
 	sub sp, #40
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r5, #192
 	lsls r5, r5, #18
 	adds r3, r5, #0
@@ -352,7 +352,7 @@ Func_080e572c:
 	ldrsh r1, [r3, r2]
 	adds r0, r7, #0
 	adds r2, r5, #0
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 	movs r0, #0
 	ldrsh r3, [r6, r0]
 	adds r5, #1
@@ -368,7 +368,7 @@ Func_080e572c:
 	bl BattleEffect_PrepareBufferInterpolation
 	bl BattleEffect_EndCanvasSprite
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3

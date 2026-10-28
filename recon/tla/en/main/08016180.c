@@ -27,8 +27,8 @@ void Serial_Initialize(void) {
     imeReg = &REG_IME;
   } while (0);
   *imeReg = (u32)imeReg;
-  Runtime_SetIrqHandler(7, 0, Serial_HandleTransferInterrupt);
-  Runtime_SetIrqHandler(6, 0, Serial_HandleTransferInterrupt);
+  Irq_SetHandler(7, 0, Serial_HandleTransferInterrupt);
+  Irq_SetHandler(6, 0, Serial_HandleTransferInterrupt);
   REG_IME = 0;
   REG_IE &= 0xff3f;
   if ((REG_IF & 0x80) != 0)

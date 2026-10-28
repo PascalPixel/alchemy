@@ -15,7 +15,7 @@ Func_080e82cc:
 	adds r1, #140
 	movs r0, #92
 	sub sp, #64
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r2, #192
 	str r0, [sp, #48]
 	lsls r2, r2, #18
@@ -98,10 +98,10 @@ Func_080e82cc:
 	movs r0, #96
 	movs r5, #128
 	lsls r5, r5, #6
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	adds r1, r5, #0
 	movs r0, #96
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	mov r9, r0
 	adds r1, r5, #0
 	movs r2, #0

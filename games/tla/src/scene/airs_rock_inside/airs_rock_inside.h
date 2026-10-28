@@ -35,7 +35,7 @@ extern char SceneId_Ov664Room10;
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 
-struct FieldActor *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);

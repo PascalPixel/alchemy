@@ -33,7 +33,7 @@ void BattleMotion_ProjectPositionFar(s32, s32 *);
 s32 Unit_KnowsActionFar(s32 group, s32 entry);
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 struct AnimationObject;
 struct EffectPosition;

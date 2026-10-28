@@ -38,17 +38,17 @@ extern const u32 gData_02001d8c[];
 extern const u8 gData_02001dd8[];
 extern u8 gMapCellBuffer[];
 
-struct VenusActor *Engine_ActorGet(s32 id);
-s32 Engine_PartyGetLeaderActor(void);
-void Engine_EventStart(void);
-void Engine_EventEnd(void);
-void Engine_EventResolvePendingActions(s32 skip);
-void Engine_EventWait(s32 frames);
-void Engine_AudioPlayCue(s32 cue);
-void Engine_GameFlagSet(s32 flag);
+struct VenusActor *Import_ActorGet(s32 id);
+s32 Import_PartyGetLeaderActor(void);
+void Import_EventStart(void);
+void Import_EventEnd(void);
+void Import_EventResolvePendingActions(s32 skip);
+void Import_EventWaitFrames(s32 frames);
+void Import_SoundPlay(s32 cue);
+void Import_GameFlagSet(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
 void WaitFrames(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
@@ -72,25 +72,25 @@ static inline s32 Venus_FlagCheck(s32 flag) {
 
 static inline void Venus_FlagSet(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_GameFlagSet(flag);
+  Import_GameFlagSet(flag);
 }
 
 static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w,
                                    s32 h) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Engine_MapCopyCellsTo(sx, sy, dx, dy, w, h);
+  Import_MapCopyCellPictureIndicesRect(sx, sy, dx, dy, w, h);
 }
 
 void Func_020006ac(void) {
-  s32 leader = Engine_PartyGetLeaderActor();
-  struct VenusActor *actor = Engine_ActorGet(leader);
+  s32 leader = Import_PartyGetLeaderActor();
+  struct VenusActor *actor = Import_ActorGet(leader);
   s32 z;
 
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   ObjectMotion_EnableActionAndSetCallback(leader, gData_02001dd8);
   Object_RefreshSelectorById(leader);
-  Object_SetPartAttribute(Engine_ActorGet(leader), 6);
+  Object_SetPartAttribute(Import_ActorGet(leader), 6);
   {
     /* FAKEMATCH: the native copies the leader into r0 before it builds the
      * acceleration. */
@@ -101,21 +101,21 @@ void Func_020006ac(void) {
     ObjectMotion_SetSpeedParameters(who, 0x40000, 0x20000);
   }
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
-    Engine_ActorGet(leader)->selectFlags &= ~1;
+    Import_ActorGet(leader)->selectFlags &= ~1;
     z = 210;
   } else {
-    Engine_ActorGet(leader)->selectFlags &= ~1;
+    Import_ActorGet(leader)->selectFlags &= ~1;
     z = 238;
   }
   ObjectMotion_SetPositionAndReset(leader, actor->xPixel, z * 4);
-  Engine_EventWait(1);
-  Engine_ActorGet(leader)->selectFlags |= 1;
-  Engine_EventWait(20);
+  Import_EventWaitFrames(1);
+  Import_ActorGet(leader)->selectFlags |= 1;
+  Import_EventWaitFrames(20);
   Object_SetPartAttribute(actor, 0);
   actor->update = Func_020005a8;
   Func_02001c34(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  Object_SetPartAttribute(Engine_ActorGet(leader), 0);
+  Object_SetPartAttribute(Import_ActorGet(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
   {
     void *none;
@@ -128,11 +128,11 @@ void Func_020006ac(void) {
 
     actor->update = none;
   }
-  Engine_EventEnd();
+  Import_EventEnd();
 }
 
 void Func_0200078c(void) {
-  struct VenusActor *leader = Engine_ActorGet(Engine_PartyGetLeaderActor());
+  struct VenusActor *leader = Import_ActorGet(Import_PartyGetLeaderActor());
   s32 x = leader->xPixel;
   s32 z = leader->zPixel;
 
@@ -144,16 +144,16 @@ void Func_0200078c(void) {
     leader->terrainHeight = 0;
     leader->y = 0;
   } else if (!Venus_FlagCheck(0x201)) {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventWait(5);
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventWaitFrames(5);
     Venus_CopyCells(52, 50, 42, 49, 1, 1);
     Venus_CopyCells(52, 117, 41, 117, 3, 5);
     Venus_FlagSet(0x201);
-    Engine_AudioPlayCue(161);
+    Import_SoundPlay(161);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;
     leader->y = -0x20000;
-    Engine_EventEnd();
+    Import_EventEnd();
   }
 }

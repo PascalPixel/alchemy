@@ -53,11 +53,11 @@ FieldEvent_WaitFrames:
 	.global Func_0200119c
 	.thumb_func
 Func_0200119c:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020011a4
 	.thumb_func
 Func_020011a4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -89,11 +89,11 @@ Object_SetModeById:
 	.global Func_020011e4
 	.thumb_func
 Func_020011e4:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global Func_020011ec
 	.thumb_func
 Func_020011ec:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -117,7 +117,7 @@ Func_02001214:
 	.global Func_0200121c
 	.thumb_func
 Func_0200121c:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02001224
 	.thumb_func
 Func_02001224:
@@ -149,7 +149,7 @@ Func_02001254:
 	.global Func_0200125c
 	.thumb_func
 Func_0200125c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001264
 	.thumb_func
 Func_02001264:

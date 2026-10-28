@@ -460,8 +460,8 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
+    HeapSlot_Release(188);
+    HeapSlot_Release(104);
     if (mode == 0) {
       if (alternate == 1)
         Func_0816467c(6, focus.x, focus.y);

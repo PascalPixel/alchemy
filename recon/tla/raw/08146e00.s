@@ -1642,9 +1642,9 @@ BattleEffect_RunProcne:
 	ldr r0, .L_08147ad0
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #364
 	pop {r3, r5, r6, r7}

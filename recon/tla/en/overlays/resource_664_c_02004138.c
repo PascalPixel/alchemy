@@ -28,7 +28,7 @@ s32 Func_02005f04(s32 a, s32 b);
 s32 Func_02005f14(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Func_02005e94(s32 actor, s32 a);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
@@ -68,7 +68,7 @@ void Func_02004138(s32 idA, s32 idB) {
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   for (i = 0; i != 16; i++) {
-    spark = Engine_ObjectCreate(0x2a0, a->x, a->y, a->z);
+    spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
     Func_02005f94(246);
     spark->x += ((Random16Far() & 31) - 16) << 16;
     spark->y += ((Random16Far() & 15) - 8) << 16;
@@ -93,7 +93,7 @@ void Func_02004138(s32 idA, s32 idB) {
   REG_BLDALPHA = 0x1008;
   WaitFrames(30);
   for (i = 0; i != 16; i++) {
-    spark = Engine_ObjectCreate(0x2a0, b->x, b->y, b->z);
+    spark = Import_ActorCreate(0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
     spark->action = (Random16Far() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
@@ -120,7 +120,7 @@ void Func_02004138(s32 idA, s32 idB) {
   Func_02005f94(220);
   WaitFrames(16);
   for (i = 2; i != 32; i += 2) {
-    spark = Engine_ObjectCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
+    spark = Import_ActorCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
     spark->action = Random16Far();
     spark->unk66 = 0x800;
     ((u8 *)spark)[98] = i;

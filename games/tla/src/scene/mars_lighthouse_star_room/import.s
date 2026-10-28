@@ -42,21 +42,21 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global MemAlloc
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Resource_ResetEntry
 	.thumb_func
@@ -201,7 +201,7 @@ Func_02004284:
 	.global Func_0200428c
 	.thumb_func
 Func_0200428c:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02004294
 	.thumb_func
 Func_02004294:
@@ -241,11 +241,11 @@ FieldEvent_WaitFrames:
 	.global Func_020042dc
 	.thumb_func
 Func_020042dc:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020042e4
 	.thumb_func
 Func_020042e4:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -321,7 +321,7 @@ Object_SetPartAttribute:
 	.global Func_0200437c
 	.thumb_func
 Func_0200437c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -333,7 +333,7 @@ Func_0200438c:
 	.global Func_02004394
 	.thumb_func
 Func_02004394:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -381,7 +381,7 @@ Party_SetFields1eeAnd1f0:
 	.global Func_020043f4
 	.thumb_func
 Func_020043f4:
-	overlay_veneer EventRuntime_PrepareCurrentObjectFar
+	overlay_veneer Leader_StopMovingFar
 	.global Func_020043fc
 	.thumb_func
 Func_020043fc:
@@ -421,11 +421,11 @@ Func_0200443c:
 	.global Func_02004444
 	.thumb_func
 Func_02004444:
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
+	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Func_0200444c
 	.thumb_func
 Func_0200444c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02004454
 	.thumb_func
 Func_02004454:
@@ -437,7 +437,7 @@ Func_0200445c:
 	.global Func_02004464
 	.thumb_func
 Func_02004464:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_0200446c
 	.thumb_func
 Func_0200446c:

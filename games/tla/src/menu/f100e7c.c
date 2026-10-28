@@ -36,10 +36,10 @@ struct DjinnMenuWork {
   u8 ownerCount;
 };
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-void MemFree(void *block);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void *Heap_AllocEwram(s32 size);
+void HeapSlot_Release(s32 slot);
+void Heap_Release(void *block);
 s32 GameFlag_Test(s32 flag);
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
@@ -78,14 +78,14 @@ s32 Func_08100e7c(void) {
   struct DjinnMenuBackdrop *backdrop;
   s32 zero;
 
-  menu = Runtime_AllocateHeapBlock(220, 0xcec);
+  menu = HeapSlot_Alloc(220, 0xcec);
   savedEventMode = gAdventure.eventMode;
   gAdventure.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
-  backdrop = Runtime_BumpAllocateAlternatePool(0x2130);
+  backdrop = Heap_AllocEwram(0x2130);
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
@@ -132,8 +132,8 @@ s32 Func_08100e7c(void) {
   WaitFrames(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  MemFree(menu->backdrop);
-  Runtime_ReleaseHeapBlock(220);
+  Heap_Release(menu->backdrop);
+  HeapSlot_Release(220);
   Event_ClearInvalidPackedValuesFar();
   gAdventure.eventMode = savedEventMode;
   return 1;

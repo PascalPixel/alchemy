@@ -59,9 +59,9 @@ void Func_080ebf94(void) {
   s32 bottom;
   s32 left;
 
-  markerTiles = Runtime_BumpAllocateAlternatePool(32);
+  markerTiles = Heap_AllocEwram(32);
   oam = work->markers;
-  Object_GetById(EventRuntime_GetControlledOwner());
+  Object_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
   work->vramBlock = Resource_FindFreeEntry();
@@ -88,7 +88,7 @@ void Func_080ebf94(void) {
     *oam++ = 0;
     *oam++ = tileAttributes;
   }
-  MemFree(markerTiles);
+  Heap_Release(markerTiles);
   if (GameFlag_Test(284)) {
     work->x = 264 << 16;
     work->z = 16 << 16;

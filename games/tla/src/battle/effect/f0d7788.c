@@ -5,8 +5,8 @@
 #include "edition.h"
 
 s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinni);
-void EventRuntime_Start(void);
-void EventRuntime_End(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_080d82e0(s32 actor);
 void Func_080d8740(s32 actor);
 void Djinn_RunMarsJoinEffect(s32 actor);
@@ -46,7 +46,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
   }
   if (owner < 0)
     return;
-  EventRuntime_Start();
+  Event_Start();
   if (actor != -1) {
     if (element == 0)
       Func_080d82e0(actor);
@@ -63,5 +63,5 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
 #if LANGUAGE != LANGUAGE_JAPANESE
   ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
 #endif
-  EventRuntime_End();
+  Event_End();
 }

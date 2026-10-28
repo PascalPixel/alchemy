@@ -16,18 +16,18 @@ Func_0813e3d0:
 	str r0, [sp, #32]
 	adds r1, #124
 	movs r0, #92
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #128
 	mov r9, r0
 	lsls r1, r1, #7
 	movs r0, #96
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r1, #192
 	lsls r1, r1, #3
 	str r0, [sp, #28]
 	adds r1, #14
 	movs r0, #100
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	str r0, [sp, #16]
 	movs r3, #192
 	lsls r3, r3, #18
@@ -329,7 +329,7 @@ Func_0813e3d0:
 	mov lr, r7
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -388,7 +388,7 @@ Func_0813e3d0:
 	mov lr, r7
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0813e6da:
 	bl Render_ResetTransformState
 	ldr r1, [sp, #8]
@@ -487,16 +487,16 @@ Func_0813e3d0:
 	b .L_0813e566
 .L_0813e7a2:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0813e7dc
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer
 	movs r0, #100
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #96
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3

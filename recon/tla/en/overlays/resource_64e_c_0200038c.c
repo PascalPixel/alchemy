@@ -42,7 +42,7 @@ struct StagedActor {
 
 extern s32 gData_02001d8c[];
 
-struct StagedActor *Engine_ActorGet(s32 actor);
+struct StagedActor *Import_ActorGet(s32 actor);
 struct StagedActor *Object_FindInCell(s32 *position, struct StagedActor *self);
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 void Func_02001b44(struct StagedActor *object, s32 x, s32 y, s32 z);
@@ -50,7 +50,7 @@ void Func_02001b4c(struct StagedActor *object);
 s32 Func_02001b64(struct StagedActor *object, s32 *position);
 void Func_02001cbc(void);
 void WaitFrames(s32 frames);
-void Engine_AudioPlayCue(s32 cue);
+void Import_SoundPlay(s32 cue);
 
 void Func_0200038c(void) {
   s32 dst[3];
@@ -61,7 +61,7 @@ void Func_0200038c(void) {
   u32 step;
   s32 rate;
 
-  lead = Engine_ActorGet(gAdventure.currentOwner);
+  lead = Import_ActorGet(gAdventure.currentOwner);
   dir = lead->facing >> 12;
   step = gData_02001d8c[dir];
   dst[0] = lead->x + (step & 0xffff0000);
@@ -103,7 +103,7 @@ void Func_0200038c(void) {
   Func_02001b2c(lead, 8);
   rate = 0x3333;
   WaitFrames(15);
-  Engine_AudioPlayCue(185);
+  Import_SoundPlay(185);
   next->moveRateX = rate;
   next->moveRateZ = rate;
   Func_02001b44(next, dst[0], dst[1], dst[2]);

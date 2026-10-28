@@ -73,7 +73,7 @@ void Func_080dbb40(void);
 void Task_Remove(void (*callback)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
@@ -121,5 +121,5 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (work->kind != 28)
     event->unkcad = 1;
   Event_NoOp();
-  Runtime_ReleaseHeapBlock(224);
+  HeapSlot_Release(224);
 }

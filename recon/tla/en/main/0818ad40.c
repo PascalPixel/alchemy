@@ -114,7 +114,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
@@ -125,11 +125,11 @@ void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
@@ -329,7 +329,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
     // The card, until its picture takes over.
     if (frame < (mode == CARD_SLEEP ? 120 : mode == CARD_SWORD ? 72 : 80)) {
-      vertices = Runtime_BumpAllocateAlternatePool(32);
+      vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       texture.logHeight = 6;
@@ -359,8 +359,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       Func_080151e4(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
-      MemFree(model);
-      MemFree(vertices);
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
 
     if (mode == CARD_BAFFLE) {
@@ -537,6 +537,6 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == CARD_BAFFLE)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

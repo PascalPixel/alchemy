@@ -52,7 +52,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -754,7 +754,7 @@ Func_02001620:
 	ldr r2, [r7, #12]
 	ldr r3, [r7, #16]
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	movs r0, #246
 	bl Func_02003ef4
@@ -850,7 +850,7 @@ Func_02001620:
 	ldr r1, [r2, #8]
 	lsls r0, r0, #2
 	ldr r2, [r2, #12]
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	movs r0, #195
 	bl Func_02003ef4
@@ -974,7 +974,7 @@ Func_02001620:
 	ldr r3, [r0, #16]
 	movs r0, #168
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	bl Random16Far
 	adds r3, r5, #0

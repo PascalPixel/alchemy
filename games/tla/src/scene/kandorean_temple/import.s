@@ -34,14 +34,14 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
@@ -137,11 +137,11 @@ FieldEvent_WaitFrames:
 	.global Func_020051c0
 	.thumb_func
 Func_020051c0:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020051c8
 	.thumb_func
 Func_020051c8:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -233,7 +233,7 @@ Object_SetPartAttribute:
 	.global Func_02005280
 	.thumb_func
 Func_02005280:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -245,7 +245,7 @@ Func_02005290:
 	.global Func_02005298
 	.thumb_func
 Func_02005298:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_020052a0
 	.thumb_func
 Func_020052a0:
@@ -293,7 +293,7 @@ Func_020052f0:
 	.global Func_020052f8
 	.thumb_func
 Func_020052f8:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02005300
 	.thumb_func
 Func_02005300:
@@ -353,7 +353,7 @@ Func_02005368:
 	.global Func_02005370
 	.thumb_func
 Func_02005370:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02005378
 	.thumb_func
 Func_02005378:

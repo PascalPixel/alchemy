@@ -899,9 +899,9 @@ Func_0815585c:
 	ldr r0, .L_08155f84
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #128
 	ldr r5, .L_08155f88
 	lsls r1, r1, #7

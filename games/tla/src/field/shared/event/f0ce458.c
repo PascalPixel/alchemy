@@ -20,13 +20,13 @@ struct PendingAction {
 };
 
 const struct PendingAction *BattleAction_Get(s32 action);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 GameFlag_IsConditionActive(s32 condition);
 
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
-  u32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->angle;
+  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
   s32 flags;
 
   if (selector == -1)

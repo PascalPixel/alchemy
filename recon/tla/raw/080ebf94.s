@@ -6,13 +6,13 @@ Func_080ebf94:
 	push {r5, r6, r7, lr}
 	movs r0, #32
 	sub sp, #20
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	ldr r7, .L_080ec128
 	adds r6, r0, #0
 	adds r1, r7, #0
 	adds r1, #32
 	str r1, [sp, #4]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl Object_GetById
 	movs r5, #0
 	str r5, [sp, #12]
@@ -96,7 +96,7 @@ Func_080ebf94:
 	cmp r2, #127
 	bls .L_080ec040
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #142
 	lsls r0, r0, #1
 	bl GameFlag_Test

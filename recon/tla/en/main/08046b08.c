@@ -210,7 +210,7 @@ extern struct SummaryResourceEntry gResourceTableEntries[];
 extern const u8 gResource_FixedBlockBTiles[];
 
 s32 Party_SumDjinnCountsFar(s32 member);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count);
 void BattleActor_CommitPlacementFar(void);
 s32 VramCache_AllocEntry(s32 size);
@@ -259,8 +259,8 @@ void Text_DrawNumberInWindow(s32 value, s32 digits,
                                struct SummaryWindow *window, s32 x, s32 y);
 s32 Unit_GetElementLevelFar(s32 member, s32 element);
 void Resource_LoadTableEntryToBuffer(s32 entry, s32 slot);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void Unit_CalculateFar(s32 member);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 void WaitFrames(s32 frames);
@@ -336,7 +336,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   hasDjinn = Party_SumDjinnCountsFar(-1);
   page = 0;
   figureShown = 0;
-  djinnList = Runtime_BumpAllocateAlternatePool(84 * sizeof(*djinnList));
+  djinnList = Heap_AllocEwram(84 * sizeof(*djinnList));
   itemCount = psynergyCount = djinnCount = 0;
   figureList[0] = shownMember = list[0];
   figureList[1] = 255;
@@ -1120,7 +1120,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     }
 
     if (page == 0) {
-      u16 *helpText = MemAlloc(128 * sizeof(*helpText));
+      u16 *helpText = Heap_Alloc(128 * sizeof(*helpText));
 
       if ((u32)cursor.helpEntry >= 14) {
         s32 statusKind = statusKinds[cursor.helpEntry - 14];
@@ -1132,7 +1132,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
         if (statusKind == 0 && unit->hp == 0)
           statusKind = 16;
-        savedUnit = MemAlloc(sizeof(*savedUnit));
+        savedUnit = Heap_Alloc(sizeof(*savedUnit));
         Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
         defenseDelta = unit->def;
@@ -1146,7 +1146,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
         Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
-        MemFree(savedUnit);
+        Heap_Release(savedUnit);
         switch (statusKind) {
         case 8:
           helpValue = unit->grimReaper;
@@ -1189,7 +1189,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
                                  128);
       }
       Text_DrawWideStringAtOffset(helpText, helpWindow, 0, 4);
-      MemFree(helpText);
+      Heap_Release(helpText);
     }
     redraw = 0;
     work->dirty = 1;
@@ -1254,6 +1254,6 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleActor_CommitPlacementFar();
   WaitFrames(1);
-  MemFree(djinnList);
+  Heap_Release(djinnList);
   return 0;
 }

@@ -775,7 +775,7 @@ BattleEffect_RunDaedalus:
 	b .L_0817eace
 .L_0817f04e:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #240
 	ldr r0, [sp, #144]
 	ldr r5, .L_0817f0b0
@@ -2723,7 +2723,7 @@ BattleEffect_RunDaedalus:
 	blt .L_0817ffcc
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2790,9 +2790,9 @@ BattleEffect_RunDaedalus:
 	bl Render_DrawModelList
 .L_0817ffc0:
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 .L_0817ffcc:
 	ldr r4, [sp, #140]
 	movs r7, #142
@@ -4418,9 +4418,9 @@ BattleEffect_RunDaedalus:
 	ldr r0, .L_08180c90
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #268
 	pop {r3, r5, r6, r7}

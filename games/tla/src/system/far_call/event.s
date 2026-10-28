@@ -8,15 +8,15 @@ ParentSequence_RunFar:
 	.global FieldEvent_WaitFramesFar
 	.thumb_func
 FieldEvent_WaitFramesFar:
-	overlay_veneer EventRuntime_Wait
-	.global EventRuntime_StartFar
+	overlay_veneer Event_WaitFrames
+	.global Event_StartFar
 	.thumb_func
-EventRuntime_StartFar:
-	overlay_veneer EventRuntime_Start
-	.global EventRuntime_EndFar
+Event_StartFar:
+	overlay_veneer Event_Start
+	.global Event_EndFar
 	.thumb_func
-EventRuntime_EndFar:
-	overlay_veneer EventRuntime_End
+Event_EndFar:
+	overlay_veneer Event_End
 	.global Event_RunObjectHookAndWaitFar
 	.thumb_func
 Event_RunObjectHookAndWaitFar:

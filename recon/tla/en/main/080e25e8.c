@@ -55,7 +55,7 @@ struct TouchCopies {
 
 extern struct TouchCopies gData_02001000;
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 struct ObjectRuntime *Object_GetById(u32 actor);
 void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
                    s32 fromZ);
@@ -65,7 +65,7 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
                    s16 originZ, s32 layerIndex) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 ownerHeight =
-      Object_GetById(EventRuntime_GetControlledOwner())->terrainHeight >> 20;
+      Object_GetById(Party_GetLeaderActor())->terrainHeight >> 20;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   struct TouchLayer *layer =
       &((struct TouchMap *)Ram_HeapSlots->mapWork)->layers[layerIndex];

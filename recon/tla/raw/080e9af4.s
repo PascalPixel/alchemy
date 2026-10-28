@@ -16,7 +16,7 @@ Func_080e9af4:
 	adds r1, #56
 	movs r0, #92
 	sub sp, #24
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #192
 	lsls r2, r2, #18
 	adds r3, r2, #0
@@ -212,7 +212,7 @@ Func_080e9af4:
 	movs r3, #26
 	ldrsh r2, [r0, r3]
 	ldr r0, [sp, #8]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080e9cb6:
 	movs r6, #128
 	lsls r6, r6, #5
@@ -239,7 +239,7 @@ Func_080e9af4:
 	ldrsh r0, [r3, r4]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	b .L_080e9d9a
 .L_080e9cf4:
 	movs r0, #85

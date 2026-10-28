@@ -405,7 +405,7 @@ Func_0811ea0c:
 	adds r0, r1, #0
 	bl Func_0811e830
 	ldr r0, [sp, #4]
-	bl MemFree
+	bl Heap_Release
 .L_0811ed5e:
 	bl BattleEventRuntime_WaitForReady
 	ldr r2, [sp, #12]

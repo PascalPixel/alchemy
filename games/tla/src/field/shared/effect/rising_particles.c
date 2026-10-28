@@ -23,8 +23,8 @@ struct RisingParticleWork {
   struct RisingParticle particles[64];
 };
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
@@ -40,7 +40,7 @@ extern const u8 gData_080f385e[];
 /// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
 /// schedules the update.
 void Func_080d6b90(void) {
-  struct RisingParticleWork *work = Runtime_AllocateBlock(116, 0x814);
+  struct RisingParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH: the register variable builds the fill word's zero in r2,
@@ -53,11 +53,11 @@ void Func_080d6b90(void) {
 
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
-  tiles = Runtime_AllocateBlock(56, 0x400);
+  tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
   work->vramEntry = Resource_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   for (i = 0; i < 64; i++, particle++) {
     u32 *sprite = particle->sprite;
     s32 x;

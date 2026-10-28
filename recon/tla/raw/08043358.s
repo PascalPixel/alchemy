@@ -10,7 +10,7 @@ Save_BuildFileSummary:
 	ldr r5, .L_080434d4
 	sub sp, #28
 	mov r8, r0
-	bl Runtime_GetBuildStampTimeFar
+	bl BuildStamp_GetTimeFar
 	ldr r2, .L_080434d8
 	ldr r3, .L_080434dc
 	str r0, [r2]

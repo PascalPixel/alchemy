@@ -6,14 +6,14 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Runtime_AllocateHeapBlockFar
+	.global HeapSlot_AllocFar
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
+HeapSlot_AllocFar:
 	overlay_veneer Func_08000140
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
@@ -93,11 +93,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001da0
 	.thumb_func
 Func_02001da0:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001da8
 	.thumb_func
 Func_02001da8:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -177,7 +177,7 @@ Object_SetPartAttribute:
 	.global Func_02001e48
 	.thumb_func
 Func_02001e48:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -189,7 +189,7 @@ Func_02001e58:
 	.global Func_02001e60
 	.thumb_func
 Func_02001e60:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -229,7 +229,7 @@ Func_02001ea8:
 	.global Func_02001eb0
 	.thumb_func
 Func_02001eb0:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02001eb8
 	.thumb_func
 Func_02001eb8:
@@ -257,7 +257,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001ee8
 	.thumb_func
 Func_02001ee8:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001ef0
 	.thumb_func
 Func_02001ef0:
@@ -269,7 +269,7 @@ Object_LinkObjectAndSetCallback:
 	.global Func_02001f00
 	.thumb_func
 Func_02001f00:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001f08
 	.thumb_func
 Func_02001f08:

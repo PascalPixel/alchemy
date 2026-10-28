@@ -228,7 +228,7 @@ BattleEffect_RunGround:
 	.2byte 0xf800
 .L_081589ae:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #216
 	movs r3, #20
 	lsls r1, r1, #7
@@ -473,7 +473,7 @@ BattleEffect_RunGround:
 	mov lr, r5
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #1
 	add r11, r0
 	mov r1, r11
@@ -619,7 +619,7 @@ BattleEffect_RunGround:
 	ldr r0, .L_08158cdc
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}

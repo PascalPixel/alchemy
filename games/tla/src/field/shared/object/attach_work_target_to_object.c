@@ -39,7 +39,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
 }
 
 void Camera_SetSpeedParameters(s32 first, s32 second) {
-  struct EventWork *work = Runtime_AllocateBlock(108, 0xd50);
+  struct EventWork *work = HeapSlot_AllocEwram(108, 0xd50);
 
   work->viewCenter->speedLimit = first;
   work->viewCenter->acceleration = second;

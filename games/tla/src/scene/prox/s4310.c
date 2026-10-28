@@ -8,7 +8,7 @@ struct SparkWork {
 
 void Task_RemoveFar(void (*callback)(void));
 void Resource_ResetEntry(s32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_02004114(void);
 
 void Func_02004310(void) {
@@ -16,5 +16,5 @@ void Func_02004310(void) {
 
   Task_RemoveFar(Func_02004114);
   Resource_ResetEntry(work->resource);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

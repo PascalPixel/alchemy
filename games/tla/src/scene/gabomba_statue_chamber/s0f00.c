@@ -1,8 +1,8 @@
 #include "gabomba_statue_chamber.h"
 
 extern struct GabombaStatueChamberObject *gData_02002058;
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Func_02001d90(s32 item);
 void Func_02000ef0();
@@ -28,10 +28,10 @@ void Func_02000f00(void) {
     object->update = Func_02000ef0;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    block = Runtime_AllocateHeapBlockFar(68, 0x608);
+    block = HeapSlot_AllocFar(68, 0x608);
     Func_02001d90(230);
     VramCache_Load(sprite->vramBlock, 128, block + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
   }
 }
 
@@ -56,9 +56,9 @@ void Func_02000f88(void) {
     object->update = Func_02000ef0;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    block = Runtime_AllocateHeapBlockFar(68, 0x608);
+    block = HeapSlot_AllocFar(68, 0x608);
     Func_02001d90(242);
     VramCache_Load(sprite->vramBlock, 128, block + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
   }
 }

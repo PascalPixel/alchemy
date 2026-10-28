@@ -585,7 +585,7 @@ Func_0200065c:
 	str r3, [r7, #52]
 	lsls r1, r1, #3
 	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	str r0, [sp, #4]
 	movs r0, #246
 	bl Func_020057d4
@@ -598,7 +598,7 @@ Func_0200065c:
 	str r2, [sp, #0]
 	bl VramCache_Load
 	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_020087f4:
 	movs r1, #1
 	movs r0, #37
@@ -7505,7 +7505,7 @@ Func_02004ec8:
 .L_0200d0a4:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -7525,7 +7525,7 @@ Func_02004ec8:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200d108

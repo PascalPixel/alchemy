@@ -5,7 +5,7 @@
 extern const u8 gData_020050f4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005014(s32 cue);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -31,7 +31,7 @@ s32 Func_020007f4(void) {
 loop:
   {
     struct ObjectRuntime *dust =
-        Engine_ObjectCreate(0x11d, source->x, source->y, source->z);
+        Import_ActorCreate(0x11d, source->x, source->y, source->z);
 
     if (dust != 0) {
       dust->motionFlags = 0;

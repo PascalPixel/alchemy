@@ -74,12 +74,12 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *eye, void *target);
 struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -240,7 +240,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       Render_ResetTransformState();
       gCameraSceneParameters[4] = 104;
       {
-        void *vertices = Runtime_BumpAllocateAlternatePool(32);
+        void *vertices = Heap_AllocEwram(32);
         struct RenderModel *model = Render_AllocateModelList(1);
 
         model->kind = 6;
@@ -264,8 +264,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);
         }
-        MemFree(model);
-        MemFree(vertices);
+        Heap_Release(model);
+        Heap_Release(vertices);
       }
       gCameraSceneParameters[3] = 120;
       gCameraSceneParameters[4] = 120;
@@ -275,6 +275,6 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

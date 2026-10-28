@@ -73,8 +73,8 @@ struct FxEvent {
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_InitializeSharedScene(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -105,13 +105,13 @@ void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e6400(void);
 void Func_080e716c(void);
 
 void Func_080e68d0(void) {
-  struct RiseWork *work = Runtime_AllocateHeapBlock(92, 0x193c);
+  struct RiseWork *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *caster = scene->mainObject;
   struct FxEvent *event = Ram_HeapSlots->eventWork;
@@ -355,10 +355,10 @@ void Func_080e68d0(void) {
         stage = 2;
       scene->stage = stage;
       scene->frame = i;
-      EventRuntime_RunPendingEvent(pending, stage, i);
+      Field_RunPsynergyEvent(pending, stage, i);
       i++;
     }
-    EventRuntime_RunPendingEvent(pending, 999, i);
+    Field_RunPsynergyEvent(pending, 999, i);
   }
   Task_Remove(Func_080e6400);
   Sound_PlayFar(114);
@@ -371,5 +371,5 @@ end:
   Object_Destroy(object);
   Object_Destroy(other);
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

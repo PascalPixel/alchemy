@@ -93,7 +93,7 @@ Func_081a15dc:
 	mov r9, r0
 	ldr r5, .L_081a17a8
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -114,7 +114,7 @@ Func_081a15dc:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r1, .L_081a17b0
 	ldr r0, .L_081a17b4
 	ldrh r3, [r0]

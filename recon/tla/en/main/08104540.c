@@ -60,8 +60,8 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
 void Window_CloseIfOpen(void *window, s32 mode);
 void Window_SetTilemapEntryFar(struct Window *window, s32 tile, s32 x,
                                  s32 y, s32 mode);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void MemFree(void *block);
+void *Heap_AllocEwram(s32 size);
+void Heap_Release(void *block);
 s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                   u16 *out, s32 *firstCount, s32 *secondCount);
 void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
@@ -112,13 +112,13 @@ s32 Func_08104540(void) {
   WaitFrames(1);
   counts = pageCounts;
   counts[1] = counts[0] = 1;
-  listedActions = Runtime_BumpAllocateAlternatePool(96);
-  saved = Runtime_BumpAllocateAlternatePool(332);
+  listedActions = Heap_AllocEwram(96);
+  saved = Heap_AllocEwram(332);
   unit = Unit_Get(menu->shownOwner[0]);
   counts[1] = counts[0] = Func_08101860(unit->actionSlots, unit->actionSlots,
                                         listedActions, &gained, &lost);
-  MemFree(saved);
-  MemFree(listedActions);
+  Heap_Release(saved);
+  Heap_Release(listedActions);
   counts[0] = (counts[0] - 1) / 6 + 1;
   if (counts[0] == 0)
     counts[0] = 1;

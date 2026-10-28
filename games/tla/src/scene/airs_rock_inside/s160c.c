@@ -4,7 +4,7 @@ s32 Random16Far(void);
 void Func_02001458(void);
 
 void Func_0200160c(s32 x, s32 y, s32 z) {
-  struct FieldActor *object = Engine_ObjectCreate(0x11d, x, y, z);
+  struct FieldActor *object = Import_ActorCreate(0x11d, x, y, z);
 
   Func_02005d5c(object, 1);
   ObjectDispatch_SetSingleChildFlags(object, 0);

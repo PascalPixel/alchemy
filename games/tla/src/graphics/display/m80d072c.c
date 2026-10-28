@@ -73,7 +73,7 @@ void ScreenTransition_Update(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_Update);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       window->extraTiles = 3;
       return;
     } else {
@@ -122,7 +122,7 @@ void ScreenTransition_UpdateFromCentre(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;

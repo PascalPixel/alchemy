@@ -47,7 +47,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
@@ -91,7 +91,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
     } while (entry->actor != 0xffff);
   }
   Func_080eaa14(list);
-  owner = Object_GetById(EventRuntime_GetControlledOwner());
+  owner = Object_GetById(Party_GetLeaderActor());
   if (Func_08020310(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
     owner->terrainHeight = owner->y =
         Map_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);

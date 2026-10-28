@@ -16,7 +16,7 @@
 
 extern const u16 Field_Palette685[];
 
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -31,7 +31,7 @@ void Func_0200362c(s32 cue);
 void Func_02003604(u8 *sprite);
 void Func_020034d4(s32 id, s32 x, s32 z);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 
 struct FlashSprite {
   u8 unk00[5];
@@ -42,7 +42,7 @@ struct FlashSprite {
 };
 
 void Func_020029f8(s32 id, s32 mode) {
-  u8 *work = Runtime_AllocateHeapBlockFar(220, 0x428);
+  u8 *work = HeapSlot_AllocFar(220, 0x428);
   struct ObjectRuntime *object = Object_GetById(id);
   s32 slot;
   s32 tile;
@@ -111,5 +111,5 @@ void Func_020029f8(s32 id, s32 mode) {
   }
   Func_020034d4(id, 0, 0);
   Resource_ResetEntry(slot);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
 }

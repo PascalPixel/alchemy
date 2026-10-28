@@ -4883,7 +4883,7 @@ Func_020051a0:
 	subs r3, #12
 	movs r0, #144
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r5, r0, #0
 	adds r1, r5, #0
 	ldr r0, .L_0200d514
@@ -4895,7 +4895,7 @@ Func_020051a0:
 	adds r2, r5, #0
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 .L_0200d26a:
 	ldr r3, [sp, #36]
 	adds r3, #218
@@ -5354,11 +5354,11 @@ Func_020055c4:
 	adds r1, #52
 	adds r6, r0, #0
 	movs r0, #236
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	adds r5, r0, #0
 	movs r0, #144
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r3, r5, #0
 	adds r3, #226
 	strh r6, [r3]
@@ -5420,7 +5420,7 @@ Func_020055c4:
 	ldr r0, .L_0200d684
 	bl Task_Add
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

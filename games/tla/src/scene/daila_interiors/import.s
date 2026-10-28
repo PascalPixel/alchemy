@@ -86,14 +86,14 @@ Func_02000d14:
 	.thumb_func
 FieldEvent_WaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Engine_EventStart
+	.global Import_EventStart
 	.thumb_func
-Engine_EventStart:
-	overlay_veneer EventRuntime_StartFar
-	.global Engine_EventEnd
+Import_EventStart:
+	overlay_veneer Event_StartFar
+	.global Import_EventEnd
 	.thumb_func
-Engine_EventEnd:
-	overlay_veneer EventRuntime_EndFar
+Import_EventEnd:
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -122,25 +122,25 @@ ObjectMotion_Launch:
 	.thumb_func
 ObjectMotion_SetAngleToward:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Engine_EventSetMessage
+	.global Import_EventSetMessageId
 	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer EventRuntime_SetMessageFar
+Import_EventSetMessageId:
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Engine_EventShowMessage
+	.global Import_EventShowMessageAndWait
 	.thumb_func
-Engine_EventShowMessage:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+Import_EventShowMessageAndWait:
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Engine_ActorSetSpritePriority
+	.global Import_ActorSetSpritePriority
 	.thumb_func
-Engine_ActorSetSpritePriority:
+Import_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000d94
 	.thumb_func
@@ -158,10 +158,10 @@ Func_02000da4:
 	.thumb_func
 Func_02000dac:
 	overlay_veneer Func_080c8480
-	.global Engine_EventResolvePendingActions
+	.global Import_EventResolvePendingActions
 	.thumb_func
-Engine_EventResolvePendingActions:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+Import_EventResolvePendingActions:
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
@@ -177,7 +177,7 @@ Func_02000dcc:
 	.global Func_02000dd4
 	.thumb_func
 Func_02000dd4:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02000ddc
 	.thumb_func
 Func_02000ddc:

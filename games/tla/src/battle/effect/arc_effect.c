@@ -15,7 +15,7 @@
 #include "arc_effect.h"
 
 void BattleEffect_StartArcEffect(void) {
-  struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));
+  struct ArcEffectWork *work = HeapSlot_Alloc(248, sizeof(*work));
 
   work->resource = Resource_FindFreeEntry();
   VramCache_Load(work->resource, 0x100, gBattleEffect_ArcTiles);
@@ -31,5 +31,5 @@ void BattleEffect_EndArcEffect(void) {
 
   Resource_ResetEntry(work->resource);
   Task_Remove((u32)BattleEffect_UpdateArcEffect);
-  Runtime_ReleaseHeapBlock(248);
+  HeapSlot_Release(248);
 }

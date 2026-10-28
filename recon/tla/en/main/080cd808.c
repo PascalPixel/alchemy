@@ -30,7 +30,7 @@ extern const u8 Data_080eff22[];
 extern char MsgSearchStart[];
 extern char MsgSearchEmpty[];
 extern char MsgButFoundNothing[];
-void EventRuntime_PrepareCurrentObject(void);
+void Leader_StopMoving(void);
 void FieldMessage_ShowFar(s32 message, s32 flags);
 struct SceneEvent *Func_080ccd78(s32 kind, s32 target);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -49,7 +49,7 @@ s32 Func_080cd808(s32 id) {
   if ((u32)index <= 5) {
     s32 message;
 
-    EventRuntime_PrepareCurrentObject();
+    Leader_StopMoving();
     message = Data_080eff22[index];
     FieldMessage_ShowFar(message + (s32)MsgSearchStart, 1);
     FieldMessage_ShowFar(message + (s32)MsgSearchEmpty, 1);
@@ -60,7 +60,7 @@ s32 Func_080cd808(s32 id) {
     condition = event->condition;
     kind = (event->flags >> 4) & 31;
     if (!(*(u16 *)&event->target & 0x400) && kind != 0) {
-      EventRuntime_PrepareCurrentObject();
+      Leader_StopMoving();
       FieldMessage_ShowFar(kind + (s32)MsgSearchStart, 1);
       GameFlag_SetBit(0x142);
     } else {

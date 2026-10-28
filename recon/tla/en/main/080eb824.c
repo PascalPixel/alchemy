@@ -28,8 +28,8 @@
 void Func_080eb824(void) {
   u8 *windowTiles = Ram_HeapSlots->windowTiles;
   struct CanvasSpriteWork *work =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
-  u8 *canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_CANVAS, CANVAS_SIZE);
+      HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
+  u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_SIZE);
   u16 *map;
   s32 y;
   s32 x;
@@ -49,7 +49,7 @@ void Func_080eb824(void) {
           0x84000000 | CANVAS_SIZE / 4, REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
-  map = Runtime_AllocateBlock(HEAP_SLOT_CANVAS_MAP,
+  map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,
                               CANVAS_WIDTH * CANVAS_WIDTH * sizeof(u16));
   for (y = 0; y < CANVAS_WIDTH; y++) {
     for (x = 0; x < CANVAS_WIDTH; x++)

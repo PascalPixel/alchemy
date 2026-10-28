@@ -74,7 +74,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   struct UiSprite *sprite;
   s32 selected;
 
-  buffer = Runtime_AllocateBlock(56, 0x400);
+  buffer = HeapSlot_AllocEwram(56, 0x400);
   changed = 1;
   maximum -= minimum;
   result = -1;
@@ -137,6 +137,6 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
       Window_CloseFar(window, 2);
     }
   }
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   return result;
 }

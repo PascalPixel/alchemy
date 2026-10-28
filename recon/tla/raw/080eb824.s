@@ -13,14 +13,14 @@ Func_080eb824:
 	movs r1, #196
 	movs r0, #240
 	ldr r5, [r3, #60]
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #128
 	lsls r2, r2, #5
 	mov r8, r2
 	adds r7, r0, #0
 	mov r1, r8
 	movs r0, #96
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	mov r10, r0
 	ldr r6, .L_080eb8ac
 	movs r1, #196
@@ -89,7 +89,7 @@ Func_080eb824:
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r0, #180
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r6, #0
 	movs r7, #7
 .L_080eb8d8:

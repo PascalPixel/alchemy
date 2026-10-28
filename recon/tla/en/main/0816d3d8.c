@@ -255,6 +255,6 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
   ObjectDispatch_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

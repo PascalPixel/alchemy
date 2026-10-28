@@ -85,7 +85,7 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
         z < REGION_FIXED(maxZ)) {
       runtime->countdown = (u16)selectedValue;
       Sound_PlayFar(123);
-      EventRuntime_PrepareCurrentObject();
+      Leader_StopMoving();
       return;
     }
     runtime = Ram_HeapSlots->eventWork;

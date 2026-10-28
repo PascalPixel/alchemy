@@ -29,7 +29,7 @@ extern const u8 Data_080b1f2c[4][5];
 void Func_080af7ac(void);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
-u32 Runtime_GetBuildStampTime(void);
+u32 BuildStamp_GetTime(void);
 u32 Random16(void);
 
 /// Starts a new game's state: clears the adventure, the work block, the
@@ -88,7 +88,7 @@ void Func_080addf0(void) {
   gAdventure.paletteGlow[0] = 0;
   gAdventure.paletteGlow[1] = 8;
   *(u32 *)gAdventure.unk000 = 0;
-  *(u32 *)((u8 *)&gAdventure + 0x2d8) = Runtime_GetBuildStampTime();
+  *(u32 *)((u8 *)&gAdventure + 0x2d8) = BuildStamp_GetTime();
   gFrameWaitCount = 0;
   gAutoSleepEnabled = 0;
   gAdventure.playTime = 0;

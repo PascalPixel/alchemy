@@ -42,7 +42,7 @@ Func_0200057c:
 	movs r0, #208
 	lsls r0, r0, #3
 	sub sp, #72
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r1, #128
 	lsls r1, r1, #19
 	ldrh r2, [r1]
@@ -76,7 +76,7 @@ Func_0200057c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r3, .L_02008658
 	movs r2, #133
 	lsls r2, r2, #2
@@ -117,7 +117,7 @@ Func_0200057c:
 	subs r3, #12
 	movs r0, #144
 	lsls r0, r0, #2
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	ldr r0, .L_02008664
 	bl Resource_GetTableEntry
@@ -192,9 +192,9 @@ Func_0200057c:
 	cmp r7, #18
 	bne .L_02008694
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #246
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl Object_GetById
 	movs r3, #9
@@ -233,7 +233,7 @@ Func_0200057c:
 	ldr r2, [r5, #12]
 	ldr r1, [r6, #8]
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	movs r0, #14
 	bl Object_GetById
@@ -274,10 +274,10 @@ Func_0200057c:
 	str r3, [r5, #48]
 	adds r0, r5, #0
 	movs r1, #7
-	bl Engine_ObjectSetMode
+	bl Import_ActorSetMode
 	adds r0, r5, #0
 	ldr r1, .L_0200883c
-	bl Engine_ObjectSetScript
+	bl Import_ActorSetScript
 	adds r0, r5, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildFlags
@@ -319,7 +319,7 @@ Func_0200057c:
 	ldr r0, .L_02008848
 	bl Task_Add
 	movs r0, #207
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	ldr r3, .L_02008824
 	movs r2, #128
 	lsls r2, r2, #19
@@ -746,7 +746,7 @@ Func_0200057c:
 	bl Func_02004864
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Engine_AudioPlayCue
+	bl Import_SoundPlay
 	movs r0, #14
 	bl Object_GetById
 	movs r3, #6

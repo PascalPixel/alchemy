@@ -24,11 +24,11 @@ void Func_02000270(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(1, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsSouthRoadDanger);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -41,11 +41,11 @@ void Func_020002d0(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(2, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsNewTravelers);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsNewTravelers);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -58,11 +58,11 @@ void Func_02000330(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Func_02000dec(0, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsDinnerChoice);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsDinnerChoice);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -75,39 +75,39 @@ void Func_02000390(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     if (GameFlag_Test(0x847) == 0) {
-      Engine_EventStart();
-      Engine_EventResolvePendingActions(0);
+      Import_EventStart();
+      Import_EventResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
-      Engine_EventSetMessage(msg);
+      Import_EventSetMessageId(msg);
       FieldMessage_ShowAtActor(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
         FieldEvent_WaitFrames(10);
-        Engine_EventSetMessage(msg + 1);
+        Import_EventSetMessageId(msg + 1);
       } else {
         FieldEvent_WaitFrames(20);
-        Engine_EventSetMessage(msg + 2);
+        Import_EventSetMessageId(msg + 2);
       }
-      Engine_EventShowMessage(actor, 0);
-      Engine_EventEnd();
+      Import_EventShowMessageAndWait(actor, 0);
+      Import_EventEnd();
       GameFlag_SetBit(0x847);
     } else {
       Func_02000de4(actor);
     }
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
-    Engine_EventSetMessage(msg);
+    Import_EventSetMessageId(msg);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
       FieldEvent_WaitFrames(10);
-      Engine_EventSetMessage(msg + 1);
+      Import_EventSetMessageId(msg + 1);
     } else {
       FieldEvent_WaitFrames(20);
-      Engine_EventSetMessage(msg + 2);
+      Import_EventSetMessageId(msg + 2);
     }
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
     GameFlag_SetBit(0x847);
   }
 }
@@ -121,11 +121,11 @@ void Func_02000498(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000de4(actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsLeaveForMadra);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -138,11 +138,11 @@ void Func_020004f4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(1, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsPirateTreasure);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsPirateTreasure);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -155,11 +155,11 @@ void Func_02000554(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(2, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsSpaciousVillage);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
@@ -172,60 +172,60 @@ void Func_020005b4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Func_02000dec(0, actor);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaInteriorsFishermenWaiting);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
+    Import_EventShowMessageAndWait(actor, 0);
+    Import_EventEnd();
   }
 }
 
 void Func_02000614(void) {
   s32 msg;
 
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsGoingToMadra;
-  Engine_EventSetMessage(msg);
+  Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
     FieldEvent_WaitFrames(10);
-    Engine_EventSetMessage(msg + 1);
+    Import_EventSetMessageId(msg + 1);
   } else {
     FieldEvent_WaitFrames(20);
-    Engine_EventSetMessage(msg + 2);
+    Import_EventSetMessageId(msg + 2);
   }
-  Engine_EventShowMessage(12, 0);
-  Engine_EventEnd();
+  Import_EventShowMessageAndWait(12, 0);
+  Import_EventEnd();
 }
 
 void Func_0200066c(void) {
   s32 msg;
 
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsLookingForBoat;
-  Engine_EventSetMessage(msg);
+  Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
     FieldEvent_WaitFrames(10);
-    Engine_EventSetMessage(msg + 1);
+    Import_EventSetMessageId(msg + 1);
   } else {
     FieldEvent_WaitFrames(20);
-    Engine_EventSetMessage(msg + 2);
+    Import_EventSetMessageId(msg + 2);
   }
-  Engine_EventShowMessage(14, 0);
-  Engine_EventEnd();
+  Import_EventShowMessageAndWait(14, 0);
+  Import_EventEnd();
 }
 
 void Func_020006c4(void) {
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_EventSetMessage((s32)MsgDailaInteriorsWatchingPractice);
-  Engine_EventShowMessage(26, 0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_EventSetMessageId((s32)MsgDailaInteriorsWatchingPractice);
+  Import_EventShowMessageAndWait(26, 0);
   FieldEvent_WaitFrames(30);
   Object_SetModeById(26, 3);
   FieldEvent_WaitFrames(30);
-  Engine_EventShowMessage(26, 0);
-  Engine_EventEnd();
+  Import_EventShowMessageAndWait(26, 0);
+  Import_EventEnd();
 }

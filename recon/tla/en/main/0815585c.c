@@ -114,7 +114,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 
 // The opening every Djinn effect shares: sparks gather from around the
 // caster, spin about a point travelling from the caster to the anchor, and
@@ -431,8 +431,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   ClearWords_((void *)0x06004000, 0x4000);
   ClearWords_(canvas, 0x4000);
   REG_BLDALPHA = 0x1010;

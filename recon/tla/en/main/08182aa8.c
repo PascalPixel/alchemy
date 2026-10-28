@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -153,7 +153,7 @@ void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void Func_08164b2c(s32 r, s32 g, s32 b);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)[16]].tile)
 #define HALF_HI(v) (((s16 *)&(v))[1])
@@ -676,7 +676,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    verts = Runtime_BumpAllocateAlternatePool(512);
+    verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     model->texture = &texture;
@@ -940,8 +940,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model);
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
     }
     work->transferPending = 1;
@@ -1011,7 +1011,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    verts = Runtime_BumpAllocateAlternatePool(512);
+    verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
     model->texture = &texture2;
     texture2.logWidth = 7;
@@ -1044,13 +1044,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

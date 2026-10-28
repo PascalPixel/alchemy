@@ -60,19 +60,19 @@ s32 DailaInteriors_Start(void) {
       Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
       Object_GetById(13)->priorityFlags |= 32;
       Object_GetById(19)->priorityFlags |= 32;
-      Engine_ActorSetSpritePriority(19, 2);
+      Import_ActorSetSpritePriority(19, 2);
       Object_GetById(19)->collisionFlags |= 4;
     }
   } else if (gAdventure.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
     Func_02000dac(0);
     if (!GameFlag_Test(0xa20)) {
       Func_02000cbc(Object_GetById(9), 458);
       ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
-      Engine_ActorSetSpritePriority(9, 1);
+      Import_ActorSetSpritePriority(9, 1);
       Object_GetById(9)->speed1c = 0x13333;
       Object_GetById(9)->speed18 = 0x13333;
       Object_GetById(9)->collisionFlags |= 4;
@@ -89,7 +89,7 @@ s32 DailaInteriors_Start(void) {
     } else {
       Func_02000dc4(gData_02000e04);
     }
-    Engine_EventEnd();
+    Import_EventEnd();
   }
   return 0;
 }

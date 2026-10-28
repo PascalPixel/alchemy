@@ -471,7 +471,7 @@ BattleEffect_RunTargetMotes:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	add r9, r3
 	mov r4, r9
@@ -766,9 +766,9 @@ BattleEffect_RunTargetMotes:
 	b .L_0814ac50
 .L_0814adfa:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [sp, #16]
 	ldr r0, [sp, #64]
 	adds r3, #16

@@ -16,13 +16,13 @@
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
-  void *stagingBuffer = Runtime_AllocateBlock(56, 0x400);
+  void *stagingBuffer = HeapSlot_AllocEwram(56, 0x400);
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
   if (resourceIndex <= 0x5F) {
     Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
     VramCache_Load(resourceIndex, 0x200, stagingBuffer);
-    Runtime_ReleaseHeapBlock(56);
+    HeapSlot_Release(56);
   }
 }
 

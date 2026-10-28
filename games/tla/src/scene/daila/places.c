@@ -15,14 +15,14 @@ static inline void CenterAndWalk(s32 actor, s32 priority, s32 dz) {
   /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameter
    * keeps the native order (direct: -6 is negated before the priority is
    * loaded, 2 differ) */
-  Engine_ActorCenterAndWalk(actor, priority, dz);
+  Import_ActorCenterAndWalk(actor, priority, dz);
 }
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
   /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameter
    * keeps the native order (direct: 0x300 is shifted before the actor is
    * loaded, 2 differ) */
-  Engine_ActorReturnHome(mode, actor, flag);
+  Import_ActorReturnHome(mode, actor, flag);
 }
 
 s32 *Func_02000044(void) {
@@ -42,19 +42,19 @@ s32 *Func_02000070(void) {
 void Func_0200009c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
-  Engine_ActorSetSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
-  Engine_ActorSetSpritePriority(gAdventure.currentOwner, 2);
-  Engine_ActorGet(gAdventure.currentOwner)->motionFlags = 0;
-  Engine_AudioPlayCue(123);
-  Engine_ActorSetAnimation(gAdventure.currentOwner, 2);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
+  Import_ActorSetSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
+  Import_ActorSetSpritePriority(gAdventure.currentOwner, 2);
+  Import_ActorGet(gAdventure.currentOwner)->motionFlags = 0;
+  Import_SoundPlay(123);
+  Import_ActorSetAnimation(gAdventure.currentOwner, 2);
   CenterAndWalk(gAdventure.currentOwner, 2, -6);
-  Engine_EventWait(10);
-  Engine_EventSetCountdown(work->exit);
-  Engine_EventCloseScreen();
-  Engine_EventWaitDelay();
-  Engine_EventEnd();
+  Import_EventWaitFrames(10);
+  Import_EventSetExitRequest(work->exit);
+  Import_EventFinishScreenTransition();
+  Import_EventWaitTransitionFrames();
+  Import_EventEnd();
 }
 
 void Func_02000118(s32 mode) { ReturnHome(mode, 66, 0x300); }

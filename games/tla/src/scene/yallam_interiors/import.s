@@ -45,11 +45,11 @@ FieldEvent_WaitFrames:
 	.global Func_020009b0
 	.thumb_func
 Func_020009b0:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020009b8
 	.thumb_func
 Func_020009b8:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -97,7 +97,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000a18
 	.thumb_func
 Func_02000a18:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -105,7 +105,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02000a28
 	.thumb_func
 Func_02000a28:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -125,11 +125,11 @@ Func_02000a48:
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02000a58
 	.thumb_func
 Func_02000a58:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02000a60
 	.thumb_func
 Func_02000a60:

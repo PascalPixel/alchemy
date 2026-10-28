@@ -27,7 +27,7 @@ void Func_080405ac(void) {
 }
 
 void Func_080405dc(void) {
-  void *work = Runtime_AllocateBlock(208, 0x628);
+  void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(Func_080405ac, TASK_PASS_VBLANK);
@@ -35,5 +35,5 @@ void Func_080405dc(void) {
 
 void Func_08040614(void) {
   Task_Remove(Func_080405ac);
-  Runtime_ReleaseHeapBlock(208);
+  HeapSlot_Release(208);
 }

@@ -6,36 +6,36 @@
 void Daila_TalkHip(void) {
   s32 msg;
 
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   msg = (s32)MsgDailaHurtHip;
-  Engine_EventSetMessage(msg);
-  Engine_EventOpenMessage(12, 0);
-  if (Engine_EventChooseYesNo(Engine_PartyGetLeaderActor(), 0) == 0) {
-    Engine_EventWait(10);
-    Engine_EventSetMessage(msg + 1);
+  Import_EventSetMessageId(msg);
+  Import_FieldMessageShowAtActor(12, 0);
+  if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
+    Import_EventWaitFrames(10);
+    Import_EventSetMessageId(msg + 1);
   } else {
-    Engine_EventWait(20);
-    Engine_EventSetMessage(msg + 2);
+    Import_EventWaitFrames(20);
+    Import_EventSetMessageId(msg + 2);
   }
-  Engine_EventShowMessage(12, 0);
-  Engine_EventEnd();
+  Import_EventShowMessageAndWait(12, 0);
+  Import_EventEnd();
 }
 
 void Func_02000340(s32 keeper) {
-  u16 facing = Engine_ActorGet(gAdventure.currentOwner)->facing;
+  u16 facing = Import_ActorGet(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
    * facing before it builds the quadrant offset (2 differ without it). */
   do {
   } while (0);
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Engine_ShopOpen(3, keeper);
+    Import_ShopOpen(3, keeper);
   } else {
-    Engine_EventStart();
-    Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDailaTaviRikiHome);
-    Engine_EventShowMessage(keeper, 0);
-    Engine_EventEnd();
+    Import_EventStart();
+    Import_EventResolvePendingActions(0);
+    Import_EventSetMessageId((s32)MsgDailaTaviRikiHome);
+    Import_EventShowMessageAndWait(keeper, 0);
+    Import_EventEnd();
   }
 }

@@ -90,7 +90,7 @@ extern struct BgScrollPair gBgScroll[];
 extern u8 gAdventure[];
 
 s32 VramCache_AllocEntry(s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Party_CountActiveOwnersFar(void);
 s32 *Djinn_GetRecoveryTableFar(s32 kind);
@@ -98,7 +98,7 @@ void Func_08118130(s32 kind, u8 *counts);
 void Func_080456f8(struct CommandRowWork *work, s32 index, s32 kind);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_SetIrqHandler(s32 irq, s32 line, void (*handler)(void));
+void Irq_SetHandler(s32 irq, s32 line, void (*handler)(void));
 void Graphics_SetBg1Priority3(void);
 void Func_08045780(void);
 void WindowSprite_PrepareForRedraw(void *window);
@@ -113,7 +113,7 @@ void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 resource);
-void MemFree(void *block);
+void Heap_Release(void *block);
 
 s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   u8 party[4];
@@ -136,7 +136,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   iconSlot = VramCache_AllocEntry(0x400);
   tradeCount = 0;
   stripDirty = 1;
-  selectionUi = Runtime_BumpAllocateAlternatePool(sizeof(*selectionUi));
+  selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   for (i = 255; i >= 0; i--)
     selectionUi->paletteSlots[i] = 255;
   selectionUi->paletteCount = 1;
@@ -198,7 +198,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     selectionUi->entries[entryIndex].positionY = 136;
   }
   Task_Add(Graphics_SetBg1Priority3, 0xc80);
-  Runtime_SetIrqHandler(2, 136, Func_08045780);
+  Irq_SetHandler(2, 136, Func_08045780);
 
   for (;;) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
@@ -411,9 +411,9 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   work->dirty = 1;
   WaitFrames(1);
   Task_Remove(Graphics_SetBg1Priority3);
-  Runtime_SetIrqHandler(2, 0, 0);
+  Irq_SetHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
-  MemFree(selectionUi);
+  Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   WaitFrames(1);
   return command;

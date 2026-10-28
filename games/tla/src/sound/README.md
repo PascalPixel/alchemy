@@ -33,7 +33,7 @@ Functions take their ☀️ twins' names, which ☀️'s guides explain: the
 driver's routines pret's MusicPlayer2000 names (`m4aSongNumStart`, `MPlayMain`,
 `ply_note`), the sound layer `Sound_`. A few copies The Lost Age keeps beside
 the driver still carry older prefixes (`MusicTrack_`, `Audio_`, `Pcm_`) with
-their own suffixes, and `LzPack_` and `Runtime_` remain. Only `SoundFlag_`,
+their own suffixes, and `LzPack_` remains. Only `SoundFlag_`,
 setting, clearing and testing a sound's flags, and
 `Sound_SetFixedSampleFreq`, a fixed-rate variant of `SampleFreqSet`, are
 The Lost Age's own so far.

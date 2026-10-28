@@ -69,9 +69,9 @@ s32 Func_080f94a4(void) {
   s32 result;
   s32 size;
 
-  screen = Runtime_AllocateHeapBlock(220, 0xcec);
+  screen = HeapSlot_Alloc(220, 0xcec);
   size = 0x2000;
-  backup = Runtime_BumpAllocateAlternatePool(size);
+  backup = Heap_AllocEwram(size);
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -102,13 +102,13 @@ s32 Func_080f94a4(void) {
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   Menu_ResetTwoResourceEntries();
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
   Func_08038290();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)0x06004000, backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
-  MemFree(backup);
+  Heap_Release(backup);
   WaitFrames(1);
   Menu_ResumeFieldTasks();
   WaitFrames(1);

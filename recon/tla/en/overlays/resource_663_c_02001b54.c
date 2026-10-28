@@ -52,7 +52,7 @@ void Func_02001b54(struct ObjectRuntime *object) {
           object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
       pos->z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
     }
-    shot = (struct ObjectRuntime *)Engine_ObjectCreate(280, pos->x,
+    shot = (struct ObjectRuntime *)Import_ActorCreate(280, pos->x,
                                                        object->y, pos->z);
     Func_02003b28(shot, 2);
     ObjectDispatch_SetSingleChildFlags(shot, 0);

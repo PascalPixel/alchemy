@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                   s32 direction) {
   s32 index;
 

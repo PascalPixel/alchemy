@@ -193,7 +193,7 @@ void FieldEffect_RunFrost(void) {
     target->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleMain;
     ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
     if (ev != NULL)
-      EventRuntime_RunPendingEvent(ev, scene->firstObjectId,
+      Field_RunPsynergyEvent(ev, scene->firstObjectId,
                                    scene->secondObjectId);
     WaitFrames(20);
   }

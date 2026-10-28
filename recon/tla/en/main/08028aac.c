@@ -65,7 +65,7 @@ extern const s32 gData_0802ec94[];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802dbd0(struct ObjectRuntime *object, struct FieldPosition *position);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 void ObjectDispatch_SetChildByteValue(struct ObjectRuntime *object, s32 value);
@@ -201,7 +201,7 @@ check_objects:
   for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object &&
-        Runtime_CheckRadiusOverlap(&other->x, other->radius, &position.x,
+        Field_CheckSpheresOverlap(&other->x, other->radius, &position.x,
                                    object->radius) >= 0)
       collision |= 2;
   }

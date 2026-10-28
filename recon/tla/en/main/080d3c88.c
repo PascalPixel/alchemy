@@ -94,14 +94,14 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       }
     } else if (localId <= 7) {
       sprite = localId;
-      object = ObjectTable_Get(EventRuntime_GetControlledOwner());
+      object = ObjectTable_Get(Party_GetLeaderActor());
       if (work->controlMode == 3) {
         Render_ProjectPoint((u8 *)object + 8, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (Func_080d5bec(EventRuntime_GetControlledOwner(), pos) != -1)
+        if (Func_080d5bec(Party_GetLeaderActor(), pos) != -1)
           found = 1;
         else
           found = 0;

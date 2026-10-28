@@ -56,11 +56,11 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 buffer;
   u8 *allocation;
 
-  allocation = Runtime_AllocateBlock(0x44, 0x608);
+  allocation = HeapSlot_AllocEwram(0x44, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
   buffer = VramCache_Reload(slot, (s32)(allocation + 0x400));
-  Runtime_ReleaseHeapBlock(0x44);
+  HeapSlot_Release(0x44);
   return buffer;
 }
 

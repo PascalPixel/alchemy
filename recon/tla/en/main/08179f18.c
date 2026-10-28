@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -161,7 +161,7 @@ void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815f0a0(s32 palette);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -611,7 +611,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     if (frame == 114) {
       Sound_PlayFar(212);
     }
-    verts = Runtime_BumpAllocateAlternatePool(512);
+    verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
@@ -643,8 +643,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         }
       }
     }
-    MemFree(model);
-    MemFree(verts);
+    Heap_Release(model);
+    Heap_Release(verts);
     Render_ResetTransformState();
     SceneTransform_ApplyPitch(0x9400);
     SceneTransform_ApplyYaw(0x6800);
@@ -705,7 +705,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         blit2(canvas, sprites + gData_08197410[size - 1], out.x + 48 - size / 2,
               out.y + 92 - size, size, size * 2);
       }
-      Runtime_ReleaseHeapBlock(SLOT_ALT);
+      HeapSlot_Release(SLOT_ALT);
     }
     if ((u32)(frame - 186) <= 79) {
       s32 v = frame - 186;
@@ -890,6 +890,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

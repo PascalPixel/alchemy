@@ -9,7 +9,7 @@ Func_080ec1d0:
 	push {r6, r7}
 	mov r10, r1
 	mov r8, r0
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	movs r7, #143
 	movs r3, #192
 	lsls r3, r3, #18

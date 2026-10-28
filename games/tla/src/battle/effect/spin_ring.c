@@ -5,12 +5,12 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
-void EventRuntime_Start(void);
-void EventRuntime_ResolvePendingActions(s32 skip);
-void EventRuntime_StartScreen(void);
-void EventRuntime_WaitDelay(void);
+void Event_Start(void);
+void Event_ResolvePendingActions(s32 skip);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
-void EventRuntime_Wait(s32 frames);
+void Event_WaitFrames(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
 void BattleEffect_SpinObject(void);
 
@@ -28,11 +28,11 @@ void Func_080e37e0(s32 actor) {
 
   object->update = BattleEffect_SpinObject;
   object->scaleX = 0;
-  EventRuntime_Start();
-  EventRuntime_ResolvePendingActions(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   ObjectDispatch_SetSingleChildFlagsFar(Object_GetById(actor), 0);
-  EventRuntime_StartScreen();
-  EventRuntime_WaitDelay();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   ring = Object_Spawn(280, object->x, object->y, object->z);
   Object_SetMode(ring, 2);
   ring->scaleX = 0x8000;
@@ -56,7 +56,7 @@ void Func_080e37e0(s32 actor) {
     WaitFrames(1);
   }
   ObjectDispatch_SetSingleChildFlagsFar(Object_GetById(actor), 1);
-  EventRuntime_Wait(10);
+  Event_WaitFrames(10);
   Object_Destroy(ring);
   object->update = NULL;
   object->angle = angle;

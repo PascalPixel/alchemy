@@ -106,14 +106,14 @@ void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *Heap_AllocEwram(s32 size);
+void HeapSlot_Release(s32 slot);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -195,7 +195,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
       if (cel > 2)
         cel = (cel & 1) + 1;
       if (frame < BURST_DRAW_FRAMES) {
-        vertices = Runtime_BumpAllocateAlternatePool(32);
+        vertices = Heap_AllocEwram(32);
         quad = Render_AllocateModelList(1);
         texture.size = (texture.size & ~0xff) | 6;
         texture.size = (texture.size & ~0xff00) | 6 << 8;
@@ -210,8 +210,8 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
         Func_0801521c(gData_081994d0[mode] << 1);
         Render_TransformVertices(gData_081991f0, vertices, 4);
         Render_DrawModelList(quad);
-        MemFree(quad);
-        MemFree(vertices);
+        Heap_Release(quad);
+        Heap_Release(vertices);
       }
     }
 
@@ -225,6 +225,6 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

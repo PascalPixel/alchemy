@@ -96,7 +96,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   if (decodePicture == NULL) {
     Dma_Set(
         Render_DecodePictureCode,
-        Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
+        HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
         0x84000000 |
             ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
@@ -205,7 +205,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   } else if (obj->dirty != 0) {
     drawCount = -1;
     size = obj->width * obj->height;
-    pixels = MemAlloc(size);
+    pixels = Heap_Alloc(size);
     Iwram_ClearWords(pixels, size);
 
     for (i = obj->count - 1; i >= 0; i--) {
@@ -244,11 +244,11 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         Resource_DecodeType01(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
         if (layer->param != 0) {
-          unpacked = MemAlloc(0x400);
+          unpacked = Heap_Alloc(0x400);
           decodePicture(
               Resource_DecompressLz(layer->pictures[layer->picture], unpacked),
               pixels, layer->param);
-          MemFree(unpacked);
+          Heap_Release(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
           if (decoded != 0)
@@ -262,11 +262,11 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     if (obj->flags & 14) {
       if (obj->flags & 2) {
         u32 codeSize = (u32)Data_08021824Size;
-        OutlineFn outline = MemAlloc(codeSize);
+        OutlineFn outline = Heap_Alloc(codeSize);
 
         Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
         outline(obj->width, obj->height, pixels, system->edge, system->fill);
-        MemFree(outline);
+        Heap_Release(outline);
       }
       if (obj->flags & 8) {
         s32 rows = obj->depth;
@@ -310,10 +310,10 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     obj->tile = tile;
     obj->dirty = 0;
     system->used += size;
-    MemFree(pixels);
+    Heap_Release(pixels);
   }
 
   if (decoderWasLoaded == 0)
-    Runtime_ReleaseHeapBlock(80);
+    HeapSlot_Release(80);
   return mirrored;
 }

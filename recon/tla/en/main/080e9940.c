@@ -47,7 +47,7 @@ struct GlowEvent {
 
 extern u32 gFrameCount;
 
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
@@ -63,7 +63,7 @@ void Camera_WorldToScreen(s32 *position);
 void Func_080e9940(void) {
   struct GlowWork *work = Ram_HeapSlots->battleFxWork[0];
   struct ObjectRuntime *player =
-      ObjectTable_Get(EventRuntime_GetControlledOwner());
+      ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   u16 *palette;
   s32 position[3];

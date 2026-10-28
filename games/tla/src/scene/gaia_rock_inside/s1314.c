@@ -7,7 +7,7 @@
        ->v)
 
 #include "call.h"
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 s32 Object_SetPartAttribute();
 s32 Object_SetSpritePriority();
 s32 Func_02004d9c();
@@ -19,7 +19,7 @@ extern u8 gData_02005208[];
 void Func_02001314(s32 a0) {
   s32 t0;
 
-  t0 = Value4(Engine_ObjectCreate, 0x2a0, FIELD_AT(a0, s32, 8),
+  t0 = Value4(Import_ActorCreate, 0x2a0, FIELD_AT(a0, s32, 8),
               FIELD_AT(a0, s32, 12), FIELD_AT(a0, s32, 16));
   FIELD_AT(t0, s32, 28) = 0x6666;
   FIELD_AT(t0, s32, 24) = 0x6666;

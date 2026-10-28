@@ -8,7 +8,7 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -21,7 +21,7 @@ void Func_02004eb0(void) {
   struct FieldSprite *sprite;
 
 loop:
-  object = Engine_ObjectCreate(672, 0, 0, 0);
+  object = Import_ActorCreate(672, 0, 0, 0);
   sprite = object->animation;
   sprite->priority = 1;
   ((u8 *)object)[0x63] = i << 4;

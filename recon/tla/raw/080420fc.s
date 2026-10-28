@@ -13,7 +13,7 @@ Text_DrawStringAtOffset:
 	mov r10, r2
 	mov r8, r3
 	adds r7, r1, #0
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r6, r0, #0
@@ -67,7 +67,7 @@ Text_DrawStringAtOffset:
 .L_08042174:
 	bl Text_DrawStringAsTiles
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_0804217e:
 	pop {r3, r5}
 	mov r8, r3

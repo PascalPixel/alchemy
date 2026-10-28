@@ -35,7 +35,7 @@ void BattleEffect_InitializeSlots(void) {
   void *work;
 
   work =
-      Runtime_AllocateHeapBlock(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene));
+      HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
   Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
@@ -53,7 +53,7 @@ void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
     if (slot->active != 0)
       BattleEffect_ClearOwnedSlot(slot);
   }
-  Runtime_ReleaseHeapBlock(BATTLE_EFFECT_SLOT);
+  HeapSlot_Release(BATTLE_EFFECT_SLOT);
   WaitFrames(1);
 }
 

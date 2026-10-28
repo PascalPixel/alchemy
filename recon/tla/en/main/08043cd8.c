@@ -23,9 +23,9 @@
 #include "dma.h"
 #include "io_reg.h"
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-u32 Runtime_GetBuildStampTimeFar(void);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
+u32 BuildStamp_GetTimeFar(void);
 void PaletteGlow_Start(void);
 void PaletteGlow_Stop(void);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
@@ -82,13 +82,13 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   s32 i;
   s32 y;
 
-  spriteWork = Runtime_AllocateHeapBlock(220, 0xcec);
+  spriteWork = HeapSlot_Alloc(220, 0xcec);
   save = Ram_HeapSlots->serialWork;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
   summaryDirty = 1;
-  buildStamp = Runtime_GetBuildStampTimeFar();
+  buildStamp = BuildStamp_GetTimeFar();
   if (selectedFile < 0)
     selectedFile = 0;
   if (menuMode == 1) {
@@ -276,7 +276,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   Window_Close(summaryWindow, 2);
   Window_Close(fileList, 2);
   PaletteGlow_Stop();
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
   Func_0803f9c0(gAdventure.unk220[5], gAdventure.unk220[6]);
   WaitFrames(1);
 done:

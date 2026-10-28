@@ -46,7 +46,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = Runtime_AllocateHeapBlock(56, 0x400);
+  decodedTile = HeapSlot_Alloc(56, 0x400);
   if (tileOffsets[tile] != 0)
     Resource_DecodeByteLzInRam((u8 *)tileOffsets + tileOffsets[tile],
                                decodedTile);
@@ -79,6 +79,6 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       screenTiles += 48;
     }
   }
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   return 1;
 }

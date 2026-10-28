@@ -57,46 +57,46 @@ Math_CosineFar:
 	.thumb_func
 Func_08000128:
 	overlay_veneer Vector_AddPolarOffset
-	.global Runtime_SetIrqHandlerFar
+	.global Irq_SetHandlerFar
 	.thumb_func
-Runtime_SetIrqHandlerFar:
-	overlay_veneer Runtime_SetIrqHandler
-	.global Runtime_InitializeHeapFar
+Irq_SetHandlerFar:
+	overlay_veneer Irq_SetHandler
+	.global Heap_InitializeFar
 	.thumb_func
-Runtime_InitializeHeapFar:
-	overlay_veneer Runtime_InitializeHeap
+Heap_InitializeFar:
+	overlay_veneer Heap_Initialize
 	.global Func_08000140
 	.thumb_func
 Func_08000140:
-	overlay_veneer Runtime_AllocateHeapBlock
-	.global Runtime_AllocateBlockFar
+	overlay_veneer HeapSlot_Alloc
+	.global HeapSlot_AllocEwramFar
 	.thumb_func
-Runtime_AllocateBlockFar:
-	overlay_veneer Runtime_AllocateBlock
-	.global Runtime_ReleaseHeapBlockFar
+HeapSlot_AllocEwramFar:
+	overlay_veneer HeapSlot_AllocEwram
+	.global HeapSlot_ReleaseFar
 	.thumb_func
-Runtime_ReleaseHeapBlockFar:
-	overlay_veneer Runtime_ReleaseHeapBlock
-	.global Runtime_GetRemainingIwramFar
+HeapSlot_ReleaseFar:
+	overlay_veneer HeapSlot_Release
+	.global Heap_GetRemainingIwramFar
 	.thumb_func
-Runtime_GetRemainingIwramFar:
-	overlay_veneer Runtime_GetRemainingIwram
-	.global Runtime_GetRemainingEwramFar
+Heap_GetRemainingIwramFar:
+	overlay_veneer Heap_GetRemainingIwram
+	.global Heap_GetRemainingEwramFar
 	.thumb_func
-Runtime_GetRemainingEwramFar:
-	overlay_veneer Runtime_GetRemainingEwram
-	.global Runtime_BumpAllocateFar
+Heap_GetRemainingEwramFar:
+	overlay_veneer Heap_GetRemainingEwram
+	.global Heap_AllocFar
 	.thumb_func
-Runtime_BumpAllocateFar:
-	overlay_veneer MemAlloc
-	.global Runtime_BumpAllocateAlternatePoolFar
+Heap_AllocFar:
+	overlay_veneer Heap_Alloc
+	.global Heap_AllocEwramFar
 	.thumb_func
-Runtime_BumpAllocateAlternatePoolFar:
-	overlay_veneer Runtime_BumpAllocateAlternatePool
+Heap_AllocEwramFar:
+	overlay_veneer Heap_AllocEwram
 	.global Sys_FreeFar
 	.thumb_func
 Sys_FreeFar:
-	overlay_veneer MemFree
+	overlay_veneer Heap_Release
 	.global DebugText_PrintFar
 	.thumb_func
 DebugText_PrintFar:
@@ -229,10 +229,10 @@ Projection_SetFar:
 	.thumb_func
 Func_08000280:
 	overlay_veneer Func_080132d0
-	.global Runtime_ConstantZeroResultFar
+	.global System_ReturnZeroFar
 	.thumb_func
-Runtime_ConstantZeroResultFar:
-	overlay_veneer Runtime_ConstantZeroResult
+System_ReturnZeroFar:
+	overlay_veneer System_ReturnZero
 	.global Resource_GetTableEntryFar
 	.thumb_func
 Resource_GetTableEntryFar:

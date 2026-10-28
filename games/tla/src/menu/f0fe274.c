@@ -33,8 +33,8 @@ void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Func_080fe49c(void);
 void WindowSprite_ClearListFar(void *window);
 void ItemMenu_Close(void);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void MemFree(void *block);
+void *Heap_AllocEwram(s32 size);
+void Heap_Release(void *block);
 void Menu_SuspendFieldTasks(void);
 void Menu_ResumeFieldTasks(void);
 void Palette_LightenHighlight(s32 paletteNumber);
@@ -59,9 +59,9 @@ static __inline__ void CopyWords_(void *destination, const void *source,
 
 s32 Func_080fe274(void) {
   struct OwnerMenuState *state =
-      (struct OwnerMenuState *)Runtime_AllocateHeapBlock(220, 0x0cec);
-  void *palette = Runtime_BumpAllocateAlternatePool(64);
-  void *tiles = Runtime_BumpAllocateAlternatePool(0x2800);
+      (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
+  void *palette = Heap_AllocEwram(64);
+  void *tiles = Heap_AllocEwram(0x2800);
   s32 result = -1;
   struct HeapSlots *heap;
   struct ScreenTransitionState *transition;
@@ -110,12 +110,12 @@ s32 Func_080fe274(void) {
   Text_UseExtraTilesFar(0);
   CopyWords_((void *)0x05000000, palette, 64);
   CopyWords_((void *)0x06004000, tiles, 0x2800);
-  MemFree(tiles);
-  MemFree(palette);
+  Heap_Release(tiles);
+  Heap_Release(palette);
   ((struct WindowWork *)heap->windowTiles)->menuBusy = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  Runtime_ReleaseHeapBlock(220);
+  HeapSlot_Release(220);
   heap->objectSystem->suspended = 0;
   transition->active = saved;
   WaitFrames(1);

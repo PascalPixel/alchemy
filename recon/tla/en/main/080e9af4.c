@@ -65,11 +65,11 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 s32 Resource_ResetEntry(u32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
 
 void Func_080e9af4(void) {
-  struct GlowWork *work = Runtime_AllocateHeapBlock(92, 0x1038);
+  struct GlowWork *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *player = scene->mainObject;
@@ -134,7 +134,7 @@ void Func_080e9af4(void) {
     }
     WaitFrames(10);
     if (pending != NULL)
-      EventRuntime_RunPendingEvent(pending, scene->unk18, scene->unk1a);
+      Field_RunPsynergyEvent(pending, scene->unk18, scene->unk1a);
     for (i = 31; i != 0; i--) {
       work->scale = i << 11;
       WaitFrames(1);
@@ -142,7 +142,7 @@ void Func_080e9af4(void) {
     WaitFrames(5);
     Task_Remove(Func_080e9940);
     Resource_ResetEntry(work->resource);
-    Runtime_ReleaseHeapBlock(92);
+    HeapSlot_Release(92);
   } else {
     player->motionFlags = 0;
     player->y = player->terrainHeight;

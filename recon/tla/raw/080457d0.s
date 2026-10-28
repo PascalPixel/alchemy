@@ -29,7 +29,7 @@ Func_080457d0:
 	adds r5, #228
 	lsls r0, r0, #1
 	ldr r5, [r5]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	mov r3, r9
 	movs r2, #255
@@ -353,7 +353,7 @@ Func_080457d0:
 	ldr r2, .L_08045b00
 	movs r0, #2
 	movs r1, #136
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	movs r0, #216
 	movs r2, #224
 	lsls r0, r0, #1
@@ -1198,7 +1198,7 @@ Func_080457d0:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Runtime_SetIrqHandler
+	bl Irq_SetHandler
 	ldr r1, .L_0804612c
 	ldr r0, .L_08046130
 	ldrh r3, [r0]
@@ -1227,7 +1227,7 @@ Func_080457d0:
 .L_08046102:
 	strh r4, [r0]
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	ldr r6, [sp, #48]
 	movs r3, #0
 	strb r3, [r6, #6]

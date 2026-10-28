@@ -38,7 +38,7 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
   u8 *input;
 
   input = text;
-  buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  buffer = Heap_AllocEwram(0x200);
   output = buffer;
   if (*input != 0) {
     do {
@@ -49,7 +49,7 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
   }
   *output = 0;
   Text_DrawWideString(buffer, arg1, arg2, arg3);
-  Runtime_ReleaseAlternatePool(buffer);
+  Heap_ReleaseAlternatePool(buffer);
 }
 
 void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
@@ -63,7 +63,7 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   s32 dst;
   s32 phase;
 
-  buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  buffer = Heap_AllocEwram(0x200);
   base = (u8 *)Ram_HeapSlots->windowTiles;
   output = buffer;
   if (*text != 0) {
@@ -84,12 +84,12 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
     src = (s32)base + cell + 8;
     phase = offsetX & 7;
     Text_DrawTileRow(buffer, src, dst, phase);
-    Runtime_ReleaseAlternatePool(buffer);
+    Heap_ReleaseAlternatePool(buffer);
   }
 }
 
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
-  u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
   while (*text != 0) {
@@ -101,7 +101,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   y >>= 3;
   Text_DrawWideStringInWindow(buffer, arg1, x, y);
-  Runtime_ReleaseAlternatePool(buffer);
+  Heap_ReleaseAlternatePool(buffer);
 }
 
 void Text_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {

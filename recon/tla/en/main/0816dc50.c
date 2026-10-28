@@ -74,12 +74,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -271,7 +271,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       }
     }
 
-    vertices = Runtime_BumpAllocateAlternatePool(0x400);
+    vertices = Heap_AllocEwram(0x400);
     model = Render_AllocateModelList(1);
     savedScrollX = gCameraSceneParameters[3];
     savedScrollY = gCameraSceneParameters[4];
@@ -502,8 +502,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         Transform_Pop();
       }
     }
-    MemFree(model);
-    MemFree(vertices);
+    Heap_Release(model);
+    Heap_Release(vertices);
     gCameraSceneParameters[3] = savedScrollX;
     gCameraSceneParameters[4] = savedScrollY;
     Func_08158ce0(8, 8);
@@ -512,7 +512,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

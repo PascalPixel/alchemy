@@ -308,8 +308,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -31,7 +31,7 @@ struct TouchCell {
 
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
 s32 Func_080ce458(u32 type, s32 kind, s32 id);
-void EventRuntime_RunPendingEvent(s32 event, s32 argument0, s32 argument1);
+void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1);
 
 void Func_080e249c(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
@@ -71,6 +71,6 @@ void Func_080e249c(void) {
     s32 event = Func_080ce458(0x50000005, work->kind, ids[i]);
 
     if (event != 0)
-      EventRuntime_RunPendingEvent(event, work->argument0, work->argument1);
+      Field_RunPsynergyEvent(event, work->argument0, work->argument1);
   }
 }

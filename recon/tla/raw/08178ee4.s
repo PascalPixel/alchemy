@@ -566,9 +566,9 @@ BattleEffect_RunHeartbreak:
 	movs r0, #1
 	bl BattleBackground_LoadFar
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #36
 	pop {r3, r5, r6, r7}

@@ -495,7 +495,7 @@ BattleEffect_RunDeathPlunge:
 	bne .L_08188bca
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -583,9 +583,9 @@ BattleEffect_RunDeathPlunge:
 	bne .L_08188b6c
 .L_08188bbe:
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_08188bca:
 	ldr r5, [sp, #44]
 	cmp r5, #64
@@ -676,7 +676,7 @@ BattleEffect_RunDeathPlunge:
 	ldr r0, .L_08188cac
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}

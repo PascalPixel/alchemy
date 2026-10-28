@@ -35,7 +35,7 @@ BattlePresentation_AppendLinkedActions:
 	lsls r3, r3, #2
 	movs r0, #40
 	str r3, [sp, #12]
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	ldr r3, [r7]
 	add r5, sp, #16
 	mov r10, r5
@@ -172,7 +172,7 @@ BattlePresentation_AppendLinkedActions:
 	bne .L_0811d550
 .L_0811d562:
 	ldr r0, [r5]
-	bl MemFree
+	bl Heap_Release
 	mov r1, r8
 	ldr r0, [r1]
 	b .L_0811d592
@@ -189,7 +189,7 @@ BattlePresentation_AppendLinkedActions:
 	bl BattleLink_ResetTransferState
 	bl Serial_RemoveIrqHandlers
 	ldr r0, [r5]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #1
 	negs r0, r0
 .L_0811d592:

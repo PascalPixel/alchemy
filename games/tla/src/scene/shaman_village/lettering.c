@@ -31,7 +31,7 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
 /// has a palette of its own and graphic 4's tiles.
 void Func_02002fb0(s32 graphic) {
   u8 *buffer =
-      Runtime_BumpAllocateAlternatePool((224 + LETTERING_PALETTE_ROWS) * 32);
+      Heap_AllocEwram((224 + LETTERING_PALETTE_ROWS) * 32);
   s32 palette;
 
   if (gData_02005158[0] == -1)
@@ -47,5 +47,5 @@ void Func_02002fb0(s32 graphic) {
       (u8 *)((graphic << 10) + (s32)buffer + 32 * LETTERING_PALETTE_ROWS));
   while ((s32)((struct DmaRegisters volatile *)REG_DMA3)->control < 0)
     ;
-  MemFree(buffer);
+  Heap_Release(buffer);
 }

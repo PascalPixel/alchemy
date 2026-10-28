@@ -21,6 +21,6 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
     Object_SetPartAttribute(obj, 0);
 
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(138);
+    Import_SoundPlay(138);
   return 0;
 }

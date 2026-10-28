@@ -36,8 +36,8 @@ struct GrabEventWork {
   s16 phase;
 };
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
@@ -74,7 +74,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void Camera_FollowActor(s32 actor, s32 mode);
 
 void Func_080e4a34(void) {
-  u8 *work = Runtime_AllocateHeapBlock(92, 0x192c);
+  u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
   struct GrabEventWork *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *owner;
@@ -189,7 +189,7 @@ void Func_080e4a34(void) {
   Resource_ResetEntry(particleEntry);
   BattleEffect_PrepareBufferInterpolation();
 end:
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
   if (event->standing != 0)
     Func_080e4730();
 }

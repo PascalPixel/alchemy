@@ -26,14 +26,14 @@ void ObjectSystem_Configure(s32 mode) {
   volatile u32 zero;
 
   if (mode == 3) {
-    sprites = Runtime_AllocateBlock(16, ANIMATION_OBJECT_COUNT *
+    sprites = HeapSlot_AllocEwram(16, ANIMATION_OBJECT_COUNT *
                                             sizeof(struct AnimationObject));
-    layers = Runtime_AllocateBlock(12, ANIMATION_OBJECT_COUNT *
+    layers = HeapSlot_AllocEwram(12, ANIMATION_OBJECT_COUNT *
                                            sizeof(struct AnimationEntry));
   } else {
-    sprites = Runtime_AllocateHeapBlock(16, ANIMATION_OBJECT_COUNT *
+    sprites = HeapSlot_Alloc(16, ANIMATION_OBJECT_COUNT *
                                                 sizeof(struct AnimationObject));
-    layers = Runtime_AllocateHeapBlock(12, ANIMATION_OBJECT_COUNT *
+    layers = HeapSlot_Alloc(12, ANIMATION_OBJECT_COUNT *
                                                sizeof(struct AnimationEntry));
   }
   Palette_LoadBasicObjColors();
@@ -45,7 +45,7 @@ void ObjectSystem_Configure(s32 mode) {
   {
     u32 size = (u32)Render_CopyStridedCodeSize;
 
-    Dma_Set(Render_CopyStridedCode, Runtime_AllocateHeapBlock(84, size),
+    Dma_Set(Render_CopyStridedCode, HeapSlot_Alloc(84, size),
             (DMA_ENABLE | DMA_32BIT) << 16 | (size >> 2), REG_DMA3);
   }
 }

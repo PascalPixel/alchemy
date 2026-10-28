@@ -658,7 +658,7 @@ BattleEffect_RunFume:
 	bl Render_DrawModelList
 .L_0817cbce:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 .L_0817cbd4:
 	bl ObjectGroup_CountDownMemberTimers
 	ldr r2, [sp, #80]
@@ -684,7 +684,7 @@ BattleEffect_RunFume:
 	b .L_0817c78e
 .L_0817cc06:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0817cc2c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

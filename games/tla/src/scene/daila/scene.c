@@ -41,26 +41,26 @@ s32 Func_02000ac8(void) {
     Func_02000d68(12, 0);
   else if (gAdventure.scene == (s32)&SceneId_Daila2)
     Func_02000d50(gData_02000d80);
-  Engine_ActorSetSpritePriority(21, 1);
+  Import_ActorSetSpritePriority(21, 1);
   if (gAdventure.scene == (s32)&SceneId_Daila2 &&
-      Engine_GameFlagIsSet(0x300) == 0)
+      Import_GameFlagIsSet(0x300) == 0)
     Object_SetWideSprite(66, 0);
   return 0;
 }
 
 s32 Func_02000b44(void) {
   if (gAdventure.scene == (s32)&SceneId_Daila2) {
-    if (Engine_GameFlagIsSet(0x210))
+    if (Import_GameFlagIsSet(0x210))
       MapCopyAttr(10, 19, 1, 1, 11, 19);
-    if (Engine_GameFlagIsSet(0x211))
+    if (Import_GameFlagIsSet(0x211))
       MapCopyAttr(25, 20, 1, 1, 26, 20);
-    if (Engine_GameFlagIsSet(0x212))
+    if (Import_GameFlagIsSet(0x212))
       MapCopyAttr(28, 23, 1, 1, 29, 23);
-    if (Engine_GameFlagIsSet(0x213))
+    if (Import_GameFlagIsSet(0x213))
       MapCopyAttr(17, 11, 1, 1, 18, 11);
-    if (Engine_GameFlagIsSet(0x214))
+    if (Import_GameFlagIsSet(0x214))
       MapCopyAttr(30, 17, 1, 1, 31, 17);
-    if (Engine_GameFlagIsSet(0x215))
+    if (Import_GameFlagIsSet(0x215))
       MapCopyAttr(16, 23, 1, 1, 17, 23);
   }
   return 0;

@@ -21,7 +21,7 @@ Func_080cb2b8:
 	mov r8, r1
 	mov r9, r0
 	str r3, [sp, #20]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	str r0, [sp, #16]
 	bl Func_080cb8e8
 	movs r1, #0

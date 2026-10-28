@@ -142,7 +142,7 @@ Func_020031a8:
 	.global Func_020031b0
 	.thumb_func
 Func_020031b0:
-	overlay_veneer Runtime_CheckRadiusOverlapFar
+	overlay_veneer Field_CheckSpheresOverlapFar
 	.endif
 	.global Func_020031b8
 	.thumb_func
@@ -167,11 +167,11 @@ FieldEvent_WaitFrames:
 	.global Func_020031e0
 	.thumb_func
 Func_020031e0:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020031e8
 	.thumb_func
 Func_020031e8:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -211,7 +211,7 @@ Func_02003230:
 	.global Func_02003238
 	.thumb_func
 Func_02003238:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02003240
 	.thumb_func
 Func_02003240:
@@ -247,7 +247,7 @@ Func_02003278:
 	.global Func_02003280
 	.thumb_func
 Func_02003280:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02003288
 	.thumb_func
 Func_02003288:
@@ -259,7 +259,7 @@ Func_02003290:
 	.global Func_02003298
 	.thumb_func
 Func_02003298:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_020032a0
 	.thumb_func
 Func_020032a0:

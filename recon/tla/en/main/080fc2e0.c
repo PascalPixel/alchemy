@@ -65,7 +65,7 @@ s32 Func_080fc2e0(s32 unused) {
 
   Func_080fae8c(menu->paneOwner[1], SelectedTargetSlot(menu), 0,
                 menu->paneOwner[1]);
-  saved = MemAlloc(332);
+  saved = Heap_Alloc(332);
   Iwram_CopyWords(saved, unit, 332);
   window = menu->messageWindow;
   if ((u32)(Inventory_EquipFar(menu->paneOwner[1], SelectedTargetSlot(menu)) +
@@ -111,7 +111,7 @@ s32 Func_080fc2e0(s32 unused) {
     selection = 1;
   if (selection == 1)
     Iwram_CopyWords(unit, saved, 332);
-  MemFree(saved);
+  Heap_Release(saved);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   Unit_CalculateFar(menu->paneOwner[1]);
   return selection;

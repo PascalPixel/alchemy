@@ -15,9 +15,9 @@ Func_080e7238:
 	adds r1, #144
 	movs r0, #92
 	sub sp, #32
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	str r0, [sp, #16]
-	bl EventRuntime_GetControlledOwner
+	bl Party_GetLeaderActor
 	bl ObjectTable_Get
 	mov r8, r0
 	ldr r0, .L_080e74d0
@@ -318,7 +318,7 @@ Func_080e7238:
 	ldr r0, [sp, #8]
 	bl Resource_ResetEntry
 	movs r0, #92
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Func_080dc954
 	add sp, #32
 	pop {r3, r5, r6, r7}

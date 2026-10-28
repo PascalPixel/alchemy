@@ -43,8 +43,8 @@ extern u8 MsgHowMany[];
 extern u8 MsgItemName[];
 extern const u8 gMenu_QuantityTiles[];
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void ItemMenu_SetMessageWindowHeight7(void);
 void WindowSprite_RedrawSavedRectFar(void *window);
 void WindowSprite_ClearListFar(void *window);
@@ -68,7 +68,7 @@ void WaitFrames(s32 frames);
 s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
   s32 value = base;
   struct QuantityMenu *menu = Ram_HeapSlots->menuRuntime;
-  u8 *tiles = Runtime_AllocateBlock(56, 0x400);
+  u8 *tiles = HeapSlot_AllocEwram(56, 0x400);
   s32 entry;
   s32 changed = 1;
   s32 targetCount = 0;
@@ -141,7 +141,7 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
   }
   WindowSprite_RedrawSavedRectFar(window);
   WindowSprite_ClearListFar(window);
-  Runtime_ReleaseHeapBlock(56);
+  HeapSlot_Release(56);
   menu->selectedItemIcon->state = 13;
   if (GameFlag_Test(0x150))
     value = -1;

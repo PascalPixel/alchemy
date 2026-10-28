@@ -52,7 +52,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -470,7 +470,7 @@ Func_020007f4:
 	ldr r2, [r7, #12]
 	ldr r3, [r7, #16]
 	adds r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_02008894
@@ -1299,7 +1299,7 @@ Func_020015d0:
 	ldr r2, [r7, #12]
 	ldr r3, [r7, #16]
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	movs r0, #246
 	bl Func_02005014
@@ -1395,7 +1395,7 @@ Func_020015d0:
 	ldr r1, [r2, #8]
 	lsls r0, r0, #2
 	ldr r2, [r2, #12]
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	movs r0, #195
 	bl Func_02005014
@@ -1519,7 +1519,7 @@ Func_020015d0:
 	ldr r3, [r0, #16]
 	movs r0, #168
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	bl Random16Far
 	adds r3, r5, #0
@@ -4300,7 +4300,7 @@ Func_02002f64:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #1
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_ja_0200be7c
@@ -6669,7 +6669,7 @@ Func_02002f64:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #1
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0200c070
@@ -7276,7 +7276,7 @@ Func_020044f8:
 .L_0200c534:
 	movs r0, #196
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r1, #196
 	adds r5, r0, #0
 	lsls r1, r1, #4
@@ -7691,7 +7691,7 @@ Func_020044f8:
 	movs r3, #1
 	str r3, [r1]
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #252
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
@@ -7920,7 +7920,7 @@ Func_02004af0:
 	ldr r1, [r5, #8]
 	ldr r3, [r5, #16]
 	movs r0, #255
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_0200cbcc

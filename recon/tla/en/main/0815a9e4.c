@@ -132,7 +132,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Task_Add(s32 (*callback)(void), s32 order);
 s32 Task_Remove(s32 (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
@@ -471,8 +471,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
   for (i = 0; i != ROCK_COUNT; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();

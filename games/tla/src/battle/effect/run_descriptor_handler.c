@@ -23,7 +23,7 @@ struct TouchWork {
 };
 
 struct TouchEvent *Func_080ccd78(s32 kind, s32 target);
-void EventRuntime_RunMessage(s32 actor, s32 message);
+void Event_RunMessage(s32 actor, s32 message);
 void Sound_PlayFar(s32 cue);
 void ObjectEffect_StartContextEffect25(void);
 void ObjectEffect_StartContextEffect26(void);
@@ -38,7 +38,7 @@ s32 Scene_RunRaisedEvent(s32 id) {
 
     if (handler != 0) {
       if (handler < 0x10000)
-        EventRuntime_RunMessage(-1, handler);
+        Event_RunMessage(-1, handler);
       else
         ((void (*)(s32))handler)(id);
       result = 0;
@@ -63,7 +63,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
     if (event->flags & 0x200)
       work->blockedSteps = 0;
     if (event->u.result < 0x10000) {
-      EventRuntime_RunMessage(handled, event->u.result);
+      Event_RunMessage(handled, event->u.result);
       handled = 0;
     } else {
       ((void (*)(s32))event->u.result)(value);

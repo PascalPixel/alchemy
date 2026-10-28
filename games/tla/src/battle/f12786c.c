@@ -41,7 +41,7 @@ s32 Func_0812786c(s32 owner, s32 levels) {
   s32 floor;
   s32 i;
 
-  base = Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
+  base = Heap_AllocEwram(sizeof(struct OwnerStats));
   state = Unit_Get(owner);
   stats = &state->stats;
   Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
@@ -114,5 +114,5 @@ s32 Func_0812786c(s32 owner, s32 levels) {
 
   state->level += levels;
   Unit_CalculateFar(owner);
-  MemFree(base);
+  Heap_Release(base);
 }

@@ -25,7 +25,7 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 parameter) {
 
 struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z,
                                                  s32 kind) {
-  struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+  struct FieldActor *object = Import_ActorCreate(kind, x, y, z);
 
   if (object != 0) {
     Object_SetSpritePriority(object, 0);
@@ -38,7 +38,7 @@ struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z,
 
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
                                                             s32 kind) {
-  struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+  struct FieldActor *object = Import_ActorCreate(kind, x, y, z);
 
   if (object != 0) {
     Object_SetSpritePriority(object, 1);

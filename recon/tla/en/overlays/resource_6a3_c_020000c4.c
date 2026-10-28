@@ -13,7 +13,7 @@
 // loop, the counter outranks the map buffer and takes r5); set there, CSE
 // stores the fill word from it, where the native loads its halfword 0 from the
 // pool (38). Tried: the 0 at each statement from the start to the second
-// MemAlloc (38 to 76), permute 8 minutes.
+// Heap_Alloc (38 to 76), permute 8 minutes.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -24,8 +24,8 @@ extern char ResourceId_LightningTiles;
 extern char ResourceId_LightningMap;
 extern s16 gBgScroll[];
 
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200468c(void *resource, void *destination);
 void Func_02004924(s32 a, s32 b);
@@ -67,13 +67,13 @@ void Func_020000c4(void) {
   gCpuLoadDisplayEnabled = 0;
   REG_DISPCNT &= ~0x100;
   Io_Write16(0x400, &REG_BG0CNT);
-  tiles = MemAlloc(0x800);
+  tiles = Heap_Alloc(0x800);
   Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningTiles), tiles);
   Dma_Set(tiles, (void *)(0x06000000), 0x84000200, REG_DMA3);
   i = 0;
-  MemFree(tiles);
+  Heap_Release(tiles);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
-  buffer = MemAlloc(128);
+  buffer = Heap_Alloc(128);
   Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   p = buffer;
 mask:
@@ -89,7 +89,7 @@ copy:
   p += 4;
   if (i != 16)
     goto copy;
-  MemFree(buffer);
+  Heap_Release(buffer);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
   gBgScroll[0] = -104;

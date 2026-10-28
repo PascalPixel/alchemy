@@ -478,7 +478,7 @@ BattleEffect_RunDiamondBerg:
 .L_0816c024:
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #8]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -679,9 +679,9 @@ BattleEffect_RunDiamondBerg:
 	cmp r4, #8
 	bne .L_0816c12a
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #8]
-	bl MemFree
+	bl Heap_Release
 	b .L_0816c224
 .L_0816c1dc:
 	.4byte IwramFillWords
@@ -743,7 +743,7 @@ BattleEffect_RunDiamondBerg:
 	ldr r0, .L_0816c270
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}

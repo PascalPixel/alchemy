@@ -1970,7 +1970,7 @@ Func_020017a8:
 	adds r1, #20
 	movs r0, #220
 	str r2, [sp, #8]
-	bl Runtime_AllocateHeapBlockFar
+	bl HeapSlot_AllocFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2288,7 +2288,7 @@ Func_020017a8:
 	ldr r0, [sp, #4]
 	bl Resource_ResetEntry
 	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	add sp, #12
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2779,7 +2779,7 @@ Func_0200216c:
 .L_0200a348:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -2799,7 +2799,7 @@ Func_0200216c:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a3ac

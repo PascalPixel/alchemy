@@ -30,13 +30,13 @@ struct ClimbSprite {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void EventRuntime_Start(void);
-void EventRuntime_End(void);
-void EventRuntime_Wait(s32 frames);
+void Event_Start(void);
+void Event_End(void);
+void Event_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_08020258(s32 *position);
-s32 Runtime_CheckRadiusOverlapFar(s32 *position, s32 radius, s32 *other,
+s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
                                   s32 otherRadius);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
@@ -54,7 +54,7 @@ s32 Func_080d53b8(void) {
   s32 position[3];
   s32 result;
 
-  EventRuntime_Start();
+  Event_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
   if (gAdventure.renderMode == 0) {
@@ -116,7 +116,7 @@ s32 Func_080d53b8(void) {
     for (; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
-          Runtime_CheckRadiusOverlapFar(&entry->x, radius, position,
+          Field_CheckSpheresOverlapFar(&entry->x, radius, position,
                                         entry->radius - 2) >= 0)
         goto failure;
     }
@@ -131,16 +131,16 @@ s32 Func_080d53b8(void) {
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
-    EventRuntime_Wait(4);
+    Event_WaitFrames(4);
     gAdventure.renderMode = 0;
     leader->actionFlags = 1;
     leader->action = 0;
     leader->unk66 = 0;
   }
-  EventRuntime_End();
+  Event_End();
   return 0;
 
 failure:
-  EventRuntime_End();
+  Event_End();
   return -1;
 }

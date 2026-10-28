@@ -60,8 +60,8 @@ struct FxScene {
 extern const u8 Data_080f3984[];
 extern char ResourceId_Explosion, ResourceId_GlowDisc;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Camera_WorldToScreen(s32 *position);
 s32 Func_080db9a8(struct ObjectRuntime *object, s32 facing);
@@ -80,13 +80,13 @@ void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e4d9c(void);
 
 void Func_080e572c(void) {
   struct GlowWork *work =
-      Runtime_AllocateHeapBlock(92, sizeof(struct GlowWork));
+      HeapSlot_Alloc(92, sizeof(struct GlowWork));
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
@@ -180,7 +180,7 @@ void Func_080e572c(void) {
     WaitFrames(1);
     if (work->phase == 999)
       frame = 999;
-    EventRuntime_RunPendingEvent(pending, work->shake, frame);
+    Field_RunPsynergyEvent(pending, work->shake, frame);
     frame++;
   }
   Task_Remove(Func_080e4d9c);
@@ -188,5 +188,5 @@ void Func_080e572c(void) {
   Resource_ResetEntry(burstEntry);
   BattleEffect_PrepareBufferInterpolation();
   BattleEffect_EndCanvasSprite();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

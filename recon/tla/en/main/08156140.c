@@ -136,7 +136,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 s32 Task_Add(s32 (*callback)(void), s32 order);
 s32 Task_Remove(s32 (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -481,7 +481,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame <= 3)
           draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
         draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
-        Runtime_ReleaseHeapBlock(188);
+        HeapSlot_Release(188);
       }
 
       // The shots.
@@ -624,14 +624,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
                            pos->y - Data_08198475[kind], 32,
                            Data_08198475[kind]);
-            Runtime_ReleaseHeapBlock(188);
+            HeapSlot_Release(188);
             if (effect->side == 1)
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
             else
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
                            32, Data_08198475[kind]);
-            Runtime_ReleaseHeapBlock(188);
+            HeapSlot_Release(188);
           } else if (mode == 1) {
             if (ABS(shot->x) <= ABS(target->x))
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
@@ -683,26 +683,26 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->x - Data_081984d7[step],
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
-              Runtime_ReleaseHeapBlock(188);
+              HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
                   flash->y + Data_081984e5[step] - Data_081984ec[step],
                   Data_081984d7[step], Data_081984de[step]);
-              Runtime_ReleaseHeapBlock(188);
+              HeapSlot_Release(188);
             } else {
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
               DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step] + 0x128a,
                              flash->x - Data_081984ec[step],
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
-              Runtime_ReleaseHeapBlock(188);
+              HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,
                   flash->x + Data_081984e5[step] - Data_081984ec[step],
                   flash->y, Data_081984de[step], Data_081984d7[step]);
-              Runtime_ReleaseHeapBlock(188);
+              HeapSlot_Release(188);
             }
             flash->z++;
             if (flash->z == 12)
@@ -777,7 +777,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
                            glintX, glintY, gData_08197492[glint],
                            gData_08197498[glint]);
-            Runtime_ReleaseHeapBlock(188);
+            HeapSlot_Release(188);
             p->variant++;
           }
         }
@@ -791,6 +791,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // Tear down: stop the transfer, free the blitter, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

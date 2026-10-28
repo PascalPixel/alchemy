@@ -22,21 +22,21 @@ Task_Add:
 	.thumb_func
 Task_RemoveFar:
 	overlay_veneer Func_080000d8
-	.global Runtime_AllocateBlock
+	.global HeapSlot_AllocEwram
 	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_ReleaseHeapBlock
+HeapSlot_AllocEwram:
+	overlay_veneer HeapSlot_AllocEwramFar
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Runtime_BumpAllocateAlternatePool
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001914
 	.thumb_func
@@ -169,11 +169,11 @@ FieldEvent_WaitFrames:
 	.global Func_02001a14
 	.thumb_func
 Func_02001a14:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02001a1c
 	.thumb_func
 Func_02001a1c:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -209,7 +209,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02001a64
 	.thumb_func
 Func_02001a64:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -217,7 +217,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02001a74
 	.thumb_func
 Func_02001a74:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_02001a7c
 	.thumb_func
 Func_02001a7c:
@@ -249,7 +249,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001ab4
 	.thumb_func
 Func_02001ab4:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001abc
 	.thumb_func
 Func_02001abc:

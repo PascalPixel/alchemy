@@ -70,9 +70,9 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     ResourceId_SlotsGreenDigits, ResourceId_SlotsDoubleUpBanner,
     ResourceId_SlotsCashOutBanner;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Camera_ResetSceneDefaultsB(void);
 void Task_ResetAll(void);
@@ -181,10 +181,10 @@ void Func_081b83c4(void) {
   s32 tileY;
   s16 affineScale;
 
-  spritePalette = Runtime_AllocateHeapBlock(96, 0x200);
-  dice = Runtime_AllocateBlock(92, 0x7b7c);
-  sprites = Runtime_AllocateBlock(180, 0x614);
-  camera = Runtime_AllocateBlock(48, 76);
+  spritePalette = HeapSlot_Alloc(96, 0x200);
+  dice = HeapSlot_AllocEwram(92, 0x7b7c);
+  sprites = HeapSlot_AllocEwram(180, 0x614);
+  camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetSceneDefaultsB();
   Task_ResetAll();
@@ -1091,9 +1091,9 @@ void Func_081b83c4(void) {
                                 0x10000 - (index << 12), 256);
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(48);
-  Runtime_ReleaseHeapBlock(180);
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(92);
-  Runtime_ReleaseHeapBlock(100);
+  HeapSlot_Release(48);
+  HeapSlot_Release(180);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
 }

@@ -307,7 +307,7 @@ BattleEffect_RunRadiantFire:
 	cmp r4, #8
 	bne .L_0816f7a4
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -382,9 +382,9 @@ BattleEffect_RunRadiantFire:
 	cmp r4, #8
 	bne .L_0816f856
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_0816f8c0:
 	movs r1, #4
 	movs r0, #4
@@ -408,7 +408,7 @@ BattleEffect_RunRadiantFire:
 	ldr r0, .L_0816f908
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #48
 	pop {r3, r5, r6, r7}

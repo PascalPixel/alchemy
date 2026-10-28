@@ -471,7 +471,7 @@ BattleEffect_RunBolt:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	mov r4, r11
 	add r9, r3
@@ -595,7 +595,7 @@ BattleEffect_RunBolt:
 	ldr r0, .L_08155858
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}

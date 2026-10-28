@@ -27,7 +27,7 @@ Func_0802b998:
 	lsls r1, r1, #4
 	adds r1, #120
 	movs r0, #32
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r3, #0
 	adds r7, r0, #0
 	add r0, sp, #32
@@ -145,13 +145,13 @@ Func_0802b998:
 	str r2, [r3]
 	movs r0, #48
 	movs r1, #76
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r1, #208
 	lsls r1, r1, #6
 	mov r10, r0
 	adds r1, #132
 	movs r0, #28
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r3, #200
 	movs r1, #144
 	lsls r3, r3, #4
@@ -230,7 +230,7 @@ Func_0802b998:
 	ldr r5, .L_0802bce4
 	movs r0, #104
 	adds r1, r5, #0
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	movs r2, #132
 	movs r3, #128
 	lsrs r5, r5, #2

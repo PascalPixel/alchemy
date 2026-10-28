@@ -21,11 +21,11 @@ FieldEvent_WaitFrames:
 	.global Func_020005c4
 	.thumb_func
 Func_020005c4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -53,7 +53,7 @@ Object_SetPartAttribute:
 	.global Func_02000604
 	.thumb_func
 Func_02000604:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -61,7 +61,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02000614
 	.thumb_func
 Func_02000614:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -73,11 +73,11 @@ Func_02000624:
 	.global Func_0200062c
 	.thumb_func
 Func_0200062c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02000634
 	.thumb_func
 Func_02000634:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_0200063c
 	.thumb_func
 Func_0200063c:

@@ -16,11 +16,11 @@ void Func_080ad090(void);
 void Func_08038348(s32 first, s32 second);
 void VramCache_Reset(void);
 void Task_ResetAll(void);
-void Runtime_SetIrqHandler(s32 index, s32 a, s32 b);
-void Runtime_InitializeHeap(void);
+void Irq_SetHandler(s32 index, s32 a, s32 b);
+void Heap_Initialize(void);
 void Func_08014b70(void);
 s32 Battle_RunEncounterFar(s32 entrance);
-s32 Runtime_BlankDisplayAndRunFar(s32 entrance);
+s32 LuckyDice_StartFar(s32 entrance);
 s32 Resource_FarCall00E(s32 entrance);
 s32 Resource_FarCall00F(s32 entrance);
 void Scene_ReturnFromSequence(s32 result);
@@ -48,7 +48,7 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
 #define RUN_SAVING_PALETTES(call)                                              \
   {                                                                            \
     void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);         \
-    void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);                            \
+    void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                            \
                                                                                \
     Dma_Set(palette, saved,                                                    \
             (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
@@ -57,7 +57,7 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     Dma_Set(saved, palette,                                                    \
             (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
             REG_DMA3);                                                         \
-    MemFree(saved);                                                            \
+    Heap_Release(saved);                                                            \
   }
 
 /// The parent sequence, as The Broken Seal's ParentSequence_Run, with this
@@ -106,9 +106,9 @@ void ParentSequence_Run(s32 mode) {
     }
     gRenderOamEnabled = 1;
     Task_ResetAll();
-    Runtime_SetIrqHandler(1, 0, 0);
-    Runtime_SetIrqHandler(2, 0, 0);
-    Runtime_InitializeHeap();
+    Irq_SetHandler(1, 0, 0);
+    Irq_SetHandler(2, 0, 0);
+    Heap_Initialize();
     Func_08014b70();
     VramCache_Reset();
     if (gAdventure.scene >= SEQUENCE_UNK_1FB) {
@@ -117,7 +117,7 @@ void ParentSequence_Run(s32 mode) {
         entrance = Battle_RunEncounterFar(entrance);
         break;
       case SEQUENCE_DICE:
-        RUN_SAVING_PALETTES(Runtime_BlankDisplayAndRunFar);
+        RUN_SAVING_PALETTES(LuckyDice_StartFar);
         break;
       case SEQUENCE_SLOTS:
         RUN_SAVING_PALETTES(Resource_FarCall00E);

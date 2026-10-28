@@ -34,7 +34,7 @@ void Func_080dcb44(void);
 void Func_080dc978(s32 id, s32 value) {
   struct WaveFxWork *work;
 
-  work = Runtime_AllocateBlock(WAVE_FX_SLOT, sizeof(*work));
+  work = HeapSlot_AllocEwram(WAVE_FX_SLOT, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   work->phase = (gFrameCount * 2) % 360;
   work->id = id;

@@ -233,7 +233,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
     if (frame <= 63) {
-      vertices = Runtime_BumpAllocateAlternatePool(32);
+      vertices = Heap_AllocEwram(32);
       job = Render_AllocateModelList(1);
       job->fade = frame > 55 ? (56 - frame) * 8 : 0;
       texture.logWidth = 6;
@@ -275,8 +275,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           Render_DrawModelList(job);
         }
       }
-      MemFree(job);
-      MemFree(vertices);
+      Heap_Release(job);
+      Heap_Release(vertices);
     }
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
@@ -286,7 +286,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // Tear down.
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

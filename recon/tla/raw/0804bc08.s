@@ -33,7 +33,7 @@ Func_0804bc08:
 	str r0, [sp, #48]
 	lsls r1, r1, #1
 	movs r0, #228
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	mov r1, sp
 	adds r1, #100
 	str r1, [sp, #36]
@@ -383,7 +383,7 @@ Func_0804bc08:
 	cmp r6, #7
 	bne .L_0804bf46
 	movs r0, #18
-	bl MemAlloc
+	bl Heap_Alloc
 	ldr r3, .L_0804bfd0
 	adds r7, r0, #0
 	ldrb r3, [r3]
@@ -417,7 +417,7 @@ Func_0804bc08:
 	adds r1, r5, #0
 	bl Func_08046b08
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	b .L_0804bdc2
 .L_0804bf46:
 	cmp r6, #4
@@ -620,7 +620,7 @@ Func_0804bc08:
 	.4byte 0x00000000
 .L_0804c0dc:
 	movs r0, #12
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r0, #1
@@ -643,7 +643,7 @@ Func_0804bc08:
 	adds r0, r5, #0
 	adds r3, #38
 	strb r2, [r3]
-	bl MemFree
+	bl Heap_Release
 	b .L_0804bfac
 .L_0804c11a:
 	ldr r0, [sp, #32]
@@ -2191,7 +2191,7 @@ Func_0804bc08:
 	movs r0, #0
 	bl Camera_ConfigureSceneFar
 	movs r0, #228
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, [sp, #80]
 	cmp r1, #0
 	blt .L_0804cd90

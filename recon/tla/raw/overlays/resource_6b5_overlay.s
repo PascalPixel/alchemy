@@ -30,7 +30,7 @@ Func_0200039c:
 	mov r11, r2
 	mov r0, r11
 	sub sp, #48
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r3, #225
 	lsls r3, r3, #2
 	movs r2, #0
@@ -210,12 +210,12 @@ Func_0200039c:
 	b .L_de_02008532
 .L_de_02008508:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	movs r2, #170
 	lsls r2, r2, #1
 	mov r11, r2
 	mov r0, r11
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Djinn_GetRecoveryTable
@@ -229,7 +229,7 @@ Func_0200039c:
 	adds r7, r0, #0
 .L_de_02008532:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
 	sub sp, #-48
 	pop {r3, r5, r6, r7}
@@ -258,7 +258,7 @@ Func_0200039c:
 	mov r11, r2
 	mov r0, r11
 	sub sp, #48
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r3, #225
 	lsls r3, r3, #2
 	movs r2, #0
@@ -423,12 +423,12 @@ Func_0200039c:
 	b .L_02008516
 .L_020084ec:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	movs r2, #170
 	lsls r2, r2, #1
 	mov r11, r2
 	mov r0, r11
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r9, r0
 	movs r0, #1
 	bl Djinn_GetRecoveryTable
@@ -442,7 +442,7 @@ Func_0200039c:
 	adds r7, r0, #0
 .L_02008516:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
 	add sp, #48
 	pop {r3, r5, r6, r7}
@@ -473,7 +473,7 @@ Func_02000578:
 	lsls r5, r5, #1
 	adds r0, r5, #0
 	sub sp, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	add r3, sp, #16
 	mov r8, r3
 	movs r2, #150
@@ -621,9 +621,9 @@ Func_02000578:
 	movs r5, #170
 	adds r0, r7, #0
 	lsls r5, r5, #1
-	bl MemFree
+	bl Heap_Release
 	adds r0, r5, #0
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #0
 	bl Djinn_GetRecoveryTable
@@ -736,7 +736,7 @@ Func_02000578:
 	bl WaitFrames
 .L_0200879a:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r11
 	add sp, #32
 	pop {r3, r5, r6, r7}
@@ -897,7 +897,7 @@ Func_02000864:
 	movs r1, #249
 	lsls r1, r1, #3
 	movs r0, #216
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	ldr r5, .L_02008b24
 	adds r6, r0, #0
 	adds r0, r5, #0
@@ -994,7 +994,7 @@ Func_02000864:
 	movs r0, #4
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	movs r0, #216
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #0
 	bl LinkLobby_WriteSlotValue
 	movs r0, #4
@@ -1105,7 +1105,7 @@ Func_02000864:
 	cmp r1, r4
 	bls .L_02008b74
 	movs r0, #216
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_02008b8a:
 	bl Func_02001a1c
 	b .L_02008ba8

@@ -32,7 +32,7 @@ s32 Func_02000578(void) {
   struct TradeOfferState *list;
 
   size = 0x154;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = Heap_AllocEwram(size);
   result = 0;
   timeout = 600;
   memberCount = Func_02000538(memberIds);
@@ -93,9 +93,9 @@ next:
     result = transferResult;
     goto done;
   }
-  MemFree(heap);
+  Heap_Release(heap);
   size = 0x154;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = Heap_AllocEwram(size);
   Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   {
     s32 timeout;
@@ -133,6 +133,6 @@ next:
     WaitFrames(2);
   }
 done:
-  MemFree(heap);
+  Heap_Release(heap);
   return result;
 }

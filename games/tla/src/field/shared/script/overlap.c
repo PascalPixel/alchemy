@@ -19,7 +19,7 @@ s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values) {
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
     if (entry->script != NULL && (1 & *flags) && entry != object) {
-      if (Runtime_CheckRadiusOverlap(&entry->x, entry->radius - 2, values,
+      if (Field_CheckSpheresOverlap(&entry->x, entry->radius - 2, values,
                                      object->radius - 2) >= 0)
         return -1;
     }
@@ -36,7 +36,7 @@ ScriptObject_FindOverlappingEntry(struct ObjectRuntime *object, s32 *values) {
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
     if (entry->script != NULL && (1 & *flags) && entry != object) {
-      if (Runtime_CheckRadiusOverlap(&entry->x, entry->radius - 2, values,
+      if (Field_CheckSpheresOverlap(&entry->x, entry->radius - 2, values,
                                      object->radius - 2) >= 0)
         return entry;
     }

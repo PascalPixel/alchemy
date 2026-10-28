@@ -36,15 +36,15 @@ struct PreviewItem {
 
 void *Unit_Get(s32 owner);
 struct PreviewItem *Item_Get(s32 item);
-void *MemAlloc(s32 size);
-void MemFree(void *buffer);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *buffer);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
 void Func_080f8170(void *window, s32 target, s32 slot, s32 style);
 
 // FAKEMATCH(wrapper): the helper in the equipment and Psynergy cases only;
-// as buffer = MemAlloc(332) in all three, 38 of 217 instructions differ.
-static inline void *AllocUnitCopy(void) { return MemAlloc(332); }
+// as buffer = Heap_Alloc(332) in all three, 38 of 217 instructions differ.
+static inline void *AllocUnitCopy(void) { return Heap_Alloc(332); }
 
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
   struct PreviewMenu *menu = Ram_HeapSlots->menuRuntime;
@@ -68,7 +68,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       Func_080f8170(menu->statusWindow, target, slot, style);
     } else {
       unit = Unit_Get(target);
-      buffer = MemAlloc(332);
+      buffer = Heap_Alloc(332);
       Iwram_CopyWords(buffer, unit, 332);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
@@ -84,7 +84,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, 332);
-      MemFree(buffer);
+      Heap_Release(buffer);
     }
     break;
   case 1:
@@ -116,7 +116,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, 332);
-      MemFree(buffer);
+      Heap_Release(buffer);
     }
     break;
   case 6:
@@ -140,7 +140,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, 332);
-      MemFree(buffer);
+      Heap_Release(buffer);
     }
     break;
   }

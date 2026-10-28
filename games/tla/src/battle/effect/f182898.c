@@ -46,7 +46,7 @@ void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 
 // A column of bubbles. On the first frame 256 glowing ovals of random size
@@ -145,7 +145,7 @@ void Func_08182898(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

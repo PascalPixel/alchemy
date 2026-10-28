@@ -30,13 +30,13 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global MemAlloc
+	.global Heap_Alloc
 	.thumb_func
-MemAlloc:
-	overlay_veneer Runtime_BumpAllocateFar
-	.global MemFree
+Heap_Alloc:
+	overlay_veneer Heap_AllocFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_0200468c
 	.thumb_func
@@ -205,11 +205,11 @@ FieldEvent_WaitFrames:
 	.global Func_020047d4
 	.thumb_func
 Func_020047d4:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020047dc
 	.thumb_func
 Func_020047dc:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -297,7 +297,7 @@ Object_SetPartAttribute:
 	.global Func_0200488c
 	.thumb_func
 Func_0200488c:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -309,7 +309,7 @@ Func_0200489c:
 	.global Func_020048a4
 	.thumb_func
 Func_020048a4:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -393,7 +393,7 @@ Event_WaitTransitionFrames:
 	.global Func_0200494c
 	.thumb_func
 Func_0200494c:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02004954
 	.thumb_func
 Func_02004954:

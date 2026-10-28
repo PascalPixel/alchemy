@@ -1,7 +1,7 @@
 #include "kibombo.h"
 
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void Func_02005a84(s32 resource);
 void VramCache_Load(s32 handle, s32 size, void *source);
 
@@ -25,10 +25,10 @@ void Func_02002de0(void) {
     object->field5c = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
+    buffer = HeapSlot_AllocFar(68, 0x608);
     Func_02005a84(242);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-    Runtime_ReleaseHeapBlock(68);
+    HeapSlot_Release(68);
   }
 }
 

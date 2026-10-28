@@ -65,7 +65,7 @@ s32 ScriptObject_CheckOverlapFar(struct ObjectRuntime *object,
                                  struct Effect04Vector *position);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
                                  s32 target);
 s32 Resource_ResetEntry(u32 entry);
 void Func_080de060(struct FieldParticle *slot);
@@ -202,7 +202,7 @@ void Func_080de21c(void) {
 
   event = Func_080ce458(0x50000005, 4, Func_080ce31c(4));
   if (event != NULL)
-    EventRuntime_RunPendingEvent(event, scene->firstObjectId,
+    Field_RunPsynergyEvent(event, scene->firstObjectId,
                                  scene->secondObjectId);
   WaitFrames(10);
   BattleEffect_PrepareBufferInterpolation();

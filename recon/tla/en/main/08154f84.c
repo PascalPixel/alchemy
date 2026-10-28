@@ -80,7 +80,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Task_Add(s32 (*callback)(void), s32 order);
 s32 Task_Remove(s32 (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 u32 Random16(void);
@@ -264,7 +264,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
   // Tear down: stop the transfer, free both blitters, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

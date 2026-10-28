@@ -86,8 +86,8 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
     ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
     ResourceId_DustPuffA;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Func_08020330(struct ObjectRuntime *object);
 void Field_StartColorTransition(s32 frames, s32 color);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
@@ -108,7 +108,7 @@ s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
+void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e38c8(void);
 
@@ -137,7 +137,7 @@ void Func_080e3d04(void) {
   s32 i;
   s32 j;
 
-  work = Runtime_AllocateHeapBlock(92, sizeof(struct SprayWork));
+  work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
   event = Ram_HeapSlots->eventWork;
   scene = Ram_HeapSlots->effectWork;
   caster = scene->mainObject;
@@ -291,7 +291,7 @@ void Func_080e3d04(void) {
       pending = Func_080ce458(0x60000005, scene->fieldKind,
                               (s16)(work->hitObject | 0x100));
       if (pending != NULL)
-        EventRuntime_RunPendingEvent(pending, scene->firstObjectId,
+        Field_RunPsynergyEvent(pending, scene->firstObjectId,
                                      work->hitObject);
       if (Func_080ce458(0x20000005, scene->fieldKind,
                         (s16)(work->hitObject | 0x100)) != NULL) {
@@ -317,5 +317,5 @@ void Func_080e3d04(void) {
   Resource_ResetEntry(puffSlot);
 end:
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

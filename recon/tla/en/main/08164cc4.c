@@ -542,7 +542,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   // Act two: the blast.
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   Func_0814cca8();
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
@@ -714,7 +714,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   if (mode == 0)
     ResourceObject_ReleaseFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();

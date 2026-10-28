@@ -55,7 +55,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -789,7 +789,7 @@ Func_02001420:
 	movs r0, #128
 	sub sp, #4
 	ldr r7, .L_020094d4
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r6, r0, #0
 	str r6, [sp, #0]
 	movs r3, #192
@@ -830,7 +830,7 @@ Func_02001420:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r1, r8
 	ldr r3, [r1, #8]
 	str r3, [r7, #8]

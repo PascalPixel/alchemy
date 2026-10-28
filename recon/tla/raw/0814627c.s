@@ -423,9 +423,9 @@ BattleEffect_RunTriangleStrike:
 	b .L_081463ee
 .L_081465d0:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r4, #240
 	ldr r2, [sp, #76]
 	ldr r5, [sp, #56]

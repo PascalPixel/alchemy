@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 
-void Runtime_RemapBytesByTable(u8 *buf, s32 cnt) {
+void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
   s32 n;
   u8 *p;
   u8 *table;

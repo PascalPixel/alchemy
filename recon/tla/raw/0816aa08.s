@@ -480,9 +480,9 @@ BattleEffect_RunPlumeEdge:
 	b .L_0816aafe
 .L_0816adde:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816ae3c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

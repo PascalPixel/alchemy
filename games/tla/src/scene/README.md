@@ -38,7 +38,7 @@ counts.
 ## Function prefixes
 
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`Actor_`, `Animation_`, `Camera_`, `Engine_`, `Event_`, `FieldEvent_`,
+`Actor_`, `Animation_`, `Camera_`, `Event_`, `FieldEvent_`, `Import_`,
 `GameFlag_`, `Map_`, `Motion_`, `Object_`, `ObjectDispatch_`, `ObjectMotion_`,
 `OverlayObject_`, `Scene_`, `SceneActor_`, `SceneState_`, `Task_`,
 `Vector_` and `Vram_`, with a place's name for its own events. Those only The

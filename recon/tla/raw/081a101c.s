@@ -17,7 +17,7 @@ DisplayScroll_DrawLine:
 	adds r0, r6, #0
 	str r1, [sp, #8]
 	adds r7, r2, #0
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r1, #0
 	movs r2, #192
 	mov r3, r10
@@ -293,7 +293,7 @@ DisplayScroll_DrawLine:
 	bne .L_081a11c2
 .L_081a123c:
 	ldr r0, [sp, #4]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #0
 .L_081a1244:
 	add sp, #44

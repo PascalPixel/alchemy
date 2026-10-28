@@ -50,30 +50,30 @@ void Func_080d3fb0(s32 object, s32 message) {
   WaitFrames(1);
 }
 
-void EventRuntime_Wait(s32 frames);
+void Event_WaitFrames(s32 frames);
 
-void EventRuntime_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
+void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
   Func_080d3fb0(object, message);
-  EventRuntime_Wait(frames);
+  Event_WaitFrames(frames);
 }
 
 void Func_080d3fb0(s32 object, s32 message);
 
-void EventRuntime_ShowMessageAndWait(s32 object, s32 message) {
+void Event_ShowMessageAndWait(s32 object, s32 message) {
   Func_080d3fb0(object, message);
 }
 
 void *FieldMessage_ShowAtActor(s32 object, s32 message);
-s32 EventRuntime_GetControlledOwner(void);
+s32 Party_GetLeaderActor(void);
 s32 Event_AskYesNoWithActorAnimation(s32 owner, s32 mode);
 void Func_080d3fb0(s32 object, s32 message);
 
-s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
+s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
   s32 result;
 
   FieldMessage_ShowAtActor(object, message);
   result =
-      Event_AskYesNoWithActorAnimation(EventRuntime_GetControlledOwner(), 0);
+      Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0);
   if (result == 0) {
     Func_080d3fb0(object, message);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -84,7 +84,7 @@ s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
   return result;
 }
 
-void EventRuntime_Noop(void) {}
+void Event_NoOpUpdate(void) {}
 
 s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
 

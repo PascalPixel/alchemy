@@ -1016,7 +1016,7 @@ BattleEffect_RunUlysses:
 	b .L_0815c32a
 .L_0815bf2e:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #48]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1518,9 +1518,9 @@ BattleEffect_RunUlysses:
 	cmp r2, #96
 	bne .L_0815c2cc
 	ldr r0, [sp, #44]
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #48]
-	bl MemFree
+	bl Heap_Release
 .L_0815c32a:
 	ldr r3, [sp, #56]
 	cmp r3, #0
@@ -1533,7 +1533,7 @@ BattleEffect_RunUlysses:
 	b .L_0815c4a6
 .L_0815c33a:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #28]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1703,9 +1703,9 @@ BattleEffect_RunUlysses:
 	cmp r2, #2
 	bne .L_0815c3c0
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #28]
-	bl MemFree
+	bl Heap_Release
 .L_0815c4a6:
 	ldr r3, [sp, #52]
 	cmp r3, #179
@@ -2045,9 +2045,9 @@ BattleEffect_RunUlysses:
 	ldr r0, .L_0815c76c
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r2, [sp, #92]
 	b .L_0815c770
 	.2byte 0x0000

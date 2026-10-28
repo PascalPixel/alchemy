@@ -200,11 +200,11 @@ Func_02000198:
 	bl Func_020012c8
 	movs r0, #192
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #128
 	lsls r0, r0, #5
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	ldr r0, .L_02008424
 	bl Resource_GetTableEntry
@@ -218,7 +218,7 @@ Func_02000198:
 	bl VramCache_Load
 	mov r10, r0
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	adds r5, r7, #0
 	adds r5, #12
 	movs r6, #95
@@ -352,7 +352,7 @@ Func_02000198:
 	mov r0, r8
 	bl Resource_ResetEntry
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #244
 	movs r1, #1
 	movs r2, #195

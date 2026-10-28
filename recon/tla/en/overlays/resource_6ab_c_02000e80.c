@@ -38,8 +38,8 @@ s32 ObjectMotion_ArmCallback();
 s32 ObjectMotion_SetPositionAndReset();
 s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
-s32 Runtime_AllocateHeapBlockFar();
-s32 Runtime_ReleaseHeapBlock();
+s32 HeapSlot_AllocFar();
+s32 HeapSlot_Release();
 s32 Task_Add();
 s32 Task_RemoveFar();
 s32 FieldMessage_Show();
@@ -88,12 +88,12 @@ L_02008ea2:
   FIELD_AT(t8, u8, 27) = 0;
   t11 = FIELD_AT(v_r0, u8, 35);
   FIELD_AT(v_r0, u8, 35) = (2 | t11);
-  t12 = Value2((s32 (*)())Runtime_AllocateHeapBlockFar, 68, 0x608);
+  t12 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
   Call1((void (*)())Func_020042ac, 247);
   t14 = FIELD_AT(t8, u8, 16);
   v_r5 = (t12 + 0x400);
   Call3((void (*)())VramCache_Load, t14, 128, v_r5);
-  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
+  Call1((void (*)())HeapSlot_Release, 68);
 L_02008f48:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r6 = ((s32)gAdventure + 0x214);
@@ -175,12 +175,12 @@ L_0200905c:
   FIELD_AT(v_r0, u8, 92) = 1;
   t64 = FIELD_AT(v_r0, u8, 35);
   FIELD_AT(v_r0, u8, 35) = (2 | t64);
-  t65 = Value2((s32 (*)())Runtime_AllocateHeapBlockFar, 68, 0x608);
+  t65 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
   Call1((void (*)())Func_020042ac, 247);
   t67 = FIELD_AT(t61, u8, 16);
   v_r5 = (t65 + 0x400);
   Call3((void (*)())VramCache_Load, t67, 128, v_r5);
-  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
+  Call1((void (*)())HeapSlot_Release, 68);
 L_02009112:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r7 = ((s32)gAdventure + 0x214);

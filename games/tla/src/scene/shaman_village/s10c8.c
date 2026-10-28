@@ -59,7 +59,7 @@ void Func_020011f8(void) {
   ObjectMotion_EnableActionAndResetMotion(17);
   WaitFrames(1);
   ObjectMotion_Launch(17, 4, 20);
-  Engine_AudioPlayCue(229);
+  Import_SoundPlay(229);
   WaitFrames(2);
   Object_SetActionCallbackAndRefreshById(16, gData_020050f8);
 }
@@ -74,7 +74,7 @@ void Func_0200122c(void) {
       Func_0200498c((s32)MsgShamanFortuneAvoidSouth);
     Func_020049a4(17, 0);
   } else {
-    Engine_AudioPlayCue(0);
+    Import_SoundPlay(0);
     if (GameFlag_Test(0xa21))
       Func_0200498c((s32)MsgShamanFortuneOfferAfterTrial);
     else
@@ -85,7 +85,7 @@ void Func_0200122c(void) {
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
       Func_020049a4(17, 0);
-      Engine_AudioPlayCue(11);
+      Import_SoundPlay(11);
       Object_SetModeById(17, 5);
       Func_020049a4(17, 0);
       Func_020011f8();
@@ -115,7 +115,7 @@ void Func_02001380(void) {
   if (GameFlag_Test(0x200)) {
     Func_0200498c((s32)MsgShamanTrialRulesAreSimple);
   } else {
-    Engine_AudioPlayCue(78);
+    Import_SoundPlay(78);
     Func_020048c4();
     Func_02004a24(0);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
@@ -123,7 +123,7 @@ void Func_02001380(void) {
     ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x13333, 0x9999);
     ShamanVillage_ObjWalk(gAdventure.currentOwner, 182, 280);
     ShamanVillage_ObjArm(gAdventure.currentOwner, 0, 0);
-    Engine_AudioPlayCue(76);
+    Import_SoundPlay(76);
     ShamanVillage_ObjArm(15, 0x8000, 0);
     ShamanVillage_ObjArm(16, 0x8000, 0);
     ShamanVillage_ObjTurn(17, 0x8000);
@@ -229,7 +229,7 @@ void Func_02001764(void) {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     ShamanVillage_MessageOpen(0x200f, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
-      Engine_AudioPlayCue(76);
+      Import_SoundPlay(76);
       ShamanVillage_MessagePut(0x200f, 0);
       GameFlag_SetBit(0x200);
       Func_02001380();

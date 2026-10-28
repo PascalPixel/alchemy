@@ -57,8 +57,8 @@ struct FxScene {
 
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Camera_WorldToScreen(s32 *position);
 void WaitFrames(s32 frames);
@@ -77,7 +77,7 @@ u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e82cc(void) {
-  struct RingWork *work = Runtime_AllocateBlock(92, 0x298c);
+  struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *caster = scene->mainObject;
@@ -119,8 +119,8 @@ void Func_080e82cc(void) {
     k = *((s16 *)pos + 5);
     gBgScroll[0].y = 64 - k;
     Iwram_FillWords((void *)0x06002000, 0x800, 0);
-    Runtime_ReleaseHeapBlock(96);
-    picture = Runtime_AllocateBlock(96, 0x2000);
+    HeapSlot_Release(96);
+    picture = HeapSlot_AllocEwram(96, 0x2000);
     Iwram_FillWords(picture, 0x2000, 0);
     WaitFrames(1);
     Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,

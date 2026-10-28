@@ -46,7 +46,7 @@ struct LoadEventWork {
   u8 unkd38;
 };
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
+void *HeapSlot_Alloc(s32 slot, s32 size);
 struct BattleAct *BattleAction_Get(s32 actionId);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
@@ -63,7 +63,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   s32 running;
 
   if (event->unkcb6 == 0) {
-    work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(*work));
+    work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
     /* FAKEMATCH(one-pass): an empty once-only block, so the work's copy is
      * made at once after the allocation; as plain statements, 4 of 239
      * instructions differ in tla-en. */

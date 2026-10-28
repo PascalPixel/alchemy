@@ -11,8 +11,8 @@
 
 struct ObjectRuntime *Func_02001f0c(s32 type, s32 x, s32 y, s32 z);
 void Func_02001f4c(s32 a);
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 VramCache_Load(s32 block, s32 count, u8 *source);
 
 struct ObjectRuntime *Func_02001210(void) {
@@ -31,10 +31,10 @@ struct ObjectRuntime *Func_02001210(void) {
   object->unk5c[0] = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
+  buffer = HeapSlot_AllocFar(68, 0x608);
   Func_02001f4c(242);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
-  Runtime_ReleaseHeapBlock(68);
+  HeapSlot_Release(68);
   return object;
 }
 

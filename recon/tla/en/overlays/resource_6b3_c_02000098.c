@@ -28,8 +28,8 @@ extern s32 Data_02000a30;
 extern struct EpilogueSprite gData_02000a00;
 extern s8 gData_02000a34;
 
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void *Resource_GetTableEntry(u16 id);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
@@ -40,7 +40,7 @@ void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
 void Func_0200005c(void);
 
 void Func_02000098(void) {
-  void *buffer = MemAlloc(0x800);
+  void *buffer = Heap_Alloc(0x800);
   s32 entry;
   s32 tile;
 
@@ -55,7 +55,7 @@ void Func_02000098(void) {
   gData_02000a00.unk09_2 = 0;
   gData_02000a00.unk05_5 = 0;
   gData_02000a00.unk09_4 = 14;
-  MemFree(buffer);
+  Heap_Release(buffer);
   gData_02000a34 = 0;
   Task_Add(Func_0200005c, 0x480);
 }

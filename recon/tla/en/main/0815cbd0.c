@@ -96,7 +96,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void SummonEffect_RunCanvasMode1(void *action);
 
 // One quarter of the web, drawn with its own transparent blitter, built and
@@ -106,7 +106,7 @@ void SummonEffect_RunCanvasMode1(void *action);
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags));  \
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,  \
                                              size);                            \
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);                                    \
+    HeapSlot_Release(HEAP_BLITTER);                                    \
   } while (0)
 
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {

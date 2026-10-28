@@ -122,7 +122,7 @@ s32 Func_0802a6b8(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
   sceneResources = &gData_0802f380[index];
-  work = Runtime_AllocateBlock(32, sizeof(struct MapScrollWork));
+  work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map000);
@@ -216,7 +216,7 @@ s32 Func_0802a6b8(s32 index) {
   if (GameFlag_Test(0x170) != 0) {
     GameFlag_ClearBit(0x170);
   } else {
-    graphicsBuffer = MemAlloc(0x4000);
+    graphicsBuffer = Heap_Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       backdrop = *(s16 *)BG_PLTT;
       Resource_DecodeType01(
@@ -240,7 +240,7 @@ s32 Func_0802a6b8(s32 index) {
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[5] +
                                                   (u32)&ResourceId_Map000),
                            gData_02028000);
-      MemFree(graphicsBuffer);
+      Heap_Release(graphicsBuffer);
     }
   }
   displayFlags = 0;

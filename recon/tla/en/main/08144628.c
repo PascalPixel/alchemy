@@ -247,8 +247,8 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(188);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
   Task_Remove(BattleEffect_ArmBg1HBlankDma);
   BattleEffect_EndCanvasLayer();
 }

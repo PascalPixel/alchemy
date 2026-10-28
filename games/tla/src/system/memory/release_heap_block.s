@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Runtime_ReleaseHeapBlock
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
+HeapSlot_Release:
 	movs	r4, #3
 	lsls	r4, r4, #24
 	ldr	r1, [r0, r4]

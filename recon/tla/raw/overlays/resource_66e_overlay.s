@@ -885,7 +885,7 @@ Func_02000c04:
 	movs r0, #252
 	lsls r1, r1, #1
 	sub sp, #16
-	bl Runtime_AllocateBlock
+	bl HeapSlot_AllocEwram
 	movs r3, #156
 	lsls r3, r3, #6
 	movs r6, #0
@@ -934,7 +934,7 @@ Func_02000c04:
 	cmp r6, #0
 	bne .L_02008c7e
 	movs r0, #252
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_02008e7c
 	b .L_02008e72
 .L_02008c7e:
@@ -1159,7 +1159,7 @@ Func_02000c04:
 	ldr r5, .L_02008e7c
 .L_02008e6a:
 	movs r0, #252
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	adds r0, r5, #0
 .L_02008e72:
 	add sp, #16

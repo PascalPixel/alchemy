@@ -3,7 +3,7 @@
 	.include "games/tla/src/system/overlay.inc"
 	.global Resource_FarCall00F
 Resource_FarCall00F:
-	.global Runtime_BlankDisplayAndRunSceneFar
+	.global Func_081b83c4_StartFar
 	.thumb_func
-Runtime_BlankDisplayAndRunSceneFar:
-	overlay_veneer Runtime_BlankDisplayAndRunScene
+Func_081b83c4_StartFar:
+	overlay_veneer Func_081b83c4_Start

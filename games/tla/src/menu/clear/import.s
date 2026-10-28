@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Task_RemoveFar:
 	overlay_veneer Func_080000d8
-	.global Runtime_BumpAllocateAlternatePool
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_020021f8
 	.thumb_func
@@ -237,7 +237,7 @@ Unit_UpdateClass:
 	.global Func_02002388
 	.thumb_func
 Func_02002388:
-	overlay_veneer Runtime_GetBuildStampTimeFar
+	overlay_veneer BuildStamp_GetTimeFar
 	.global Func_02002390
 	.thumb_func
 Func_02002390:

@@ -778,9 +778,9 @@ BattleEffect_RunBurstScene:
 	b .L_0815a480
 .L_0815a710:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #20]
@@ -872,9 +872,9 @@ BattleEffect_RunBurstScene:
 	cmp r10, r2
 	bne .L_0815a754
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r3, [sp, #52]
 	cmp r3, #3
 	bgt .L_0815a7ea
@@ -982,7 +982,7 @@ BattleEffect_RunBurstScene:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r3, #1
 	add r10, r3
 	mov r5, r10
@@ -1049,7 +1049,7 @@ BattleEffect_RunBurstScene:
 	cmp r2, #16
 	bne .L_0815a8f2
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0815a94a:
 	movs r0, #8
 	movs r1, #8

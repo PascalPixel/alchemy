@@ -87,7 +87,7 @@ BattleEffect_RunCatastrophe:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r1, .L_08184510
 	movs r0, #1
 	movs r2, #0

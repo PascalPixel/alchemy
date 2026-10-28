@@ -1037,7 +1037,7 @@ BattleEffect_RunGeode:
 	adds r0, r5, #0
 	bl Render_DrawModelList
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 .L_0816cefa:
 	mov r1, r11
 	cmp r1, #48
@@ -1063,7 +1063,7 @@ BattleEffect_RunGeode:
 	ble .L_0816d022
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1177,9 +1177,9 @@ BattleEffect_RunGeode:
 	cmp r7, #4
 	bne .L_0816cf72
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 .L_0816d022:
 	mov r1, r11
 	cmp r1, #61
@@ -1274,7 +1274,7 @@ BattleEffect_RunGeode:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816d12c
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

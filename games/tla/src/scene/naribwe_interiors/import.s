@@ -10,14 +10,14 @@ __umodsi3:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Runtime_AllocateBlock
+	.global HeapSlot_AllocEwram
 	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_ReleaseHeapBlock
+HeapSlot_AllocEwram:
+	overlay_veneer HeapSlot_AllocEwramFar
+	.global HeapSlot_Release
 	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
+HeapSlot_Release:
+	overlay_veneer HeapSlot_ReleaseFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -65,11 +65,11 @@ FieldEvent_WaitFrames:
 	.global Func_020010e0
 	.thumb_func
 Func_020010e0:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_020010e8
 	.thumb_func
 Func_020010e8:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -109,7 +109,7 @@ Object_SetPartAttribute:
 	.global Func_02001138
 	.thumb_func
 Func_02001138:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -117,7 +117,7 @@ FieldMessage_ShowAtActor:
 	.global Func_02001148
 	.thumb_func
 Func_02001148:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -145,11 +145,11 @@ Func_02001178:
 	.global Func_02001180
 	.thumb_func
 Func_02001180:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001188
 	.thumb_func
 Func_02001188:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001190
 	.thumb_func
 Func_02001190:

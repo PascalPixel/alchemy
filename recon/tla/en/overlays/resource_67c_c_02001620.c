@@ -38,7 +38,7 @@ void Func_02003e74();
 void Func_02003e84();
 void ObjectMotion_EnableActionAndSetCallback();
 void Func_02003e04();
-s32 Engine_ObjectCreate();
+s32 Import_ActorCreate();
 s32 Random16Far();
 void Object_SetPartAttribute();
 void Object_SetSpritePriority();
@@ -84,7 +84,7 @@ s32 Func_02001620(s32 a0, s32 a1, s32 a2) {
   r8 = 0;
   goto L_020096f8;
 L_020096f8:
-  v2 = Engine_ObjectCreate(0x2a0, FIELD_AT(r7, s32, 8), FIELD_AT(r7, s32, 12),
+  v2 = Import_ActorCreate(0x2a0, FIELD_AT(r7, s32, 8), FIELD_AT(r7, s32, 12),
                            FIELD_AT(r7, s32, 16));
   r5 = v2;
   Call1((void (*)())Func_02003ef4, 246);
@@ -123,7 +123,7 @@ L_020097bc:
   Call1((void (*)())WaitFrames, 30);
   r8 = 0;
 L_020097ce:
-  v5 = Engine_ObjectCreate(0x2a0, FIELD_AT(r10, s32, 8), FIELD_AT(r10, s32, 12),
+  v5 = Import_ActorCreate(0x2a0, FIELD_AT(r10, s32, 8), FIELD_AT(r10, s32, 12),
                            FIELD_AT(r10, s32, 16));
   r5 = v5;
   Call1((void (*)())Func_02003ef4, 195);
@@ -171,7 +171,7 @@ L_020098c2:
   Call1((void (*)())WaitFrames, 16);
   r8 = 2;
 L_020098d2:
-  v8 = Engine_ObjectCreate(0x2a0, FIELD_AT(r10, s32, 8),
+  v8 = Import_ActorCreate(0x2a0, FIELD_AT(r10, s32, 8),
                            ((r8 << 16) + (FIELD_AT(r10, s32, 12))) - 524288,
                            FIELD_AT(r10, s32, 16));
   r5 = v8;

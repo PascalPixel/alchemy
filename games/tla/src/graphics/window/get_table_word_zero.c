@@ -33,5 +33,5 @@ void Func_08045564(u8 *work) {
 
   RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
   routine(*(void **)(work + 0x604), work);
-  MemFree(routine);
+  Heap_Release(routine);
 }

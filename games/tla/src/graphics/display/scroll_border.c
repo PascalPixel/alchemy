@@ -26,9 +26,9 @@ void Func_081a1830(void) {
   u32 i;
 
   /* FAKEMATCH(temporary): the allocation kept in entries; as
-   * gData_0200752c = Runtime_BumpAllocateAlternatePool(0x120), 1 of 82
+   * gData_0200752c = Heap_AllocEwram(0x120), 1 of 82
    * instructions differ in tla-en. */
-  entries = Runtime_BumpAllocateAlternatePool(0x120);
+  entries = Heap_AllocEwram(0x120);
   gData_0200752c = entries;
   tile = VramCache_Load(slot, 0x200, 0);
   Dma_Fill32(0x11111111, (void *)(0x06010000 + tile * 32), 0x200);

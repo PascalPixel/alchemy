@@ -9,7 +9,7 @@ struct EventWaitWork {
   s32 waitMode;
 };
 
-void EventRuntime_UpdateWaitMode(void) {
+void Event_UpdateDebugSkip(void) {
   struct EventWaitWork *work = Ram_HeapSlots->eventWork;
 
   if (gDebugMode != 0) {

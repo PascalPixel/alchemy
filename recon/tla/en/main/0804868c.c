@@ -112,7 +112,7 @@ extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 struct DjinnMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                         s32 flags);
 void Text_UseExtraTiles(s32 on);
@@ -143,7 +143,7 @@ void Input_ResetKeyRepeat(void);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Resource_ResetEntry(s32 slot);
 void Func_08041b68(void);
-void MemFree(void *block);
+void Heap_Release(void *block);
 void WaitFrames(s32 frames);
 
 s32 Func_0804868c(s32 member) {
@@ -191,7 +191,7 @@ s32 Func_0804868c(s32 member) {
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
-  djinnEntries = Runtime_BumpAllocateAlternatePool(84 * sizeof(*djinnEntries));
+  djinnEntries = Heap_AllocEwram(84 * sizeof(*djinnEntries));
   djinnCount = 0;
   drawnFirstEntry = drawnRow;
   encodedDjinn = 0;
@@ -608,7 +608,7 @@ s32 Func_0804868c(s32 member) {
   Window_Close(listWindow, 1);
   Func_08041b68();
   Text_UseExtraTiles(0);
-  MemFree(djinnEntries);
+  Heap_Release(djinnEntries);
   WaitFrames(1);
   return encodedDjinn;
 }

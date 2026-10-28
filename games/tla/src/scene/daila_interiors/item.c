@@ -42,8 +42,8 @@ void Func_02000730(void) {
   item = 458;
   saved28 = Object_GetById(9)->unk28;
   savedY = Object_GetById(9)->y;
-  Engine_EventStart();
-  Engine_EventResolvePendingActions(0);
+  Import_EventStart();
+  Import_EventResolvePendingActions(0);
   if (Func_02000d14(item) >= 0) {
     Func_02000da4(Object_GetById(9), 3);
     Func_02000dfc(83);
@@ -68,7 +68,7 @@ void Func_02000730(void) {
       Object_GetById(9)->unk48 = saved48;
       Object_GetById(9)->unk6c = 0;
       Func_02000c9c(Object_GetById(9));
-      Engine_ActorSetSpritePriority(9, 1);
+      Import_ActorSetSpritePriority(9, 1);
       Object_GetById(9)->kind55 = 2;
       Object_GetById(9)->speed1c = 0x13333;
       Object_GetById(9)->speed18 = 0x13333;
@@ -76,5 +76,5 @@ void Func_02000730(void) {
       Daila_ObjPlace(9, 232 << 16, 196 << 16);
     }
   }
-  Engine_EventEnd();
+  Import_EventEnd();
 }

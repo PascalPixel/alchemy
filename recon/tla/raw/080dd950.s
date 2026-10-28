@@ -66,7 +66,7 @@ Func_080dd950:
 	ldrsh r1, [r7, r2]
 	movs r3, #26
 	ldrsh r2, [r7, r3]
-	bl EventRuntime_RunPendingEvent
+	bl Field_RunPsynergyEvent
 .L_080dd9e8:
 	adds r3, r7, #0
 	adds r3, #52

@@ -31,13 +31,13 @@ void Func_080d1f20(s32 heading) {
   s32 left, right;
   u32 frame;
 
-  EventRuntime_WaitDelay();
-  tiles = Runtime_BumpAllocateAlternatePool(0x1040);
+  Event_WaitTransitionFrames();
+  tiles = Heap_AllocEwram(0x1040);
   cell = (u16 *)0x06002000;
   headings += headings[heading] / 4;
   Resource_DecodeByteLzInRam(headings, tiles);
   Dma_Set(tiles, (void *)0x06000200, 0x84000410, (volatile u32 *)0x040000d4);
-  MemFree(tiles);
+  Heap_Release(tiles);
   REG_DISPCNT &= 0xfeff;
   Dma_Fill32(0xf000, cell, 0x800);
   cell = (u16 *)0x060020c0;

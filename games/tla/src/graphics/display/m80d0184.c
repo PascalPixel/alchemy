@@ -9,7 +9,7 @@ void Func_080cf78c(void);
 
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
-      Runtime_AllocateBlock(124, sizeof(*state));
+      HeapSlot_AllocEwram(124, sizeof(*state));
   volatile u32 zero;
 
   zero = 0;
@@ -29,7 +29,7 @@ void Func_080d0184(void) {
 }
 
 void *Func_080d019c(void) {
-  void *block = Runtime_AllocateBlock(124, 0x540);
+  void *block = HeapSlot_AllocEwram(124, 0x540);
   volatile u32 zero = 0;
 
   Dma_Set(&zero, block, 0x85000150, (volatile u32 *)0x040000d4);

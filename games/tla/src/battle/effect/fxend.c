@@ -12,7 +12,7 @@ void BattleEffect_EndCanvasSprite(void) {
   Task_Remove(Func_080eb6a0);
   Task_Remove(Func_080eb594);
   WaitFrames(1);
-  Runtime_ReleaseHeapBlock(180);
-  Runtime_ReleaseHeapBlock(96);
-  Runtime_ReleaseHeapBlock(240);
+  HeapSlot_Release(180);
+  HeapSlot_Release(96);
+  HeapSlot_Release(240);
 }

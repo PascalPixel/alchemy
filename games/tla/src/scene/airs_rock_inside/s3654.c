@@ -23,8 +23,8 @@ extern s32 gFrameCount;
 extern char ResourceId_LightningTiles;
 extern char ResourceId_LightningMap;
 extern const u8 gData_02005fd8[];
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
@@ -34,7 +34,7 @@ void Func_02005f94(s32 cue);
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02002cc0(void);
 void Func_02002c40(void);
-struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
 void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
@@ -71,7 +71,7 @@ void GameFlag_SetBit(s32 flag);
 /// reaches object 8, which flashes and leaves (Func_02001084); the display is
 /// put back and flag 0x899 set.
 void Func_02003654(void) {
-  u16 *buffer = MemAlloc(0x800);
+  u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
   struct ObjectRuntime *spark;
   u32 i;
@@ -89,9 +89,9 @@ void Func_02003654(void) {
   Func_02005d24(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x6000000, 0x84000200, (volatile u32 *)0x040000d4);
-  MemFree(buffer);
+  Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x6002000, 0x800);
-  buffer = MemAlloc(0x80);
+  buffer = Heap_Alloc(0x80);
   Func_02005d24(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
@@ -110,14 +110,14 @@ row:
   cell += 4;
   if (i != 16)
     goto row;
-  MemFree(buffer);
+  Heap_Release(buffer);
   Func_02005f94(246);
   ((u8 *)Object_GetById(10))[98] = 9;
   ((u8 *)Object_GetById(10))[99] = 1;
   Object_GetById(10)->update = Func_02002cc0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = Engine_ObjectCreate(0x2a0, Object_GetById(10)->x,
+      spark = Import_ActorCreate(0x2a0, Object_GetById(10)->x,
                                   Object_GetById(10)->y, Object_GetById(10)->z);
       {
         s32 priority = ((s8 *)Object_GetById(10)->animation)[9] & 12;

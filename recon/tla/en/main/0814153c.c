@@ -65,12 +65,12 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                       s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -162,7 +162,7 @@ void Func_081885f0(void *a, void *b, s32 count);
 void Graphics_LoadGreyRamp(void);
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight);
-void MemFree(void *buffer);
+void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -399,7 +399,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Resource_LoadAndDecompress(0x192, work->sheet + 0x2000, 1, 0);
         Resource_LoadAndDecompress(0xc9, work->sheet + 0x4000, 0, 0);
       }
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       model->shade = 0;
       texture.logWidth = 5;
@@ -461,8 +461,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_TransformVertices(Data_081991c0, verts, 4);
         Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
     if ((u32)(frame - 148) <= 71) {
       s32 x0 = cx >> 16;
@@ -490,10 +490,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + 0x2000 + gData_08197486[k], x, y,
             gData_08197492[k], gData_08197498[k]);
-        Runtime_ReleaseHeapBlock(SLOT_ALT);
+        HeapSlot_Release(SLOT_ALT);
       }
     }
-    Runtime_ReleaseHeapBlock(SLOT_ALT);
+    HeapSlot_Release(SLOT_ALT);
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -559,7 +559,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 109) {
-      verts = Runtime_BumpAllocateAlternatePool(32);
+      verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture2.logWidth = 5;
       texture2.logHeight = 2;
@@ -592,8 +592,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_TransformVertices(Data_081991c0, verts, 4);
         Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(verts);
+      Heap_Release(model);
+      Heap_Release(verts);
     }
     {
       s32 r = 8;
@@ -785,7 +785,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
     }
-    MemFree(model);
+    Heap_Release(model);
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -805,6 +805,6 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(SLOT_BLITTER);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

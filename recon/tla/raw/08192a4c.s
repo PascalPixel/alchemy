@@ -112,7 +112,7 @@ Func_08192a4c:
 	cmp r3, #0
 	beq .L_08192bfc
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -204,9 +204,9 @@ Func_08192a4c:
 	adds r0, r6, #0
 	bl Render_DrawModelList
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	movs r3, #224
 	lsls r3, r3, #6
 	cmp r10, r3

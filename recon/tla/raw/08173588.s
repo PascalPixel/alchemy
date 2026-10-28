@@ -321,7 +321,7 @@ Func_08173588:
 	movs r3, #104
 	str r3, [r2, #16]
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #16]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -498,9 +498,9 @@ Func_08173588:
 	bne .L_081738fc
 .L_08173976:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #16]
-	bl MemFree
+	bl Heap_Release
 	ldr r2, .L_081739d0
 	movs r3, #120
 	str r3, [r2, #12]
@@ -522,7 +522,7 @@ Func_08173588:
 	b .L_0817372a
 .L_081739ac:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_081739e8
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

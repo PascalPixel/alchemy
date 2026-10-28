@@ -10,7 +10,7 @@ Unit_Calculate:
 	adds r5, r0, #0
 	movs r0, #96
 	sub sp, #4
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r6, r0, #0
 	adds r0, r5, #0
 	bl Unit_Get
@@ -1056,7 +1056,7 @@ Unit_Calculate:
 	strh r2, [r7, #58]
 .L_080adbd8:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3

@@ -91,7 +91,7 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;
@@ -188,6 +188,6 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

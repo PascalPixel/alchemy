@@ -75,10 +75,10 @@ void Tilemap_ConvertBuffer(void) {
   u32 size;
 
   size = 0x8000;
-  saved = Runtime_BumpAllocateAlternatePool(size);
+  saved = Heap_AllocEwram(size);
   CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
   routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
-  MemFree(routine);
-  MemFree(saved);
+  Heap_Release(routine);
+  Heap_Release(saved);
 }

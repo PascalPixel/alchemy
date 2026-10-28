@@ -26,7 +26,7 @@ Func_081263fc:
 	mov r10, r5
 	ldr r5, .L_08126520
 	adds r0, r5, #0
-	bl MemAlloc
+	bl Heap_Alloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -46,7 +46,7 @@ Func_081263fc:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	movs r4, #160
 	lsls r4, r4, #3
 	adds r4, #108

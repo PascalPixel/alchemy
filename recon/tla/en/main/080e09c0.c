@@ -44,8 +44,8 @@ struct ScatterEvent {
   s8 targetZ;
 };
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -69,7 +69,7 @@ extern char ResourceId_SparkleFade;
 extern char ResourceId_StarSparkleFade;
 
 void Func_080e09c0(void) {
-  struct ScatterWork *work = Runtime_AllocateHeapBlock(92, 0x2114);
+  struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *caster = scene->mainObject;
@@ -158,5 +158,5 @@ void Func_080e09c0(void) {
     Object_Destroy(object);
   }
   BattleEffect_PrepareBufferInterpolation();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

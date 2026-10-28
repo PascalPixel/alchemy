@@ -1881,7 +1881,7 @@ BattleEffect_RunFlora:
 .L_0817ad56:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r8, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1975,9 +1975,9 @@ BattleEffect_RunFlora:
 	cmp r1, #4
 	bne .L_0817ad9c
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r8
-	bl MemFree
+	bl Heap_Release
 	bl Render_ResetTransformState
 	movs r0, #148
 	lsls r0, r0, #8
@@ -2194,7 +2194,7 @@ BattleEffect_RunFlora:
 	cmp r6, #32
 	bne .L_0817aee2
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0817afe2:
 	ldr r3, [sp, #160]
 	subs r3, #186
@@ -2938,7 +2938,7 @@ BattleEffect_RunFlora:
 	ldr r0, .L_0817b5d0
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #292
 	pop {r3, r5, r6, r7}

@@ -30,7 +30,7 @@ void Func_0200481c(void) {
   frame = 0;
   i = 0;
   do {
-    effect = (struct FieldEffect *)Engine_ObjectCreate(285, leader->x,
+    effect = (struct FieldEffect *)Import_ActorCreate(285, leader->x,
                                                        leader->y, leader->z);
     if (effect != 0) {
       frame = Func_02004e98(effect->sprite, frame);

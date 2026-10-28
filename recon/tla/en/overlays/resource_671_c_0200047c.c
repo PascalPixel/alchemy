@@ -56,8 +56,8 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void *MemAlloc(s32 size);
-void MemFree(void *block);
+void *Heap_Alloc(s32 size);
+void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 handle, s32 size, void *source);
 struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
@@ -86,7 +86,7 @@ static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 static __inline__ void *Mem_Alloc(s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  return MemAlloc(size);
+  return Heap_Alloc(size);
 }
 
 static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {

@@ -38,7 +38,7 @@ void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -63,7 +63,7 @@ void Func_02004df8(s32 id);
 
 static __inline__ struct ObjectRuntime *Create(s32 kind, s32 x, s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Engine_ObjectCreate(kind, x, y, z);
+  return Import_ActorCreate(kind, x, y, z);
 }
 
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);

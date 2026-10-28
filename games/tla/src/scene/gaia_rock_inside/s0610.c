@@ -6,7 +6,7 @@ extern const u8 gData_020050d0[];
 
 u32 Random16Far(void);
 struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
@@ -63,7 +63,7 @@ s32 Func_02000678(void) {
    * 0x80000; without the barrier the offset is started first (one reordered
    * pair, differ 2). */
   __asm__ volatile("" : "+r"(x));
-  object = Engine_ObjectCreate(14, x + 0x80000, source->y - 0x20000, source->z);
+  object = Import_ActorCreate(14, x + 0x80000, source->y - 0x20000, source->z);
   object->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(object, 0);
   Func_02004dac(object, gData_020050d0);

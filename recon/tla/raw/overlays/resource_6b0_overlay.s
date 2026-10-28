@@ -335,7 +335,7 @@ Func_02000480:
 .L_020084c4:
 	adds r1, r5, #0
 	mov r3, r8
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020084d4
@@ -677,7 +677,7 @@ Func_0200088c:
 	ldr r1, [r6]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r2, r9
 	ldr r3, [r2]
 	ldr r1, [r6]
@@ -827,7 +827,7 @@ Func_020009b8:
 	mov r1, r9
 	mov r2, r10
 	lsls r0, r0, #2
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	adds r5, r0, #0
 	lsls r6, r7, #12
 	adds r2, r5, #0
@@ -1119,7 +1119,7 @@ Func_02000ac8:
 	ldr r1, [r3, #8]
 	lsrs r0, r0, #16
 	ldr r3, [r3, #16]
-	bl Engine_ObjectCreate
+	bl Import_ActorCreate
 	mov r10, r0
 	mov r2, r10
 	adds r2, #85
@@ -2863,7 +2863,7 @@ Func_02002a74:
 .L_0200ac50:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl MemAlloc
+	bl Heap_Alloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -2883,7 +2883,7 @@ Func_02002a74:
 	asrs r0, r0, #16
 	bl VramCache_Load
 	adds r0, r5, #0
-	bl MemFree
+	bl Heap_Release
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200acb4

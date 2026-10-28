@@ -30,7 +30,7 @@ extern u8 MsgFieldShowAnemosPower[];
 
 void Task_RemoveFar(void (*callback)(void));
 void Resource_ResetEntry(s32 entry);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
 s32 Object_SetModeById(u32 id, s32 mode);

@@ -58,7 +58,7 @@ void Func_080db0b0(s32 id) {
   struct SwingSprite *heldSprite;
   s32 side = 0;
   struct ObjectRuntime *leader =
-      Object_GetById(EventRuntime_GetControlledOwner());
+      Object_GetById(Party_GetLeaderActor());
   struct ObjectRuntime *anchor = Object_GetById(id);
   struct ChainSlot *slot;
   struct SwingSprite *sprite;

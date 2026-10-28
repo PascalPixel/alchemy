@@ -235,7 +235,7 @@ Func_0816e65c:
 	bl ObjectDispatch_SetAnimationSpeedFar
 .L_0816e82e:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #20]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -570,9 +570,9 @@ Func_0816e65c:
 	bl BattleEffectKernels_IntegrateVector3
 .L_0816eace:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #20]
-	bl MemFree
+	bl Heap_Release
 	ldr r6, .L_0816ec44
 	ldr r2, [sp, #48]
 	ldr r1, [sp, #32]
@@ -733,7 +733,7 @@ Func_0816e65c:
 	movs r1, #16
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_0816ec54
 	bl Task_Remove
 	bl BattleEffect_EndCanvasLayer

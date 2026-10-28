@@ -198,7 +198,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(
               canvas, work->sheet, x, 112 - height, 14, height);
-          Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+          HeapSlot_Release(HEAP_BLITTER);
         }
       }
     }
@@ -224,8 +224,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       }
       particle++;
     }
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
 
     if (frame < COLUMN_RISE_FRAME)
       Func_08158ce0(4, 4);

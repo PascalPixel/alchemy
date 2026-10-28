@@ -798,7 +798,7 @@ BattleEffect_RunHaures:
 	b .L_0818760a
 .L_08187428:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #36]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1027,9 +1027,9 @@ BattleEffect_RunHaures:
 	adds r0, r7, #0
 	bl Render_DrawModelList
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #36]
-	bl MemFree
+	bl Heap_Release
 .L_0818760a:
 	ldr r3, .L_08187690
 	movs r1, #160
@@ -1262,7 +1262,7 @@ BattleEffect_RunHaures:
 	cmp r0, #8
 	bne .L_08187754
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081877d2:
 	ldr r1, [sp, #76]
 	movs r3, #141
@@ -1389,7 +1389,7 @@ BattleEffect_RunHaures:
 	str r3, [r2]
 .L_081878c0:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -1512,9 +1512,9 @@ BattleEffect_RunHaures:
 	bl Render_DrawModelList
 .L_081879c6:
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 .L_081879d2:
 	ldr r1, [sp, #76]
 	movs r2, #138
@@ -1801,7 +1801,7 @@ BattleEffect_RunHaures:
 	cmp r2, #11
 	bne .L_08187bd6
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #32]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2037,9 +2037,9 @@ BattleEffect_RunHaures:
 	b .L_08187cf6
 .L_08187df0:
 	mov r0, r10
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #32]
-	bl MemFree
+	bl Heap_Release
 .L_08187dfc:
 	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
@@ -2790,7 +2790,7 @@ BattleEffect_RunHaures:
 	bne .L_0818839c
 .L_081883d6:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	adds r7, r0, #0
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -2994,9 +2994,9 @@ BattleEffect_RunHaures:
 	.4byte 0x0000003c
 .L_08188570:
 	adds r0, r6, #0
-	bl MemFree
+	bl Heap_Release
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
@@ -3038,7 +3038,7 @@ BattleEffect_RunHaures:
 	ldr r0, .L_081885ec
 	bl Task_Remove
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #192
 	pop {r3, r5, r6, r7}

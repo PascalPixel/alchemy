@@ -36,8 +36,8 @@ struct WhirlWork {
   s8 kind;
 };
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Func_080e2264(void);
 void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
@@ -64,7 +64,7 @@ void Object_Destroy(struct ObjectRuntime *object);
 void BattleEffect_EndX(void);
 
 void Func_080e3074(void) {
-  struct WhirlWork *work = Runtime_AllocateHeapBlock(92, 0x1b38);
+  struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
@@ -254,5 +254,5 @@ void Func_080e3074(void) {
   owner->update = NULL;
   owner->angle = owner->action;
   BattleEffect_EndCanvasSprite();
-  Runtime_ReleaseHeapBlock(92);
+  HeapSlot_Release(92);
 }

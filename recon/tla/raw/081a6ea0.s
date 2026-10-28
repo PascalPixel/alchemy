@@ -13,7 +13,7 @@ Func_081a6ea0:
 	movs r1, #112
 	movs r0, #172
 	sub sp, #36
-	bl Runtime_AllocateHeapBlock
+	bl HeapSlot_Alloc
 	ldr r3, .L_081a6ef4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -361,7 +361,7 @@ Func_081a6ea0:
 	ldr r0, .L_081a71b4
 	bl Task_Remove
 	movs r0, #172
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #1

@@ -44,7 +44,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Task_Add(void (*callback)(void), s32 order);
 s32 Task_Remove(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
+void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -97,7 +97,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   work->transferPending = 1;
   WaitFrames(1);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
   // copied twice side by side into the map buffer.
@@ -153,6 +153,6 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
   Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(104);
+  HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }

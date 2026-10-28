@@ -34,13 +34,13 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_BumpAllocateAlternatePool
+	.global Heap_AllocEwram
 	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global MemFree
+Heap_AllocEwram:
+	overlay_veneer Heap_AllocEwramFar
+	.global Heap_Release
 	.thumb_func
-MemFree:
+Heap_Release:
 	overlay_veneer Sys_FreeFar
 	.global Func_02004aa8
 	.thumb_func
@@ -233,11 +233,11 @@ FieldEvent_WaitFrames:
 	.global Func_02004c20
 	.thumb_func
 Func_02004c20:
-	overlay_veneer EventRuntime_StartFar
+	overlay_veneer Event_StartFar
 	.global Func_02004c28
 	.thumb_func
 Func_02004c28:
-	overlay_veneer EventRuntime_EndFar
+	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
@@ -325,7 +325,7 @@ Object_SetPartAttribute:
 	.global Func_02004cd8
 	.thumb_func
 Func_02004cd8:
-	overlay_veneer EventRuntime_SetMessageFar
+	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
@@ -337,7 +337,7 @@ Func_02004ce8:
 	.global Func_02004cf0
 	.thumb_func
 Func_02004cf0:
-	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	overlay_veneer Event_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -377,7 +377,7 @@ Func_02004d38:
 	.global Func_02004d40
 	.thumb_func
 Func_02004d40:
-	overlay_veneer EventRuntime_SetCountdownFar
+	overlay_veneer Event_SetExitRequestFar
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
@@ -437,7 +437,7 @@ Func_02004db0:
 	.global Func_02004db8
 	.thumb_func
 Func_02004db8:
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02004dc0
 	.thumb_func
 Func_02004dc0:
@@ -481,7 +481,7 @@ Func_02004e08:
 	.global Func_02004e10
 	.thumb_func
 Func_02004e10:
-	overlay_veneer EventRuntime_GetControlledOwnerFar
+	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02004e18
 	.thumb_func
 Func_02004e18:

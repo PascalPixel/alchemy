@@ -48,11 +48,11 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
     paletteDestination = 0x05000100;
   }
   size = (u32)BattleEffect_ExpandCodeSize;
-  decoder = (PackedDecoder)MemAlloc(size);
+  decoder = (PackedDecoder)Heap_Alloc(size);
   Dma_Set(BattleEffect_ExpandCode, decoder, 0x84000000 | (size >> 2),
           REG_DMA3);
   decoder(resourceData + 256, tileDestination, paletteOffset);
-  MemFree(decoder);
+  Heap_Release(decoder);
 
   for (i = 0; i < 128; i++) {
     u16 color = *(const s16 *)resourceData;

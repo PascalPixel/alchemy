@@ -528,7 +528,7 @@ BattleEffect_RunLiquifier:
 	bne .L_0818f156
 .L_0818f1c4:
 	movs r0, #32
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #12]
 	movs r0, #1
 	bl Render_AllocateModelList
@@ -968,9 +968,9 @@ BattleEffect_RunLiquifier:
 	cmp r3, #8
 	bne .L_0818f4fc
 	adds r0, r7, #0
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #12]
-	bl MemFree
+	bl Heap_Release
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
@@ -994,9 +994,9 @@ BattleEffect_RunLiquifier:
 	ldr r0, .L_0818f5c8
 	bl Task_Remove
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	bl BattleEffect_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}

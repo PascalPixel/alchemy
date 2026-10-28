@@ -229,7 +229,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
               canvas,
               work->sheet + gData_08197486[frame & 3] + RENDER_MODE_TORNADO, x,
               y + 16, gData_08197492[frame & 3], gData_08197498[frame & 3]);
-          Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+          HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }
 
@@ -302,8 +302,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
           }
         }
       }
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_BLITTER);
 
       // The target flashes 16 frames into its turn, until the end.
       if (frame == member * 8 + 16) {

@@ -8,7 +8,7 @@ struct EventObjects {
   struct ObjectRuntime *objects[64];
 };
 
-struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);

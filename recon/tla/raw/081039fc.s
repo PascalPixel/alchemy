@@ -119,12 +119,12 @@ Func_081039fc:
 	b .L_08103c5c
 .L_08103ae8:
 	movs r0, #96
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r5, #166
 	lsls r5, r5, #1
 	str r0, [sp, #76]
 	adds r0, r5, #0
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r1, #0
 	movs r3, #128
 	str r1, [sp, #72]
@@ -287,9 +287,9 @@ Func_081039fc:
 	mov lr, r5
 	.2byte 0xf800
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #76]
-	bl MemFree
+	bl Heap_Release
 	b .L_08103d1a
 .L_08103c5c:
 	ldr r3, [sp, #104]
@@ -297,11 +297,11 @@ Func_081039fc:
 	cmp r3, #1
 	bhi .L_08103d1a
 	movs r0, #96
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	str r0, [sp, #48]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22
@@ -376,9 +376,9 @@ Func_081039fc:
 	str r3, [r0, #4]
 	mov r0, r9
 	str r1, [sp, #88]
-	bl MemFree
+	bl Heap_Release
 	ldr r0, [sp, #48]
-	bl MemFree
+	bl Heap_Release
 .L_08103d1a:
 	ldr r0, [sp, #124]
 	movs r1, #5
@@ -595,7 +595,7 @@ Func_081039fc:
 .L_08103ec8:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
+	bl Heap_AllocEwram
 	movs r1, #132
 	mov r9, r0
 	movs r0, #0
@@ -819,7 +819,7 @@ Func_081039fc:
 	strb r3, [r2, #5]
 .L_081040b6:
 	mov r0, r9
-	bl MemFree
+	bl Heap_Release
 .L_081040bc:
 	ldr r0, [sp, #96]
 	cmp r0, #0

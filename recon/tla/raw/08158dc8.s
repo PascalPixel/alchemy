@@ -763,7 +763,7 @@ BattleEffect_RunThor:
 	bne .L_08159332
 .L_081593a8:
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081593ae:
 	ldr r3, [sp, #100]
 	subs r3, #151
@@ -877,7 +877,7 @@ BattleEffect_RunThor:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r1, #23
 	movs r0, #188
 	bl BattleEffect_LoadBlitter
@@ -898,7 +898,7 @@ BattleEffect_RunThor:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_081594b6:
 	ldr r4, [sp, #112]
 	movs r5, #240
@@ -1395,7 +1395,7 @@ BattleEffect_RunThor:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 .L_0815989e:
 	ldr r1, [sp, #100]
 	cmp r1, r10
@@ -1688,7 +1688,7 @@ BattleEffect_RunThor:
 	cmp r9, r4
 	bne .L_08159a78
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r5, [sp, #100]
 	cmp r5, #15
 	ble .L_08159b4e
@@ -1816,7 +1816,7 @@ BattleEffect_RunThor:
 	mov lr, r4
 	.2byte 0xf800
 	movs r0, #188
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	movs r4, #1
 	add r9, r4
 	mov r5, r9
@@ -1853,7 +1853,7 @@ BattleEffect_RunThor:
 	b .L_0815965c
 .L_08159c3e:
 	movs r0, #104
-	bl Runtime_ReleaseHeapBlock
+	bl HeapSlot_Release
 	ldr r0, .L_08159ca8
 	bl Task_Remove
 	movs r0, #0

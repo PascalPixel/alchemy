@@ -1,6 +1,6 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
 /// game's last scene: SceneId_LemurianShip, with the area name Lemurian ship.
-/// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
+/// It is entered from Faran's house (timber_rooms_bc.c) once Iodem has given
 /// the party the Black Orb, and stepping back on cell behavior 1
 /// (LemurianShip_LeaveTheShip) returns there.
 ///

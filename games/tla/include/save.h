@@ -7,7 +7,7 @@
 /// A save file's summary for the file screen: the leader's name, level and
 /// class, the area, play time, coins, Djinn and party.
 struct SaveSummary {
-  u8 slotHeader[16]; ///< room for the record's SaveSlotHeader
+  u8 slotHeader[16]; ///< room for the part's SaveSectorHeader
   u8 name[12];       ///< the leader's
   u8 level;          ///< the leader's
   u8 classId;        ///< the leader's
@@ -22,31 +22,31 @@ struct SaveSummary {
   u8 paletteGlow;    ///< gAdventure.paletteGlow[0]
   u8 paletteGlowSub; ///< gAdventure.paletteGlow[1]
   u16 frames; ///< low half of the build stamp saved with the game
-  /// Filled on reading, from the record's next sector (offset 0x10, or 0x110
+  /// Filled on reading, from the part's next sector (offset 0x10, or 0x110
   /// for the extra summary).
   u8 unk38[4];
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
-/// The save work: which of the 15 flash sectors hold a record, their record
-/// ids and counters, a record's three sectors and the summaries.
+/// The save work: which of the 15 flash sectors hold a part, their part
+/// ids and counters, one part's three sectors and the summaries.
 struct SaveWorkspace {
-  u8 occupied[15];  ///< 1 for a sector holding the current copy of a record
-  u8 recordId[15];  ///< each sector's record
+  u8 occupied[15];  ///< 1 for a sector holding the current copy of a part
+  u8 partId[15];    ///< each sector's part
   u16 counter[15]; ///< each sector's counter
-  u8 slot[0x3000];  ///< one record's sectors, read from or written to flash
-  struct SaveSummary summary[3]; ///< each file's, from records 0 to 2
-  struct SaveSummary extra;      ///< record 3's summary
+  u8 slot[0x3000];  ///< one part's sectors, read from or written to flash
+  struct SaveSummary summary[3]; ///< each file's, from parts 0 to 2
+  struct SaveSummary extra;      ///< part 3's summary
   void (*progress)(s32 step); ///< called between sector writes, if set
   u16 sectorCount; ///< 0 when a write starts
   u16 sectorTotal; ///< 3 or 6 sectors to write
 };
 
-/// The header of a save sector in flash: its signature, the record it holds,
+/// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.
-struct SaveSlotHeader {
+struct SaveSectorHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
-  u8 recordId;
+  u8 partId;
   u16 checksum;
   u16 counter;
   u8 reserved[4]; ///< not named by ⚓️ code
@@ -57,8 +57,8 @@ STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 0x1e);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x303c);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 0x30fc);
 STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x3144);
-STATIC_ASSERT(sizeof(struct SaveSlotHeader) == 0x10);
+STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 0x10);
 
-u32 Save_FindLatestSector(s32 recordId);
+u32 Save_FindLatestSector(s32 partId);
 
 #endif

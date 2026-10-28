@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/daila/entry.o"(.text)
         "*/games/tla/src/scene/daila/scene_tables.o"(.text)
-        "*/games/tla/src/scene/daila/places.o"(.text)
+        "*/games/tla/src/scene/daila/placements.o"(.text)
         "*/games/tla/src/scene/daila/talk.o"(.text)
         "*/games/tla/src/scene/daila/hip.o"(.text)
         "*/games/tla/src/scene/daila/s03a0.o"(.text)

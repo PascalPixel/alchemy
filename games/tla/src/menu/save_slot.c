@@ -10,7 +10,7 @@ extern s8 gMenu_SaveSlotActionByPosition[];
 s32 Func_080432a4(void);
 void Menu_CenterResourceEntries(s32, s32, s32);
 
-/// Offers the actions the save records allow (plus two optional entries
+/// Offers the actions the files allow (plus two optional entries
 /// behind EWRAM flags) and maps the chosen position to an action. The second
 /// optional entry is 31, and with the first option off, action 4 becomes 5.
 // As ☀️'s Menu_SelectSaveSlotAction. A module of its own: in the Japanese

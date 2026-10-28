@@ -121,7 +121,7 @@ main	rom_main_00	recon/tla/raw/0801596c	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.0001596c	ja
 main	rom_main_00	games/tla/src/system/save/sector	.text
 main	rom_main_00	games/tla/src/system/save/f015ca4	.text
-main	rom_main_00	games/tla/src/system/save/record	.text
+main	rom_main_00	games/tla/src/system/save/part	.text
 main	rom_main_00	games/tla/src/system/save/state	.text
 main	rom_main_00	games/tla/src/system/save/release_workspace	.text
 main	rom_main_00	games/tla/src/system/link/serial_queue_command	.text
@@ -939,7 +939,7 @@ main	rom_main_02	games/tla/src/system/save/f042f10	.text
 main	rom_main_02	games/tla/src/system/save/f042ff0	.text
 main	rom_main_02	games/tla/src/system/save/play_time	.text
 main	rom_main_02	games/tla/src/system/save/find_free_summary_slot	.text
-main	rom_main_02	games/tla/src/system/save/scan_record_flags	.text
+main	rom_main_02	games/tla/src/system/save/scan_part_flags	.text
 main	rom_main_02	recon/tla/it/rom	.rom.000433bc	it
 main	rom_main_02	recon/tla/fr/rom	.rom.000433a8	fr
 main	rom_main_02	recon/tla/es/rom	.rom.000433c4	es

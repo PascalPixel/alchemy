@@ -1,0 +1,7 @@
+	.include "games/tbs/src/cartridge/overlay.inc"
+	overlay_veneer StuccoRoomsA_Initialize
+	overlay_veneer StuccoRoomsA_GetEntrances
+	overlay_veneer StuccoRoomsA_GetExits
+	overlay_veneer StuccoRoomsA_GetActorPlacements
+	overlay_veneer StuccoRoomsA_GetTriggers
+	overlay_veneer StuccoRoomsA_GetRegions

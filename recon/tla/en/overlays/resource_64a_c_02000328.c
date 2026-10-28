@@ -1,6 +1,6 @@
 // Draft, differ 696 of 756 (tla-en; the other editions differ in their
 // messages and layout): the game clear menu's flow: the ending choice, the
-// save slot actions, the password and link screens around the cell buffer
+// file actions, the password and link screens around the cell buffer
 // swap, and starting the next game. Left: register choice and block order;
 // the message numbers are written as numbers.
 #include "types.h"

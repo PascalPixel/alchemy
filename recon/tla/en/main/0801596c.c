@@ -3,7 +3,7 @@
 // Save_InitializeWork (games/tbs/src/runtime/runtime.c) over 15
 // sectors. Same instructions in the same shape; what is left is register
 // choice: the native keeps the workspace in fp (here a stack slot), the
-// occupied pointer in r7 and the record id byte addressed as a stack offset
+// occupied pointer in r7 and the part id byte addressed as a stack offset
 // plus base, where this draft makes each its own induction register.
 #include "types.h"
 #include "mem.h"
@@ -28,8 +28,8 @@ s32 Save_ReadSector(s32 index);
 
 s32 Func_0801596c(void) {
   struct SaveWorkspace *work;
-  struct SaveSlotHeader header;
-  struct SaveSlotHeader *slot;
+  struct SaveSectorHeader header;
+  struct SaveSectorHeader *slot;
   u32 index;
 
   work = HeapSlot_AllocEwram(204, sizeof(*work));
@@ -46,11 +46,11 @@ s32 Func_0801596c(void) {
 
   for (index = 0; index < 15; index += 3) {
     u32 status;
-    u32 record;
+    u32 partId;
     u8 id;
 
     work->occupied[index] = 0;
-    work->recordId[index] = 16;
+    work->partId[index] = 16;
     work->counter[index] = 0;
     status = Save_ReadSector(index);
     START_DMA(work->slot, &header, 0x84000004);
@@ -59,8 +59,8 @@ s32 Func_0801596c(void) {
 
     if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
-    record = slot->recordId;
-    id = record;
+    partId = slot->partId;
+    id = partId;
     work->counter[index] = slot->counter;
     if (id >= 16)
       continue;
@@ -68,10 +68,10 @@ s32 Func_0801596c(void) {
       continue;
 
     work->occupied[index] = 1;
-    work->recordId[index] = record;
+    work->partId[index] = partId;
     if (status < index) {
       do {
-        if (work->recordId[status] == (u8)record) {
+        if (work->partId[status] == (u8)partId) {
           if (work->counter[status] < slot->counter)
             work->occupied[status] = 0;
           else

@@ -5,7 +5,7 @@
 /// - Kalay (SceneId_Kalay), the town. Eight doors (step triggers 1 to 8) open
 /// into
 ///   the houses, the weapon and armor shops, the inn and the Kalay Sanctum
-///   (kalay_interiors.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
+///   (stucco_rooms_a.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
 ///   KALAY_TO_ARMOR_SHOP_COUNTER into the same two shops from behind their
 ///   counters; KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace, and
 ///   step triggers 9 and 10 out to the World Map (KALAY_TO_WORLD_MAP and
@@ -22,7 +22,7 @@
 /// departure, once (FLAG_KALAY_COLOSSO_TOUR_LEFT): the guides count the group,
 /// find a man missing and lead it off without him, and he runs after it. The
 /// second guide is the head guide's sprite with its green and blue swapped
-/// (SPRITE_COLOR_RBG), here and in kalay_interiors.c and kalay_tolbi_docks.c.
+/// (SPRITE_COLOR_RBG), here and in stucco_rooms_a.c and kalay_tolbi_docks.c.
 /// - Hammet Palace (SceneId_HammetPalaceGrounds), before the door of the
 /// palace,
 ///   where two soldiers of Kalay stand guard; the palace's rooms are

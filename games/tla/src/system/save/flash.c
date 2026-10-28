@@ -74,7 +74,8 @@ s32 IdentifyFlash(void) {
     }
     chip++;
   }
-  // Install the selected record, including the fallback when no ID matched.
+  // Install the selected chip's handlers, including the fallback when no
+  // ID matched.
   gFlash_Handler0 = (*chip)->handlers[0];
   gFlash_Handler1 = (*chip)->handlers[1];
   gEraseFlashSector = (*chip)->handlers[2];

@@ -30,7 +30,7 @@
 
 #include "adventure.h"
 #include "scene_ids.h"
-#include "module/scene/kalay_interiors.h"
+#include "module/scene/stucco_rooms_a.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
 #include "battle.h"
@@ -52,12 +52,12 @@
 #include "sounds.h"
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
-/// (gKalayInteriors_HouseActorPlacements), the inn's, whose rooms are
+/// (gStuccoRoomsA_HouseActorPlacements), the inn's, whose rooms are
 /// entered through the inn's entrances
-/// (gKalayInteriors_InnActorPlacements), and the Kalay Sanctum's
-/// (gKalayInteriors_SanctumActorPlacements). Unless a note says otherwise,
+/// (gStuccoRoomsA_InnActorPlacements), and the Kalay Sanctum's
+/// (gStuccoRoomsA_SanctumActorPlacements). Unless a note says otherwise,
 /// it quotes what its actor says before the Colosso tour leaves.
-enum KalayInteriorsActorId {
+enum StuccoRoomsAActorId {
   // Kalay's houses
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "I'm shocked to hear the righteous thieves of
@@ -180,29 +180,29 @@ enum KalayInteriorsActorId {
 /// Kalay's inn, as Inn_CheckIn numbers the inns.
 enum { KALAY_INN = 7 };
 
-static void KalayInteriors_ApplyRoomState(void);
+static void StuccoRoomsA_ApplyRoomState(void);
 
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
-const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
+const struct SceneEntrance *StuccoRoomsA_GetEntrances(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    return gKalayInteriors_HouseEntrances;
+    return gStuccoRoomsA_HouseEntrances;
   }
   if (sceneId == (s32)&SceneId_KalaySanctum) {
-    return gKalayInteriors_SanctumEntrances;
+    return gStuccoRoomsA_SanctumEntrances;
   }
-  return gKalayInteriors_NoEntrances;
+  return gStuccoRoomsA_NoEntrances;
 }
 
-const struct SceneExitRegion *KalayInteriors_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *StuccoRoomsA_GetRegions(void) { return NULL; }
 
-const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
+const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
 
 /// The inn's rooms share one actor placement table and the houses
 /// another, chosen by entrance and clipped to the current view.
-const struct ActorPlacement *KalayInteriors_GetActorPlacements(void) {
+const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
   s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
@@ -218,24 +218,24 @@ const struct ActorPlacement *KalayInteriors_GetActorPlacements(void) {
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
     case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-      table = gKalayInteriors_InnActorPlacements;
+      table = gStuccoRoomsA_InnActorPlacements;
       break;
     default:
-      table = gKalayInteriors_HouseActorPlacements;
+      table = gStuccoRoomsA_HouseActorPlacements;
       break;
     }
     Scene_AssignViewFlags(table);
     return table;
   }
   if (sceneId == (s32)&SceneId_KalaySanctum) {
-    return gKalayInteriors_SanctumActorPlacements;
+    return gStuccoRoomsA_SanctumActorPlacements;
   }
-  return gKalayInteriors_NoActorPlacements;
+  return gStuccoRoomsA_NoActorPlacements;
 }
 
 /// Selects room dialogue with the same entrance grouping as the
 /// actor placements.
-const struct Trigger *KalayInteriors_GetTriggers(void) {
+const struct Trigger *StuccoRoomsA_GetTriggers(void) {
   s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
@@ -250,21 +250,21 @@ const struct Trigger *KalayInteriors_GetTriggers(void) {
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
     case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-      return gKalayInteriors_InnTriggers;
+      return gStuccoRoomsA_InnTriggers;
     default:
-      return gKalayInteriors_HouseTriggers;
+      return gStuccoRoomsA_HouseTriggers;
     }
   }
   if (sceneId == (s32)&SceneId_KalaySanctum) {
-    return gKalayInteriors_SanctumTriggers;
+    return gStuccoRoomsA_SanctumTriggers;
   }
-  return gKalayInteriors_NoTriggers;
+  return gStuccoRoomsA_NoTriggers;
 }
 
 /// The tour's guide in the dining room of Kalay's inn: now the party has heard
 /// of the tour. `Please finish eating if you are taking the tour! We'll be
 /// leaving soon!`
-static void KalayInteriors_TalkToTourGuide(void) {
+static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
   Event_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
@@ -274,7 +274,7 @@ static void KalayInteriors_TalkToTourGuide(void) {
 
 /// Someone asks whether the party knows the continent south of Tolbi. They're
 /// in one of Kalay's houses, and answer either way the party replies.
-static void KalayInteriors_AskAboutSouthernContinent(void) {
+static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
   Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
@@ -285,7 +285,7 @@ static void KalayInteriors_AskAboutSouthernContinent(void) {
 /// innkeeper offers a room. From any other side he asks whether the party is
 /// going to Tolbi too, or, once the tour has left, says how empty the inn
 /// feels.
-static void KalayInteriors_TalkToInnkeeper(void) {
+static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
@@ -309,7 +309,7 @@ static void KalayInteriors_TalkToInnkeeper(void) {
 /// The Kalay Sanctum's healer offers its services across the counter. He does
 /// so when spoken to across the counter with the leader facing north; from
 /// elsewhere he says Kalay is a peaceful place.
-static void KalayInteriors_TalkToHealer(void) {
+static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   // FACING_IS_NORTH removes the native EN halfword shift and changes its
@@ -327,7 +327,7 @@ static void KalayInteriors_TalkToHealer(void) {
 /// Walking north into one of four doors inside Kalay's houses and inn
 /// (step triggers 12, 13, 16 and 19): stops the room's actors, opens the
 /// door and walks the leader out.
-static void KalayInteriors_OpenDoorAndExit(void) {
+static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldWork *work = gFieldWork;
   u32 slot;
   s32 doorIndex;
@@ -364,10 +364,10 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   Sound_Play(SE_DOOR_OPEN);
 
   {
-    u32 x = gKalayInteriors_DoorCells[doorIndex].x;
-    u32 y = gKalayInteriors_DoorCells[doorIndex].y;
+    u32 x = gStuccoRoomsA_DoorCells[doorIndex].x;
+    u32 y = gStuccoRoomsA_DoorCells[doorIndex].y;
 
-    MapGrid_AnimateCells(gKalayInteriors_DoorCells[doorIndex].steps, x, y);
+    MapGrid_AnimateCells(gStuccoRoomsA_DoorCells[doorIndex].steps, x, y);
   }
 
   Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
@@ -387,11 +387,11 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 
 /// Sets the opening transition and restores room-specific actors and
 /// tiles.
-s32 KalayInteriors_Initialize(void) {
+s32 StuccoRoomsA_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gAdventure.sceneId == (s32)&SceneId_StuccoRoomsA) {
-    KalayInteriors_ApplyRoomState();
+    StuccoRoomsA_ApplyRoomState();
   }
   return 0;
 }
@@ -403,7 +403,7 @@ s32 KalayInteriors_Initialize(void) {
 /// below the ground floor, where the corner of a neighbouring room would
 /// otherwise show at the bottom edge of the view (the room's render with and
 /// without the copy).
-static void KalayInteriors_ApplyRoomState(void) {
+static void StuccoRoomsA_ApplyRoomState(void) {
   s16 entrance = gAdventure.entrance;
 
   switch (entrance) {
@@ -442,13 +442,13 @@ static void KalayInteriors_ApplyRoomState(void) {
   }
 }
 
-struct SceneEntrance gKalayInteriors_NoEntrances[] = {
+struct SceneEntrance gStuccoRoomsA_NoEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
+struct SceneEntrance gStuccoRoomsA_HouseEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {STUCCO_ROOMS_A_HOUSE_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
@@ -492,7 +492,7 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
+struct SceneEntrance gStuccoRoomsA_SanctumEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
@@ -501,7 +501,7 @@ struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gKalayInteriors_Exits[] = {
+u32 gStuccoRoomsA_Exits[] = {
     SCENE_EXITS(StuccoRoomsA),
     SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY, Kalay,
                KALAY_FROM_HOUSE_NORTHWEST),
@@ -545,12 +545,12 @@ u32 gKalayInteriors_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gKalayInteriors_NoActorPlacements[] = {
+struct ActorPlacement gStuccoRoomsA_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorPlacement gKalayInteriors_HouseActorPlacements[] = {
+struct ActorPlacement gStuccoRoomsA_HouseActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(101), 0, PIXELS(181), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
@@ -578,7 +578,7 @@ struct ActorPlacement gKalayInteriors_HouseActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gKalayInteriors_InnActorPlacements[] = {
+struct ActorPlacement gStuccoRoomsA_InnActorPlacements[] = {
     { SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(120), 0, PIXELS(627), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER,
@@ -606,19 +606,19 @@ struct ActorPlacement gKalayInteriors_InnActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gKalayInteriors_SanctumActorPlacements[] = {
+struct ActorPlacement gStuccoRoomsA_SanctumActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(106), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct Trigger gKalayInteriors_NoTriggers[] = {
+struct Trigger gStuccoRoomsA_NoTriggers[] = {
     { TRIGGERS_END },
 };
 
 /// A bare flag as a condition holds while that flag is clear: these lines are
 /// spoken before the Colosso tour leaves, the next ones after.
-struct Trigger gKalayInteriors_HouseTriggers[] = {
+struct Trigger gStuccoRoomsA_HouseTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY },
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY },
@@ -627,9 +627,9 @@ struct Trigger gKalayInteriors_HouseTriggers[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(StuccoRoomsA_OpenDoorAndExit) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT(StuccoRoomsA_OpenDoorAndExit) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
     { TRIGGER_TALK, ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
     { TRIGGER_TALK, ACTOR_MAN_ON_THE_NORTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
@@ -638,7 +638,7 @@ struct Trigger gKalayInteriors_HouseTriggers[] = {
     { TRIGGER_TALK, ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
     { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
     { TRIGGER_TALK, ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT(KalayInteriors_AskAboutSouthernContinent) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT(StuccoRoomsA_AskAboutSouthernContinent) },
     { TRIGGER_TALK, ACTOR_WOMAN_BOUND_FOR_THE_TOUR, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
     { TRIGGER_TALK, ACTOR_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
     { TRIGGER_TALK, ACTOR_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
@@ -670,21 +670,21 @@ struct Trigger gKalayInteriors_HouseTriggers[] = {
     { TRIGGERS_END },
 };
 
-struct Trigger gKalayInteriors_InnTriggers[] = {
+struct Trigger gStuccoRoomsA_InnTriggers[] = {
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_KALAY },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(StuccoRoomsA_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(StuccoRoomsA_OpenDoorAndExit) },
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
     { TRIGGER_EXIT, 15, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
     { TRIGGER_EXIT, 17, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(StuccoRoomsA_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INNKEEPERS_WIFE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
     { TRIGGER_TALK, ACTOR_INNKEEPERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
     { TRIGGER_TALK, ACTOR_FIRST_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
     { TRIGGER_TALK, ACTOR_SECOND_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
-    { TRIGGER_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToTourGuide) },
+    { TRIGGER_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, EVENT(StuccoRoomsA_TalkToTourGuide) },
     { TRIGGER_TALK, ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
     { TRIGGER_TALK, ACTOR_THIRD_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
     { TRIGGER_TALK, ACTOR_FOURTH_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
@@ -720,23 +720,23 @@ struct Trigger gKalayInteriors_InnTriggers[] = {
     { TRIGGERS_END },
 };
 
-struct Trigger gKalayInteriors_SanctumTriggers[] = {
+struct Trigger gStuccoRoomsA_SanctumTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(StuccoRoomsA_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { TRIGGERS_END },
 };
 // clang-format on
 
-u16 gKalayInteriors_DoorCellSteps[] = {
+u16 gStuccoRoomsA_DoorCellSteps[] = {
     MAPGRID_ANIMATION_STEP(7, 125, 1, 2, 5),
     MAPGRID_ANIMATION_STEP(8, 125, 1, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapGridCellAnimation gKalayInteriors_DoorCells[] = {
-    {gKalayInteriors_DoorCellSteps, 34, 98},
-    {gKalayInteriors_DoorCellSteps, 39, 98},
-    {gKalayInteriors_DoorCellSteps, 50, 96},
-    {gKalayInteriors_DoorCellSteps, 52, 107},
+struct MapGridCellAnimation gStuccoRoomsA_DoorCells[] = {
+    {gStuccoRoomsA_DoorCellSteps, 34, 98},
+    {gStuccoRoomsA_DoorCellSteps, 39, 98},
+    {gStuccoRoomsA_DoorCellSteps, 50, 96},
+    {gStuccoRoomsA_DoorCellSteps, 52, 107},
 };

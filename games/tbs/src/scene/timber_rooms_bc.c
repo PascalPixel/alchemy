@@ -1,5 +1,5 @@
 /// @file
-/// Lalivero's interiors: two sheets of rooms drawn in timber in one overlay,
+/// Lalivero's rooms: two sheets of rooms drawn in timber in one overlay,
 /// Timber rooms B and C. The game packs rooms that share a tile style onto one
 /// map, and every room on these two is Lalivero's, entered from the town. Their
 /// area name is Lalivero, and Lalivero Sanctum for the Sanctum's rooms of
@@ -17,7 +17,7 @@
 /// TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands behind a
 /// counter and trades only with a leader facing north across it
-/// (LaliveroInteriors_TalkToWeaponMerchant and the others); from any other side
+/// (TimberRoomsBC_TalkToWeaponMerchant and the others); from any other side
 /// they talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the
 /// place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
@@ -28,12 +28,12 @@
 /// wharf where Babi's ship lies (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST,
 /// leading on by TIMBER_ROOMS_C_TO_LEMURIAN_SHIP). Before Venus Lighthouse an
 /// inn worker apologizes once for her distraction
-/// (LaliveroInteriors_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and
+/// (TimberRoomsBC_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and
 /// goes back to her chores. The aerie of Venus Lighthouse leads in by
 /// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
-/// LaliveroInteriors_ReportToFaran: the party reports to Faran and Iodem, in
+/// TimberRoomsBC_ReportToFaran: the party reports to Faran and Iodem, in
 /// one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Step trigger 51 afterwards
-/// plays LaliveroInteriors_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
+/// plays TimberRoomsBC_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
 /// sends the party outside, where Iodem gives it the Black Orb (lalivero.c). A
 /// barrel holds a Lucky Medal.
 
@@ -41,7 +41,7 @@
 #include "adventure.h"
 #include "scene_ids.h"
 #include "module/import.h"
-#include "module/scene/lalivero_interiors.h"
+#include "module/scene/timber_rooms_bc.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
 #include "module/game/game.h"
@@ -65,7 +65,7 @@
 #include "actor_script.h"
 #include "sounds.h"
 #include "flags.h"
-static void LaliveroInteriors_TellFaranAboutJenna(void);
+static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No exit
 /// leads to it and the entrance table has no row for it: only the debug
@@ -86,7 +86,7 @@ enum {
 /// The actors of both scenes, numbered by the rows of each scene's
 /// actor placement tables. The people are named by what they say before Venus
 /// Lighthouse and by what their sprites show.
-enum LaliveroInteriorsActorId {
+enum TimberRoomsBCActorId {
   // The houses, the shops and the Sanctum (TimberRoomsB).
   /// A young man with brown hair in a purple shirt, in the house at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_WEST. "Of course I have seen Sheba's
@@ -219,21 +219,21 @@ static s32 InnWorker_Sigh(struct Actor *interpreter) {
   return 0;
 }
 
-const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
-  return gLaliveroInteriors_Entrances;
+const struct SceneEntrance *TimberRoomsBC_GetEntrances(void) {
+  return gTimberRoomsBC_Entrances;
 }
 
-const struct SceneExitRegion *LaliveroInteriors_GetRegions(void) {
+const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
   if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
 }
 
-const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
+const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
-const struct ActorPlacement *LaliveroInteriors_GetActorPlacements(void) {
+const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
@@ -247,7 +247,7 @@ const struct ActorPlacement *LaliveroInteriors_GetActorPlacements(void) {
 /// The side the leader faces: the facing rounded to the nearest of east,
 /// south, west and north. Facing north, the leader is across the counter
 /// from a shopkeeper.
-static inline u16 LaliveroInteriors_LeaderGetSide(void) {
+static inline u16 TimberRoomsBC_LeaderGetSide(void) {
   return (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
@@ -256,9 +256,9 @@ static inline u16 LaliveroInteriors_LeaderGetSide(void) {
 /// shop; from elsewhere, before Venus Lighthouse, they ask whether the party
 /// has heard that Sheba was taken hostage and Faran went after her, and after
 /// it tell of the rough sea.
-static void LaliveroInteriors_TalkToWeaponMerchant(s32 keeper) {
+static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  // LaliveroInteriors_LeaderGetSide's rounding, written with the mask 0xc000,
+  // TimberRoomsBC_LeaderGetSide's rounding, written with the mask 0xc000,
   // which loads from the literal pool where the helper's builds the mask.
   u16 side = (leader->facing + 0x2000) & 0xc000;
 
@@ -284,8 +284,8 @@ static void LaliveroInteriors_TalkToWeaponMerchant(s32 keeper) {
 
 /// Lalivero (TimberRoomsB): the armor shop across the counter; otherwise
 /// small talk.
-static void LaliveroInteriors_TalkToArmorMerchant(s32 keeper) {
-  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
+static void TimberRoomsBC_TalkToArmorMerchant(s32 keeper) {
+  if (TimberRoomsBC_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroWantedSendShips);
@@ -298,8 +298,8 @@ static void LaliveroInteriors_TalkToArmorMerchant(s32 keeper) {
 
 /// Lalivero (TimberRoomsB): the item shop across the counter; otherwise
 /// small talk.
-static void LaliveroInteriors_TalkToItemMerchant(s32 keeper) {
-  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
+static void TimberRoomsBC_TalkToItemMerchant(s32 keeper) {
+  if (TimberRoomsBC_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroImpossibleGoOcean);
@@ -312,8 +312,8 @@ static void LaliveroInteriors_TalkToItemMerchant(s32 keeper) {
 
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
-static void LaliveroInteriors_TalkToHealer(s32 healer) {
-  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
+static void TimberRoomsBC_TalkToHealer(s32 healer) {
+  if (TimberRoomsBC_LeaderGetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroBabiLighthouseStruck);
@@ -326,8 +326,8 @@ static void LaliveroInteriors_TalkToHealer(s32 healer) {
 
 /// Lalivero (TimberRoomsC), the inn: a room for the night across the
 /// counter; otherwise small talk.
-static void LaliveroInteriors_TalkToInnkeeper(s32 innkeeper) {
-  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
+static void TimberRoomsBC_TalkToInnkeeper(s32 innkeeper) {
+  if (TimberRoomsBC_LeaderGetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroDidntKnowTime);
@@ -342,10 +342,10 @@ static void LaliveroInteriors_TalkToInnkeeper(s32 innkeeper) {
 /// stops her chores to apologize: worry for Sheba keeps her from concentrating.
 /// A leader standing west of her steps aside to the south before she starts
 /// again.
-static void LaliveroInteriors_TalkToInnWorker(void) {
+static void TimberRoomsBC_TalkToInnWorker(void) {
   s16 side;
 
-  side = LaliveroInteriors_LeaderGetSide();
+  side = TimberRoomsBC_LeaderGetSide();
   GameFlag_Set(FLAG_LALIVERO_INN_WORKER_APOLOGIZED);
   Event_Start();
   Field_EndBusyAndReveal();
@@ -371,13 +371,13 @@ static void LaliveroInteriors_TalkToInnWorker(void) {
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Event_WaitFrames(20);
   }
-  Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
+  Actor_SetScript(ACTOR_INN_WORKER, gTimberRoomsBC_InnWorkerChores);
   Event_End();
 }
 
 /// Lalivero (TimberRoomsC), step trigger 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
-static void LaliveroInteriors_IodemCallsOut(void) {
+static void TimberRoomsBC_IodemCallsOut(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_Start();
@@ -398,7 +398,7 @@ static void LaliveroInteriors_IodemCallsOut(void) {
 
 /// Lalivero (TimberRoomsC): Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
-static void LaliveroInteriors_TalkToIodem(void) {
+static void TimberRoomsBC_TalkToIodem(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
@@ -407,7 +407,7 @@ static void LaliveroInteriors_TalkToIodem(void) {
 
 /// Both scenes, a doorway out: take the touched step trigger's exit with the
 /// exit sound.
-static void LaliveroInteriors_LeaveBuilding(void) {
+static void TimberRoomsBC_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->stepTrigger;
 
@@ -417,7 +417,7 @@ static void LaliveroInteriors_LeaveBuilding(void) {
 
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
-const struct Trigger *LaliveroInteriors_GetTriggers(void) {
+const struct Trigger *TimberRoomsBC_GetTriggers(void) {
   if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
@@ -435,7 +435,7 @@ const struct Trigger *LaliveroInteriors_GetTriggers(void) {
 /// Lighthouse: the party reports to Faran and Iodem. No sign of Sheba, nor of
 /// Jenna and the others; Faran's faith that Sheba lived, what an Adept is, and
 /// a farewell as the party sets out to search for Jenna.
-static void LaliveroInteriors_ReportToFaran(void) {
+static void TimberRoomsBC_ReportToFaran(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -491,7 +491,7 @@ static void LaliveroInteriors_ReportToFaran(void) {
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
   if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
-    LaliveroInteriors_TellFaranAboutJenna();
+    TimberRoomsBC_TellFaranAboutJenna();
   } else {
     Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
@@ -772,7 +772,7 @@ static void LaliveroInteriors_ReportToFaran(void) {
 /// The party tells Faran and Iodem what became of Jenna and the others, when
 /// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
 /// ship.
-static void LaliveroInteriors_TellFaranAboutJenna(void) {
+static void TimberRoomsBC_TellFaranAboutJenna(void) {
   Event_SetMessageId(MsgLaliveroTellOthers);
   Event_WaitFrames(20);
 
@@ -877,10 +877,10 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
-      Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
+      Actor_SetScript(ACTOR_INN_WORKER, gTimberRoomsBC_InnWorkerChores);
     }
     if (gAdventure.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
-      LaliveroInteriors_ReportToFaran();
+      TimberRoomsBC_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // placements do.
       Actor_SetMovementType(Actor_GetById(ACTOR_IODEM),
@@ -895,7 +895,7 @@ s32 Scene_Initialize(void) {
 
 /// The inn worker's chores once she has apologized: she paces between two
 /// spots, turning to each side, and sighs now and then.
-s32 gLaliveroInteriors_InnWorkerChores[] = {
+s32 gTimberRoomsBC_InnWorkerChores[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCELERATION, 0x13333),
@@ -929,7 +929,7 @@ s32 gLaliveroInteriors_InnWorkerChores[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gLaliveroInteriors_Entrances[] = {
+struct SceneEntrance gTimberRoomsBC_Entrances[] = {
     {TIMBER_ROOMS_B_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
     {TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
@@ -992,7 +992,7 @@ struct SceneExitRegion gTimberRoomsC_Regions[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gLaliveroInteriors_Exits[] = {
+u32 gTimberRoomsBC_Exits[] = {
     SCENE_EXITS(TimberRoomsB),
     SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_WEST),
     SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST),
@@ -1099,16 +1099,16 @@ struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsB_Triggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { TRIGGER_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
@@ -1129,10 +1129,10 @@ struct Trigger gTimberRoomsB_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsBeenSoLongSinceI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheLaliveransAreATimidPeople) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
@@ -1146,16 +1146,16 @@ struct Trigger gTimberRoomsB_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
@@ -1176,10 +1176,10 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImWorriedThatWeWontGet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOneCouldPossiblySwimIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
@@ -1193,25 +1193,25 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsC_Triggers[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
     { TRIGGER_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(LaliveroInteriors_TalkToInnWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(LaliveroInteriors_TalkToInnWorker) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(TimberRoomsBC_TalkToInnWorker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(TimberRoomsBC_TalkToInnWorker) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyDidThisHaveToHappen) },
@@ -1225,18 +1225,18 @@ struct Trigger gTimberRoomsC_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
-    { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT(LaliveroInteriors_IodemCallsOut) },
-    { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT(LaliveroInteriors_TalkToIodem) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT(TimberRoomsBC_IodemCallsOut) },
+    { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT(TimberRoomsBC_TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
@@ -1248,7 +1248,7 @@ struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoThereAreSomePeopleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsPleaseUseThatShipToFind) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIMustSayItIsNice) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWouldTheLightingMakeSuch) },

@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_690_overlay.o"(.text.x020080b8)
         "*/games/tla/src/scene/settlements/s0280.o"(.text)
         "*/games/tla/src/scene/settlements/scene_tables.o"(.text)
-        "*/games/tla/src/scene/settlements/places.o"(.text)
+        "*/games/tla/src/scene/settlements/placements.o"(.text)
         "*/games/tla/src/scene/settlements/exits.o"(.text)
         "*/games/tla/src/scene/settlements/s0358.o"(.text)
         "*/games/tla/src/scene/settlements/events_a.o"(.text)

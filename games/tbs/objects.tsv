@@ -853,9 +853,9 @@ main	rom_tail_02	games/tbs/src/cartridge/overlay/overlays
 3a8	text	games/tbs/src/scene/kalay
 3a8	text	games/tbs/src/scene/import/kalay
 3a8	bss	resource_3a8_overlay	.bss
-3a9	text	games/tbs/src/scene/entry/kalay_interiors
-3a9	text	games/tbs/src/scene/kalay_interiors
-3a9	text	games/tbs/src/scene/import/kalay_interiors
+3a9	text	games/tbs/src/scene/entry/stucco_rooms_a
+3a9	text	games/tbs/src/scene/stucco_rooms_a
+3a9	text	games/tbs/src/scene/import/stucco_rooms_a
 3aa	text	games/tbs/src/scene/entry/hammet_palace
 3aa	text	games/tbs/src/scene/hammet_palace
 3aa	text	games/tbs/src/scene/import/hammet_palace
@@ -975,9 +975,9 @@ main	rom_tail_02	games/tbs/src/cartridge/overlay/overlays
 3c6	text	games/tbs/src/scene/entry/lalivero
 3c6	text	games/tbs/src/scene/lalivero
 3c6	text	games/tbs/src/scene/import/lalivero
-3c7	text	games/tbs/src/scene/entry/lalivero_interiors
-3c7	text	games/tbs/src/scene/lalivero_interiors
-3c7	text	games/tbs/src/scene/import/lalivero_interiors
+3c7	text	games/tbs/src/scene/entry/timber_rooms_bc
+3c7	text	games/tbs/src/scene/timber_rooms_bc
+3c7	text	games/tbs/src/scene/import/timber_rooms_bc
 3c8	text	games/tbs/src/scene/entry/venus_lighthouse
 3c8	text	games/tbs/src/scene/venus_lighthouse
 3c8	text	games/tbs/src/scene/import/venus_lighthouse

@@ -1,5 +1,5 @@
 /// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
-/// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
+/// Lalivero: SceneId_Lalivero. Its buildings are timber_rooms_bc.c. The
 /// story brings the party here twice, and Lalivero_GetActorPlacements and
 /// Lalivero_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.

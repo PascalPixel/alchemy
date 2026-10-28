@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/resource_661_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/yampi_desert/s00b8.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/places.o"(.text)
+        "*/games/tla/src/scene/yampi_desert/placements.o"(.text)
         "*/games/tla/src/scene/yampi_desert/scene_tables.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s02f8.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s03b8.o"(.text)

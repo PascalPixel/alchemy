@@ -1,21 +1,21 @@
-#ifndef ALCHEMY_MODULE_MAP_LALIVERO_INTERIORS_H
-#define ALCHEMY_MODULE_MAP_LALIVERO_INTERIORS_H
+#ifndef ALCHEMY_MODULE_MAP_TIMBER_ROOMS_BC_H
+#define ALCHEMY_MODULE_MAP_TIMBER_ROOMS_BC_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
 
-const struct SceneEntrance *LaliveroInteriors_GetEntrances(void);
-const struct SceneExitRegion *LaliveroInteriors_GetRegions(void);
-const u32 *LaliveroInteriors_GetExits(void);
-const struct ActorPlacement *LaliveroInteriors_GetActorPlacements(void);
-const struct Trigger *LaliveroInteriors_GetTriggers(void);
+const struct SceneEntrance *TimberRoomsBC_GetEntrances(void);
+const struct SceneExitRegion *TimberRoomsBC_GetRegions(void);
+const u32 *TimberRoomsBC_GetExits(void);
+const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void);
+const struct Trigger *TimberRoomsBC_GetTriggers(void);
 s32 Scene_Initialize(void);
-extern s32 gLaliveroInteriors_InnWorkerChores[];
-extern struct SceneEntrance gLaliveroInteriors_Entrances[];
+extern s32 gTimberRoomsBC_InnWorkerChores[];
+extern struct SceneEntrance gTimberRoomsBC_Entrances[];
 extern struct SceneExitRegion gTimberRoomsB_Regions[];
 extern struct SceneExitRegion gTimberRoomsC_Regions[];
-extern u32 gLaliveroInteriors_Exits[];
+extern u32 gTimberRoomsBC_Exits[];
 extern struct ActorPlacement gTimberRoomsB_ActorPlacements[];
 extern struct ActorPlacement gTimberRoomsC_ActorPlacements[];
 extern struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[];

@@ -33,11 +33,11 @@ u32 Save_WriteSector(s32 sector);
 
 s32 Save_InvalidateSector(s32 index);
 
-u32 Save_ReadPart(s32 recordId, void *destination) {
+u32 Save_ReadPart(s32 partId, void *destination) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   u32 index;
 
-  index = Save_FindLatestSector(recordId);
+  index = Save_FindLatestSector(partId);
   if (index > 14)
     return 1;
   Save_ReadSector(index);
@@ -46,12 +46,12 @@ u32 Save_ReadPart(s32 recordId, void *destination) {
   return 0;
 }
 
-u32 Save_DeletePart(s32 recordId) {
+u32 Save_DeletePart(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   s32 index;
   s32 result;
 
-  index = Save_FindLatestSector(recordId);
+  index = Save_FindLatestSector(partId);
   if ((u32)index > 14)
     return 1;
   work->sectorCount = 0;
@@ -83,7 +83,7 @@ s32 Save_ChecksumSector(void) {
   return sum;
 }
 
-u32 Save_FindLatestSector(s32 recordId) {
+u32 Save_FindLatestSector(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   u32 latestCounter;
   u32 latestSlot;
@@ -92,7 +92,7 @@ u32 Save_FindLatestSector(s32 recordId) {
   latestCounter = 0;
   latestSlot = 15;
   for (i = 0; i <= 14; i += 3) {
-    if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
+    if (work->occupied[i] != 0 && partId == work->partId[i]) {
       if (latestCounter < work->counter[i]) {
         latestCounter = work->counter[i];
         latestSlot = i;
@@ -104,7 +104,7 @@ u32 Save_FindLatestSector(s32 recordId) {
 
 s32 Save_InvalidateSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-  struct SaveSlotHeader header;
+  struct SaveSectorHeader header;
   volatile u32 zero;
 
   zero = 0;
@@ -112,14 +112,14 @@ s32 Save_InvalidateSector(s32 index) {
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
   WAIT_DMA();
-  header.recordId = 16;
+  header.partId = 16;
   header.counter = 0;
   START_DMA(&header, work->slot, 0x84000004);
   WAIT_DMA();
   if (Save_WriteSector(index) != 0)
     return 1;
   work->occupied[index] = 0;
-  work->recordId[index] = 16;
+  work->partId[index] = 16;
   work->counter[index] = 0;
   return 0;
 }

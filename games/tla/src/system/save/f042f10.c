@@ -3,7 +3,7 @@
 #include "irqlock.h"
 
 void Serial_QueueCommand(u32 command);
-s32 Func_08015ca4(s32 slot, void *buffer);
+s32 Func_08015ca4(s32 partId, void *buffer);
 void Func_08042dc4(s32 step);
 
 #define DMA_STOP(n)                                                            \
@@ -18,7 +18,7 @@ void Func_08042dc4(s32 step);
 /// stopped, queueing Func_08042dc4 as the serial command around it, then
 /// restores IE and IME. Func_08042ff0 does the same around
 /// Save_DeletePart.
-s32 Func_08042f10(s32 slot, void *buffer) {
+s32 Func_08042f10(s32 partId, void *buffer) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
@@ -48,7 +48,7 @@ s32 Func_08042f10(s32 slot, void *buffer) {
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
   Serial_QueueCommand((u32)Func_08042dc4);
-  result = Func_08015ca4(slot, buffer);
+  result = Func_08015ca4(partId, buffer);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
   REG_IE = ie;

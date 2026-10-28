@@ -1,6 +1,6 @@
 # The Lost Age: scene
 
-This folder holds The Lost Age's scenes: one folder per place, 106 of them,
+This folder holds The Lost Age's scenes: one folder per scene overlay, 106 of them,
 each an overlay loaded at 0x2008000 like ☀️'s. ☀️'s
 [Scenes](../../../tbs/src/scene/README.md) explains how a scene runs, its
 tables and its events; this page says only what differs here.
@@ -8,7 +8,7 @@ tables and its events; this page says only what differs here.
 ## What differs from ☀️
 
 - **A scene is a folder, not a file.** ☀️ writes each scene as one
-  `<place>.c` with its entry and import tables beside it. ⚓️'s scene is a
+  `<scene>.c` with its entry and import tables beside it. ⚓️'s scene is a
   folder: `entry.s`, `import.s`, `scene_tables.c`, `data.c`, and its code in
   files named for the offset in the overlay where each function begins
   (`airs_rock_inside/s0128.c`), with a header of its own names where it has
@@ -20,8 +20,8 @@ tables and its events; this page says only what differs here.
   through one `overlay.ld` and its object list.
 - **Numbers.** ⚓️'s overlays are numbered from 0x649
   (`games/tla/src/field/scenes.s`), and its scene table has a sixth column, a
-  flag. A place both games have is a separate ⚓️ scene with its own number
-  and map.
+  flag. An area both games have has separate ⚓️ scenes, with their own
+  numbers and maps.
 - **Main-image calls.** The main-image code a ⚓️ scene imports is in
   `games/tla/src/field/shared/` and the other ⚓️ folders, under the names of
   its ☀️ twins where it does the same.

@@ -14,20 +14,20 @@ extern s16 gData_020036d0;
 s32 Func_0801596c(void);
 s32 Save_LoadFileSummaries(void);
 void Save_ReleaseWork(void);
-s32 Save_ReadPart(s32 slot, void *buffer);
+s32 Save_ReadPart(s32 partId, void *buffer);
 s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
-s32 Func_08042f10(s32 slot, void *buffer);
-s32 Func_08043cd8(s32 slot, s32 mode);
+s32 Func_08042f10(s32 partId, void *buffer);
+s32 Func_08043cd8(s32 file, s32 mode);
 void FieldMessage_Show(s32 message, s32 position);
 
-s32 Save_WriteFile(s32 slot) {
+s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
   if (Func_0801596c() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
-  } else if (Func_08042f10(slot, gData_02000000) != 0) {
+  } else if (Func_08042f10(file, gData_02000000) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, 1);
     result = -3;
   }

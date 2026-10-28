@@ -1,7 +1,7 @@
 #include "savedata.h"
 #include "types.h"
 
-/// The signature that marks a save record.
+/// The signature that marks a save sector.
 const u8 gSave_Signature[] = "CAMELOT";
 const u8 gSave_HeaderTemplate[8] = "CAMELOTT";
 

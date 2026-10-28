@@ -33,10 +33,10 @@ u32 Save_WriteSector(s32 sector);
 
 s32 Save_InvalidateSector(s32 index);
 
-/// Picks the free slot to write record `mode` to, at random among every third
-/// of the 15 slots. The last free slot only goes to a record that already has
+/// Picks the free sector to write part `mode` to, at random among every third
+/// of the 15 sectors. The last free sector only goes to a part that already has
 /// a copy, so replacing a save always has room. Returns 15 when there is no
-/// slot to use.
+/// sector to use.
 // As ☀️'s Save_SelectWriteSector.
 u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[15];
@@ -67,7 +67,7 @@ u32 Save_SelectWriteSector(s32 mode) {
       if (Save_FindLatestSector(mode) == 15)
         index = 15;
     } else {
-      // A free slot at random, so the writes spread over the flash chip.
+      // A free sector at random, so the writes spread over the flash chip.
       index = Random16() % count;
       index = empty[index];
     }
@@ -101,7 +101,7 @@ u32 Save_WriteSector(s32 sector) {
 
 s32 Save_ReadSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-  struct SaveSlotHeader header;
+  struct SaveSectorHeader header;
 
   ReadFlash(index, 0, work->slot, 0x1000);
   ReadFlash(index + 1, 0, work->slot + 0x1000, 0x1000);

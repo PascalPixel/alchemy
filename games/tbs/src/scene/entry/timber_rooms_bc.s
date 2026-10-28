@@ -1,0 +1,7 @@
+	.include "games/tbs/src/cartridge/overlay.inc"
+	overlay_veneer Scene_Initialize
+	overlay_veneer TimberRoomsBC_GetEntrances
+	overlay_veneer TimberRoomsBC_GetExits
+	overlay_veneer TimberRoomsBC_GetActorPlacements
+	overlay_veneer TimberRoomsBC_GetTriggers
+	overlay_veneer TimberRoomsBC_GetRegions

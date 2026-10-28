@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/games/tla/src/scene/caverns/s015c.o"(.text)
         "*/games/tla/src/scene/caverns/scene_tables.o"(.text)
-        "*/games/tla/src/scene/caverns/places.o"(.text)
+        "*/games/tla/src/scene/caverns/placements.o"(.text)
         "*/games/tla/src/scene/caverns/exits.o"(.text)
         "*/games/tla/src/scene/caverns/map_cell.o"(.text)
         "*/games/tla/src/field/shared/object/wait_until_idle.o"(.text)

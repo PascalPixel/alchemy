@@ -21,14 +21,14 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   return difference;
 }
 
-u32 Save_GetLatestCounter(s32 recordId) {
+u32 Save_GetLatestCounter(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   u32 latestCounter;
   u32 i;
 
   latestCounter = 0;
   for (i = 0; i <= 14; i += 3) {
-    if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
+    if (work->occupied[i] != 0 && partId == work->partId[i]) {
       if (latestCounter < work->counter[i])
         latestCounter = work->counter[i];
     }

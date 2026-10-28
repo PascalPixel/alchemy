@@ -3,7 +3,7 @@
 #include "irqlock.h"
 
 void Serial_QueueCommand(u32 command);
-s32 Save_DeletePart(s32 record);
+s32 Save_DeletePart(s32 partId);
 void Func_08042dc4(s32 step);
 
 #define DMA_STOP(n)                                                            \
@@ -14,10 +14,10 @@ void Func_08042dc4(s32 step);
     dma[5];                                                                    \
   } while (0)
 
-/// Deletes a save record (Save_DeletePart) with interrupts masked and
+/// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
 /// all four DMA channels stopped, queueing Func_08042dc4 as the serial command
 /// around it, as Func_08042f10 does around Func_08015ca4.
-s32 Func_08042ff0(s32 record) {
+s32 Func_08042ff0(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
@@ -47,7 +47,7 @@ s32 Func_08042ff0(s32 record) {
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
   Serial_QueueCommand((u32)Func_08042dc4);
-  result = Save_DeletePart(record);
+  result = Save_DeletePart(partId);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
   REG_IE = ie;

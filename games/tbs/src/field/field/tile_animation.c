@@ -4,13 +4,36 @@
 
 #include "../field_internal.h"
 
+// A tileset animation script's commands, a halfword each where a source tile
+// would stand (TilesetAnim_Update and TilesetAnim_StartAll).
+#define TILESET_ANIM_LOOP 0xffff        ///< back to the start of the script
+#define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
+#define TILESET_ANIM_JUMP 0xfe00   ///< low byte: the halfword pair to jump to
+#define TILESET_ANIM_STOP 0xff     ///< TILESET_ANIM_JUMP's low byte to stop
+#define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
+#define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
+// The first source tile read from gMapGridAnimTiles rather than VRAM, for
+// 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
+#define TILESET_ANIM_RAM_TILE 0x600
+#define TILESET_ANIM_RAM_WIDE_TILE 0x200
+
+// The blend script's commands (BlendScript_Run): as the tileset animations',
+// and a BLDCNT value, told apart by its top four bits.
+#define BLEND_SCRIPT_LOOP 0xffff
+#define BLEND_SCRIPT_OPCODE_MASK 0xff00
+#define BLEND_SCRIPT_JUMP 0xfe00
+#define BLEND_SCRIPT_STOP 0xff
+#define BLEND_SCRIPT_BLDCNT_MASK 0xf000
+#define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
+
 /// Each frame: runs the 16 tileset animations. A tileset animation's script is
 /// groups of four halfwords (source tile, count, destination tile, frames to
-/// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
-/// 0xfeff stops, and 0xffff loops to the start. TilesetAnim_StartAll
-/// adds it as a task (priority TASK_PASS_FRAME); the world map's still
-/// view (WorldMap_StartStillPicture) suspends it. Moves each tileset
-/// animation's cursor and timer in the map work.
+/// wait) that copy tiles into VRAM; TILESET_ANIM_JUMP jumps to the halfword
+/// pair its low byte names, with TILESET_ANIM_STOP it stops, and
+/// TILESET_ANIM_LOOP loops to the start. TilesetAnim_StartAll adds it as a task
+/// (priority TASK_PASS_FRAME); the world map's still view
+/// (WorldMap_StartStillPicture) suspends it. Moves each tileset animation's
+/// cursor and timer in the map work.
 void TilesetAnim_Update(void) {
   // Each tileset animation is written (gridState->animations + channelIndex):
   // as gridState->animations[channelIndex], 78 of 119 instructions differ in
@@ -37,16 +60,17 @@ void TilesetAnim_Update(void) {
     if ((gridState->animations + channelIndex)->timer == 0) {
       commands = (gridState->animations + channelIndex)->cursor;
       sourceTileOrOpcode = *commands++;
-      if (sourceTileOrOpcode == 0xffff) {
+      if (sourceTileOrOpcode == TILESET_ANIM_LOOP) {
         (gridState->animations + channelIndex)->cursor =
             (gridState->animations + channelIndex)->start;
         goto next;
       }
-      // 0xfeff leaves the cursor on itself, so the tileset animation stays
-      // stopped until it is started again; 0xfeNN jumps to halfword NN * 2 of
-      // its script.
-      if ((sourceTileOrOpcode & 0xff00) == 0xfe00) {
-        if ((sourceTileOrOpcode & 0xff) == 0xff)
+      // TILESET_ANIM_STOP leaves the cursor on itself, so the tileset animation
+      // stays stopped until it is started again; TILESET_ANIM_JUMP jumps to
+      // the halfword pair its low byte names.
+      if ((sourceTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
+          TILESET_ANIM_JUMP) {
+        if ((sourceTileOrOpcode & 0xff) == TILESET_ANIM_STOP)
           continue;
         (gridState->animations + channelIndex)->cursor =
             (gridState->animations + channelIndex)->start +
@@ -56,28 +80,28 @@ void TilesetAnim_Update(void) {
       tileCount = *commands++;
       destinationTile = commands[0];
       (gridState->animations + channelIndex)->timer = commands[1];
-      // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
-      // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
-      // gMapGridAnimTiles. A lower one is copied within VRAM. The count is in
-      // tiles, eight words each (16 when wide).
+      // A source tile from TILESET_ANIM_RAM_TILE (TILESET_ANIM_RAM_WIDE_TILE
+      // for 64-byte tiles) is read from RAM, at the start of gMapGridAnimTiles.
+      // A lower one is copied within VRAM. The count is in tiles, eight words
+      // each (16 when wide).
       if (gridState->wideTiles == 0) {
-        if (sourceTileOrOpcode >= 0x600)
+        if (sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
           Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * 32,
                   BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
+                  DMA_COPY_WORDS(tileCount * 8), REG_DMA3);
         else
           Dma_Set(BG_CHAR_BLOCK(1) + sourceTileOrOpcode * 32,
                   BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
+                  DMA_COPY_WORDS(tileCount * 8), REG_DMA3);
       } else {
-        if (sourceTileOrOpcode >= 0x200)
+        if (sourceTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
           Dma_Set(Ram_CellPictures + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
+                  DMA_COPY_WORDS(tileCount * 16), REG_DMA3);
         else
           Dma_Set(BG_CHAR_BLOCK(2) + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
+                  DMA_COPY_WORDS(tileCount * 16), REG_DMA3);
       }
       // A copy with a wait of 0 lets the next command run at once.
       (gridState->animations + channelIndex)->cursor += 4;
@@ -109,10 +133,11 @@ void TilesetAnim_Pause(u32 channelIndex) {
 }
 
 /// Starts the tileset animations a map's animation script lists: each
-/// 0xfdNN marker starts tileset animation NN & 15 there (paused when bit 7 is
-/// set). Clears all 16 first, and adds TilesetAnim_Update as a task when any
-/// starts. Called by MapGrid_LoadMap with the map's own script, and by
-/// WorldMap_InitializePerspective with the world map's default one.
+/// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
+/// there (paused with TILESET_ANIM_MARKER_PAUSED). Clears all 16 first, and
+/// adds TilesetAnim_Update as a task when any starts. Called by MapGrid_LoadMap
+/// with the map's own script, and by WorldMap_InitializePerspective with the
+/// world map's default one.
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapGridScrollAnimView *gridState;
   s32 channelsStarted;
@@ -126,12 +151,12 @@ void TilesetAnim_StartAll(const u16 *script) {
   // markers. Only the low four bits pick the tileset animation, so a marker
   // for 16 or more reuses one of the 16.
   marker = *script++;
-  while (marker != 0xffff) {
-    if ((marker & 0xff00) == 0xfd00) {
+  while (marker != TILESET_ANIM_LOOP) {
+    if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct TilesetAnim *channel;
       u32 channelIndex = marker & 15;
       u32 paused = 0;
-      if (marker & 0x80)
+      if (marker & TILESET_ANIM_MARKER_PAUSED)
         paused = 1;
       channel = &gridState->animations[channelIndex];
       channel->start = script;
@@ -163,12 +188,13 @@ void TilesetAnim_ResumeAll(void) {
     Task_ResumeAll(TilesetAnim_Update);
 }
 
-/// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
-/// other sets BLDALPHA (or BLDY when not alpha blending) and waits the halfword
-/// after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-/// BlendScript_Start adds it as a task (priority TASK_PASS_FRAME).
-/// Writes REG_BLDCNT, REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in
-/// the map work's blendControl.
+/// Each frame: runs the map's blend script. A BLEND_SCRIPT_BLDCNT command sets
+/// BLDCNT; any other sets BLDALPHA (or BLDY when not alpha blending) and waits
+/// the halfword after it in frames; BLEND_SCRIPT_JUMP jumps, with
+/// BLEND_SCRIPT_STOP it stops, and BLEND_SCRIPT_LOOP loops. BlendScript_Start
+/// adds it as a task (priority TASK_PASS_FRAME). Writes REG_BLDCNT,
+/// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
+/// blendControl.
 void BlendScript_Run(void) {
   // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
   // blendControl's address and 118 bytes of tbs-en's code change.
@@ -194,23 +220,23 @@ again:
     commands = blend->cursor;
     instruction = *commands;
     commands++;
-    if (instruction == 0xffff) {
+    if (instruction == BLEND_SCRIPT_LOOP) {
       blend->cursor = blend->script;
       goto again;
     }
 
-    if ((instruction & 0xff00) == 0xfe00) {
+    if ((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
       delayOrJumpIndex = instruction & 0xff;
-      if (delayOrJumpIndex == 0xff)
+      if (delayOrJumpIndex == BLEND_SCRIPT_STOP)
         return;
       blend->cursor = blend->script + delayOrJumpIndex * 2;
       goto again;
     }
 
     // A BLDCNT value is told apart by its top four bits being 3, its second
-    // target's sprite and backdrop bits. A level cannot reach 0x3000: the
+    // target's sprite and backdrop bits. A level cannot reach them: the
     // BLDALPHA coefficients and BLDY go to 16 at most.
-    if ((instruction & 0xf000) == 0x3000) {
+    if ((instruction & BLEND_SCRIPT_BLDCNT_MASK) == BLEND_SCRIPT_BLDCNT) {
       REG_BLDCNT = instruction;
       gridState->blendControl = instruction;
       blend->cursor++;
@@ -219,7 +245,8 @@ again:
 
     // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
     // to white or black by BLDY.
-    if ((gridState->blendControl & 0xc0) == 0x40)
+    if ((gridState->blendControl &
+         (BLDCNT_EFFECT_BLEND | BLDCNT_EFFECT_LIGHTEN)) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;
@@ -246,7 +273,7 @@ void BlendScript_Start(u16 *script) {
   blend = &((struct MapGridScrollAnimView *)gMapGridWork[0])->blend;
   Dma_Set((const void *)&zero, blend,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
-  if (*script != 0xffff) {
+  if (*script != BLEND_SCRIPT_LOOP) {
     blend->script = script;
     blend->cursor = script;
     blend->delay = 0;
@@ -363,7 +390,7 @@ void PaletteCycle_Step(void) {
       for (colorIndex = 0; colorIndex < colorCount - rotationOffset;
            colorIndex++)
         rotatedColors[colorIndex] = *savedColors++;
-      Dma_Set(rotatedColors, paletteColors, DMA_ENABLE << 16 | colorCount,
+      Dma_Set(rotatedColors, paletteColors, DMA_COPY_HALFWORDS(colorCount),
               REG_DMA3);
       // The next step rotates one place further, back to none after a full
       // turn, and waits delay frames.
@@ -377,3 +404,18 @@ void PaletteCycle_Step(void) {
     }
   }
 }
+
+#undef TILESET_ANIM_LOOP
+#undef TILESET_ANIM_OPCODE_MASK
+#undef TILESET_ANIM_JUMP
+#undef TILESET_ANIM_STOP
+#undef TILESET_ANIM_MARKER
+#undef TILESET_ANIM_MARKER_PAUSED
+#undef TILESET_ANIM_RAM_TILE
+#undef TILESET_ANIM_RAM_WIDE_TILE
+#undef BLEND_SCRIPT_LOOP
+#undef BLEND_SCRIPT_OPCODE_MASK
+#undef BLEND_SCRIPT_JUMP
+#undef BLEND_SCRIPT_STOP
+#undef BLEND_SCRIPT_BLDCNT_MASK
+#undef BLEND_SCRIPT_BLDCNT

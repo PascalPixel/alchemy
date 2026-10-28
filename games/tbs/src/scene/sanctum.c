@@ -90,7 +90,7 @@
 #include "uiflow.h"
 #include "resource.h"
 #include "mem.h"
-#include "actor_controllers.h"
+#include "actor_builtin_scripts.h"
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "frame.h"

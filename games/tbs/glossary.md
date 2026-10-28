@@ -375,9 +375,12 @@ time names the table.
 
 The list of `SC_` commands an actor runs each frame: waits, moves, jumps,
 loops and tests of game flags. One command can hand the actor to a
-controller, a routine built into the field that steers it every frame, such
-as player control (`SC_PLAYER`) or the camera's
+built-in script, a routine built into the field that steers it every frame,
+such as player control (`SC_PLAYER`) or the camera's
 ([Field](field.md#actors-and-their-actor-scripts)).
+
+Evidence: plain English. A built-in script is part of the actor script it
+runs under, and "controller" stays the game pad's word.
 
 ### Trigger
 

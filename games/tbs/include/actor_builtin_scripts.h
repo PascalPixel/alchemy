@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_ACTOR_CONTROLLERS_H
-#define ALCHEMY_ACTOR_CONTROLLERS_H
+#ifndef ALCHEMY_ACTOR_BUILTIN_SCRIPTS_H
+#define ALCHEMY_ACTOR_BUILTIN_SCRIPTS_H
 
 /// @file
-/// The actor dispatcher's scripts: key checks, the player, the world map and
-/// the camera.
+/// The built-in scripts an actor script can hand its actor to: key checks,
+/// the player, the world map and the camera.
 
 #include "unit/field/field.h"
 #include "types.h"

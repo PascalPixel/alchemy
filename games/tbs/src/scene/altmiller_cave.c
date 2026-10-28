@@ -79,7 +79,7 @@
 #include "djinn_ids.h"
 #include "pushed_actor.h"
 #include "edition.h"
-#include "actor_controllers.h"
+#include "actor_builtin_scripts.h"
 #include "scene_ids.h"
 #include "dma.h"
 #include "io_reg.h"

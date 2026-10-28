@@ -1085,7 +1085,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
   ColosseumSatrageMatch_UpdateRollingLogCollision();
-  // A Halted controller leaves the lifts standing; otherwise resume the task.
+  // With the lifts halted the lift operator leaves them standing; otherwise
+  // resume the task.
   Import_ActorSetAnimation(ACTOR_LIFT_OPERATOR, 10);
   if (GameFlag_Get(FLAG_LIFTS_HALTED)) {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,

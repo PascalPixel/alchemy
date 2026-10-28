@@ -22,7 +22,8 @@ enum MercuryLighthousePoolBehavior {
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM = 31
 };
 
-/// Published in the scene's light-controller slot while the pillar is active.
+/// Published in the scene's slot for the leader's lights while the pillar is
+/// active.
 struct MercuryLighthouseLights {
   /// The leader's lights, 0 to 3: the heart gives three and each hop into the
   /// pool spends one.

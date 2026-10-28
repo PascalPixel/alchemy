@@ -49,7 +49,7 @@
 #include "actor.h"
 #include "animspr.h"
 #include "actor.h"
-#include "actor_controllers.h"
+#include "actor_builtin_scripts.h"
 #include "event_layer.h"
 #include "heap.h"
 #include "keystate.h"

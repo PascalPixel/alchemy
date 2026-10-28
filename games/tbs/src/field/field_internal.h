@@ -35,7 +35,7 @@
 #include "heap.h"
 #include "affine.h"
 #include "task.h"
-#include "actor_controllers.h"
+#include "actor_builtin_scripts.h"
 #include "metadata_lookup.h"
 #include "edition.h"
 #include "objdisp.h"

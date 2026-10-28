@@ -58,9 +58,10 @@ void Func_020019a8(void) {
   /* FAKEMATCH(one-pass): REG_WINOUT is stored before REG_DISPCNT's address is
    * built; as a plain store, 2 of 98 instructions differ in tla-en. */
   do {
-    REG_WINOUT = 0x2f3f;
+    REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+                 WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   } while (0);
-  REG_DISPCNT |= 0x8000;
+  REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Func_020034b8(204);
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);

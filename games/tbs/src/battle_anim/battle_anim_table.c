@@ -685,7 +685,7 @@ u8 gCybele_LeafSizes[] = {16, 12, 8};
 u16 gCybele_ChipOffsets[] = {3920, 3932, 3947, 3955, 3970};
 u8 gCybele_ChipWidths[] = {2, 5, 2, 5, 3};
 u8 gCybele_ChipHeights[] = {6, 3, 4, 3, 3};
-// The five frames of a spark, square.
+// The five pictures of a spark, square.
 u16 gCybele_SparkOffsets[] = {3979, 4043, 4268, 4389, 4470};
 u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
 // The ember cells of the blast sheet, square. Only the last, largest one is

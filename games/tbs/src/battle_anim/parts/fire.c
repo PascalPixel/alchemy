@@ -88,8 +88,8 @@ void BattleAnim_RunFire(struct BattleAnimArgs *args) {
   for (frame = 0; frame != (gFire_Counts[work->args->variant] >> 1) + 132;
        frame++) {
     // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
-    // 17 to 79, about a quarter turn in all while each animation frame takes
-    // one display frame (BattleCamera_ApplyPhasedDelta).
+    // 17 to 79, about a quarter turn in all, while each frame takes one
+    // VBlank (BattleCamera_ApplyPhasedDelta).
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;
     else

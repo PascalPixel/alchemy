@@ -3,7 +3,7 @@
 
 #include "render_input.h"
 
-/// A window: a framed rectangle of the tilemap with its sprite outputs, its
+/// A window: a bordered rectangle of the tilemap with its sprite outputs, its
 /// opening or closing animation and the rectangle it last drew.
 struct UiWindow {
   struct RenderOutputList output; ///< the sprites the window carries

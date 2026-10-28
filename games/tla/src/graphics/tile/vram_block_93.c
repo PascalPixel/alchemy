@@ -65,7 +65,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   struct AnimationEntry *found;
   struct AnimationEntry *object;
   s32 i;
-  void **frames;
+  void **pictures;
   u8 **animation;
 
   found = NULL;
@@ -81,20 +81,20 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
       }
     }
     if (found != NULL) {
-      /* FAKEMATCH: instruction order only: read as a word, the frames load does
-       * not wait on the animId store, so the zero for pos and param loads first
+      /* FAKEMATCH: instruction order only: read as a word, the pictures load
+       * does not wait on the animId store, so the zero for pos and param loads first
        * as native; the typed read swaps the two (differ 2). */
-      frames = (void **)*(s32 *)&metadata->frames;
+      pictures = (void **)*(s32 *)&metadata->pictures;
       object = found;
       object->animId = id;
-      if (frames == 0)
-        frames = (void **)Animation_LookupValueByKey(id);
+      if (pictures == 0)
+        pictures = (void **)Animation_LookupValueByKey(id);
 
       animation = metadata->animation;
       object->scripts = animation;
-      object->frames = frames;
+      object->pictures = pictures;
       object->mode = metadata->pictureCodec;
-      object->frame = 0xff;
+      object->picture = 0xff;
       object->script = animation[0];
       object->pos = 0;
       object->kind = metadata->drawKind;

@@ -9,7 +9,7 @@
 /// The sprites the field, its Psynergy and the scenes' actor template
 /// tables create actors of by number.
 enum SpriteId {
-  /// A treasure chest, shut, opening and open, with the frames of the mimic
+  /// A treasure chest, shut, opening and open, with the pictures of the mimic
   /// some chests turn out to be.
   /// ★ Named from what the player sees: a red treasure chest (its render)
   SPRITE_CHEST = 0x14,

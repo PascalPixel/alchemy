@@ -77,7 +77,7 @@ s32 BattleMessage_WaitForAdvance(void) {
   struct AdvanceArrowSprite promptStorage;
   s32 frame;
   s32 tileSlot;
-  s32 frameTiles;
+  s32 pictureTiles;
   struct Window *window;
   struct BattleMessageOffset *offset;
 
@@ -86,8 +86,8 @@ s32 BattleMessage_WaitForAdvance(void) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
-    // Cycle the eight frames, one every four frames.
-    frameTiles =
+    // Cycle the eight pictures, one every four frames.
+    pictureTiles =
         ((gFrameCount >> 2) & 7) * 128 + (s32)gBattleMessage_AdvanceArrowTiles;
     window = gBattleMessageWork->window;
     offset = gBattleMessageWork->offset;
@@ -100,7 +100,7 @@ s32 BattleMessage_WaitForAdvance(void) {
     // (playback.c).
     ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
     ((u32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
+    prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     // The window is placed in tiles, its offset in 1/256 pixels.
     prompt->x = window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames (a sixteenth
@@ -133,12 +133,12 @@ void BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 #endif
   struct MenuPoint position;
-  s32 frameTiles;
+  s32 pointerTiles;
   struct CursorSprite promptStorage;
   struct CursorSprite *prompt;
   s32 tileSlot;
 
-  frameTiles = WindowSprite_GetPointerTilesFar(0);
+  pointerTiles = WindowSprite_GetPointerTilesFar(0);
   position.x = x;
   position.y = y;
   while (!TextPrinter_AllFinishedFar())
@@ -151,7 +151,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = MENU_SPRITE_SHAPE_16X16;
     ((s32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
+    prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     // Nudge it up and right every four frames.
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;

@@ -20,8 +20,8 @@ struct Spark {
 /// writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
-  /// gElementGlow_StarFrameOffsets, the rings' frames at
-  /// gElementGlow_RingFrameOffsets.
+  /// gElementGlow_StarPictureOffsets, the rings' pictures at
+  /// gElementGlow_RingPictureOffsets.
   u8 sheet[0x11c0];
   struct Spark sparks[16];
   struct Ring rings[3];
@@ -54,7 +54,7 @@ void ElementGlow_UpdateStarField(void) {
 s32 ElementGlow_UpdateStarField(void) {
 #endif
   s32 ringIndex;
-  s32 frame;
+  s32 picture;
   u32 size;
   s32 ringX;
   s32 ringY;
@@ -133,17 +133,17 @@ s32 ElementGlow_UpdateStarField(void) {
     if (life != 0) {
       x = (spark->motion[0] >> 10) + 64;
       y = (spark->motion[1] >> 10) + 64;
-      frame = life;
-      if (frame < 0)
-        frame = 0;
-      else if (frame > 6)
-        frame = 6;
-      size = gElementGlow_StarSizes[frame];
-      draw(canvas, (u8 *)work + gElementGlow_StarFrameOffsets[frame],
+      picture = life;
+      if (picture < 0)
+        picture = 0;
+      else if (picture > 6)
+        picture = 6;
+      size = gElementGlow_StarSizes[picture];
+      draw(canvas, (u8 *)work + gElementGlow_StarPictureOffsets[picture],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
-  // The rings, 32 by 32, with the other blitter: each shows its four frames
+  // The rings, 32 by 32, with the other blitter: each shows its four pictures
   // eight frames apiece, then is no longer drawn.
   draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   for (ring = work->rings, ringIndex = 2; ringIndex >= 0; ringIndex--, ring++) {
@@ -154,7 +154,7 @@ s32 ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      draw(canvas, (u8 *)work + gElementGlow_RingFrameOffsets[phase],
+      draw(canvas, (u8 *)work + gElementGlow_RingPictureOffsets[phase],
            ringX + 48, ringY + 48, 32, 32);
     }
   }

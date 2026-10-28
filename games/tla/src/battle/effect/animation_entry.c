@@ -23,10 +23,10 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   }
   found->animId = 0;
   found->scripts = NULL;
-  found->frames = NULL;
+  found->pictures = NULL;
   found->script = none;
   found->mode = 0;
-  found->frame = 0;
+  found->picture = 0;
   found->pos = 0;
   found->kind = 1;
   found->param = 0;

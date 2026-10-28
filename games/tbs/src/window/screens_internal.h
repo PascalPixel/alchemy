@@ -266,7 +266,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
-// The width inside the frame of the name window of the shop's commands
+// The width inside the border of the name window of the shop's commands
 // (icons 0x11 to 0x14) and of the Sanctum's services (icons 0x19 to 0x1c).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define ENTRY11_COMMAND_LABEL_WIDTH 8

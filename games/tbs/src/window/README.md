@@ -1,6 +1,6 @@
 # Windows
 
-When someone in a town speaks, a framed box opens at the top of the screen
+When someone in a town speaks, a bordered box opens at the top of the screen
 and their words appear in it a few letters at a time, with a little voice blip
 as they go. Every box of text in the game works this way: what people say, the
 menus, the shop counters, the battle commands. The window code draws those
@@ -289,7 +289,7 @@ so renaming one changes other folders too.
 
 - **work block**: `struct WindowWork`, heap slot `HEAP_SLOT_WINDOW`, reached
   as `WINDOW_WORK`. It holds all of the window system's state.
-- **window**: a `struct Window` slot, one framed rectangle of the shared
+- **window**: a `struct Window` slot, one bordered rectangle of the shared
   tilemap.
 - **text canvas**: a window with `WINDOW_FLAG_TEXT_CANVAS`, whose text is drawn
   into bitmap tiles rather than placed as sprites or tilemap tiles.

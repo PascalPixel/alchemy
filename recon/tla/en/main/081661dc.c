@@ -49,9 +49,9 @@
 #define BLIT_MAX 1
 
 #define SHARD_COUNT 64
-#define STREAK_FRAME_BYTES (48 * 72)
-#define BURST_FRAME_BYTES (40 * 80)
-#define BURST_STRIP_BYTES (3 * BURST_FRAME_BYTES) // the stronger variant's
+#define STREAK_PICTURE_BYTES (48 * 72)
+#define BURST_PICTURE_BYTES (40 * 80)
+#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) // the stronger variant's
 
 #define SHARDS_FRAMES 64
 #define STREAK_FRAME 6 // the user's fire streak, six frames
@@ -180,11 +180,11 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (effect->side == 0)
         draw[0](canvas,
-                work->sheet + (frame - STREAK_FRAME) * STREAK_FRAME_BYTES,
+                work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2 - 24, user.y - 24, 48, 72);
       else
         draw[0](canvas,
-                work->sheet + (frame - STREAK_FRAME) * STREAK_FRAME_BYTES,
+                work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2, user.y - 24, 48, 72);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
@@ -203,7 +203,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
-      draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_FRAME_BYTES,
+      draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
       BattleEffect_CallDoNothing(10000);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);

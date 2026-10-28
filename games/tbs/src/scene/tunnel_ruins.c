@@ -716,7 +716,8 @@ static void TunnelRuins_HopNorthBySmallPillars(void) {
   }
 }
 
-/// Draws an impact frame of the passage and starts a decaying vertical shake.
+/// Draws one picture of the passage's impact and starts a decaying vertical
+/// shake.
 static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
   Sound_PlaySong(SE_THUMP);

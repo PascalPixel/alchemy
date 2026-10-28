@@ -5,7 +5,7 @@
 // Near miss, differ 2 of 68, one reordered pair in the loop's setup: the native
 // stores the slot pointer to its stack home before it copies the zero index to
 // r8 (str r2, [sp, #4]; mov r8, r1), this form copies first. The two tagged
-// empty asm statements keep the frames store ahead of the animation store;
+// empty asm statements keep the pictures store ahead of the animation store;
 // without them the pictures are stored two rows later and that pair differs as
 // well (differ 4).
 #include "types.h"
@@ -33,7 +33,7 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
     struct AnimationEntry *object = state->entries[index];
     struct AnimationMetadata *metadata =
         Resource_GetMetadataRecordFar(object->animId);
-    s32 frames;
+    s32 pictures;
     s32 animation;
 
     if (metadata->width == 0)
@@ -47,20 +47,20 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
       state->offsetX = metadata->adjustX;
     }
 
-    frames = metadata->frames;
-    if (frames == 0)
-      frames = Animation_LookupValueByKey(object->animId);
+    pictures = metadata->pictures;
+    if (pictures == 0)
+      pictures = Animation_LookupValueByKey(object->animId);
 
     object->kind = metadata->drawKind;
     animation = metadata->animation;
     asm volatile(""); /* FAKEMATCH: first fence of the pair below */
-    *(s32 *)&object->frames = frames;
-    asm volatile(""); /* FAKEMATCH: the listing stores the frames before the
+    *(s32 *)&object->pictures = pictures;
+    asm volatile(""); /* FAKEMATCH: the listing stores the pictures before the
                          animation; unfenced, the pictures are stored two rows
                          later (one reordered row) */
     *(s32 *)&object->scripts = animation;
     object->mode = metadata->pictureCodec;
-    object->frame = 0xff;
+    object->picture = 0xff;
     object->script = 0;
     object->pos = 0;
   }

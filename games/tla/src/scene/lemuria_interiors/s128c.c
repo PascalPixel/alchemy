@@ -17,19 +17,19 @@ struct FieldActor *Object_GetById(s32 id);
 void Func_02002924(s32 cue);
 void FieldEvent_WaitFrames(s32 frames);
 
-struct SpriteFrames {
+struct SpritePictures {
   u8 unk00[5];
-  u8 frame;
+  u8 picture;
 };
 
 struct AnimatedSprite {
   u8 unk00[0x12];
   s16 rotation;
   u8 unk14[5];
-  u8 frame;
-  u8 nextFrame;
+  u8 picture;
+  u8 nextPicture;
   u8 unk1b[0xd];
-  struct SpriteFrames *frames;
+  struct SpritePictures *pictures;
 };
 
 struct SpawnedActor {
@@ -51,11 +51,11 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
       s32 timerValue = timer;
 
       /* FAKEMATCH: the native loads the timer argument before the zero for
-       * nextFrame (differ 2 without the temporary and barrier). */
+       * nextPicture (differ 2 without the temporary and barrier). */
       __asm__("");
       ((struct SpawnedActor *)object)->timer = timerValue;
     }
-    sprite->nextFrame = 0;
+    sprite->nextPicture = 0;
     sprite->rotation = rotation;
   }
 }

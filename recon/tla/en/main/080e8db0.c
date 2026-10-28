@@ -68,7 +68,7 @@ struct ObjectSprite {
   u8 unk16[3];
   u8 unk19;
   u8 unk1a[0xe];
-  void *frames;
+  void *pictures;
 };
 
 struct EffectScene {
@@ -85,7 +85,7 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void Func_080e43a4(void *frames, void *buffer, s32 size);
+void Func_080e43a4(void *source, void *buffer, s32 size);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
@@ -135,7 +135,7 @@ void Func_080e8db0(void) {
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
-    Func_080e43a4(targetSprite->frames, work->picture,
+    Func_080e43a4(targetSprite->pictures, work->picture,
                   targetSprite->width * targetSprite->height);
   }
   Func_080e89e4(VIEW_MOVE_X);

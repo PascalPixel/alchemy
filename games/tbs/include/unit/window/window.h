@@ -29,8 +29,8 @@ enum {
   WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom
   /// text is drawn into a canvas of bitmap tiles (Window_MapTextCanvasTiles)
   WINDOW_FLAG_TEXT_CANVAS = 0x8,
-  /// the canvas has a frame and a filled background; without it the canvas is
-  /// transparent and frameless
+  /// the canvas has a border and a filled background; without it the canvas is
+  /// transparent and borderless
   WINDOW_FLAG_BORDERED_CANVAS = 0x20,
   WINDOW_FLAG_OUTLINED_TEXT = 0x40, ///< the canvas text gets an outline
   /// when a new page resizes the window, its bottom edge stays put
@@ -454,7 +454,7 @@ void Portrait_CloseWindow(u32 entry);
 
 s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
-void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse);
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                           s32 reuse);

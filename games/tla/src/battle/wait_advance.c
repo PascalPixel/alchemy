@@ -56,7 +56,7 @@ void BattlePresentation_WaitForAdvance(void) {
   struct AdvanceSprite promptStorage;
   s32 frame;
   s32 tileSlot;
-  s32 frameTiles;
+  s32 pictureTiles;
   s32 sheet;
   struct AdvanceWindow *window;
   struct AdvanceOffset *offset;
@@ -70,8 +70,8 @@ void BattlePresentation_WaitForAdvance(void) {
   sheet = (s32)Data_0812996c;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
-    // Cycle the eight frames, one every four frames.
-    frameTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
+    // Cycle the eight pictures, one every four frames.
+    pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
     window = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->window;
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
     QueueIoWriteDelay10(0x0400004a, 4);
@@ -79,7 +79,7 @@ void BattlePresentation_WaitForAdvance(void) {
     Io_Write16(16, (volatile u16 *)0x04000052);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
+    prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->x = window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
     prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +

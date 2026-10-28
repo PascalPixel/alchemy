@@ -8,7 +8,7 @@
 #include "frame.h"
 #include "callback_scheduler.h"
 
-void MapAnimation_PresentFrame(void) {
+void MapAnimation_PresentPicture(void) {
   s32 control;
   volatile u32 *dma;
 
@@ -30,7 +30,7 @@ extern u8 gData_02038000[];
 extern u8 gData_0203a000[];
 extern u8 gData_0201c000[];
 void MapAnimation_Update(void);
-void MapAnimation_PresentFrame(void);
+void MapAnimation_PresentPicture(void);
 void Func_0802dd08(void *source, void *destination);
 
 void MapAnimation_Start(void) {
@@ -44,7 +44,7 @@ void MapAnimation_Start(void) {
   one = 1;
   *active = one;
   Scheduler_SuspendTasks(MapAnimation_Update);
-  work->framePending = one;
+  work->picturePending = one;
   resources = work->resources;
   Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
   if (work->extraTiles != 0)
@@ -56,8 +56,8 @@ void MapAnimation_Start(void) {
                 Ram_MapCellBuffer);
   work->windowTop = 200;
   work->windowBottom = 255;
-  gData_030011f8 = MapAnimation_PresentFrame;
-  work->frameShown = one;
+  gData_030011f8 = MapAnimation_PresentPicture;
+  work->pictureShown = one;
 }
 
 extern u8 gData_02038000[];

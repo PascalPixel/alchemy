@@ -90,7 +90,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     Animation_ApplyChildArgumentFar(animation, 5);
     entry = animation->entry;
     entry->param = 6;
-    entry->frame = 0xff;
+    entry->picture = 0xff;
     WaitFrames(4);
     Map_RenderAnimatedTilePicturesForObjectFar(animation);
     BattleObject_MarkForRelease(unitId);

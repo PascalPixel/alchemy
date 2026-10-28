@@ -91,7 +91,7 @@ void BattleMotion_ShowDowned(s32 id) {
       } while (0);
       recs[n] = rec;
       ent->param = 6;
-      ent->frame = 0xff;
+      ent->picture = 0xff;
       n++;
     }
     WaitFrames(4);

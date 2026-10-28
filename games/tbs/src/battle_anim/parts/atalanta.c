@@ -8,7 +8,7 @@
 /// particles in PARTICLES (28 bytes each, so they end at 0x2a00).
 #define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 0x3800)
 
-/// The pictures in the slash sheet: five flash frames, then the slash in
+/// The pictures in the slash sheet: five flash pictures, then the slash in
 /// three parts. Each starts where the one before ends; the notes give the
 /// sizes the draws use. A flash picture's number is the frame of the flash it
 /// is drawn on.

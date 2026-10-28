@@ -32,7 +32,7 @@ what each ability does to its targets and the spoils.
 [Battle animations](battle_anim/README.md) draws what each ability shows on screen,
 one function for each animation.
 
-[Windows](window/README.md) draws the framed boxes text appears in, decodes
+[Windows](window/README.md) draws the bordered boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
 windows, among them the battle menus, the file list and the name entry screen.
 [Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and

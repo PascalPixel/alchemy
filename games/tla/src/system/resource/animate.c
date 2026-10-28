@@ -20,7 +20,7 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
   if (work != NULL) {
     info = Resource_GetMetadataRecordFar(work->animId);
     if (info->width != 0) {
-      value = info->frames;
+      value = info->pictures;
       if (value == 0)
         value = Animation_LookupValueByKey(work->animId);
       z = 0;
@@ -29,13 +29,13 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
       /* FAKEMATCH: ⚓️ clears the script before storing the lists. */
       asm("");
       animation = info->animation;
-      work->frames = (void **)value;
+      work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
       work->pos = z;
-      /* FAKEMATCH: then the codec and the frame. */
+      /* FAKEMATCH: then the codec and the picture. */
       asm("");
       work->mode = info->pictureCodec;
-      work->frame = 0xff;
+      work->picture = 0xff;
     }
   }
 }

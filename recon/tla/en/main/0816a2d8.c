@@ -3,9 +3,9 @@
 // BattleEffect_RunFlashingStrike rebuilt.
 
 // Twin: ☀️ BattleEffect_RunFlashingStrike (games/tbs/src/effect/effect.c), a body of
-// two kinds there; The Lost Age keeps its frame (the 120 x 120 picture in four
-// frames of four, the canvas flooded with colour 0x3f for four frames, the hit
-// at frame 20) and adds:
+// two kinds there; The Lost Age keeps its shape (the 120 x 120 picture in four
+// pictures of four frames each, the canvas flooded with colour 0x3f for four
+// frames, the hit at frame 20) and adds:
 // - six picture sets, with variant 4's colours rotated in the BG palette;
 // - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
 // through the second blitter;
@@ -50,11 +50,11 @@
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_ADDITIVE 0
 
-// Each picture is four frames; the reflected variant's frames are half as
-// tall.
+// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
+// variant's are half as tall.
 #define PICTURE_SIZE 120
-#define FRAME_BYTES (PICTURE_SIZE * PICTURE_SIZE)
-#define HALF_FRAME_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
+#define PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE)
+#define HALF_PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
 
 #define REVEAL_FRAMES 21
 #define FLOOD_FRAME 16 // the pictures end and the canvas floods
@@ -93,12 +93,12 @@ s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 jumpVelocity);
 
-// A picture flashes up over the target in four frames of four, the canvas
-// floods with one colour, and the target is struck.
+// A picture flashes up over the target (four pictures, four frames each), the
+// canvas floods with one colour, and the target is struck.
 //
-// Setup: open the canvas, load the variant's four frames (two into the
+// Setup: open the canvas, load the variant's four pictures (two into the
 // sheet, two into the map cell buffer), move the user up to the target, and
-// build the blitters. Each frame shows the picture's frame for its time,
+// build the blitters. Each frame shows the current picture for its time,
 // floods the canvas from frame 16 to 19, and shakes the camera; results at
 // frame 18, the hit at 20.
 void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
@@ -115,8 +115,8 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;
 
-  // The pictures: frames 1 and 2 in the sheet, 3 and 4 in the map cell
-  // buffer (variant 5's four half frames all there).
+  // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
+  // buffer (variant 5's four half pictures all there).
   if (variant == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, Ram_MapCellBuffer,
@@ -205,31 +205,31 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
         mirror(canvas, Ram_MapCellBuffer, 0, PICTURE_SIZE / 2, PICTURE_SIZE,
                PICTURE_SIZE / 2);
       } else if (frame <= 7) {
-        draw(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES, 0, 0, PICTURE_SIZE,
+        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES, 0,
+        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       } else if (frame <= 11) {
-        draw(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES * 2, 0, 0,
+        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0, 0,
              PICTURE_SIZE, PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES * 2, 0,
+        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       } else if (frame <= 15) {
-        draw(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES * 3, 0, 0,
+        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0, 0,
              PICTURE_SIZE, PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_FRAME_BYTES * 3, 0,
+        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       }
     } else {
       if (frame <= 3)
         draw(canvas, work->sheet, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
       else if (frame <= 7)
-        draw(canvas, work->sheet + FRAME_BYTES, 0, 0, PICTURE_SIZE,
+        draw(canvas, work->sheet + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE);
       else if (frame <= 11)
         draw(canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
       else if (frame <= 15)
-        draw(canvas, Ram_MapCellBuffer + FRAME_BYTES, 0, 0, PICTURE_SIZE,
+        draw(canvas, Ram_MapCellBuffer + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE);
     }
 

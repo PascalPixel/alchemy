@@ -261,12 +261,12 @@ void BattlePlayback_Run(void) {
       // for the player: B held or an advance key pressed goes on; after ten
       // VBlanks, a held advance key does too. The arrow is an 8 by 16,
       // 256-colour sprite (attribute 0 0xa000, which unlike that function's
-      // is not semi-transparent) cycling eight frames of
+      // is not semi-transparent) cycling eight pictures of
       // gBattleMessage_AdvanceArrowTiles, one every four frames, in the
       // VRAM cache entry BattleWork.arrowTiles.
       struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
-      s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
+      s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageWork *display = gBattleMessageWork;
       struct Window *window = display->window;
       struct BattleMessageOffset *offset = display->offset;
@@ -279,7 +279,7 @@ void BattlePlayback_Run(void) {
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      prompt->tile = VramCache_Reload(events->arrowResource, frameTiles);
+      prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +

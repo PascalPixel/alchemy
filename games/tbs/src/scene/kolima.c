@@ -1753,7 +1753,7 @@ s32 gKolima_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// A door opening: two frames of a cell column two cells high.
+/// A door opening: two pictures of a cell column two cells high.
 u16 gKolima_DoorCells[] = {
     MAPGRID_ANIMATION_STEP(66, 32, 1, 2, 4),
     MAPGRID_ANIMATION_STEP(67, 32, 1, 2, 4),

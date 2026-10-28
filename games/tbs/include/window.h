@@ -40,9 +40,9 @@ struct Window {
   /// ended or closed the window, which frees the printer for the next text.
   u16 state;
   u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
-  /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
+  /// The zoom's stage: counts down from 7 to 0 while opening, and up from 0 to
   /// duration while closing.
-  u16 zoomStep;
+  u16 zoomStage;
   s16 duration;       ///< frames of the zoom under way; 0 when none
   u16 previousX;      ///< tiles
   u16 previousY;      ///< tiles
@@ -52,7 +52,7 @@ struct Window {
 
 STATIC_ASSERT(sizeof(struct Window) == 0x24);
 STATIC_ASSERT(offsetof(struct Window, width) == 8);
-STATIC_ASSERT(offsetof(struct Window, zoomStep) == 0x18);
+STATIC_ASSERT(offsetof(struct Window, zoomStage) == 0x18);
 STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
 /// A text printer, one of three, which types decoded text into a window a few

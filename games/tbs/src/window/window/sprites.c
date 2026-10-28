@@ -477,7 +477,7 @@ void WindowSprite_UpdateAll(void) {
     if (!(window->flags & WINDOW_FLAG_OPEN))
       continue;
     windowSprite = (struct WindowSpriteCellView *)window->sprites.head;
-    // The page arrow's frame: one of 8, each shown for 4 frames.
+    // The page arrow's picture: one of 8, each shown for 4 VBlanks.
     phase = (gVBlankCount >> 2) & 7;
     while (windowSprite != NULL) {
       struct CursorSprite *sprite = &windowSprite->attr;

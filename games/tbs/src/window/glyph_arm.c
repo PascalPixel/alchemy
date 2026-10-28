@@ -303,14 +303,14 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 }
 
 /// Builds the hardware window's horizontal extent for each of the screen's
-/// 160 scanlines from frameTiles in the UI tilemap (32 tiles a row,
+/// 160 scanlines from the UI tilemap at tilemap (32 tiles a row,
 /// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
-/// to the second halfword of its pair in scanlineBounds. A row without a frame
+/// to the second halfword of its pair in scanlineBounds. A row without a border
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
 /// one pixel on that side, so the window follows the border's rounded corners.
 /// Each frame of a window transition calls it, through
 /// ScanlineWindow_FillSpans (screens/outputs.c).
-void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
+void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
   s32 left;
@@ -333,7 +333,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
     tileColumn = bottomRight;
     scanlineBounds++;
     for (; tileColumn < SCREEN_TILE_COLUMNS; tileColumn++) {
-      u16 tile = *frameTiles++;
+      u16 tile = *tilemap++;
 
       if (tile == 0)
         continue;
@@ -411,7 +411,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
     scanlineBounds++;
     *scanlineBounds++ = horizontalBounds;
     scanlineBounds++;
-    frameTiles += 2;
+    tilemap += 2;
     *scanlineBounds++ = horizontalBounds;
     scanlineBounds++;
     *scanlineBounds++ = horizontalBounds;

@@ -1,44 +1,44 @@
 #include "types.h"
 #include "field_event.h"
 
-struct SpriteFrames {
+struct SpritePictures {
   u8 unk00[5];
-  u8 frame;
+  u8 picture;
 };
 
 struct AnimatedSprite {
   u8 unk00[0x12];
   s16 rotation;
   u8 unk14[5];
-  u8 frame;
-  u8 nextFrame;
+  u8 picture;
+  u8 nextPicture;
   u8 unk1b[0xd];
-  struct SpriteFrames *frames;
+  struct SpritePictures *pictures;
 };
 
 void Func_02001398(struct FieldActor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpriteFrames *frames = sprite->frames;
+  struct SpritePictures *pictures = sprite->pictures;
 
   switch (object->timer & 3) {
   case 0:
-    frames->frame = 7;
-    sprite->frame = 1;
-    sprite->nextFrame = 2;
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 2;
     break;
   case 1:
-    sprite->frame = 1;
-    sprite->nextFrame = 0;
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
     break;
   case 2:
-    frames->frame = 7;
-    sprite->frame = 1;
-    sprite->nextFrame = 0;
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
     break;
   case 3:
-    frames->frame = 0;
-    sprite->frame = 1;
-    sprite->nextFrame = 0;
+    pictures->picture = 0;
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
     break;
   }
   object->timer++;

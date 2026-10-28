@@ -258,9 +258,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-/// Draws a window at its full size: its frame, and for a text canvas window
-/// the canvas, filled with colour 4 under a frame when the window is framed and
-/// transparent otherwise.
+/// Draws a window at its full size: its border, and for a text canvas window
+/// the canvas, filled with colour 4 under a border when the window is bordered
+/// and transparent otherwise.
 void Window_DrawOpened(struct Window *window) {
   u32 flags;
   u32 value;
@@ -344,13 +344,13 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     }
     if (attrs & WINDOW_FLAG_INSTANT) {
       found->flags |= WINDOW_FLAG_INSTANT;
-      found->zoomStep = 0;
+      found->zoomStage = 0;
       found->duration = 1;
       Window_DrawOpened(found);
     } else {
       // Zoom open over eight frames, and wait until it is open.
       found->duration = WINDOW_OPEN_FRAMES;
-      found->zoomStep = WINDOW_OPEN_FRAMES - 1;
+      found->zoomStage = WINDOW_OPEN_FRAMES - 1;
       Window_WaitZoom(found);
       WaitFrames(1);
     }
@@ -401,7 +401,7 @@ void Window_Close(struct Window *window, s32 instant) {
     window->animation = zero;
     window->state = zero;
     window->flags = zero;
-    window->zoomStep = zero;
+    window->zoomStage = zero;
     window->duration = zero;
     window->previousX = zero;
     window->previousY = zero;
@@ -410,7 +410,7 @@ void Window_Close(struct Window *window, s32 instant) {
   } else {
     // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
     // instant is 0 here.
-    window->zoomStep = instant;
+    window->zoomStage = instant;
     window->duration = WINDOW_CLOSE_FRAMES;
   }
 }

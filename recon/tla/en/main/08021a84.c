@@ -5,9 +5,9 @@
 // sp+24 down to decoderWasLoaded at sp+8; 305 the other way). Data_08021824Size
 // stands for the outline routine's size, a pool word in the native, which no
 // symbol names yet.
-// ☀️'s Sprite_ComposeAnimationPicture (games/tbs/src/field/field.c) on
+// ☀️'s Sprite_ComposePicture (games/tbs/src/field/field/sprite_draw.c) on
 // The Lost Age's sprite: command 252 plays a sound, 242 and 243 set the
-// sprite's offsets, a blank or a frame keeps reading commands, flag 0x20
+// sprite's offsets, a blank or a picture keeps reading commands, flag 0x20
 // takes the mirroring from the kind 2 table without drawing, and the
 // outline (flag 2) is an ARM routine copied to the heap for the call; flags
 // 8 and 4 sink the picture into the ground or shade its lowest rows.
@@ -73,7 +73,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemColours *system;
-  DrawFn decodeFrame;
+  DrawFn decodePicture;
   s32 decoderWasLoaded;
   struct AnimationEntry *layer;
   u8 *pixels;
@@ -85,22 +85,22 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   s32 drawCount;
   u32 key;
   s32 arg;
-  s32 frame;
+  s32 picture;
   u32 facing;
   s32 tile;
 
   system = (struct ObjectSystemColours *)Ram_HeapSlots->objectSystem;
   decoderWasLoaded = 1;
-  decodeFrame = Ram_HeapSlots->unk4c[1];
+  decodePicture = Ram_HeapSlots->unk4c[1];
   mirrored = 0;
-  if (decodeFrame == NULL) {
+  if (decodePicture == NULL) {
     Dma_Set(
         Render_DecodePictureCode,
         Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
         0x84000000 |
             ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
-    decodeFrame = Ram_HeapSlots->unk4c[1];
+    decodePicture = Ram_HeapSlots->unk4c[1];
     decoderWasLoaded = 0;
   }
 
@@ -112,9 +112,9 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       continue;
   read_command:
     if ((s16)layer->timer <= 0) {
-      frame = layer->script[layer->pos++];
+      picture = layer->script[layer->pos++];
       arg = layer->script[layer->pos++];
-      switch (frame) {
+      switch (picture) {
       case 254:
         Animation_SetWorkEntry(layer, arg);
         obj->lastNo = arg;
@@ -127,7 +127,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         break;
       case 241:
         layer->pos -= 2;
-        frame = layer->frameBase;
+        picture = layer->pictureBase;
         goto select_direction;
       case 240:
         layer->kind = arg;
@@ -139,15 +139,15 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         obj->offsetY = arg;
         break;
       case 255:
-        layer->frameBase = 255;
+        layer->pictureBase = 255;
       case 245:
         layer->timer += arg << 4;
         break;
       case 239:
-        layer->frameBase = 255;
+        layer->pictureBase = 255;
         layer->script = NULL;
         obj->count--;
-        frame = 255;
+        picture = 255;
         goto select_direction;
       case 244:
       case 246:
@@ -157,14 +157,14 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       case 250:
         break;
       default:
-        layer->frameBase = frame;
+        layer->pictureBase = picture;
         layer->timer += arg << 4;
         break;
       }
       goto read_command;
     }
     layer->timer = layer->timer - layer->step;
-    frame = layer->frameBase;
+    picture = layer->pictureBase;
   select_direction:
     switch (layer->kind) {
     case 1:
@@ -190,11 +190,11 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       facing = 0;
       break;
     }
-    frame += facing & 7;
+    picture += facing & 7;
     if (i == 0 && (facing >> 7) != 0)
       mirrored = 1;
-    if (layer->frame != frame) {
-      layer->frame = frame;
+    if (layer->picture != picture) {
+      layer->picture = picture;
       obj->dirty = 1;
     }
   }
@@ -212,9 +212,9 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       layer = obj->entries[i];
       if (layer == 0)
         continue;
-      if (layer->frames == 0)
+      if (layer->pictures == 0)
         continue;
-      if (layer->frame == 255)
+      if (layer->picture == 255)
         continue;
       key = layer->priority;
       if (key > 3)
@@ -241,21 +241,21 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     for (i = 0; i < drawCount; i++) {
       layer = obj->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == 1) {
-        Resource_DecodeType01(layer->frames[layer->frame], pixels);
+        Resource_DecodeType01(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
         if (layer->param != 0) {
           unpacked = MemAlloc(0x400);
-          decodeFrame(
-              Resource_DecompressLz(layer->frames[layer->frame], unpacked),
+          decodePicture(
+              Resource_DecompressLz(layer->pictures[layer->picture], unpacked),
               pixels, layer->param);
           MemFree(unpacked);
         } else {
-          decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
+          decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
           if (decoded != 0)
-            decodeFrame(decoded, pixels, 0);
+            decodePicture(decoded, pixels, 0);
         }
       } else {
-        decodeFrame(layer->frames[layer->frame], pixels, layer->param);
+        decodePicture(layer->pictures[layer->picture], pixels, layer->param);
       }
     }
 

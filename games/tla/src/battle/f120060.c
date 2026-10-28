@@ -40,12 +40,12 @@ void Runtime_PushSlotEntry(void *entry, s32 priority);
 /// bobbing at (x, y) and waits for A, B, L or R; returns 1.
 s32 Func_08120060(s32 x, s32 y) {
   struct MenuPoint position;
-  s32 frameTiles;
+  s32 pointerTiles;
   struct CursorSprite promptStorage;
   struct CursorSprite *prompt;
   s32 tileSlot;
 
-  frameTiles = Ui_GetTableWordZeroFar(0);
+  pointerTiles = Ui_GetTableWordZeroFar(0);
   position.x = x;
   position.y = y;
   while (!UiWork_IsCompleteFar())
@@ -58,7 +58,7 @@ s32 Func_08120060(s32 x, s32 y) {
     Io_Write16(16, (volatile u16 *)0x04000052);
     ((s32 *)prompt)[1] = 0x40000000;
     ((s32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
+    prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Runtime_PushSlotEntry(prompt, 240);

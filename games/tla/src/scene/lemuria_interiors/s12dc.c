@@ -6,19 +6,19 @@ struct FieldActor *Object_GetById(s32 id);
 void Func_02002924(s32 cue);
 void FieldEvent_WaitFrames(s32 frames);
 
-struct SpriteFrames {
+struct SpritePictures {
   u8 unk00[5];
-  u8 frame;
+  u8 picture;
 };
 
 struct AnimatedSprite {
   u8 unk00[0x12];
   s16 rotation;
   u8 unk14[5];
-  u8 frame;
-  u8 nextFrame;
+  u8 picture;
+  u8 nextPicture;
   u8 unk1b[0xd];
-  struct SpriteFrames *frames;
+  struct SpritePictures *pictures;
 };
 
 void Func_020012dc(s32 id) {

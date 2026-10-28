@@ -1,4 +1,4 @@
-@ Eight frames of a 16x16 explosion of 16 colours, one under another.
+@ Eight pictures of a 16x16 explosion of 16 colours, one under another.
 @ Func_080e572c unpacks them into one block of OBJ video memory and makes 32
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15;
 @ its callback Func_080e4d9c copies the 16 colours of Data_080f0fa0 to OBJ

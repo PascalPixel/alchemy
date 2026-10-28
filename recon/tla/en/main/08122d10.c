@@ -284,7 +284,7 @@ void BattleEvent_Playback(void) {
     } else if (events->phase == 5) {
       struct ArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = Data_0812996c;
-      s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
+      s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageDisplay *display =
           (struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4];
       struct MessageWindow *window = display->window;
@@ -298,7 +298,7 @@ void BattleEvent_Playback(void) {
       QueueIoWriteDelay6(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      prompt->tile = VramCache_Reload(events->arrowResource, frameTiles);
+      prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +

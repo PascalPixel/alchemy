@@ -14,7 +14,7 @@
 void BattleEffect_UpdateDescendingParticleNegativeArc(void);
 void BattleEffect_UpdateDescendingParticlePositiveArc(void);
 
-struct ArcFrame {
+struct ArcPicture {
   u8 padding00[22];
   u8 visible;
 };
@@ -46,7 +46,7 @@ struct ArcSprite {
   u8 padding12[8];
   u8 animation;
   u8 padding1b[13];
-  struct ArcFrame *frame;
+  struct ArcPicture *picture;
 };
 
 struct ArcObject {
@@ -107,7 +107,7 @@ void Func_080e1024(struct ArcObject *source) {
     sprite->flags05_5 = 0;
     sprite->layer = 1;
     sprite->size = 2;
-    sprite->frame->visible = zero;
+    sprite->picture->visible = zero;
   }
   objects[0]->callback = (void *)BattleEffect_UpdateDescendingParticleNegativeArc;
   objects[0]->sprite->attr.byte.variant = 0;

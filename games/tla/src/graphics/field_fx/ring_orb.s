@@ -1,4 +1,4 @@
-@ Four frames of a 32x32 sprite of 256 colours, one under another: two of an
+@ Four pictures of a 32x32 sprite of 256 colours, one under another: two of an
 @ orb of rings in colours 224 to 234, then two filled with colour 2.
 @ Func_080e9af4 unpacks them into one block of OBJ video memory and makes a
 @ 32x32 sprite that shows the first two in turn. Its callback Func_080e9940

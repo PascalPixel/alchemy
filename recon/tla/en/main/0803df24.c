@@ -1,7 +1,7 @@
 // Draft, differ 14 of 641 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
-// Draft, differ 58 of 641: The Broken Seal's MenuSelection_DrawFrame with this
+// Draft, differ 58 of 641: The Broken Seal's SelectionMenu_Draw with this
 // game's three-word projected position (frame 24). Every remaining row is
 // instruction order under the ARM9TDMI scheduling: the halves of split
 // constants and the loads beside them come in another order (first at cnt = 0
@@ -31,7 +31,7 @@ struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *screen);
 s32 VramCache_Load(s32 slot, s32 size, void *source);
 void Func_0803e488(struct SelectionScreen *state, s32 index);
 
-void MenuSelection_DrawFrame(void) {
+void SelectionMenu_Draw(void) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
   struct SelectionNode *cursor = &state->records[14];

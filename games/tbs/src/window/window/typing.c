@@ -49,7 +49,7 @@ void TextPrinter_RunAll(void) {
     struct Window *current = printer->window;
 
     // A zooming window is left alone until its zoom ends.
-    if (current != NULL && current->zoomStep == 0 && current->duration == 0) {
+    if (current != NULL && current->zoomStage == 0 && current->duration == 0) {
       u16 flags = current->flags;
 
       // Flags 0 with no zoom left: the window has closed.

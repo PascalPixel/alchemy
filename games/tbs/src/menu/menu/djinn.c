@@ -849,7 +849,7 @@ s32 DjinnMenu_ShowHelp(void) {
     {
       struct Window *window = printer->window;
 
-      window->zoomStep = 0;
+      window->zoomStage = 0;
       window->duration = 0;
       window->state = 0;
     }

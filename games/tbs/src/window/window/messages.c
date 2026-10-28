@@ -158,7 +158,7 @@ void Window_CloseAll(s32 unused) {
     do {
       pollWindow = printer->window;
       if (pollWindow != 0) {
-        if (pollWindow->zoomStep == 0 && pollWindow->duration == 0) {
+        if (pollWindow->zoomStage == 0 && pollWindow->duration == 0) {
           flag = pollWindow->flags;
           // flag is 0 here: the printer is set free.
           if (flag == 0)
@@ -335,7 +335,7 @@ void TextPrinter_CloseFinishedWindows(void) {
   i = 0;
   do {
     window = printer->window;
-    if (window != NULL && window->zoomStep == 0 && window->duration == 0 &&
+    if (window != NULL && window->zoomStage == 0 && window->duration == 0 &&
         window->flags != 0 && window->state != 0) {
       Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }

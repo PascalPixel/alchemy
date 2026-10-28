@@ -7,15 +7,15 @@ gBattleParty_RoundEndSideOrder:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 @ Star workspace positions.
-	.global gElementGlow_StarFrameOffsets
-gElementGlow_StarFrameOffsets:
+	.global gElementGlow_StarPictureOffsets
+gElementGlow_StarPictureOffsets:
 	.4byte 0, 1, 5, 14, 30, 46, 62
 	.global gElementGlow_StarSizes
 gElementGlow_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4
 	.balign 4
-	.global gElementGlow_RingFrameOffsets
-gElementGlow_RingFrameOffsets:
+	.global gElementGlow_RingPictureOffsets
+gElementGlow_RingPictureOffsets:
 	.4byte 0x4e, 0x44e, 0x84e, 0xc4e
 	.4byte 0, 10, 20, 0
 	.global gBattle_UnusedCharacterIdPairs

@@ -16,7 +16,7 @@ struct AnimationMetadata {
   u8 boxX;
   u8 boxY;
   u8 pictureCodec;
-  void **frames;
+  void **pictures;
   u8 **animation;
 };
 
@@ -26,7 +26,7 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 0x05);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 0x08);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 0x09);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, frames) == 0x0c);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
 
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);

@@ -76,8 +76,8 @@ struct MapViewWork {
   u32 *resources;
   u8 unk124[0x84c];
   s8 extraTiles;
-  u8 frameShown;
-  u8 framePending;
+  u8 pictureShown;
+  u8 picturePending;
   s8 area;
 };
 

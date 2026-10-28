@@ -879,16 +879,16 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 
 /// Alternates two faces twice, ending on the first.
 static __inline__ void
-KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFrame, s32 secondFrame) {
-  Import_ActorSetAnimation(actorId, firstFrame);
+KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace, s32 secondFace) {
+  Import_ActorSetAnimation(actorId, firstFace);
   WaitFrames(6);
-  Import_ActorSetAnimation(actorId, secondFrame);
+  Import_ActorSetAnimation(actorId, secondFace);
   WaitFrames(6);
-  Import_ActorSetAnimation(actorId, firstFrame);
+  Import_ActorSetAnimation(actorId, firstFace);
   WaitFrames(6);
-  Import_ActorSetAnimation(actorId, secondFrame);
+  Import_ActorSetAnimation(actorId, secondFace);
   WaitFrames(6);
-  Import_ActorSetAnimation(actorId, firstFrame);
+  Import_ActorSetAnimation(actorId, firstFace);
 }
 
 /// Plays one of Tret's or Laurel's face gestures, chosen by the blank

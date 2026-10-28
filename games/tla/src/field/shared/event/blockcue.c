@@ -58,17 +58,17 @@ void Func_080e42d4(void) {
 #define PICTURE_FORMAT_TYPE01 1     ///< one type-01 stream
 #define PICTURE_FORMAT_COMPRESSED 3 ///< compressed, then run through the decoder
 
-struct FrameSource {
+struct PictureSource {
   u8 unk00[5];
   u8 decodeMode;
   u8 unk06;
   u8 format;
-  const void **frames;
+  const void **pictures;
   u8 unk0c[10];
-  u8 frame;
+  u8 picture;
 };
 
-typedef void (*FrameDecoder)(const void *source, void *destination, s32 mode);
+typedef void (*PictureDecoder)(const void *source, void *destination, s32 mode);
 
 extern const u8 BattleEffect_DecodePictureCode[];
 extern const u8 BattleEffect_DecodePictureCopyEnd[];
@@ -79,9 +79,9 @@ extern u8 BattleEffect_DecodePictureBlockSize[];
 /// Draws the current picture into a cleared buffer of the given
 /// size. The ARM picture decoder runs from RAM: when no copy is loaded yet, this
 /// loads one for the call and releases it afterwards.
-void Func_080e43a4(struct FrameSource *source, void *buffer, s32 size) {
+void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
   s32 decoderLoaded = 1;
-  FrameDecoder decode = Ram_HeapSlots->unk4c[1];
+  PictureDecoder decode = Ram_HeapSlots->unk4c[1];
 
   if (decode == NULL) {
     Dma_Set(BattleEffect_DecodePictureCode,
@@ -97,15 +97,15 @@ void Func_080e43a4(struct FrameSource *source, void *buffer, s32 size) {
 
   Iwram_ClearWords(buffer, size);
   if (source->format == PICTURE_FORMAT_TYPE01) {
-    Resource_DecodeType01(source->frames[source->frame], buffer);
+    Resource_DecodeType01(source->pictures[source->picture], buffer);
   } else if (source->format == PICTURE_FORMAT_COMPRESSED) {
     const void *stream =
-        Iwram_Decompress(source->frames[source->frame], buffer);
+        Iwram_Decompress(source->pictures[source->picture], buffer);
 
     if (stream != NULL)
       decode(stream, buffer, 0);
   } else {
-    decode(source->frames[source->frame], buffer, source->decodeMode);
+    decode(source->pictures[source->picture], buffer, source->decodeMode);
   }
 
   if (!decoderLoaded)

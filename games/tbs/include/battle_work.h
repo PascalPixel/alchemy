@@ -24,7 +24,7 @@ struct AdvanceArrowSprite {
   /// Attribute 1's flip and size bits; 0, which with the tall shape is 8 by
   /// 16 pixels.
   u16 size : 7;
-  u16 tile : 10; ///< the arrow frame's VRAM tile, reloaded each frame
+  u16 tile : 10; ///< the arrow picture's VRAM tile, reloaded each frame
   /// Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here.
   u16 palette : 6;
   /// OAM's fourth halfword, the affine parameter slot; cleared with the tile

@@ -11,7 +11,7 @@
 // (games/tbs/src/window/window.c). The five messages (0x113b, 0x1141, 0x1144,
 // 0x1146 and 0x1161 in English) are pool symbols the catalogs must name before
 // adoption (MsgOptionA to MsgOptionE here). Remaining: mostly the native's
-// loads issued ahead of constants (each frame loop's reload of the frame before
+// loads issued ahead of constants (each icon loop's reload of the icon before
 // the option offset, the slider rows), the cursor row's registers and the
 // offsets of the cursor and the preset, which the native builds in the other
 // register.
@@ -34,9 +34,9 @@ struct OptionScreen {
   u8 cursor[0x10];
   u8 marker[2][0x10];
   u8 unk5d4[0x18];
-  struct RenderOutput *frame0[3];
-  struct RenderOutput *frame1[2];
-  struct RenderOutput *frame2[2];
+  struct RenderOutput *icons0[3];
+  struct RenderOutput *icons1[2];
+  struct RenderOutput *icons2[2];
 };
 
 extern u8 MsgOptionA[], MsgOptionB[], MsgOptionC[], MsgOptionD[], MsgOptionE[];
@@ -85,7 +85,7 @@ s32 Func_080400e8(void) {
   s32 x;
   s32 y;
   s32 result;
-  struct RenderOutput *frame;
+  struct RenderOutput *icon;
 
   redraw = 1;
   selectedOption = 0;
@@ -110,10 +110,10 @@ s32 Func_080400e8(void) {
         work->option[4] = 0;
 
       for (i = 0; i <= 2; i++) {
-        frame = work->frame0[i];
-        frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
-        resourceIndex = (u8)work->frame0[i]->index;
+        icon = work->icons0[i];
+        icon->sentinel = 0xfb;
+        UiIcon_PrepareObjectFar(icon);
+        resourceIndex = (u8)work->icons0[i]->index;
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
@@ -121,10 +121,10 @@ s32 Func_080400e8(void) {
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        frame = work->frame1[i];
-        frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
-        resourceIndex = (u8)work->frame1[i]->index;
+        icon = work->icons1[i];
+        icon->sentinel = 0xfb;
+        UiIcon_PrepareObjectFar(icon);
+        resourceIndex = (u8)work->icons1[i]->index;
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
@@ -132,10 +132,10 @@ s32 Func_080400e8(void) {
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        frame = work->frame2[i];
-        frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
-        resourceIndex = (u8)work->frame2[i]->index;
+        icon = work->icons2[i];
+        icon->sentinel = 0xfb;
+        UiIcon_PrepareObjectFar(icon);
+        resourceIndex = (u8)work->icons2[i]->index;
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;

@@ -18,18 +18,18 @@ s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
 /// Icon_BuildAbilityIconTiles draws icon 0 for a number past them.
 s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 
-/// Builds a command icon (overlay overlayIcon over frame frameIcon) and loads
+/// Builds a command icon (overlay overlayIcon over base baseIcon) and loads
 /// it into a sprite tile slot: *slot, or a free one when reuse is 0. Returns
 /// the tile in *tileOut.
-/// Frame decode is opaque; the command layer is then composited with
+/// The base decodes opaque; the command layer is then composited with
 /// transparency. With no free slot, *slot is VRAM_CACHE_ENTRY_COUNT and the
 /// load fails (*tileOut 0).
-void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
 
   work = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  work->encoded = gIcon_BasePointerTable[frameIcon];
+  work->encoded = gIcon_BasePointerTable[baseIcon];
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 0);

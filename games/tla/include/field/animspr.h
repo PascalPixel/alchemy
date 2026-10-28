@@ -38,16 +38,16 @@ struct AnimationEntry {
   /// The facing table its pictures follow (from the metadata, or
   /// animation command 240).
   u8 kind;
-  u8 param;      ///< SpriteColorMode its pixels are drawn with
-  u8 priority;   ///< drawing order 0 to 3 among the layers; above 3 not drawn
-  u8 mode;       ///< picture codec: 1 type-01, 3 LZ, anything else raw
-  void **frames; ///< picture pointers, from the metadata or a resource slot
-  u8 **scripts;  ///< the metadata's command scripts, one per animation number
-  u8 *script;    ///< the running script; null once command 239 ends it
-  u8 pos;        ///< byte offset of the next command in script
-  u8 step;       ///< taken off timer each frame; 16 is normal speed
-  u8 frame;      ///< picture shown, frameBase plus the facing offset; 255 none
-  u8 frameBase;  ///< picture the script chose, before facing; 255 blank
+  u8 param;        ///< SpriteColorMode its pixels are drawn with
+  u8 priority;     ///< drawing order 0 to 3 among the layers; above 3 not drawn
+  u8 mode;         ///< picture codec: 1 type-01, 3 LZ, anything else raw
+  void **pictures; ///< picture pointers, from the metadata or a resource slot
+  u8 **scripts;    ///< the metadata's command scripts, one per animation number
+  u8 *script;      ///< the running script; null once command 239 ends it
+  u8 pos;          ///< byte offset of the next command in script
+  u8 step;         ///< taken off timer each frame; 16 is normal speed
+  u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
+  u8 pictureBase; ///< picture the script chose, before facing; 255 blank
 };
 
 /// A resource slot: the tag of the animation loaded into it (slot number and

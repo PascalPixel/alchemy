@@ -3,13 +3,13 @@
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
 // Draft, differ 16 of 113, instruction order only: the perspective map's
-// HBlank setup each frame, ☀️'s MapAnimation_ApplyAffineFrame
-// (games/tbs/src/field/field.c) written over ⚓️'s heap slots: stops HBlank
-// DMA 0, loads the first scanline's BG2 and BG3 affine registers from this
-// frame's page and starts the HBlank DMA for the rest, then sets the window
-// bits of DISPCNT. Left: eight single rows placed one or two slots apart
-// (the heap slot load, the DISPCNT mask, the second DMA control read, a
-// word copy and the window bottom read).
+// HBlank setup each frame, ☀️'s WorldMap_ApplyAffinePage
+// (games/tbs/src/field/field/world_map.c) written over ⚓️'s heap slots:
+// stops HBlank DMA 0, loads the first scanline's BG2 and BG3 affine
+// registers from this frame's page and starts the HBlank DMA for the rest,
+// then sets the window bits of DISPCNT. Left: eight single rows placed one or
+// two slots apart (the heap slot load, the DISPCNT mask, the second DMA
+// control read, a word copy and the window bottom read).
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

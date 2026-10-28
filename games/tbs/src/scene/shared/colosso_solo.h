@@ -79,8 +79,8 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
 
 /// Makes the character the only party member, the one the player moves and
 /// the camera follows, with full HP and PP and no poison. The gauges are the
-/// battle's (1 << 14 full; a character with any HP or PP left shows at least
-/// 1).
+/// battle's (1 << 14 full; a character with any HP or PP left shows at
+/// least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
   s32 v;

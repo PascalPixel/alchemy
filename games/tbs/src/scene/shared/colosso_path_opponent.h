@@ -24,7 +24,7 @@
 
 /// The halfwords of the opponent's path: x and z for 7,200 frames, the last
 /// pair the (0, 0) that ends it, as Colosso_UpdatePathOpponent records it.
-#define COLOSSO_PATH_HALFWORDS 14400
+#define COLOSSO_PATH_HALFWORDS (7200 * 2)
 
 /// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
 /// starts: the gauge, then the opponent's path.

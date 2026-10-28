@@ -752,12 +752,12 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     riderX = rider->x.fixed;
     deltaX = liftX - riderX;
     if (deltaX >= 0) {
-      if (deltaX > PIXELS(10) - 1) {
+      if (deltaX >= PIXELS(10)) {
         continue;
       }
     } else {
       riderX -= liftX;
-      if (riderX > PIXELS(10) - 1) {
+      if (riderX >= PIXELS(10)) {
         continue;
       }
     }
@@ -765,12 +765,12 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     riderZ = rider->z.fixed;
     deltaZ = liftZ - riderZ;
     if (deltaZ >= 0) {
-      if (deltaZ > PIXELS(10) - 1) {
+      if (deltaZ >= PIXELS(10)) {
         continue;
       }
     } else {
       riderZ -= liftZ;
-      if (riderZ > PIXELS(10) - 1) {
+      if (riderZ >= PIXELS(10)) {
         continue;
       }
     }

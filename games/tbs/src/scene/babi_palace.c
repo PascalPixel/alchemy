@@ -2564,10 +2564,10 @@ s32 gBabiPalace_IndigestionScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

@@ -2300,10 +2300,11 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_End();
 }
 
-/// Unused: asks the field to use Frost (party member 4 and
-/// ABILITY_FROST); nothing calls it.
+/// Unused: asks the field to have Felix use Frost; nothing calls it.
 UNUSED static void AltinPeak_RequestPsynergy(void) {
-  gFieldWork->psynergy = (4 << 10) | ABILITY_FROST;
+  // XXX (no evidence): why the user is Felix, who never joins the party in
+  // this game; nothing calls this, so no caller shows what it was for.
+  gFieldWork->psynergy = (FELIX << 10) | ABILITY_FROST;
 }
 
 /// Task in AltinPeakSpritz: while the leader stands higher than 48

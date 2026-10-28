@@ -447,7 +447,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST + FACING_STEP, 40);
-  Actor_SetSpeed(ACTOR_LAYANA, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_LAYANA, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_LAYANA, 892, 440);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_NORTH + FACING_STEP, 20);
@@ -558,7 +558,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_IVAN, 868, 472);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
@@ -857,10 +857,10 @@ static void HammetPalace_HammetsHomecoming(void) {
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_MIA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 864, 498);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {

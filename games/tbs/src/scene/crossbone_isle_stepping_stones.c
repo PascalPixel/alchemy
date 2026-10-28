@@ -108,8 +108,7 @@ enum CrossboneIsleSteppingStonesActorId {
   /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// CrossboneIsleDragonStatue's boulder for Move, SPRITE_TURNING_ROCK, which
-  /// sinks
-  /// into place at column 16.
+  /// sinks into place at column 16.
   /// ★ Named from what the player sees: a round grey boulder below the logs
   /// (its render)
   ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,

@@ -59,7 +59,7 @@ enum ColossoLetteringPicture {
 
 /// The bytes of one lettering picture's tiles: 2,048 pixels at 4 bits each, as
 /// four 32x16 pieces or two 32x32 ones (lettering.tsv).
-#define COLOSSO_LETTERING_PICTURE_BYTES 1024
+#define COLOSSO_LETTERING_PICTURE_BYTES (4 * 32 * 16 / 2)
 
 /// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
 /// gColosso_LetteringParameter picks the second half of a picture.
@@ -101,7 +101,8 @@ static void Colosso_LoadLettering(s32 id) {
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gColosso_LetteringSlot, COLOSSO_LETTERING_PICTURE_BYTES,
-            (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
+            (u8 *)((id * COLOSSO_LETTERING_PICTURE_BYTES) + (s32)buf +
+                   COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);
   Heap_Release(buf);
 }

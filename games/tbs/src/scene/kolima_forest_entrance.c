@@ -1158,16 +1158,15 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
                                          (x > PIXELS(202) && x < PIXELS(255) &&
                                           sparkle->z.fixed > PIXELS(549) &&
                                           sparkle->z.fixed < PIXELS(632)))
-            : (x = sparkle->x.fixed,
-               (x > PIXELS(192) && x < PIXELS(244) &&
-                sparkle->z.fixed > PIXELS(549) &&
-                sparkle->z.fixed <= PIXELS(585) - 1) ||
-                   (x > PIXELS(244) && x < PIXELS(274) &&
-                    sparkle->z.fixed > PIXELS(571) &&
-                    sparkle->z.fixed <= PIXELS(605) - 1) ||
-                   (x > PIXELS(211) && x < PIXELS(255) &&
-                    sparkle->z.fixed > PIXELS(596) &&
-                    sparkle->z.fixed < PIXELS(632))))) {
+            : (x = sparkle->x.fixed, (x > PIXELS(192) && x < PIXELS(244) &&
+                                      sparkle->z.fixed > PIXELS(549) &&
+                                      sparkle->z.fixed < PIXELS(585)) ||
+                                         (x > PIXELS(244) && x < PIXELS(274) &&
+                                          sparkle->z.fixed > PIXELS(571) &&
+                                          sparkle->z.fixed < PIXELS(605)) ||
+                                         (x > PIXELS(211) && x < PIXELS(255) &&
+                                          sparkle->z.fixed > PIXELS(596) &&
+                                          sparkle->z.fixed < PIXELS(632))))) {
     return 0;
   }
   Sound_Play(SE_DRIP);
@@ -1289,10 +1288,10 @@ s32 gKolimaForestEntrance_SquashAction[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

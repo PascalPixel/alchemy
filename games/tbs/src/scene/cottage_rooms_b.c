@@ -206,10 +206,9 @@ enum CottageRoomsBActorId {
   /// ★ Named from the game: "We're a small hotel, and we get few guests"
   /// (MsgValeWereASmallHotelAndWe)
   ACTOR_INN_WORKER,
-  /// In a room of the inn, before the party leaves Vale: SPRITE_FELIX_MASKED,
-  /// masked
-  /// Felix's (sol_sanctum_eruption.h). "Hey... Boy... Do you have business with
-  /// me?"
+  /// In a room of the inn, before the party leaves Vale: masked Felix
+  /// (SPRITE_FELIX_MASKED, sol_sanctum_eruption.h). "Hey... Boy... Do you have
+  /// business with me?"
   /// ★ Named from the game: "That masked man..." (MsgValeTheMaskedManWasFelix)
   ACTOR_MASKED_MAN,
   /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night: Catch reaches it
@@ -219,8 +218,7 @@ enum CottageRoomsBActorId {
   /// (MsgValeComeOnHurry)
   ACTOR_TUNIC,
   /// Kraden's sprite (SPRITE_KRADEN, as in Sol Sanctum's events), seen only
-  /// from
-  /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
+  /// from COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
   /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN
 };
@@ -1452,10 +1450,10 @@ s32 gCottageRoomsB_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
     SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
@@ -1464,10 +1462,10 @@ s32 gCottageRoomsB_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     SC_END,
 };

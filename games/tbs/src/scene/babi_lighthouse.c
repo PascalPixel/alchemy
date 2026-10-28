@@ -181,7 +181,6 @@ enum {
   ACTOR_ROAD_PILLAR = 12
 };
 
-/// The lighthouse keeps two flags in the area flags from FLAG_AREA_TEMP_FIRST.
 enum {
   /// Growth has grown the Entry's sprout into a vine.
   /// ★ Named from the game: "Growth" (MsgAbilityName)
@@ -1545,10 +1544,10 @@ s32 gBabiLighthouse_TrembleScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
     SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
@@ -1557,10 +1556,10 @@ s32 gBabiLighthouse_TrembleScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(120),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TO(1)),

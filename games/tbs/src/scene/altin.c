@@ -918,9 +918,10 @@ static void Altin_SprayDrift(struct Actor *actor) {
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(((u32)Import_RandomNext() * 0x8000) >> 16) - PIXELS(1);
+    spray->z.fixed +=
+        -(((u32)Import_RandomNext() * (PIXELS(1) / 2)) >> 16) - PIXELS(1);
     spray->scaleX += 3 * Q16_ONE / 20;
-    spray->scaleY += -4 * Q16_ONE / 100;
+    spray->scaleY += -Q16_ONE / 25;
   } else {
     spray->z.fixed += PIXELS(2);
     spray->scaleX += 3 * Q16_ONE / 100;

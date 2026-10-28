@@ -39,7 +39,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       base = (s32)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       none = 0;
       base += 0x400;
-      Dma_Fill32(none, (void *)base, 0x80);
+      Dma_Fill32(none, (void *)base, 128);
       Icon_DrawItem(item);
       tile = VramCache_Load(sprite->slot, 128, (const void *)base);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);

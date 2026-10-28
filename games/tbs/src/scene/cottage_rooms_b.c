@@ -1408,8 +1408,8 @@ s32 gCottageRoomsB_FlameRisesScript[] = {
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_Y, -0x1999),
-    SC_ADD(SW_TARGET_Y, -0x1999),
+    SC_ADD(SW_Y, -PIXELS(1) / 10),
+    SC_ADD(SW_TARGET_Y, -PIXELS(1) / 10),
     SC_ADD(SW_SCALE_X, -655),
     SC_ADD(SW_SCALE_Y, 2621),
     SC_WAIT(1),
@@ -1417,8 +1417,8 @@ s32 gCottageRoomsB_FlameRisesScript[] = {
     SC_SET(SW_Y, PIXELS(8)),
     SC_SET(SW_TARGET_Y, PIXELS(8)),
     SC_LABEL(3),
-    SC_ADD(SW_Y, 0x7333),
-    SC_ADD(SW_TARGET_Y, 0x7333),
+    SC_ADD(SW_Y, PIXELS(9) / 20),
+    SC_ADD(SW_TARGET_Y, PIXELS(9) / 20),
     SC_ADD(SW_SCALE_X, 65),
     SC_ADD(SW_SCALE_Y, -1310),
     SC_WAIT(1),
@@ -1439,7 +1439,7 @@ s32 gCottageRoomsB_DoraFacesIsaacScript[] = {
 };
 
 s32 gCottageRoomsB_MythrilBagRisesScript[] = {
-    SC_ADD(SW_Y, 0x8000),
+    SC_ADD(SW_Y, PIXELS(1) / 2),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
@@ -1611,7 +1611,7 @@ struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterLeaving[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 208, 0x0, MOVEMENT_TYPE_STAND,
+    { 208, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1631,7 +1631,7 @@ struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterKalay[] = {
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 208, 0x0, MOVEMENT_TYPE_STAND,
+    { 208, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },

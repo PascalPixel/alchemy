@@ -269,7 +269,7 @@ enum {
 
 #define WATER_BEAST_HOP_PERIOD 60
 #define WATER_SPRAY_LIFETIME 20
-#define WATER_SPRAY_START_SCALE 0x4ccc
+#define WATER_SPRAY_START_SCALE (3 * Q16_ONE / 10)
 
 // UB: the native facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
@@ -704,7 +704,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
-    beast->y.fixed += -0x18000;
+    beast->y.fixed += -PIXELS(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Event_PlaySound(SE_SPLASH);
@@ -988,8 +988,8 @@ static void Altin_ScareOffBeast(void) {
 /// The cook from Xian paces between his pots, nodding over each.
 s32 gCottageRoomsD_CookScript[] = {
     SC_ADD(SW_COLLISION, 128),
-    SC_SET(SW_SPEED, 0x26666),
-    SC_SET(SW_ACCELERATION, 0x13333),
+    SC_SET(SW_SPEED, PIXELS(12) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(6) / 5),
     SC_LABEL(1),
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),

@@ -1557,13 +1557,13 @@ static void Imil_TurnSlidingActor(struct Actor *updated) {
   }
   prev = actor->facing;
   d = (s16)(d - prev);
-  if (d > 0x1000)
-    d = 0x1000;
-  if (d < -0x1000)
-    d = -0x1000;
+  if (d > FACING_STEP)
+    d = FACING_STEP;
+  if (d < -FACING_STEP)
+    d = -FACING_STEP;
   actor->facing = prev + d;
   Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 0x30);
+  Actor_SetAnimationSpeed(actor, 48);
 }
 
 /// The leader slides along Imil's ice until something stops him.
@@ -1750,7 +1750,7 @@ s32 gImil_MiaCheckRoomScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(161), 0, PIXELS(124)),
     SC_SYNC,
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(134), 0, PIXELS(139)),
     SC_SYNC,
     SC_MOVE(PIXELS(135), 0, PIXELS(189)),
@@ -1763,7 +1763,7 @@ s32 gImil_MiaRunOutScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(PIXELS(165), 0, PIXELS(207)),
     SC_SYNC,
-    SC_SET(0x23, 1),
+    SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(147), 0, PIXELS(252)),
     SC_SYNC,
     SC_MOVE(PIXELS(150), 0, PIXELS(268)),

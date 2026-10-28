@@ -1394,7 +1394,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// (SceneId_FuchinFallsCaveArcticBlade), in both of its halves, at the cells
 /// their flags name.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
-  if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 0x10000) {
+  if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 1 << 16) {
     {
       s32 column = 14;
       s32 row = 10;
@@ -1918,10 +1918,10 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
   }
   facing = actor->facing;
   direction = (s16)(direction - facing);
-  if (direction > 0x1000)
-    direction = 0x1000;
-  if (direction < -0x1000)
-    direction = -0x1000;
+  if (direction > FACING_STEP)
+    direction = FACING_STEP;
+  if (direction < -FACING_STEP)
+    direction = -FACING_STEP;
   actor->facing = facing + direction;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);

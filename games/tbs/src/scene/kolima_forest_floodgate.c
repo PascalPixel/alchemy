@@ -118,7 +118,7 @@ const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
 /// ahead, and the cells of the logs are marked again where they now lie.
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
-  MapGrid_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
+  MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
                                       CELL_BEHAVIOR_WALL);
   KolimaForestFloodgate_MarkShortLogCells();
@@ -239,9 +239,9 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
   *destination++ = *source++;
   *destination = *source;
   scroll = (u16 *)gKolimaForestFloodgate_ShakeScroll;
-  scroll[1] += 0xb0;
-  scroll[3] += 0xb0;
-  scroll[5] += 0xb0;
+  scroll[1] += 176;
+  scroll[3] += 176;
+  scroll[5] += 176;
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
@@ -416,8 +416,8 @@ s32 KolimaForestFloodgate_Initialize(void) {
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
-            gKolimaForestFloodgateRecords,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
+            gKolimaForestFloodgateRecords, (DMA_ENABLE | DMA_32BIT) << 16 | 18,
+            REG_DMA3);
     *gKolimaForestFloodgateReturned = 0;
     *gKolimaForestFloodgateMap = 1;
   }

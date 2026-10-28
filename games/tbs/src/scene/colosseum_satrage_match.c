@@ -374,14 +374,14 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   obstacle = Actor_GetById(ACTOR_WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
-    column = 0x23;
-    row = 0x4D;
-    MapGrid_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
+    column = 35;
+    row = 77;
+    MapGrid_CopyCellAttributes(35, 78, 1, 1, column, row);
   } else {
     GameFlag_Clear(FLAG_WALL_PILLAR_MOVED);
-    column = 0x23;
-    row = 0x4D;
-    MapGrid_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
+    column = 35;
+    row = 77;
+    MapGrid_CopyCellAttributes(34, 77, 1, 1, column, row);
   }
 }
 
@@ -450,7 +450,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
     rotationStep += 36;
   }
   FieldActor_SetMoveTarget(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
-  for (settleRotationStep = 0x168, settleFrames = 21; settleFrames >= 0;
+  for (settleRotationStep = 360, settleFrames = 21; settleFrames >= 0;
        settleFrames--) {
     sprite->rotation -= settleRotationStep;
     wait(1);
@@ -924,7 +924,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
-  Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 0x100);
+  Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 256);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
@@ -2058,7 +2058,7 @@ const s16 gColosseumSatrageMatch_LetteringLose[] = {
 char gHexDigits[20] = "0123456789ABCDEF";
 
 s32 gColosseumSatrageMatch_SparkScript[] = {
-    SC_ADD(SW_Y, -0x4000),
+    SC_ADD(SW_Y, -PIXELS(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_RELEASE,

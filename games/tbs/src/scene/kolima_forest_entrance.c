@@ -302,7 +302,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 0x251);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 593);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
   {
@@ -1321,7 +1321,7 @@ s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
 /// A field sinks and shrinks away over 90 frames.
 s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
     SC_ANIMATION(1),
-    SC_ADD(SW_Z, -0x1999),
+    SC_ADD(SW_Z, -PIXELS(1) / 10),
     SC_ADD(SW_SCALE_X, -983),
     SC_ADD(SW_SCALE_Y, -983),
     SC_WAIT(1),
@@ -1335,7 +1335,7 @@ s32 gKolimaForestEntrance_GroundSparkleAction[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
     SC_SET(SW_COLLISION, 0),
-    SC_SET(0x23, 0),
+    SC_SET(SW_TIMER, 0),
     SC_LABEL(1),
     SC_CALL(KolimaForestEntrance_TwinkleGroundSparkle),
     SC_LOOP(SC_FOREVER, SC_TOP),

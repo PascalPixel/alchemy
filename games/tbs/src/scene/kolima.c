@@ -425,7 +425,7 @@ static void Kolima_LowerBridge(void) {
   FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 174, 0x116);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 174, 278);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
@@ -711,9 +711,9 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(30);
-  Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x11e);
-  Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x12e);
-  Actor_WalkToAndWait(ACTOR_IVAN, 88, 0x136);
+  Actor_WalkToAndWait(ACTOR_IVAN, 72, 286);
+  Actor_WalkToAndWait(ACTOR_IVAN, 72, 302);
+  Actor_WalkToAndWait(ACTOR_IVAN, 88, 310);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
@@ -740,7 +740,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_IVAN, 80, 0x136);
+  Actor_WalkToAndWait(ACTOR_IVAN, 80, 310);
   motionFacingFlag = ACTOR_FACES_MOTION;
   Event_Wait(1);
   Actor_GetById(ACTOR_IVAN)->steeringFlags |= motionFacingFlag;
@@ -761,7 +761,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_GetById(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x11e);
+  Actor_WalkToAndWait(ACTOR_IVAN, 72, 286);
   Event_Wait(1);
   Actor_GetById(ACTOR_IVAN)->steeringFlags |= motionFacingFlag;
   Actor_SetScript(ACTOR_IVAN, gKolima_IvanWalksIn);
@@ -1739,7 +1739,7 @@ s32 gKolima_EntryActions[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
     SC_SET(SW_COLLISION, 0),
-    SC_SET(0x23, 0),
+    SC_SET(SW_TIMER, 0),
     SC_LABEL(1),
     SC_CALL(Kolima_UpdateTimedAppearance),
     SC_LOOP(SC_FOREVER, SC_TOP),

@@ -485,11 +485,11 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   FieldMessage_ShowAtActor(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
-    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_SetMessageId(question + 1);
   } else {
     Event_Wait(10);
-    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
+    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     Event_SetMessageId(question + 2);
   }
   Event_ShowMessageAndWait(actorId, 0);
@@ -1427,7 +1427,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 0x2f8);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 760);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);

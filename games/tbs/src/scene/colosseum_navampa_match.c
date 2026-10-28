@@ -2377,7 +2377,7 @@ const s8 gColosseumNavampaMatch_WallWedgePattern[][6] = {
 
 // clang-format off
 const u16 gColosseumNavampaMatch_FacingAngles[] = {
-    0, 0, 0x4000, 0x8000, 0x8000, 0x8000, 0xc000, 0,
+    0, 0, FACING_SOUTH, FACING_WEST, FACING_WEST, FACING_WEST, FACING_NORTH, 0,
 };
 
 const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {

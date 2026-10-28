@@ -781,9 +781,9 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
   *destination++ = *source++;
   *destination = *source;
   coordinates = (u16 *)sShakenScroll;
-  coordinates[1] += 0xc0;
-  coordinates[3] += 0xc0;
-  coordinates[5] += 0xc0;
+  coordinates[1] += 192;
+  coordinates[3] += 192;
+  coordinates[5] += 192;
 }
 
 /// Reveals the alternate water tiles through a gradually randomized scroll

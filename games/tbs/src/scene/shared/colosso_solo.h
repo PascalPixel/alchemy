@@ -35,8 +35,8 @@
 /// Map temp flags, by stage number: a friend cheers at the stage, and its
 /// description was heard. When a friend cheers there, the guide says
 /// "Unfortunately, we have a full house."
-#define COLOSSO_STAGE_CHEERED 0x200
-#define COLOSSO_STAGE_DESCRIBED 0x208
+#define COLOSSO_STAGE_CHEERED FLAG_SCENE_TEMP_00
+#define COLOSSO_STAGE_DESCRIBED FLAG_SCENE_TEMP_08
 
 /// Puts Garet, Ivan and Mia back at the cells where they chose to cheer, at the
 /// centre of each cell.
@@ -79,7 +79,8 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
 
 /// Makes the character the only party member, the one the player moves and
 /// the camera follows, with full HP and PP and no poison. The gauges are the
-/// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
+/// battle's (1 << 14 full; a character with any HP or PP left shows at least
+/// 1).
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
   s32 v;
@@ -98,8 +99,8 @@ void Colosso_ControlCharacterAlone(s32 id) {
   unit->pp = unit->ppMax;
   unit->poison = 0;
   v = (unit->hp << 14) / unit->hpMax;
-  t = 0x4000;
-  if (v <= 0x4000) {
+  t = 1 << 14;
+  if (v <= 1 << 14) {
     t = 0;
     if (v >= 0)
       t = v;
@@ -109,8 +110,8 @@ void Colosso_ControlCharacterAlone(s32 id) {
     unit->hpGauge = 1;
   }
   v = (unit->pp << 14) / unit->ppMax;
-  t = 0x4000;
-  if (v <= 0x4000) {
+  t = 1 << 14;
+  if (v <= 1 << 14) {
     t = 0;
     if (v >= 0)
       t = v;

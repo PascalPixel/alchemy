@@ -852,7 +852,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(864), PIXELS(630));
-  gFieldWork->transition = v5 = 0x100;
+  gFieldWork->transition = v5 = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);

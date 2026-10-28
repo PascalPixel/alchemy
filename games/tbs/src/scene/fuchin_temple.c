@@ -385,11 +385,11 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
-                    0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+                    PIXELS(1) / 2, 0, 0, EFFECT_USE_PALETTE, &options);
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
                     0, 0, 0, EFFECT_USE_PALETTE, &options);
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
-                    -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
+                    -PIXELS(1) / 2, 0, 0, EFFECT_USE_PALETTE, &options);
   Event_Wait(30);
   Scene_PlayQueuedMusic();
   MapGrid_CopyCellAttributes(10, 24, 1, 1, 10, 22);
@@ -2479,7 +2479,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
   nyunpa = Actor_GetById(ACTOR_NYUNPA);
   options.priority = 1;
-  options.type = 0x0119;
+  options.type = 281;
   options.script = gFuchinTemple_ShotScript;
   options.targetScaleX = 224 << 10;
   options.targetScaleY = 192 << 9;
@@ -2489,7 +2489,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
       Sound_Play(SE_PSYNERGY_START);
     }
     FieldEffect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
-                      nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
+                      nyunpa->z.fixed - PIXELS(24), 0, PIXELS(3) / 5, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_SCALE_TO_TARGET | EFFECT_USE_PRIORITY |
                           EFFECT_SCRIPT_MEDIUM,
@@ -2538,10 +2538,10 @@ static void FuchinTemple_AnimateRevealLesson(void) {
       Sound_Play(SE_GLITTER);
     }
     particleX = hama->x.fixed +
-                ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) +
-                0xfff40000;
+                ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) -
+                PIXELS(12);
     particleY = hama->y.fixed +
-                ((((u32)Import_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
+                ((((u32)Import_RandomNext() << 5) >> 16) << 16) - PIXELS(16);
     riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,

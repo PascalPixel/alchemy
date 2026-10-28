@@ -925,7 +925,7 @@ static void CrossboneIsleKeys_CastRevealInStatueRoom(void) {
 /// Reveal wears off in CrossboneIsleStatues: the translucent layer
 /// returns.
 static void CrossboneIsleKeys_RevealEndsInStatueRoom(void) {
-  u16 value = 0x0607;
+  u16 value = BLEND_ALPHA(7, 6);
 
   REG_BLDALPHA = value;
 }

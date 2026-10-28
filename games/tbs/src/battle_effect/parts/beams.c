@@ -388,9 +388,8 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
       struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
-      SET_VELOCITY(mote, Random16() & EFFECT_ANGLE_MASK,
-                   Random16() & EFFECT_ANGLE_MASK,
-                   Random16() & EFFECT_ANGLE_MASK);
+      SET_VELOCITY(mote, Random16() & TRIG_ANGLE_MASK,
+                   Random16() & TRIG_ANGLE_MASK, Random16() & TRIG_ANGLE_MASK);
     }
     Actor_SetAnimationSpeedFar(actor, 0);
     velocityX = actor->velocityX;

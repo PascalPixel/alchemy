@@ -256,7 +256,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (EFFECT_TURN / 3));
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_Vertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
@@ -402,7 +402,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (EFFECT_TURN / 3));
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;

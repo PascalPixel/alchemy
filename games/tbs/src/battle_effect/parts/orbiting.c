@@ -207,12 +207,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
           s32 y;
 
           x = screen.x +
-              (((Trig_Sin(spark->velocityX + i * (EFFECT_TURN / 3)) * 8)) >>
-               16);
+              (((Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
           y = screen.y +
-              (((Trig_Cos(spark->velocityX + i * (EFFECT_TURN / 3)) * 8)) >>
-               16);
-          spark->velocityX += EFFECT_TURN / 128;
+              (((Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
+          spark->velocityX += TRIG_TURN / 128;
           draw[0](canvas, work->sheet + i * (24 * 24), x - 12, y - 28, 24, 24);
         }
       }
@@ -270,7 +268,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     s32 speed;
 
     puff = &work->particles[i];
-    angle = Random16() & EFFECT_ANGLE_MASK;
+    angle = Random16() & TRIG_ANGLE_MASK;
     speed = Random16() & 0xff;
     SET_POSITION(puff, 0, 0, 0);
     if (i % 6 == 5) {

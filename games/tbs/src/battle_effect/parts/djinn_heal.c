@@ -53,7 +53,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   // pixels a frame.
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 heading = Random16() & EFFECT_ANGLE_MASK;
+    s32 heading = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 0xff) + 128;
 
     SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);

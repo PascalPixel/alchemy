@@ -95,11 +95,10 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gVortices_Counts[work->args->variant][FROTH_FRAMES];
        frame++) {
-    // The camera swings EFFECT_TURN * 3 / 512 of yaw a frame over frames 17
-    // to 63.
+    // The camera swings 3/512 of a turn of yaw a frame over frames 17 to 63.
     camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
-      work->cameraDelta = EFFECT_TURN * 3 / 512;
+      work->cameraDelta = TRIG_TURN * 3 / 512;
     else
       work->cameraDelta = 0;
     // 16 frames before the end the battle shows the damage, with sound 132
@@ -265,11 +264,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
       x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                Trig_Sin((frame << 11) + i * (EFFECT_TURN / 4)) +
+                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
             wave) >>
            16) +
           40;
-      y = (Trig_Cos((frame << 11) + i * (EFFECT_TURN / 4)) * 2) >> 16;
+      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +

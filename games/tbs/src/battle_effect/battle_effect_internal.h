@@ -93,13 +93,6 @@
 /// Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
-/// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
-/// turns take, as fixed_math.h says: EFFECT_TURN / 4 is a quarter turn.
-#define EFFECT_TURN 0x10000
-/// Keeps an angle within one turn: Random16() & EFFECT_ANGLE_MASK is a random
-/// angle.
-#define EFFECT_ANGLE_MASK (EFFECT_TURN - 1)
-
 /// A heap slot read through a pointer to the effect's own slot,
 /// gHeapSlots[HEAP_SLOT_BATTLE_EFFECT].
 #define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
@@ -219,10 +212,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
-/// The bytes of the six glint cells that open the tornado sheet: the last of
-/// gBattleEffect_GlintCells, 17x24 pixels, starts at 2750. The tornado strips,
-/// and the bolts or bursts some effects decode over them, follow.
-#define GLINT_SET_BYTES (2750 + 17 * 24)
+/// The bytes of the six glint cells that open the tornado sheet, the sum of
+/// their pictures in gBattleEffect_GlintCells' order (its widths by its
+/// heights). The tornado strips, and the bolts or bursts some effects decode
+/// over them, follow.
+#define GLINT_SET_BYTES                                                        \
+  (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
 /// Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
 /// `size` (size pixels wide, twice that tall) of `sheet` through blitter

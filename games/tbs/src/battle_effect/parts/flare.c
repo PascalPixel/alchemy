@@ -63,7 +63,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     originX = 64;
     direction = -1;
   }
-  angle = -EFFECT_TURN / 4;
+  angle = -TRIG_TURN / 4;
   i = 0;
   delay = 0;
   // Each flame starts 4 frames after the one before: its variant counts up
@@ -74,7 +74,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         ((direction * (((Trig_Sin(angle) * 32)) >> 16)) + originX) + 20;
     arcFlame->y = (((Trig_Cos(angle) * 16)) >> 16) + 40;
     arcFlame->variant = delay;
-    angle += EFFECT_TURN / 16;
+    angle += TRIG_TURN / 16;
     delay -= 4;
     i += 1;
     arcFlame++;

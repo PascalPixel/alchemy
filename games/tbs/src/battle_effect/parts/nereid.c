@@ -138,7 +138,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark = &sparks[k];
           if (spark->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & EFFECT_ANGLE_MASK;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -155,7 +155,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark = &sparks[k];
           if (spark->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & EFFECT_ANGLE_MASK;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);

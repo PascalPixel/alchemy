@@ -59,7 +59,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   // to 7 frames old, so they die at different times.
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
-    angle = Random16() & EFFECT_ANGLE_MASK;
+    angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = 64 << 16;
     spark->y = 112 << 16;
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;

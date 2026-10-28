@@ -229,7 +229,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = ((4 << 16) -
-                ((Trig_Sin((frame << 12) + i * (EFFECT_TURN / 32)) * 4))) >>
+                ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
                10;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
@@ -247,7 +247,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           s32 x;
           s32 y;
 
-          angle = Random16() & EFFECT_ANGLE_MASK;
+          angle = Random16() & TRIG_ANGLE_MASK;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintCellWidths[frame & 3] >> 1);

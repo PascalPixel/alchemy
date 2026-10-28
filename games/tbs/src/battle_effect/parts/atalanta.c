@@ -13,7 +13,8 @@
 /// sizes the draws use. A flash picture's number is the frame of the flash it
 /// is drawn on.
 enum SlashSheetCell {
-  ATALANTA_SLASH_FLASH_1 = 0, ///< 14x28
+  /// 14x28
+  ATALANTA_SLASH_FLASH_1 = 0,
   /// 23x44
   ATALANTA_SLASH_FLASH_2 = ATALANTA_SLASH_FLASH_1 + 14 * 28,
   /// 20x30
@@ -142,9 +143,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     for (j = 0; j != 24; j++) {
       PARTICLES[i * 24 + j].x = (Random16() & 15) + 48;
       Transform_Reset();
-      Transform_ApplyRoll(Random16() & EFFECT_ANGLE_MASK);
-      Transform_ApplyPitch(Random16() & EFFECT_ANGLE_MASK);
-      Transform_ApplyYaw(Random16() & EFFECT_ANGLE_MASK);
+      Transform_ApplyRoll(Random16() & TRIG_ANGLE_MASK);
+      Transform_ApplyPitch(Random16() & TRIG_ANGLE_MASK);
+      Transform_ApplyYaw(Random16() & TRIG_ANGLE_MASK);
       Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }

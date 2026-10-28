@@ -78,7 +78,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     s32 angle;
 
     speed = (Random16() & 0x3ff) + 256;
-    angle = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+    angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
     SET_POSITION(spark, 0x4000, 0x7000, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
@@ -105,7 +105,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         // fast. Each frame a bolt picks one of four pictures and jitters up
         // to 7 pixels across.
         thrown = 0;
-        angle = ((frame << 11) + EFFECT_TURN / 4) * bolt;
+        angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
         if (work->args->variant == EFFECT_VARIANT_BASIC)
@@ -132,7 +132,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             s32 spread;
 
             speed = (Random16() & 0x1ff) + 128;
-            spread = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+            spread = (Random16() & 0x7fff) - TRIG_TURN / 4;
             spark->x = x << 16;
             spark->y = (y + 112) << 16;
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;

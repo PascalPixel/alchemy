@@ -78,7 +78,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
 
       s32 radius = i * 2;
-      s32 angle = Random16() & EFFECT_ANGLE_MASK;
+      s32 angle = Random16() & TRIG_ANGLE_MASK;
 
       flash->x = Trig_Sin(angle) * radius;
       flash->y = -(Trig_Cos(angle) * radius);
@@ -96,7 +96,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 angle;
 
       speed = (Random16() & 0x1ff) + 32;
-      angle = Random16() & EFFECT_ANGLE_MASK;
+      angle = Random16() & TRIG_ANGLE_MASK;
       spark->x = RAGNAROK_COLUMN_X(work->args->side, col) << 16;
       spark->y = 88 << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;

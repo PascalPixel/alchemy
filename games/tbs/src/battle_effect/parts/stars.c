@@ -125,7 +125,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
           Transform_Push();
           Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(EFFECT_TURN / 4);
+          Transform_ApplyYaw(TRIG_TURN / 4);
           scale.x = ((frame - start) << 12) + Q16_ONE / 16;
           if (scale.x > Q16_ONE)
             scale.x = Q16_ONE;

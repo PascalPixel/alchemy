@@ -138,7 +138,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
               spark->x = PLASMA_COLUMN_X(work->args->side, i) << 16;
               spark->y = 104 << 16;
@@ -309,7 +309,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
       point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
       radius = j * 2;
-      angle = Random16() & EFFECT_ANGLE_MASK;
+      angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + 25;
@@ -324,7 +324,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS]] +
           j;
       speed = (Random16() & 0x3ff) + 32;
-      angle = Random16() & EFFECT_ANGLE_MASK;
+      angle = Random16() & TRIG_ANGLE_MASK;
       if (work->args->side == EFFECT_SIDE_PARTY)
         spark->x =
             (originX -

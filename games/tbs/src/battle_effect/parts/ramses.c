@@ -282,7 +282,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         // Masked in place, the mask assigned first; as Random16() & mask, 3
         // instructions differ.
         speed &= Random16();
-        angle = Random16() & EFFECT_ANGLE_MASK;
+        angle = Random16() & TRIG_ANGLE_MASK;
         spark->x = 32 << 16;
         spark->y = 92 << 16;
         spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;

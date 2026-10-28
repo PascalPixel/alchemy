@@ -452,9 +452,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
       particle = &work->particles[i];
       SET_POSITION(particle, (Random16() & 63) + 32, 0, 0);
-      SET_VELOCITY(particle, Random16() & EFFECT_ANGLE_MASK,
-                   Random16() & EFFECT_ANGLE_MASK,
-                   Random16() & EFFECT_ANGLE_MASK);
+      SET_VELOCITY(particle, Random16() & TRIG_ANGLE_MASK,
+                   Random16() & TRIG_ANGLE_MASK, Random16() & TRIG_ANGLE_MASK);
     }
   }
   // Stop the acting unit, saving its motion for after the gathering, and
@@ -759,7 +758,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           // long that moves up two lines a frame.
           s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
           *scanline++ = offset;
-          phase += EFFECT_TURN / 32;
+          phase += TRIG_TURN / 32;
         }
       }
     }
@@ -951,7 +950,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame >= 8 && frame <= 23) {
         for (i = 0; i != 3; i++) {
           s32 image = i & 3;
-          s32 angle = Random16() & EFFECT_ANGLE_MASK;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 imageX;
           s32 imageY;
           s32 drawFlags;
@@ -1267,9 +1266,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
           particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           SET_POSITION(particle, (Random16() & 127) + 32, 0, 0);
-          SET_VELOCITY(particle, Random16() & EFFECT_ANGLE_MASK,
-                       Random16() & EFFECT_ANGLE_MASK,
-                       Random16() & EFFECT_ANGLE_MASK);
+          // A chip's pitch and yaw; nothing reads velocityZ, so its draw only
+          // advances the random sequence.
+          SET_VELOCITY(particle, Random16() & TRIG_ANGLE_MASK,
+                       Random16() & TRIG_ANGLE_MASK, Random16() & 0xffff);
         }
         // Chip 63's y, not its radius, is set to 159, which sets it up to 159
         // pixels off its line.

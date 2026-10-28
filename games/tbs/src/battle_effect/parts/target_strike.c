@@ -445,7 +445,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         glint) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
-        s32 angle = Random16() & EFFECT_ANGLE_MASK;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 range = 31;
         s32 radius = Random16() & range;
         s32 x;

@@ -159,7 +159,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     angle = frame << 11;
     for (; i != 160; i++) {
       *scanline++ = lineOffset - ((Trig_Sin(angle) * ripple) >> 10);
-      angle += EFFECT_TURN / 32;
+      angle += TRIG_TURN / 32;
     }
     if (drawPanel != 0) {
       if (work->args->side == EFFECT_SIDE_ENEMIES) {

@@ -68,7 +68,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   for (i = 0; i != 64; i++) {
     struct Particle *seed = &work->particles[i];
 
-    seed->x = Random16() & EFFECT_ANGLE_MASK;
+    seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
     seed->y = ((Random16() & 31) - 64) << 16;
   }
@@ -157,7 +157,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                 mote->z -= 2;
               if (mote->y < 48 << 16)
                 mote->y += 5 << 16;
-              mote->x += EFFECT_TURN / 128;
+              mote->x += TRIG_TURN / 128;
             }
           } else {
             mote->z += 8;

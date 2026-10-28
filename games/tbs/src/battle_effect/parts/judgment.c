@@ -52,7 +52,7 @@ struct JudgmentWork {
 #define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
 /// DMA word that fills the 120x120 wave picture.
 #define JUDGMENT_DMA_FILL_WAVE                                                 \
-  DMA_FILL_WORDS(JUDGMENT_WAVE_SIZE *JUDGMENT_WAVE_SIZE / 4)
+  DMA_FILL_WORDS((JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE) / 4)
 
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
@@ -177,16 +177,16 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // angles its velocities. It takes four random numbers: the fourth
     // overwrites velocityY, losing the third.
     PARTICLES[i].x = (Random16() & 15) + 72;
-    PARTICLES[i].velocityX = Random16() & EFFECT_ANGLE_MASK;
-    PARTICLES[i].velocityY = Random16() & EFFECT_ANGLE_MASK;
-    PARTICLES[i].velocityY = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].velocityX = Random16() & TRIG_ANGLE_MASK;
+    PARTICLES[i].velocityY = Random16() & 0xffff;
+    PARTICLES[i].velocityY = Random16() & TRIG_ANGLE_MASK;
   }
 
   for (i = 0; i != 128; i++) {
     // Sparks on a ring of radius 63.75 pixels (255 / 4), 32 to 95 pixels
     // up; only the dead stage in the frame loop reads them, but their
     // random numbers still count.
-    s32 angle = Random16() & EFFECT_ANGLE_MASK;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
     /* FAKEMATCH(temporary): amp holds 255, which the native hoists into sl;
      * as 255 at both multiplies, 59 of 2455 instructions differ in tbs-en. */
     s32 amp = 255;
@@ -391,7 +391,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
-        s32 angle = Random16() & EFFECT_ANGLE_MASK;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 x = ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
         s32 y = ((Trig_Cos(angle) * 16) >> 16) - gJudgment_ShardHeights[k] / 2;
         draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60, y + 80,
@@ -894,8 +894,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // impact, a sixteenth of a turn apart from left to right, cycling their
     // four pictures every 2 frames.
     if (frame >= 86 && frame < 150) {
-      s32 angle = -EFFECT_TURN / 4;
-      for (i = 0; i != 9; i++, angle += EFFECT_TURN / 16) {
+      s32 angle = -TRIG_TURN / 4;
+      for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
         s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
         draw[0](canvas,

@@ -377,7 +377,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     // Masked in place, the mask assigned first; as Random16() & mask, 3
     // instructions differ.
     speed &= Random16();
-    angle = Random16() & EFFECT_ANGLE_MASK;
+    angle = Random16() & TRIG_ANGLE_MASK;
     SET_POSITION(mote, source->x.fixed, source->y.fixed + (5 << 16),
                  source->z.fixed);
     SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,

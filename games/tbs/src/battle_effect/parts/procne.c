@@ -195,8 +195,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
         if (frame <= 490) {
           heading[index] += spin[index];
-          if (heading[index] > EFFECT_TURN)
-            heading[index] -= EFFECT_TURN;
+          if (heading[index] > TRIG_TURN)
+            heading[index] -= TRIG_TURN;
           actor->facing += spin[index] / 4;
         }
 
@@ -454,7 +454,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             index = 0;
             do {
               speed = (Random16() & 127) + 16;
-              angle = Random16() & EFFECT_ANGLE_MASK;
+              angle = Random16() & TRIG_ANGLE_MASK;
               spark = &PARTICLES[slot * 128 + index];
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;

@@ -25,7 +25,7 @@
 
 /// Launches up to max sparks from (px, py), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
-/// index. Each flies at angle (0 straight up, a full turn EFFECT_TURN) at a
+/// index. Each flies at angle (0 straight up, a full turn TRIG_TURN) at a
 /// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
 /// up and down, and lives 32 to 39 frames. Used for the pillar's 512 sparks
 /// and each bolt's 16; the mote's sparks are launched inline. The speed is
@@ -229,9 +229,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         size = 8;
       }
       Transform_ApplyPosition(position);
-      Transform_ApplyPitch(-EFFECT_TURN / 16);
-      Transform_ApplyRoll(EFFECT_TURN / 2);
-      Transform_ApplyPitch(EFFECT_TURN / 2);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
+      Transform_ApplyRoll(TRIG_TURN / 2);
+      Transform_ApplyPitch(TRIG_TURN / 2);
       Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
@@ -244,7 +244,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     } else {
       SET_VECTOR(position, 0, 0, 256 << 16);
       Transform_ApplyPosition(position);
-      Transform_ApplyPitch(-EFFECT_TURN / 16);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);
       Transform_ApplyPitch(frame << 8);
     }
@@ -452,7 +452,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
           if (frame == start + 2) {
             THOR_LAUNCH_SPARKS(spark, i, pillarX << 16, pillarY << 16,
-                               (Random16() & 0x7fff) - EFFECT_TURN / 4, 512);
+                               (Random16() & 0x7fff) - TRIG_TURN / 4, 512);
             work->shakeFrames = 8;
           }
         }
@@ -494,7 +494,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             }
             if (frame == i * 2 + 80) {
               THOR_LAUNCH_SPARKS(spark, j, 16 << 16, 80 << 16,
-                                 Random16() & EFFECT_ANGLE_MASK, 16);
+                                 Random16() & TRIG_ANGLE_MASK, 16);
               work->shakeFrames = 8;
               EFFECT_FOR_EACH_TARGET(j, work->args) {
                 BattleEffect_TintBattler(work->args->targets[j],
@@ -513,7 +513,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           // Masked in place, the mask assigned first; as Random16() & mask, 3
           // instructions differ.
           radius &= Random16();
-          angle = Random16() & EFFECT_ANGLE_MASK;
+          angle = Random16() & TRIG_ANGLE_MASK;
           moteX = (Trig_Sin(angle) * (radius + 8)) >> 16;
           mirrorX = moteX + 72;
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
@@ -556,7 +556,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             // Masked in place, the mask assigned first; as Random16() & mask, 3
             // instructions differ.
             speed &= Random16();
-            angle = Random16() & EFFECT_ANGLE_MASK;
+            angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = mirrorX << 16;
             spark->y = moteY << 16;
             speed += 64;
@@ -624,7 +624,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 formationScreenX;
         for (i = 0, formationScreenX = formationX >> 17; i != 3; i++) {
           s32 glint = i & 3;
-          s32 angle = Random16() & EFFECT_ANGLE_MASK;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 x = (((Trig_Sin(angle) * 8)) >> 16) + formationScreenX -
                   (gBattleEffect_GlintCellWidths[glint] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -

@@ -414,7 +414,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   // pixels; mote i waits i frames before it starts to rise.
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = 0;
-    PARTICLES[i].x = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
     PARTICLES[i].variant = -i;
   }
@@ -480,7 +480,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The first 32 motes, each starting i frames in: each frame a mote
-    // turns EFFECT_TURN / 64 (about 5.6 degrees), rises 5 pixels and moves 4
+    // turns TRIG_TURN / 64 (about 5.6 degrees), rises 5 pixels and moves 4
     // pixels further out. The other 96 are placed but never drawn.
     for (i = 0; i != 32; i++) {
       struct Particle *fleck = &PARTICLES[i];
@@ -491,7 +491,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
-        fleck->x += EFFECT_TURN / 64;
+        fleck->x += TRIG_TURN / 64;
         fleck->y += 5 << 16;
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
@@ -992,12 +992,12 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // frames (variant).
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = 128 << 16;
-    PARTICLES[i].x = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;
   }
   for (i = 0; i != 64; i++) {
-    work->particles[i].x = Random16() & EFFECT_ANGLE_MASK;
+    work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
   }
@@ -1101,9 +1101,9 @@ void BattleEffect_DrawStreaks(void) {
 
       seed->head = r + 48;
       seed->tail = r + 40;
-      seed->pitch = Random16() & EFFECT_ANGLE_MASK;
-      seed->yaw = Random16() & EFFECT_ANGLE_MASK;
-      seed->roll = Random16() & EFFECT_ANGLE_MASK;
+      seed->pitch = Random16() & TRIG_ANGLE_MASK;
+      seed->yaw = Random16() & TRIG_ANGLE_MASK;
+      seed->roll = Random16() & TRIG_ANGLE_MASK;
     }
   }
   point.y = 0;

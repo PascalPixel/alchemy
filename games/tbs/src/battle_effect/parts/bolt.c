@@ -122,7 +122,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                j++) {
             struct Particle *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
-            s32 angle = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+            s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
             spark->x = screen.x << 16;
             spark->y = 104 << 16;

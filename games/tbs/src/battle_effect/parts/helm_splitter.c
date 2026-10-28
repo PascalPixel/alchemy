@@ -137,7 +137,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
         s32 force = (Random16() & 63) + 256;
-        s32 angle = Random16() & EFFECT_ANGLE_MASK;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
         spark->x = 64 << 16;
@@ -302,7 +302,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // drawn.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
-    s32 angle = Random16() & EFFECT_ANGLE_MASK;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     work->particles[i].x = x;
     work->particles[i].y = y;
@@ -318,16 +318,16 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * (EFFECT_TURN / 3)) * 32) >> 6;
+        (Trig_Sin(i * (TRIG_TURN / 3)) * 32) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * (EFFECT_TURN / 3)) * 32) >> 5);
+        -((Trig_Cos(i * (TRIG_TURN / 3)) * 32) >> 5);
   }
 
   // Small sparks fly in random directions at half a pixel to 4.5 a frame,
   // the vertical part doubled, and live 20 to 35 frames.
   for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 32;
-    s32 angle = Random16() & EFFECT_ANGLE_MASK;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     PARTICLES[i].x = x;
     PARTICLES[i].y = y;

@@ -514,7 +514,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     s32 radius = 192;
     s32 angle;
 
-    angle = Random16() & EFFECT_ANGLE_MASK;
+    angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_DULL) {
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;

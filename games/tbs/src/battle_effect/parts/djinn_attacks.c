@@ -137,7 +137,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            angle = Random16() & EFFECT_ANGLE_MASK;
+            angle = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = flame->x << 16;
             mote->y = flame->y << 16;
@@ -256,7 +256,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = EFFECT_TURN / 2; // 180 degrees
+  angle = TRIG_TURN / 2;
   do {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -287,7 +287,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            direction = Random16() & EFFECT_ANGLE_MASK;
+            direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = ball->x << 16;
             mote->y = ball->y << 16;
@@ -318,7 +318,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    angle -= EFFECT_TURN / 32; // 11.25 degrees
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != JUPITER_FRAMES);
   EFFECT_FINISH_CANVAS();
@@ -402,7 +402,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_RUMBLE);
   frame = 0;
-  angle = EFFECT_TURN / 2;
+  angle = TRIG_TURN / 2;
   do {
     // Until frame 79 the Djinni sways 24 pixels from side to side, a turn
     // every 32 frames, while its height swings on a radius that shrinks
@@ -430,7 +430,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            direction = (Random16() & 0x7fff) + EFFECT_TURN / 4;
+            direction = (Random16() & 0x7fff) + TRIG_TURN / 4;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = column->x << 16;
             mote->y = (column->y + 16) << 16;
@@ -462,7 +462,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    angle -= EFFECT_TURN / 32;
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != VENUS_FRAMES);
   EFFECT_FINISH_CANVAS();
@@ -546,8 +546,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       mote->y = ((Random16() & 7) + 96) << 16;
       mote->velocityX = ((Random16() & 127) - 64) << 11;
       mote->velocityY = ((Random16() & 127) - 64) << 10;
-      mote->z = Random16() & EFFECT_ANGLE_MASK;
-      mote->velocityZ = Random16() & EFFECT_ANGLE_MASK;
+      mote->z = Random16() & TRIG_ANGLE_MASK;
+      // Unread: this draw only advances the random sequence.
+      mote->velocityZ = Random16() & 0xffff;
     }
     step++;
     index++;
@@ -637,9 +638,11 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
                 size * 2);
         Particle_AdvanceWithGravity2D(step, 64, -Q16_ONE / 8);
         angle = step->z;
-        step->z = angle + EFFECT_TURN / 32;
-        if (step->z > EFFECT_ANGLE_MASK)
-          step->z = angle + EFFECT_TURN / 32 - EFFECT_ANGLE_MASK;
+        step->z = angle + TRIG_TURN / 32;
+        // The wrap takes off one less than a turn, so a wrapped phase lands a
+        // 65536th of a turn on, which the sway never shows.
+        if (step->z > TRIG_ANGLE_MASK)
+          step->z = angle + TRIG_TURN / 32 - (TRIG_TURN - 1);
       }
       index++;
       step++;

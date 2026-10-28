@@ -139,7 +139,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != 160; i++) {
       *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + (4 << 16)) >> 10;
-      angle += EFFECT_TURN / 128;
+      angle += TRIG_TURN / 128;
     }
 
     // Rotate colours 2 to 63 up by one, so the rings run outward: colour 63

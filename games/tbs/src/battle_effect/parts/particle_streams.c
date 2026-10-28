@@ -432,7 +432,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant == -1) {
-          s32 angle = (Random16() & 0x7fff) + EFFECT_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
           mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
@@ -452,7 +452,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       screen.depth = 512 << 16;
       Transform_Reset();
       Transform_ApplyPosition(ScreenPoint_Coordinates(&screen));
-      Transform_ApplyRoll(EFFECT_TURN / 32);
+      Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,

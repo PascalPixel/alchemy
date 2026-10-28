@@ -191,7 +191,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           // Masked in place, the mask assigned first; as Random16() & mask, 3
           // instructions differ.
           speed &= Random16();
-          angle = Random16() & EFFECT_ANGLE_MASK;
+          angle = Random16() & TRIG_ANGLE_MASK;
           chip->x = screenPosition.x << 16;
           chip->y = (screenPosition.y - 24) << 16;
           chip->velocityX = Trig_Sin(angle) * (speed + 32) >> 6;

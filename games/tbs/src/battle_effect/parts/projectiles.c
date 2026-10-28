@@ -97,7 +97,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   // pixels a frame (speed / 32).
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 angle = Random16() & EFFECT_ANGLE_MASK;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
 
     SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
@@ -220,7 +220,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
-        s32 angle = Random16() & EFFECT_ANGLE_MASK;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = *outX << 15;

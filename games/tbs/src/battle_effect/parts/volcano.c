@@ -151,7 +151,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
               SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
                            (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;

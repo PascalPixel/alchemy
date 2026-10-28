@@ -123,8 +123,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                  ((Random16() & 63) - 32) << 14);
     flash->variant = 0;
   }
-  for (i = 0, j = -EFFECT_TURN / 4; i != DRAGON_CLOUD_PUFFS;
-       i++, j += EFFECT_TURN / 16) {
+  for (i = 0, j = -TRIG_TURN / 4; i != DRAGON_CLOUD_PUFFS;
+       i++, j += TRIG_TURN / 16) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
@@ -148,10 +148,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // centre at 100% zoom, which also moves the battle background's plane.
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       if (frame <= 63)
-        camera->yaw -= EFFECT_TURN / 256;
+        camera->yaw -= TRIG_TURN / 256;
     } else {
       if (frame <= 63)
-        camera->yaw += EFFECT_TURN / 256;
+        camera->yaw += TRIG_TURN / 256;
     }
     BattleCamera_SetViewFar(0, 0, 0, 100);
     if (frame <= 17) {

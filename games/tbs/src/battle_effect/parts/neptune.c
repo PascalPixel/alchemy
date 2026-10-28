@@ -148,10 +148,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -1;
   }
   // Seed the flares that converge during the formation burst: each starts
-  // 64 to 95 pixels out, in the quarter turn from EFFECT_TURN / 2 (up and to
+  // 64 to 95 pixels out, in the quarter turn from TRIG_TURN / 2 (up and to
   // the left of the centre), and closes in over 32 frames.
   for (i = 0, flareSeed = work->particles; i != 32; i++, flareSeed++) {
-    s32 a = (Random16() & 0x3fff) + EFFECT_TURN / 2;
+    s32 a = (Random16() & 0x3fff) + TRIG_TURN / 2;
     s32 r = (Random16() & 127) + 255;
     flareSeed->x = (Trig_Sin(a) * r) >> 2;
     flareSeed->y = (Trig_Cos(a) * r) >> 2;
@@ -164,7 +164,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // 5 pixels a frame and up 3 to 5; the other slots stay free (variant -1).
   for (i = 0; i != 712; i++) {
     s32 r = Random16() & 255;
-    s32 a = Random16() & EFFECT_ANGLE_MASK;
+    s32 a = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (128 << 16);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
@@ -261,7 +261,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // slot, up to 2 pixels a frame either way across and 2 to 6 up.
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
-          s32 a = Random16() & EFFECT_ANGLE_MASK;
+          s32 a = Random16() & TRIG_ANGLE_MASK;
           PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (64 << 16);
           PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
@@ -546,7 +546,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               // Masked in place, the mask assigned first; as Random16() & mask,
               // 3 instructions differ.
               r &= Random16();
-              a = (Random16() & 0x7fff) - EFFECT_TURN / 4;
+              a = (Random16() & 0x7fff) - TRIG_TURN / 4;
               PARTICLES[j].x = sparkOriginX << 16;
               PARTICLES[j].y = ground << 16;
               r += 32;

@@ -184,9 +184,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
         // Folding the angle into the first half turn keeps the sine
         // positive: the row hops rather than sways.
-        ang = (frame * 1024 - EFFECT_TURN / 8) & EFFECT_ANGLE_MASK;
-        if (ang > EFFECT_TURN / 2) {
-          ang -= EFFECT_TURN / 2;
+        ang = (frame * 1024 - TRIG_TURN / 8) & TRIG_ANGLE_MASK;
+        if (ang > TRIG_TURN / 2) {
+          ang -= TRIG_TURN / 2;
         }
         wave = (Trig_Sin(ang) * amp) >> 16;
         if ((frame & 31) == 8) {
@@ -349,15 +349,15 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
         rowX -= 16;
         if (frame <= 8) {
-          ang = frame * 2048 + EFFECT_TURN / 4;
-          if (ang > EFFECT_TURN / 2) {
-            ang -= EFFECT_TURN / 2;
+          ang = frame * 2048 + TRIG_TURN / 4;
+          if (ang > TRIG_TURN / 2) {
+            ang -= TRIG_TURN / 2;
           }
           rise = ((Trig_Sin(ang) * 64)) >> 16;
         } else {
-          ang = frame * 2048 + EFFECT_TURN / 4;
-          if (ang > EFFECT_TURN / 2) {
-            ang -= EFFECT_TURN / 2;
+          ang = frame * 2048 + TRIG_TURN / 4;
+          if (ang > TRIG_TURN / 2) {
+            ang -= TRIG_TURN / 2;
           }
           rise = ((Trig_Sin(ang) * 32)) >> 16;
         }

@@ -62,7 +62,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + EFFECT_TURN / 4;
+    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 128;
     PARTICLES[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
     PARTICLES[i].y = (origin.y + 8) << 16;

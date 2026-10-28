@@ -82,7 +82,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     struct Particle *flash = &work->particles[i];
 
     s32 scale = i * 2;
-    s32 ang = Random16() & EFFECT_ANGLE_MASK;
+    s32 ang = Random16() & TRIG_ANGLE_MASK;
 
     flash->x = Trig_Sin(ang) * scale;
     flash->y = -(Trig_Cos(ang) * scale);
@@ -112,7 +112,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     // Masked in place, the mask assigned first; as Random16() & mask, 3
     // instructions differ.
     mag &= Random16();
-    ang = Random16() & EFFECT_ANGLE_MASK;
+    ang = Random16() & TRIG_ANGLE_MASK;
     spark->x = sparkOriginX;
     spark->y = 176 << 15;
     spark->velocityX = (Trig_Sin(ang) * (mag + 32)) >> 5;
@@ -195,7 +195,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 ang;
 
           mag = Random16() & 63;
-          ang = Random16() & EFFECT_ANGLE_MASK;
+          ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
           dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
@@ -223,7 +223,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 ang;
 
           mag = Random16() & 63;
-          ang = Random16() & EFFECT_ANGLE_MASK;
+          ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
           dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;

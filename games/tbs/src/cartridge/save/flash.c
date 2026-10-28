@@ -21,9 +21,9 @@ s32 ReadFlashId(void) {
   readByte = (FlashByteRead)(locals.buffer + 1);
 
   // Unlock the chip and enter its manufacturer/device identification mode.
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0x90;
+  FLASH_WRITE(0x5555, 0xaa);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0x90);
 
   // Give the chip time to answer.
   {
@@ -35,13 +35,13 @@ s32 ReadFlashId(void) {
   }
 
   // The high byte identifies the device; the low byte identifies its maker.
-  result = (u16)readByte((u8 *)0x0e000001) << 8;
-  result |= readByte((u8 *)0x0e000000);
+  result = (u16)readByte((u8 *)(FLASH_BASE + 1)) << 8;
+  result |= readByte((u8 *)FLASH_BASE);
 
   // Leave ID mode (0xf0) and wait as long again.
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0xf0;
+  FLASH_WRITE(0x5555, 0xaa);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0xf0);
 
   {
     volatile u16 *delay = &locals.delay;
@@ -224,7 +224,7 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
         break;
       // A Macronix chip (0x1cc2) is sent the reset command, 0xf0.
       if (gFlash->id == 0x1cc2)
-        *(volatile u8 *)0x0e005555 = 0xf0;
+        FLASH_WRITE(0x5555, 0xf0);
       result = timingIndex | 0xc000;
       break;
     }
@@ -259,7 +259,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 halfwordsRemaining;
   FlashReadCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   sourceCode = (u16 *)ReadFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
@@ -269,7 +269,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
     halfwordsRemaining--;
   }
   core = (FlashReadCore)((u8 *)code + 1);
-  core((u8 *)0x0e000000 + (sector << gFlash_ChipDefault.type.sector.shift) +
+  core((u8 *)FLASH_BASE + (sector << gFlash_ChipDefault.type.sector.shift) +
            offset,
        destination, size);
 }
@@ -306,7 +306,7 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
   u16 halfwordsRemaining;
   FlashVerifyCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   sourceCode = (u16 *)VerifyFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
@@ -317,7 +317,7 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
   }
   core = (FlashVerifyCore)((u8 *)code + 1);
   return (s32)core((u8 *)source,
-                   (u8 *)0x0e000000 +
+                   (u8 *)FLASH_BASE +
                        (sector << gFlash_ChipDefault.type.sector.shift),
                    (u16)gFlash_ChipDefault.type.sector.size);
 }

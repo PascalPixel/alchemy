@@ -36,7 +36,8 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
     one = actor->spriteStorageKind;
     if (one == 1) {
       sprite = (struct Sprite *)actor->sprite;
-      base = (s32)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+      base =
+          (s32)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       none = 0;
       base += 0x400;
       Dma_Fill32(none, (void *)base, 0x80);

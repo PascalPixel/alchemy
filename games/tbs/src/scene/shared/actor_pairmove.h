@@ -18,20 +18,20 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   other = Actor_GetById(id);
   Event_Start();
   {
-    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
+    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    actor->speedLimit = 0x10000;
-    actor->acceleration = 0x8000;
+    actor->speedLimit = PIXELS(1);
+    actor->acceleration = PIXELS(1) / 2;
     FieldActor_SetMoveTarget(actor, x, actor->y.fixed, z);
   }
   Actor_SelectAnimation(actor, 27);
   {
-    x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-    z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+    x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
+    z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    other->speedLimit = 0x10000;
-    other->acceleration = 0x8000;
+    other->speedLimit = PIXELS(1);
+    other->acceleration = PIXELS(1) / 2;
     FieldActor_SetMoveTarget(other, x, other->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {

@@ -23,7 +23,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     actor->motionFlags = 0;
     Import_ActorSetPosition(0, actor->x.part.pixel << 16,
-                            (actor->z.part.pixel << 16) + -0x100000);
+                            (actor->z.part.pixel << 16) + -PIXELS(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpriteFlags(record, 0);
@@ -35,7 +35,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
 #else
     actor->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
 #endif
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
     record = Actor_Get(ACTOR_PARTY_LEADER);

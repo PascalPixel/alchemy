@@ -44,18 +44,18 @@ void MercuryLighthouse_RestoreLights(s32 region,
   }
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   z = actor->z.fixed;
-  cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
-         actor->x.fixed / 0x100000;
+  cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / PIXELS(16)) << 7) +
+         actor->x.fixed / PIXELS(16);
   if (st->levels != 0 && st->pillar != 0) {
     obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-                            actor->y.fixed + 0x180000, z);
+                            actor->y.fixed + PIXELS(24), z);
     if (obj != 0) {
       obj->groundHeight = actor->groundHeight;
       animation = obj->sprite;
       Actor_StartScript(obj, gMercuryLighthouse_PillarScript);
       obj->watchedActor = actor;
       obj->motionFlags = 4;
-      obj->y.fixed += -0x8000;
+      obj->y.fixed += -PIXELS(1) / 2;
       if (animation != 0) {
         Sprite_StartAnimation(animation, 6 - st->levels);
         animation->flags = 0;
@@ -77,7 +77,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->priorityFlags = 2;
-    obj->speedLimit = 0x40000;
+    obj->speedLimit = PIXELS(4);
     if (animation != 0) {
       Sprite_StartAnimation(animation, 6);
       animation->flags = 0;

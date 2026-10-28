@@ -70,9 +70,9 @@ u32 Party_GetAverageLevel(void) {
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the main routine's work, FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT
-/// + 5 the enemies of the current battle. Anything else, or an enemy outside a
-/// battle, is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
+/// characters in the main routine's work; the six from FIRST_ENEMY_UNIT are the
+/// enemies of the current battle. Anything else, or an enemy outside a battle,
+/// is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;

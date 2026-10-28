@@ -14,9 +14,9 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *unit = Unit_GetFar(unitId);
 
   if (turns <= 5) {
-    // Q16_ONE / 100, rounded down, scales the percentage to a 16-bit
-    // random number.
-    s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (Q16_ONE / 100);
+    // 65536 / 100, rounded down, scales the percentage to the 16-bit random
+    // range.
+    s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (65536 / 100);
     if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }

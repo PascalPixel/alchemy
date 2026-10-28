@@ -368,7 +368,8 @@ s32 BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
 /// Called by BattleFormation_BuildEnemyList and BattleAbility_ApplyToTarget
-/// when BattleEnemy_ClaimNameLetter returns bit 15. Writes Unit.name.
+/// when BattleEnemy_ClaimNameLetter's result has ENEMY_LETTER_FIRST_TOO set.
+/// Writes Unit.name.
 #ifdef UBFIX
 void BattleEnemy_LetterFirstOfKind(s32 classId) {
 #else

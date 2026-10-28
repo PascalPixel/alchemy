@@ -2,7 +2,7 @@
 	.global gBattleObject_EmptyScript
 gBattleObject_EmptyScript:
 	.4byte 16
-@ Resource id | slot << 9, terminated by 0xffff.
+@ A weapon's item id | its BattleWeaponKind << 9 (sprites.c), terminated by 0xffff.
 	.global gBattleUnit_WeaponKinds
 gBattleUnit_WeaponKinds:
 	.2byte 1, 2, 3, 4, 5, 6, 7, 8

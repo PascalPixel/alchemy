@@ -286,8 +286,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
   affine->y = y;
 
-  // The picture's lower half starts at map row 8, 64 pixels (in 8.8)
-  // down the plane: the first screen line that reaches it at this zoom.
+  // The picture's lower half starts at map row 8, 64 pixels down the plane
+  // in 8.8 (64 << 8): the first screen line that reaches it at this zoom.
   lowerHalfLine = (Iwram_RatioMulQ14((s16)step, (64 << 8) - y) >> 16) + 1;
 
   // Each line's BG2CNT. The plane covers lines 0 to 135, above the status

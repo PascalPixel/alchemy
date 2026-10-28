@@ -405,8 +405,8 @@ void BattleUnit_RefreshPlacement(void) {
   enemyPlace = 0;
   battle = gBattleWork;
   count = BattleParty_PrepareMembers(unitIds);
-  // placement[0..7] is each party unit id's place (BATTLE_OBJECT_NONE for none)
-  // and placement[8..13] the enemy places, numbered 8 to 13.
+  // placement[0..7] is each party unit id's place and placement[8..13] the
+  // enemy places, numbered 8 to 13.
   placementValue = BATTLE_OBJECT_NONE;
   for (unitIndex = 13; unitIndex >= 0; unitIndex--)
     battle->objectIndex[unitIndex] = placementValue;

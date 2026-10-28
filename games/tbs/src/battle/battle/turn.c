@@ -102,7 +102,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 
   // While active (the view's busy) is set, BattleCamera_SetRange leaves
   // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
-  // offset 8 pixels in y (in 8.8), scale 2.0.
+  // offset 8 pixels in y, in 8.8 (128 << 4), scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   view->busy = 1;
   BattleCamera_SetRange(240 << 15, (118 - verticalOffset) << 16, 0, 128 << 4,

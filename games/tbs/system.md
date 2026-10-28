@@ -11,7 +11,7 @@ Field, Battle and User Interface stand on.
 
 ## Start-up
 
-![The console switched on: Camelot's logo, then the Golden Sun logo](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![The console switched on: the Golden Sun logo fades in after Camelot's](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 Before the first logo, the game puts memory in order, starts the interrupts,
 the sound and the task table, copies the routines that must run fastest into

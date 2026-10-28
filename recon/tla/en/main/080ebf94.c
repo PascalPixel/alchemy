@@ -17,7 +17,7 @@
 // minutes: nothing.
 #include "types.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "vram_tab.h"
 #include "event_work.h"

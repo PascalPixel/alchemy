@@ -11,7 +11,7 @@
 // at the head of its stores. A once-only block around the Defense stage
 // (28 to 20) and an empty asm after the second equipment loop's
 // Item_GetDirect (20 to 18) are the best devices found.
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "item.h"
 #include "game_flags.h"

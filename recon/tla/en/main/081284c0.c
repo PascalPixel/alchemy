@@ -12,7 +12,7 @@
 // frame's 64 bytes), and list declared before count gives their spill slots.
 // Tried: gains first, gains inside the member loop (23).
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 #include "battle_unit.h"
 #include "battle_action.h"

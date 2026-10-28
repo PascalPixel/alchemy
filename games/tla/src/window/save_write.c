@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "save.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 
 extern u8 MsgNoBackupMemory;

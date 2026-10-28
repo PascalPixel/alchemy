@@ -6,7 +6,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
-#include "mem.h"
+#include "heap_release.h"
 
 typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
 

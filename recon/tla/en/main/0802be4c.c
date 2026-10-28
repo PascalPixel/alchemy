@@ -11,7 +11,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "graphics.h"
 

@@ -13,7 +13,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "actor.h"
 #include "ram_buffer.h"
 

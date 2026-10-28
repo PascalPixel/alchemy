@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 #include "task.h"
 

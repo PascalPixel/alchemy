@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "sprite.h"
 #include "window.h"
 #include "iwram_call.h"

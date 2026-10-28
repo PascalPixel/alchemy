@@ -25,7 +25,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "system.h"
 #include "battle_work.h"
 #include "battle_random.h"

@@ -9,7 +9,7 @@
 #include "scene_ids.h"
 #include "event_work.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "call.h"
 #include "field_effect.h"
 

@@ -2,7 +2,7 @@
 #include "battle.h"
 #include "battle_unit.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 
 struct UnitBaseStats {
   s16 hp;

@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "io_write.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "resource.h"

@@ -6,7 +6,7 @@
 // in r7, builds the ~12 mask inside the first loop and keeps the next index
 // in r11 with no hoisted 0, and the stack slots follow from that.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "actor.h"
 #include "event_work.h"

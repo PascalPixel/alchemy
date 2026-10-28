@@ -9,7 +9,7 @@
 // from the pool into r11 for all three stores (here each is a movs); this
 // draft keeps the base in r8, VRAM in r7 and the size in r9.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 

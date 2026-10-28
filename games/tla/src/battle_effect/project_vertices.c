@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 #include "ram_code.h"
 #include "macros.h"

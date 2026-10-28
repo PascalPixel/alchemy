@@ -13,7 +13,7 @@
 // tiles, entry and phase in another order; the first loop's sprite is r5 and
 // the 15 mask r6 in the native, the other way round here.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "system.h"
 #include "resource.h"
 #include "actor.h"

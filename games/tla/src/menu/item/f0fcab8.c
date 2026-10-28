@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 
 struct InventoryMenuState {

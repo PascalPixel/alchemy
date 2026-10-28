@@ -7,7 +7,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "types.h"
 

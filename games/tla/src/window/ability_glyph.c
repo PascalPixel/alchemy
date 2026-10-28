@@ -10,7 +10,7 @@
 #include "system.h"
 #include "types.h"
 #include "glyph.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 
 struct BattleActionGlyph {

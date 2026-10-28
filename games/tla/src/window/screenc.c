@@ -3,7 +3,7 @@
 #include "oam.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "task.h"
 
 void Func_08108030(void *panel);

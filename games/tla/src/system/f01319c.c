@@ -3,7 +3,7 @@
 #include "io_reg.h"
 #include "io_write.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "irq.h"
 #include "task.h"
 #include "io_write_queue.h"

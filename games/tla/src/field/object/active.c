@@ -4,7 +4,7 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "edition.h"
 

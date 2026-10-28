@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "render_input.h"
 

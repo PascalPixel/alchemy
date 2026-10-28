@@ -3,7 +3,7 @@
 #include "window.h"
 #include "system.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "edition.h"

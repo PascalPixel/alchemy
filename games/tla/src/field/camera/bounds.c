@@ -5,7 +5,7 @@
 #include "event_work.h"
 #include "map.h"
 #include "actor.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 #include "task.h"
 #include "macros.h"

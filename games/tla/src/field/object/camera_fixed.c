@@ -5,7 +5,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "graphics.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "transform.h"
 
 // The fixed camera: each frame it places every object's sprites, facing them

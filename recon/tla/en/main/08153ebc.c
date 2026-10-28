@@ -42,7 +42,7 @@
 #include "input.h"
 #include "io_reg.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "motobj.h"
 #include "actor.h"
 #include "ram_buffer.h"

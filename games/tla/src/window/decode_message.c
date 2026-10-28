@@ -1,6 +1,6 @@
 #include "types.h"
 #include "edition.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "ram_code.h"
 #include "ram_buffer.h"

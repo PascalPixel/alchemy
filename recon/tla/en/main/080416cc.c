@@ -18,7 +18,7 @@
 // winning on its class against the call before it or on dependents.
 // Five minutes of alchemy permute on the direct-call form found nothing.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "iwram_call.h"

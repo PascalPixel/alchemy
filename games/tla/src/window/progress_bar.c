@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);

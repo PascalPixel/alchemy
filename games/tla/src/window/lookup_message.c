@@ -9,7 +9,7 @@
 #include "text_reader.h"
 #include "types.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 
 void Message_Find(struct TextReader *reader, s32 message) {

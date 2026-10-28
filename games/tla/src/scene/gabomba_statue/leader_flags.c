@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 
 extern u8 gSceneState[];

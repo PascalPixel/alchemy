@@ -10,7 +10,7 @@
 // block moved the copy's argument. Tried: inline wrappers for the fill, a glyph
 // pointer without the font local, eleven permuter minutes.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 
 s32 GameFlag_Test(s32 flag);

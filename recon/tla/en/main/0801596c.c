@@ -6,7 +6,7 @@
 // occupied pointer in r7 and the part id byte addressed as a stack offset
 // plus base, where this draft makes each its own induction register.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "flash.h"
 #include "irq.h"

@@ -6,7 +6,7 @@
 #include "game.h"
 #include "graphics.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
 #include "objdisp.h"
 #include "resource.h"

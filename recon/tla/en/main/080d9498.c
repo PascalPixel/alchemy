@@ -11,7 +11,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 
 s32 ArcTan2(s32 y, s32 x);

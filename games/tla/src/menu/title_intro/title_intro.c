@@ -6,7 +6,7 @@
 #include "palette_buffers.h"
 #include "task.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "graphics.h"
 #include "ram_buffer.h"

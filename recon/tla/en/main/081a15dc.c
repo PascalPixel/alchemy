@@ -16,7 +16,7 @@
 // Six permuter minutes found nothing.
 #include "types.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "io_write_queue.h"
 #include "display_scroll.h"

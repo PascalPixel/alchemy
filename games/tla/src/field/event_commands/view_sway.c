@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "view_move.h"
 
 // Field Psynergy kind 27 (BattleEffect_Run's case 27): the view sways.

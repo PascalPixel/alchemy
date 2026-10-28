@@ -10,7 +10,7 @@
 #include "types.h"
 #include "resource.h"
 #include "render_input.h"
-#include "mem.h"
+#include "heap_release.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)

@@ -2,7 +2,7 @@
 // order only. An empty asm before `spawnZ = 0;` lowers it to 2; no second one
 // closes it. Permute (4 minutes) best differ 4.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "task.h"
 #include "map.h"

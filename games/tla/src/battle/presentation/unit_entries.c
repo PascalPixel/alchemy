@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 
 s32 Func_080381c0(s32 unit, void *buffer, s32 mode);
 

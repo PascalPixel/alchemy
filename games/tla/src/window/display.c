@@ -2,7 +2,7 @@
 #include "graphics.h"
 #include "system.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "glyph.h"
 #include "dma.h"
 #include "io_reg.h"

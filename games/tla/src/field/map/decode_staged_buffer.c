@@ -4,7 +4,7 @@
 #include "types.h"
 extern u32 gMapBlocks[];
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_code.h"
 #include "iwram_call.h"
 extern u8 gMapCellBuffer[];

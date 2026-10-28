@@ -16,7 +16,7 @@
 // gInput.pressed volatile the form without the helper measured 15 with three
 // arguments and 55 with four; the helper came from the permuter (2026-10-19).
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "input.h"
 #include "flag_call.h"
 #include "iwram_call.h"

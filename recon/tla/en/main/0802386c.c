@@ -19,7 +19,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "map.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field/sprite.h"

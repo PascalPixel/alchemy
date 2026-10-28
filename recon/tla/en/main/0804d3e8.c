@@ -8,7 +8,7 @@
 // CSE (differ 38 to 42); operand-tied empty asms after each statement and
 // the device search found nothing lower.
 
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "resource.h"
 #include "resource_menu.h"

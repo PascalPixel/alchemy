@@ -20,7 +20,7 @@
 #include "task.h"
 #include "motobj.h"
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 
 struct CastAnimationEntry {
   u8 unk00[5];

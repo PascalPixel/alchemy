@@ -6,7 +6,7 @@
 // afresh in each turn of the clearing loop and read from its register.
 #include "types.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "owner_state.h"
 #include "serial.h"
 

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "task.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "dma.h"
 
 void Func_080d5ff8(void);

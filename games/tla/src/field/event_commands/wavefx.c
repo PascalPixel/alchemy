@@ -1,6 +1,6 @@
 #include "types.h"
 #include "task.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 
 #define WAVE_FX_SLOT 88

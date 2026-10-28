@@ -11,7 +11,7 @@
 #include "dma.h"
 #include "resource.h"
 #include "render_input.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "input.h"

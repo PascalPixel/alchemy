@@ -1,5 +1,5 @@
 #include "shaman_village.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "dma.h"
 #include "io_reg.h"

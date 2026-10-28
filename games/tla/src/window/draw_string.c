@@ -1,4 +1,4 @@
-#include "mem.h"
+#include "heap_release.h"
 #include "text_render.h"
 
 void Text_DrawWideStringAtOffset(void *text, s32 work, s32 x, s32 y);

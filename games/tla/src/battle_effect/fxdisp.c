@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "battle_effect_work.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "motobj.h"
 #include "iwram_call.h"
 #include "edition.h"

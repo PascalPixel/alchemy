@@ -20,7 +20,7 @@
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 
 struct Words2 {
   u32 w[2];

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "battle.h"
 #include "graphics.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "task.h"
 #include "palette_buffers.h"

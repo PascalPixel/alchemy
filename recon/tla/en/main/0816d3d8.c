@@ -44,7 +44,7 @@
 #include "system.h"
 #include "task.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "motobj.h"
 #include "effect_step.h"
 #include "battle_effect.h"

@@ -12,7 +12,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
 #include "types.h"
 #include "transform.h"

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "task.h"
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);

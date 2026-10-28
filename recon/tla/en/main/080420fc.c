@@ -9,7 +9,7 @@
 // behind an empty asm barrier changes the high-register copies (differ 29);
 // four minutes of permuter found nothing better. Twin of The Broken Seal's
 // Text_DrawStringAtOffset with this game's loop barrier.
-#include "mem.h"
+#include "heap_release.h"
 #include "text_render.h"
 #include "window.h"
 #include "ram_buffer.h"

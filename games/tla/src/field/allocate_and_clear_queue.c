@@ -1,4 +1,4 @@
-#include "mem.h"
+#include "heap_release.h"
 #include "system.h"
 #include "types.h"
 #include "palette_snapshots.h"

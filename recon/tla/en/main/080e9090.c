@@ -11,7 +11,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "event_work.h"
 #include "actor.h"
 #include "fixed_math.h"

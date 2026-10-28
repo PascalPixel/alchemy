@@ -8,7 +8,7 @@
 #include "system.h"
 #include "resource.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "io_reg.h"
 

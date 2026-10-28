@@ -1,7 +1,7 @@
 #include "types.h"
 #include "battle_side.h"
 #include "battle_unit.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "system.h"
 
 /// One kept formation: its record and its average level, -1 while empty.

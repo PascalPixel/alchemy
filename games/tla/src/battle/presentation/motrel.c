@@ -1,6 +1,6 @@
 #include "types.h"
 #include "motobj.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
 
 struct Work0811e7dc {

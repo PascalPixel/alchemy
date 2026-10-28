@@ -1,6 +1,6 @@
 #include "types.h"
 #include "glyph.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "graphics.h"
 #include "resource.h"
 

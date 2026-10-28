@@ -36,7 +36,7 @@
 #include "task.h"
 #include "effect_step.h"
 #include "graphics.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "system.h"
 #include "transform.h"

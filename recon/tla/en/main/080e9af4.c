@@ -22,7 +22,7 @@
 #include "event_work.h"
 #include "task.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "effect_sprite.h"
 #include "battle.h"
 

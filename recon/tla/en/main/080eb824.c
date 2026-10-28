@@ -13,7 +13,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "task.h"
 #include "canvas_sprite.h"
 

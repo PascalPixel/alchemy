@@ -11,7 +11,7 @@
 #include "map.h"
 #include "scene.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 #include "ram_code.h"
 

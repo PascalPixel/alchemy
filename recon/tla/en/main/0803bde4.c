@@ -12,7 +12,7 @@
 // to RAM, other windows show it as a sprite.
 #include "types.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "uiwindow.h"

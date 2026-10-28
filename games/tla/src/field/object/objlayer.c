@@ -3,7 +3,7 @@
 #include "task.h"
 #include "battle.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "render_input.h"
 #include "edition.h"

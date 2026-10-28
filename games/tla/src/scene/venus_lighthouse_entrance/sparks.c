@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 
 struct SparkWork {
   u8 unk0000[0x2102];

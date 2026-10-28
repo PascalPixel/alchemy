@@ -1,6 +1,6 @@
 #include "types.h"
 #include "macros.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "battle_display.h"
 
 /// Allocates the battle camera (heap slot 48) and sets its starting view.

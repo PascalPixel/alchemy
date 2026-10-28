@@ -1,6 +1,6 @@
 #include "types.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "task.h"
 
 void Func_080eb6a0(void);

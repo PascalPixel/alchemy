@@ -32,7 +32,7 @@
 #include "io_write_queue.h"
 #include "iwram_call.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 
 struct SavedBattleObj {
   struct BattleObj object;

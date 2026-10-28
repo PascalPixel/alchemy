@@ -5,7 +5,7 @@
 // goto loops), and steps j through its u16 value (lsls, lsrs; adds #1; lsls,
 // asrs) and i as (i << 16) + 0x10000.
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "palette_snapshots.h"
 
 void Func_02003410(void) {

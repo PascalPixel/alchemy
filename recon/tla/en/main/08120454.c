@@ -358,7 +358,7 @@
 #include "battle_type.h"
 #include "battle_work.h"
 #include "motobj.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "battle_display.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

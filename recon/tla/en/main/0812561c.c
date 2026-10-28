@@ -24,7 +24,7 @@
 #include "battle_type.h"
 #include "battle_work.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "motobj.h"
 #include "owner_value.h"
 #include "ram_buffer.h"

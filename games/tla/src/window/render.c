@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "text_render.h"
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);

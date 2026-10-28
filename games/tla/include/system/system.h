@@ -2,7 +2,7 @@
 #define ALCHEMY_SYSTEM_H
 
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
 
 void wait(s32 frames);

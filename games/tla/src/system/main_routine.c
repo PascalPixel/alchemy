@@ -1,7 +1,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"

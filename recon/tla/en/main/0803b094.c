@@ -7,7 +7,7 @@
 // Text_DrawPrefixedNumberAtOffset (listing 0x08042274). alchemy-devtools diff
 // against the listing reports differ 1071, which measures nothing.
 
-#include "mem.h"
+#include "heap_release.h"
 #include "text_render.h"
 #include "ram_buffer.h"
 #include "window.h"

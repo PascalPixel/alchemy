@@ -3,7 +3,7 @@
 
 #include "dma.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 
 // Copies an ARM routine to RAM for execution. bytes is its linker-defined size.

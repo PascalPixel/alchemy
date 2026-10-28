@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 
 extern u8 gSceneState[];

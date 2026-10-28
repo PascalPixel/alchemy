@@ -27,7 +27,7 @@
 #include "io_write_queue.h"
 #include "irq.h"
 #include "iwram_call.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 
 #define DMA3 ((volatile u32 *)0x040000d4)

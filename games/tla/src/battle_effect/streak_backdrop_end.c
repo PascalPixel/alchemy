@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "task.h"
-#include "mem.h"
+#include "heap_release.h"
 
 void Func_0813f8d4(void);
 void BattleEffect_TransferHalvedCanvas(void);

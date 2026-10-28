@@ -2,7 +2,7 @@
 #include "scene_tables.h"
 #include "resource.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 #include "vram_tab.h"
 #include "input.h"

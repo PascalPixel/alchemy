@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "task.h"
 #include "ram_buffer.h"
 #include "arc_effect.h"

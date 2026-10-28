@@ -10,7 +10,7 @@
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "system.h"
 #include "event_work.h"

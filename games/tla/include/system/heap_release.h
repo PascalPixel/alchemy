@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_RUNTIME_MEM_H
-#define ALCHEMY_RUNTIME_MEM_H
+#ifndef ALCHEMY_HEAP_RELEASE_H
+#define ALCHEMY_HEAP_RELEASE_H
 
 #include "edition.h"
 #include "types.h"

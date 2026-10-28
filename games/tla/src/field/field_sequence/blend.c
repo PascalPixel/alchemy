@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "display_transition.h"
 #include "dma.h"
 #include "system.h"

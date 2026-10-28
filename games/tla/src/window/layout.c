@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "ram_code.h"

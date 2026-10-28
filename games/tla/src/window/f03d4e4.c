@@ -1,6 +1,6 @@
 #include "types.h"
 #include "glyph.h"
-#include "mem.h"
+#include "heap_release.h"
 
 extern u8 *gIcon_BasePointerTable[];
 extern u8 *gIcon_OverlayPointerTable[];

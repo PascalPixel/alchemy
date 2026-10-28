@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "battle_effect_work.h"
 
 // A texture for the ARM model renderer: its size as powers of two and the

@@ -9,7 +9,7 @@
 // spin loop counts down in the frame counter's register (separate counters
 // 297), and the first loop walks sprite and spark pointers (256).
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "resource.h"
 #include "actor.h"
 #include "event_work.h"

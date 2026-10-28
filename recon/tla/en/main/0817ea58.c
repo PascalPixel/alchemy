@@ -2,7 +2,7 @@
 // compiles again with the common dma.h and resource.h's
 // ResourceObject_ReleaseFar; not worked on since).
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;

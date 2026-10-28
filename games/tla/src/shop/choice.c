@@ -12,7 +12,7 @@
 #include "system.h"
 #include "dma.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 #include "input.h"
 #include "text/msg_ids.h"

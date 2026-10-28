@@ -4,7 +4,7 @@
 /// with two arguments. Nothing in the image calls it.
 #include "types.h"
 #include "dma.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "io_reg.h"
 
 extern const u8 Data_081380ac[];

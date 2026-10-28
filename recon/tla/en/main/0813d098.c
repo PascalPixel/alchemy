@@ -28,7 +28,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"

@@ -7,7 +7,7 @@
 #include "window.h"
 #include "uiwindow.h"
 #include "resource.h"
-#include "mem.h"
+#include "heap_release.h"
 
 void Window_DrawTilemapResource(struct Window *window,
                                   const void *resource) {

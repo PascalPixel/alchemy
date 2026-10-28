@@ -1,5 +1,5 @@
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "task.h"
 #include "io_reg.h"

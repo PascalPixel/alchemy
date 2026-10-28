@@ -1,4 +1,4 @@
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "iwram_call.h"
 

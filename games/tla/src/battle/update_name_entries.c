@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "owner_state.h"
 #include "serial.h"
 #include "tla_edition.h"

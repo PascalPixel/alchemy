@@ -7,7 +7,7 @@
 // the argument setups (the message number after the window height). Its
 // messages are numbered here (Msg04103 ...), their names in The Broken Seal
 // beside them; they need names in the catalogs before it links.
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "item.h"

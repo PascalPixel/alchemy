@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "fixed_math.h"
 
 s32 Party_GetLeaderActor(void);

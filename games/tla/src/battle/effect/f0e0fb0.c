@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 
 void BattleEffect_UpdateDescendingParticleNegativeArc(
-    struct ObjectRuntime *particle) {
-  struct ObjectRuntime *source;
+    struct Actor *particle) {
+  struct Actor *source;
   s32 y;
   s32 limit;
   s32 scale;
@@ -21,7 +21,7 @@ void BattleEffect_UpdateDescendingParticleNegativeArc(
 
   y = particle->y;
   if (y <= limit) {
-    Object_Destroy(particle);
+    Actor_Destroy(particle);
     return;
   }
 

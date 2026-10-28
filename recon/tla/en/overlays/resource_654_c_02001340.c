@@ -40,6 +40,6 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   gData_02004a18[0] = other->x - object->x;
   gData_02004a18[1] = other->y - object->y;
   gData_02004a18[2] = other->z - object->z;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
 }

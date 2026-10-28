@@ -2443,7 +2443,7 @@ BattleEffect_RunAzul:
 	ldr r4, [sp, #64]
 	cmp r4, #185
 	ble .L_0815e0c0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 .L_0815e0c0:
 	ldr r6, [sp, #76]
 	movs r7, #240

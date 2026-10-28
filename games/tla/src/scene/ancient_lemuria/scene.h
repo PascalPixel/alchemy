@@ -8,7 +8,7 @@
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 s32 Math_Sine(s32 angle);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

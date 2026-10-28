@@ -1,16 +1,16 @@
 // Draft, differ 27 of 79: four dust puffs scatter from person 9 with a sound.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern const u8 gData_020050f4[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005014(s32 cue);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02004d9c(struct ObjectRuntime *object, s32 mode);
-void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
+void Func_02004d9c(struct Actor *object, s32 mode);
+void Func_02004dac(struct Actor *object, const u8 *script);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -23,20 +23,20 @@ struct DustSprite {
 };
 
 s32 Func_020007f4(void) {
-  struct ObjectRuntime *source = Object_GetById(9);
+  struct Actor *source = Actor_GetById(9);
   s32 i;
 
   Func_02005014(202);
   i = 3;
 loop:
   {
-    struct ObjectRuntime *dust =
+    struct Actor *dust =
         Import_ActorCreate(0x11d, source->x, source->y, source->z);
 
     if (dust != 0) {
       dust->motionFlags = 0;
       dust->collisionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(dust, 0);
+      Actor_SetSingleChildFlags(dust, 0);
       Func_02004d9c(dust, 1);
       Func_02004dac(dust, gData_020050f4);
       ((struct DustSprite *)dust->animation)->layer = 1;

@@ -1,7 +1,7 @@
 #include "script.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 Object_IsTargetUnset(struct ObjectRuntime *object);
+s32 Actor_IsTargetUnset(struct Actor *object);
 
 s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
@@ -14,7 +14,7 @@ s32 Script_Wait(struct ScriptInterpreter *interpreter) {
 /// Waits until the object reaches its target or 60 frames pass; on the
 /// timeout the target is cleared. Returns 1 when the script moves on.
 s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+  struct Actor *object = (struct Actor *)interpreter;
   u8 *delay = &interpreter->delay;
 
   if (*delay > 59) {
@@ -31,7 +31,7 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
     interpreter->cursor++;
     return 1;
   }
-  if (Object_IsTargetUnset(object) != 0) {
+  if (Actor_IsTargetUnset(object) != 0) {
     interpreter->cursor++;
     return 1;
   }

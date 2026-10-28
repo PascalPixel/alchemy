@@ -1,9 +1,9 @@
 #include "types.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Scene_SetArrivalFlags(s32 unused);
 void Func_02000d80(s32 mode);
 void Func_02000e04(s32 id);
@@ -15,7 +15,7 @@ void Func_020028f8(s32 id, s32 x, s32 z);
 s32 Func_02000bf0(void) {
   Scene_SetArrivalFlags(0);
   Func_02000d80(0);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
   if (Flag_IsSet(0xa00))
     Func_02002a28(0xd00000, 0x2a00000, 2, 236);
   if (Flag_IsSet(0xa00)) {

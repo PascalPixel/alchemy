@@ -10,14 +10,14 @@
 #include "scene_ids.h"
 s32 Func_02001254();
 s32 Func_02001324();
-s32 ObjectMotion_SetVariantCallback();
+s32 Actor_StartRepeatedMotion();
 s32 FieldEvent_WaitFrames();
 s32 Func_020012f4();
 s32 Func_020012ec();
 s32 Func_020012fc();
 s32 Func_02001244();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
+s32 Actor_GetById();
+s32 Actor_ResetAndSetPosition();
 s32 Party_SetFields1eeAnd1f0();
 s32 Func_020012d4();
 s32 Func_0200125c();
@@ -29,7 +29,7 @@ void Func_020010ac(void) {
 
   Func_02001254();
   Call1(Func_02001324, 0);
-  Call2(ObjectMotion_SetVariantCallback, 8, 2);
+  Call2(Actor_StartRepeatedMotion, 8, 2);
   Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Func_020012f4, 0x10000, 0);
   Call2(Func_020012ec, 0x10003, 1);
@@ -39,9 +39,9 @@ void Func_020010ac(void) {
   Call2(Func_020012ec, 0x10000, 0);
   Call1(Func_020012fc, 0x3c);
   Call1(FieldEvent_WaitFrames, 0x3c);
-  t12 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t12 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t12 != 0) {
-    Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
+    Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
   Call1(FieldEvent_WaitFrames, 0x14);

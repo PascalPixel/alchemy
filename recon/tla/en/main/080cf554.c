@@ -12,17 +12,17 @@
 #include "types.h"
 #include "field_sprite.h"
 #include "flag_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 s16 *Func_080ceba8(void);
 s32 Func_080cec24(s32 id, void *result);
-struct ObjectRuntime *ObjectEvent_GetObject(s32 id);
+struct Actor *ObjectEvent_GetObject(s32 id);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
-struct ObjectRuntime *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+struct Actor *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 
 extern s32 Data_080f01b8[];
@@ -36,7 +36,7 @@ void Func_080cf554(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   u8 result[12];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 type;
   s32 id;
   s32 flag;
@@ -86,9 +86,9 @@ void Func_080cf554(void) {
     object = Func_080200c0(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      ObjectDispatch_InitializeFar(object, Data_080f01b8);
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-      Object_SetMode(object, 1);
+      Actor_StartScriptFar(object, Data_080f01b8);
+      Actor_SetSingleChildFlagsFar(object, 0);
+      Actor_SetMode(object, 1);
       ((struct FieldSprite *)object->animation)->priority = 1;
     }
   } while (++i <= 15 && (type = *entry++) != 0 && !(type & 0x4000));

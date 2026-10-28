@@ -38,7 +38,7 @@ extern char MsgCastLacksPp;
 extern char MsgPsynergyBlocked;
 
 s32 ArcTan2(s32 x, s32 y);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void PartyStatus_DrawFar(s32 flags);
 void *Func_0811e3ac(struct BattlePlan *plan,
                     struct BattlePresentationWork *work);
@@ -106,8 +106,8 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
-  Object_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
+  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);
@@ -155,7 +155,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     }
     if (((s32 *)plan)[25] == 0)
       BattleEventRuntime_WaitForReady();
-    Object_SetMode(object, 1);
+    Actor_SetMode(object, 1);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
       ObjMotRst(work.actors[targetIndex]);
   }

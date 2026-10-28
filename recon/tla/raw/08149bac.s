@@ -820,7 +820,7 @@ BattleEffect_RunSparkGroups:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #48]
 	lsls r4, r4, #7

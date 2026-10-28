@@ -37,7 +37,7 @@ void Func_02000628(void) {}
 void Func_0200062c(s32 id) {
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     u8 *cells = map->layers[0].cells;
@@ -52,7 +52,7 @@ void Func_0200062c(s32 id) {
 void Func_02000660(s32 id) {
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     u8 *cells = map->layers[0].cells;
@@ -62,8 +62,8 @@ void Func_02000660(s32 id) {
   }
 }
 
-s32 Func_02000694(struct ObjectRuntime *object) {
-  struct ObjectRuntime *owner = object->watchedObject;
+s32 Func_02000694(struct Actor *object) {
+  struct Actor *owner = object->watchedObject;
 
   SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
                owner->z);
@@ -74,13 +74,13 @@ s32 Func_02000694(struct ObjectRuntime *object) {
 extern const u8 gData_02005a7c[];
 
 void Func_020006b4(s32 id) {
-  struct ObjectRuntime *owner = Object_GetById(id);
-  struct ObjectRuntime *object;
+  struct Actor *owner = Actor_GetById(id);
+  struct Actor *object;
 
   if (owner != NULL) {
-    object = Object_Create(489, owner->x, owner->y, owner->z);
+    object = Actor_Create(489, owner->x, owner->y, owner->z);
     if (object != NULL) {
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       Func_020057d0(object, gData_02005a7c);
       object->watchedObject = owner;
       /* FAKEMATCH: stores the owner link before it copies the object for the

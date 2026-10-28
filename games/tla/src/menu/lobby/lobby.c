@@ -11,7 +11,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "flag_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
@@ -31,7 +31,7 @@ struct LinkPeerSignature {
 extern struct LinkPeerSignature gLinkPeerSignatures[];
 extern s32 gData_020022b8;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_0200006c(s32 slot);
 
 /// The lobby's task each frame: counts frames without the opponent, clears
@@ -48,7 +48,7 @@ s32 Func_02000134(void) {
 
   work = Ram_HeapSlots->eventWork;
   result = 1;
-  z = Object_GetById(4)->z;
+  z = Actor_GetById(4)->z;
   /* FAKEMATCH: the one-pass block loads z before the 0xe00000 bound is built;
    * tested directly the bound comes first (differ 2). */
   do {

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -11,7 +11,7 @@ struct MenuFlagWork {
 
 struct FxGroup {
   u8 unk00[32];
-  struct ObjectRuntime *objects[8];
+  struct Actor *objects[8];
   u16 values[8];
   s32 count;
 };

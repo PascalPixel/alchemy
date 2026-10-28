@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -14,8 +14,8 @@ extern const u8 MsgThereSALot[];
 extern const u8 MsgThereSAGame[];
 extern const u8 MsgIOnceHeard[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_020006bc(s32 id);
@@ -46,17 +46,17 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 s32 Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 actor, s32 x, s32 z);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
+void Actor_CenterOnColumn(s32 actor, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target,
+s32 Func_02000088(struct Actor *object, struct Actor *target,
                   s32 range, s32 force);
 void Func_02001688(void);
-void Func_02002448(struct ObjectRuntime *object, s32 mode);
+void Func_02002448(struct Actor *object, s32 mode);
 void Func_02002460(s32 a, s32 b, s32 c);
 void Func_02002578(s32 index);
 void Func_020025a0(s32 cue);

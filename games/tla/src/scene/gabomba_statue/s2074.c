@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 struct IoReg16 {
@@ -17,7 +17,7 @@ struct IoReg16 {
 /// Makes the scene more translucent the farther inside the object is.
 void Func_02002074(void) {
   s32 blend;
-  struct ObjectRuntime *object =
+  struct Actor *object =
       ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->object;
   s32 level = object->z;
 

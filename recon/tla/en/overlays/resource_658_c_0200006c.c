@@ -9,7 +9,7 @@
 // helper).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct MadraEventWork {
@@ -25,9 +25,9 @@ struct MadraPlacement {
 
 extern s32 gData_02003308[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02002ae8(const void *data, s32 a, s32 b);
@@ -39,14 +39,14 @@ void Func_02002c90(s32 a);
 
 void Func_0200006c(void) {
   struct MadraEventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u32 id;
 
   Func_02002b28();
   Func_02002c58(0);
   id = 8;
 next:
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (object)
     object->motionFlags = 0;
   id++;
@@ -61,9 +61,9 @@ next:
                   ((u16 *)&gData_02003308[index * 2 + 1])[0],
                   ((u16 *)&gData_02003308[index * 2 + 1])[1]);
   }
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -8);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_CenterOnColumn(gAdventure.currentOwner, 2, -8);
   FieldEvent_WaitFrames(10);
   Func_02002c30(work->value154);
   Event_FinishScreenTransition();

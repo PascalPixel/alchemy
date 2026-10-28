@@ -505,7 +505,7 @@ BattleEffect_RunWhiplash:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

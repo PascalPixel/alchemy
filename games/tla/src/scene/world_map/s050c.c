@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "owner_state.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Unit_AddPp();
 void Func_02003c3c(void);
@@ -35,7 +35,7 @@ void Func_0200050c(void) {
   }
   Func_02003c3c();
   Func_02004a1c();
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   count = Party_CountActiveOwners();
   pp = 0;
   i = 0;

@@ -21,17 +21,17 @@ u8 *Func_0200004c(void) {
 
 void Func_020000d8(void) {
   struct IsletsTarget target;
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
 
   if (Func_020037d8(&target)) {
     Func_02003a5c(target);
     WaitFrames(5);
     object->gravity = 0x8000;
-    Object_SetModeById(10, 3);
-    ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
+    Actor_SetModeById(10, 3);
+    Actor_OffsetPositionAndResetMotion(10, 0, 8);
     FieldEvent_WaitFrames(22);
     Func_02003ffc(240);
-    Object_SetModeById(10, 8);
+    Actor_SetModeById(10, 8);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;

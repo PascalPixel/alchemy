@@ -9,11 +9,11 @@
 #include "types.h"
 #include "lib/call.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "system/field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004e5c(void);
 void Func_02004fcc(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -30,13 +30,13 @@ void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 void Func_02004f34(s32 id, s32 value);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02004e24(s32 a, s32 b, s32 c);
 void Func_02004e2c(void);
 s32 Func_02004e64(void);
 
 s32 Func_0200042c(void) {
-  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
+  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer, as in
    * overlay 671's draft. */
   register u32 i asm("r10");
@@ -79,7 +79,7 @@ s32 Func_0200042c(void) {
   } while (i <= 16);
   Func_02005014(188);
   Func_02004f34(gAdventure.currentOwner, 0x101);
-  Object_SetModeById(gAdventure.currentOwner, 49);
+  Actor_SetModeById(gAdventure.currentOwner, 49);
   Call3((void (*)())Func_02004e24, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
   Func_02004e2c();
@@ -87,7 +87,7 @@ s32 Func_0200042c(void) {
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   return Func_02004e64();
 }

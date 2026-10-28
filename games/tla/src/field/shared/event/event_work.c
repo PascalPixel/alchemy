@@ -12,7 +12,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "display_transition.h"
 
 void Event_StartScreenTransition(void) {

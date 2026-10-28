@@ -3,11 +3,11 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void FieldEvent_WaitFrames(s32 frames);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
@@ -34,7 +34,7 @@ void Func_0200537c(void);
 s32 Func_02005384(void);
 void Func_02005394(s32 cue);
 
-void Func_02000e78(s32 id, struct ObjectRuntime *object);
+void Func_02000e78(s32 id, struct Actor *object);
 void Func_02000eb0(void);
 void Func_02000eec(void);
 void Func_02000f28(void);

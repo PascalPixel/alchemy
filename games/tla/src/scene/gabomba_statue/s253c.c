@@ -1,6 +1,6 @@
 #include "types.h"
 #include "text/msg_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -16,11 +16,11 @@ extern u32 gData_02005ba4[];
 extern u32 gData_02005be8[];
 extern s32 gData_02005c74[];
 extern s32 gData_02005ca0[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020056b4(void);
 void Func_0200580c(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct ObjectRuntime *Func_020057bc(void);
+struct Actor *Func_020057bc(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
@@ -28,14 +28,14 @@ void Func_02005754(const u8 *message);
 void Func_02005764(s32 id, s32 value);
 void Func_02005724(s32 id, s32 target);
 void WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 id, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 void Func_020057a4(s32 speed, s32 acceleration);
 void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Func_020057e4(s32 a, s32 b);
 void Func_020057dc(s32 a, s32 b);
 void Func_020057ec(s32 a);
@@ -44,7 +44,7 @@ void Func_02005854(s32 sound);
 void Func_0200571c(s32 id, s32 x, s32 z, s32 speed);
 void Func_02000f6c(void);
 void Func_0200578c(s32 id, s32 a, s32 b);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 u32 Random16Far(void);
 s32 Func_02004d48(s32 a, s32 b);
 void GameFlag_SetBit(s32 flag);
@@ -62,17 +62,17 @@ static __inline__ void Camera_SetSpeed(s32 speed, s32 acceleration) {
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, frames);
+  Actor_ArmCallback(id, angle, frames);
 }
 
 static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ResetAndSetPositionInMode2(id, x, z);
+  Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
 static __inline__ void Func_02005764_(s32 id, s32 value) {
@@ -135,18 +135,18 @@ void Func_0200253c(void) {
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_SetSpeed(23, 0xcccc, 0x6666);
-  ObjectMotion_EnableActionAndSetCallback(23, gData_02005ba4);
+  Actor_SetMovementTypeById(23, gData_02005ba4);
   WaitFrames(10);
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02005af4);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02005b1c);
-  ObjectMotion_EnableActionAndSetCallback(7, gData_02005b60);
-  Object_RefreshSelectorById(23);
+  Actor_SetMovementTypeById(5, gData_02005b1c);
+  Actor_SetMovementTypeById(7, gData_02005b60);
+  Actor_RefreshSelectorById(23);
   FieldEvent_WaitFrames(20);
   Camera_SetSpeed(0x13333, 0x2666);
   Camera_SetBounds(217 << 17, -1, 143 << 17, 1);
   Actor_SetSpeed(23, 0x13333, 0x9999);
-  Object_SetActionCallbackAndRefreshById(23, gData_02005be8);
+  Actor_SetMovementTypeAndWaitById(23, gData_02005be8);
   FieldEvent_WaitFrames(40);
   Func_02005774_(23, 0xd000);
   Func_02005764_(23, 0);
@@ -158,14 +158,14 @@ void Func_0200253c(void) {
   Actor_Turn(5, 0xa000, 0);
   Actor_Turn(gAdventure.currentOwner, 0xa000, 0);
   Actor_Turn(7, 0x2000, 40);
-  Object_GetById(7)->angle = 0x4000;
-  Object_GetById(gAdventure.currentOwner)->angle = 0x4000;
-  Object_GetById(6)->angle = 0x4000;
-  Object_GetById(5)->angle = 0x4000;
-  Object_GetById(7)->actionFlags &= 0xfe;
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= 0xfe;
-  Object_GetById(6)->actionFlags &= 0xfe;
-  Object_GetById(5)->actionFlags &= 0xfe;
+  Actor_GetById(7)->angle = 0x4000;
+  Actor_GetById(gAdventure.currentOwner)->angle = 0x4000;
+  Actor_GetById(6)->angle = 0x4000;
+  Actor_GetById(5)->angle = 0x4000;
+  Actor_GetById(7)->actionFlags &= 0xfe;
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= 0xfe;
+  Actor_GetById(6)->actionFlags &= 0xfe;
+  Actor_GetById(5)->actionFlags &= 0xfe;
   Actor_Place(7, 400, 272);
   Actor_Place(gAdventure.currentOwner, 420, 272);
   Actor_Place(6, 444, 272);
@@ -222,28 +222,28 @@ void Func_020027cc(void) {
   Actor_Turn(7, 0xc000, 0);
   Actor_Turn(23, 0xb000, 60);
   Func_02005854(130);
-  Object_SetPartAttribute(Object_GetById(9), 7);
-  Object_SetPartAttribute(Object_GetById(10), 7);
+  Actor_SetPartAttribute(Actor_GetById(9), 7);
+  Actor_SetPartAttribute(Actor_GetById(10), 7);
   WaitFrames(8);
-  Object_SetPartAttribute(Object_GetById(10), 3);
-  Object_SetPartAttribute(Object_GetById(9), 0);
+  Actor_SetPartAttribute(Actor_GetById(10), 3);
+  Actor_SetPartAttribute(Actor_GetById(9), 0);
   WaitFrames(8);
-  ((struct Wanderer *)Object_GetById(gAdventure.currentOwner))->timer =
+  ((struct Wanderer *)Actor_GetById(gAdventure.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Object_GetById(7))->timer =
+  ((struct Wanderer *)Actor_GetById(7))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Object_GetById(5))->timer =
+  ((struct Wanderer *)Actor_GetById(5))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Object_GetById(6))->timer =
+  ((struct Wanderer *)Actor_GetById(6))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Object_GetById(23))->timer =
+  ((struct Wanderer *)Actor_GetById(23))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02005c74);
-  ObjectMotion_EnableActionAndSetCallback(7, gData_02005c74);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02005ca0);
-  ObjectMotion_EnableActionAndSetCallback(6, gData_02005ca0);
-  ObjectMotion_EnableActionAndSetCallback(23, gData_02005ca0);
+  Actor_SetMovementTypeById(7, gData_02005c74);
+  Actor_SetMovementTypeById(5, gData_02005ca0);
+  Actor_SetMovementTypeById(6, gData_02005ca0);
+  Actor_SetMovementTypeById(23, gData_02005ca0);
   Func_02005854(11);
   Func_02004d48(11, 0);
   FieldEvent_WaitFrames(80);

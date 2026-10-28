@@ -6,7 +6,7 @@
 // here) and, for the last two moves, in r5 from the pool with the offset in
 // r3 (here r3 and r1).
 #include "../../../../games/tla/src/scene/yampi_desert/scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Func_020012d4(s32 cell);
 
@@ -27,12 +27,12 @@ s32 Func_020012d4(s32 cell);
   }
 
 void Func_020013f8(void) {
-  struct ObjectRuntime *leader =
-      (struct ObjectRuntime *)Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader =
+      (struct Actor *)Actor_GetById(gAdventure.currentOwner);
   s32 column = leader->x >> 20;
   s32 row = leader->z >> 20;
 
-  if (Object_GetById(64) != NULL)
+  if (Actor_GetById(64) != NULL)
     Func_02004090(64, 0, 0);
   Func_02003ff0(82, 89, 15, 40, 5, 6);
   Scene_Call4000(82, 89, 5, 6, 15, 40);

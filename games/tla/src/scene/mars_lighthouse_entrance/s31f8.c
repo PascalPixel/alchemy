@@ -1,16 +1,16 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern u32 gInput;
 extern const s16 gData_02005758[];
 
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
-void Func_02004bc0(struct ObjectRuntime *object, s32 mode);
+void Func_02004bc0(struct Actor *object, s32 mode);
 
-void Func_020031f8(struct ObjectRuntime *object) {
+void Func_020031f8(struct Actor *object) {
   s32 angle;
   s32 turn;
 
@@ -34,5 +34,5 @@ void Func_020031f8(struct ObjectRuntime *object) {
     turn = -0x1000;
   object->angle += turn;
   Func_02004bc0(object, 2);
-  ObjectDispatch_SetAnimationSpeed(object, 48);
+  Actor_SetAnimationSpeed(object, 48);
 }

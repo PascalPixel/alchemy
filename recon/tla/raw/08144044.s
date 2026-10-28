@@ -338,7 +338,7 @@ BattleEffect_RunHaunt:
 	beq .L_081442f2
 	b .L_081441b2
 .L_081442f2:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7

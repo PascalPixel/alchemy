@@ -60,7 +60,7 @@ void StartFlashTimer(u8 index);
 void PartyStatus_Close(void);
 
 struct BattleObj;
-struct ObjectRuntime;
+struct Actor;
 
 struct ParticleChild {
   u8 padding[9];
@@ -86,9 +86,9 @@ void BattleMotion_InterpolatePosition(struct BattleObj *start_slot,
                                       struct BattleObj *end_slot, s32 progress);
 #endif
 s32 LuckyDice_Run(void);
-void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
-void ObjectMotion_NoOp(void);
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
+void Actor_WaitForValue16Far(struct Actor *);
+void Actor_NoOp(void);
+void Actor_SetMotionActionCallback(struct Actor *, s32);
 void Resource_LoadCode(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 void ResourceMetadata_ClearRecord(void *destination);

@@ -81,10 +81,10 @@ BattleEffect_RunRisingDragon:
 	ldr r0, [r0]
 	movs r1, #48
 	str r0, [sp, #52]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r1, #2
 	ldr r0, [sp, #52]
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, [sp, #84]
 	mov r4, sp
 	adds r4, #136
@@ -941,7 +941,7 @@ BattleEffect_RunRisingDragon:
 	adds r0, r6, #0
 	bl Heap_Release
 .L_08178e6c:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #2
 	movs r0, #2
 	bl Func_08158ce0
@@ -969,7 +969,7 @@ BattleEffect_RunRisingDragon:
 .L_08178ea4:
 	ldr r0, [sp, #52]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #104
 	bl HeapSlot_Release
 	ldr r0, .L_08178ee0

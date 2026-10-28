@@ -6,7 +6,7 @@
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 
 void Func_0200043c(void) {
-  struct SeaOfTimeObject *object = Object_GetById(8);
+  struct SeaOfTimeObject *object = Actor_GetById(8);
   s32 turn[1];
   s32 center[3];
   s32 *pos;

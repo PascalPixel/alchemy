@@ -1,9 +1,9 @@
 #include "types.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames();
 void Func_02001080();
 void Func_02001088();
@@ -13,12 +13,12 @@ void Func_02001168();
 void Func_02001188();
 void GameFlag_SetBit();
 void GameFlag_Test();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_OffsetPositionAndReset();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_SetVariantCallback();
-void ObjectMotion_ArmCallback();
+void Actor_Jump();
+void Actor_OffsetPositionAndResetMotion();
+void Actor_OffsetPositionAndReset();
+void Actor_WaitForMoveById();
+void Actor_StartRepeatedMotion();
+void Actor_ArmCallback();
 
 /// Pushes Shaman Village cave's object 17 away from the leader, unless the two
 /// stand on opposite sides of the boundary between 8-pixel columns 36 and 37.
@@ -27,8 +27,8 @@ void ObjectMotion_ArmCallback();
 /// once; otherwise it slides two cells along z, one and then three along x
 /// away from the leader with a hop, and back along z.
 void Func_02000184(void) {
-  struct ObjectRuntime *object = Object_GetById(17);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(17);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 leaderX = leader->x >> 19;
   s32 leaderZ = leader->z >> 19;
   s32 objectX = object->x >> 19;
@@ -50,20 +50,20 @@ void Func_02000184(void) {
       return;
     Func_02001080();
     Call1(Func_020011e0, 0);
-    Call3(ObjectMotion_Launch, 17, 4, 20);
-    Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, 0, 32);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
+    Call3(Actor_Jump, 17, 4, 20);
+    Call3(Actor_OffsetPositionAndResetMotion, 17, 0, 32);
+    Call1(Actor_WaitForMoveById, 17);
     Call2(Func_02001188, 17, 1);
-    Call2(ObjectMotion_SetVariantCallback, 17, 2);
-    Call3(ObjectMotion_ArmCallback, 17, 0x8000, 0);
-    Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, -8, 0);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
-    Call3(ObjectMotion_Launch, 17, 4, 20);
+    Call2(Actor_StartRepeatedMotion, 17, 2);
+    Call3(Actor_ArmCallback, 17, 0x8000, 0);
+    Call3(Actor_OffsetPositionAndResetMotion, 17, -8, 0);
+    Call1(Actor_WaitForMoveById, 17);
+    Call3(Actor_Jump, 17, 4, 20);
     Call2(Func_02001168, 17, 258);
     Call1(FieldEvent_WaitFrames, 30);
-    Object_GetById(17)->actionFlags &= ~1;
-    Call3(ObjectMotion_OffsetPositionAndReset, 17, 8, 0);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
+    Actor_GetById(17)->actionFlags &= ~1;
+    Call3(Actor_OffsetPositionAndReset, 17, 8, 0);
+    Call1(Actor_WaitForMoveById, 17);
     Call1(FieldEvent_WaitFrames, 30);
     Call3(Func_02001160, 17, 258, 0);
     Call1(FieldEvent_WaitFrames, 30);
@@ -74,16 +74,16 @@ void Func_02000184(void) {
   Func_02001080();
   Call1(Func_020011e0, 0);
   dz <<= 5;
-  Call3(ObjectMotion_Launch, 17, 4, 20);
-  Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, 0, dz);
-  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
-  Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, dx << 4, 0);
-  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
-  Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, dx * 48, 0);
+  Call3(Actor_Jump, 17, 4, 20);
+  Call3(Actor_OffsetPositionAndResetMotion, 17, 0, dz);
+  Call1(Actor_WaitForMoveById, 17);
+  Call3(Actor_OffsetPositionAndResetMotion, 17, dx << 4, 0);
+  Call1(Actor_WaitForMoveById, 17);
+  Call3(Actor_OffsetPositionAndResetMotion, 17, dx * 48, 0);
   object->velocityY = 0x80000;
   dz = -dz;
-  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
-  Call3(ObjectMotion_OffsetPositionAndResetMotion, 17, 0, dz);
-  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
+  Call1(Actor_WaitForMoveById, 17);
+  Call3(Actor_OffsetPositionAndResetMotion, 17, 0, dz);
+  Call1(Actor_WaitForMoveById, 17);
   Func_02001088();
 }

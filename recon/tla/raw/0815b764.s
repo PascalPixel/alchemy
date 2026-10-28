@@ -1947,7 +1947,7 @@ BattleEffect_RunUlysses:
 	ldr r7, [sp, #56]
 	cmp r7, #0
 	beq .L_0815c69a
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

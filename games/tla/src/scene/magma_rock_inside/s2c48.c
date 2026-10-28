@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "frame.h"
 #include "field_effect.h"
 
@@ -8,7 +8,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-void Func_02002c48(struct ObjectRuntime *object) {
+void Func_02002c48(struct Actor *object) {
   struct EffectOptions options;
   s32 position[3];
   u32 frame = gFrameCount & 7;

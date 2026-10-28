@@ -3,8 +3,8 @@
 
 extern u32 gData_020007e4;
 
-struct ObjectRuntime;
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct Actor;
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_020001b0(void);
 void Func_02000568(void);
 void Func_020005c8(s32 a);
@@ -16,10 +16,10 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
 
-s32 Func_02000038(struct ObjectRuntime *object) {
+s32 Func_02000038(struct Actor *object) {
   if ((gData_020007e4 >> 1) & 1)
-    Object_SetPartAttribute(object, 15);
+    Actor_SetPartAttribute(object, 15);
   else
-    Object_SetPartAttribute(object, 7);
+    Actor_SetPartAttribute(object, 7);
   return 0;
 }

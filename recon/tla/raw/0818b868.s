@@ -430,7 +430,7 @@ BattleEffect_RunTripleChomp:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r3, [sp, #56]
 	lsls r0, r0, #7

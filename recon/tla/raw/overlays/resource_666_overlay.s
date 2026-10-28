@@ -15,14 +15,14 @@ Func_020005b8:
 	adds r2, #93
 	str r2, [r3]
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	ldrb r2, [r0]
 	movs r3, #4
 	orrs r3, r2
 	strb r3, [r0]
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	ldrb r2, [r0]
 	movs r3, #16
@@ -30,16 +30,16 @@ Func_020005b8:
 	strb r3, [r0]
 	movs r1, #3
 	movs r0, #9
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #31
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #14
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r1, #3
 	movs r0, #15
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #0
 	bl Func_02000bac
 	movs r3, #128
@@ -59,11 +59,11 @@ Func_020005b8:
 	lsls r3, r3, #9
 	str r3, [r5, #24]
 	movs r0, #14
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_ja_020086d4
 	str r3, [r0, #108]
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_ja_020086d8
 	str r3, [r0, #108]
 	movs r0, #245
@@ -113,16 +113,16 @@ Func_020005b8:
 .L_ja_020086a8:
 	movs r0, #24
 	movs r1, #2
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #19
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #28
 	movs r1, #2
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #25
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 .L_ja_020086c8:
 	movs r0, #0
 	pop {r5, pc}

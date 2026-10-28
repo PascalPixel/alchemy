@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -19,9 +19,9 @@ extern const s16 gData_020043e4[];
 extern const struct AnemosInnerSanctumPicture gData_02004410[];
 
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02003320(const void *data, s32 a, s32 b);
@@ -49,7 +49,7 @@ void Func_02001c94(void) {
   i = 8;
 loop:
   {
-    struct ObjectRuntime *object = Object_GetById(i);
+    struct Actor *object = Actor_GetById(i);
 
     if (object != NULL)
       object->motionFlags = 0;
@@ -66,9 +66,9 @@ loop:
     Func_02003320_(gData_02004410[index].data, gData_02004410[index].a,
                    gData_02004410[index].b);
   }
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -4);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -4);
   FieldEvent_WaitFrames(6);
   Func_02003450(work->value);
   Event_FinishScreenTransition();

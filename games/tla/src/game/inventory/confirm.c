@@ -7,10 +7,10 @@ s16 *Scene_FindActorPlacement(s32 action);
 s32 Message_AllTypedFar(void);
 void WaitFrames(s32 count);
 s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Window_CloseMatchingIdFar(s32 sprite);
 void Message_CloseFinishedWindowsFar(void);
-void Object_WaitUntilChildValueDiffers(s32 actor, s32 value);
+void Actor_WaitForAnimationEnd(s32 actor, s32 value);
 
 /// The event command "choose yes or no": waits for the message, asks yes or no
 /// below it or above it when the message windows reach past row 15, and the
@@ -49,17 +49,17 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
                                        *(s16 *)(work + 0xcb2),
                                        *(s16 *)(work + 0xcb4));
   if (answer != 0) {
-    Object_SetModeById(actor, 4);
+    Actor_SetModeById(actor, 4);
     Window_CloseMatchingIdFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gAdventure.eventMode != 2)
-      Object_WaitUntilChildValueDiffers(actor, 4);
+      Actor_WaitForAnimationEnd(actor, 4);
   } else {
-    Object_SetModeById(actor, 3);
+    Actor_SetModeById(actor, 3);
     Window_CloseMatchingIdFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gAdventure.eventMode != 2)
-      Object_WaitUntilChildValueDiffers(actor, 3);
+      Actor_WaitForAnimationEnd(actor, 3);
   }
 
   return answer;

@@ -18,7 +18,7 @@
 // owner just spins on. Each ends with cue 136, object 280 destroyed, the
 // owner's update cleared and its angle restored.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "canvas_sprite.h"
 
@@ -26,7 +26,7 @@ struct WhirlWork {
   u8 unk0000[0x1b08];
   s16 count;
   u8 unk1b0a[2];
-  struct ObjectRuntime *follower;
+  struct Actor *follower;
   s16 state;
   s16 timer;
   s32 angle;
@@ -40,10 +40,10 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Func_080e2264(void);
-void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void BattleEffect_SpinObject(void);
 void Camera_WorldToScreen(s32 *position);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -54,25 +54,25 @@ void Func_080e249c(void);
 void Func_080e2ec0(void);
 void Func_080e2d64(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 void BattleEffect_EndX(void);
 
 void Func_080e3074(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
+  struct Actor *owner = *(struct Actor **)(effect + 16);
   s16 *points = (s16 *)(event + 0xcc0);
   s32 spread = 0x40000;
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
-  struct ObjectRuntime *ring;
+  struct Actor *ring;
   u16 *offsets;
   u8 *pixels;
   u16 *palette;
@@ -83,7 +83,7 @@ void Func_080e3074(void) {
 
   BattleEffect_InitializeSharedScene();
   Func_080e2264();
-  BattleEffect_SetObjectUpdateMode(*(struct ObjectRuntime **)(effect + 16), 0);
+  BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->action = owner->angle;
   palette = (u16 *)0x050003c0;
@@ -91,9 +91,9 @@ void Func_080e3074(void) {
     *palette++ = ((i + 16) << 5) | (31 << 10) | (i + 16);
   Func_080eb824();
   canvas = Ram_HeapSlots->unkec[1];
-  pos[0] = (*(struct ObjectRuntime **)(effect + 16))->x;
-  pos[1] = (*(struct ObjectRuntime **)(effect + 16))->y;
-  pos[2] = (*(struct ObjectRuntime **)(effect + 16))->z;
+  pos[0] = (*(struct Actor **)(effect + 16))->x;
+  pos[1] = (*(struct Actor **)(effect + 16))->y;
+  pos[2] = (*(struct Actor **)(effect + 16))->z;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -107,8 +107,8 @@ void Func_080e3074(void) {
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleFxWork[1];
-  ring = Object_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
-  Object_SetMode(ring, 2);
+  ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
+  Actor_SetMode(ring, 2);
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
   WaitFrames(1);
@@ -157,10 +157,10 @@ void Func_080e3074(void) {
       WaitFrames(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-    Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
-    ObjectDispatch_SetSingleChildFlagsFar(owner, 0);
+    Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+    Actor_SetSingleChildFlagsFar(owner, 0);
     frame = 0;
-    ObjectMotion_SetActionVariant(*(s16 *)(effect + 24), 1);
+    Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
     owner->motionFlags = 0;
     WaitFrames(1);
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
@@ -188,8 +188,8 @@ void Func_080e3074(void) {
       WaitFrames(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-    Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
-    ObjectDispatch_SetSingleChildFlagsFar(owner, 0);
+    Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+    Actor_SetSingleChildFlagsFar(owner, 0);
     owner->motionFlags = 0;
     WaitFrames(1);
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
@@ -220,7 +220,7 @@ void Func_080e3074(void) {
       BattleEffect_EndX();
   } else if (mode == 1) {
     Sound_PlayFar(136);
-    Object_SetMode(ring, 6);
+    Actor_SetMode(ring, 6);
     if (work->kind)
       Func_080e2acc();
     for (i = 0; i < 16; i++) {
@@ -241,7 +241,7 @@ void Func_080e3074(void) {
       BattleEffect_EndX();
   } else {
     Sound_PlayFar(136);
-    Object_SetMode(ring, 6);
+    Actor_SetMode(ring, 6);
     for (i = 0; i < 16; i++) {
       owner->angle += 0x1000;
       canvas->angle += 0x400;
@@ -250,7 +250,7 @@ void Func_080e3074(void) {
     }
   }
   Sound_PlayFar(136);
-  Object_Destroy(ring);
+  Actor_Destroy(ring);
   owner->update = NULL;
   owner->angle = owner->action;
   BattleEffect_EndCanvasSprite();

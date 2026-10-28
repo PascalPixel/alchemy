@@ -26,7 +26,7 @@ struct FieldActor {
   s32 acceleration;
 };
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 void Func_02001254(void);
 void Func_02001324(s32 skip);
 void Func_0200121c(struct FieldActor *actor, s32 x, s32 y, s32 z);
@@ -50,8 +50,8 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   {
     register s32 id asm("r5") = actorId;
 
-    leader = Object_GetById(*owner);
-    actor = Object_GetById(id);
+    leader = Actor_GetById(*owner);
+    actor = Actor_GetById(id);
   }
   Func_02001254();
   Func_02001324(0);

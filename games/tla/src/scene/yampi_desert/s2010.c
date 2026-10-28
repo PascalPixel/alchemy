@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_02002010(void) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x;
   s32 y;
   s32 z;
@@ -14,7 +14,7 @@ void Func_02002010(void) {
   else
     gAdventure.unk2c3 = 0;
   if (gAdventure.scene == (s32)&SceneId_Ov661Room3) {
-    ObjectMotion_SetActionVariant(18, leader->sprite->priority);
+    Actor_SetSpritePriority(18, leader->sprite->priority);
     x = leader->x;
     asm volatile(""); /* FAKEMATCH: ⚓️ reads x before it builds 0x1d80000 */
     if (x > 0x1d80000) {

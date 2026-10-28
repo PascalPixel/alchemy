@@ -4,7 +4,7 @@
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 void Func_02001e70(s32 id, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValues(struct DispatchObject *, u32);
@@ -22,16 +22,16 @@ static inline s32 FlagTest(s32 flag) {
 }
 
 void Func_02000cc8(void) {
-  struct FieldActor *left = Object_GetById(9);
-  struct FieldActor *right = Object_GetById(10);
-  struct FieldActor *door = Object_GetById(23);
+  struct FieldActor *left = Actor_GetById(9);
+  struct FieldActor *right = Actor_GetById(10);
+  struct FieldActor *door = Actor_GetById(23);
   struct FieldSprite *sprite = door->sprite;
 
   Place(24, 512 << 16, 248 << 16);
   Place(23, 512 << 16, 248 << 16);
   Place(9, 472 << 16, 256 << 16);
   Place(10, 552 << 16, 256 << 16);
-  WORD_AT(Object_GetById(24), 24) = 0;
+  WORD_AT(Actor_GetById(24), 24) = 0;
   door->motionFlags = 0;
   door->y = door->terrainHeight;
   left->motionFlags = 0;
@@ -43,16 +43,16 @@ void Func_02000cc8(void) {
     door->y += 0x1eb80;
     door->x -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues((struct DispatchObject *)Object_GetById(9), 4);
-    Animation_ApplyChildValues((struct DispatchObject *)Object_GetById(11), 4);
+    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(9), 4);
+    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(11), 4);
   }
   if (FlagTest(0xa0b)) {
     right->y += 0x66640;
     door->y += 0x1eb80;
     door->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues((struct DispatchObject *)Object_GetById(10), 4);
-    Animation_ApplyChildValues((struct DispatchObject *)Object_GetById(12), 4);
+    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(10), 4);
+    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(12), 4);
   }
   if (FlagTest(0xa0a) && FlagTest(0xa0b)) {
     left->y += 0x199900;

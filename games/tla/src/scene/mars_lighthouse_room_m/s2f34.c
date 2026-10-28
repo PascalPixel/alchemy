@@ -1,10 +1,10 @@
 #include "mars_lighthouse_room_m.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020031a8(struct ObjectRuntime *object, s32 mode);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Func_020031a8(struct Actor *object, s32 mode);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
-s32 Func_02002f34(struct ObjectRuntime *object) {
+s32 Func_02002f34(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {
@@ -38,7 +38,7 @@ s32 Func_02002f34(struct ObjectRuntime *object) {
   return 1;
 }
 
-s32 Func_02002fe0(struct ObjectRuntime *object) {
+s32 Func_02002fe0(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {

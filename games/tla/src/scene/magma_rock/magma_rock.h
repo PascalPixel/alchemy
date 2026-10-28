@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-struct ObjectRuntime;
+struct Actor;
 
 struct MagmaRockWork {
   s32 unk00;
@@ -11,7 +11,7 @@ struct MagmaRockWork {
   s32 y;
   s32 z;
   s32 unk10;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 };
 
 #endif

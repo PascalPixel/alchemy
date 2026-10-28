@@ -70,7 +70,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -250,7 +250,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(4, 16);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

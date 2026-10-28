@@ -32,7 +32,7 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 void Func_02002260(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
     GameFlag_SetBit(0x9db);
@@ -86,7 +86,7 @@ const u8 *Func_02002338(void) {
   return gData_02003790;
 }
 
-void Func_020023d0(struct ObjectRuntime *object) {
+void Func_020023d0(struct Actor *object) {
   struct AnkohlRuinsEffectParams params;
   u32 phase = gFrameCount & 7;
   s32 dx;

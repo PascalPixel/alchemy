@@ -37,7 +37,7 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
@@ -184,7 +184,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
                           0x8000003f);
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     WaitFrames(1);
   }
 

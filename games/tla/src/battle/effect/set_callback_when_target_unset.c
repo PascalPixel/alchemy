@@ -8,10 +8,10 @@
 #include "system.h"
 #include "types.h"
 #include "objdisp.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "frame.h"
 
-void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
+void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   s32 tx;
   s32 ty;
 
@@ -21,7 +21,7 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *target) {
   if (tx == 0x80000000) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)target,
+      Actor_StartScriptFar((struct DispatchObject *)target,
                                    (u32)gBattleEffect_UntargetedObjectScript);
     }
   }

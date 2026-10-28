@@ -14,7 +14,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "animspr.h"
 
 struct EffectVector {
@@ -37,7 +37,7 @@ struct OrbitEffect {
   u8 unk4c[24];
   u16 timer;
   s16 pause;
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
   void (*update)(struct OrbitEffect *);
 };
 
@@ -47,18 +47,18 @@ struct OrbTargetSprite {
   struct AnimationEntry *entries[4];
 };
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object);
+void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
 void BattleEffect_CircleAnchor(struct OrbitEffect *mote);
 void BattleEffect_WanderAroundAnchor(struct OrbitEffect *mote);
-void BattleEffect_AgeAndCueAtEighty(struct ObjectRuntime *object);
+void BattleEffect_AgeAndCueAtEighty(struct Actor *object);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080db0b0(s32 objectId);
-void Func_08020340(struct ObjectRuntime *object);
-void Object_Destroy(struct ObjectRuntime *object);
+void Func_08020340(struct Actor *object);
+void Actor_Destroy(struct Actor *object);
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
@@ -80,13 +80,13 @@ enum OrbKind {
 // ten frames, growing it from a quarter size, then play out the kind.
 void FieldEffect_RunWhirlwind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *target = scene->child;
-  struct ObjectRuntime *caster = scene->mainObject;
+  struct Actor *target = scene->child;
+  struct Actor *caster = scene->mainObject;
   struct OrbTargetSprite *sprite = target->animation;
   struct EffectVector position;
   struct EffectVector to;
   struct EffectVector from;
-  struct ObjectRuntime *orb;
+  struct Actor *orb;
   struct OrbitEffect *mote;
   s32 kind = ORB_PLAIN;
   s32 step;
@@ -110,12 +110,12 @@ void FieldEffect_RunWhirlwind(void) {
   to.y = scene->y - (4 << 16);
   from.z = caster->z;
   to.z = scene->z;
-  orb = Object_Spawn(ORB_OBJECT, 0, 0, 0);
+  orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)
     return;
 
   BattleEffect_InitializeSharedScene();
-  Object_SetMode(orb, 2);
+  Actor_SetMode(orb, 2);
   for (step = 0; step < 11; step++) {
     s32 scale;
 
@@ -146,7 +146,7 @@ void FieldEffect_RunWhirlwind(void) {
       position.z = orb->z;
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(distance, Random16(), &position);
-      mote = (struct OrbitEffect *)Object_Spawn(MOTE_OBJECT, position.x,
+      mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                 position.y, position.z);
       if (mote != 0) {
         mote->update = BattleEffect_CircleAnchor;
@@ -161,17 +161,17 @@ void FieldEffect_RunWhirlwind(void) {
     WaitFrames(120);
     // fall through
   case ORB_PLAIN:
-    Object_SetMode(orb, 1);
+    Actor_SetMode(orb, 1);
     WaitFrames(30);
     Sound_PlayFar(SE_ORB_FADES);
     Func_08020340(orb);
-    Object_Destroy(orb);
+    Actor_Destroy(orb);
     break;
 
   case ORB_WANDER:
   case ORB_HANDOFF:
     WaitFrames(5);
-    Object_SetMode(orb, 1);
+    Actor_SetMode(orb, 1);
     if (kind == ORB_WANDER) {
       // Sixteen motes that wander about the orb, the first pausing longest.
       s32 pause = 20;
@@ -185,7 +185,7 @@ void FieldEffect_RunWhirlwind(void) {
         distance = Random16() * 5;
         distance += 3 << 16;
         Vector_AddPolarOffset(distance, Random16(), &position);
-        mote = (struct OrbitEffect *)Object_Spawn(MOTE_OBJECT, position.x,
+        mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                   position.y, position.z);
         if (mote != 0) {
           mote->update = BattleEffect_WanderAroundAnchor;
@@ -204,7 +204,7 @@ void FieldEffect_RunWhirlwind(void) {
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
-    Object_Destroy(orb);
+    Actor_Destroy(orb);
     break;
   }
   BattleEffect_PrepareBufferInterpolation();

@@ -66,13 +66,13 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct AlhafraInteriorsObject *Object_GetById(s32 id);
-void Object_SetPositionAndResetMotion(struct AlhafraInteriorsObject *object,
+struct AlhafraInteriorsObject *Actor_GetById(s32 id);
+void Actor_SetPositionAndResetMotion(struct AlhafraInteriorsObject *object,
                                       s32 x, s32 y, s32 z);
-void Object_SetPartAttribute(struct AlhafraInteriorsObject *object, s32 value);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void ObjectMotion_SetActionVariant(s32 actor, s32 variant);
+void Actor_SetPartAttribute(struct AlhafraInteriorsObject *object, s32 value);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_SetSpritePriority(s32 actor, s32 variant);
 
 void Func_02000a94(void);
 void Func_02000a9c(void);
@@ -86,10 +86,10 @@ void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);
 void Func_02000bdc(s32 cue);
 void Func_02000aec(s32 actor, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
+void Actor_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct AlhafraInteriorsObject *object, s32 flags);
-void Object_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
@@ -116,29 +116,29 @@ static inline void AlhafraInteriors_FlagSet(s32 flag) {
 
 static inline void AlhafraInteriors_ObjArm(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(actor, angle, frames);
+  Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void
 AlhafraInteriors_ObjSetPos(struct AlhafraInteriorsObject *object, s32 x, s32 y,
                            s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetPositionAndResetMotion(object, x, y, z);
+  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetMovementTypeById(s32 actor, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_02000b5c(s32 actor, s32 emote, s32 frames);
 void Func_02000b64(s32 actor, s32 emote);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void AlhafraInteriors_CamMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -149,12 +149,12 @@ static inline void AlhafraInteriors_CamMove(s32 x, s32 y, s32 z, s32 mode) {
 static inline void AlhafraInteriors_ObjSpeed(s32 actor, s32 speed,
                                              s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void AlhafraInteriors_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void AlhafraInteriors_Wait(s32 frames) {

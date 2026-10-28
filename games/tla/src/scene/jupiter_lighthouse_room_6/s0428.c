@@ -26,7 +26,7 @@ void Func_02000428(s32 id) {
    * cleared; as plain statements the ARM9TDMI schedule clears it first (differ
    * 2). */
   do {
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     object->motionFlags = 4;
     height = object->height;
     WORD_AT(object, 68) = 0;

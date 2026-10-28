@@ -21,18 +21,18 @@ void Func_02003a8c(void) {
   if (GameFlag_Test(0x849)) {
     Func_02005230(10, 0, 0);
   } else {
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-    Object_SetModeById(10, 6);
-    ObjectMotion_EnableActionAndSetCallback(10, gData_02005550);
+    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetModeById(10, 6);
+    Actor_SetMovementTypeById(10, gData_02005550);
   }
   Func_02005338(0);
 }
 
 void Func_02003ae4(s32 id, s32 base) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
-  Object_SetModeById(id, 5);
+  Actor_SetModeById(id, 5);
   object->action = base + ((Random16Far() * 400) >> 16);
   object->unk66 = id;
-  ObjectMotion_EnableActionAndSetCallback(id, gData_02005548);
+  Actor_SetMovementTypeById(id, gData_02005548);
 }

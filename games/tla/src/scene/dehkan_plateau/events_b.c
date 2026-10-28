@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f44[];
@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
@@ -36,7 +36,7 @@ void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
 void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_020015b8(struct ObjectRuntime *object);
+void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
 
@@ -86,8 +86,8 @@ void Func_020013b0(void) {
 void Func_020013fc(void) {
   Func_020002f8(gData_02003f80);
   Func_020013b0();
-  if (Object_GetById(gAdventure.currentOwner)->y < -0x180000) {
-    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  if (Actor_GetById(gAdventure.currentOwner)->y < -0x180000) {
+    Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
 }

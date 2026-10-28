@@ -6,7 +6,7 @@ extern const u8 gData_02006ed4[];
 extern const u8 gData_02006f04[];
 extern const u8 *const gData_02007024[];
 
-s32 Func_02000058(struct ObjectRuntime *object) {
+s32 Func_02000058(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
 
   object->terrainHeight = height;

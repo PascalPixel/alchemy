@@ -8,9 +8,9 @@ void Func_02001c5c(void) {
   if (gData_0200480c != 0) {
     scene = gAdventure.scene;
     if (scene == (s32)&SceneId_Ov661Room4)
-      object = Object_GetById(16);
+      object = Actor_GetById(16);
     else if (scene == (s32)&SceneId_Ov661Room5)
-      object = Object_GetById(21);
+      object = Actor_GetById(21);
     else
       return;
     gData_0200480c->x = object->x;

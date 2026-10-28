@@ -1,10 +1,10 @@
 #include "types.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
-void Func_02001a0c(struct ObjectRuntime *object) {
+void Func_02001a0c(struct Actor *object) {
   u32 frame = gFrameCount;
 
   if (frame & 1)

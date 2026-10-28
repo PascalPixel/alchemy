@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct AnemosInnerSanctumEventWork {
@@ -8,7 +8,7 @@ struct AnemosInnerSanctumEventWork {
   s32 value1ac;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
@@ -21,19 +21,19 @@ void Func_02003468(s32 a);
 void Func_020034a8(void);
 
 void Func_02001938(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (gAdventure.entrance == 1)
-    object = Object_GetById(8);
+    object = Actor_GetById(8);
   else if (gAdventure.entrance == 3)
-    object = Object_GetById(9);
+    object = Actor_GetById(9);
   else
-    object = Object_GetById(10);
-  if (*(s16 *)((u8 *)Object_GetById(gAdventure.currentOwner) + 18) <= 247) {
+    object = Actor_GetById(10);
+  if (*(s16 *)((u8 *)Actor_GetById(gAdventure.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
     object->update = Func_020017b4;
-    object->unk4c = Object_GetById(gAdventure.currentOwner)->x;
-    object->acceleration = Object_GetById(gAdventure.currentOwner)->z;
+    object->unk4c = Actor_GetById(gAdventure.currentOwner)->x;
+    object->acceleration = Actor_GetById(gAdventure.currentOwner)->z;
     GameFlag_SetBit(0x200);
   }
 }

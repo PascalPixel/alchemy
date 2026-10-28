@@ -34,7 +34,7 @@ struct DispatchObject {
   u32 value00;      ///< the object script's address
   s16 value04;      ///< the script cursor, in words
   u8 unk06[0x1d];   ///< facing, position, scales and radius; not named here
-  u8 priorityFlags; ///< ObjectRuntime.priorityFlags
+  u8 priorityFlags; ///< Actor.priorityFlags
   u8 unk24[0x0c];   ///< the velocity; not named here
   s32 value30;      ///< speed limit, 16.16 fixed-point pixels per frame
   s32 value34;      ///< acceleration, 16.16 fixed point
@@ -63,13 +63,13 @@ s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
 void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *, s32);
-void ObjectDispatch_Initialize(struct DispatchObject *, const s32 *);
-void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *, u32);
+void Actor_StartScript(struct DispatchObject *, const s32 *);
+void Actor_SetSingleChildFlagsFar(struct DispatchObject *, u32);
 void Animation_ApplyChildValuesToRecord(struct DispatchChild *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *, u32);
 void Animation_ApplyChildValues(struct DispatchObject *, u32);
 void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
-void ObjectDispatch_SetSpritePriority(struct DispatchObject *, s32);
+void Actor_SetSpritePriorityDirect(struct DispatchObject *, s32);
 
 extern const s32 gObjectDispatch_CameraScript[];
 extern const s32 gObjectDispatch_EndScript[];

@@ -11,7 +11,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02005a20(s32 layer, s32 shape, s32 height);
 
 void Func_02004ce0(s32 level, s32 layer, s32 owner) {
-  struct ObjectRuntime *object = Object_GetById(owner);
+  struct Actor *object = Actor_GetById(owner);
   u8 *shape = gMapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
                                (struct MapCell *)Ram_MapCellBuffer);
   s32 value = Func_02005848(object->terrainId, object->x, object->z);

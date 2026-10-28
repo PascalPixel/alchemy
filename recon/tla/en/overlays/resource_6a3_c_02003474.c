@@ -7,7 +7,7 @@
 // blocks around them (16 to 18), permute 10 minutes.
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_effect.h"
 
 struct GustObject {
@@ -35,7 +35,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 struct GustObject *Func_0200470c(s32 type, s32 x, s32 y, s32 z);
 void Func_020046f4(struct GustObject *object, s32 mode);
-void ObjectDispatch_SetSingleChildFlags(struct GustObject *object, u32 flags);
+void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 void Func_020032b4(struct GustObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -58,7 +58,7 @@ struct GustObject *Func_02003474(struct GustObject *source) {
   position.z = source->z + Gust_PolarZ(source->angle, 0x80000);
   object = Func_0200470c(280, position.x, source->y, position.z);
   Func_020046f4(object, 2);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->unk64 = 0;

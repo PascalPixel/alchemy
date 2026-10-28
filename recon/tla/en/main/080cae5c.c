@@ -3,28 +3,28 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "map.h"
 #include "dma.h"
 
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 value);
 
-extern struct ObjectRuntime gSnapshotObjects[];
+extern struct Actor gSnapshotObjects[];
 
-struct ObjectRuntime *ObjectTable_Get(u32 objectId);
+struct Actor *ObjectTable_Get(u32 objectId);
 void ObjectTable_Restore(void) {
-  struct ObjectRuntime *copy = gSnapshotObjects;
+  struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;
   u8 *frames = (u8 *)&gSnapshotObjects[32];
   u8 *nextFrames = frames + 32;
   u8 *priorities = frames + 64;
   s32 count;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
   s32 *view;
-  struct ObjectRuntime *camera;
+  struct Actor *camera;
   s32 index;
   s32 priority;
   s32 y;
@@ -37,11 +37,11 @@ void ObjectTable_Restore(void) {
     object = ObjectTable_Get(index);
     if (object != NULL) {
       sprite = object->animation;
-      Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
+      Dma_Set(copy, object, 0x84000000 | (sizeof(struct Actor) / 4),
               (volatile u32 *)0x040000d4);
       object->animation = sprite;
-      Object_SetMode(object, *frames);
-      ObjectDispatch_SetSingleChildFlagsFar(object, *nextFrames);
+      Actor_SetMode(object, *frames);
+      Actor_SetSingleChildFlagsFar(object, *nextFrames);
       priority = *priorities;
       sprite->priority = priority;
       sprite->partPriority = priority;
@@ -54,7 +54,7 @@ void ObjectTable_Restore(void) {
         camera->y = y;
         camera->z = object->z;
         view[1] = y;
-        Object_ResetMotion(object);
+        Actor_ResetMotion(object);
       }
     }
     copy++;

@@ -4,15 +4,15 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Func_02002a40(s32 sound);
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 void Func_020029b0(s32 *position);
@@ -20,21 +20,21 @@ s32 Func_02001044(s32 *from, s32 *to);
 s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Func_02002820(struct ObjectRuntime *object, const s32 *script);
+void Func_02002820(struct Actor *object, const s32 *script);
 
-void Func_02001070(struct ObjectRuntime *self) {
+void Func_02001070(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_SetAnimationSpeed(self, 0);
+    Actor_SetAnimationSpeed(self, 0);
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(self, 16);
+  Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->action & 31) == 31)
     Func_02002a40(231);
   ((struct FieldSprite *)self->animation)->priority =

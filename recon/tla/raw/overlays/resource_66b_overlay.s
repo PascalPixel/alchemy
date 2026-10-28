@@ -17,7 +17,7 @@ Func_020003f8:
 	adds r6, r1, #0
 	adds r0, r6, #0
 	sub sp, #68
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	ldr r3, [r7, #8]
 	asrs r3, r3, #20
@@ -38,7 +38,7 @@ Func_020003f8:
 	movs r2, #1
 	bl Func_020011d4
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	asrs r3, r3, #20
 	cmp r3, #76
@@ -84,7 +84,7 @@ Func_020003f8:
 	adds r0, r6, #0
 	lsls r1, r1, #10
 	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #128
 	movs r2, #128
 	lsls r1, r1, #3
@@ -92,7 +92,7 @@ Func_020003f8:
 	adds r0, r6, #0
 	adds r1, #169
 	adds r2, #18
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	movs r2, #204
 	lsls r2, r2, #8
 	adds r2, #204
@@ -106,7 +106,7 @@ Func_020003f8:
 	strb r5, [r3]
 	adds r0, r6, #0
 	mov r10, r2
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r1, #0
 	adds r0, r7, #0
 	bl Func_020003dc
@@ -163,10 +163,10 @@ Func_020003f8:
 	bl Func_0200131c
 	adds r0, r6, #0
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	bl Func_020011fc
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #2
@@ -236,7 +236,7 @@ Func_02000be4:
 	bne .L_02008c32
 	b .L_02008d78
 .L_02008c32:
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	ldr r3, [r7, #8]
 	cmp r3, #0
@@ -497,7 +497,7 @@ Func_02000dac:
 	bne .L_02008e1c
 	b .L_02008f90
 .L_02008e1c:
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_02008fbc
 	movs r1, #12
 	mov r10, r0
@@ -732,13 +732,13 @@ Func_02001068:
 	mov r0, r8
 	ldr r7, [sp, #28]
 	adds r5, r3, #4
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	mov r0, r8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test

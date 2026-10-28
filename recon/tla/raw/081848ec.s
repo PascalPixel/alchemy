@@ -4673,7 +4673,7 @@ Func_08185b9c:
 	bne .L_08186d52
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #164]
 	lsls r4, r4, #7

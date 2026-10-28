@@ -9,7 +9,7 @@
        ->v)
 s32 Func_02001d5c();
 s32 Func_02001dc0();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 __divsi3();
 extern u8 gData_020023c4[];
 extern u8 gAdventure[];
@@ -23,7 +23,7 @@ void Func_02001ffc(s32 p0) {
   s32 t29, t30, t31, t32, t33, t34, t35, t36;
 
   t0 = FIELD_AT((s32)gAdventure, s32, 532);
-  t1 = Object_GetById(t0);
+  t1 = Actor_GetById(t0);
   t2 = FIELD_AT(0x3000000, s32, 108);
   t3 = FIELD_AT(p0, s32, 68);
   t4 = FIELD_AT(p0, s32, 16);
@@ -105,7 +105,7 @@ L_0200a0e8:
     goto L_0200a148;
   v_r5 = (v_r8 + 84);
 L_0200a0f8:
-  t28 = Object_GetById(v_r0);
+  t28 = Actor_GetById(v_r0);
   t29 = FIELD_AT(t28, s32, 12);
   t30 = FIELD_AT(t28, s32, 20);
   v_r4 = t28;

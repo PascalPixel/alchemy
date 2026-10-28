@@ -1,16 +1,16 @@
 #include "shaman_village.h"
 
 void Func_02003b24(void) {
-  ObjectMotion_SetActionVariant(6, 1);
+  Actor_SetSpritePriority(6, 1);
   Import_SoundPlay(131);
   Func_02004a54();
-  Func_02004a6c(Object_GetById(6), 2);
+  Func_02004a6c(Actor_GetById(6), 2);
   FieldEvent_WaitFrames(40);
-  Func_02004a6c(Object_GetById(6), 0);
+  Func_02004a6c(Actor_GetById(6), 0);
   Func_02004a64();
   Func_02004a5c();
   Func_0200057c();
-  ObjectMotion_SetActionVariant(6, 2);
+  Actor_SetSpritePriority(6, 2);
 }
 
 void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
@@ -26,16 +26,16 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     ShamanVillage_SePlay(158);
   ShamanVillage_MapCopy(a, b, c, d, mode, f);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_02004834(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_0200483c(object);
     object->facing = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02004c08);
   ShamanVillage_WaitFrames(12);
   ShamanVillage_SePlay(123);

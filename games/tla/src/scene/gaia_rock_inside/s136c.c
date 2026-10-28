@@ -5,7 +5,7 @@
 // overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 struct Orbiter {
@@ -20,14 +20,14 @@ struct Orbiter {
   u8 unk63;
   s16 angle;
   u16 speed;
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
 };
 
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 void Func_02001314(struct Orbiter *orbiter);
 
 s32 Func_0200136c(struct Orbiter *orbiter) {
-  struct ObjectRuntime *anchor = orbiter->anchor;
+  struct Actor *anchor = orbiter->anchor;
   s16 *angle;
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;

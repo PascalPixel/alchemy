@@ -7,14 +7,14 @@ void Func_0200245c(s32 actor);
 /// Restores six of the scene's map edits and actors 16 to 22 from flags 0x938 to
 /// 0x93e, then runs the pending step of one of flags 0x228 to 0x22e.
 void Func_02002498(void) {
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_02003010);
-  Object_GetById(8)->priorityFlags |= 32;
-  ObjectMotion_SetActionVariant(8, 1);
+  Actor_GetById(8)->priorityFlags |= 32;
+  Actor_SetSpritePriority(8, 1);
   if (LemurianShip_FlagCheck(0x938)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 32);
-    LemurianShip_ObjSetPos(Object_GetById(16), 0x3080000, 0, 0x2080000);
-    Object_GetById(16)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(16), 0x3080000, 0, 0x2080000);
+    Actor_GetById(16)->height = 0;
     if (!LemurianShip_FlagCheck(0x228))
       LemurianShip_ObjPlace(9, 0, 0);
   } else {
@@ -22,8 +22,8 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x939)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 53, 32);
-    LemurianShip_ObjSetPos(Object_GetById(17), 0x3580000, 0, 0x2080000);
-    Object_GetById(17)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(17), 0x3580000, 0, 0x2080000);
+    Actor_GetById(17)->height = 0;
     if (!LemurianShip_FlagCheck(0x229))
       LemurianShip_ObjPlace(10, 0, 0);
   } else {
@@ -31,8 +31,8 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93a)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 43, 37);
-    LemurianShip_ObjSetPos(Object_GetById(18), 0x2b80000, 0, 0x2580000);
-    Object_GetById(18)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(18), 0x2b80000, 0, 0x2580000);
+    Actor_GetById(18)->height = 0;
     if (!LemurianShip_FlagCheck(0x22a))
       LemurianShip_ObjPlace(11, 0, 0);
   } else {
@@ -40,8 +40,8 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93b)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 37);
-    LemurianShip_ObjSetPos(Object_GetById(19), 0x3080000, 0, 0x2580000);
-    Object_GetById(19)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(19), 0x3080000, 0, 0x2580000);
+    Actor_GetById(19)->height = 0;
     if (!LemurianShip_FlagCheck(0x22b))
       LemurianShip_ObjPlace(12, 0, 0);
   } else {
@@ -49,8 +49,8 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93c)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 50, 37);
-    LemurianShip_ObjSetPos(Object_GetById(20), 0x3280000, 0, 0x2580000);
-    Object_GetById(20)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(20), 0x3280000, 0, 0x2580000);
+    Actor_GetById(20)->height = 0;
     if (!LemurianShip_FlagCheck(0x22c))
       LemurianShip_ObjPlace(13, 0, 0);
   } else {
@@ -58,8 +58,8 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93e)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 43);
-    LemurianShip_ObjSetPos(Object_GetById(22), 0x3080000, 0, 0x2b80000);
-    Object_GetById(22)->height = 0;
+    LemurianShip_ObjSetPos(Actor_GetById(22), 0x3080000, 0, 0x2b80000);
+    Actor_GetById(22)->height = 0;
     if (!LemurianShip_FlagCheck(0x22e))
       LemurianShip_ObjPlace(15, 0, 0);
   } else {

@@ -2,7 +2,7 @@
 #include "system.h"
 #include "objdisp.h"
 #include "object_dispatch.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 
@@ -16,19 +16,19 @@ extern const s32 gData_080f0e78[];
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ObjectRuntime *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                    s32 angle);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 
 void Func_080df6f4(void) {
   struct BattleFxScene *work;
-  struct ObjectRuntime *obj;
-  struct ObjectRuntime *pair[2];
+  struct Actor *obj;
+  struct Actor *pair[2];
   struct ScatterPosition pos;
-  struct ObjectRuntime **walk;
+  struct Actor **walk;
   s32 n;
   s32 dist;
 
@@ -49,15 +49,15 @@ void Func_080df6f4(void) {
       Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
   }
 
-  Object_CommitPosition(pair[0]);
+  Actor_CommitPosition(pair[0]);
   Sound_PlayFar(134);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;
     pos.z = work->z;
-    obj = Object_Spawn(673, pos.x, pos.y, pos.z);
+    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+      Actor_StartScriptFar((struct DispatchObject *)obj,
                                    gData_080f0e78);
       obj->speedLimit = Random16() + 0x20000;
       obj->acceleration = 0x20000;
@@ -67,7 +67,7 @@ void Func_080df6f4(void) {
     }
   }
 
-  Object_Destroy(pair[0]);
-  Object_Destroy(pair[1]);
+  Actor_Destroy(pair[0]);
+  Actor_Destroy(pair[1]);
   BattleEffect_PrepareBufferInterpolation();
 }

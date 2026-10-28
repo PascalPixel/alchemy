@@ -9,13 +9,13 @@ void Func_02003178(void);
 /// with that flag set sets 0x946.
 void Func_02000d2c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   /* FAKEMATCH(one-pass): the block loads the event work before the 0xcbc offset
    * is built; as plain statements, 2 of 76 instructions differ in tla-en. */
   do {
   } while (0);
-  object = *(struct ObjectRuntime **)(event + 0xcbc);
+  object = *(struct Actor **)(event + 0xcbc);
 
   Func_02003048();
   Func_02003148(0);
@@ -32,7 +32,7 @@ void Func_02000d2c(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X; as
      * object->x, 10 of 76 instructions differ in tla-en. */
-    struct ObjectRuntime *o = object;
+    struct Actor *o = object;
 
     if (o->x >> 19 == 27)
       GameFlag_SetBit(0x947);

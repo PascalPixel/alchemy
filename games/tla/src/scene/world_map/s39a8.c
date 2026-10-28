@@ -1,11 +1,11 @@
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Math_Sine(s32 angle);
 
-s32 Func_020039a8(struct ObjectRuntime *object) {
-  struct ObjectRuntime *parent = object->watchedObject;
+s32 Func_020039a8(struct Actor *object) {
+  struct Actor *parent = object->watchedObject;
   s32 step = ++object->action;
   s32 scale;
 

@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "fixed_math.h"
 #include "fx_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "edition.h"
 
 struct BurstParticleVector {
@@ -16,12 +16,12 @@ void Func_080ddbd8(void);
 void Sound_PlayFar(s32 no);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct BurstParticleVector *position);
-void *Object_Spawn(s32 id, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(void *object, u32 script);
+void *Actor_Spawn(s32 id, s32 x, s32 y, s32 z);
+void Actor_StartScriptFar(void *object, u32 script);
 void BattleEffect_PrepareBufferInterpolation(void);
 // Far call to the target classifier Func_080237c8.
-s32 Func_08020330(struct ObjectRuntime *object);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+s32 Func_08020330(struct Actor *object);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Func_080daecc(s32 objectId, s32 mode);
 
@@ -36,7 +36,7 @@ void Func_080daecc(s32 objectId, s32 mode);
 /// round the scene's position; one of kind 394 only plays the cue (sound 126).
 void Func_080dda30(s32 unused) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *target = scene->child;
+  struct Actor *target = scene->child;
   s32 kind = 0;
 
   if (target == 0)
@@ -49,8 +49,8 @@ void Func_080dda30(s32 unused) {
     kind = 2;
 
   if (kind == 0) {
-    Object_SetMode(target, 2);
-    ObjectDispatch_SetSingleChildFlagsFar(target, 0);
+    Actor_SetMode(target, 2);
+    Actor_SetSingleChildFlagsFar(target, 0);
     target->collisionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm after the collision store, which the
      * priority address is copied after; as plain statements, 2 of 113
@@ -66,7 +66,7 @@ void Func_080dda30(s32 unused) {
     s32 n = 4;
 
     do {
-      struct ObjectRuntime *piece;
+      struct Actor *piece;
       s32 distance;
 
       p->values[0] = scene->x;
@@ -74,10 +74,10 @@ void Func_080dda30(s32 unused) {
       distance = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(distance, Random16(), p);
       p->values[1] = scene->y;
-      piece = Object_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
+      piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
                            p->values[2]);
       if (piece != 0) {
-        ObjectDispatch_InitializeFar(piece, (u32)gData_080f0ee8);
+        Actor_StartScriptFar(piece, (u32)gData_080f0ee8);
         piece->motionFlags = 2;
       }
       WaitFrames((((u32)Random16() * 2) >> 16) + 2);
@@ -110,9 +110,9 @@ void FieldEffect_RunGrowth(void) {
     randomValue = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(randomValue, Random16(), p);
     p->values[1] = *(s32 *)(state + 8);
-    object = Object_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
+    object = Actor_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
-      ObjectDispatch_InitializeFar(object, (u32)gData_080f0ee8);
+      Actor_StartScriptFar(object, (u32)gData_080f0ee8);
       *((u8 *)object + 0x55) = 2;
     }
     WaitFrames((((u32)Random16() * 2) >> 16) + 2);

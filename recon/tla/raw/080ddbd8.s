@@ -85,7 +85,7 @@ Func_080ddbd8:
 	ldr r3, [r0, #8]
 	movs r0, #168
 	lsls r0, r0, #2
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r7, r0, #0
 	ldr r6, [r7, #80]
 	movs r0, #33
@@ -156,13 +156,13 @@ Func_080ddbd8:
 	bl Animation_ApplyChildValuesFar
 	adds r0, r7, #0
 	movs r1, #7
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r7, #0
 	ldr r1, .L_080ddd9c
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r2, r9
 	ldr r3, [r2, #4]
 	mov r0, r10
@@ -201,7 +201,7 @@ Func_080ddbd8:
 	ldr r3, [r0, #8]
 	ldr r2, [r2, #4]
 	adds r0, r7, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 .L_080ddd70:
 	movs r0, #131
 	bl Sound_PlayFar

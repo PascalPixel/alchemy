@@ -5,7 +5,7 @@
 // counter (0x16a). The same listing as overlay 692's Func_020024ac. Left: order
 // and registers; the native tests the velocities before reading the last cell.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
@@ -19,13 +19,13 @@ extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
 s32 Func_02005f84(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005db4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 s32 Func_02000690(s32 kind, s32 x, s32 z);
 
 void Func_020026c0(void) {
-  struct ObjectRuntime *actor = Object_GetById(Func_02005f84());
+  struct Actor *actor = Actor_GetById(Func_02005f84());
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
   s32 cell = (x << 16) + z;

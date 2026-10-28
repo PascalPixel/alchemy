@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MagmaRockWork {
   s32 unk00;
@@ -8,10 +8,10 @@ struct MagmaRockWork {
   s32 y;
   s32 z;
   s32 unk10;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 s32 Func_02001084(u16 *table) {
@@ -29,7 +29,7 @@ check:
   id = *table++;
   if (code != *table++)
     goto next;
-  work->target = Object_GetById(id);
+  work->target = Actor_GetById(id);
   result = *table;
 done:
   return result;

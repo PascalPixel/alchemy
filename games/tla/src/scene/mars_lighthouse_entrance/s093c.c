@@ -21,7 +21,7 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02004d58(s32 a0, s32 a1);
 void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
@@ -48,7 +48,7 @@ void Func_0200093c(void) {
 /// Sends object id from column 11 to x 152, then from column 10 to x 200,
 /// both at z 792, through Func_02004bf8.
 void Func_0200096c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 11) {
     s32 y;
@@ -68,7 +68,7 @@ void Func_0200096c(s32 unused, s32 id) {
     object->acceleration = 0x2000;
     y = object->y;
     {
-      register struct ObjectRuntime *self asm("r0") = object;
+      register struct Actor *self asm("r0") = object;
       register s32 x asm("r1") = 0xc80000;
       register s32 z asm("r3") = 0x3180000;
 

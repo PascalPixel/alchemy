@@ -79,14 +79,14 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);          // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);                // ObjectGroup_CountDownMemberTimers
+                   s32 frames);          // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);                // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
+void Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Sound_PlayFar(s32 cue);
@@ -144,7 +144,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   scrollSpeed = 0;
   cueTimer = 0;
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  ObjectDispatch_SetAnimationSpeedFar(user, 48);
+  Actor_SetAnimationSpeedFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
@@ -173,7 +173,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 52)
-      Object_SetMode(user, 2);
+      Actor_SetMode(user, 2);
 
     // From frame 64 the background follows the boulders, ever faster.
     if (frame > 64) {
@@ -248,12 +248,12 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(2, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  ObjectDispatch_SetAnimationSpeedFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();

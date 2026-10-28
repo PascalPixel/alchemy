@@ -33,7 +33,7 @@ void Func_02002de0(void) {
 }
 
 void Func_02002e60(void) {
-  struct KibomboObject *leader = Object_GetById(gAdventure.currentOwner);
+  struct KibomboObject *leader = Actor_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's
    * height before it builds the limit (2 differ without it). */
@@ -41,18 +41,18 @@ void Func_02002e60(void) {
   } while (0);
   if (leader->y > 0x100000) {
     Func_02005b0c(29, 0, 0);
-    ObjectMotion_SetActionVariant(30, 2);
+    Actor_SetSpritePriority(30, 2);
   } else {
-    Kibombo_ObjSetPos(Object_GetById(29), 0x780000, 0, 0xa80000);
-    ObjectMotion_SetActionVariant(30, 3);
+    Kibombo_ObjSetPos(Actor_GetById(29), 0x780000, 0, 0xa80000);
+    Actor_SetSpritePriority(30, 3);
   }
 }
 
 void Func_02002eb0(void) {
   if (gData_02007950 != 0) {
-    struct KibomboObject *object = Object_GetById(27);
+    struct KibomboObject *object = Actor_GetById(27);
 
-    Object_SetPositionAndResetMotion(gData_02007950, object->x,
+    Actor_SetPositionAndResetMotion(gData_02007950, object->x,
                                      object->y + 0xc0000, object->z);
   }
 }

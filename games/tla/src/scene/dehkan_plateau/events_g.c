@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f44[];
@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
@@ -36,7 +36,7 @@ void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
 void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_020015b8(struct ObjectRuntime *object);
+void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
 void Func_020021b4(void);
@@ -79,26 +79,26 @@ static __inline__ void Wait(s32 frames) {
 }
 
 void Func_02003c70(u32 id, s32 x, s32 z, s16 angle);
-struct ObjectRuntime *Func_02003cc8(s32 id, s32 a, s32 b);
+struct Actor *Func_02003cc8(s32 id, s32 a, s32 b);
 void Func_02003cf0(void);
-struct ObjectRuntime *Func_02003cf8(void);
+struct Actor *Func_02003cf8(void);
 void Func_02003d50(s32 a, s32 b);
 void Func_02003d58(s32 a, s32 b);
 void Func_02003d60(void);
 void Func_02003d68(void);
 void Func_02003d70(void);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
-void Object_LinkObjectAndSetCallback(s32 id, s32 target);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_ArmCallback(s32 id, s32 a, s32 b);
+void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_WaitFrames(s32 frames);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
@@ -108,7 +108,7 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 
 static __inline__ void Actor_FaceToward(s32 id, s32 target, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetAngleToward(id, target, mode);
+  Actor_SetAngleToward(id, target, mode);
 }
 
 static __inline__ void Actor_SetTurn(s32 id, s32 a, s32 b) {
@@ -118,17 +118,17 @@ static __inline__ void Actor_SetTurn(s32 id, s32 a, s32 b) {
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Actor_Launch(s32 id, s32 a, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_Launch(id, a, b);
+  Actor_Jump(id, a, b);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -158,12 +158,12 @@ static __inline__ void Pause(s32 frames) {
 
 static __inline__ void Actor_SetVariant(s32 id, s32 variant) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetActionVariant(id, variant);
+  Actor_SetSpritePriority(id, variant);
 }
 
-static __inline__ struct ObjectRuntime *Actor_Get(s32 id) {
+static __inline__ struct Actor *Actor_Get(s32 id) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Object_GetById(id);
+  return Actor_GetById(id);
 }
 
 void Func_020021e8(void) {
@@ -223,9 +223,9 @@ void Func_02002390(void) {
   Pause(10);
   Cue(153);
   Actor_Get(25)->velocityY = 0x80000;
-  ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 0);
+  Actor_SetSingleChildFlags(Actor_Get(25), 0);
   Actor_MoveTo(25, 200, 104);
-  ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 1);
+  Actor_SetSingleChildFlags(Actor_Get(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, 0x4000);
   Flag_Set(0x86e);
@@ -235,7 +235,7 @@ void Func_02002390(void) {
 void Func_02002458(void) {
   Func_02003c28();
   Func_02003d78(0);
-  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 25);
+  Actor_WatchAndSetScript(gAdventure.currentOwner, 25);
   Func_02003cf8()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
@@ -244,7 +244,7 @@ void Func_02002458(void) {
   Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
-  ObjectMotion_ArmCallback(25, 0, 20);
+  Actor_ArmCallback(25, 0, 20);
   Func_02002604();
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);

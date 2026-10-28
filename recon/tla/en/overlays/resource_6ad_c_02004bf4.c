@@ -7,7 +7,7 @@
 // leader's step direction is left in step. Shared with overlay 6a1 and others.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 
@@ -15,16 +15,16 @@ extern const u16 gData_02005f58[];
 extern const s8 gData_02005f64[][4];
 extern const s32 gData_02005f7c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 /// The whole-pixel half of a 16.16 coordinate, read as a halfword.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-struct ObjectRuntime *Func_02004bf4(s32 *step, s32 *id, s32 *footprint) {
-  struct ObjectRuntime **objects =
-      (struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 52);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object;
+struct Actor *Func_02004bf4(s32 *step, s32 *id, s32 *footprint) {
+  struct Actor **objects =
+      (struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 52);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object;
   u32 index;
   u32 k;
   s32 ahead;

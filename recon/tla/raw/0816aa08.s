@@ -463,7 +463,7 @@ BattleEffect_RunPlumeEdge:
 	mov lr, r4
 	.2byte 0xf800
 .L_0816adbc:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

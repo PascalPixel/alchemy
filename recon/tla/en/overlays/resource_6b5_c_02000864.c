@@ -53,17 +53,17 @@ void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Task_RemoveFar(void *callback);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y,
                                           s32 flags);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 
 extern char SceneId_LinkLobby;
 
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters build each speed
    * again at each call; direct calls share registers */
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 // Touching the lobby counter: waits for the opponent, walks the lead to the
@@ -134,28 +134,28 @@ s32 Func_02000864(void) {
     WaitFrames(8);
     Func_02001994(5);
     if (Flag_IsSet(0x173)) {
-      ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+      Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgGoodLuck2);
       FieldMessage_ShowAtActor(8, 0);
       WaitFrames(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(4, 216, 184);
-      ObjectMotion_CommitCurrentPositionAndActivate(4);
-      ObjectMotion_ResetAndSetPositionInMode2(4, 216, 168);
-      ObjectMotion_CommitCurrentPositionAndActivate(4);
+      Actor_ResetAndSetPositionInMode2(4, 216, 184);
+      Actor_WaitForMoveById(4);
+      Actor_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_WaitForMoveById(4);
     } else {
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(4, 216, 200);
-      ObjectMotion_CommitCurrentPositionAndActivate(4);
+      Actor_ResetAndSetPositionInMode2(4, 216, 200);
+      Actor_WaitForMoveById(4);
       Actor_SetSpeed(4, 0x1999, 0xccc);
-      ObjectMotion_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_ResetAndSetPositionInMode2(4, 216, 168);
       if (Func_020007b8() < 0) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
-        ObjectMotion_ResetAndSetPositionInMode2(4, 216, 200);
+        Actor_ResetAndSetPositionInMode2(4, 216, 200);
         Func_0200198c(5);
         WaitFrames(8);
         Func_02001994(5);
-        ObjectMotion_CommitCurrentPositionAndActivate(4);
+        Actor_WaitForMoveById(4);
         HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
@@ -171,7 +171,7 @@ s32 Func_02000864(void) {
         return;
       }
       Actor_SetSpeed(4, 0x8000, 0x4000);
-      ObjectMotion_CommitCurrentPositionAndActivate(4);
+      Actor_WaitForMoveById(4);
     }
     set = Flag_IsSet(0x173);
     scene = (s32)&SceneId_LinkLobby;

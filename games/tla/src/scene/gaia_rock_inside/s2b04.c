@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 
 void Func_02002b04(u32 id, s8 mode) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
@@ -21,5 +21,5 @@ void Func_02002b04(u32 id, s8 mode) {
     asm("" : "+l"(z));
     object->unk66 = z;
   }
-  Object_SetModeById(id, mode);
+  Actor_SetModeById(id, mode);
 }

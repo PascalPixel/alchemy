@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 
@@ -16,10 +16,10 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
@@ -35,9 +35,9 @@ void Func_020006d0(s32 a);
 void Func_020006d8(s32 a, s32 b, s32 c);
 s32 Func_020006e8(void);
 
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02000438(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone;
@@ -62,26 +62,26 @@ static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   FieldEvent_WaitFrames(frames);
 }
 
-static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {
+static __inline__ struct Actor *Actor_GetById_(s32 id) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Object_GetById(id);
+  return Actor_GetById(id);
 }
 
-static __inline__ void Object_SetModeById_(u32 id, s32 mode) {
+static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetModeById(id, mode);
+  Actor_SetModeById(id, mode);
 }
 
-static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
+static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void
-ObjectDispatch_SetSingleChildFlags_(struct ObjectRuntime *object, s32 flags) {
+Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectDispatch_SetSingleChildFlags(object, flags);
+  Actor_SetSingleChildFlags(object, flags);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 id, s32 flags) {
@@ -106,20 +106,20 @@ static __inline__ void Func_02000630_(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02000630(a, b, c, d, e, f);
 }
 
-static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 id, s32 x,
+static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x,
                                                                s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitPositionAndActivate(id, x, z);
+  Actor_CommitPositionAndActivate(id, x, z);
 }
 
-static __inline__ void ObjectMotion_ArmCallback_(s32 id, s32 angle, s32 flags) {
+static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, flags);
+  Actor_ArmCallback(id, angle, flags);
 }
 
-static __inline__ void ObjectMotion_SetPositionAndReset_(s32 id, s32 x, s32 z) {
+static __inline__ void Actor_SetPositionAndReset_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 #endif

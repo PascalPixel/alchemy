@@ -18,7 +18,7 @@ void Func_02001d50(void) {
   register s32 owner __asm__("r5");
   s32 angle;
 
-  object = Object_GetById(8);
+  object = Actor_GetById(8);
   Func_0200406c();
   Func_02004204(0);
   Contigo_Se(78);
@@ -150,12 +150,12 @@ void Func_02001d50(void) {
   answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   owner = gAdventure.currentOwner;
   if (answer == 0) {
-    ObjectMotion_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(owner);
     Contigo_ObjMode(2, 3);
     Contigo_MessagePut(2, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
-    ObjectMotion_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(owner);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Contigo_ObjMode(2, 4);
     Contigo_MessagePut(2, 0);
@@ -213,12 +213,12 @@ void Func_02001d50(void) {
   answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   owner = gAdventure.currentOwner;
   if (answer == 0) {
-    ObjectMotion_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(owner);
     Contigo_ObjEmote(1, 258);
     Contigo_MessagePut(0x4001, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
-    ObjectMotion_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(owner);
     Contigo_Jump(1, 264, 20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Contigo_MessagePut(0x4001, 0);
@@ -235,7 +235,7 @@ void Func_02001d50(void) {
   Contigo_Jump(0, 261, 0);
   Contigo_Jump(1, 261, 20);
   Contigo_Se(0);
-  Object_SetPartAttribute(Object_GetById(8), 15);
+  Actor_SetPartAttribute(Actor_GetById(8), 15);
   angle = 0xb000;
   Func_020040dc(8, 0xa00000, 0x1d20000, angle);
   WaitFrames(1);
@@ -248,7 +248,7 @@ void Func_02001d50(void) {
   Contigo_ObjFollow(1, 8);
   Contigo_ObjFollow(3, 8);
   Contigo_ObjFollow(2, 8);
-  Object_SetPartAttribute(Object_GetById(8), 0);
+  Actor_SetPartAttribute(Actor_GetById(8), 0);
   Contigo_CamSpeed(0x26666, 0x4ccc);
   Contigo_CamMove(0xb40000, -1, 0x19a0000, 1);
   Func_0200419c();

@@ -7,7 +7,7 @@
 // the id in r4 and spills it across each call).
 #include "types.h"
 #include "io_reg.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// One object the beam reaches, as Func_020022e4 records it.
 struct MarsLighthouseBeamTarget {
@@ -15,7 +15,7 @@ struct MarsLighthouseBeamTarget {
   u16 index;
   u16 flags;
   u16 unk06;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 height; ///< 16.16 pixels
 };
 
@@ -32,8 +32,8 @@ struct MarsLighthouseBeam {
 extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_020020ec(void);
@@ -53,19 +53,19 @@ void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       {
         s32 flags = *targets;
         s32 height = flags & 15;
-        struct ObjectRuntime *object;
+        struct Actor *object;
 
         flags &= 0xf0;
-        object = Object_GetById(id);
+        object = Actor_GetById(id);
         targets++;
         if (object != NULL) {
-          ObjectDispatch_SetSingleChildFlags(object, 0);
+          Actor_SetSingleChildFlags(object, 0);
           ((u8 *)object)[98] = 1;
           if ((flags & 0x80) == 0)
             object->collisionFlags = 0;
           target->active = 1;
           target->flags = flags;
-          target->object = Object_GetById(id);
+          target->object = Actor_GetById(id);
           target->height = height << 16;
           target->index = i;
           target++;

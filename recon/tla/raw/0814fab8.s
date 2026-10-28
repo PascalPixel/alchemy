@@ -1253,7 +1253,7 @@ Func_0814fab8:
 	beq .L_08150460
 	b .L_0814ff78
 .L_08150460:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r5, [sp, #72]
 	lsls r1, r1, #7

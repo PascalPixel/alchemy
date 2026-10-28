@@ -13,7 +13,7 @@
 // registers, which shifts most rows.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "bg_scroll.h"
@@ -52,7 +52,7 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
@@ -80,7 +80,7 @@ void Func_080e82cc(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *caster = scene->mainObject;
+  struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct RingMote *mote;

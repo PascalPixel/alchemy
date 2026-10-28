@@ -15,7 +15,7 @@
 // back to the owner object, marks the event work's flags 0xca5 and 0xcad
 // unless the effect kind was 8 or 28, and releases the work.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct CleanupSlot {
@@ -26,7 +26,7 @@ struct CleanupSlot {
 
 struct CleanupWork {
   u8 unk000[16];
-  struct ObjectRuntime *owner;
+  struct Actor *owner;
   u8 unk014[10];
   s16 kind;
   u8 unk020[36];
@@ -80,7 +80,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupEventWork *event = Ram_HeapSlots->eventWork;
   s8 *block = Ram_HeapSlots->block32;
   struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *owner = work->owner;
+  struct Actor *owner = work->owner;
   struct CleanupSlot *slot = work->slots;
   s32 i;
   s16 first;

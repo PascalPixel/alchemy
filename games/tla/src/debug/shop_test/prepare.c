@@ -4,7 +4,7 @@
 #include "adventure.h"
 #include "event_work.h"
 
-void Object_SetModeById(s32 id, s32 mode);
+void Actor_SetModeById(s32 id, s32 mode);
 void Func_02000db0(void);
 
 /// The scene's first entry: sets screen effect 256 and event mode 2, puts
@@ -21,14 +21,14 @@ s32 Func_02000688(void) {
   asm volatile("" : "+r"(party));
   *effect = 256;
   party->eventMode = 2;
-  Object_SetModeById(16, 5);
-  Object_SetModeById(17, 5);
-  Object_SetModeById(18, 5);
-  Object_SetModeById(19, 5);
-  Object_SetModeById(30, 6);
-  Object_SetModeById(31, 6);
-  Object_SetModeById(32, 6);
-  Object_SetModeById(33, 6);
+  Actor_SetModeById(16, 5);
+  Actor_SetModeById(17, 5);
+  Actor_SetModeById(18, 5);
+  Actor_SetModeById(19, 5);
+  Actor_SetModeById(30, 6);
+  Actor_SetModeById(31, 6);
+  Actor_SetModeById(32, 6);
+  Actor_SetModeById(33, 6);
   if (party->entrance == 99)
     Func_02000db0();
   return 0;

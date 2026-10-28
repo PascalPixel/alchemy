@@ -1269,7 +1269,7 @@ BattleEffect_RunZagan:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 .L_0814c882:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #1
 	mov r3, r9
 	ands r3, r2

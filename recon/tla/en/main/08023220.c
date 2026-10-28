@@ -13,7 +13,7 @@
 // builds before the load; *entry = sprite; entry++; is the same as
 // *entry++.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "metadata_lookup.h"
 #include "object_dispatch.h"
 #include "animspr.h"
@@ -22,10 +22,10 @@
 #include "dma.h"
 
 void *ResourceObject_Create(s32 id);
-void *ObjectDispatch_FindFreeObject(void);
+void *Actor_FindFreeObject(void);
 
-struct ObjectRuntime *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *object;
+struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
+  struct Actor *object;
   void *sprite;
   s32 kind;
   void **entry;
@@ -33,7 +33,7 @@ struct ObjectRuntime *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
 
   kind = id / 4096;
   id &= 0xfff;
-  object = ObjectDispatch_FindFreeObject();
+  object = Actor_FindFreeObject();
   if (object != NULL) {
     object->radius = 16;
     switch (kind) {
@@ -74,7 +74,7 @@ struct ObjectRuntime *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
     }
   }
   if (object != NULL) {
-    Object_SetPositionAndResetMotion(object, x, y, z);
+    Actor_SetPositionAndResetMotion(object, x, y, z);
     object->script = (s32 *)gObjectDispatch_EndScript;
     object->speedLimit = 0x20000;
     object->step = 0;

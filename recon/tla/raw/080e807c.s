@@ -22,7 +22,7 @@ Func_080e807c:
 	mov r10, r0
 	ldr r0, [r3]
 	sub sp, #16
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	add r7, sp, #4
 	str r3, [r7]

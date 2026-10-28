@@ -11,8 +11,8 @@ s32 Camera_FollowActor();
 s32 Camera_MoveWithinMapBounds();
 s32 Func_02005884();
 s32 Func_020059f4();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_GetById();
+s32 Actor_SetSpritePriority();
+s32 Actor_GetById();
 s32 WaitFrames();
 extern u8 Data_02006a1c[];
 extern u8 gData_020059fc[];
@@ -71,10 +71,10 @@ L_0200baca:
   v_r5 = v_r9;
 L_0200bad6:
   t3 = *(s32 *)v_r5;
-  t4 = Object_GetById(t3);
+  t4 = Actor_GetById(t3);
   FIELD_AT(t4, u8, 85) = 0;
   t5 = *(s32 *)v_r5;
-  ObjectMotion_SetActionVariant(t5, 1);
+  Actor_SetSpritePriority(t5, 1);
   t7 = *(s32 *)sp_;
   *(s32 *)sp_ = (t7 + 1);
   v_r7 = (v_r7 + 1);
@@ -89,11 +89,11 @@ L_0200bafc:
 L_0200bafe:
   v_r5 = (v_r7 << 2);
   t9 = *(s32 *)((s32)gData_020069dc + v_r5);
-  t10 = Object_GetById(t9);
+  t10 = Actor_GetById(t9);
   t11 = FIELD_AT(t10, u8, 35);
   FIELD_AT(t10, u8, 35) = (32 | t11);
   t12 = *(s32 *)((s32)gData_020069dc + v_r5);
-  ObjectMotion_SetActionVariant(t12, 0);
+  Actor_SetSpritePriority(t12, 0);
   v_r7 = (v_r7 + 1);
   if ((u32)v_r7 <= (u32)5)
     goto L_0200bafe;
@@ -110,14 +110,14 @@ L_0200bb28:
   v_r6 = v_r9;
 L_0200bb3e:
   t18 = *(s32 *)v_r6;
-  t19 = Object_GetById(t18);
+  t19 = Actor_GetById(t18);
   t20 = FIELD_AT(t19, s32, 16);
   t21 = FIELD_AT(sp_, s32, 4);
   FIELD_AT(t19, s32, 16) = (t20 + t21);
   t22 = *(s32 *)v_r6;
-  t23 = Object_GetById(t22);
+  t23 = Actor_GetById(t22);
   t24 = *(s32 *)v_r6;
-  t25 = Object_GetById(t24);
+  t25 = Actor_GetById(t24);
   t26 = FIELD_AT(t25, s32, 16);
   FIELD_AT(t23, s32, 64) = t26;
   t27 = *(s32 *)sp_;
@@ -177,11 +177,11 @@ L_0200bbe0:
 L_0200bbe2:
   v_r5 = (v_r7 << 2);
   t33 = *(s32 *)((s32)gData_020069dc + v_r5);
-  t34 = Object_GetById(t33);
+  t34 = Actor_GetById(t33);
   t35 = FIELD_AT(t34, u8, 35);
   FIELD_AT(t34, u8, 35) = (223 & t35);
   t36 = *(s32 *)((s32)gData_020069dc + v_r5);
-  ObjectMotion_SetActionVariant(t36, 1);
+  Actor_SetSpritePriority(t36, 1);
   v_r7 = (v_r7 + 1);
   if ((u32)v_r7 <= (u32)5)
     goto L_0200bbe2;
@@ -194,7 +194,7 @@ L_0200bc0e:
   t39 = *(s32 *)v_r5;
   Func_02005884(t39, 0, 0);
   t41 = *(s32 *)v_r5;
-  t42 = Object_GetById(t41);
+  t42 = Actor_GetById(t41);
   FIELD_AT(t42, u8, 85) = 0;
   t43 = *(s32 *)sp_;
   v_r7 = (v_r7 + 1);

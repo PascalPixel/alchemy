@@ -8,11 +8,11 @@
 // The landing wait is the rotated loop (an if around a do-while), and the flag
 // and sound calls go through the call layer, each as the native has it.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test();
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -21,10 +21,10 @@ void FieldEvent_WaitFrames(s32 frames);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002c5c();
 s32 Func_02000194(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020002f0(void);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Actor_Stop(s32 id);
 void Func_02002ba4(s32 id, s32 a, s32 b);
 s32 Func_02000290(void);
 void Func_02002b6c(void);
@@ -33,14 +33,14 @@ void Func_02002c0c(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002bd4(void);
-void Func_02002ad4(struct ObjectRuntime *object, s32 mode);
+void Func_02002ad4(struct Actor *object, s32 mode);
 void Func_02002c3c(s32 x, s32 z, s32 layer, s32 value);
 void Func_020005e8(s32 value);
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 spot;
   s32 i;
   s32 y;
@@ -66,7 +66,7 @@ void Func_020007a4(s32 unused, s32 id) {
     spot = Func_02000194();
     if (spot == -1)
       return;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(id), 0);
     FieldEvent_WaitFrames(30);
     Func_020002f0();
     if (spot == 0)
@@ -77,11 +77,11 @@ void Func_020007a4(s32 unused, s32 id) {
       Call1(Func_02002c5c, 167);
     if (spot == 4 && Value1(GameFlag_Test, 2577))
       Call1(Func_02002c5c, 167);
-    ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
+    Actor_Stop(gAdventure.currentOwner);
     Func_02002ba4(id, 0, 0);
     if (Func_02000290() != 2 || !Value1(GameFlag_Test, 2582))
       return;
-    object = Object_GetById(17);
+    object = Actor_GetById(17);
     GameFlag_ClearBit(2582);
     FieldEvent_WaitFrames(10);
     Func_02002b6c();
@@ -106,13 +106,13 @@ void Func_020007a4(s32 unused, s32 id) {
    * tla-en. */
   if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
     GameFlag_SetBit(2586);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(20), 0);
     FieldEvent_WaitFrames(30);
     Call1(Func_02002c5c, 167);
     Func_020005e8(1);
     if (!Value1(GameFlag_Test, 2583))
       return;
-    object = Object_GetById(9);
+    object = Actor_GetById(9);
     GameFlag_ClearBit(2583);
     FieldEvent_WaitFrames(20);
     Call1(Func_02002c5c, 151);

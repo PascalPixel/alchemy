@@ -6,7 +6,7 @@
 // Func_0200119c. The same listing as overlay 661's Func_02003b80 and 697's
 // Func_02003f68. Left: a rough reading: the native keeps the record cursor, the counts, the tile and the scroll on the stack (r8 to r11 hold the OAM cursor, the actor and the segment height), and computes the positions in another order; the alignment is poor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "graphics/vram_tab.h"
@@ -24,12 +24,12 @@ struct SwingActor {
   s16 speed;
   s16 unk14;
   s16 bob;
-  struct ObjectRuntime *shadow;
+  struct Actor *shadow;
 };
 
 extern u8 gData_020023c4[];
 extern u32 gFrameCount;
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 Math_Sine(s32 angle);
 void Func_0200119c(u32 *oam, s32 depth);
 
@@ -42,13 +42,13 @@ void Func_02000dac(void) {
   s32 scrollX = *(s32 *)(map + 0xe4) & 0xffff0000;
   s32 scrollZ = *(s32 *)(map + 0xe8) & 0xffff0000;
   s32 lift = (*(s32 **)map)[1];
-  struct ObjectRuntime *actor;
+  struct Actor *actor;
   s32 count = 0, k, h, frame, x, y, z, screenY, depth;
 
   for (k = 15; k >= 0; k--, swing++) {
     if (swing->id == 0 || swing->height == 0)
       continue;
-    actor = Object_GetById(swing->id);
+    actor = Actor_GetById(swing->id);
     frame = (gFrameCount % 12 / 3) * 8 + 32;
     for (h = 0; h < swing->height; h += 16) {
       if (count > 79)

@@ -8,10 +8,10 @@ void Func_02000a8c(void) {
   scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov661Room4) {
     Camera_FollowActor(16, 1);
-    Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 16);
+    Actor_WatchAndSetScript(gAdventure.currentOwner, 16);
   } else if (scene == (s32)&SceneId_Ov661Room5) {
     Camera_FollowActor(21, 1);
-    Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 21);
+    Actor_WatchAndSetScript(gAdventure.currentOwner, 21);
   }
   /* FAKEMATCH: entering the loop at its test keeps the test single and the
    * address load inside the loop; as a while loop the test is copied above it

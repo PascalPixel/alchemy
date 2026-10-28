@@ -6,9 +6,8 @@
 
 struct DispatchObject;
 
-void *ObjectDispatch_FindFreeObject(void);
-void ObjectDispatch_Release(struct DispatchObject *object);
-void ObjectDispatch_InitializeFar(struct DispatchObject *object,
-                                  const s32 *script);
+void *Actor_FindFreeObject(void);
+void Actor_Release(struct DispatchObject *object);
+void Actor_StartScriptFar(struct DispatchObject *object, const s32 *script);
 
 #endif

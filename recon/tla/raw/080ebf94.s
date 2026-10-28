@@ -13,7 +13,7 @@ Func_080ebf94:
 	adds r1, #32
 	str r1, [sp, #4]
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	movs r5, #0
 	str r5, [sp, #12]
 	str r5, [sp, #8]

@@ -2,9 +2,9 @@
 
 void Func_020000a0(struct KibomboObject *object) {
   if (gFrameCount & 2)
-    Object_SetPartAttribute(object, 10);
+    Actor_SetPartAttribute(object, 10);
   else
-    Object_SetPartAttribute(object, 0);
+    Actor_SetPartAttribute(object, 0);
 }
 
 s32 Func_020000c4(struct KibomboObject *object) {

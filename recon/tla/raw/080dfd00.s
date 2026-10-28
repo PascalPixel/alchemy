@@ -80,7 +80,7 @@ FieldEffect_RunWhirlwind:
 	movs r2, #0
 	str r3, [r5, #8]
 	movs r3, #0
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r7, r0, #0
 	cmp r7, #0
 	bne .L_080dfda0
@@ -89,7 +89,7 @@ FieldEffect_RunWhirlwind:
 	bl BattleEffect_InitializeSharedScene
 	adds r0, r7, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r9, r8
 	movs r6, #0
 	mov r8, r5
@@ -201,7 +201,7 @@ FieldEffect_RunWhirlwind:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #1
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dfeba
@@ -231,7 +231,7 @@ FieldEffect_RunWhirlwind:
 .L_080dfed6:
 	movs r1, #1
 	adds r0, r7, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #30
 	bl WaitFrames
 	movs r0, #136
@@ -239,7 +239,7 @@ FieldEffect_RunWhirlwind:
 	adds r0, r7, #0
 	bl Func_08020340
 	adds r0, r7, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 	b .L_080dffd2
 .L_080dfef8:
 	mov r3, r11
@@ -250,7 +250,7 @@ FieldEffect_RunWhirlwind:
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r2, r11
 	cmp r2, #2
 	bne .L_080dffa2
@@ -292,7 +292,7 @@ FieldEffect_RunWhirlwind:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #1
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dff92
@@ -341,7 +341,7 @@ FieldEffect_RunWhirlwind:
 	adds r0, r7, #0
 	bl Func_08020340
 	adds r0, r7, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 .L_080dffd2:
 	bl BattleEffect_PrepareBufferInterpolation
 .L_080dffd6:

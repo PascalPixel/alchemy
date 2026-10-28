@@ -4,9 +4,9 @@
 #include "battle_unit.h"
 
 void *Unit_Get(s32 owner);
-void Object_ResetMotion(struct MotionObject *object);
-void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_ResetMotion(struct MotionObject *object);
+void Actor_SetTargetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 
 /// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
 /// four enemies, the actor steps 15 pixels further from x = 0 on its
@@ -30,15 +30,15 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
     } while (0);
     if (object->y < 0xa0000)
       object->velocityY += 0x28000;
-    Object_ResetMotion(object);
+    Actor_ResetMotion(object);
     if (slot->anchorX > 0)
       x = object->x + 0xf0000;
     else
       x = object->x - 0xf0000;
-    Object_SetPosition(object, x, 0, slot->anchorZ);
+    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
 }

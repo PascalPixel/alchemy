@@ -5,7 +5,7 @@
 // Near miss, differ 6 of 106: the touch dispatch of the wall room (☀️'s
 // EV13_TOUCH shape): by the exit touched, 13 to 20, it runs one of the
 // room's events when object 14's state allows. Left: the native loads the
-// event work before it sets the Object_GetById argument (one row), and it
+// event work before it sets the Actor_GetById argument (one row), and it
 // forms the state pointer (adds r0, #98) in the jump-table block after the
 // range check; formed before the switch it comes ahead of the check, and
 // formed in each case it stays there (differ 58).
@@ -33,7 +33,7 @@ void Func_02002d50(void) {
   if (GameFlag_Test(115))
     return;
   work = Ram_HeapSlots->eventWork;
-  state = &Object_GetById(14)->state;
+  state = &Actor_GetById(14)->state;
   switch (work->exit) {
   case 13:
     if (*state == 0)

@@ -77,15 +77,15 @@ GameFlag_SetByte:
 	.global Func_020021b4
 	.thumb_func
 Func_020021b4:
-	overlay_veneer Object_SetMode
-	.global ObjectDispatch_SetAnimationSpeed
+	overlay_veneer Actor_SetMode
+	.global Actor_SetAnimationSpeed
 	.thumb_func
-ObjectDispatch_SetAnimationSpeed:
-	overlay_veneer ObjectDispatch_SetAnimationSpeedFar
+Actor_SetAnimationSpeed:
+	overlay_veneer Actor_SetAnimationSpeedFar
 	.global Func_020021c4
 	.thumb_func
 Func_020021c4:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Func_020021cc
 	.thumb_func
 Func_020021cc:
@@ -93,11 +93,11 @@ Func_020021cc:
 	.global Func_020021d4
 	.thumb_func
 Func_020021d4:
-	overlay_veneer Object_Destroy
-	.global Object_SetPositionAndResetMotion
+	overlay_veneer Actor_Destroy
+	.global Actor_SetPositionAndResetMotion
 	.thumb_func
-Object_SetPositionAndResetMotion:
-	overlay_veneer Object_SetPositionAndResetMotionFar
+Actor_SetPositionAndResetMotion:
+	overlay_veneer Actor_SetPositionAndResetMotionFar
 	.global Func_020021e4
 	.thumb_func
 Func_020021e4:
@@ -105,11 +105,11 @@ Func_020021e4:
 	.global Func_020021ec
 	.thumb_func
 Func_020021ec:
-	overlay_veneer Object_SetPosition
+	overlay_veneer Actor_SetTargetPosition
 	.global Func_020021f4
 	.thumb_func
 Func_020021f4:
-	overlay_veneer Object_CommitPosition
+	overlay_veneer Actor_CommitPosition
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -126,10 +126,10 @@ Func_0200220c:
 	.thumb_func
 Func_02002214:
 	overlay_veneer Func_080201f0
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_02002224
 	.thumb_func
 Func_02002224:
@@ -158,38 +158,38 @@ Func_0200224c:
 	.thumb_func
 Func_02002254:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetSpeedParameters
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_SetPositionAndCommit
+Actor_SetSpeedParameters:
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_SetPositionAndCommit
 	.thumb_func
-ObjectMotion_SetPositionAndCommit:
-	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_ResetAndSetPositionInMode2
+Actor_SetPositionAndCommit:
+	overlay_veneer Actor_SetPositionAndCommitFar
+	.global Actor_ResetAndSetPositionInMode2
 	.thumb_func
-ObjectMotion_ResetAndSetPositionInMode2:
-	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+Actor_ResetAndSetPositionInMode2:
+	overlay_veneer Actor_ResetAndSetPositionInMode2Far
 	.global Func_0200227c
 	.thumb_func
 Func_0200227c:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global Object_SetPartAttribute
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
-	.global ObjectMotion_SetActionVariant
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
+	.global Actor_SetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+Actor_SetSpritePriority:
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_0200229c
 	.thumb_func
 Func_0200229c:
@@ -230,10 +230,10 @@ Func_020022dc:
 	.thumb_func
 Func_020022e4:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Object_Spawn
+	.global Actor_Spawn
 	.thumb_func
-Object_Spawn:
-	overlay_veneer Object_SpawnFar
+Actor_Spawn:
+	overlay_veneer Actor_SpawnFar
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:

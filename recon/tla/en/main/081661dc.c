@@ -88,9 +88,9 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // ObjectGroup_UpdateMembers
+                   s32 frames);   // Actor_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // The user lunges, a streak of fire leaves them, and the target bursts into
@@ -247,7 +247,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == FLASH_FRAME)
       Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
     Func_08158ce0(16, 16);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

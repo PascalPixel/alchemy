@@ -1,7 +1,7 @@
 #include "tundaria_tower.h"
 
-void Func_02002fb0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02002fb8(struct ObjectRuntime *object);
+void Func_02002fb0(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002fb8(struct Actor *object);
 void Func_02003178(void);
 void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
@@ -13,7 +13,7 @@ void WaitFrames(s32 frames);
 /// then settles on the middle of its cell.
 void Func_02000c64(s32 unused, s32 actorArg) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 actor;
   s32 dx;
   s32 dz;
@@ -23,7 +23,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
    * asm, 2 instructions differ in tla-en. */
   asm("");
   actor = actorArg;
-  object = *(struct ObjectRuntime **)(work + 0xcbc);
+  object = *(struct Actor **)(work + 0xcbc);
   Func_02003048();
   Func_02003148(0);
   dx = (object->x >> 20) - (object->action >> 8);

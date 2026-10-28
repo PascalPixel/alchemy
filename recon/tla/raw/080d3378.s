@@ -26,26 +26,26 @@ Func_080d3378:
 	bne .L_080d33bc
 	adds r0, r6, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, .L_080d33b8
 	adds r0, r6, #0
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	b .L_080d33cc
 .L_080d33b8:
 	.4byte Data_080f085c
 .L_080d33bc:
 	adds r0, r6, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, .L_080d344c
 	adds r0, r6, #0
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080d33cc:
 	cmp r5, #0
 	beq .L_080d33d8
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_080d33d8:
 	adds r3, r6, #0
 	adds r3, #85
@@ -106,7 +106,7 @@ Func_080d3378:
 .L_080d3450:
 	.4byte 0xffffe667
 .L_080d3454:
-	.4byte Object_DriftAndDamp
+	.4byte FieldEffect_UpdateParticleLinearMotion
 .L_080d3458:
 	pop {r3}
 	mov r8, r3

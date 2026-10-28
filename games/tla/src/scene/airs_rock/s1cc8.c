@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 extern u8 gData_02003d94[];
@@ -9,13 +9,13 @@ void Func_02003c88(s32 skip);
 void Func_02003cc0(void);
 void Func_020003e8(const u8 *list);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02003cd8(s32 cue);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02001cc8(void) {
-  struct ObjectRuntime *object =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *object =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
   s32 x, z;
 
   Func_02003bc8();

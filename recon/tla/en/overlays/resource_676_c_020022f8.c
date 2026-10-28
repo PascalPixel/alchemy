@@ -3,7 +3,7 @@
 // Tried: loops counting up, the step as i * 40, declaring the counters
 // first; the swap stays.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern char SceneId_Ov676Room1;
@@ -17,14 +17,14 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02002450(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02002458(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(s32 id);
+void Func_02002450(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002458(struct Actor *object);
 void Func_02002470(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020025a0(s32 cue);
 void Func_020023c8(void);
 
-static __inline__ void Func_02002450_(struct ObjectRuntime *object, s32 x,
+static __inline__ void Func_02002450_(struct Actor *object, s32 x,
                                       s32 y, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
@@ -41,7 +41,7 @@ static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e,
 void Func_020022f8(void) {
   s32 step;
   s32 i;
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
   struct TileSprite *sprite = object->animation;
 
   GameFlag_SetBit(0x300);

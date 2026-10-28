@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 #include "scene_ids.h"
@@ -39,7 +39,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_0200062c(s32 id);
@@ -53,9 +53,9 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis);
 void Func_02001104(s32 id, s32 a, s32 frame);
 void Func_02004418(const void *data);
 void Func_020045ac(const void *data, s32 a);
-void Func_020057c8(struct ObjectRuntime *object, s32 a);
-void Func_020057d0(struct ObjectRuntime *object, const void *script);
-struct ObjectRuntime *Func_020057d8(s32 type, s32 x, s32 y, s32 z);
+void Func_020057c8(struct Actor *object, s32 a);
+void Func_020057d0(struct Actor *object, const void *script);
+struct Actor *Func_020057d8(s32 type, s32 x, s32 y, s32 z);
 void Func_02005818(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005820(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005918(s32 id, s32 a, s32 b);
@@ -74,7 +74,7 @@ struct Adventure254 {
 void Task_Add(void (*callback)(void), s32 priority);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_020006b4(s32 id);
 void Func_020007b4(void);
 void Func_02005810(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -85,7 +85,7 @@ void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);
 void Func_02005a68(s32 a);
 
-static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
+static __inline__ struct Actor *Actor_Create(s32 type, s32 x, s32 y,
                                                       s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_020057d8(type, x, y, z);

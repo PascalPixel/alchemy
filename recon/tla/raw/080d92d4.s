@@ -200,10 +200,10 @@ Func_080d92d4:
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r10
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080d947c:
 	add sp, #52
 	pop {r3, r5, r6, r7}

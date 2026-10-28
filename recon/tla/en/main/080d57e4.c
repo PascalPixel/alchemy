@@ -13,14 +13,14 @@
 #include "types.h"
 #include "field_sprite.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
 void Sound_PlayFar(s32 cue);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080201d0(s32 layer, s32 x, s32 z);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+s32 Func_08020210(struct Actor *object, s32 *position);
 
 extern const u16 Data_080f0890[];
 
@@ -30,7 +30,7 @@ struct EventWorkGrab {
 };
 
 s32 Func_080d57e4(void) {
-  struct ObjectRuntime *leader = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *leader = ObjectTable_Get(gAdventure.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   s32 position[3];
   u32 angle;
@@ -59,9 +59,9 @@ s32 Func_080d57e4(void) {
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->acceleration = 0x10000;
-  Object_SetMode(leader, 2);
-  Object_SetPosition(leader, position[0], position[1], position[2]);
-  Object_CommitPosition(leader);
+  Actor_SetMode(leader, 2);
+  Actor_SetTargetPosition(leader, position[0], position[1], position[2]);
+  Actor_CommitPosition(leader);
   sprite->priority = ((u8 *)leader)[98];
   gAdventure.renderMode = 0;
   return 1;

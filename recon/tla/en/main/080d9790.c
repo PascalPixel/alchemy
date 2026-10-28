@@ -14,7 +14,7 @@
 #include "fixed_math.h"
 #include "iwram_call.h"
 #include "mem.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 s32 ArcTan2(s32 y, s32 x);
@@ -43,8 +43,8 @@ struct ChainSlot {
 };
 
 struct ChainWork {
-  struct ObjectRuntime *from;
-  struct ObjectRuntime *to;
+  struct Actor *from;
+  struct Actor *to;
   u8 unk08[4];
   struct ChainSlot slots[8];
 };
@@ -76,8 +76,8 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
     *cursor++ = node;
     node = node->next;
   }
-  Object_SetMode(work->from, 3);
-  Object_SetMode(work->to, 3);
+  Actor_SetMode(work->from, 3);
+  Actor_SetMode(work->to, 3);
   WaitFrames(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;

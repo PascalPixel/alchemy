@@ -6,17 +6,17 @@ void Func_0200155c(void) {
   struct LemurianShipObject *object;
 
   if (GameFlag_Test(0x202)) {
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
     if ((object->x | object->z) == 0) {
       work->field16a = 200;
-      Object_SetModeById(8, 1);
+      Actor_SetModeById(8, 1);
     }
   }
   if (GameFlag_Test(0x203)) {
-    object = Object_GetById(11);
+    object = Actor_GetById(11);
     if ((object->x | object->z) == 0) {
       work->field16a = 201;
-      Object_SetModeById(9, 1);
+      Actor_SetModeById(9, 1);
     }
   }
 }
@@ -32,7 +32,7 @@ void Func_020015c8(void) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02002bf0(object, 0);
     Func_02002c18(object, 0x3280000, 0x80000, 0x8c0000);
     Func_02002bf8(object, gData_02003ef8);

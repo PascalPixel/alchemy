@@ -114,7 +114,7 @@ void BattleEvent_GrantDjinnBonus(struct PlaybackEvents *events, u32 value);
 void Sound_PlayFar(s32 cue);
 void Func_080381d0(s32 message);
 s32 Message_AllTypedFar(void);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_0812824c(s32 unitId, s32 flags);
 void BattleActor_ResetRuntimeFields(s32 unitId);
 void Animation_ApplyChildArgumentFar(void *record, s32 value);
@@ -215,7 +215,7 @@ void BattleEvent_Playback(void) {
             if (events->pendingCue > 0)
               Sound_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
-            Object_SetMode(BattleObject_Get(events->actorId)->object, 5);
+            Actor_SetMode(BattleObject_Get(events->actorId)->object, 5);
             events->phase = 10;
             events->timer = 0;
             break;

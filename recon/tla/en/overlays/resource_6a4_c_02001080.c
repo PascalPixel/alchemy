@@ -11,7 +11,7 @@
 // points with a random drift.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct BeamSprite {
   u8 unk00[8];
@@ -52,13 +52,13 @@ struct BeamWork {
   s8 loop;
   s8 still;
   s8 side;
-  struct ObjectRuntime *first;
-  struct ObjectRuntime *second;
+  struct Actor *first;
+  struct Actor *second;
 };
 
 void Func_02002b68(s32 sound);
-void Func_0200105c(struct ObjectRuntime *object);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+void Func_0200105c(struct Actor *object);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
 void Func_02002b20(s32 *position);
 void Func_02002b38(struct BeamSprite *sprite);
@@ -71,8 +71,8 @@ s32 Math_Cosine(s32 angle);
 
 void Func_02001080(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
-  struct ObjectRuntime *carrier =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 460);
+  struct Actor *carrier =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   s32 t = work->frame;
   s32 a[3];
   s32 b[3];
@@ -144,7 +144,7 @@ void Func_02001080(void) {
                        << 2;
     work->carried[1] = LERP(work->from[1], work->to[1], t, 96);
     work->carried[2] = LERP(work->from[2], work->to[2], t, 96);
-    Object_SetPositionAndResetMotion(carrier, work->carried[0],
+    Actor_SetPositionAndResetMotion(carrier, work->carried[0],
                                      work->carried[1], work->carried[2]);
     aside = work->side != 0 ? -0x100000 : 0x100000;
     work->pointA[0] = work->carried[0] - aside;

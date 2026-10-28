@@ -9,14 +9,14 @@
 #include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_0200100c(u16 *list) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 flag;
 
   goto test;
 next:
-  object = Object_GetById(list[0]);
+  object = Actor_GetById(list[0]);
   flag = (s16)list[2];
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02001428(object, GameFlag_Test((u16)flag) + 1);
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;

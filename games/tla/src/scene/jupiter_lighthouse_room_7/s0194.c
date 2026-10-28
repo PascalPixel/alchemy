@@ -10,14 +10,14 @@
 
 void GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Object_GetById();
+s32 Actor_GetById();
 
 s32 Func_02000194(void) {
   s32 t1, t2, t3, t5, t7, t9, t11, t13, v5, v6, v7, v8;
 
-  t1 = Value1(Object_GetById, 18);
+  t1 = Value1(Actor_GetById, 18);
   v5 = t1;
-  t2 = Value1(Object_GetById, 19);
+  t2 = Value1(Actor_GetById, 19);
   v7 = 1;
   v6 = (FIELD_AT(v5, s32, 8) >> 20);
   v8 = t2;

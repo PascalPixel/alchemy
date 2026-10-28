@@ -13,8 +13,8 @@ void Func_0200095c(s32 id);
 void Func_02000924(s32 id);
 
 void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side) {
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *partner = Object_GetById(other);
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *partner = Actor_GetById(other);
   s32 t;
 
   if (OBJECT_BYTE(object, 0x63) != 0)

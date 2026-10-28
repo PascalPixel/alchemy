@@ -26,14 +26,14 @@ void Func_02005388();
 void GameFlag_ClearBit();
 void GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Object_GetById();
+s32 Actor_GetById();
 extern u8 gData_02006298[];
 extern u8 gData_0200629c[];
 
 void Func_020019d4(void) {
   s32 t1, t8, t10, t12, t13, t14, t17, t18, p_r6, v_r5_1, v_r7_1, v_r8_1;
 
-  t1 = Value1((s32 (*)())Object_GetById, gAdventure.currentOwner);
+  t1 = Value1((s32 (*)())Actor_GetById, gAdventure.currentOwner);
   v_r5_1 = t1;
   v_r8_1 = (FIELD_AT(v_r5_1, s32, 8) >> 20);
   v_r7_1 = (FIELD_AT(v_r5_1, s32, 16) >> 20);

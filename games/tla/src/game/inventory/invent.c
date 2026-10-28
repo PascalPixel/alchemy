@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system.h"
 
 void Inventory_ReservedNoOp(void) {}
 
-void Object_WaitUntilChildValueDiffers(s32 objectId, s32 value) {
-  struct ObjectRuntime *obj = ObjectTable_Get(objectId);
+void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
+  struct Actor *obj = ObjectTable_Get(objectId);
 
   if (obj != 0 && obj->animationKind == 1) {
     s32 cnt = 0;

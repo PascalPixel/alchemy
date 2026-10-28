@@ -26,10 +26,10 @@ void Func_02005714();
 void Func_0200580c();
 void GameFlag_ClearBit();
 s32 GameFlag_Test();
-void ObjectDispatch_SetSingleChildFlags();
-s32 Object_GetById();
-void Object_SetModeById();
-void Object_SetPartAttribute();
+void Actor_SetSingleChildFlags();
+s32 Actor_GetById();
+void Actor_SetModeById();
+void Actor_SetPartAttribute();
 void Task_Add();
 void WaitFrames();
 void Func_02001ac0();
@@ -41,31 +41,31 @@ void Func_02003634(void) {
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
 
-  t1 = Value1((s32 (*)())Object_GetById, 10);
-  Call2((void (*)())Object_SetPartAttribute, t1, 3);
+  t1 = Value1((s32 (*)())Actor_GetById, 10);
+  Call2((void (*)())Actor_SetPartAttribute, t1, 3);
   Call2((void (*)())Task_Add, (s32)Func_02002074, 0x480);
-  t4 = Value1((s32 (*)())Object_GetById, 11);
-  Call2((void (*)())Object_SetPartAttribute, t4, 11);
-  t6 = Value1((s32 (*)())Object_GetById, 12);
-  Call2((void (*)())Object_SetPartAttribute, t6, 11);
-  t8 = Value1((s32 (*)())Object_GetById, 13);
-  Call2((void (*)())Object_SetPartAttribute, t8, 10);
-  t10 = Value1((s32 (*)())Object_GetById, 14);
-  Call2((void (*)())Object_SetPartAttribute, t10, 10);
-  t12 = Value1((s32 (*)())Object_GetById, 16);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t12, 0);
-  t14 = Value1((s32 (*)())Object_GetById, 17);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t14, 0);
-  t16 = Value1((s32 (*)())Object_GetById, 18);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t16, 0);
-  t18 = Value1((s32 (*)())Object_GetById, 19);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t18, 0);
-  t20 = Value1((s32 (*)())Object_GetById, 20);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t20, 0);
-  t22 = Value1((s32 (*)())Object_GetById, 21);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t22, 0);
-  t24 = Value1((s32 (*)())Object_GetById, 22);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t24, 0);
+  t4 = Value1((s32 (*)())Actor_GetById, 11);
+  Call2((void (*)())Actor_SetPartAttribute, t4, 11);
+  t6 = Value1((s32 (*)())Actor_GetById, 12);
+  Call2((void (*)())Actor_SetPartAttribute, t6, 11);
+  t8 = Value1((s32 (*)())Actor_GetById, 13);
+  Call2((void (*)())Actor_SetPartAttribute, t8, 10);
+  t10 = Value1((s32 (*)())Actor_GetById, 14);
+  Call2((void (*)())Actor_SetPartAttribute, t10, 10);
+  t12 = Value1((s32 (*)())Actor_GetById, 16);
+  Call2((void (*)())Actor_SetSingleChildFlags, t12, 0);
+  t14 = Value1((s32 (*)())Actor_GetById, 17);
+  Call2((void (*)())Actor_SetSingleChildFlags, t14, 0);
+  t16 = Value1((s32 (*)())Actor_GetById, 18);
+  Call2((void (*)())Actor_SetSingleChildFlags, t16, 0);
+  t18 = Value1((s32 (*)())Actor_GetById, 19);
+  Call2((void (*)())Actor_SetSingleChildFlags, t18, 0);
+  t20 = Value1((s32 (*)())Actor_GetById, 20);
+  Call2((void (*)())Actor_SetSingleChildFlags, t20, 0);
+  t22 = Value1((s32 (*)())Actor_GetById, 21);
+  Call2((void (*)())Actor_SetSingleChildFlags, t22, 0);
+  t24 = Value1((s32 (*)())Actor_GetById, 22);
+  Call2((void (*)())Actor_SetSingleChildFlags, t24, 0);
   t26 = Value1((s32 (*)())GameFlag_Test, 0x8fb);
   if (t26 == 0)
     goto L_0200b6f2;
@@ -78,7 +78,7 @@ L_0200b6f2:
   t29 = Value1((s32 (*)())GameFlag_Test, 0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = Value1((s32 (*)())Object_GetById, gAdventure.currentOwner);
+  t30 = Value1((s32 (*)())Actor_GetById, gAdventure.currentOwner);
   v_r5 = t30;
   Call3((void (*)())Func_02005714, 11, 0, 0);
   Call3((void (*)())Func_02005714, 12, 0, 0);
@@ -108,7 +108,7 @@ L_0200b78e:
    * added in place, 2 of 211 instructions differ in tla-en. */
   table = gData_02005d8c;
   Call4((void (*)())Func_020048a4, 19, 11, *(s32 *)(table + (t46 << 2)), 16);
-  Call2((void (*)())Object_SetModeById, 15, 5);
+  Call2((void (*)())Actor_SetModeById, 15, 5);
   if (FIELD_AT(&gAdventure, s16, 482) != 2)
     goto L_0200b7c0;
   Func_020027cc();

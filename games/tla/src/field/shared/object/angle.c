@@ -2,15 +2,15 @@
 #include "object_lookup.h"
 #include "types.h"
 #include "field_sprite.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 count);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void Sound_PlayFar(s32 cue);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 mode);
-void Func_080d3378(struct ObjectRuntime *source, s32 attribute);
+void Actor_ArmCallback(s32 id, s32 value, s32 mode);
+void Func_080d3378(struct Actor *source, s32 attribute);
 void Event_NoOp(void);
 
 /// Makes an object jump down off a ledge in front of it: it plays `mode` for 10
@@ -23,8 +23,8 @@ void Event_NoOp(void);
 // while (y > ground) { WaitFrames(1); if (++i >= 180) break; } agscc keeps
 // the test at the top and jumps back to it (differ 18), where the native has
 // the test copied below the body as loop rotation would place it.
-void Object_JumpDownLedge(s32 id, s32 mode, s32 particle) {
-  struct ObjectRuntime *object = Object_GetById(id);
+void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
+  struct Actor *object = Actor_GetById(id);
   s32 z = object->z;
   s32 x = (object->x & 0xfff00000) + 0x80000;
   s32 frame;
@@ -33,16 +33,16 @@ void Object_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   if (object == NULL)
     return;
   frame = ((struct FieldSprite *)object->animation)->nextFrame;
-  Object_SetMode(object, mode);
+  Actor_SetMode(object, mode);
   WaitFrames(10);
-  Object_SetMode(object, 1);
-  ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+  Actor_SetMode(object, 1);
+  Actor_SetSingleChildFlagsFar(object, 0);
   object->motionFlags |= 2;
   object->velocityY = 0x40000;
-  Object_SetPosition(object, x, object->y, z + 0xc0000);
+  Actor_SetTargetPosition(object, x, object->y, z + 0xc0000);
   WaitFrames(6);
   Sound_PlayFar(217);
-  ObjectMotion_ArmCallback(id, 0x5000, 0);
+  Actor_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     object->y -= 0x20000;
@@ -53,8 +53,8 @@ void Object_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   }
   object->motionFlags = 3;
   object->velocityY = 0x30000;
-  Object_SetPosition(object, x, object->y, z + 0x100000);
-  Object_CommitPosition(object);
+  Actor_SetTargetPosition(object, x, object->y, z + 0x100000);
+  Actor_CommitPosition(object);
   if (particle & 0x1000) {
     WaitFrames(4);
     return;
@@ -67,7 +67,7 @@ void Object_JumpDownLedge(s32 id, s32 mode, s32 particle) {
         break;
     } while (object->y > object->terrainHeight);
   }
-  ObjectDispatch_SetSingleChildFlagsFar(object, frame);
+  Actor_SetSingleChildFlagsFar(object, frame);
   WaitFrames(2);
   Event_NoOp();
 }
@@ -82,7 +82,7 @@ struct ObjectPairPosition {
 
 s32 ArcTan2(s32, s32);
 
-void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
+void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct ObjectPairPosition *first;
   struct ObjectPairPosition *second;
 

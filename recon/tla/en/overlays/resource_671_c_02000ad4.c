@@ -5,25 +5,25 @@
 // steps off (Func_020006ac). In Ov671Room4 at cell (28, 15) or (30, 15) it
 // ends the ride (Func_02000a20) and runs exit 5 or 6 (Func_020057c4). Left: the native keeps the speed in r6 and the actor in r5, shares one sign block per platform and orders the tests otherwise.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern char SceneId_Ov671Room4;
 extern s32 gData_02005af0;
 s32 Func_0200584c(void);
-struct ObjectRuntime *Object_GetById(u32 id);
-struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *object, s32 kind);
-void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 speed);
-void Func_02000a20(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(u32 id);
+struct Actor *Func_020005b4(struct Actor *object, s32 kind);
+void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 speed);
+void Func_02000a20(struct Actor *object);
 void Func_020057c4(s32 exit);
 
 void Func_02000ad4(void) {
-  struct ObjectRuntime *actor, *platform;
+  struct Actor *actor, *platform;
   s32 speed, d, sign, x;
 
   if (gData_02005af0 == 0)
     return;
-  actor = Object_GetById(Func_0200584c());
+  actor = Actor_GetById(Func_0200584c());
   speed = gData_02005af0 << 15;
   platform = Func_020005b4(actor, 360);
   if (platform != 0) {

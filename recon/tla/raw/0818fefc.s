@@ -171,7 +171,7 @@ BattleEffect_RunMegiddo:
 	ldr r3, [r3, #72]
 	movs r1, #0
 	str r3, [sp, #44]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r4, [sp, #40]
 	mov r0, sp
 	mov r1, sp
@@ -728,7 +728,7 @@ BattleEffect_RunMegiddo:
 	strh r4, [r0]
 	ldr r0, [sp, #40]
 	movs r1, #128
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r1, #240
 	lsls r1, r1, #6
 	ldr r2, .L_08190790
@@ -1490,7 +1490,7 @@ BattleEffect_RunMegiddo:
 	ldr r3, [r2]
 	cmp r3, #1
 	bls .L_08190aa8
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #92]
 	lsls r4, r4, #7

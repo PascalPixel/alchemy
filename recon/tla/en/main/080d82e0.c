@@ -11,7 +11,7 @@
 #include "system.h"
 #include "animspr.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "adventure.h"
 #include "effect_slot.h"
@@ -25,16 +25,16 @@ struct EffectVector {
 
 struct BattleFxScene;
 
-#define ObjectGroup_SetChildValueUnlessFifteenFar                              \
+#define Actor_SetChildValueUnlessFifteenFar                              \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define ObjectDispatch_ReleaseFar Object_Destroy
+#define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
-void Object_Destroy();
+void Actor_Destroy();
 
 struct EffectOwner {
   u8 unk00[8];
@@ -43,7 +43,7 @@ struct EffectOwner {
   struct AnimationObject *sprite;
 };
 
-struct ObjectRuntime *Object_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 actor);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
@@ -109,10 +109,10 @@ struct CaptureObject {
   void *callback;
 };
 
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetMode(struct Actor *object, s32 mode);
+void Actor_ArmCallback(s32 id, s32 value, s32 flags);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -149,8 +149,8 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   s32 scale;
   s32 position[3];
 
-  leader = (struct CaptureObject *)Object_GetById(gAdventure.currentOwner);
-  djinni = (struct CaptureObject *)Object_GetById(arg);
+  leader = (struct CaptureObject *)Actor_GetById(gAdventure.currentOwner);
+  djinni = (struct CaptureObject *)Actor_GetById(arg);
   if (djinni == NULL)
     return;
 
@@ -160,21 +160,21 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   WaitFrames(30);
   djinni->visible = 0;
   Sound_PlayFar(152);
-  ObjectMotion_Launch(arg, 4, 15);
+  Actor_Jump(arg, 4, 15);
   Sound_PlayFar(152);
-  ObjectMotion_Launch(arg, 4, 15);
+  Actor_Jump(arg, 4, 15);
   WaitFrames(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
   Sound_PlayFar(153);
-  ObjectMotion_Launch(arg, 8, 22);
+  Actor_Jump(arg, 8, 22);
   Sound_PlayFar(140);
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
-  Object_SetMode((struct ObjectRuntime *)djinni, 3);
+  Actor_SetMode((struct Actor *)djinni, 3);
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
   WaitFrames(30);
   Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -189,7 +189,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     FieldParticle_Initialize(slot, 672, position[0], position[2]);
     FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
+    Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
     ((struct FieldParticle *)slot)->scaleX = 0x8000;
     ((struct FieldParticle *)slot)->scaleY = Random16() + 0x18000;
     remaining--;
@@ -221,7 +221,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     position[0] = leader->x;
     position[1] = leader->y + 0x780000;
     position[2] = leader->z;
-    djinni = (struct CaptureObject *)Object_Spawn(672, position[0], position[1],
+    djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
                                                   position[2]);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
@@ -231,7 +231,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
       djinni->angle = (remaining << 16) / 24;
       djinni->callback = (void *)BattleEffect_UpdateDescendingOrbitObject;
       djinni->mode = 0;
-      Object_SetMode((struct ObjectRuntime *)djinni, 7);
+      Actor_SetMode((struct Actor *)djinni, 7);
       Animation_ApplyChildValuesFar(djinni, 11);
     }
   }
@@ -244,7 +244,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   position[1] = leader->y + 0x120000;
   position[2] = leader->z;
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Object_Spawn(672, position[0], position[1],
+    djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
                                                   position[2]);
     if (djinni == NULL)
       break;
@@ -257,7 +257,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
+    Actor_StartScriptFar((struct DispatchObject *)djinni,
                                  gBattleEffect_SharedParticleScript);
   }
 

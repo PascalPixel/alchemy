@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "frame.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 u32 Random16Far(void);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
@@ -13,7 +13,7 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 void Func_020014e4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   s32 velocity[3];
 

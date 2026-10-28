@@ -33,8 +33,8 @@ void Func_0200491c(s32 a, s32 b);
 void Func_0200492c(s32 frames);
 void Func_020049c4(s32 sound);
 void Func_0200475c(s32 a, s32 b, s32 c);
-void ObjectMotion_Launch(s32 id, s32 mode, s32 value);
-void ObjectMotion_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
+void Actor_Jump(s32 id, s32 mode, s32 value);
+void Actor_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
 void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020049ac(s32 x, s32 z, s32 a, s32 b);
 void Func_020046b4(void);
@@ -106,11 +106,11 @@ copy:
   Func_020049c4(144);
   Func_0200475c_(0x50000, 0x70000, 0x10000);
   Func_0200475c_(-1, -1, 0xe666);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
-  ObjectMotion_Launch(4, 6, 0);
-  Object_GetById(4)->actionFlags &= ~1;
-  ObjectMotion_OffsetPositionAndReset(4, -16, 0);
-  Object_GetById(20)->update = Func_0200354c;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
+  Actor_Jump(4, 6, 0);
+  Actor_GetById(4)->actionFlags &= ~1;
+  Actor_OffsetPositionAndReset(4, -16, 0);
+  Actor_GetById(20)->update = Func_0200354c;
   i = 0;
 fade:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;

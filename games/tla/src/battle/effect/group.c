@@ -7,32 +7,32 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
-#define ObjectDispatch_SetAnimationSpeedFar                                 \
-  ((void (*)(struct ObjectRuntime *,                                           \
-             s32))ObjectDispatch_SetAnimationSpeedFar)
+#define Actor_SetAnimationSpeedFar                                 \
+  ((void (*)(struct Actor *,                                           \
+             s32))Actor_SetAnimationSpeedFar)
 
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 value);
 
 struct SpawnScene {
   u8 unk00[0x10];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u8 *part;
   s32 mask;
 
   object = Func_080200c0(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
-      Object_Destroy((struct DispatchObject *)object);
+      Actor_Destroy((struct DispatchObject *)object);
       return NULL;
     }
     object->terrainHeight = scene->mainObject->terrainHeight;
@@ -43,16 +43,16 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     asm volatile("" : "+l"(mask) : : "memory");
     part = object->animation;
     part[9] &= mask;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-    Object_SetMode(object, 1);
+    Actor_SetSingleChildFlagsFar(object, 0);
+    Actor_SetMode(object, 1);
   }
   return object;
 }
 
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
+void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action) {
   s16 *activeObjectId;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 objectId;
 
   objectId = 0;
@@ -62,7 +62,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->movementState = groupMode;
-      ObjectDispatch_SetAnimationSpeedFar(object, action);
+      Actor_SetAnimationSpeedFar(object, action);
     }
     objectId++;
   } while (objectId <= 0x50);

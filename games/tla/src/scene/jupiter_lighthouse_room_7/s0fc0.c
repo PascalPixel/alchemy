@@ -9,7 +9,7 @@ void Func_02002b54(s32 x, s32 z, s32 layer, s32 value);
 void Func_02002c4c(s32 x, s32 z, s32 layer, s32 value);
 
 s32 Func_02000fc0(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 value;
 
   Scene_SetArrivalFlags(0);
@@ -40,12 +40,12 @@ s32 Func_02000fc0(void) {
     GameFlag_ClearBit(0xa1a);
   else
     GameFlag_SetBit(0xa1a);
-  Object_GetById(18)->motionFlags = 0;
-  Object_GetById(19)->motionFlags = 0;
-  Object_GetById(20)->motionFlags = 0;
+  Actor_GetById(18)->motionFlags = 0;
+  Actor_GetById(19)->motionFlags = 0;
+  Actor_GetById(20)->motionFlags = 0;
   Func_020002f0();
   if (!GameFlag_Test(0xa1a)) {
-    object = Object_GetById(20);
+    object = Actor_GetById(20);
     value = Func_02002b5c(object->x, object->z, 0);
     Func_02002b54(object->x, object->z, 0, value + 2);
     Func_02002c4c(object->x, object->z, 0, 0x80);

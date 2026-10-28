@@ -40,7 +40,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     character->hp = 0;
 
   slot = BattleObject_Get(unitId);
-  Object_SetMode(slot->object, 5);
+  Actor_SetMode(slot->object, 5);
   PartyStatus_DrawFar(0);
   MessageArgument_ClearAllFar();
 
@@ -71,7 +71,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   slot = BattleObject_Get(unitId);
-  Object_SetMode(slot->object, 1);
+  Actor_SetMode(slot->object, 1);
 }
 
 struct BattleObjectAnimation {

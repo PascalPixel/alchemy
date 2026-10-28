@@ -15,10 +15,10 @@ Func_080d82e0:
 	adds r7, r3, r0
 	ldr r0, [r7]
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	mov r10, r0
 	adds r0, r5, #0
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d830c
@@ -43,13 +43,13 @@ Func_080d82e0:
 	adds r0, r5, #0
 	movs r1, #4
 	movs r2, #15
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #152
 	bl Sound_PlayFar
 	movs r1, #4
 	movs r2, #15
 	adds r0, r5, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #30
 	bl WaitFrames
 	ldr r3, .L_080d8470
@@ -59,7 +59,7 @@ Func_080d82e0:
 	adds r0, r5, #0
 	movs r1, #8
 	movs r2, #22
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #140
 	bl Sound_PlayFar
 	movs r1, #166
@@ -74,20 +74,20 @@ Func_080d82e0:
 	adds r0, r6, #0
 	str r3, [r6, #108]
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #90
 	bl WaitFrames
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r7]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	ldr r0, [r7]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #28
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #30
 	bl WaitFrames
 	ldr r1, .L_080d8478
@@ -195,7 +195,7 @@ Func_080d82e0:
 	movs r0, #168
 	str r3, [r5, #8]
 	lsls r0, r0, #2
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080d84e8
@@ -225,7 +225,7 @@ Func_080d82e0:
 	strb r0, [r3]
 	movs r1, #7
 	adds r0, r6, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	movs r1, #11
 	bl Animation_ApplyChildValuesFar
@@ -295,7 +295,7 @@ Func_080d82e0:
 	strh r3, [r2]
 	adds r0, r6, #0
 	ldr r1, .L_080d85b4
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080d857c:
 	cmp r7, #7
 	bgt .L_080d8594
@@ -304,7 +304,7 @@ Func_080d82e0:
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
 	lsls r0, r0, #2
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d8528

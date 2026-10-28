@@ -14,7 +14,7 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-union FieldObject *Object_GetById(s32 id);
+union FieldObject *Actor_GetById(s32 id);
 
 /// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
 /// Effect_AdvanceMotion, then the leader's sprite priority for the effect.
@@ -61,7 +61,7 @@ void Func_02004a14(union FieldObject *object) {
    * address; without it, 2 of 59 instructions differ in tla-en. */
   do {
   } while (0);
-  leader = Object_GetById(party->currentOwner);
+  leader = Actor_GetById(party->currentOwner);
   to = (struct EffectSpriteAttributes *)effect->sprite;
   from = (struct EffectSpriteAttributes *)leader->effect.sprite;
   source = from->bits;

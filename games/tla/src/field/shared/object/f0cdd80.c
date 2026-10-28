@@ -1,22 +1,22 @@
 #include "types.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
-struct ObjectRuntime *Func_080eaf28(s32 *position, s32 mode);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_080eaf28(s32 *position, s32 mode);
+s32 Func_08020210(struct Actor *object, s32 *position);
 void WaitFrames(s32 frames);
 void Event_NoOp(void);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 
 void Func_080cdd80(void) {
   s32 position[3];
-  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *target;
+  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *target;
   s32 terrain;
   s32 result;
   s32 speed;
@@ -38,26 +38,26 @@ void Func_080cdd80(void) {
   result = Func_08020210(target, position);
   target->terrainId = terrain;
   if (result <= 0) {
-    Object_SetMode(owner, 8);
+    Actor_SetMode(owner, 8);
     WaitFrames(15);
     Sound_PlayFar(185);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetPosition(target, position[0], position[1], position[2]);
+    Actor_SetTargetPosition(target, position[0], position[1], position[2]);
     WaitFrames(2);
     acceleration = owner->acceleration;
     owner->acceleration = 0x3333;
     speed = owner->speedLimit;
     owner->speedLimit = 0x3333;
-    Object_SetPosition(owner, position[0], position[1], position[2]);
-    Object_CommitPosition(target);
+    Actor_SetTargetPosition(owner, position[0], position[1], position[2]);
+    Actor_CommitPosition(target);
     WaitFrames(1);
     Event_NoOp();
-    Object_SetPositionAndResetMotionFar(target, position[0], position[1],
+    Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
                                         position[2]);
-    Object_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16,
+    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16,
                                         owner->y, S16_AT(owner, 18) << 16);
-    Object_SetMode(owner, 1);
+    Actor_SetMode(owner, 1);
     owner->speedLimit = speed;
     owner->acceleration = acceleration;
   }

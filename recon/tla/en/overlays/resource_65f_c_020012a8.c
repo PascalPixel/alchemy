@@ -12,7 +12,7 @@
 // (best 38).
 #include "types.h"
 #include "field_effect.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct Vec {
   s32 x;
@@ -20,7 +20,7 @@ struct Vec {
   s32 z;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
@@ -29,7 +29,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 void Func_020012a8(s32 objectId) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct Vec vec;
   struct EffectOptions params;
   u32 angleStep;
@@ -37,7 +37,7 @@ void Func_020012a8(s32 objectId) {
   s32 x;
   s32 z;
 
-  object = Object_GetById(objectId);
+  object = Actor_GetById(objectId);
   params.update = Effect_AdvanceMotion;
   /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
    * the bytes form the vector's address after the cosine call on every pass,

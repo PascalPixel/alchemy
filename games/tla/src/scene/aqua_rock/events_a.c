@@ -1,7 +1,7 @@
 #include "local.h"
 
-s32 Func_02000478(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_02000478(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   object->speedLimit = 0x10000;
   object->acceleration = 0xccc;
   object->collisionFlags = 0;
@@ -19,7 +19,7 @@ const u8 *Func_020004a4(void) {
   return gData_02002eec;
 }
 
-void Func_020004e4(struct ObjectRuntime *object) {
+void Func_020004e4(struct Actor *object) {
   if (Map_GetTerrainHeight(0, object->x, object->z) > object->y)
     object->y += 0x20000;
   else

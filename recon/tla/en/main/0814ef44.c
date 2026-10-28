@@ -63,7 +63,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"
@@ -81,12 +81,12 @@ static __inline__ s32 Sqrt_(s32 value) { return Iwram_Sqrt(value); }
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
+                   s32 timerFrames); // Actor_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleEffect_RunDjinniEntrance
@@ -512,7 +512,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
         }
       }
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

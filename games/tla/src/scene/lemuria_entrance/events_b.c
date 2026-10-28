@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWorkRoute {
@@ -27,11 +27,11 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void Object_RefreshSelectorById(u32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void Actor_RefreshSelectorById(u32 id);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

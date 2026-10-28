@@ -28,9 +28,9 @@ struct DailaMapWork {
 
 extern const u8 gData_02000e04[];
 
-struct DailaStartActor *Object_GetById(s32 id);
-void Object_SetModeById(s32 actor, s32 mode);
-void ObjectDispatch_SetSingleChildFlags(struct DailaStartActor *object,
+struct DailaStartActor *Actor_GetById(s32 id);
+void Actor_SetModeById(s32 actor, s32 mode);
+void Actor_SetSingleChildFlags(struct DailaStartActor *object,
                                         s32 value);
 void Func_02000c58(void);
 void Func_02000cbc(struct DailaStartActor *object, s32 item);
@@ -52,34 +52,34 @@ s32 DailaInteriors_Start(void) {
       Func_02000c58();
     } else {
       if (GameFlag_Test(0x873)) {
-        Object_SetModeById(24, 5);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(24), 0);
-        Object_SetModeById(25, 5);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(25), 0);
+        Actor_SetModeById(24, 5);
+        Actor_SetSingleChildFlags(Actor_GetById(24), 0);
+        Actor_SetModeById(25, 5);
+        Actor_SetSingleChildFlags(Actor_GetById(25), 0);
       }
-      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
-      Object_GetById(13)->priorityFlags |= 32;
-      Object_GetById(19)->priorityFlags |= 32;
+      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(13)->priorityFlags |= 32;
+      Actor_GetById(19)->priorityFlags |= 32;
       Import_ActorSetSpritePriority(19, 2);
-      Object_GetById(19)->collisionFlags |= 4;
+      Actor_GetById(19)->collisionFlags |= 4;
     }
   } else if (gAdventure.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Import_EventStart();
     Import_EventResolvePendingActions(0);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(13), 0);
     Func_02000dac(0);
     if (!GameFlag_Test(0xa20)) {
-      Func_02000cbc(Object_GetById(9), 458);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
+      Func_02000cbc(Actor_GetById(9), 458);
+      Actor_SetSingleChildFlags(Actor_GetById(9), 0);
       Import_ActorSetSpritePriority(9, 1);
-      Object_GetById(9)->speed1c = 0x13333;
-      Object_GetById(9)->speed18 = 0x13333;
-      Object_GetById(9)->collisionFlags |= 4;
-      Object_GetById(13)->collisionFlags |= 4;
+      Actor_GetById(9)->speed1c = 0x13333;
+      Actor_GetById(9)->speed18 = 0x13333;
+      Actor_GetById(9)->collisionFlags |= 4;
+      Actor_GetById(13)->collisionFlags |= 4;
     } else {
-      Object_GetById(9)->collisionFlags |= 4;
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
+      Actor_GetById(9)->collisionFlags |= 4;
+      Actor_SetSingleChildFlags(Actor_GetById(9), 0);
     }
     if (!GameFlag_Test(0x873)) {
       Func_02000d4c(10, 0, 0);

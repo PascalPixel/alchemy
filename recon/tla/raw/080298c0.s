@@ -92,7 +92,7 @@ Func_080298c0:
 	adds r3, r5, #0
 	ldr r1, [r7, #8]
 	ldr r2, [sp, #16]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r4, [sp, #8]
 	movs r3, #1
 	strh r3, [r4]
@@ -174,7 +174,7 @@ Func_080298c0:
 	ldr r3, [r7, #16]
 	movs r1, #3
 	str r3, [r6, #8]
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	ldr r3, [r7, #8]
 	add r5, sp, #68
 	str r3, [r5]
@@ -314,7 +314,7 @@ Func_080298c0:
 	ldr r1, [r3]
 	adds r0, r7, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r1, [r7, #36]
 	ldr r6, .L_08029c6c
 	adds r0, r1, #0
@@ -377,7 +377,7 @@ Func_080298c0:
 	ldr r1, .L_08029c74
 	str r3, [r5, #20]
 	ldr r6, [r5, #80]
-	bl ObjectDispatch_Initialize
+	bl Actor_StartScript
 	ldr r3, .L_08029c78
 	adds r2, r5, #0
 	str r3, [r5, #108]
@@ -767,7 +767,7 @@ Func_080298c0:
 	str r2, [r7, #36]
 	str r2, [r7, #40]
 	str r2, [r7, #44]
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_0802a100
 .L_08029ef2:
 	ldr r4, .L_0802a004
@@ -813,7 +813,7 @@ Func_080298c0:
 	adds r0, r7, #0
 	mov r3, r8
 	adds r2, r4, r6
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r0, [sp, #8]
 	movs r3, #1
 	strh r3, [r0]
@@ -824,7 +824,7 @@ Func_080298c0:
 	str r5, [r7, #40]
 	str r5, [r7, #44]
 	movs r1, #3
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_0802a100
 .L_08029f68:
 	movs r3, #192
@@ -859,7 +859,7 @@ Func_080298c0:
 .L_08029f9e:
 	movs r1, #1
 	adds r0, r7, #0
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	ldr r1, [sp, #32]
 	cmp r1, #0
 	beq .L_0802a014
@@ -924,7 +924,7 @@ Func_080298c0:
 	ldr r1, [r3]
 	adds r0, r7, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r1, [r7, #36]
 	ldr r6, .L_0802a118
 	adds r0, r1, #0
@@ -981,7 +981,7 @@ Func_080298c0:
 	ldr r1, .L_0802a120
 	str r3, [r5, #20]
 	ldr r6, [r5, #80]
-	bl ObjectDispatch_Initialize
+	bl Actor_StartScript
 	adds r2, r5, #0
 	adds r2, #35
 	movs r3, #8

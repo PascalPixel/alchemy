@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 void Func_020005a0();
 void Func_020005c8();
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 void WaitFrames();
 
 void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
@@ -12,10 +12,10 @@ void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 scale;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (mode == 1) {
     Func_020005c8(id, x << 16, z << 16);
     object->scaleX = 0;

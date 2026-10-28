@@ -26,7 +26,7 @@ struct EventTransition {
   s32 frames;
 };
 
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Func_020035ac(s32 value);
 void Func_0200361c(s32 a, s32 b);
 void Func_020034d4(s32 actor, s32 x, s32 z);
@@ -45,7 +45,7 @@ s32 Func_020004d4(void) {
 #endif
   party = &gAdventure;
   if (party->scene != (s32)&SceneId_Ov685Room1)
-    Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
+    Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   Func_020035ac(0);
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov685Room4) {
@@ -59,14 +59,14 @@ s32 Func_020004d4(void) {
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
       Func_0200361c(10, 326);
       Func_020034d4(10, 664 << 16, 232 << 16);
-      Object_GetById(10)->motionFlags = 4;
+      Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
       Func_020034d4(8, 664 << 16, 200 << 16);
   } else if (scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
-      Object_SetModeById(8, 11);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
+      Actor_SetModeById(8, 11);
+      Actor_SetSingleChildFlags(Actor_GetById(8), 0);
     }
   }
   return 0;

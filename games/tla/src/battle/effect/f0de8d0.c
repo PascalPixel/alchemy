@@ -30,7 +30,7 @@ struct SparkObject {
   void (*update)(struct SparkObject *);
 };
 
-struct SparkObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct SparkObject *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
 void Animation_ApplyChildValuesFar(struct SparkObject *object, u32 value);
 void BattleEffect_SwayParticle(struct SparkObject *obj);
@@ -57,7 +57,7 @@ void Func_080de8d0(struct SparkObject *obj) {
     pos[1] = obj->y + (2 << 16);
     pos[2] = obj->z;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Object_Spawn(673, pos[0], pos[1], pos[2]);
+    spark = Actor_Spawn(673, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
@@ -67,7 +67,7 @@ void Func_080de8d0(struct SparkObject *obj) {
       spark->anchorX = spark->x;
       Animation_ApplyChildValuesFar(spark, 9);
       spark->unk5e = 72;
-      ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
+      Actor_StartScriptFar((struct DispatchObject *)spark,
                                    gBattleEffect_SharedParticleScript);
     }
   }

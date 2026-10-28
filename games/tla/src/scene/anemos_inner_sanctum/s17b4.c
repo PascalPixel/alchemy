@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "frame.h"
 
@@ -11,16 +11,16 @@ struct AnemosInnerSanctumEventWork {
 
 extern const s32 gData_02003594[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void GameFlag_ClearBit(s32 flag);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void Func_020032e0(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Func_020032e0(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_020032e8(struct ObjectRuntime *object, const s32 *script);
+void Func_020032e8(struct Actor *object, const s32 *script);
 void Func_020034b8(s32 sound);
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 s32 Func_02003348(s32 layer, s32 x, s32 z);
@@ -36,14 +36,14 @@ static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
 /// leader's step, raising an effect of type 0x2a0 on each step, and stops where
 /// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
 /// or 200. unk4c and acceleration hold the leader's last x and z.
-void Func_020017b4(struct ObjectRuntime *self) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_020017b4(struct Actor *self) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 next[2];
   s32 ahead[3];
-  struct ObjectRuntime *dust;
+  struct Actor *dust;
   s32 kind;
 
-  if (Object_GetById(gAdventure.currentOwner)->z >> 16 > 248) {
+  if (Actor_GetById(gAdventure.currentOwner)->z >> 16 > 248) {
     self->update = 0;
     GameFlag_ClearBit(0x200);
     self->x = (self->x & 0xfff00000) + 0x80000;
@@ -58,10 +58,10 @@ void Func_020017b4(struct ObjectRuntime *self) {
     dust->x += ((Random16Far() & 15) - 8) << 16;
     dust->y += ((Random16Far() & 31) - 4) << 16;
     dust->motionFlags = 0;
-    Object_SetPartAttribute(dust, ((u8 *)self)[0x62]);
-    Object_SetSpritePriority(dust, 2);
+    Actor_SetPartAttribute(dust, ((u8 *)self)[0x62]);
+    Scene_SetActorSpritePriority(dust, 2);
     Func_020032e0(dust, 1);
-    ObjectDispatch_SetSingleChildFlags(dust, 0);
+    Actor_SetSingleChildFlags(dust, 0);
     Func_020032e8(dust, gData_02003594);
     self->unk4c = leader->x;
     self->acceleration = leader->z;

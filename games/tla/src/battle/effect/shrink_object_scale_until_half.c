@@ -8,21 +8,21 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-#define Object_SetPositionAndResetMotionFar                                    \
-  ((s32 (*)(void *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
+#define Actor_SetPositionAndResetMotionFar                                    \
+  ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
 s32 FieldEffect_RunWhirlwind();
 
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object) {
+void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
   s32 scale;
 
   scale = object->scaleX - 0x80;
   object->scaleY = scale;
   object->scaleX = scale;
   if (scale < 0x8000) {
-    Object_SetPositionAndResetMotionFar(object, 0, 0, 0);
+    Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
 }

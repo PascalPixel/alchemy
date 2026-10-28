@@ -15,7 +15,7 @@
 #include "window.h"
 #include "uiflow.h"
 
-void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
+void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 
 /// Shows 16x16 flags per page and takes input until closed, starting on page

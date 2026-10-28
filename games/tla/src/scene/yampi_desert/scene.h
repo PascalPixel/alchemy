@@ -21,14 +21,14 @@ extern const u8 gData_020047ec[];
 extern const u8 gData_02004800[];
 extern s32 gData_02004808;
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
-void Object_SetPartAttribute(struct FieldActor *object, s32 value);
-void Object_SetWideSprite(s32 actor, s32 value);
+void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
+void Actor_SetWideSprite(s32 actor, s32 value);
 s32 Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
@@ -74,10 +74,10 @@ void Func_020040d0(s32 actor, s32 flags);
 void Func_020004e0(void);
 void Func_02000918(u16 *list);
 void Func_0200095c(u16 *list);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Camera_FollowActor(s32 id, s32 mode);
-void Object_LinkObjectAndSetCallback(s32 id, s32 target);
+void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -89,9 +89,9 @@ void Func_020041f8(s32 cue);
 extern struct FieldActor *gData_0200480c;
 extern s32 gInput;
 extern u32 gFrameCount;
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003fe0(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Func_02003fe8(struct FieldActor *object);
@@ -99,8 +99,8 @@ void Func_020040e8(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
 void Func_02004118(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_Stop(s32 id);
 void Func_020021d4(void);
 void Func_02002180(void);
 void Func_02002318(void);
@@ -131,7 +131,7 @@ static inline void Scene_FlagClear(s32 flag) {
 
 static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, flags);
+  Actor_ArmCallback(id, angle, flags);
 }
 
 static inline void Scene_Call4090(s32 actor, s32 x, s32 z) {
@@ -156,7 +156,7 @@ static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
 
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
@@ -166,7 +166,7 @@ static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
 
 static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndCommit(id, x, z);
+  Actor_SetPositionAndCommit(id, x, z);
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
@@ -176,7 +176,7 @@ static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
 
 static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 #endif

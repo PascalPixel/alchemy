@@ -400,7 +400,7 @@ BattleEffect_RunShiningStar:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r5, #240
 	ldr r3, [sp, #48]
 	lsls r5, r5, #7

@@ -85,7 +85,7 @@ void BattleEffect_SpawnObjects(s32 count, s32 resource,
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Sound_PlayFar(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // ObjectGroup_UpdateMembers
+                   s32 frames); // Actor_UpdateMembers
 void Func_0816442c(s32 formation, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x,

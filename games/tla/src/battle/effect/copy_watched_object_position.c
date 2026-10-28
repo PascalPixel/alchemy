@@ -10,10 +10,10 @@
 #include "types.h"
 #include "metadata_lookup.h"
 #include "scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 BattleEffect_CopyWatchedObjectPosition(struct ObjectRuntime *object) {
-  struct ObjectRuntime *link;
+s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
+  struct Actor *link;
 
   link = object->watchedObject;
   if (link != NULL) {

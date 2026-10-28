@@ -26,7 +26,7 @@ s32 Script_ApplyWatchedObjectPosition();
 s32 Script_ApplyLocalOffsetPosition();
 s32 Func_08025698();
 s32 Func_08025830();
-s32 Object_ApproachWatchedObject();
+s32 Actor_ApproachWatchedActor();
 s32 Func_08025160();
 s32 Script_RepeatOrJump();
 s32 Script_JumpToLabel();
@@ -42,7 +42,7 @@ s32 Script_ApplyOperandAdd();
 s32 Script_ApplyOperandCompare();
 s32 Func_08027064();
 s32 Func_080279b0();
-s32 Object_MoveByKeys();
+s32 Actor_MoveByKeys();
 s32 Func_080292fc();
 s32 Func_08029570();
 s32 Func_080298c0();
@@ -53,7 +53,7 @@ s32 Func_0802a124();
 s32 Func_0802632c();
 s32 Func_080267bc();
 s32 Func_08027e0c();
-s32 ObjectDispatch_ReleaseAndClear();
+s32 Actor_ReleaseAndClear();
 s32 Script_SetAnimation();
 s32 Script_Nop();
 s32 Script_PlaySound();
@@ -251,7 +251,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
     Func_08025698,                       // 0x09 SC_WANDER
     Func_08025830,                       // 0x0a SC_WANDER_HOME
-    Object_ApproachWatchedObject,         // 0x0b SC_APPROACH_WATCHED
+    Actor_ApproachWatchedActor,         // 0x0b SC_APPROACH_WATCHED
     Func_08025160,                       // 0x0c SC_CAMERA
     Script_RepeatOrJump,                 // 0x0d SC_LOOP
     Script_JumpToLabel,                  // 0x0e SC_JUMP
@@ -267,7 +267,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_ApplyOperandCompare,          // 0x18 SC_CMP
     Func_08027064,                       // 0x19 SC_PLAYER
     Func_080279b0,                       // 0x1a SC_CMD_1A
-    Object_MoveByKeys,                   // 0x1b SC_KEYS
+    Actor_MoveByKeys,                   // 0x1b SC_KEYS
     Func_080292fc,                       // 0x1c SC_CMD_1C
     Func_08029570,                       // 0x1d SC_CMD_1D
     Func_080298c0,                       // 0x1e SC_CMD_1E
@@ -278,7 +278,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Func_0802632c,                       // 0x23 SC_CMD_23
     Func_080267bc,                       // 0x24 SC_CMD_24
     Func_08027e0c,                       // 0x25 SC_CMD_25
-    ObjectDispatch_ReleaseAndClear,      // 0x26 SC_FREE
+    Actor_ReleaseAndClear,      // 0x26 SC_FREE
     Script_SetAnimation,      // 0x27 SC_ARG
     Script_Nop,                  // 0x28 SC_NOP
     Script_PlaySound,                 // 0x29 SC_SE

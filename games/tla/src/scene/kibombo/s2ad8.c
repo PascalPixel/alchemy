@@ -13,7 +13,7 @@ void Func_02002ad8(void) {
    */
   do {
   } while (0);
-  work->leader = Object_GetById(gAdventure.currentOwner);
+  work->leader = Actor_GetById(gAdventure.currentOwner);
 }
 
 void Func_02002af8(void) {

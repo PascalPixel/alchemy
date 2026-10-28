@@ -9,7 +9,7 @@
 // (movs r1, #8; movs r2, #9; movs r0, #0).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 #include "task.h"
@@ -22,7 +22,7 @@ extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020001d0(const void *data);
 void Func_02000c64(const void *data);
 void Func_020013b0(void);
@@ -62,11 +62,11 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02003bf0(a, b, c, d, e, f);
 }
 
-static __inline__ void Actor_SetPosition(struct ObjectRuntime *object, s32 x,
+static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Object_SetPositionAndResetMotion(object, x, y, z);
+  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -84,7 +84,7 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 static __inline__ void Actor_SetVariant(s32 id, s32 variant) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetActionVariant(id, variant);
+  Actor_SetSpritePriority(id, variant);
 }
 
 static __inline__ void Actor_Link(s32 slot, s32 first, s32 second) {
@@ -94,13 +94,13 @@ static __inline__ void Actor_Link(s32 slot, s32 first, s32 second) {
 }
 
 void Func_02003284(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 zero;
 
   if (Flag_Test(265) == 0) {
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
     Actor_SetVariant(gAdventure.currentOwner, 2);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
   Actor_SetVariant(8, 1);
   Actor_SetVariant(9, 1);
@@ -114,23 +114,23 @@ void Func_02003284(void) {
   Func_02003d90();
   Func_02003da8(0, 520, 12, 13);
   Func_02003db8(gData_02003fc4);
-  if (Object_GetById(19)->y > (s32)0xfff80000)
+  if (Actor_GetById(19)->y > (s32)0xfff80000)
     Actor_SetVariant(19, 1);
   else
     Actor_SetVariant(19, 2);
   Func_02003cc0(20);
-  Object_GetById(20)->priorityFlags |= 32;
+  Actor_GetById(20)->priorityFlags |= 32;
   Actor_SetVariant(20, 2);
   if (Flag_Test(0x841) != 0)
     Func_0200172c();
   else
     Map_CopyAttributes(38, 32, 1, 1, 38, 33);
-  Object_GetById(14)->priorityFlags &= ~1;
-  Object_GetById(15)->priorityFlags &= ~1;
-  Object_GetById(16)->priorityFlags &= ~1;
-  Object_GetById(17)->priorityFlags &= ~1;
+  Actor_GetById(14)->priorityFlags &= ~1;
+  Actor_GetById(15)->priorityFlags &= ~1;
+  Actor_GetById(16)->priorityFlags &= ~1;
+  Actor_GetById(17)->priorityFlags &= ~1;
   Func_02000c64(gData_02003fc8);
-  object = Object_GetById(17);
+  object = Actor_GetById(17);
   zero = 0;
   if ((object->x >> 20) == 54) {
     struct MapCell *cell = Ram_HeapSlots->mapWork->layers[0].cells;
@@ -149,15 +149,15 @@ void Func_02003284(void) {
 
     Actor_PlaceFacing(25, 212 << 17, 208 << 15, angle);
   }
-  Object_SetModeById(18, 3);
+  Actor_SetModeById(18, 3);
   if (Flag_Test(0x86f) != 0) {
     /* FAKEMATCH: the named angle is started before the two coordinates, as in
      * Func_02003164. */
     s32 angle = 0x4000;
 
-    object = Object_GetById(18);
+    object = Actor_GetById(18);
     Map_CopyAttributes(27, 8, 1, 1, 27, 9);
-    Object_SetModeById(18, 4);
+    Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
     Flag_Set(517);
@@ -173,7 +173,7 @@ void Func_02003284(void) {
   Func_020001d0(gData_02003f80);
   Func_020013b0();
   Func_02001fc4();
-  object = Object_GetById(27);
+  object = Actor_GetById(27);
   *((u8 *)object + 85) = zero;
   object->y = zero;
   gData_0200567c = zero;

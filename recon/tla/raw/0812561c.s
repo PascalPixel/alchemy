@@ -295,12 +295,12 @@ Func_0812561c:
 	bl BattleObject_Get
 	movs r1, #3
 	ldr r0, [r0]
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r8
 	bl BattleObject_Get
 	movs r1, #32
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r3, #1
 	mov r0, r8
 	adds r1, r6, #0

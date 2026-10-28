@@ -14,7 +14,7 @@ extern u16 gData_02005a64[];
 s32 GameFlag_Test();
 void Task_Add();
 void Func_02002f08(void);
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02004774();
 void Func_020049b4();
@@ -43,7 +43,7 @@ void Func_02003048(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   /* FAKEMATCH: ⚓️ loads the ground height before it clears the word; without it

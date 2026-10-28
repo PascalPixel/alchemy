@@ -121,7 +121,7 @@ Func_02000538:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r7, [r6, #104]
 	bl Func_02001be8
@@ -141,7 +141,7 @@ Func_02000538:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r3, #99
 	adds r3, r3, r7
 	mov r8, r3
@@ -227,7 +227,7 @@ Func_02000538:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
@@ -316,7 +316,7 @@ Func_02000538:
 	lsls r3, r3, #2
 	adds r5, r5, r3
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #1
@@ -365,7 +365,7 @@ Func_02000750:
 	adds r6, r0, #0
 	ldr r0, [r3]
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #179
 	lsls r3, r3, #1
 	add r3, r10
@@ -398,14 +398,14 @@ Func_02000750:
 .L_020087ae:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	b .L_020088fa
 .L_020087b8:
 	.4byte gAdventure
 .L_020087bc:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]
@@ -615,7 +615,7 @@ Func_02000910:
 	bl Func_02001b68
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	adds r3, r7, #0
 	movs r6, #0
 	adds r3, #85
@@ -688,13 +688,13 @@ Func_02000a88:
 	mov r7, r8
 	push {r7}
 	movs r0, #9
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	movs r0, #23
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	ldr r2, [r5, #80]
 	movs r1, #128
@@ -723,7 +723,7 @@ Func_02000a88:
 	lsls r1, r1, #18
 	bl Func_02001c10
 	movs r0, #24
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #85
 	movs r2, #0
 	adds r3, r3, r5
@@ -770,11 +770,11 @@ Func_02000a88:
 	adds r3, r3, r2
 	mov r2, r8
 	strh r3, [r2, #18]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #4
 	bl Animation_ApplyChildValues
 	movs r0, #11
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #4
 	bl Animation_ApplyChildValues
 .L_02008b64:
@@ -803,11 +803,11 @@ Func_02000a88:
 	adds r3, r3, r2
 	mov r2, r8
 	strh r3, [r2, #18]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #4
 	bl Animation_ApplyChildValues
 	movs r0, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #4
 	bl Animation_ApplyChildValues
 .L_02008bae:
@@ -1311,7 +1311,7 @@ Func_0200130c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	movs r2, #0
 	asrs r4, r3, #20
@@ -1410,7 +1410,7 @@ Func_02001648:
 	ldr r0, [r1]
 	sub sp, #8
 	mov r10, r1
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r3, [r6, #8]
 	movs r2, #64
@@ -1455,9 +1455,9 @@ Func_02001648:
 	strb r2, [r3]
 	mov r3, r10
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r2, #226
 	movs r3, #128
 	lsls r2, r2, #4
@@ -1487,7 +1487,7 @@ Func_02001648:
 	strh r3, [r1, #14]
 	ldr r0, [r2]
 	movs r1, #28
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #16
 	bl FieldEvent_WaitFrames
 .L_02009710:
@@ -1518,7 +1518,7 @@ Func_02001648:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	adds r0, #84
 	strb r3, [r0]
@@ -1563,7 +1563,7 @@ Func_020017e0:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	sub sp, #68
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	bl Func_02001be8
 	movs r0, #0
@@ -1685,7 +1685,7 @@ Func_020017e0:
 	bl Func_02001c30
 	ldr r0, [r5]
 	movs r1, #49
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #160
 	movs r1, #160
 	movs r2, #128
@@ -1716,7 +1716,7 @@ Func_020017e0:
 	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #1
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	bl Func_02001bf0
 	add sp, #68
 	pop {r3, r5}
@@ -1746,7 +1746,7 @@ Func_02001978:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	ldr r6, .L_02009a24
 	asrs r3, r3, #20

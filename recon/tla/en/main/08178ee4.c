@@ -87,7 +87,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void HeapSlot_Release(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -256,7 +256,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

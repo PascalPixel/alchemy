@@ -4,7 +4,7 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Scene_SetArrivalFlags(s32 value);
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
 void Func_02002228(s32 id, s32 x, s32 z);
 void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
@@ -19,7 +19,7 @@ s32 Func_020001d4(void) {
   if (GameFlag_Test(0x109) == 0)
     GameFlag_ClearBit(0xa18);
   if (GameFlag_Test(0xa18)) {
-    struct FieldActor *object = Object_GetById(10);
+    struct FieldActor *object = Actor_GetById(10);
 
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;

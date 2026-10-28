@@ -9,14 +9,14 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
 void Func_02001254(s32 actor, s32 target);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
 void Func_0200128c(s32 message);
 void Func_020012a4(s32 actor, s32 emote, s32 frames);
 void Func_02001294(s32 speaker, s32 flags);
-void ObjectMotion_EnableActionAndResetMotion(s32 actor);
+void Actor_Stop(s32 actor);
 void Func_020012ac(s32 actor, s32 emote);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Object_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Func_0200124c(s32 actor, s32 x, s32 z);
 void Func_0200131c(s32 cue);
 void Func_020012bc(s32 countdown);
@@ -24,7 +24,7 @@ void Func_020012bc(s32 countdown);
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; as direct
    * calls the coordinates are kept in callee-saved registers (79 differ). */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
@@ -54,32 +54,32 @@ void Func_020007d8(void) {
   Event_WaitTransitionFrames();
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 552, 488);
   Func_02001254(5, gAdventure.currentOwner);
-  Object_LinkObjectAndSetCallback(5, gAdventure.currentOwner);
+  Actor_WatchAndSetScript(5, gAdventure.currentOwner);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);
-  Object_LinkObjectAndSetCallback(6, gAdventure.currentOwner);
+  Actor_WatchAndSetScript(6, gAdventure.currentOwner);
   Func_02001254(6, gAdventure.currentOwner);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
-  Object_LinkObjectAndSetCallback(22, gAdventure.currentOwner);
+  Actor_WatchAndSetScript(22, gAdventure.currentOwner);
   Func_02001254(22, gAdventure.currentOwner);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 608, 472);
   Func_0200128c((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Func_02001294(22, 0);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x8000, 10);
-  ObjectMotion_Launch(5, 6, 15);
-  ObjectMotion_Launch(5, 6, 23);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x8000, 10);
+  Actor_Jump(5, 6, 15);
+  Actor_Jump(5, 6, 23);
   Func_02001294(5, 0);
-  ObjectMotion_EnableActionAndResetMotion(6);
-  ObjectMotion_SetAngleToward(6, 5, 0);
+  Actor_Stop(6);
+  Actor_SetAngleToward(6, 5, 0);
   Func_02001294(6, 0);
-  Object_LinkObjectAndSetCallback(6, gAdventure.currentOwner);
+  Actor_WatchAndSetScript(6, gAdventure.currentOwner);
   GondowanCliffs_ObjEmote(gAdventure.currentOwner, 258);
   FieldEvent_WaitFrames(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
-  Object_SetModeById(gAdventure.currentOwner, 3);
-  Object_SetModeById(6, 3);
-  Object_SetModeById(5, 3);
+  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(6, 3);
+  Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_WaitFrames(30);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);

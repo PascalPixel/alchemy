@@ -18,7 +18,7 @@
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
 
@@ -125,8 +125,8 @@ void Func_080ca2fc(void);
 void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
 s32 Party_GetLeaderActor(void);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Func_080cb05c(void);
 void WaitFrames(s32 frames);
@@ -143,7 +143,7 @@ void Func_080cb82c(void);
 void Func_080cb8a4(void);
 s32 Func_080d25c8(s32 item);
 void PartyInventory_GiveItem(s32 item, s32 mode);
-struct ObjectRuntime *Func_080cb8e8(void);
+struct Actor *Func_080cb8e8(void);
 void Leader_StopMoving(void);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void FieldMessage_ShowFar(s32 message, s32 mode);
@@ -185,7 +185,7 @@ void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 s32 SceneSequence_Run(void) {
   struct FieldWork *work;
   struct Adventure *party;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   struct FieldUnit *unit;
   s32 result;
   s32 mode;
@@ -279,9 +279,9 @@ s32 SceneSequence_Run(void) {
   work->sceneAttributeLow = attributes & 15;
   arrival = (s8 *)&gAdventure.unk2c2;
   if (*arrival == 2) {
-    Object_GetById(Party_GetLeaderActor())->scaleX = zero;
-    ObjectDispatch_SetSingleChildFlagsFar(
-        Object_GetById(Party_GetLeaderActor()), 0);
+    Actor_GetById(Party_GetLeaderActor())->scaleX = zero;
+    Actor_SetSingleChildFlagsFar(
+        Actor_GetById(Party_GetLeaderActor()), 0);
   }
   Func_080cb05c();
   WaitFrames(2);
@@ -347,7 +347,7 @@ s32 SceneSequence_Run(void) {
   for (;;) {
     GameFlag_SetBit(260);
     leader = Func_080cb8e8();
-    Object_ResetMotion(leader);
+    Actor_ResetMotion(leader);
     party->x = leader->x;
     party->y = 0;
     party->z = leader->z;
@@ -365,15 +365,15 @@ s32 SceneSequence_Run(void) {
           Leader_StopMoving();
           Func_080cb82c();
           for (i = 0; i < work->fallenCount; i++) {
-            Object_SetMode(leader, 22);
+            Actor_SetMode(leader, 22);
             MessageArgument_PushFar(work->fallenOwners[i], 1);
             FieldMessage_ShowFar(0xd92, 1);
           }
           if (work->survivorCount == 0) {
             if (Data_02000454 == 4)
-              Object_SetMode(leader, 36);
+              Actor_SetMode(leader, 36);
             else
-              Object_SetMode(leader, 19);
+              Actor_SetMode(leader, 19);
             Sound_PlayFar(59);
             FieldMessage_ShowFar(0xd93, 1);
             unit = Unit_Get(Data_02000454);

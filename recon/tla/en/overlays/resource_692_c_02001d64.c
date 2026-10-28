@@ -6,11 +6,11 @@
 // shaking eased; then it settles, sound 288, flag 2552 is set and the camera
 // returns to the leader.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
@@ -31,17 +31,17 @@ u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 id);
 void Func_02001d04(void);
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Func_02004da0(id, 194 << 18, 248 << 16);
-  ObjectMotion_ResetAndSetPosition(id, x, z);
-  Object_GetById(id)->velocityY = 0x60000;
-  Object_GetById(id)->gravity = 0x8000;
-  Object_GetById(id)->action = 0;
-  Object_GetById(id)->update = Func_02001d04;
+  Actor_ResetAndSetPosition(id, x, z);
+  Actor_GetById(id)->velocityY = 0x60000;
+  Actor_GetById(id)->gravity = 0x8000;
+  Actor_GetById(id)->action = 0;
+  Actor_GetById(id)->update = Func_02001d04;
 }
 
 void Func_02001d64(void) {
@@ -88,17 +88,17 @@ void Func_02001d64(void) {
       Arrive(17, 776, 232);
     } else if (i == 112) {
       Func_02004da0(12, 194 << 18, 248 << 16);
-      ObjectMotion_ResetAndSetPosition(12, 696, 232);
+      Actor_ResetAndSetPosition(12, 696, 232);
       Camera_MoveWithinMapBounds(174 << 18, -1, 232 << 16, 1);
-      Object_GetById(12)->velocityY = 0x68000;
-      Object_GetById(12)->gravity = 0x8000;
-      Object_GetById(12)->action = 0;
-      Object_GetById(12)->update = Func_02001d04;
+      Actor_GetById(12)->velocityY = 0x68000;
+      Actor_GetById(12)->gravity = 0x8000;
+      Actor_GetById(12)->action = 0;
+      Actor_GetById(12)->update = Func_02001d04;
       Func_02004d10(-1, -1, 0xe666);
     }
     WaitFrames(3);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(12);
+  Actor_WaitForMoveById(12);
   Func_02004d18();
   Func_02004f30(288);
   FieldEvent_WaitFrames(40);

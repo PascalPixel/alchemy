@@ -18,14 +18,14 @@ void Func_02002d6c(struct FieldActor *object, s32 x, s32 z, s32 mode) {
                            the flag store, where the native loads it; taken in
                            the call below, the store comes first */
   object->motionFlags = 0;
-  ObjectMotion_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
-  ObjectMotion_SetPositionAndReset(party->currentOwner, x, z);
+  Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
+  Actor_SetPositionAndReset(party->currentOwner, x, z);
   Func_020040e8(party->currentOwner, 0xc000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(party->currentOwner), 0);
-  Object_SetModeById(party->currentOwner, 13);
+  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
+  Actor_SetModeById(party->currentOwner, 13);
   Func_02003fe0(object, object->x, object->y - 0xa0000, object->z);
   Func_02003fe8(object);
-  Object_SetModeById(party->currentOwner, 10);
+  Actor_SetModeById(party->currentOwner, 10);
   Func_020041f8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

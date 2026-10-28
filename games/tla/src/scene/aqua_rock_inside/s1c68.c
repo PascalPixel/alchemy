@@ -7,10 +7,10 @@ void Func_02001c68(void) {
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 152);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 152);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02001a1c();
   }
@@ -23,9 +23,9 @@ void Func_02001cd8(void) {
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 280, 184);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 280, 184);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02001a1c();
   }
@@ -38,9 +38,9 @@ void Func_02001d40(void) {
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02001a1c();
   }

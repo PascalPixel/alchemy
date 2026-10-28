@@ -8,7 +8,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z) {
 }
 
 void Func_02000f2c(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
   s32 i;
@@ -22,8 +22,8 @@ void Func_02000f2c(void) {
     Func_0200156c(9);
     Func_020020c0(9, 0, 0);
     Place(21, 0xb80000, 0xb80000);
-    Object_GetById(21)->motionFlags = 0;
-    Object_GetById(21)->y -= 0x400000;
+    Actor_GetById(21)->motionFlags = 0;
+    Actor_GetById(21)->y -= 0x400000;
     CopyCells2(9, 11, 1, 1, 11, 12);
     GameFlag_SetBit(0x204);
   }

@@ -925,7 +925,7 @@ Func_0815f16c:
 	bne .L_0815f8ea
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	mov r3, sp
 	adds r3, #228
 	str r3, [sp, #16]
@@ -1392,7 +1392,7 @@ Func_0815f16c:
 	bl HeapSlot_Release
 	adds r0, r7, #0
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r2, [sp, #124]
 	cmp r2, #45
 	bne .L_0815fcc0
@@ -1418,7 +1418,7 @@ Func_0815f16c:
 .L_0815fce2:
 	adds r0, r7, #0
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r0, [sp, #80]
 	str r0, [r7, #36]
 	ldr r1, [sp, #76]
@@ -8894,7 +8894,7 @@ Func_0815f16c:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r5, #240
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7

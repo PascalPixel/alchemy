@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -15,7 +15,7 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Random16Far();
 s32 Func_020000b8();
 void GameFlag_SetBit();
@@ -30,7 +30,7 @@ s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   r10 = a0;
   /* sub (s32)stack, #56 */
   r9 = FIELD_AT(50331872, s32, 0);
-  v0 = Object_GetById(*(s16 *)((FIELD_AT(50331872, s32, 0)) + 26));
+  v0 = Actor_GetById(*(s16 *)((FIELD_AT(50331872, s32, 0)) + 26));
   r7 = v0;
   r0 = v0;
   if (r6 > 7)
@@ -67,7 +67,7 @@ L_02008adc:
     FIELD_AT(r7, s32, 28) = 0x10000;
     r4 = 0;
     GameFlag_SetBit(*(s16 *)((r7 + 100) + r4));
-    v4 = Object_GetById(*(s16 *)(r9 + 26));
+    v4 = Actor_GetById(*(s16 *)(r9 + 26));
     Func_02000338();
     r4 = r10;
     v5 = Func_02002fc0(67, 23, ((FIELD_AT(r7, s32, 8)) >> 20) + 64,

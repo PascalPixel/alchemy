@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02001e78(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
     u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);

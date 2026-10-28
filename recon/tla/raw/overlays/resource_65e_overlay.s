@@ -21,7 +21,7 @@ Func_02000340:
 	adds r2, #11
 	adds r3, r5, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #32
@@ -76,9 +76,9 @@ Func_02000340:
 	b .L_0200843e
 .L_020083d0:
 	movs r0, #18
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #4
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	b .L_0200843e
 .L_020083de:
 	ldr r3, .L_0200844c
@@ -92,7 +92,7 @@ Func_02000340:
 	cmp r3, #1
 	bne .L_0200840c
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	ldrb r3, [r0]
 	movs r2, #4
@@ -100,7 +100,7 @@ Func_02000340:
 	strb r3, [r0]
 	movs r1, #2
 	movs r0, #8
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	b .L_0200843e
 .L_0200840c:
 	cmp r3, #5
@@ -109,7 +109,7 @@ Func_02000340:
 	adds r0, #255
 	bl GameFlag_ClearBit
 	movs r0, #9
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	ldrb r3, [r0]
 	movs r2, #4
@@ -117,7 +117,7 @@ Func_02000340:
 	strb r3, [r0]
 	movs r1, #2
 	movs r0, #9
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	b .L_0200843e
 .L_02008432:
 	cmp r3, #4

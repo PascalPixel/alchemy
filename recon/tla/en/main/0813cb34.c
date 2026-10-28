@@ -86,8 +86,8 @@ u32 Random16(void);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+                   s32 timerFrames); // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void SummonEffect_RunCanvasMode1(void *effect);
 void WaitFrames(s32 frames);
 
@@ -259,7 +259,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

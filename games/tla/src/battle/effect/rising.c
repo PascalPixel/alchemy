@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "mem.h"
 
 s32 Party_GetLeaderActor(void);
 void WaitFrames(s32);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const u8 *script);
 void Marker_MoveLeaderAwayFromEmitter(void);
-void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object,
+void Actor_SetSpritePriorityDirectFar(struct Actor *object,
                                          s32 priority);
 extern const u8 gData_080effd8[];
 extern const u8 gData_080f0074[];
@@ -17,8 +17,8 @@ extern const u8 gData_080f0074[];
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
 /// owner to face a quarter turn.
-void Func_080cf350(struct ObjectRuntime *object) {
-  struct ObjectRuntime *owner;
+void Func_080cf350(struct Actor *object) {
+  struct Actor *owner;
 
   if (object == 0)
     return;
@@ -27,7 +27,7 @@ void Func_080cf350(struct ObjectRuntime *object) {
     /* FAKEMATCH(pin): the owner kept in r0, where the call returns it, until
      * after the motion byte's store; as an ordinary local, 2 of 40
      * instructions differ in tla-en. */
-    register struct ObjectRuntime *found asm("r0") =
+    register struct Actor *found asm("r0") =
         ObjectTable_Get(Party_GetLeaderActor());
     object->acceleration = 0x10000;
     object->speedLimit = 0x20000;
@@ -38,22 +38,22 @@ void Func_080cf350(struct ObjectRuntime *object) {
     __asm__ volatile("" : "+r"(found));
     owner = found;
   }
-  Object_SetPosition(object, owner->x, owner->y + 0x240000, owner->z);
-  ObjectDispatch_SetSpritePriorityFar(object, 1);
+  Actor_SetTargetPosition(object, owner->x, owner->y + 0x240000, owner->z);
+  Actor_SetSpritePriorityDirectFar(object, 1);
   WaitFrames(3);
-  Object_SetMode(owner, 28);
-  ObjectDispatch_InitializeFar(object, gData_080f0074);
+  Actor_SetMode(owner, 28);
+  Actor_StartScriptFar(object, gData_080f0074);
   owner->angle = 0x4000;
 }
 
-void EffectRuntime_RunObjectRiseAndDescent(struct ObjectRuntime *object, s32 flags) {
-  struct ObjectRuntime *owner;
+void EffectRuntime_RunObjectRiseAndDescent(struct Actor *object, s32 flags) {
+  struct Actor *owner;
 
   if (object != 0) {
     owner = ObjectTable_Get(Party_GetLeaderActor());
     if (flags & 1) {
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-      ObjectDispatch_InitializeFar(object, gData_080effd8);
+      Actor_SetSingleChildFlagsFar(object, 0);
+      Actor_StartScriptFar(object, gData_080effd8);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
       object->update = Marker_MoveLeaderAwayFromEmitter;
@@ -64,7 +64,7 @@ void EffectRuntime_RunObjectRiseAndDescent(struct ObjectRuntime *object, s32 fla
       Func_080cf350(object);
     if (flags == 3)
       WaitFrames(80);
-    Object_SetMode(owner, 1);
+    Actor_SetMode(owner, 1);
   }
 }
 
@@ -79,16 +79,16 @@ struct EffectVisual {
   u8 value1a;
   u8 value1b;
 };
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 
 void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
-  struct ObjectRuntime *owner =
+  struct Actor *owner =
       ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(68, 0x608);
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_080200c0(489, owner->x, owner->y + 0x240000, owner->z);
 
   if (object != 0) {
@@ -121,7 +121,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
       Func_080cf350(object);
 
     WaitFrames(80);
-    Object_SetMode(owner, 1);
-    Object_Destroy(object);
+    Actor_SetMode(owner, 1);
+    Actor_Destroy(object);
   }
 }

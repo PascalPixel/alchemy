@@ -5,7 +5,7 @@
 // index (96), a while loop, i declared first, the count as s16, u16 or s32
 // local (47 to 49) or as a u16 field (76).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct Spot {
@@ -27,7 +27,7 @@ struct SpotState {
 
 extern struct SpotState gData_02002308;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -35,7 +35,7 @@ void Func_0200146c(struct SpotState *state, struct Spot *spot);
 void Func_020014dc(struct SpotState *state, struct Spot *spot);
 
 s32 Func_0200180c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02002308;

@@ -12,8 +12,8 @@ s32 Func_02004fcc();
 s32 PartyInventory_FindOwner();
 s32 Func_02004f0c();
 s32 Func_02004f14();
-s32 Object_GetById();
-s32 Object_RefreshSelectorById();
+s32 Actor_GetById();
+s32 Actor_RefreshSelectorById();
 s32 Func_02000f00();
 s32 Func_02000fac();
 s32 Func_02004e64();
@@ -32,9 +32,9 @@ void Func_020012ac(void) {
     Call1(Func_02004f0c, (s32)MsgGaiaRockInside07);
     Call2(Func_02004f14, 0xa, 0);
   } else {
-    t5 = Value1(Object_GetById, 9);
+    t5 = Value1(Actor_GetById, 9);
     if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610) {
-      Call1(Object_RefreshSelectorById, 9);
+      Call1(Actor_RefreshSelectorById, 9);
     }
     Func_02000f00();
     Call1(Func_02004f0c, (s32)MsgGaiaRockInside04);

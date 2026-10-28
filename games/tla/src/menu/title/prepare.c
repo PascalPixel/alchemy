@@ -6,7 +6,7 @@
 #include "io_reg.h"
 #include "vram_tab.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -23,7 +23,7 @@ extern s16 gData_020006dc;
 extern struct TitleSprite gData_020006f0[];
 extern u32 gFrameCount;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void Fade_ToBlack(s32 vblanks);
@@ -52,7 +52,7 @@ s32 Func_0200005c(void) {
   s32 limit;
 
   if (gAdventure.entrance == 10) {
-    Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+    Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
     Func_02000644(75);
     Func_0200031c(0);
     WaitFrames(120);

@@ -9,10 +9,10 @@ void Func_02000f50(void) {
 
 void Func_02000f98(void) {
   Func_02000454(gData_02001220);
-  Object_GetById(8)->priorityFlags |= 0x20;
-  Object_GetById(9)->priorityFlags |= 0x20;
-  Object_GetById(10)->collisionFlags |= 8;
-  Object_GetById(11)->collisionFlags |= 8;
+  Actor_GetById(8)->priorityFlags |= 0x20;
+  Actor_GetById(9)->priorityFlags |= 0x20;
+  Actor_GetById(10)->collisionFlags |= 8;
+  Actor_GetById(11)->collisionFlags |= 8;
 }
 
 void Func_02000fe4(void) {

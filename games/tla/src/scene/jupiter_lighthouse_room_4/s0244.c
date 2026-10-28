@@ -1,19 +1,19 @@
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Func_02001da8(struct ObjectRuntime *object, s32 mode);
+void Func_02001da8(struct Actor *object, s32 mode);
 
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
 /// numbers: it circles at its angle (action) around x 232 and rises with its
 /// phase (unk66) from 120 pixels down, taking mode 7 at phase 1 and mode 2 at
 /// phase 38 and starting over once above the ground; drawn in front while the
 /// sine is negative and behind otherwise.
-void Func_02000244(struct ObjectRuntime *object) {
+void Func_02000244(struct Actor *object) {
   s16 angle = object->action;
   s16 height = object->unk66;
   struct FieldSprite *sprite;

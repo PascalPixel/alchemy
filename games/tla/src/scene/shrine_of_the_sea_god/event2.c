@@ -22,7 +22,7 @@ void Func_02001250(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count;) {
-    u8 *flags = &Object_GetById(first + i)->priorityFlags;
+    u8 *flags = &Actor_GetById(first + i)->priorityFlags;
     u32 next = i + 1;
 
     if (show)
@@ -35,12 +35,12 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 }
 
 void Func_02001290(void) {
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   GameFlag_SetBit(0x20a);
 }
 
 void Func_020012b4(void) {
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   GameFlag_ClearBit(0x20a);
 }

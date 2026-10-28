@@ -7,10 +7,10 @@
 // emitted after. Tried earlier: while, guarded do-while, a separate cursor, a
 // 6-byte struct (the ABI pads it to 8).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02003910(s32 id, u16 x, u16 z, s32 layer);
 
@@ -23,12 +23,12 @@ void Func_02003820(const u16 *list) {
 next:
   {
     s32 id = entry[0];
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s32 x = (s16)entry[1];
     s32 z = (s16)entry[2];
 
     object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02003910(id, x, z, object->terrainId);
     entry += 3;
   }

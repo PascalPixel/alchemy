@@ -20,13 +20,13 @@ const u8 *Func_02000218(void) {
 static __inline__ void Offset(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
    * order; the direct call negates the offset last (differ 2). */
-  ObjectMotion_OffsetPositionAndResetMotion(id, x, z);
+  Actor_OffsetPositionAndResetMotion(id, x, z);
 }
 
 static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
   /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
    * order; the direct call negates the offset last (differ 2). */
-  ObjectMotion_CenterOnColumn(id, column, offset);
+  Actor_CenterOnColumn(id, column, offset);
 }
 
 static __inline__ void Func_02002460_(s32 a, s32 b, s32 c) {
@@ -43,7 +43,7 @@ void Func_02000270(void) {
   Func_02002488();
   Func_02002590(0);
   for (i = 8; i <= 63; i++) {
-    u8 *actor = (u8 *)Object_GetById(i);
+    u8 *actor = (u8 *)Actor_GetById(i);
 
     if (actor != NULL) {
       u8 *flags = &actor[85];
@@ -69,8 +69,8 @@ void Func_02000270(void) {
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
   asm("");
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
   {
     s32 owner = gAdventure.currentOwner;
 

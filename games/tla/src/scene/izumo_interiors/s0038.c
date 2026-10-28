@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 s32 Func_02000038(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
 
   if ((u32)(object->x - 0x940000) <= 0x80000) {
     s32 z = object->z;
@@ -21,7 +21,7 @@ s32 Func_02000038(void) {
 }
 
 s32 Func_0200006c(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
 
   if ((u32)(object->x - 0x840000) <= 0x80000) {
     s32 z = object->z;

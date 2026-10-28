@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 #include "event_work.h"
@@ -32,13 +32,13 @@ struct TundariaTowerPosition {
   s32 z;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
 void FieldMessage_Show(const u8 *message, s32 flags);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Task_RemoveFar(void (*callback)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
@@ -65,7 +65,7 @@ extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
 void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_0200137c(void);
 extern const u8 gData_020037f8[];
@@ -76,13 +76,13 @@ extern const u8 gData_02003a5c[];
 extern const u8 gData_02003b28[];
 extern const u8 gData_02003c90[];
 
-void Func_02000840(struct ObjectRuntime *object);
+void Func_02000840(struct Actor *object);
 void Func_02002ebc(void);
 
 void Func_02003000(s32 a, s32 b, s32 c);
 void Func_02003108(s32 color, s32 b);
 void Func_02003110(s32 color, s32 b);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 
 static inline void TundariaTower_FadeTo(s32 color, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -97,7 +97,7 @@ static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
 static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; as a
    * direct call the actor loads before the coordinates. */
-  ObjectMotion_ResetAndSetPosition(actor, x, z);
+  Actor_ResetAndSetPosition(actor, x, z);
 }
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {

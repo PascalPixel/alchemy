@@ -10,9 +10,9 @@ s32 Event_AskYesNoWithActorAnimation();
 s32 FieldEvent_WaitFrames();
 s32 Func_02001c8c();
 s32 GameFlag_SetBit();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_SetSpeedParameters();
+s32 Actor_SetPositionAndReset();
+s32 Actor_ArmCallback();
+s32 Actor_SetSpeedParameters();
 s32 Motion_SetModeAndWaitAnimation();
 extern u8 MsgAlhafra92[];
 
@@ -37,14 +37,14 @@ void Func_0200066c(s32 actor) {
       Call1(FieldEvent_WaitFrames, 20);
       Call1(Func_02001c74, message + 2);
       Call2(Func_02001c8c, actor, 0);
-      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 72,
+      Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 72,
             344);
-      Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+      Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
       Call1(FieldEvent_WaitFrames, 10);
-      Call3(ObjectMotion_SetSpeedParameters, actor, 0x10000, 0x8000);
-      Call3(ObjectMotion_SetPositionAndReset, actor, 56, 328);
-      Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000, 0);
-      Call3(ObjectMotion_ArmCallback, actor, 0x2000, 0);
+      Call3(Actor_SetSpeedParameters, actor, 0x10000, 0x8000);
+      Call3(Actor_SetPositionAndReset, actor, 56, 328);
+      Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xa000, 0);
+      Call3(Actor_ArmCallback, actor, 0x2000, 0);
       Call1(FieldEvent_WaitFrames, 20);
       Call2(Motion_SetModeAndWaitAnimation, actor, 3);
       Call1(FieldEvent_WaitFrames, 10);

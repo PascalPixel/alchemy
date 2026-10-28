@@ -18,7 +18,7 @@
 // the flag) when the flag is set, mode 1 otherwise. Func_080eaa14 then takes
 // the same list, and the leader is lifted onto the terrain if below it.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -38,9 +38,9 @@ struct RestoreMap {
   struct RestoreLayer layers[1];
 };
 
-struct ObjectRuntime *Object_GetById(u32 actor);
-s32 Func_080eab70(struct ObjectRuntime *object);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 actor);
+s32 Func_080eab70(struct Actor *object);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -51,28 +51,28 @@ void Func_080ea7c0(struct ActorFlag *actors) {
   register struct ActorFlag *list asm("r9") = actors;
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct ActorFlag *entry;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 height;
 
   for (entry = list; entry->actor != 0xffff; entry++) {
-    struct ObjectRuntime *object = Object_GetById(entry->actor);
+    struct Actor *object = Actor_GetById(entry->actor);
     u16 flag = entry->flag;
     s32 slot = Func_080eab70(object);
     u8 *cell = map->layers[object->terrainId].cells[slot];
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+    Actor_SetSingleChildFlagsFar(object, 0);
     cell[2] = 0xff;
     if (GameFlag_Test(flag)) {
-      Object_SetMode(object, 0);
+      Actor_SetMode(object, 0);
       GameFlag_ClearBit(flag);
     } else {
-      Object_SetMode(object, 1);
+      Actor_SetMode(object, 1);
     }
   }
   Func_080eaa14(list);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

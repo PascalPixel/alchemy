@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -13,12 +13,12 @@ void Func_02005e14(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f7c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02005f94(s32 cue);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Func_02005e1c(void);
 
@@ -30,7 +30,7 @@ void Func_02005e1c(void);
 /// sets or clears the flags of the spots along its rows and redraws the
 /// pillars' cells (Func_0200062c).
 void Func_0200332c(void) {
-  struct ObjectRuntime *pushed = *(struct ObjectRuntime **)(EVENT_WORK + 0xcbc);
+  struct Actor *pushed = *(struct Actor **)(EVENT_WORK + 0xcbc);
   s32 x, z;
 
   Func_02005e14();
@@ -70,19 +70,19 @@ void Func_0200332c(void) {
     Call4((void (*)())Func_02005df4, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
       GameFlag_SetBit(0x8d0);
-    if ((Object_GetById(9)->x >> 19 == 73 &&
-         Object_GetById(9)->z >> 19 == 43) ||
-        (Object_GetById(10)->x >> 19 == 73 &&
-         Object_GetById(10)->z >> 19 == 43))
-      ((u8 *)Object_GetById(13))[99] = 1;
+    if ((Actor_GetById(9)->x >> 19 == 73 &&
+         Actor_GetById(9)->z >> 19 == 43) ||
+        (Actor_GetById(10)->x >> 19 == 73 &&
+         Actor_GetById(10)->z >> 19 == 43))
+      ((u8 *)Actor_GetById(13))[99] = 1;
     else
-      ((u8 *)Object_GetById(13))[99] = 0;
-    if (pushed->x == Object_GetById(11)->x &&
-        pushed->z == Object_GetById(11)->z) {
+      ((u8 *)Actor_GetById(13))[99] = 0;
+    if (pushed->x == Actor_GetById(11)->x &&
+        pushed->z == Actor_GetById(11)->z) {
       if (x == 83 && z == 43)
-        ((u8 *)Object_GetById(14))[99] = 1;
+        ((u8 *)Actor_GetById(14))[99] = 1;
       else
-        ((u8 *)Object_GetById(14))[99] = 0;
+        ((u8 *)Actor_GetById(14))[99] = 0;
     }
   } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
     if (x == 35 && z == 59)
@@ -101,12 +101,12 @@ void Func_0200332c(void) {
       GameFlag_ClearBit(513);
     if (x == 77 && z == 19)
       GameFlag_ClearBit(514);
-    Func_0200062c(2, Object_GetById(8)->x >> 20, Object_GetById(8)->z >> 20, 0);
-    Func_0200062c(2, Object_GetById(9)->x >> 20, Object_GetById(9)->z >> 20, 0);
+    Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
+    Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
   } else if (gAdventure.scene == (s32)&SceneId_Ov664Room9) {
     if (x == 45 && z == 33)
       GameFlag_SetBit(0x8d3);
-    Func_0200062c(2, Object_GetById(10)->x >> 20, Object_GetById(10)->z >> 20,
+    Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20,
                   0);
   }
   Func_02005e1c();

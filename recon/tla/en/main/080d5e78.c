@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 6 of 69 in tla-en, instruction
 // order and register choice. No empty asm before any one statement lowers it.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "system.h"
 
@@ -27,7 +27,7 @@ void ResourceMetadata_ClearRecordFar(void *record);
 void ObjectEffect_EndContextEffect(s32 mode) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *obj = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *obj = ObjectTable_Get(gAdventure.currentOwner);
   struct ContextSprite *ctx = obj->animation;
   struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
 
@@ -37,7 +37,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   eff->param = 15;
   obj->x = (obj->x & mask) + 0x80000;
   obj->z &= mask;
-  Object_SetMode(obj, mode);
+  Actor_SetMode(obj, mode);
   WaitFrames(30);
   ctx->count = 1;
   ResourceMetadata_ClearRecordFar(ctx->entry);
@@ -45,6 +45,6 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   ctx->flags = 1;
   obj->acceleration = 0x10000;
   obj->speedLimit = 0x10000;
-  Object_SetPosition(obj, obj->x, obj->y, obj->z + 0x80000);
-  Object_CommitPosition(obj);
+  Actor_SetTargetPosition(obj, obj->x, obj->y, obj->z + 0x80000);
+  Actor_CommitPosition(obj);
 }

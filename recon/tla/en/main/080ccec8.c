@@ -18,7 +18,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "scene_ids.h"
 
 struct ActorPlacement {
@@ -47,7 +47,7 @@ void Marker_MoveLeaderAwayFromEmitter(void);
 extern const u8 gObjectMotion_StepAngleScript[];
 
 struct ActorPlacement *Scene_FindActorPlacement(s32 id);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 struct ContainerRow *Func_080ceba8(void);
 void Event_Start(void);
 void Event_End(void);
@@ -61,10 +61,10 @@ void ObjectEvent_SetMode2(s32 id);
 void ObjectEvent_SetMode4WithCue(s32 id);
 void ObjectEvent_SetMode5WithCue(s32 id);
 void ObjectEvent_SetMode6WithCue(s32 id);
-struct ObjectRuntime *ObjectEvent_GetObject(s32 id);
+struct Actor *ObjectEvent_GetObject(s32 id);
 void ObjectEvent_Remove(s32 id);
 void ObjectEvent_Spring(s32 id);
-void Func_080cf350(struct ObjectRuntime *object);
+void Func_080cf350(struct Actor *object);
 void Sound_PlayFar(s32 cue);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void PartyStatus_CreateWindowFar(s32 layout);
@@ -77,39 +77,39 @@ void Func_08038340(s32 value);
 void Func_080ad2f8(s32 value);
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot);
 void BattleEffect_SelectBattleCue(s32 zone, s32 group);
-s32 Object_GetSpriteShape(s32 id);
+s32 Actor_GetSpriteShape(s32 id);
 s32 Party_FindOwnerWithActionFar(s32 action);
-struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
+struct Actor *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
 void WaitFrames(s32 frames);
 void Party_AdjustCoinsFar(s32 amount);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void Object_Destroy(struct ObjectRuntime *object);
-void Object_DestroyIfPresent(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
+void Actor_ReleaseIfPresent(struct Actor *object);
 s32 PartyInventory_AddFar(s32 item);
 struct TalkEvent *Func_080ccd78(s32 kind, s32 target);
 s32 BattleEffect_GetFlags(s32 id);
 u32 Random16(void);
 void Event_RunMessage(s32 actor, s32 message);
-void ObjectDispatch_SetAnimationSpeedFar(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeedFar(struct Actor *object,
                                          s32 value);
-void Object_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
+void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 void Window_SetBusyFlagsFar(s32 flags);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
 void BattleEffect_ResumeObject(s32 id);
 
 s32 Func_080ccec8(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 savedAngle;
   s32 paused;
   s32 busyFlags;
   s32 silent;
   u8 *event;
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *shown;
+  struct Actor *leader;
+  struct Actor *shown;
   struct ContainerRow *row;
   struct TalkEvent *talk;
   u8 *busy;
@@ -130,7 +130,7 @@ s32 Func_080ccec8(s32 id) {
   busyFlags = 0;
   event = Ram_HeapSlots->eventWork;
   id &= 0xfff;
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   found = 0;
   if (id > 63) {
     if (id != 79) {
@@ -198,7 +198,7 @@ s32 Func_080ccec8(s32 id) {
           FieldMessage_ShowFar((s32)&MsgContainerTrap + 1, 1);
         PartyStatus_CloseFar();
         shown->update = NULL;
-        Object_SetMode(shown, 2);
+        Actor_SetMode(shown, 2);
         Sound_PlayFar(246);
         Event_WaitFrames(30);
         FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
@@ -237,7 +237,7 @@ s32 Func_080ccec8(s32 id) {
       }
       if (type == 133)
         FieldMessage_ShowFar((s32)&MsgSarcophagus, 1);
-      if (Object_GetSpriteShape(index)) {
+      if (Actor_GetSpriteShape(index)) {
         FieldMessage_ShowFar((s32)&MsgContainerShape, 1);
         if (Party_FindOwnerWithActionFar(136) != -1)
           *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 346) = 1;
@@ -262,10 +262,10 @@ s32 Func_080ccec8(s32 id) {
         if (flag != -1)
           GameFlag_SetBit(flag);
         if (type == 131) {
-          Object_SetPositionAndResetMotionFar(shown, 0, 0, 0);
+          Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
           shown->update = NULL;
         } else {
-          Object_Destroy(shown);
+          Actor_Destroy(shown);
         }
         goto done;
       }
@@ -287,7 +287,7 @@ s32 Func_080ccec8(s32 id) {
         FieldMessage_ShowFar((s32)&MsgInventoryFull, 1);
         FieldMessage_ShowFar((s32)&MsgInventoryFull + 4, 1);
         if (type != 131)
-          Object_DestroyIfPresent(shown);
+          Actor_ReleaseIfPresent(shown);
         if (type == 128)
           ObjectEvent_SetMode5WithCue(index);
         goto done;
@@ -306,10 +306,10 @@ s32 Func_080ccec8(s32 id) {
       if (flag != -1)
         GameFlag_SetBit(flag);
       if (type == 131) {
-        Object_SetPositionAndResetMotionFar(shown, 0, 0, 0);
+        Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
         shown->update = NULL;
       } else {
-        Object_Destroy(shown);
+        Actor_Destroy(shown);
       }
       if (type == 133)
         ObjectEvent_Remove(index);
@@ -351,13 +351,13 @@ s32 Func_080ccec8(s32 id) {
     goto resume;
   if (!paused) {
     ((u8 *)object)[91] = 1;
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->angle;
     if ((u8)placement->kind <= 1 || placement->kind == 3) {
-      leader = Object_GetById(gAdventure.currentOwner);
-      Object_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
+      leader = Actor_GetById(gAdventure.currentOwner);
+      Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
                                           leader->z);
-      Object_TurnToFaceEachOther(id, gAdventure.currentOwner, 0);
+      Actor_TurnToFaceEachOther(id, gAdventure.currentOwner, 0);
     }
   }
   if (talk->script < 0x10000) {
@@ -370,16 +370,16 @@ s32 Func_080ccec8(s32 id) {
   if (!paused) {
     if (object->script[object->step] == 17) {
       if (placement->kind == 3) {
-        object->watchedObject = Object_GetById(gAdventure.currentOwner);
+        object->watchedObject = Actor_GetById(gAdventure.currentOwner);
         object->actionFlags |= 1;
-        Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
+        Actor_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
       } else if (placement->kind == 1) {
         object->action = savedAngle;
-        ObjectDispatch_InitializeFar(object, gObjectMotion_StepAngleScript);
+        Actor_StartScriptFar(object, gObjectMotion_StepAngleScript);
       }
     }
     ((u8 *)object)[91] = 0;
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
   }
   result = 0;
 resume:

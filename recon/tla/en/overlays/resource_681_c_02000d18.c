@@ -2,7 +2,7 @@
 // clear), person 15 walks off, the doorway cells open, four boulders are
 // placed and the flag is set.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct CellPoint {
@@ -15,11 +15,11 @@ extern const u8 gData_020051b8[];
 extern const u8 gData_02005118[];
 extern const u8 gData_02005168[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_EnableActionAndSetCallback(u32 objectId, const u8 *script);
+void Actor_SetMovementTypeById(u32 objectId, const u8 *script);
 void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 s32 Func_02004dec(s32 layer, s32 x, s32 z);
@@ -40,8 +40,8 @@ struct BoulderSprite {
 };
 
 void Func_02000d18(void) {
-  struct ObjectRuntime *guard;
-  struct ObjectRuntime *leader;
+  struct Actor *guard;
+  struct Actor *leader;
   s16 count;
   s16 i;
 
@@ -56,19 +56,19 @@ void Func_02000d18(void) {
   }
   if (count <= 0)
     return;
-  guard = Object_GetById(15);
-  leader = Object_GetById(gAdventure.currentOwner);
+  guard = Actor_GetById(15);
+  leader = Actor_GetById(gAdventure.currentOwner);
   Func_02004e5c();
   Func_02004fcc(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = 0x20000;
     Func_02004f2c(gAdventure.currentOwner, 0x100, 0);
-    ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+    Actor_SetMovementTypeById(gAdventure.currentOwner,
                                             gData_020051b8);
   }
-  ObjectMotion_EnableActionAndSetCallback(15, gData_02005118);
+  Actor_SetMovementTypeById(15, gData_02005118);
   FieldEvent_WaitFrames(60);
-  ObjectMotion_EnableActionAndSetCallback(15, gData_02005168);
+  Actor_SetMovementTypeById(15, gData_02005168);
   FieldEvent_WaitFrames(30);
   Func_02004e04(117, 20, 7, 8, 104, 20);
   Func_02004e04(111, 12, 1, 6, 111, 20);

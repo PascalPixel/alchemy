@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "scene_ids.h"
@@ -9,10 +9,10 @@
 
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 s32 FieldMessage_ShowAtActor(s32 id, s32 flags);
@@ -51,10 +51,10 @@ void Func_020000b8(s32 actor) {
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     FieldEvent_WaitFrames(20);
-    Object_LinkObjectAndSetCallback(actor, gAdventure.currentOwner);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 760, 320);
-    Call3((void (*)())ObjectMotion_ArmCallback, 14, 0x5000, 0);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+    Actor_WatchAndSetScript(actor, gAdventure.currentOwner);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 760, 320);
+    Call3((void (*)())Actor_ArmCallback, 14, 0x5000, 0);
+    Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
     FieldEvent_WaitFrames(10);
     Func_02001588((s32)&SceneId_WorldMap, 67);
   } else {
@@ -88,7 +88,7 @@ void Func_0200019c(void) {
   Func_02001538((s32)&MsgAlhafraManor18);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Call3((void (*)())Func_02001560, 18, 256, 60);
-  ObjectMotion_SetAngleToward(18, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(18, gAdventure.currentOwner, 0);
   Value3((s32 (*)())Func_02001560, 18, 263, 20);
   Func_02001548(18, 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
@@ -108,10 +108,10 @@ void Func_02000238(void) {
   Func_02001538((s32)&MsgAlhafraManor23);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Call3((void (*)())Func_02001560, 8, 256, 30);
-  Object_LinkObjectAndSetCallback(8, gAdventure.currentOwner);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 304, 152);
-  ObjectMotion_ArmCallback(8, 0, 0);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x8000, 0);
+  Actor_WatchAndSetScript(8, gAdventure.currentOwner);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 304, 152);
+  Actor_ArmCallback(8, 0, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x8000, 0);
   FieldEvent_WaitFrames(10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_WaitFrames(10);
@@ -122,9 +122,9 @@ void Func_02000238(void) {
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_WaitFrames(10);
   Call3((void (*)())Func_02001548, 0x4008, 0, 10);
-  ObjectMotion_ArmCallback(8, 0xe000, 0);
+  Actor_ArmCallback(8, 0xe000, 0);
   FieldEvent_WaitFrames(50);
-  ObjectMotion_ArmCallback(8, 0, 0);
+  Actor_ArmCallback(8, 0, 0);
   FieldEvent_WaitFrames(10);
   Call3((void (*)())Func_02001548, 0x4008, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
@@ -139,7 +139,7 @@ void Func_02000370(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)((u8 *)work + 0x166) != 0) {
-    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
   }
   GameFlag_SetBit(0x8bc);
@@ -153,10 +153,10 @@ void Func_02000370(void) {
   Motion_SetModeAndWaitAnimation(9, 3);
   FieldEvent_WaitFrames(10);
   Func_02001548(9, 0, 10);
-  ObjectMotion_ArmCallback(9, 0xd000, 0);
+  Actor_ArmCallback(9, 0xd000, 0);
   FieldEvent_WaitFrames(30);
   Func_02001548(9, 0, 10);
-  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   Func_02001548(9, 0, 10);
   Value3((s32 (*)())Func_02001560, 9, 258, 40);
@@ -182,5 +182,5 @@ void Func_02000370(void) {
   }
   Func_020014c0();
   if (*(s16 *)((u8 *)work + 0x166) != 0)
-    Call3((void (*)())ObjectMotion_ArmCallback, 9, 0xd000, 0);
+    Call3((void (*)())Actor_ArmCallback, 9, 0xd000, 0);
 }

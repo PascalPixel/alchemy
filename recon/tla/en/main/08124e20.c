@@ -66,7 +66,7 @@ s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812628c(s32 mode, s32 background, s32 value);
 void Sound_PlayFar(s32 cue);
@@ -137,8 +137,8 @@ void Func_08124e20(void) {
             BattleEvent_Push(11, unitId);
             Sound_PlayFar(212);
             if (BattleParty_IsUnitListed(unitId)) {
-              Object_SetMode(BattleObject_Get(unitId)->object, 3);
-              ObjectDispatch_SetAnimationSpeedFar(
+              Actor_SetMode(BattleObject_Get(unitId)->object, 3);
+              Actor_SetAnimationSpeedFar(
                   (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;

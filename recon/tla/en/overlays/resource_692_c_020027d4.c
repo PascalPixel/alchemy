@@ -24,7 +24,7 @@ static __inline__ void FlagSet(s32 flag) {
 
 void Func_020027d4(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 value = Func_02000658(2, leader->x >> 20, leader->z >> 20) >> 8;
   s16 *number;
   s32 row;

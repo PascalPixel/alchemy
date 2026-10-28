@@ -747,7 +747,7 @@ Func_02000d80:
 	mov r8, r3
 	mov r0, r8
 	mov r9, r2
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r0, .L_02008f70
 	ldr r1, .L_02008f74
@@ -846,7 +846,7 @@ Func_02000d80:
 	strb r3, [r2]
 	movs r1, #0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #18
@@ -986,7 +986,7 @@ Func_02001e00:
 	mov r0, r8
 	mov r10, r2
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #240
 	lsls r2, r2, #1
 	adds r3, r6, r2

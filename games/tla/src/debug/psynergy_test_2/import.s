@@ -74,22 +74,22 @@ Func_020005a8:
 	.thumb_func
 Func_020005b0:
 	overlay_veneer Func_080201f0
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Object_GetById
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_020005c8
 	.thumb_func
 Func_020005c8:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_020005d8
 	.thumb_func
 Func_020005d8:

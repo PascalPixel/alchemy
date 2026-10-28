@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -16,8 +16,8 @@ void Func_0200062c();
 void GameFlag_SetBit();
 void GameFlag_Test();
 void Event_AskYesNoWithActorAnimation();
-void ObjectMotion_SetAngleToward();
-void Object_SetModeById();
+void Actor_SetAngleToward();
+void Actor_SetModeById();
 void FieldMessage_ShowAtActor();
 void Func_020004dc(void);
 
@@ -43,11 +43,11 @@ void Func_020004dc(void) {
   Call1((void (*)())Func_0200062c, 0);
   Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors19);
   Value3((s32 (*)())Func_02000624, 18, 0x100, 60);
-  Call3((void (*)())ObjectMotion_SetAngleToward, 18, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 18, gAdventure.currentOwner,
         0);
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, gAdventure.currentOwner, 0x100, 60);
-  Call2((void (*)())Object_SetModeById, 18, 4);
+  Call2((void (*)())Actor_SetModeById, 18, 4);
   Call1((void (*)())FieldEvent_WaitFrames, 15);
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, 18, 0x108, 60);

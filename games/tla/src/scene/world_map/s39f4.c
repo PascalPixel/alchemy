@@ -1,6 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
 
@@ -9,11 +9,11 @@ extern const u8 gData_02004f9c[];
 
 u32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 angle, s32 distance, s32 *position);
-struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
-void Func_02004b20(struct ObjectRuntime *object, const u8 *script);
+struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
+void Func_02004b20(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
-static __inline__ struct ObjectRuntime *Func_02004b30_(s32 kind, s32 x, s32 y,
+static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
                                                        s32 z) {
   /* FAKEMATCH: forwarding through the inline builds the kind after the position
    * loads, as in the native (direct: differ 4). */
@@ -22,8 +22,8 @@ static __inline__ struct ObjectRuntime *Func_02004b30_(s32 kind, s32 x, s32 y,
 
 /// Spawns a pair of sparks at the object.
 // As ☀️'s MercuryLighthouse_SpawnSparkPair does at a spawn point.
-void Func_020039f4(struct ObjectRuntime *object) {
-  struct ObjectRuntime *spark;
+void Func_020039f4(struct Actor *object) {
+  struct Actor *spark;
   struct FieldSprite *sprite;
   s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
@@ -62,10 +62,10 @@ void Func_020039f4(struct ObjectRuntime *object) {
 }
 
 /// Spawns a particle at a random spot around the object.
-void Func_02003aac(struct ObjectRuntime *object) {
+void Func_02003aac(struct Actor *object) {
   s32 position[3];
   s32 angle;
-  struct ObjectRuntime *particle;
+  struct Actor *particle;
   struct FieldSprite *sprite;
 
   Iwram_MulQ16(object->scaleX, 0x18000);

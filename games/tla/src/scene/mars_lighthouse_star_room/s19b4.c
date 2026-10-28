@@ -1,7 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
 
   if (object != NULL) {
@@ -17,7 +17,7 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
 }
 
 void Func_020019fc(s32 *position, s32 speed, s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
 
   if (object != NULL) {
@@ -32,7 +32,7 @@ void Func_020019fc(s32 *position, s32 speed, s32 flag) {
   }
 }
 
-s32 Func_02001a44(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02001a44(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
     if ((u32)(a->y - b->y - 1) <= 0xffffe) {
       if (DIFF(a->z, b->z) < 0x80000)

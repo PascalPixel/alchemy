@@ -13,12 +13,12 @@
 // cross-jumping and keeps the shapes in r0, r4 and lr across a case.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern u32 gData_02005910[];
 extern u8 Data_0202c001[];
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001b98(void);
@@ -35,7 +35,7 @@ void Func_02001c10(void) {
   u32 *shapesB = *(u32 **)(map + 0x170);
   u32 *dest = (u32 *)(Data_0202c001 + 0x1cf);
   u32 *src = gData_02005910;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 *frames;
   u32 i;
   s32 x, z, cell, found;
@@ -45,7 +45,7 @@ void Func_02001c10(void) {
     *dest++ = *src++;
   } while (++i <= 11);
   for (i = 8; (s32)i <= 63; i++) {
-    object = Object_GetById(i);
+    object = Actor_GetById(i);
     if (object == 0)
       continue;
     if (object->animationKind != 1)
@@ -113,7 +113,7 @@ void Func_02001c10(void) {
       object->collisionFlags = 0;
       object->motionFlags = 0;
       object->priorityFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
     }
   }
   Task_Add(Func_02001b98, 0x480);

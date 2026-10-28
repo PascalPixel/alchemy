@@ -1,6 +1,6 @@
 #include "types.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct LightTile {
   s16 x;
@@ -23,7 +23,7 @@ struct LightPuzzle {
 
 extern struct LightPuzzle gData_02002864;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 index, s32 value);
@@ -31,7 +31,7 @@ void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
 
 s32 Func_02001bb8(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct LightPuzzle *puzzle = &gData_02002864;

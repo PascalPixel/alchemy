@@ -20,7 +20,7 @@
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 ArcTan2(s32 y, s32 x);
 
@@ -72,7 +72,7 @@ extern char ResourceId_Leaves;
 
 void Func_080e2acc(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime *owner = *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->effectWork + 16);
+  struct Actor *owner = *(struct Actor **)((u8 *)Ram_HeapSlots->effectWork + 16);
   struct BurstCell *cell = (struct BurstCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
   s32 dx = (cell->x << 20) - owner->x + 0x80000;
   s32 dz = (cell->z << 20) - owner->z + 0x80000;

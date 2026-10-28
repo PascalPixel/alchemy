@@ -11,7 +11,7 @@ struct Cell {
   s16 z;
 };
 
-s32 Func_020005a0(struct ObjectRuntime *object) {
+s32 Func_020005a0(struct Actor *object) {
   struct Cell *cells = (struct Cell *)gData_02002c64;
   s32 i;
 

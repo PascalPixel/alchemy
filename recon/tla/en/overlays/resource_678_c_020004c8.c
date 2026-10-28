@@ -5,7 +5,7 @@
 // reports the bottom; a blocked hole turns the leader round and runs
 // Func_02000428. Left: the native keeps the hole number in r6 and the found result in r7 across the room tests, enters the sinking loop at its test and clamps the slip through two pool constants.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "system/vector3.h"
 
@@ -14,15 +14,15 @@ extern char SceneId_Ov678Room5, SceneId_Ov678Room7, SceneId_Ov678Room8,
 extern u8 gData_020029b8[], gData_020029c0[];
 s32 Func_02002708(s32 hole);
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
 void Func_02002968(s32 mode);
-s32 Func_02002850(struct ObjectRuntime *object, struct Vector3 *position);
+s32 Func_02002850(struct Actor *object, struct Vector3 *position);
 void Func_02000428(s32 hole);
 void WaitFrames(s32 frames);
 
 void Func_020004c8(s32 hole) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   struct Vector3 position;
   s32 found, result, slip;
 
@@ -49,7 +49,7 @@ void Func_020004c8(s32 hole) {
     found = Func_02002708(hole - 10);
   if (found == 0)
     return;
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   Func_02002898();
   Func_02002968(0);
   for (;;) {

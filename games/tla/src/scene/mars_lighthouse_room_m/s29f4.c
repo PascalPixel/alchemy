@@ -3,13 +3,13 @@
 
 extern const u8 gData_02003348[];
 
-struct ObjectRuntime *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
-void Func_02003120(struct ObjectRuntime *object, const void *script);
+struct Actor *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
+void Func_02003120(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -23,7 +23,7 @@ void Func_020029f4(s32 x, s32 y, s32 z, s32 speed) {
   i = 1;
 next:
   {
-    struct ObjectRuntime *object = Func_02003128(325, x, y, z);
+    struct Actor *object = Func_02003128(325, x, y, z);
 
     if (object != NULL) {
       s32 angle;
@@ -37,7 +37,7 @@ next:
       radius = Random16Far() * 8;
       size = Random16Far();
       Func_02003120(object, gData_02003348);
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
        * instructions differ in tla-en. */

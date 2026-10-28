@@ -16,8 +16,8 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
-s32 Object_SetModeById();
+s32 Actor_GetById();
+s32 Actor_SetModeById();
 s32 Event_StartScreenTransition();
 s32 Func_020010f4();
 s32 GameFlag_Test();
@@ -31,16 +31,16 @@ s32 Func_0200012c(void) {
   s32 blend;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
   FIELD_AT(0x4000052, u16, 0) = 0x80c;
-  Call2(Object_SetModeById, 0x18, 2);
-  Call2(Object_SetModeById, 0x19, 2);
-  t3 = Value1(Object_GetById, 0x18);
+  Call2(Actor_SetModeById, 0x18, 2);
+  Call2(Actor_SetModeById, 0x19, 2);
+  t3 = Value1(Actor_GetById, 0x18);
   FIELD_AT((t3 + 0x23), u8, 0) = 2;
-  t4 = Value1(Object_GetById, 0x19);
+  t4 = Value1(Actor_GetById, 0x19);
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
   Event_StartScreenTransition();
   if (FIELD_AT(gAdventure, s16, 482) == 1) {

@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_020015e8(struct ObjectRuntime *object) {
+void Func_020015e8(struct Actor *object) {
   struct FieldSprite *sprite = object->animation;
   s16 *amplitude;
 
@@ -15,7 +15,7 @@ void Func_020015e8(struct ObjectRuntime *object) {
   sprite->rotation = Iwram_MulQ16(Math_Sine(object->action), *amplitude);
 }
 
-void Func_02001630(struct ObjectRuntime *object) {
+void Func_02001630(struct Actor *object) {
   struct FieldSprite *sprite = object->animation;
   s16 *amplitude;
 

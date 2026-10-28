@@ -1,7 +1,7 @@
 #include "yampi_desert_cave.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02000e68(s32 unused, s32 id) {
   if (gAdventure.scene == (s32)&SceneId_Ov662Room2) {
@@ -19,7 +19,7 @@ void Func_02000e68(s32 unused, s32 id) {
       YampiDesertCave_Call1848(43, 14, 1, 1, 39, 16);
     }
     if (id == 13) {
-      struct ObjectRuntime *object = Object_GetById(13);
+      struct Actor *object = Actor_GetById(13);
 
       s32 column = object->x >> 20;
       s32 row = object->z >> 20;
@@ -34,7 +34,7 @@ void GameFlag_SetBit(s32 flag);
 /// Rooms 2 and 3: by where object id stands, sets flags 0x303 to 0x305 and
 /// makes the rooms' Func_02001848 calls.
 void Func_02000f10(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (gAdventure.scene == (s32)&SceneId_Ov662Room2) {
     s32 row = object->z >> 20;

@@ -82,7 +82,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
@@ -213,7 +213,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
     angle -= 0x800;

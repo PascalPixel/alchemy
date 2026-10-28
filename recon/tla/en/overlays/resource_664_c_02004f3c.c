@@ -5,17 +5,17 @@
 // Left: the native shares the second copy of levels 2 and 1 and tests the
 // switch cases in another order.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s32 gData_020073d8;
 
 s32 Func_02005f84(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005dac(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 
 void Func_02004f3c(void) {
-  struct ObjectRuntime *actor = Object_GetById(Func_02005f84());
+  struct Actor *actor = Actor_GetById(Func_02005f84());
   s32 level;
 
   actor->priorityFlags |= 32;

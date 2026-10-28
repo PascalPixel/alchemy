@@ -13,7 +13,7 @@
 // cue 539 plays, the owner's motion flags and Data_02000452 are set by the
 // event mode, and with no pending point the effect's event runs.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct PendingEvent;
@@ -24,7 +24,7 @@ extern u8 Data_02000452;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
+void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
 s32 Task_Remove(void (*callback)(void));
 void Func_080e42d4(void);
@@ -41,14 +41,14 @@ void Func_080e45a0(void *sprite);
 void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
+void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object,
                                          s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(u32 actor);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 actor);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
@@ -61,7 +61,7 @@ void Func_080e4730(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 pictureEntry;
-  struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
+  struct Actor *owner = *(struct Actor **)(effect + 16);
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
@@ -77,7 +77,7 @@ void Func_080e4730(void) {
 
   Func_080dc954();
   gAdventure[620] = 0;
-  ObjectGroup_SetActionForOthers(owner, 1, 0);
+  Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(Func_080e42d4);
   Resource_DecodeType01(Resource_GetTableEntry(0x1e1), work);
   particleEntry = Resource_FindFreeEntry();
@@ -95,7 +95,7 @@ void Func_080e4730(void) {
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
-  Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
+  Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                       owner->z);
   party = gAdventure;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
@@ -106,7 +106,7 @@ void Func_080e4730(void) {
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->animation + 12) = 0xc000;
   owner->angle = 0x4000;
-  Object_SetMode(owner, 0);
+  Actor_SetMode(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
   WaitFrames(1);
   Animation_ApplyChildValueToFirstFar(owner->animation, 0);
@@ -127,10 +127,10 @@ void Func_080e4730(void) {
       Func_080e45a0(work + 0x1900);
     }
     if (frame == 66) {
-      Object_SetMode(owner, 1);
+      Actor_SetMode(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->animation, 0);
-      ObjectDispatch_SetSingleChildFlagsFar(
-          Object_GetById(*(s16 *)(effect + 24)), 1);
+      Actor_SetSingleChildFlagsFar(
+          Actor_GetById(*(s16 *)(effect + 24)), 1);
       Camera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(539);
       if (*(s8 *)(event + 394) == 3) {
@@ -156,7 +156,7 @@ void Func_080e4730(void) {
     WaitFrames(1);
     ripple += 3;
   }
-  ObjectGroup_SetActionForOthers(owner, 0, 16);
+  Actor_SetOthersPaused(owner, 0, 16);
   Resource_ResetEntry(pictureEntry);
   Resource_ResetEntry(particleEntry);
   HeapSlot_Release(92);

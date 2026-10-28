@@ -518,7 +518,7 @@ BattleEffect_RunPrism:
 	adds r1, #8
 	adds r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7

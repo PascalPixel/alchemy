@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_0200157c(void) {
-  if (Object_GetById(64))
+  if (Actor_GetById(64))
     Func_02004090(64, 0, 0);
 }
 
@@ -41,7 +41,7 @@ void Func_02001650(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count;) {
-    u8 *flags = &Object_GetById(first + i)->priorityFlags;
+    u8 *flags = &Actor_GetById(first + i)->priorityFlags;
     u32 next = i + 1;
 
     if (show)

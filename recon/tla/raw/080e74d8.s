@@ -87,12 +87,12 @@ Func_080e74d8:
 	movs r2, #0
 	lsls r1, r1, #7
 	mov r0, r9
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	movs r1, #28
 	adds r0, r7, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, .L_080e75d8
 	movs r0, #131
 	str r3, [r7, #108]
@@ -104,7 +104,7 @@ Func_080e74d8:
 	ldr r6, .L_080e75d0
 	movs r1, #3
 	adds r0, r7, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r1, #49
 	movs r5, #0
 	mov r9, r1
@@ -114,7 +114,7 @@ Func_080e74d8:
 .L_080e75d4:
 	.4byte 0x000001ef
 .L_080e75d8:
-	.4byte ObjectGroup_ApplyRandomChildValues
+	.4byte Actor_ApplyRandomChildValues
 .L_080e75dc:
 	ldrh r3, [r7, #6]
 	movs r0, #1
@@ -345,7 +345,7 @@ Func_080e74d8:
 	movs r1, #0
 	str r3, [r7, #28]
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r1, r9
 	cmp r1, #30
 	bne .L_080e77c8

@@ -21,7 +21,7 @@ Func_080e87c4:
 	ldr r0, [r3]
 	sub sp, #8
 	mov r10, r1
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #4
 	adds r3, #172

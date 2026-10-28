@@ -65,12 +65,12 @@ extern u32 gData_020022cc;
 extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 
-struct SeaOfTimeObject *Object_GetById(s32 id);
+struct SeaOfTimeObject *Actor_GetById(s32 id);
 struct SeaOfTimeObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct SeaOfTimeObject *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct SeaOfTimeObject *object,
+void Scene_SetActorSpritePriority(struct SeaOfTimeObject *object, s32 priority);
+void Actor_SetSingleChildFlags(struct SeaOfTimeObject *object,
                                         s32 value);
-void Object_SetPartAttribute(struct SeaOfTimeObject *object, s32 value);
+void Actor_SetPartAttribute(struct SeaOfTimeObject *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);

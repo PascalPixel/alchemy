@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
@@ -12,7 +12,7 @@
    } *)(base))                                                                 \
        ->v)
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldMessage_Show(s32 message, s32 position);
 void Func_02001d7c(s32 value);
 void Func_02001bb4(s32 value);
@@ -20,9 +20,9 @@ void Func_02001bb4(s32 value);
 s32 GameFlag_Test();
 void GameFlag_SetBit();
 void FieldEvent_WaitFrames();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
+void Actor_SetAngleToward();
+void Actor_SetPositionAndReset();
+void Actor_SetSpeedParameters();
 s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Motion_SetModeAndWaitAnimation();
@@ -36,7 +36,7 @@ s32 Func_02001ca4();
 void Func_02001d04();
 
 void Func_020008e8(void) {
-  s32 y = Object_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the owner's y
    * before it builds the limit (2 differ without it). */
@@ -55,8 +55,8 @@ void Func_020008e8(void) {
 /// records that the party took it.
 void Func_02000934(void) {
   if (Value1(GameFlag_Test, 0x908)) {
-    Call3(ObjectMotion_SetAngleToward, 30, gAdventure.currentOwner, 0);
-    Call1((void (*)())Object_RefreshSelectorById, 30);
+    Call3(Actor_SetAngleToward, 30, gAdventure.currentOwner, 0);
+    Call1((void (*)())Actor_RefreshSelectorById, 30);
     Call1(Func_02001c6c, (s32)MsgYouLookLike);
     Call2(Func_02001c84, 30, 0);
     Call2(Func_02001c94, 30, 0xd000);
@@ -66,8 +66,8 @@ void Func_02000934(void) {
   Call1(Func_02001d04, 0);
   Call1(Func_02001c6c, (s32)MsgDoYouWish);
   Value3(Func_02001ca4, 30, 0x100, 30);
-  Call3(ObjectMotion_SetAngleToward, 30, gAdventure.currentOwner, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 30);
+  Call3(Actor_SetAngleToward, 30, gAdventure.currentOwner, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 30);
   Call1(FieldEvent_WaitFrames, 5);
   Value2(FieldMessage_ShowAtActor, 30, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, 4, 0)) {
@@ -78,12 +78,12 @@ void Func_02000934(void) {
     Call2(Motion_SetModeAndWaitAnimation, 30, 3);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Call3(Func_02001c7c, 30, 0, 5);
-    Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 0x1d0,
+    Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x1d0,
           0x410);
     Call2(Func_02001c94, gAdventure.currentOwner, 0xc000);
     Call1(FieldEvent_WaitFrames, 5);
-    Call3(ObjectMotion_SetSpeedParameters, 30, 0x13333, 0x9999);
-    Call3(ObjectMotion_SetPositionAndReset, 30, 0x1b8, 0x418);
+    Call3(Actor_SetSpeedParameters, 30, 0x13333, 0x9999);
+    Call3(Actor_SetPositionAndReset, 30, 0x1b8, 0x418);
     Call1(GameFlag_SetBit, 0x908);
   }
   Call2(Func_02001c94, 30, 0xd000);

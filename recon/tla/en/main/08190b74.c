@@ -86,8 +86,8 @@ void EffectPosition_ProjectScaledBattler(s32 id, struct EffectPosition *out);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
-void Object_SetMode(struct MotionObject *object, s32 mode);
-void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
+void Actor_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
@@ -109,7 +109,7 @@ void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Sound_PlayFar(s32 cue);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
@@ -220,8 +220,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
       Sound_PlayFar(212);
-      Object_SetMode(caster, 2);
-      ObjectDispatch_SetAnimationSpeedFar(caster, 48);
+      Actor_SetMode(caster, 2);
+      Actor_SetAnimationSpeedFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 
@@ -462,7 +462,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     Heap_Release(projected);
 
     Camera_ApplyVerticalShake(8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

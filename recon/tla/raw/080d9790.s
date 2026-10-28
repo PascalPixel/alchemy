@@ -68,11 +68,11 @@ Func_080d9790:
 	mov r3, r10
 	ldr r0, [r3]
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r2, r10
 	ldr r0, [r2, #4]
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #4
 	bl WaitFrames
 	ldr r2, [sp, #20]

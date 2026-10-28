@@ -12,7 +12,7 @@
 // r5 and its tile in r6) and a few reordered stores.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "iwram_call.h"
@@ -48,8 +48,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -64,8 +64,8 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_080db9a8(struct ObjectRuntime *object, s32 facing);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);

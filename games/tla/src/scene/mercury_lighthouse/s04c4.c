@@ -3,8 +3,8 @@
 
 extern u32 gData_020007e4;
 
-struct ObjectRuntime;
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct Actor;
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_020001b0(void);
 void Func_02000568(void);
 void Func_020005c8(s32 a);

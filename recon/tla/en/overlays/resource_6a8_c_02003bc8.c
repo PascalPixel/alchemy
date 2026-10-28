@@ -17,7 +17,7 @@ s32 Func_02004424();
 s32 Func_0200444c();
 s32 Func_02004454();
 s32 Map_GetTerrainHeight();
-s32 ObjectDispatch_SetAnimationSpeed();
+s32 Actor_SetAnimationSpeed();
 s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
 s32 WaitFrames();
@@ -128,7 +128,7 @@ L_0200bcdc:
   t39 = FIELD_AT(sp_, s32, 8);
   Call4((void (*)())Func_020043f4, v_r7, t37, t38, t39);
   Call2((void (*)())Func_020043c4, v_r7, 2);
-  Call2((void (*)())ObjectDispatch_SetAnimationSpeed, v_r7, 48);
+  Call2((void (*)())Actor_SetAnimationSpeed, v_r7, 48);
   v_r5 = 0;
   goto L_0200bd7e;
 L_0200bd56:

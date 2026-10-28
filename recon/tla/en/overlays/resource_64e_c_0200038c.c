@@ -43,7 +43,7 @@ struct StagedActor {
 extern s32 gData_02001d8c[];
 
 struct StagedActor *Import_ActorGet(s32 actor);
-struct StagedActor *Object_FindInCell(s32 *position, struct StagedActor *self);
+struct StagedActor *Actor_FindInCell(s32 *position, struct StagedActor *self);
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 void Func_02001b44(struct StagedActor *object, s32 x, s32 y, s32 z);
 void Func_02001b4c(struct StagedActor *object);
@@ -68,7 +68,7 @@ void Func_0200038c(void) {
   dst[1] = lead->y;
   step <<= 16;
   dst[2] = lead->z + step;
-  next = Object_FindInCell(dst, lead);
+  next = Actor_FindInCell(dst, lead);
   if (next == 0)
     return;
 
@@ -77,14 +77,14 @@ void Func_0200038c(void) {
   dst[1] = next->y;
   step <<= 16;
   dst[2] = next->z + step;
-  blocker = Object_FindInCell(dst, next);
+  blocker = Actor_FindInCell(dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst[0] = next->x;
   dst[2] = next->z;
   dst[1] = next->y + 0x100000;
-  blocker = Object_FindInCell(dst, next);
+  blocker = Actor_FindInCell(dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 

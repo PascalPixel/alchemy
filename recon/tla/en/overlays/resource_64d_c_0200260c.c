@@ -7,7 +7,7 @@
 // barrier or statement move reaches it.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct SparkState {
   s32 x;
@@ -38,11 +38,11 @@ struct SparkWork {
 };
 
 u32 Random16Far(void);
-s32 Func_02002a24(struct ObjectRuntime *object);
-s32 Func_02002a2c(struct ObjectRuntime *object);
+s32 Func_02002a24(struct Actor *object);
+s32 Func_02002a2c(struct Actor *object);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 
-void Func_0200260c(struct ObjectRuntime *source, s32 x, s32 y, s32 z) {
+void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
   s32 angle = Random16Far();
   s16 *next = &work->next;

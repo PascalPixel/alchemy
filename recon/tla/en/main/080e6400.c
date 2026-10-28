@@ -12,7 +12,7 @@
 // changes nearly every field access.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 struct RiseParticle {
@@ -35,12 +35,12 @@ struct RiseWork {
   s16 timer;
   s16 particleTile;
   s16 pictureTile;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *other;
+  struct Actor *object;
+  struct Actor *other;
   s16 mode;
 };
 
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
+void Actor_SetMode(struct Actor *object, s32 mode);
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
 void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite,
                                               struct RiseParticle *particle,
@@ -53,7 +53,7 @@ u32 Random16(void);
 
 void Func_080e6400(void) {
   struct RiseWork *work;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct EffectSprite *sprite;
   struct RiseParticle *particle;
   u8 *vram;
@@ -72,7 +72,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 8)
-        Object_SetMode(object, 3);
+        Actor_SetMode(object, 3);
       if (work->timer <= 15)
         object->y += 0x24ccc;
       if (work->timer == 28)
@@ -114,7 +114,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 8)
-        Object_SetMode(work->object, 3);
+        Actor_SetMode(work->object, 3);
       if (work->timer <= 15)
         object->y += 0x24ccc;
       if (work->timer == 28)
@@ -152,7 +152,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Object_SetMode(work->object, 4);
+        Actor_SetMode(work->object, 4);
       object->y += 0x24ccc;
       if (work->timer == 15)
         RISE_NEXT_PHASE(work);
@@ -170,7 +170,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Object_SetMode(work->object, 4);
+        Actor_SetMode(work->object, 4);
       object->y += 0x24ccc;
       if (work->timer == 15)
         RISE_NEXT_PHASE(work);

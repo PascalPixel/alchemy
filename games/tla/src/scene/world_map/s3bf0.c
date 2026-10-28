@@ -1,16 +1,16 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Func_02003bb8(struct ObjectRuntime *object, s32 mode);
+void Func_02003bb8(struct Actor *object, s32 mode);
 s32 Func_02004b90(s32 *position);
 s32 Func_02004e10(void);
 s32 Func_02004e20(s32 a, s32 b);
 void Func_02004e30(s32 value);
 
 void Func_02003bf0(void) {
-  struct ObjectRuntime *object = Object_GetById(Func_02004e10());
+  struct Actor *object = Actor_GetById(Func_02004e10());
   s32 i;
 
   Func_02004e30(212);

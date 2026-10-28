@@ -24,12 +24,12 @@ extern struct DoorStep gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-struct ObjectRuntime *Object_GetById();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_CommitCurrentPositionAndActivate();
+struct Actor *Actor_GetById();
+void Actor_SetAngleToward();
+void Actor_SetSpeedParameters();
+void Actor_ArmCallback();
+void Actor_SetPositionAndReset();
+void Actor_WaitForMoveById();
 void Motion_SetVarCbAndRefresh();
 void FieldEvent_WaitFrames();
 s32 FieldMessage_ShowAtActor();
@@ -79,7 +79,7 @@ void Func_02000730(void) {
   Func_02004be4(0);
   Func_02004b3c(MsgWhatSYour);
   Func_02004b6c(22, 0x101, 40);
-  ObjectMotion_SetAngleToward(22, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(22, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   Call3((void (*)())Func_02004b4c, 22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
@@ -109,7 +109,7 @@ void Func_02000730(void) {
       }
     }
   }
-  Call3(ObjectMotion_ArmCallback, 22, 0, 0);
+  Call3(Actor_ArmCallback, 22, 0, 0);
   Func_02004a9c();
 }
 
@@ -136,10 +136,10 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02004be4(0);
   Func_02004c9c(158);
   Func_02004a44(step->script, step->x, step->z);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  Call3((void (*)())ObjectMotion_CenterOnColumn, gAdventure.currentOwner, 2,
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
   FieldEvent_WaitFrames(10);
   Func_02004bac(countdown);
@@ -157,7 +157,7 @@ void Func_02000954(void) {}
 void Func_02000958(void) { GameFlag_SetBit(0x8be); }
 
 void Func_02000968(void) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
 
   goto check;
 run:
@@ -166,17 +166,17 @@ run:
   GameFlag_SetBit(0x8bf);
   Func_02004a94();
   Func_02004be4(0);
-  Call3(ObjectMotion_SetPositionAndReset, 4, 488, 440);
+  Call3(Actor_SetPositionAndReset, 4, 488, 440);
   Call4((void (*)())Func_02004bec, 5, -16, 0, 0);
   Func_02004b5c(4, 0x8000);
   FieldEvent_WaitFrames(20);
   Func_02004b3c(MsgIDonTKnowWhatWe);
   Call3((void (*)())Func_02004b4c, 5, 0, 5);
-  Object_SetModeById(5, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(5, 2);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
-  ObjectMotion_CommitCurrentPositionAndActivate(5);
+    Actor_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
+  Actor_WaitForMoveById(5);
   Call3((void (*)())Func_02004b04, 5, 0, 0);
   Func_02004a9c();
   return;

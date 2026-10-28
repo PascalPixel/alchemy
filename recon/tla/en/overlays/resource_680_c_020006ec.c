@@ -5,7 +5,7 @@
 // from its listing; names and structure still to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -20,16 +20,16 @@
 
 extern u8 Func_02000670[];
 s32 Func_02000f0c();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Task_Add();
 s32 Func_02000f14();
 s32 GameFlag_Test();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_02000e44();
 void Func_02000e8c();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
-void ObjectMotion_SetVariantCallback();
+void Actor_StartRepeatedMotion();
 void Func_02000ed4();
 void FieldEvent_WaitFrames();
 void Func_02000ea4();
@@ -53,7 +53,7 @@ s32 Func_020006ec(s32 a0, s32 a1, s32 a2, s32 a3) {
   FIELD_AT(r6, u16, 610) = r10;
   /* sub (s32)stack, #8 */
   v0 = Func_02000f0c();
-  v1 = Object_GetById(v0);
+  v1 = Actor_GetById(v0);
   FIELD_AT(v1, u8, 35) = 32 | (FIELD_AT(v1, u8, 35));
   r7 = 0;
   r2 = FIELD_AT(r6, s16, 480);
@@ -74,15 +74,15 @@ L_02008788:
   Call2((void (*)())Func_02000f14, 15, 1);
   v2 = GameFlag_Test(0x920);
   if (v2 != 0) {
-    v3 = Object_GetById(16);
+    v3 = Actor_GetById(16);
     r5 = v3;
     FIELD_AT(r5, u8, 85) = r7;
     FIELD_AT(r5, s32, 8) = 0x580000;
     FIELD_AT(r5, s32, 12) = 0x800000;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v3, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, v3, 0);
     Call6((void (*)())Func_02000e44, 6, 27, 1, 1, r10, 27);
   }
-  v4 = Object_GetById(19);
+  v4 = Actor_GetById(19);
   r5 = v4;
   FIELD_AT(r5, u8, 35) = r7;
   v5 = GameFlag_Test(0x921);
@@ -91,7 +91,7 @@ L_02008788:
   FIELD_AT(r5, u8, 85) = r7;
   FIELD_AT(r5, s32, 8) = 0x2880000;
   FIELD_AT(r5, s32, 12) = 0x400000;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r5, 0);
   Call6((void (*)())Func_02000e44, 33, 102, 1, 2, 37, 102);
   Call6((void (*)())Func_02000e44, 27, 44, 1, 1, 40, 46);
   goto L_0200888a;
@@ -121,7 +121,7 @@ L_020088aa:
   r5 = 49;
   Call6((void (*)())Func_02000e44, 53, 52, 1, 1, r5, r5);
   Call6((void (*)())Func_02000e44, 53, 52, 1, 1, 50, r5);
-  Call2((void (*)())Object_SetModeById, 20, 5);
+  Call2((void (*)())Actor_SetModeById, 20, 5);
   v9 = GameFlag_Test(0xa61);
   if (v9 == 0)
     goto L_020088f2;
@@ -129,12 +129,12 @@ L_020088aa:
 L_020088f2:
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call2((void (*)())ObjectMotion_SetVariantCallback, 20, 3);
+  Call2((void (*)())Actor_StartRepeatedMotion, 20, 3);
   Call2((void (*)())Func_02000ed4, 20, 1);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Func_02000ea4((s32)MsgIMNot);
   Call2((void (*)())Func_02000eac, 20, 0);
-  Call2((void (*)())ObjectMotion_SetVariantCallback, 20, 2);
+  Call2((void (*)())Actor_StartRepeatedMotion, 20, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call1((void (*)())GameFlag_SetBit, 0xa61);
   Func_02000e7c();
@@ -174,14 +174,14 @@ L_020089e8:
   r3 = 176;
   if (r2 != (176))
     goto L_02008a36;
-  v15 = Object_GetById(64);
+  v15 = Actor_GetById(64);
   r5 = v15;
   if (r5 != 0) {
     Call3((void (*)())Func_02000e8c, 64, 0, 0);
   }
   r5 = FIELD_AT(FIELD_AT(r8, s32, 108), s32, 84);
   FIELD_AT((FIELD_AT(r8, s32, 108)), s32, 276) = r5;
-  v16 = Object_GetById(8);
+  v16 = Actor_GetById(8);
   r5 = v16;
   FIELD_AT(r5, u8, 85) = r7;
   Call6((void (*)())Func_02000e44, 11, 14, 1, 1, 13,

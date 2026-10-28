@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "lib.h"
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
   s32 dz;

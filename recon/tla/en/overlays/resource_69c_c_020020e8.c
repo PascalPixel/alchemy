@@ -47,7 +47,7 @@ static __inline__ void SetByte(s32 flag, s32 value) {
 }
 
 s32 Func_020020e8(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   struct PushWork *work = &gData_02002e34;
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -75,21 +75,21 @@ s32 Func_020020e8(void) {
 }
 
 void Func_02002198(s32 dx, s32 dz, s32 route) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   struct PushWork *work = &gData_02002e34;
   u8 *eventWork = Ram_HeapSlots->eventWork;
   s32 x = GameFlag_GetByte(work->flag);
   s32 z = GameFlag_GetByte(work->flag + 8);
 
   if (x != 0 || z != 0) {
-    struct ObjectRuntime *other;
+    struct Actor *other;
 
     GameFlag_SetByte(work->flag, 0);
     GameFlag_SetByte(work->flag + 8, 0);
     dx += x;
     object->z = ((z + dz) << 20) + 0x80000;
     object->x = (dx << 20) + 0x80000;
-    other = *(struct ObjectRuntime **)(eventWork + 0x1cc);
+    other = *(struct Actor **)(eventWork + 0x1cc);
     other->x = object->x;
     other->z = object->z;
     Func_02002308();

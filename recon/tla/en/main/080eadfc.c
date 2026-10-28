@@ -10,7 +10,7 @@
 // saved in the actor's word at 76 before its raised bit is set, and layer
 // 2's slot is blocked.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct SwitchCell {
@@ -32,14 +32,14 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_080eab70(struct ObjectRuntime *object);
+s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
 
 void Func_080eadfc(void) {
-  struct ObjectRuntime *target =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *target =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;

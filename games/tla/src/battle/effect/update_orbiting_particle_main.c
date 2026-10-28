@@ -15,7 +15,7 @@
 #include "system.h"
 #include "frame.h"
 #include "object_dispatch.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 #include "macros.h"
@@ -33,7 +33,7 @@ s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
   return 0;
 }
 
-void BattleEffect_UpdateOrbitingParticleFade(struct ObjectRuntime *object) {
+void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   s32 scale;
 
   if (object != NULL) {
@@ -41,7 +41,7 @@ void BattleEffect_UpdateOrbitingParticleFade(struct ObjectRuntime *object) {
     object->scaleY -= 0x1000;
     object->scaleX = scale;
     if (scale <= 0x1000)
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct DispatchObject *)object,
                                    (u32)gBattleEffect_SharedParticleScript);
   }
 }
@@ -55,7 +55,7 @@ struct OrbitingParticleVector {
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct OrbitingParticleVector *pos);
 
-void BattleEffect_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
+void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -77,7 +77,7 @@ void BattleEffect_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
   }
 }
 
-void BattleEffect_UpdateOrbitingParticleRight(struct ObjectRuntime *particle) {
+void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -117,7 +117,7 @@ void FieldEffect_RunFrostOnTarget(void) {
   }
 }
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 /// Sixteen particles, one every three frames, orbit points scattered 2 to 6
 /// pixels around the effect; the target then flashes eight times, takes the
@@ -126,8 +126,8 @@ void FieldEffect_RunFrost(void) {
   struct OrbitingParticleVector pos;
   struct OrbitingParticleVector *p;
   struct BattleFxScene *scene;
-  struct ObjectRuntime *target;
-  struct ObjectRuntime *particle;
+  struct Actor *target;
+  struct Actor *particle;
   struct PendingEvent *ev;
   s32 cnt;
 
@@ -139,7 +139,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   cnt = 15;
   do {
-    particle = Object_Spawn(681, 0, 0, 0);
+    particle = Actor_Spawn(681, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 dist;
@@ -187,7 +187,7 @@ void FieldEffect_RunFrost(void) {
 
     if (scene->childOption == 0) {
       Sound_PlayFar(220);
-      Object_SetMode(target, 2);
+      Actor_SetMode(target, 2);
     }
 
     target->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleMain;

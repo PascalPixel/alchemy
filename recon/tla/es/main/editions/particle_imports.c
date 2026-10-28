@@ -24,8 +24,8 @@ struct ParticleEffectObject {
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
-struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetMode(struct ParticleEffectObject *, s32);
+struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
+void Actor_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 gBattleEffect_ParticleScript[];
 
 void BattleEffect_SpawnRandomParticleAtPosition(
@@ -42,14 +42,14 @@ void BattleEffect_SpawnRandomParticleAtPosition(
   position.z = source->position.z;
   random = Random16();
   Vector_AddPolarOffset(random << 4, Random16(), &position);
-  object = Object_Spawn(0x2a1, position.x, position.y, position.z);
+  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
 
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gBattleEffect_ParticleScript);
-    Object_SetMode(object, 0);
+    Actor_SetMode(object, 0);
     mask = 13;
     flags = object->child->flags;
     mask = -mask;

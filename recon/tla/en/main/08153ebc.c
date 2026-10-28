@@ -44,7 +44,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"
@@ -59,10 +59,10 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessP
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames);       // ObjectGroup_UpdateMembers
+                   s32 timerFrames);       // Actor_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
 void Func_08163c2c(s32 layer, s32 value);  // Func_08163c2c
@@ -438,7 +438,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(4, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

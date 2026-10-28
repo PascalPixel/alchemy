@@ -3,7 +3,7 @@
 // listing; names and structure still to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -17,18 +17,18 @@
        ->v)
 
 extern u8 gData_0200530c[];
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 GameFlag_SetByte();
 
 s32 Func_02002974(void) {
   s32 v0, r8, r9, r10, r7, v1, r6, r4, r11, r1, ip, r0, r2, r5, v2;
 
-  v0 = Object_GetById(10);
+  v0 = Actor_GetById(10);
   r8 = (FIELD_AT(v0, s32, 8)) >> 19;
   r9 = 0;
   r10 = 0;
   r7 = (FIELD_AT(v0, s32, 16)) >> 19;
-  v1 = Object_GetById(11);
+  v1 = Actor_GetById(11);
   r6 = (FIELD_AT(v1, s32, 8)) >> 19;
   r4 = 1;
   r11 = (FIELD_AT(v1, s32, 16)) >> 19;

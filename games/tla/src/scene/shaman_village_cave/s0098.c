@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02000098(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 frames = 60;
 
   object->motionFlags = 3;
@@ -12,7 +12,7 @@ void Func_02000098(s32 id) {
     frames--;
   }
   WaitFrames(10);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
 }
 

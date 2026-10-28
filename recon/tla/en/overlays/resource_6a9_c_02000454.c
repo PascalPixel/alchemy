@@ -15,9 +15,9 @@ s32 Func_020003b4(u32 layer, s32 x, s32 y);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data) {
-  struct ObjectRuntime *leader =
-      (struct ObjectRuntime *)Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object;
+  struct Actor *leader =
+      (struct Actor *)Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object;
   s32 height;
   s32 cell;
   const u16 *ids;
@@ -26,11 +26,11 @@ void Func_02000454(const u8 *data) {
   if (*ids == 0xffff)
     goto done;
 loop:
-  object = (struct ObjectRuntime *)Object_GetById(*ids);
+  object = (struct Actor *)Actor_GetById(*ids);
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->bounce = 0;
-  ObjectDispatch_SetSingleChildFlags((struct FieldActor *)object, 0);
+  Actor_SetSingleChildFlags((struct FieldActor *)object, 0);
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
   Func_020010cc(object->x, object->z, 0, height);
   Func_020010cc(object->x, object->z, 2, height);

@@ -53,10 +53,10 @@ Func_080d9e98:
 	bl Func_080d9f1c
 	adds r0, r5, #0
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080d9f0e:
 	add sp, #12
 	pop {r3, r5, r6}

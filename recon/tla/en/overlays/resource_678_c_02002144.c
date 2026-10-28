@@ -4,27 +4,27 @@
 // releases two objects of type 269 (Func_02002808) 15 frames apart, waits,
 // puts the character back at the saved place and clears the charge. Left: registers from the start (the native keeps gSceneState in r9, the actor in r8 and the release count in r11) and the charge's arithmetic order.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "input.h"
 
 extern u8 gSceneState[];
 extern u8 gData_02002ae8[];
 s32 Func_02002998(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
 void Func_02002968(s32 mode);
 void Func_020028a0(void);
-struct ObjectRuntime *Func_02002808(s32 type, s32 x, s32 y, s32 z);
-void Func_02002800(struct ObjectRuntime *object, const u8 *script);
+struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
+void Func_02002800(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 
 void Func_02002144(void) {
   u8 *state = gSceneState;
-  struct ObjectRuntime *actor = Object_GetById(Func_02002998());
+  struct Actor *actor = Actor_GetById(Func_02002998());
   u8 *sprite = actor->animation;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   u8 *sparkSprite, *kind;
   s32 charge, step, i;
 

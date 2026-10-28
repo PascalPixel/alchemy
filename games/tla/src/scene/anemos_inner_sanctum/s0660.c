@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 
-s32 Func_02000660(struct ObjectRuntime *object) {
+s32 Func_02000660(struct Actor *object) {
   s32 radius;
 
   object->action += object->unk66;

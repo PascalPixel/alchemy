@@ -9,20 +9,20 @@
 // 0x1b34, and the last kind-2 and kind-3 cells are kept in pixels, centred
 // on their tile, at 0xd3c and 0xd40.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 extern const s8 Data_080f0f64[];
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer);
-s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
+s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 
 void Func_080e2264(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   s16 *points = (s16 *)(event + 0xcc0);
-  struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
+  struct Actor *owner = *(struct Actor **)(effect + 16);
   s16 *point;
   s32 position[3];
   s32 x, z;

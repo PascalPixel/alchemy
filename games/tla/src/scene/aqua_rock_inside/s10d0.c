@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_020010d0(struct ObjectRuntime *object) {
+void Func_020010d0(struct Actor *object) {
   s32 frames = 60;
 
   while (frames != 0) {
@@ -24,7 +24,7 @@ void Func_020010ec(void) {
 }
 
 void Func_02001138(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   Func_02003d1c(17, 39, 2, 1, 20, 39);
   Func_02003d1c(23, 39, 1, 1, object->x >> 20, 39);

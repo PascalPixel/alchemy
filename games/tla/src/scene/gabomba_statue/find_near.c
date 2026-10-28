@@ -31,7 +31,7 @@ extern const u8 gData_020064cc[];
 extern const u8 gData_020067e4[];
 extern const u8 gData_02006898[];
 extern const u8 gData_02006a90[];
-struct Orbiter *Object_GetById(s32 id);
+struct Orbiter *Actor_GetById(s32 id);
 s32 Func_02005834(s32 value);
 void Func_020020f0(s32 value);
 void GameFlag_SetBit(s32 flag);
@@ -41,7 +41,7 @@ void WaitFrames(s32 frames);
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
 void Func_02000550(void) {
-  struct Orbiter *actor = Object_GetById(9);
+  struct Orbiter *actor = Actor_GetById(9);
   u16 zero = 0;
   s32 direction;
   s32 i;
@@ -70,7 +70,7 @@ struct Orbiter *Func_020005b4(struct Orbiter *origin, s32 id) {
   s32 i;
 
   for (i = 8; i < 64; i++) {
-    struct Orbiter *object = Object_GetById(i);
+    struct Orbiter *object = Actor_GetById(i);
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {

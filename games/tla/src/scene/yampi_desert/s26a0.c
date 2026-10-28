@@ -1,5 +1,5 @@
 #include "scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 void Func_02001c5c(void);
 void Func_020023cc(void);
@@ -8,8 +8,8 @@ void Func_020023cc(void);
 /// followed actor, and until flag 0x109 actor 21 is placed and given the
 /// update Func_020023cc.
 void Func_020026a0(void) {
-  struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(21);
-  struct ObjectRuntime *object;
+  struct Actor *leader = (struct Actor *)Actor_GetById(21);
+  struct Actor *object;
   struct FieldActor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
@@ -17,19 +17,19 @@ void Func_020026a0(void) {
    * before the call that fetches actor 22, as in the native (as in
    * Func_02002318). */
   followed = &gData_0200480c;
-  object = (struct ObjectRuntime *)Object_GetById(22);
+  object = (struct Actor *)Actor_GetById(22);
   object->priorityFlags |= 2;
   *followed = (struct FieldActor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Func_020040f8(22);
   (*followed)->motionFlags = 3;
-  ObjectMotion_SetActionVariant(22, 3);
+  Actor_SetSpritePriority(22, 3);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Object_SetPartAttribute((struct FieldActor *)leader, 15);
-  ObjectMotion_SetActionVariant(21, 3);
+  Actor_SetPartAttribute((struct FieldActor *)leader, 15);
+  Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
-  Object_GetById(21)->motionFlags = 3;
+  Actor_GetById(21)->motionFlags = 3;
   if (!GameFlag_Test(0x109)) {
     Scene_Call4098(21, 232 << 16, 664 << 16, 0);
     *((u8 *)leader + 98) = 0;

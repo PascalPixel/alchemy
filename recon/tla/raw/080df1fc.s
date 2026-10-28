@@ -28,7 +28,7 @@ Func_080df1fc:
 	str r7, [r1, #104]
 	ldr r0, [sp, #28]
 	ldr r1, .L_080df534
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	ldr r3, [sp, #32]
 	movs r2, #36
 	ldr r0, [r3, #4]
@@ -90,7 +90,7 @@ Func_080df1fc:
 	lsls r0, r0, #13
 	adds r1, r1, r0
 	adds r0, r6, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	mov r2, r10
 	ldr r1, [r2]
 	ldr r3, .L_080df53c
@@ -99,11 +99,11 @@ Func_080df1fc:
 	ldr r2, [r2, #4]
 	ldr r3, [r0, #8]
 	adds r0, r5, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r6, #0
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	adds r0, r5, #0
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	mov r1, r10
 	ldr r3, [r1]
 	movs r2, #128
@@ -132,7 +132,7 @@ Func_080df1fc:
 	adds r0, r7, #0
 	strb r3, [r1]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	beq .L_080df35c
@@ -226,20 +226,20 @@ Func_080df1fc:
 	str r2, [r5, #4]
 	ldr r3, [r7, #16]
 	str r3, [r5, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r1, [r5]
 	ldr r0, .L_080df53c
 	ldr r2, [r5, #4]
 	adds r1, r1, r0
 	ldr r3, [r5, #8]
 	ldr r0, [sp, #24]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r0, [sp, #20]
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	b .L_080df550
 .L_080df3f2:
 	ldr r3, [r7, #8]
@@ -259,18 +259,18 @@ Func_080df1fc:
 	add r1, r9
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r1, [r5]
 	ldr r2, .L_080df53c
 	ldr r0, [sp, #24]
 	adds r1, r1, r2
 	ldr r3, [r5, #8]
 	ldr r2, [r5, #4]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r0, [sp, #20]
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	ldr r0, [sp, #24]
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	ldr r3, [r7, #8]
 	mov r0, r9
 	str r3, [r5]
@@ -304,10 +304,10 @@ Func_080df1fc:
 .L_080df478:
 	ldr r0, [sp, #20]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, .L_080df54c
 	movs r2, #15
 	ldr r3, [r3]
@@ -325,10 +325,10 @@ Func_080df1fc:
 	movs r1, #4
 	ldr r5, [r2]
 	ldr r6, [r2, #8]
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #15
 	bl WaitFrames
 	movs r1, #204
@@ -346,7 +346,7 @@ Func_080df1fc:
 	ldr r3, [r0, #8]
 	ldr r2, [r2, #4]
 	adds r0, r7, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r3, [sp, #20]
 	movs r1, #204
 	lsls r1, r1, #6
@@ -364,7 +364,7 @@ Func_080df1fc:
 	ldr r2, [r3, #4]
 	ldr r0, [sp, #20]
 	ldr r3, [r3, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	mov r2, r10
 	ldr r1, [r2]
 	ldr r3, .L_080df53c
@@ -373,9 +373,9 @@ Func_080df1fc:
 	ldr r2, [r2, #4]
 	ldr r3, [r0, #8]
 	ldr r0, [sp, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r7, #0
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	mov r1, r8
 	str r5, [r7, #8]
 	str r6, [r7, #16]
@@ -392,7 +392,7 @@ Func_080df1fc:
 .L_080df53c:
 	.4byte 0xfff00000
 .L_080df540:
-	.4byte ObjectGroup_ApplyRandomChildValues
+	.4byte Actor_ApplyRandomChildValues
 .L_080df544:
 	.4byte BattleEffect_SpawnFallingParticles
 .L_080df548:
@@ -414,10 +414,10 @@ Func_080df1fc:
 .L_080df568:
 	ldr r0, [sp, #20]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r0, .L_080df6ec
 	bl Task_Remove
 	movs r0, #135
@@ -455,7 +455,7 @@ Func_080df1fc:
 	ldr r1, [r2]
 	adds r0, #255
 	ldr r2, [r2, #4]
-	bl Object_Spawn
+	bl Actor_Spawn
 	ldr r2, [sp, #4]
 	adds r6, r0, #0
 	stmia r2!, {r6}
@@ -464,7 +464,7 @@ Func_080df1fc:
 	cmp r6, #0
 	beq .L_080df614
 	ldr r1, .L_080df6f0
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	bl Random16
 	mov r3, r9
 	adds r2, r6, #0
@@ -496,9 +496,9 @@ Func_080df1fc:
 	movs r0, #131
 	bl Sound_PlayFar
 	ldr r0, [sp, #20]
-	bl Object_Destroy
+	bl Actor_Destroy
 	ldr r0, [sp, #24]
-	bl Object_Destroy
+	bl Actor_Destroy
 	ldr r3, [sp, #32]
 	adds r0, r7, #0
 	adds r3, #64
@@ -507,7 +507,7 @@ Func_080df1fc:
 	ldr r3, [sp, #32]
 	adds r0, r7, #0
 	ldr r1, [r3, #60]
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	ldr r0, [sp, #32]
 	movs r2, #0
 	ldr r3, [r0, #56]

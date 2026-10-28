@@ -13,7 +13,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fixed_math.h"
 #include "view_move.h"
 

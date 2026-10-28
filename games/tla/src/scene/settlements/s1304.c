@@ -6,7 +6,7 @@ extern const u8 gData_02002272[];
 void Func_02001200(void);
 
 void Func_02001304(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 

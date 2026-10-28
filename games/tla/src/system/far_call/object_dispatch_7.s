@@ -5,7 +5,7 @@
 	.thumb_func
 Func_08020258:
 	overlay_veneer Func_0802da24
-	.global ObjectDispatch_RegisterChildMetadataFar
+	.global Actor_RegisterSpriteMetadataFar
 	.thumb_func
-ObjectDispatch_RegisterChildMetadataFar:
-	overlay_veneer ObjectDispatch_RegisterChildMetadata
+Actor_RegisterSpriteMetadataFar:
+	overlay_veneer Actor_RegisterSpriteMetadata

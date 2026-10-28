@@ -249,7 +249,7 @@ Func_080e0618:
 	ldr r3, [r1, #12]
 	ldr r1, [r6]
 	str r3, [r6, #8]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r1, #132
 	lsls r1, r1, #6
 	adds r1, #6
@@ -267,7 +267,7 @@ Func_080e0618:
 	ldr r1, [r3, #4]
 	ldr r2, [r3, #8]
 	ldr r3, [r3, #12]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r1, #132
 	lsls r1, r1, #6
 	adds r1, #6
@@ -353,7 +353,7 @@ Func_080e0618:
 .L_080e08da:
 	mov r0, r10
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r2, #132
 	lsls r2, r2, #6
 	adds r2, #8

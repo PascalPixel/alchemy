@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct ObjectSprite {
   u8 unk00[5];
@@ -10,8 +10,8 @@ struct ObjectSprite {
   u8 yOffset;
 };
 
-void Object_SetWideSprite(u32 objectId, s32 mode) {
-  struct ObjectRuntime *object;
+void Actor_SetWideSprite(u32 objectId, s32 mode) {
+  struct Actor *object;
   struct ObjectSprite *sprite;
 
   object = ObjectTable_Get(objectId);
@@ -31,8 +31,8 @@ void Object_SetWideSprite(u32 objectId, s32 mode) {
   sprite->attr1High &= 0x3f;
 }
 
-void Object_SetSquareSprite(u32 objectId) {
-  struct ObjectRuntime *object;
+void Actor_SetSquareSprite(u32 objectId) {
+  struct Actor *object;
   struct ObjectSprite *sprite;
 
   object = ObjectTable_Get(objectId);

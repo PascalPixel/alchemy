@@ -24,10 +24,10 @@ struct RiseObject {
 
 extern const struct WarpTarget gData_02003d10;
 
-struct FieldActor *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+struct FieldActor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -47,16 +47,16 @@ s32 Func_020035f4(void);
 void Func_02003624(struct FieldActor *object, struct FieldActor *target);
 void Func_0200362c(s32 cue);
 
-static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column,
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CenterOnColumn(id, column, offset);
+  Actor_CenterOnColumn(id, column, offset);
 }
 
 static __inline__ void
-ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {

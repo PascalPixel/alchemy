@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Party_GetLeaderActor(void);
 s32 ArcTan2(s32 y, s32 x);
 void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
 
 void Func_080cf050(void) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *other;
+  struct Actor *leader;
+  struct Actor *other;
   s32 dx;
   s32 dz;
   s32 i;

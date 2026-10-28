@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "text/msg_ids.h"
 
 void WaitFrames(s32 frames);
@@ -81,9 +81,9 @@ void Func_02002698(void) {
   Func_02004db0();
   Func_02004e30(145);
   Func_02002640(0, 128, 0, 0);
-  Object_SetModeById(5, 19);
-  Object_SetModeById(8, 5);
-  Object_SetModeById(9, 7);
+  Actor_SetModeById(5, 19);
+  Actor_SetModeById(8, 5);
+  Actor_SetModeById(9, 7);
   WaitFrames(4);
   Func_02004e30(145);
   Func_02002640(32, 128, 32, 0);

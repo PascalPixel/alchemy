@@ -21,18 +21,18 @@ BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar:
 	.thumb_func
 Motion_LaunchFromFocusedObjectFar:
 	overlay_veneer Func_080d3070
-	.global ObjectMotion_OffsetPositionAndResetFar
+	.global Actor_OffsetPositionAndResetFar
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetFar:
-	overlay_veneer ObjectMotion_OffsetPositionAndReset
-	.global ObjectMotion_CommitPositionAndActivateFar
+Actor_OffsetPositionAndResetFar:
+	overlay_veneer Actor_OffsetPositionAndReset
+	.global Actor_CommitPositionAndActivateFar
 	.thumb_func
-ObjectMotion_CommitPositionAndActivateFar:
-	overlay_veneer ObjectMotion_CommitPositionAndActivate
-	.global Object_LinkObjectAndSetCallbackFar
+Actor_CommitPositionAndActivateFar:
+	overlay_veneer Actor_CommitPositionAndActivate
+	.global Actor_WatchAndSetScriptFar
 	.thumb_func
-Object_LinkObjectAndSetCallbackFar:
-	overlay_veneer Object_LinkObjectAndSetCallback
+Actor_WatchAndSetScriptFar:
+	overlay_veneer Actor_WatchAndSetScript
 	.global BattleEffect_PauseObjectFar
 	.thumb_func
 BattleEffect_PauseObjectFar:

@@ -9,7 +9,7 @@
 // neg; this has each one row later. A barrier or one-pass block around the
 // animation's load measured 6, one around the mode's two statements 16 and 6.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct ContextAnimation {
   u8 unk00[0x1a];
@@ -27,7 +27,7 @@ void WaitFrames(s32 frames);
 void Func_080d5d70(s32 id, s32 side) {
   u32 zero;
   u8 kind;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct ContextAnimation *context;
   struct ContextEffect *effect;
   s32 mode;
@@ -50,6 +50,6 @@ void Func_080d5d70(s32 id, s32 side) {
   object->velocityZ = zero;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
-  Object_SetMode(object, mode);
+  Actor_SetMode(object, mode);
   WaitFrames(18);
 }

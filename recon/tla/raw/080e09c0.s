@@ -45,7 +45,7 @@ Func_080e09c0:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
-	bl Object_Spawn
+	bl Actor_Spawn
 	mov r8, r0
 	cmp r0, #0
 	bne .L_080e0a22
@@ -73,7 +73,7 @@ Func_080e09c0:
 .L_080e0a48:
 	movs r1, #0
 	mov r0, r8
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #138
 	bl Sound_PlayFar
 	ldr r0, .L_080e0a64
@@ -177,7 +177,7 @@ Func_080e09c0:
 	bl Func_080dbed0
 	mov r0, r8
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #10
 	bl WaitFrames
 	movs r7, #15
@@ -317,7 +317,7 @@ Func_080e09c0:
 	ldr r0, [sp, #4]
 	bl Resource_ResetEntry
 	mov r0, r8
-	bl Object_Destroy
+	bl Actor_Destroy
 .L_080e0c60:
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92

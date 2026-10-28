@@ -17,7 +17,7 @@
 // native's layout and giv but hoists the mask into r7 (41).
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
-extern struct ObjectRuntime *Data_02004cec;
+extern struct Actor *Data_02004cec;
 extern char MsgMarsStar02;
 extern char MsgMarsStar06;
 extern char MsgMarsStar08;
@@ -25,20 +25,20 @@ extern char MsgMarsStar08;
 void Func_020042dc(void);
 void Func_020042e4(void);
 void Func_0200444c(s32 value);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_0200437c(s32 message);
 void Func_02004394(s32 id, s32 value);
 void Func_020043a4(s32 id, s32 angle);
-void Func_02004204(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_0200420c(struct ObjectRuntime *object);
+void Func_02004204(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_0200420c(struct Actor *object);
 void PartyInventory_Remove(s32 item);
 void Inventory_AddItem(s32 owner, s32 item);
 void FieldMessage_Show(s32 message, s32 position);
 u8 *Unit_Get(s32 owner);
 void Func_020042c4(s32 owner, s32 slot);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
-void Func_020041ec(struct ObjectRuntime *object);
+void Func_020041ec(struct Actor *object);
 void Func_020043c4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020043d4(void);
@@ -52,21 +52,21 @@ static __inline__ void Func_0200440c_(s32 a, s32 b) { Func_0200440c(a, b); }
 static __inline__ void Func_02004404_(s32 a, s32 b) { Func_02004404(a, b); }
 
 void Func_02000bd8(void) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *object;
+  struct Actor *leader;
+  struct Actor *object;
   s32 i;
   s32 offset;
 
   Func_020042dc();
   Func_0200444c(0);
-  Object_SetModeById(13, 5);
+  Actor_SetModeById(13, 5);
   Func_0200437c((s32)&MsgMarsStar02);
   Func_02004394(13, 0);
-  Object_SetModeById(13, 10);
+  Actor_SetModeById(13, 10);
   if (!GameFlag_Test(0xa3a)) {
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     Func_020043a4(gAdventure.currentOwner, 0x4000);
-    Object_SetModeById(gAdventure.currentOwner, 28);
+    Actor_SetModeById(gAdventure.currentOwner, 28);
     object = Data_02004cec;
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
@@ -89,9 +89,9 @@ void Func_02000bd8(void) {
         goto next;
       Func_020042c4(4, i);
     }
-    Object_SetModeById(gAdventure.currentOwner, 1);
+    Actor_SetModeById(gAdventure.currentOwner, 1);
     GameFlag_SetBit(0xa3a);
-    Object_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     WaitFrames(1);
     Func_020041ec(Data_02004cec);
     WaitFrames(1);

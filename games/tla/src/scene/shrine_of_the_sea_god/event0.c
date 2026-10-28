@@ -2,8 +2,8 @@
 
 void Func_02000280(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
-  u8 *state = &Object_GetById(14)->state;
+      Actor_GetById(gAdventure.currentOwner);
+  u8 *state = &Actor_GetById(14)->state;
   s32 y;
 
   if ((u8)(*state - 4) > 1)

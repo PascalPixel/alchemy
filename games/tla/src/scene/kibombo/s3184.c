@@ -24,10 +24,10 @@ void Func_020038ec(void);
 struct KibomboObject *Func_02005a34(s32 type, s32 x, s32 y, s32 z);
 void Func_02005a24(struct KibomboObject *object, s32 mode);
 void Func_02005a3c(struct KibomboObject *object);
-void ObjectDispatch_SetSingleChildFlags(struct KibomboObject *object,
+void Actor_SetSingleChildFlags(struct KibomboObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
-void Object_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);

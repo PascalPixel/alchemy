@@ -193,7 +193,7 @@ Func_0815e9f4:
 	bne .L_0815eb5e
 	mov r0, r8
 	movs r1, #0
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	mov r3, r8
 	ldr r3, [r3, #36]
 	mov r5, r8
@@ -356,7 +356,7 @@ Func_0815e9f4:
 	bl Task_Remove
 	movs r1, #16
 	mov r0, r8
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r2, [sp, #36]
 	mov r3, r8
 	str r2, [r3, #36]

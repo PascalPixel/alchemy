@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02000058(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 

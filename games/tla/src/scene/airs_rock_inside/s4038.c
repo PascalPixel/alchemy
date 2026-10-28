@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-s32 Func_02004038(struct ObjectRuntime *object) {
-  struct ObjectRuntime *target = object->watchedObject;
+s32 Func_02004038(struct Actor *object) {
+  struct Actor *target = object->watchedObject;
   s32 steps;
   s32 from;
 
@@ -20,7 +20,7 @@ s32 Func_02004038(struct ObjectRuntime *object) {
   return 0;
 }
 
-s32 Func_02004084(struct ObjectRuntime *object) {
+s32 Func_02004084(struct Actor *object) {
   u8 left;
 
   object->x += object->bounce;

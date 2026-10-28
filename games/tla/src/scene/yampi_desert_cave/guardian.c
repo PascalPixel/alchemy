@@ -14,14 +14,14 @@ extern char SceneId_Ov664Room4;
 
 s32 Func_02001870();
 s32 Func_02001930();
-s32 ObjectMotion_SetVariantCallback();
+s32 Actor_StartRepeatedMotion();
 s32 FieldEvent_WaitFrames();
 s32 Func_020018f8();
 s32 Func_020018f0();
 s32 Func_02001900();
 s32 Func_02001860();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
+s32 Actor_GetById();
+s32 Actor_ResetAndSetPosition();
 void Func_020018e0(s32 a, s32 b);
 
 /// The guardian speaks, then the party leaves for overlay 664's fourth room.
@@ -31,7 +31,7 @@ void Func_0200130c(void) {
 
   Func_02001870();
   Call1(Func_02001930, 0);
-  Call2(ObjectMotion_SetVariantCallback, 9, 2);
+  Call2(Actor_StartRepeatedMotion, 9, 2);
   Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_020018f8, 0x10000, 0);
   Call2(Func_020018f0, 0x10003, 1);
@@ -41,9 +41,9 @@ void Func_0200130c(void) {
   Call2(Func_020018f0, 0x10000, 0);
   Call1(Func_02001900, 60);
   Call1(FieldEvent_WaitFrames, 60);
-  leader = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 0x214));
+  leader = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 0x214));
   if (leader != 0)
-    Call3(ObjectMotion_ResetAndSetPosition, 9, FIELD_AT(leader, s16, 10),
+    Call3(Actor_ResetAndSetPosition, 9, FIELD_AT(leader, s16, 10),
           FIELD_AT(leader, s16, 18));
   Call1(FieldEvent_WaitFrames, 20);
   /* FAKEMATCH: a one-pass block around the first two stores keeps the call's

@@ -6,7 +6,7 @@
 // offset. Chained assignments and one work pointer measured the same.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "input.h"
@@ -18,8 +18,8 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+struct Actor *Actor_GetById(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -35,10 +35,10 @@ s32 Func_02000514(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x209;
-  Object_GetById(15)->update = Func_02001488;
+  Actor_GetById(15)->update = Func_02001488;
   if (gAdventure.entrance == 80) {
     gAdventure.entrance = gAdventure.secondary = 14;
-    ObjectMotion_ArmCallback(14, 0x5000, 0);
+    Actor_ArmCallback(14, 0x5000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_WaitFrames(10);

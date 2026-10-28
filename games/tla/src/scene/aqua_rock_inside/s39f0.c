@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_020039f0(s32 *position, s32 base) {
-  struct ObjectRuntime *object = Import_ActorCreate_(
+  struct Actor *object = Import_ActorCreate_(
       0x11d, position[0], position[1], position[2] - 0x20000);
   s32 angle;
 

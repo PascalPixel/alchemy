@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "map.h"
 
 #define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
@@ -9,7 +9,7 @@ extern s32 gData_020024b4;
 extern s32 gData_020024b0;
 
 s32 Math_Sine(s32 angle);
-struct ObjectRuntime *Func_02002074(void);
+struct Actor *Func_02002074(void);
 
 void Func_02000258(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);
@@ -26,7 +26,7 @@ void Func_02000258(void) {
 /// together on a sine wave, its phase advancing 0x200 a frame.
 void Func_02000288(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
-  struct ObjectRuntime *object = Func_02002074();
+  struct Actor *object = Func_02002074();
   s32 offset = Math_Sine(gData_020024b0) >> 2;
   s32 step;
 

@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"

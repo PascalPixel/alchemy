@@ -12,32 +12,32 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 extern s16 gData_02002864[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001dd0(void);
 void Func_02001a20(void);
 
 void Func_02001c68(s32 x, s32 z, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   void *work = Ram_HeapSlots->eventWork;
   s32 stepX = GameFlag_GetByte(gData_02002864[1]);
   s32 stepZ = GameFlag_GetByte(gData_02002864[1] + 8);
 
   if (stepX != 0 || stepZ != 0) {
-    struct ObjectRuntime *follower;
+    struct Actor *follower;
 
     GameFlag_SetByte(gData_02002864[1], 0);
     GameFlag_SetByte(gData_02002864[1] + 8, 0);
     object->x = ((stepX + x) << 20) + 0x80000;
     object->z = ((stepZ + z) << 20) + 0x80000;
-    follower = (struct ObjectRuntime *)WORD_AT(work, 460);
+    follower = (struct Actor *)WORD_AT(work, 460);
     follower->x = object->x;
     follower->z = object->z;
     Func_02001dd0();

@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 /// Moves the object: left of x 320 it speeds up rightward and grows, past it
 /// it speeds up leftward and shrinks; its priority follows its direction and
 /// its sprite spins.
-void Func_02000f9c(struct ObjectRuntime *object) {
+void Func_02000f9c(struct Actor *object) {
   s32 scale;
 
   object->y += object->gravity;
@@ -23,8 +23,8 @@ void Func_02000f9c(struct ObjectRuntime *object) {
   object->scaleX = scale;
   object->scaleY = scale;
   if (object->bounce > 0)
-    Object_SetSpritePriority(object, 1);
+    Scene_SetActorSpritePriority(object, 1);
   else
-    Object_SetSpritePriority(object, 2);
+    Scene_SetActorSpritePriority(object, 2);
   ((struct FieldSprite *)object->animation)->rotation += 0x1800;
 }

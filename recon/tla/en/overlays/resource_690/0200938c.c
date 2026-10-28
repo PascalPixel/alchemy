@@ -11,7 +11,7 @@
 extern const u8 gData_0200232c[];
 
 s32 Camera_FollowActor(s32 id, s32 a);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
+void Actor_SetMovementTypeById(s32 id, const void *callback);
 void Func_02001620(s32 id);
 
 /* FAKEMATCH: the sinking loop is written with goto so that it carries no loop
@@ -26,7 +26,7 @@ void Func_02001620(s32 id);
   goto label
 
 void Func_0200138c(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 column;
   s32 row;
   s32 i;
@@ -34,7 +34,7 @@ void Func_0200138c(void) {
   Func_02002068();
   Func_02002150(0);
   Camera_FollowActor(10, 1);
-  object = Object_GetById(10);
+  object = Actor_GetById(10);
   column = object->x >> 20;
   row = object->z >> 20;
   if (column == 12 && row == 15) {
@@ -58,7 +58,7 @@ void Func_0200138c(void) {
     Func_02001620(10);
     if (!GameFlag_Test(102)) {
       Func_020020c0(11, 0, 0);
-      ObjectMotion_EnableActionAndSetCallback(10, gData_0200232c);
+      Actor_SetMovementTypeById(10, gData_0200232c);
       FieldEvent_WaitFrames(20);
     }
     FieldEvent_WaitFrames(20);

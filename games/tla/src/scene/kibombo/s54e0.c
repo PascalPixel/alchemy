@@ -15,19 +15,19 @@ void Func_020054e0(void) {
   if (entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (entrance == 98) {
     Func_02003640(1, 0);
     Func_020036e0(1, 0);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (entrance == 97) {
     Func_02003640(1, 0);
     Func_020036e0(1, 2);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (entrance == 96) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-    Object_SetModeById(14, 4);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetModeById(14, 4);
   }
 }

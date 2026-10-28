@@ -3,20 +3,20 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 
-extern struct FieldEffect *Object_GetById(s32 id);
+extern struct FieldEffect *Actor_GetById(s32 id);
 extern void Func_0200145c(struct FieldEffect *effect, s32 mode);
 extern void Func_02001464(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02001650[];
-extern void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect,
+extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
                                                u32 flags);
-extern void Object_SetSpritePriority(struct FieldEffect *effect, s32 priority);
-extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
+extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
+extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 extern void
 BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldEffect *party = Object_GetById(gAdventure.currentOwner);
+  struct FieldEffect *party = Actor_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -33,12 +33,12 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_0200145c(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Func_02001464(effect, gData_02001650[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Object_SetSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -46,10 +46,10 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Object_SetPartAttribute(effect, options->palette);
+    Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Object_SetSpritePriority(effect, options->priority);
+    Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {

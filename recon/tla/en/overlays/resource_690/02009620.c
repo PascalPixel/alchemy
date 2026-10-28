@@ -34,7 +34,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
 void Func_02001620(s32 id) {
   struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u32 i;
 
   spawn.update = Effect_AdvanceMotion;

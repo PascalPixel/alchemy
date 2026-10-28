@@ -64,8 +64,8 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+                   s32 timerFrames); // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
@@ -168,7 +168,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
       break;
     if (frame <= 63)
       Func_08164b2c(frame / 2 - 31, frame / 2 - 31, frame / 2 - 31);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

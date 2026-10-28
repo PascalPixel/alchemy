@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 #include "vram_tab.h"
@@ -40,7 +40,7 @@ struct CellTarget {
 
 extern struct CellTarget CELL_TABLE;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 
@@ -50,7 +50,7 @@ void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 void CELL_SPRITE_DRAW(void) {
   struct CellTarget *table = &CELL_TABLE;
   struct CellTargetEntry *entry;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   struct MapWork *map;
   s32 *view;
   s32 viewX, viewZ, viewY, tile;
@@ -64,7 +64,7 @@ void CELL_SPRITE_DRAW(void) {
   do {
     entry = &table->entries[table->current];
   } while (0);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if ((leader->x >> 20) != entry->x || (leader->z >> 20) != entry->z)
     table->current = -1;
   {

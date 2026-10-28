@@ -10,22 +10,22 @@ struct YallamActor {
   void (*update)(struct YallamActor *actor);
 };
 
-struct YallamActor *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Object_SetModeById(u32 id, s32 mode);
+struct YallamActor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetModeById(u32 id, s32 mode);
 
-static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
+static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 void Func_02001904(s32 id) {
-  struct YallamActor *actor = Object_GetById(id);
+  struct YallamActor *actor = Actor_GetById(id);
 
-  ObjectMotion_SetSpeedParameters_(id, 0x13333, 0x13333);
-  Object_SetModeById(id, 2);
+  Actor_SetSpeedParameters_(id, 0x13333, 0x13333);
+  Actor_SetModeById(id, 2);
   actor->timer = 0;
   actor->count = 0;
   actor->state = 1;

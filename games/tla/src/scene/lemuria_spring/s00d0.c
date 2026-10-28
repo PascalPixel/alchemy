@@ -12,8 +12,8 @@ s32 GameFlag_SetBit();
 s32 Func_02000070();
 s32 Func_02001380();
 s32 Func_020013f8();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
+s32 Actor_SetPositionAndReset();
+s32 Actor_ArmCallback();
 s32 Func_020001e4();
 s32 Func_02001388();
 extern u8 gAdventure[];
@@ -29,8 +29,8 @@ void Func_020000d0(void) {
   }
   Func_02001380();
   Call1(Func_020013f8, 0);
-  Call3(ObjectMotion_SetPositionAndReset, actor, 0x78, 0x98);
-  Call3(ObjectMotion_ArmCallback, actor, 0x4000, 0);
+  Call3(Actor_SetPositionAndReset, actor, 0x78, 0x98);
+  Call3(Actor_ArmCallback, actor, 0x4000, 0);
   Func_020001e4();
   Func_02001388();
 }

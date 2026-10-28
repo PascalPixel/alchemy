@@ -12,8 +12,8 @@
 #include "field_event.h"
 #include "battle_session.h"
 
-#define ObjectDispatch_SetAnimationSpeedFar                                 \
-  ((void (*)(s32, s32))ObjectDispatch_SetAnimationSpeedFar)
+#define Actor_SetAnimationSpeedFar                                 \
+  ((void (*)(s32, s32))Actor_SetAnimationSpeedFar)
 
 s32 *BattleObject_Get(s32);
 
@@ -130,6 +130,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id) {
     value = 5 - value;
   }
 
-  Object_SetMode(*BattleObject_Get(id), value);
-  ObjectDispatch_SetAnimationSpeedFar(*BattleObject_Get(id), (id & 3) + 14);
+  Actor_SetMode(*BattleObject_Get(id), value);
+  Actor_SetAnimationSpeedFar(*BattleObject_Get(id), (id & 3) + 14);
 }

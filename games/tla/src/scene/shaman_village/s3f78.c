@@ -11,9 +11,9 @@ void Func_02003f78(void) {
   Func_020048c4();
   Func_02004a24(0);
   Func_0200498c((s32)MsgShamanMoapaAdvisesLeaving);
-  Object_GetById(15)->facing = 0x8000;
-  Object_GetById(16)->facing = 0x8000;
-  Object_GetById(17)->facing = 0x8000;
+  Actor_GetById(15)->facing = 0x8000;
+  Actor_GetById(16)->facing = 0x8000;
+  Actor_GetById(17)->facing = 0x8000;
   Camera_MoveWithinMapBounds(0xe00000, -1, 0x1180000, 0);
   WaitFrames(1);
   Func_0200482c();

@@ -1,6 +1,6 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
-s32 Func_020009e8(struct ObjectRuntime *object) {
+s32 Func_020009e8(struct Actor *object) {
   struct JupiterLighthouseAerieSpark spark;
   s32 frame = gFrameCount & 7;
 

@@ -70,7 +70,7 @@ void Func_02000270(void) {
   Func_02005c3c(0);
   Func_02005b4c((s32)MsgNowThatAkafubu);
   Func_02005b64(24, 0);
-  ObjectMotion_SetAngleToward(24, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(24, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   Func_02005b64(24, 0);
   Kibombo_ObjTurn(24, 0x3000);
@@ -89,7 +89,7 @@ s32 Func_020002e8(void) {
   u16 turn;
   s32 facing;
 
-  turn = Object_GetById(gAdventure.currentOwner)->facing + 0x5fff;
+  turn = Actor_GetById(gAdventure.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -160,7 +160,7 @@ void Func_0200042c(void) {
   if (Kibombo_FlagCheck(0x9df)) {
     Func_02005a9c();
     Func_02005c3c(0);
-    ObjectMotion_SetAngleToward(36, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(36, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
@@ -171,7 +171,7 @@ void Func_0200042c(void) {
     Func_02005b4c((s32)MsgOhOhMy);
     Func_02005b5c(36, 0, 40);
     Func_02005b64(36, 0);
-    ObjectMotion_SetAngleToward(36, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(36, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
@@ -219,7 +219,7 @@ void Func_02000590(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count;) {
-    u8 *flags = &Object_GetById(first + i)->priorityFlags;
+    u8 *flags = &Actor_GetById(first + i)->priorityFlags;
     u32 next = i + 1;
 
     if (show)
@@ -289,12 +289,12 @@ void Func_02000728(s32 mode) {
 }
 
 void Func_02000734(void) {
-  struct KibomboObject *object = Object_GetById(11);
+  struct KibomboObject *object = Actor_GetById(11);
 
   if (object->x >> 20 == 6 && object->z >> 20 == 18) {
     Func_02005a9c();
     Func_02005c3c(0);
-    Object_GetById(11)->motionFlags = 3;
+    Actor_GetById(11)->motionFlags = 3;
     object->motionFlags = 3;
     do
       WaitFrames(1);
@@ -302,7 +302,7 @@ void Func_02000734(void) {
     Func_02005c9c(188);
     WaitFrames(10);
     object->motionFlags = 0;
-    Object_GetById(11)->motionFlags = 0;
+    Actor_GetById(11)->motionFlags = 0;
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     GameFlag_SetBit(0x9ea);
     if (!GameFlag_Test(0x8f4))
@@ -328,15 +328,15 @@ void Func_020007c8(void) {
   Func_02005b1c(5, gAdventure.currentOwner);
   Func_02005b1c(6, gAdventure.currentOwner);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(26, 2);
-  ObjectMotion_SetActionVariant(5, 2);
-  ObjectMotion_SetActionVariant(6, 2);
+  Actor_SetSpritePriority(26, 2);
+  Actor_SetSpritePriority(5, 2);
+  Actor_SetSpritePriority(6, 2);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Kibombo_ObjSpeed(5, 0xcccc, 0x6666);
   Kibombo_ObjSpeed(6, 0xcccc, 0x6666);
-  ObjectMotion_EnableActionAndSetCallback(26, gData_02005d18);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02005d5c);
-  Object_SetActionCallbackAndRefreshById(6, gData_02005da0);
+  Actor_SetMovementTypeById(26, gData_02005d18);
+  Actor_SetMovementTypeById(5, gData_02005d5c);
+  Actor_SetMovementTypeAndWaitById(6, gData_02005da0);
   Func_02005b64(7, 0);
   if (GameFlag_Test(0x911))
     Func_02000978();
@@ -346,9 +346,9 @@ void Func_020007c8(void) {
   Kibombo_ObjSpeed(26, 0x19999, 0xcccc);
   Kibombo_ObjSpeed(5, 0x19999, 0xcccc);
   Kibombo_ObjSpeed(6, 0x19999, 0xcccc);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02005e54);
-  ObjectMotion_EnableActionAndSetCallback(6, gData_02005e54);
-  Object_SetActionCallbackAndRefreshById(26, gData_02005e54);
+  Actor_SetMovementTypeById(5, gData_02005e54);
+  Actor_SetMovementTypeById(6, gData_02005e54);
+  Actor_SetMovementTypeAndWaitById(26, gData_02005e54);
   GameFlag_SetBit(0x8f3);
   Func_02005aa4();
 }
@@ -359,12 +359,12 @@ void Func_02000978(void) {
   FieldMessage_ShowAtActor(6, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, 0x4000, 10);
-    Object_SetModeById(5, 3);
+    Actor_SetModeById(5, 3);
     Func_02005b64(5, 0);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
   } else {
     Kibombo_ObjArm(5, 0x4000, 10);
-    Object_SetModeById(5, 4);
+    Actor_SetModeById(5, 4);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Func_02005b64(5, 0);
   }
@@ -388,8 +388,8 @@ void Func_02000978(void) {
   Func_02005b64(5, 0);
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(6, 0x103, 0);
-  ObjectMotion_Launch(6, 2, 10);
-  ObjectMotion_Launch(6, 4, 10);
+  Actor_Jump(6, 2, 10);
+  Actor_Jump(6, 4, 10);
   Func_02005b64(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Func_02005b64(5, 0);
@@ -401,7 +401,7 @@ void Func_02000b2c(void) {
   Func_02005b4c((s32)MsgHeSeemsTo);
   Func_02005b64(6, 0);
   Kibombo_ObjArm(5, 0x4000, 10);
-  Object_SetModeById(5, 4);
+  Actor_SetModeById(5, 4);
   Func_02005b64(5, 0);
   Kibombo_ObjEmote(7, 0x101, 20);
   Func_02005b64(7, 0);
@@ -425,8 +425,8 @@ void Func_02000b2c(void) {
   Func_02005b64(5, 0);
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(6, 0x103, 0);
-  ObjectMotion_Launch(6, 2, 10);
-  ObjectMotion_Launch(6, 4, 10);
+  Actor_Jump(6, 2, 10);
+  Actor_Jump(6, 4, 10);
   Func_02005b64(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Func_02005b64(5, 0);

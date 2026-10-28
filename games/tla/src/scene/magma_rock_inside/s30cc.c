@@ -24,12 +24,12 @@ s32 Func_02004d10();
 s32 Func_02004d18();
 s32 Func_02002cd0();
 s32 Party_LearnAbility();
-s32 Object_TurnToFaceEachOther();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ResetAndSetPosition();
+s32 Actor_TurnToFaceEachOther();
+s32 Actor_SetSpeedParameters();
+s32 Actor_WaitForMoveById();
+s32 Actor_ArmCallback();
+s32 Actor_SetPositionAndReset();
+s32 Actor_ResetAndSetPosition();
 
 static inline void Call0(void (*f)()) {
   /* FAKEMATCH: the call layer without arguments; called directly, the two -1s
@@ -40,7 +40,7 @@ static inline void Call0(void (*f)()) {
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
 /// clear) the scene with actor 5 follows.
 void Func_020030cc(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   Func_02004d40();
   Call1(Func_02004e90, 0);
@@ -50,35 +50,35 @@ void Func_020030cc(void) {
   } else {
     Call1(Func_02004dd0, (s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
-    Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xb333,
+    Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xb333,
           0x5999);
-    Call3(ObjectMotion_SetSpeedParameters, 5, 0xb333, 0x5999);
+    Call3(Actor_SetSpeedParameters, 5, 0xb333, 0x5999);
     Call2(Func_02004da8, 5, gAdventure.currentOwner);
     Call1(FieldEvent_WaitFrames, 1);
-    Call3(ObjectMotion_ResetAndSetPositionInMode2, gAdventure.currentOwner,
+    Call3(Actor_ResetAndSetPositionInMode2, gAdventure.currentOwner,
           0x100, 0x88);
-    Call3(ObjectMotion_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate,
+    Call3(Actor_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
+    Call1(Actor_WaitForMoveById,
           gAdventure.currentOwner);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
-    Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
+    Call1(Actor_WaitForMoveById, 5);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+    Call3(Actor_ArmCallback, 5, 0x8000, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Func_02004de0, 5, 0);
-    Call2(Object_SetModeById, gAdventure.currentOwner, 3);
+    Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
     Call1(FieldEvent_WaitFrames, 0x1e);
-    Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 0x100,
+    Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x100,
           0x98);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
-    Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
+    Call3(Actor_ArmCallback, 5, 0x4000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
-    Call2(Object_SetModeById, 5, 3);
+    Call2(Actor_SetModeById, 5, 3);
     Call1(FieldEvent_WaitFrames, 0x1e);
-    Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
+    Call3(Actor_ArmCallback, 5, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
-    Call3(ObjectMotion_SetPositionAndReset, 5, 0x108, 0x89);
-    Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
+    Call3(Actor_SetPositionAndReset, 5, 0x108, 0x89);
+    Call3(Actor_ArmCallback, 5, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     FieldMessage_Show(MsgBlazeTabletInscription + 3, 1);
@@ -91,20 +91,20 @@ void Func_020030cc(void) {
     Call2(Func_02002cd0, 8, 5);
     Call2(Party_LearnAbility, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
-    Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 5, 0);
+    Call3(Actor_TurnToFaceEachOther, gAdventure.currentOwner, 5, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
-    Call2(Object_SetModeById, 5, 3);
-    Call2(Object_SetModeById, gAdventure.currentOwner, 3);
+    Call2(Actor_SetModeById, 5, 3);
+    Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
     Call1(FieldEvent_WaitFrames, 0x14);
-    Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
-    Call2(Object_SetModeById, 5, 2);
-    object = Object_GetById(gAdventure.currentOwner);
+    Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+    Call2(Actor_SetModeById, 5, 2);
+    object = Actor_GetById(gAdventure.currentOwner);
     if (object != 0)
-      Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10),
+      Call3(Actor_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10),
             FIELD_AT(object, s16, 18));
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
+    Call1(Actor_WaitForMoveById, 5);
     Call3(Func_02004da0, 5, 0, 0);
-    Object_SetActionCallback(Object_GetById(8), 9);
+    Actor_SetActionCallback(Actor_GetById(8), 9);
     Func_02004d48();
   }
 }

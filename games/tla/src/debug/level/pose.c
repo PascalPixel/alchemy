@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02000f10[];
@@ -22,9 +22,9 @@ void Func_020005d8(void) {
 
   Func_020006e4();
   Func_0200072c(0);
-  Object_SetModeById(10, 2);
-  Object_SetModeById(11, 4);
-  ObjectMotion_WaitForAnimationChange(10);
+  Actor_SetModeById(10, 2);
+  Actor_SetModeById(11, 4);
+  Actor_WaitForAnimationChange(10);
   x = 156;
   z = 208;
   id = 11;

@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -24,15 +24,15 @@ void Func_02000d1c(void) {
 }
 
 void Func_02000d4c(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u8 *animation;
   s32 a, id;
 
   Func_02004e18(19, 0x198);
-  object = Object_GetById(19);
+  object = Actor_GetById(19);
   animation = object->animation;
   animation[17] |= 1;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(19), 0);
   a = 0x4000;
   id = 19;
   /* FAKEMATCH: the native builds the last argument, then the id, before it

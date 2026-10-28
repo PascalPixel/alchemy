@@ -547,7 +547,7 @@ Func_020011a8:
 	mov r0, r8
 	mov r10, r2
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #240
 	lsls r2, r2, #1
 	adds r3, r6, r2

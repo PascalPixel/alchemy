@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MapBits {
   u8 unk00[23];
@@ -11,11 +11,11 @@ struct MapBits {
 
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Task_Add(void (*callback)(void), s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_LinkObjectAndSetCallback(s32 id, s32 target);
+void Actor_WatchAndSetScript(s32 id, s32 target);
 void Func_02001060(s32 id, s32 x, s32 z);
 void Func_02001068(s32 id, s32 x, s32 z, s32 speed);
 void Func_02000c14(void);
@@ -57,11 +57,11 @@ void Func_02000dc4(void) {
   /* FAKEMATCH: the native loads the adventure's address before it starts the
    * field offset; unforced the offset starts first (differ 2). */
   asm volatile("" : "+l"(party));
-  Object_GetById(party->currentOwner)->priorityFlags |= 32;
+  Actor_GetById(party->currentOwner)->priorityFlags |= 32;
   Task_Add_(Func_02000c14, 0x480);
   Task_Add_(Func_02000bb8, 0x480);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
-  *((u8 *)Object_GetById(17) + 85) = 0;
+  Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+  *((u8 *)Actor_GetById(17) + 85) = 0;
   if (GameFlag_Test(0x9b2)) {
     Func_02001060(19, 0, 0);
     Func_02001060(20, 0, 0);
@@ -74,10 +74,10 @@ void Func_02000dc4(void) {
 
       Func_02001068_(23, 0x1f80000, 0x1680000, speed << 6);
     }
-    Object_LinkObjectAndSetCallback(19, party->currentOwner);
-    Object_LinkObjectAndSetCallback(20, party->currentOwner);
-    Object_LinkObjectAndSetCallback(21, party->currentOwner);
-    Object_LinkObjectAndSetCallback(22, party->currentOwner);
+    Actor_WatchAndSetScript(19, party->currentOwner);
+    Actor_WatchAndSetScript(20, party->currentOwner);
+    Actor_WatchAndSetScript(21, party->currentOwner);
+    Actor_WatchAndSetScript(22, party->currentOwner);
   }
 }
 

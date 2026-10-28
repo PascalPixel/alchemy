@@ -80,7 +80,7 @@ void Func_020017e0(void) {
 /// When the object stands in column 8, sets flag 0x9fc, stops its motion and
 /// lifts it one pixel.
 void Func_0200185c(s32 a, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 8) {
     GameFlag_SetBit(0x9fc);

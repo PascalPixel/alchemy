@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct AnemosInnerSanctumEventWork {
@@ -11,17 +11,17 @@ struct AnemosInnerSanctumEventWork {
 extern char SceneId_Ov6B0Room4;
 extern const s32 gData_02003574[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_020032e0(struct ObjectRuntime *object, s32 value);
-void Func_020032e8(struct ObjectRuntime *object, const s32 *script);
+void Func_020032e0(struct Actor *object, s32 value);
+void Func_020032e8(struct Actor *object, const s32 *script);
 void Func_02003328(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003398(void);
 void Func_020033a0(void);
@@ -31,7 +31,7 @@ void Func_02003438(s32 id, s32 a);
 void Func_02003488(s32 a);
 void Func_020034b8(s32 sound);
 
-static __inline__ struct ObjectRuntime *Create(s32 type, s32 x, s32 y, s32 z) {
+static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
    * of 159 instructions differ in tla-en. */
   return Import_ActorCreate(type, x, y, z);
@@ -44,8 +44,8 @@ static __inline__ struct ObjectRuntime *Create(s32 type, s32 x, s32 y, s32 z) {
 /// 0x207.
 void Func_02001398(void) {
   struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object;
   s32 all;
   s32 i;
   s32 id;
@@ -65,12 +65,12 @@ void Func_02001398(void) {
                   ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  Object_SetPartAttribute(object, 4);
+  Actor_SetPartAttribute(object, 4);
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
-  Object_SetSpritePriority(object, 2);
+  Scene_SetActorSpritePriority(object, 2);
   Func_020032e0(object, 3);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_020032e8(object, gData_02003574);
   GameFlag_SetBit(work->unk154 + 0x1ce);
   i = 1;
@@ -91,9 +91,9 @@ next:
     Func_02003430();
     FieldEvent_WaitFrames(10);
     Func_020034b8(0x246);
-    Object_SetModeById(id, 2);
+    Actor_SetModeById(id, 2);
     GameFlag_SetBit(0x207);
-    Object_GetById(id)->motionFlags = 4;
+    Actor_GetById(id)->motionFlags = 4;
     FieldEvent_WaitFrames(80);
     Func_020033a0();
   }

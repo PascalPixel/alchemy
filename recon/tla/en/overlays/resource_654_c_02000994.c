@@ -29,21 +29,21 @@ void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
+      Actor_GetById(gAdventure.currentOwner);
   struct ShrineOfTheSeaGodObject *ride = Func_02003ad0();
-  struct ShrineOfTheSeaGodObject *a = Object_GetById(8);
-  struct ShrineOfTheSeaGodObject *b = Object_GetById(9);
-  struct ShrineOfTheSeaGodObject *c = Object_GetById(10);
+  struct ShrineOfTheSeaGodObject *a = Actor_GetById(8);
+  struct ShrineOfTheSeaGodObject *b = Actor_GetById(9);
+  struct ShrineOfTheSeaGodObject *c = Actor_GetById(10);
   u32 i;
 
   Func_020039d8();
   Call1((void (*)())Func_02003b08, 0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
-  Call2((void (*)())ObjectMotion_SetActionVariant, gAdventure.currentOwner, 1);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 8, 1);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 9, 1);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 10, 1);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Call2((void (*)())Actor_SetSpritePriority, gAdventure.currentOwner, 1);
+  Call2((void (*)())Actor_SetSpritePriority, 8, 1);
+  Call2((void (*)())Actor_SetSpritePriority, 9, 1);
+  Call2((void (*)())Actor_SetSpritePriority, 10, 1);
   Func_020039a0();
   Call1((void (*)())WaitFrames, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
@@ -120,7 +120,7 @@ void Func_02000994(void) {
   Call1((void (*)())Func_02003854, 8);
   Call1((void (*)())Func_02003854, 9);
   Call1((void (*)())Func_02003854, 10);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   leader->motionFlags = 3;
   leader->y = 0;
   leader->height = 0;

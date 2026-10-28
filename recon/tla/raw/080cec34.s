@@ -168,20 +168,20 @@ Func_080cec34:
 .L_080ced70:
 	adds r0, r5, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r0, r10
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_080ced92
 	adds r0, r5, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080ced92:
 	adds r0, r5, #0
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	ldr r2, [r5, #8]
 	cmp r2, #0
 	bge .L_080ceda6

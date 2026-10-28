@@ -1165,7 +1165,7 @@ BattleEffect_RunKirin:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7

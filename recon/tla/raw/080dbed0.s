@@ -28,7 +28,7 @@ Func_080dbed0:
 	cmp r3, r1
 	beq .L_080dbf04
 	movs r1, #0
-	bl ObjectDispatch_SetSpritePriorityFar
+	bl Actor_SetSpritePriorityDirectFar
 .L_080dbf04:
 	ldr r3, [r5, #8]
 	add r2, sp, #4

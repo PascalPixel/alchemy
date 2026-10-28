@@ -8,20 +8,20 @@
 // minutes found nothing, nor did explicit masks on byte 9 (14) or 12 more
 // minutes of permute; a mask pinned to r2 drops the copy (11).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
-struct ObjectRuntime *Func_020021cc(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_020021cc(s32 kind, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Func_02000720(void);
 
 void Func_020007d0(void) {
   s32 i;
   s32 phase;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   for (i = 0, phase = 0; i != 22; i++, phase += 5) {
     object = Func_020021cc(672, 0, 0, 0);
@@ -32,8 +32,8 @@ void Func_020007d0(void) {
     object->update = Func_02000720;
     object->action = Random16Far();
     object->unk66 = phase;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
-    Object_SetPartAttribute(object, 2);
+    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetPartAttribute(object, 2);
     ((struct FieldSprite *)object->animation)->priority = 1;
   }
 }

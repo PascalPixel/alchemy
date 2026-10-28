@@ -12,7 +12,7 @@ extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
-void ObjectDispatch_SetAnimationSpeed(struct FieldActor *object, s32 value);
+void Actor_SetAnimationSpeed(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 u32 Random16Far(void);
@@ -21,8 +21,8 @@ u32 Random16Far(void);
 /// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
 /// previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *self = (struct ObjectRuntime *)object;
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *self = (struct Actor *)object;
 
   if (Random16Far() & 0xff) {
     object->x = ((Random16Far() & 0xff) << 16) + (176 << 16);
@@ -62,11 +62,11 @@ void Func_02000550(struct FieldActor *object) {
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(object, 0);
     Map_EnableUpdateCallback();
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, 16);
   Map_DisableUpdateCallback();
   if (BYTE_AT(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)

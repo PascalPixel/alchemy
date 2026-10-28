@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct ContigoEventWork {
@@ -10,12 +10,12 @@ struct ContigoEventWork {
 
 extern const u8 gData_02004a1c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
+void Actor_SetMovementTypeById(s32 actor, const void *script);
 void Func_02001d50(void);
 void Func_020040d4(s32 actor, s32 x, s32 z);
 
@@ -27,10 +27,10 @@ void Func_020039d4(void) {
   } else if (gAdventure.entrance == 21) {
     GameFlag_ClearBit(0x12f);
   } else {
-    Object_SetModeById(17, 2);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
+    Actor_SetModeById(17, 2);
+    Actor_SetSingleChildFlags(Actor_GetById(17), 0);
     if (GameFlag_Test(0x9b2) != 0)
-      ObjectMotion_EnableActionAndSetCallback(11, gData_02004a1c);
+      Actor_SetMovementTypeById(11, gData_02004a1c);
     if (GameFlag_Test(0x9d0) != 0) {
       Func_020040d4(24, 0, 0);
       Func_020040d4(25, 0, 0);

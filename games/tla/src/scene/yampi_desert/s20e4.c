@@ -2,7 +2,7 @@
 #include "map.h"
 
 void Func_020020e4(void) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 index = Func_020041e0(leader);
   struct MapCell *cell = map->layers[0].cells + index;

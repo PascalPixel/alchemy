@@ -22,7 +22,7 @@ void Func_020007dc(s32 step) {
   }
 }
 
-void Func_02000840(struct ObjectRuntime *object) {
+void Func_02000840(struct Actor *object) {
   struct TundariaTowerEffectParams params;
   u32 phase = gFrameCount & 7;
   s32 dx;
@@ -43,7 +43,7 @@ void Func_02000840(struct ObjectRuntime *object) {
 }
 
 void Func_020008a8(void) {
-  struct ObjectRuntime *object = Object_GetById(8);
+  struct Actor *object = Actor_GetById(8);
 
   Func_02003048();
   Func_02003148(0);
@@ -54,7 +54,7 @@ void Func_020008a8(void) {
   OverlayObject_WaitUntilIdle(object);
   Func_02003088(8, 0, 0);
   Func_02003088(68, 0x1580000, 0x1740000);
-  Object_GetById(68)->update = (void (*)(void))Func_02000840;
+  Actor_GetById(68)->update = (void (*)(void))Func_02000840;
   Func_02003050();
 }
 

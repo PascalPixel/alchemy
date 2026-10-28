@@ -56,7 +56,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPending
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // ObjectGroup_UpdateMembers
+                   s32 frames);                    // Actor_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,

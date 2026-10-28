@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 #include "scene_call.h"
@@ -25,7 +25,7 @@ extern const u8 gData_02000de4[];
 extern const u8 gData_02000e44[];
 extern const u8 gData_02000fe8[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);

@@ -17,7 +17,7 @@
 #include "frame.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct FieldPosition {
   s32 x;
@@ -40,14 +40,14 @@ extern const s16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802d958(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802d958(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 
-s32 Func_0802632c(struct ObjectRuntime *object) {
+s32 Func_0802632c(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
@@ -59,7 +59,7 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
   u16 direction;
   s32 angleIndex;
   s32 headingCount;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   s32 pressed;
 
   movementAnimation = 2;
@@ -199,9 +199,9 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
     action = 9;
     if (((struct UnitHp *)Unit_Get(gAdventure.currentOwner))->hp == 0)
       action = 22;
-    ObjectDispatch_SelectAnimation(object, action);
+    Actor_SelectAnimation(object, action);
   } else {
-    ObjectDispatch_SelectAnimation(object, movementAnimation);
+    Actor_SelectAnimation(object, movementAnimation);
   }
 
   if (collision != 0) {
@@ -222,7 +222,7 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
     object->action = 0;
     object->unk66 = 2;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     if (object->action != 0)
       object->action--;
   }

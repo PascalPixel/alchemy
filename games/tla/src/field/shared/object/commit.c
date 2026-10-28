@@ -1,10 +1,10 @@
-#include "object_runtime.h"
+#include "actor.h"
 
-void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_WaitForMoveById(u32 objectId) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    Object_CommitPosition(object);
-    Object_SetMode(object, 1);
+    Actor_CommitPosition(object);
+    Actor_SetMode(object, 1);
   }
 }

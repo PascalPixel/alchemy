@@ -86,7 +86,7 @@ Func_080d784c:
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	b .L_080d7914
 .L_080d78fc:
 	mov r1, r9
@@ -98,11 +98,11 @@ Func_080d784c:
 	ldr r0, .L_080d7938
 	adds r3, r3, r0
 	adds r0, r6, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 .L_080d7914:
 	adds r0, r6, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080d791c:
 	movs r1, #1
 	add r8, r1

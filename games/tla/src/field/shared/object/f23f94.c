@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
+s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
   s32 second;
 
@@ -27,6 +27,6 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   return 1;
 }
 
-s32 Func_08023f94(struct ObjectRuntime *object) {
-  return Object_IsTargetUnset(object);
+s32 Func_08023f94(struct Actor *object) {
+  return Actor_IsTargetUnset(object);
 }

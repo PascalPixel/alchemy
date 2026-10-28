@@ -3214,7 +3214,7 @@ BattleEffect_RunCoatlicue:
 	bl Heap_Release
 	mov r0, r9
 	bl Heap_Release
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #72]
 	lsls r4, r4, #7

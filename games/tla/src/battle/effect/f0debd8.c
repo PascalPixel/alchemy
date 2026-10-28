@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "fx_scene.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "animspr.h"
 
 // ⚓️'s composite sprite (as polar_target.c's CompositeAnimation).
@@ -42,7 +42,7 @@ void Func_080debd8(void) {
 
   Sound_PlayFar(SE_CLOAK_END);
   Task_Remove(FieldEffect_CheckCloakTile);
-  Object_SetMode((struct ObjectRuntime *)caster, 0);
+  Actor_SetMode((struct Actor *)caster, 0);
   caster->hook = 0;
 
   // Blink between the flicker palette half transparent and solid...

@@ -15,7 +15,7 @@ Func_02000514:
 	adds r2, #93
 	str r2, [r3]
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_02008640
 	ldr r5, .L_02008644
 	str r3, [r0, #108]
@@ -36,7 +36,7 @@ Func_02000514:
 	strh r3, [r6]
 	movs r2, #0
 	movs r0, #14
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #10

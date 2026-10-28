@@ -17,7 +17,7 @@
 #include "iwram_call.h"
 #include "macros.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -34,23 +34,23 @@ struct JumpEventWork {
 
 extern struct MapCell gMapCellBuffer[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
 void WaitFrames(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
-s32 Func_080d4ccc(struct ObjectRuntime *object, s32 *position);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+s32 Func_08020210(struct Actor *object, s32 *position);
+s32 Func_080d4ccc(struct Actor *object, s32 *position);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void Func_080203a0(struct ObjectRuntime *object, s32 kind);
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Func_080203a0(struct Actor *object, s32 kind);
+struct Actor *Actor_FindNearestFacingTarget(struct Actor *self,
                                                      s32 id);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
 s32 Func_080d4d08(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *flags = &leader->motionFlags;
   s32 result = -1;
   u8 saved = *flags;
@@ -58,8 +58,8 @@ s32 Func_080d4d08(void) {
   s32 angle = leader->angle;
   s16 spriteFlags = 1;
   s32 position[3];
-  struct ObjectRuntime *entry;
-  struct ObjectRuntime *platform;
+  struct Actor *entry;
+  struct Actor *platform;
   s32 canJump;
   s32 i;
 
@@ -122,20 +122,20 @@ again:
     if (leader->animationKind == 1)
       spriteFlags = ((struct JumpSprite *)leader->animation)->flags;
     Event_Start();
-    Object_SetMode(leader, 6);
+    Actor_SetMode(leader, 6);
     WaitFrames(6);
     Sound_PlayFar(152);
-    Object_SetMode(leader, 7);
+    Actor_SetMode(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
-    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner,
+    Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
+    Actor_SetPositionAndCommit(gAdventure.currentOwner,
                                       ((s16 *)&position[0])[1],
                                       ((s16 *)&position[2])[1]);
-    Object_SetMode(leader, 6);
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetMode(leader, 6);
+    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
 
     map = Ram_HeapSlots->mapWork;
     if (map->unk017 & 12) {
@@ -152,10 +152,10 @@ again:
     }
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.
-    if (((platform = Object_FindNearestFacingTarget(leader, 258)) != NULL ||
-         (platform = Object_FindNearestFacingTarget(leader, 259)) != NULL) &&
+    if (((platform = Actor_FindNearestFacingTarget(leader, 258)) != NULL ||
+         (platform = Actor_FindNearestFacingTarget(leader, 259)) != NULL) &&
         (platform->priorityFlags & 2)) {
-      Object_SetMode(platform, 7);
+      Actor_SetMode(platform, 7);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;
       WaitFrames(2);
@@ -177,7 +177,7 @@ again:
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     if (GetMapCellCollisionFar(leader->terrainId, position[0], position[2]) ==
         254) {
-      Object_SetMode(leader, 1);
+      Actor_SetMode(leader, 1);
       WaitFrames(6);
       goto again;
     }

@@ -41,11 +41,11 @@ GameFlag_SetBit:
 	.global Func_020012e8
 	.thumb_func
 Func_020012e8:
-	overlay_veneer Object_SetMode
-	.global ObjectDispatch_SetAnimationSpeed
+	overlay_veneer Actor_SetMode
+	.global Actor_SetAnimationSpeed
 	.thumb_func
-ObjectDispatch_SetAnimationSpeed:
-	overlay_veneer ObjectDispatch_SetAnimationSpeedFar
+Actor_SetAnimationSpeed:
+	overlay_veneer Actor_SetAnimationSpeedFar
 	.global Func_020012f8
 	.thumb_func
 Func_020012f8:
@@ -130,26 +130,26 @@ PartyInventory_GiveItem:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetPositionAndReset
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetPositionAndReset
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
+Actor_SetPositionAndReset:
+	overlay_veneer Actor_SetPositionAndResetFar
 	.global Func_020013b0
 	.thumb_func
 Func_020013b0:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_020013b8
 	.thumb_func
 Func_020013b8:
-	overlay_veneer ObjectMotion_MoveToObjectFar
-	.global Object_SetModeById
+	overlay_veneer Actor_MoveToObjectFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_020013c8
 	.thumb_func
 Func_020013c8:
@@ -162,10 +162,10 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Func_020013d8:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

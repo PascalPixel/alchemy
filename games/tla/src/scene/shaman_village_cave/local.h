@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 
@@ -15,10 +15,10 @@ struct ShamanVillageCaveEventWork {
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_CenterOnColumn(s32 id, s32 a, s32 b);
+void Actor_CenterOnColumn(s32 id, s32 a, s32 b);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Event_FinishScreenTransition(void);

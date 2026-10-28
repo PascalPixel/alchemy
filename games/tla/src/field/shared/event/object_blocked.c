@@ -2,7 +2,7 @@
 /// Whether a script object stands where it may not.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// The script objects (Ram_HeapSlots->scriptObjects).
 #define SCRIPT_OBJECT_COUNT 64
@@ -16,9 +16,9 @@ s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// Func_08020308 reports its cell, ORed with 2 when it overlaps any other
 /// collidable script object (each radius less 2 pixels).
-s32 Func_080e4244(struct ObjectRuntime *object) {
+s32 Func_080e4244(struct Actor *object) {
   s32 result;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   s32 i;
 
   s8 *work = Ram_HeapSlots->eventWork;

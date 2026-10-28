@@ -7,7 +7,7 @@ void Func_02004060(void) {
   if (GameFlag_Test(0x94c)) {
     ShamanVillage_MapCopy(47, 19, 38, 19, 9, 11);
     ShamanVillage_BlendStart(1, 5, 9, 1, 6, 29);
-    Object_SetPartAttribute(Object_GetById(14), 6);
+    Actor_SetPartAttribute(Actor_GetById(14), 6);
   } else if (!GameFlag_Test(0x109)) {
     s32 angle = 0x4000;
 
@@ -16,12 +16,12 @@ void Func_02004060(void) {
     ShamanVillage_ObjPut(16, 0x780000, 0x2180000, angle);
     WaitFrames(1);
   }
-  Object_SetModeById(8, 2);
-  Object_SetModeById(9, 2);
-  Object_SetModeById(10, 2);
-  Object_SetModeById(11, 2);
-  Object_SetModeById(12, 2);
-  Object_SetModeById(13, 2);
+  Actor_SetModeById(8, 2);
+  Actor_SetModeById(9, 2);
+  Actor_SetModeById(10, 2);
+  Actor_SetModeById(11, 2);
+  Actor_SetModeById(12, 2);
+  Actor_SetModeById(13, 2);
   if (!GameFlag_Test(0x109)) {
     s32 entrance = gAdventure.entrance;
 
@@ -43,15 +43,15 @@ void Func_02004060(void) {
 void Func_020041b8(void) {
   struct ShamanVillageObject *object;
 
-  Object_SetModeById(8, 2);
-  Object_SetModeById(9, 2);
-  Object_SetModeById(10, 2);
-  Object_SetModeById(11, 2);
-  Object_SetModeById(12, 2);
-  Object_SetModeById(13, 2);
-  Object_GetById(14)->motionFlags = 0;
+  Actor_SetModeById(8, 2);
+  Actor_SetModeById(9, 2);
+  Actor_SetModeById(10, 2);
+  Actor_SetModeById(11, 2);
+  Actor_SetModeById(12, 2);
+  Actor_SetModeById(13, 2);
+  Actor_GetById(14)->motionFlags = 0;
   if (GameFlag_Test(0x94e)) {
-    Object_SetPositionAndResetMotion(Object_GetById(14), 0x2080000, 0x200000,
+    Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x2080000, 0x200000,
                                      0xb80000);
     WaitFrames(1);
     ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
@@ -65,9 +65,9 @@ void Func_020041b8(void) {
     ShamanVillage_MapCopy(48, 40, 101, 11, 1, 2);
   else
     Func_02004934(17, 0, 0);
-  object = Object_GetById(16);
+  object = Actor_GetById(16);
   object->collisionFlags = 8;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(16), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
 }

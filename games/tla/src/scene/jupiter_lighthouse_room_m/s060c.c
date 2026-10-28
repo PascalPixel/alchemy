@@ -12,15 +12,15 @@ void Func_020048f4(void);
 void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020048e4(s32 a, s32 b);
 void Func_0200475c(s32 a, s32 b, s32 c);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 void Func_02004844(s32 id, s32 a, s32 b);
 
 static __inline__ void
-ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_0200475c_(s32 a, s32 b, s32 c) {
@@ -55,11 +55,11 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
+static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
                                                         s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 /// Opens the floor under (49, 103) and (49, 106) once (flag 514, until 2591).
@@ -67,7 +67,7 @@ static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
 /// falls through and sets 2573: from cells 50 and 51 it drops, lands with the
 /// screen shaken and slides off sideways; from 49 and 52 it simply drops.
 void Func_0200060c(void) {
-  struct ObjectRuntime *object = Object_GetById(23);
+  struct Actor *object = Actor_GetById(23);
   s32 spot = 0;
   s32 x;
   s32 i;
@@ -121,11 +121,11 @@ void Func_0200060c(void) {
     Func_020049c4(134);
     object->gravity = 0x10000;
     object->velocityY = 0x60000;
-    ObjectMotion_SetSpeedParameters_(23, 0x18000, 0xc000);
+    Actor_SetSpeedParameters_(23, 0x18000, 0xc000);
     if (spot == 2)
-      ObjectMotion_OffsetPositionAndResetMotion_(23, -32, 0);
+      Actor_OffsetPositionAndResetMotion_(23, -32, 0);
     else
-      ObjectMotion_OffsetPositionAndResetMotion_(23, 32, 0);
+      Actor_OffsetPositionAndResetMotion_(23, 32, 0);
     FieldEvent_WaitFrames(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;
@@ -138,7 +138,7 @@ void Func_0200060c(void) {
     Func_02004844(23, 0, 0);
     FieldEvent_WaitFrames(10);
   } else if (spot == 1 || spot == 4) {
-    ObjectMotion_SetActionVariant(23, 1);
+    Actor_SetSpritePriority(23, 1);
     Func_020048e4_(0x40000, 0x8000);
     Camera_FollowActor(23, 1);
     Func_020048f4();

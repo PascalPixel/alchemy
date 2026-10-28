@@ -10,12 +10,12 @@
 // empty asm or one-pass block between them (20-42), the angles assigned with
 // a barrier between (14-16), permute 6 minutes.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Func_02000038(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 
-s32 Func_02000070(struct ObjectRuntime *self, struct ObjectRuntime *other,
+s32 Func_02000070(struct Actor *self, struct Actor *other,
                   s32 range) {
   s32 *from = &self->x;
   s32 *to = &other->x;

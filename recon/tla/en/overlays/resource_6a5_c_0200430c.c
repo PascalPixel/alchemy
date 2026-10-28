@@ -15,8 +15,8 @@ s32 Func_020059f4();
 s32 GameFlag_Test();
 s32 Math_Cosine();
 s32 Math_Sine();
-s32 ObjectDispatch_SetAnimationSpeed();
-s32 Object_GetById();
+s32 Actor_SetAnimationSpeed();
+s32 Actor_GetById();
 extern u8 Data_02006a28[];
 extern u8 IwramMulQ16[];
 extern u8 gData_020069fc[];
@@ -32,7 +32,7 @@ void Func_0200430c(s32 p0) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   t1 = FIELD_AT((s32)gAdventure, s32, 532);
-  t2 = Object_GetById(t1);
+  t2 = Actor_GetById(t1);
   t3 = FIELD_AT(t0, s16, 358);
   v_r7 = t2;
   v_r10 = t0;
@@ -49,10 +49,10 @@ void Func_0200430c(s32 p0) {
   if (t6 == 0)
     goto L_0200c378;
 L_0200c36a:
-  ObjectDispatch_SetAnimationSpeed(v_r6, 0);
+  Actor_SetAnimationSpeed(v_r6, 0);
   goto L_0200c4b6;
 L_0200c378:
-  ObjectDispatch_SetAnimationSpeed(v_r6, 16);
+  Actor_SetAnimationSpeed(v_r6, 16);
   t9 = FIELD_AT(v_r6, u16, 100);
   FIELD_AT(v_r6, u16, 100) = (t9 + 1);
   if ((31 & (t9 + 1)) != 31)

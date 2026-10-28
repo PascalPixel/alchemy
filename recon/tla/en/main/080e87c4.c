@@ -11,7 +11,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "task.h"
 #include "resource.h"
@@ -48,7 +48,7 @@ struct BurstEvent {
   u16 unkcae;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void Window_LoadGraphics(void);
 s32 Resource_FindFreeEntry(void);
@@ -64,7 +64,7 @@ extern char ResourceId_SparkleFade;
 void Func_080e87c4(void) {
   struct BurstWork *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
   s32 slot;

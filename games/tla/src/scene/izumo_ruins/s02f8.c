@@ -1,19 +1,19 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_020014d8(void);
-struct ObjectRuntime *Func_02001530(s32 *position, s32 flags);
+struct Actor *Func_02001530(s32 *position, s32 flags);
 void Func_02001488(void);
 s32 Func_02001490(void);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02001538(s32 cue);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void WaitFrames(s32 frames);
-void Func_02001428(struct ObjectRuntime *object, s32 mode);
+void Func_02001428(struct Actor *object, s32 mode);
 void Func_02000974(s32 mode);
 void Func_02001470(s32 x, s32 y, s32 z);
 void Func_02000c4c(s32 level, s32 layer);
@@ -22,13 +22,13 @@ void Func_02000aa8(void);
 void Func_020002f8(u16 *list) {
   /* FAKEMATCH(pin): the leader held in r6; as a plain local, 64 of 158
    * instructions differ in tla-en. */
-  register struct ObjectRuntime *leader asm("r6");
-  struct ObjectRuntime *pillar;
+  register struct Actor *leader asm("r6");
+  struct Actor *pillar;
   s32 position[3];
 
   if (Func_020014d8() != 0)
     return;
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -40,7 +40,7 @@ body:
   {
     u32 id = list[0];
 
-    if (Object_GetById(id) != pillar) {
+    if (Actor_GetById(id) != pillar) {
       list += 2;
       goto test;
     }
@@ -50,14 +50,14 @@ body:
       Func_02001488();
       if (!GameFlag_Test(flag)) {
         Func_02001538(125);
-        Object_SetPartAttribute(Object_GetById(id), 7);
+        Actor_SetPartAttribute(Actor_GetById(id), 7);
         WaitFrames(2);
         Func_02001428(pillar, 0);
-        Object_SetPartAttribute(Object_GetById(id), 0);
+        Actor_SetPartAttribute(Actor_GetById(id), 0);
         WaitFrames(2);
-        Object_SetPartAttribute(Object_GetById(id), 7);
+        Actor_SetPartAttribute(Actor_GetById(id), 7);
         WaitFrames(4);
-        Object_SetPartAttribute(Object_GetById(id), 0);
+        Actor_SetPartAttribute(Actor_GetById(id), 0);
         Func_02000974(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
@@ -78,7 +78,7 @@ body:
         WaitFrames(8);
         *flags = 3;
         WaitFrames(5);
-        Object_SetPositionAndResetMotion(pillar, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
         WaitFrames(2);
         Func_02001538(188);
         Func_02000aa8();

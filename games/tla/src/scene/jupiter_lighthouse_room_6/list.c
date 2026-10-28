@@ -1,13 +1,13 @@
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern s32 gData_020023c0;
 extern s16 gData_0200242a;
-extern struct ObjectRuntime *gData_0200242c[];
+extern struct Actor *gData_0200242c[];
 extern u16 gData_0200252e;
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -21,7 +21,7 @@ void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
 void Func_02000ea0(s32 id, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     object->action = value;

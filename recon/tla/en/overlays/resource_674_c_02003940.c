@@ -1,20 +1,20 @@
 // Draft, differ 159 of 132: overlay 674's copy of overlay 668's
 // Func_020043a8 (the same listing), whose draft holds its notes.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
 extern u16 gData_02004070[];
 extern s8 gData_0200407c[][4];
 extern s32 gData_02004094[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 
-struct ObjectRuntime *Func_02003940(s32 *direction, s32 *number, s32 *kind) {
+struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime **slot = (struct ObjectRuntime **)(work + 0x34);
-  struct ObjectRuntime *object;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor **slot = (struct Actor **)(work + 0x34);
+  struct Actor *object;
   u32 n, k;
   s32 aheadX, aheadZ, left, top, right, bottom;
 

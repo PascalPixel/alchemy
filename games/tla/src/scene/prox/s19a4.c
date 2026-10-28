@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWork154 {
@@ -10,19 +10,19 @@ struct EventWork154 {
 
 extern const u8 gData_020046f8[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02004464(void);
 void Func_020045ec(s32 skip);
 void Func_0200463c(s32 cue);
-void Func_020043f4(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_020043fc(struct ObjectRuntime *object);
+void Func_020043f4(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_020043fc(struct Actor *object);
 void Func_02004404(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200458c(s32 entrance);
 
@@ -48,7 +48,7 @@ static __inline__ void Cue(s32 cue) {
 
 void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 cell;
 
   Func_02004464();
@@ -61,16 +61,16 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Map_CopyCells(a, b, c, d, mode, f);
     FieldEvent_WaitFrames(20);
   }
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020043fc(object);
     object->angle = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_020046f8);
   Wait(12);
   Cue(123);

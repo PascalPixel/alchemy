@@ -19,7 +19,7 @@
 // stores.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "call.h"
@@ -30,23 +30,23 @@ extern char SceneId_Ov664Room4, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
 extern s32 gFrameCount;
 extern const u8 gData_02005fd8[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Func_02005d6c(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Func_02005d8c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02005d94(struct ObjectRuntime *object);
+void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02005d94(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 u32 Random16Far(void);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02002bd0(void);
 void Func_020017f4(void);
 s32 Math_Sine(s32 angle);
@@ -54,32 +54,32 @@ s32 Math_Cosine(s32 angle);
 s32 Func_02000690(u32 layer, s32 x, s32 z);
 void Func_02005ed4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Func_02005dec(struct ObjectRuntime *object);
+s32 Func_02005dec(struct Actor *object);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
                    struct EffectOptions *options);
 void Func_02005d9c(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Func_02005dac(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
 void Func_02005d84(void);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_02001084(struct ObjectRuntime *object, s32 a, s32 b);
-void Func_02005d7c(struct ObjectRuntime *object);
+void Func_02001084(struct Actor *object, s32 a, s32 b);
+void Func_02005d7c(struct Actor *object);
 void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005eec(s32 actor, s32 a);
 void Func_02005ee4(void);
 
-#define TARGET(effect) (*(struct ObjectRuntime **)((effect) + 20))
+#define TARGET(effect) (*(struct Actor **)((effect) + 20))
 
 /// The gust picks up an object it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
 #define PICK_UP(object, at)                                                    \
   ((object)->watchedObject = gust, (object)->update = Func_020017f4,            \
    (object)->motionFlags = 0, (object)->priorityFlags &= ~1,                   \
-   ObjectDispatch_SetSingleChildFlags(object, 0),                              \
+   Actor_SetSingleChildFlags(object, 0),                              \
    ((struct FieldSprite *)(object)->animation)->priority =                     \
        ((struct FieldSprite *)gust->animation)->priority,                      \
    gust->watchedObject = (object), carried = (at))
@@ -90,9 +90,9 @@ void Func_02005ee4(void);
    Call3(Func_02005dcc, -1, -1, 0xe666))
 
 void Func_02001828(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *gust, *spark, *object;
+  struct Actor *gust, *spark, *object;
   struct EffectOptions dust, leaves;
   struct Vector3 velocity;
   s32 hit = 0, started, x, z, dx, dz, steps = 0, carried, i;
@@ -100,10 +100,10 @@ void Func_02001828(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(207);
-  gust = (struct ObjectRuntime *)Import_ActorCreate(280, leader->x, leader->y,
+  gust = (struct Actor *)Import_ActorCreate(280, leader->x, leader->y,
                                                      leader->z);
   Func_02005d5c(gust, 2);
-  ObjectDispatch_SetSingleChildFlags(gust, 0);
+  Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   gust->motionFlags = (u8)hit;
@@ -120,7 +120,7 @@ void Func_02001828(void) {
   gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct ObjectRuntime *)Import_ActorCreate(
+      spark = (struct Actor *)Import_ActorCreate(
           0x2a0, TARGET(effect)->x, TARGET(effect)->y, TARGET(effect)->z);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
@@ -131,20 +131,20 @@ void Func_02001828(void) {
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
       Func_02005d6c(spark, gData_02005fd8);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
-      Object_SetPartAttribute(spark, 2);
+      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002bd0;
     }
     if (gFrameCount & 1) {
       gust->scaleX += 655;
       gust->scaleY += 655;
-      Object_SetPartAttribute(TARGET(effect), 15);
+      Actor_SetPartAttribute(TARGET(effect), 15);
     } else {
-      Object_SetPartAttribute(TARGET(effect), 4);
+      Actor_SetPartAttribute(TARGET(effect), 4);
     }
     FieldEvent_WaitFrames(1);
   }
-  Object_SetPartAttribute(TARGET(effect), 0);
+  Actor_SetPartAttribute(TARGET(effect), 0);
   Func_02005f94(136);
   x = TARGET(effect)->x >> 20;
   z = TARGET(effect)->z >> 20;
@@ -182,16 +182,16 @@ void Func_02001828(void) {
   carried = 0;
   while (Func_02005dec(gust) == 0) {
     if (gAdventure.scene == (s32)&SceneId_Ov664Room6) {
-      object = Object_GetById(8);
+      object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
         PICK_UP(object, 0x270025);
     } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
-      object = Object_GetById(9);
+      object = Actor_GetById(9);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
         PICK_UP(object, 0x290069);
     } else if (gAdventure.scene == (s32)&SceneId_Ov664Room9) {
-      object = Object_GetById(10);
+      object = Actor_GetById(10);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
         PICK_UP(object, 0xf0033);
@@ -217,8 +217,8 @@ void Func_02001828(void) {
     object->update = 0;
     object->motionFlags = 2;
     object->priorityFlags = (object->priorityFlags | 1) & ~6;
-    ObjectDispatch_SetSingleChildFlags(object, 1);
-    Object_SetSpritePriority(object, 2);
+    Actor_SetSingleChildFlags(object, 1);
+    Scene_SetActorSpritePriority(object, 2);
     if (gAdventure.scene == (s32)&SceneId_Ov664Room6) {
       object->terrainHeight = 0xffe00000;
       Call6(Func_02005dac, 19, 16, 1, 1, 19, 18);
@@ -236,7 +236,7 @@ void Func_02001828(void) {
       OverlayObject_WaitUntilIdle(object);
       WaitFrames(1);
       OverlayObject_WaitUntilIdle(object);
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->motionFlags = 0;
       object->terrainHeight = 0;
       object->y = 0;
@@ -348,11 +348,11 @@ shrink:
     if (hit == 5) {
       SHAKE();
       Call6(Func_02005d9c, 79, 0x40, 0x20, 79, 5, 7);
-      if (Object_GetById(8)->x >> 19 == 65) {
-        velocity.x = Object_GetById(8)->x + 0xfff80000;
-        velocity.y = Object_GetById(8)->y;
-        velocity.z = Object_GetById(8)->z + 0x80000;
-        ObjectMotion_SetActionVariant(8, 2);
+      if (Actor_GetById(8)->x >> 19 == 65) {
+        velocity.x = Actor_GetById(8)->x + 0xfff80000;
+        velocity.y = Actor_GetById(8)->y;
+        velocity.z = Actor_GetById(8)->z + 0x80000;
+        Actor_SetSpritePriority(8, 2);
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
           Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
@@ -362,7 +362,7 @@ shrink:
         WaitFrames(30);
         SHAKE();
         Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
-        Object_GetById(8)->priorityFlags |= 1;
+        Actor_GetById(8)->priorityFlags |= 1;
       } else {
         FieldEvent_WaitFrames(30);
         SHAKE();
@@ -374,10 +374,10 @@ shrink:
       }
     } else if (hit == 6) {
       SHAKE();
-      if (Object_GetById(8)->x >> 19 == 65) {
-        velocity.x = Object_GetById(8)->x + 0xfff80000;
-        velocity.y = Object_GetById(8)->y;
-        velocity.z = Object_GetById(8)->z;
+      if (Actor_GetById(8)->x >> 19 == 65) {
+        velocity.x = Actor_GetById(8)->x + 0xfff80000;
+        velocity.y = Actor_GetById(8)->y;
+        velocity.z = Actor_GetById(8)->z;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
           Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),

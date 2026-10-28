@@ -42,10 +42,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -390,7 +390,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(vertices);
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

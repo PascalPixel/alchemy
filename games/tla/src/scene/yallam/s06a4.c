@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 Func_020006a4(struct ObjectRuntime *object) {
+s32 Func_020006a4(struct Actor *object) {
   s32 x = object->targetX;
 
   /* FAKEMATCH: the one-pass block keeps the target load before the constant; as

@@ -46,5 +46,5 @@ void Func_02004188(s32 a, s32 b) {
   gauge->field02 = b;
   Task_Add(Func_02003da0, 0x48d);
   Task_Add(Func_02003f68, 0x480);
-  Object_GetById(Func_02005a40())->priorityFlags |= 0x40;
+  Actor_GetById(Func_02005a40())->priorityFlags |= 0x40;
 }

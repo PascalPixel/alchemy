@@ -1835,7 +1835,7 @@ BattleEffect_RunThor:
 	movs r1, #4
 	bl Func_08158ce0
 .L_08159c1a:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r0, [sp, #112]
 	lsls r1, r1, #7

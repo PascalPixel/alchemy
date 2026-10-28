@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Party_GetLeaderActor(void);
 
@@ -9,7 +9,7 @@ s32 Party_GetLeaderActor(void);
 void Func_080ec16c(s32 x, s32 z) {
   s32 owner = Party_GetLeaderActor();
   s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = ObjectTable_Get(owner);
+  struct Actor *object = ObjectTable_Get(owner);
 
   if (object != NULL) {
     x >>= 16;

@@ -20,12 +20,12 @@
 #include "frame.h"
 #include "input.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "worka0.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 struct WorkA4Slot *Func_080dae70(s32 id);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void WaitFrames(s32 frames);
 
@@ -57,9 +57,9 @@ void Func_080db0b0(s32 id) {
   s32 motionFlags;
   struct SwingSprite *heldSprite;
   s32 side = 0;
-  struct ObjectRuntime *leader =
-      Object_GetById(Party_GetLeaderActor());
-  struct ObjectRuntime *anchor = Object_GetById(id);
+  struct Actor *leader =
+      Actor_GetById(Party_GetLeaderActor());
+  struct Actor *anchor = Actor_GetById(id);
   struct ChainSlot *slot;
   struct SwingSprite *sprite;
   s32 swing;
@@ -107,7 +107,7 @@ void Func_080db0b0(s32 id) {
   } else
     letGo = 0x92;
   slot->active = 1;
-  Object_SetMode(leader, 32);
+  Actor_SetMode(leader, 32);
   while (1) {
     slot->phase = ((side ^ 1) << 15) + 0x4000;
     switch (gFrameCount & 63) {
@@ -148,17 +148,17 @@ void Func_080db0b0(s32 id) {
 
   sprite->angle = 0;
   slot->active = 0;
-  Object_SetMode(leader, 6);
+  Actor_SetMode(leader, 6);
   WaitFrames(6);
   Sound_PlayFar(152);
-  Object_SetMode(leader, 7);
+  Actor_SetMode(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;
   leader->velocityY = 0x40000;
   leader->motionFlags &= 0x7e;
-  ObjectDispatch_SetSingleChildFlagsFar(leader, 0);
+  Actor_SetSingleChildFlagsFar(leader, 0);
   WaitFrames(5);
-  Object_SetMode(leader, 16);
+  Actor_SetMode(leader, 16);
   leader->motionFlags = 0;
   rootX = slot->root->next->x;
   rootY = slot->root->next->y;
@@ -182,7 +182,7 @@ void Func_080db0b0(s32 id) {
     WaitFrames(1);
   }
   slot->active = 1;
-  Object_SetMode(leader, 7);
+  Actor_SetMode(leader, 7);
   leader->motionFlags = motionFlags & ~1;
   leader->velocityY = 0x40000;
   for (i = 7; i >= 0; i--) {
@@ -191,8 +191,8 @@ void Func_080db0b0(s32 id) {
   }
   slot->spacing = 0xe0000;
   heldSprite->angle = 0;
-  Object_SetMode(leader, 6);
-  ObjectDispatch_SetSingleChildFlagsFar(leader, 1);
+  Actor_SetMode(leader, 6);
+  Actor_SetSingleChildFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
   WaitFrames(6);
   slot->active = 1;

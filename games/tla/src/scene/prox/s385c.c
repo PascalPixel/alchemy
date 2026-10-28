@@ -1,14 +1,14 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
-void Func_020043c4(struct ObjectRuntime *object, s32 mode);
+void Func_020043c4(struct Actor *object, s32 mode);
 extern u32 gInput;
 extern const s16 gData_02004740[];
 
-void Func_0200385c(struct ObjectRuntime *object) {
+void Func_0200385c(struct Actor *object) {
   s32 angle;
   s32 turn;
 
@@ -32,5 +32,5 @@ void Func_0200385c(struct ObjectRuntime *object) {
     turn = -0x1000;
   object->angle += turn;
   Func_020043c4(object, 2);
-  ObjectDispatch_SetAnimationSpeed(object, 48);
+  Actor_SetAnimationSpeed(object, 48);
 }

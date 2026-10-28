@@ -218,7 +218,7 @@ Func_080ea14c:
 	bl Sound_PlayFar
 	movs r1, #2
 	ldr r0, [sp, #40]
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #60
 	bl Event_WaitFrames
 	ldr r2, [sp, #40]
@@ -234,7 +234,7 @@ Func_080ea14c:
 	bl Event_WaitFrames
 	ldr r1, .L_080ea38c
 	ldr r0, [sp, #40]
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	movs r3, #232
 	ldr r5, .L_080ea374
 	lsls r3, r3, #5
@@ -316,7 +316,7 @@ Func_080ea14c:
 	movs r1, #25
 	ldr r0, [sp, #40]
 	str r1, [sp, #8]
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	ldr r2, [sp, #40]
 	movs r3, #0
 	str r3, [r2, #24]
@@ -467,7 +467,7 @@ Func_080ea14c:
 	lsls r1, r1, #7
 	ldr r0, [sp, #48]
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	b .L_080ea6c4
 .L_080ea50e:
 	ldr r1, [sp, #44]
@@ -501,7 +501,7 @@ Func_080ea14c:
 	bne .L_080ea54a
 	ldr r0, [sp, #44]
 	movs r1, #28
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080ea54a:
 	mov r2, r10
 	cmp r2, #10
@@ -677,7 +677,7 @@ Func_080ea14c:
 	bne .L_080ea69c
 	ldr r1, .L_080ea7b8
 	ldr r0, [sp, #44]
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080ea69c:
 	movs r5, #3
 	mov r3, r10
@@ -782,7 +782,7 @@ Func_080ea14c:
 	b .L_080ea364
 .L_080ea76c:
 	ldr r0, [sp, #44]
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	ldr r2, [sp, #44]
 	movs r3, #128
 	lsls r3, r3, #9

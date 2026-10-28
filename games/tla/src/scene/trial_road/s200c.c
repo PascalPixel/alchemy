@@ -19,7 +19,7 @@ void Func_02005868();
 void Func_020058e0();
 void Func_02005990();
 s32 GameFlag_Test();
-s32 Object_GetById();
+s32 Actor_GetById();
 
 void Func_0200200c(void) {
   s32 t7, t8, t10, t13, t16, p3;
@@ -56,7 +56,7 @@ L_0200a064:
 L_0200a078:
   Func_02002db4();
 L_0200a07c:
-  t13 = Value1(Object_GetById, gAdventure.currentOwner);
+  t13 = Value1(Actor_GetById, gAdventure.currentOwner);
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
   Call1(Func_02001fc4, 1);
   Call1(Func_020006b4, 10);

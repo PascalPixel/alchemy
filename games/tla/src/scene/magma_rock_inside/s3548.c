@@ -28,33 +28,33 @@ void Func_02003548(void) {
     Func_02000800(20, gData_0200531c, 0x302);
     Func_02000800(21, gData_0200537c, 0x302);
     Func_02000800(22, gData_0200537c, 0x302);
-    if (Object_GetById(16)->step == 0) {
-      Object_GetById(16)->step = 10;
-      Object_GetById(18)->step = 10;
-      Object_GetById(20)->step = 10;
-      Object_GetById(22)->step = 10;
+    if (Actor_GetById(16)->step == 0) {
+      Actor_GetById(16)->step = 10;
+      Actor_GetById(18)->step = 10;
+      Actor_GetById(20)->step = 10;
+      Actor_GetById(22)->step = 10;
     }
-    Object_SetModeById(23, 4);
-    Object_SetModeById(24, 4);
-    Object_SetModeById(25, 4);
-    Object_SetModeById(26, 2);
+    Actor_SetModeById(23, 4);
+    Actor_SetModeById(24, 4);
+    Actor_SetModeById(25, 4);
+    Actor_SetModeById(26, 2);
   }
 }
 
-void Func_02003630(struct ObjectRuntime *arg) {
+void Func_02003630(struct Actor *arg) {
   struct Adventure *party = &gAdventure;
   /* FAKEMATCH: the object pinned to r5 and assigned after the barrier is
    * copied after gAdventure's address loads; as a plain parameter, 2
    * instructions differ in tla-en. */
-  register struct ObjectRuntime *object asm("r5");
-  struct ObjectRuntime *owner;
+  register struct Actor *object asm("r5");
+  struct Actor *owner;
   s16 ownerY;
   s16 y;
   u8 *flags;
 
   asm("");
   object = arg;
-  owner = Object_GetById(party->currentOwner);
+  owner = Actor_GetById(party->currentOwner);
   ownerY = owner->y >> 16;
   y = object->y >> 16;
   flags = &object->priorityFlags;
@@ -63,6 +63,6 @@ void Func_02003630(struct ObjectRuntime *arg) {
     *flags = 1;
   } else {
     *flags = 0;
-    Object_SetSpritePriority(object, 3);
+    Scene_SetActorSpritePriority(object, 3);
   }
 }

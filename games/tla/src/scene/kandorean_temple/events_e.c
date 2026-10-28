@@ -1,6 +1,6 @@
 #include "local.h"
 
-s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02000824(struct Actor *a, struct Actor *b) {
   s32 left = b->x - 0xc0000;
   s32 right = b->x + 0xc0000;
 
@@ -10,9 +10,9 @@ s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b) {
   return 0;
 }
 
-void Func_02000864(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *other = Object_GetById(8);
+void Func_02000864(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *other = Actor_GetById(8);
   s32 vx = object->bounce;
   s32 vz;
   struct FieldSprite *sprite;

@@ -8,18 +8,18 @@
 // the leader.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "frame.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02004c98(struct ObjectRuntime *object, s32 mode);
+void Func_02004c98(struct Actor *object, s32 mode);
 void Func_02004e90(s32 value);
 s32 Math_Cosine(s32 angle);
 
@@ -29,26 +29,26 @@ s32 Func_02000658(s32 layer, s32 x, s32 z);
 s32 Func_020005b0(s32 *from, s32 *to);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004cc8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02004cd0(struct ObjectRuntime *object);
-void Func_02004cb0(struct ObjectRuntime *object);
+void Func_02004cc8(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02004cd0(struct Actor *object);
+void Func_02004cb0(struct Actor *object);
 void Func_02004e10(s32 a, s32 b);
 void Func_02004e20(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 flag);
 u32 Random16Far(void);
-void Func_02000d1c(struct ObjectRuntime *object);
-void Func_02000ea4(struct ObjectRuntime *object);
+void Func_02000d1c(struct Actor *object);
+void Func_02000ea4(struct Actor *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_02001350(void);
 void Func_02000ce4(u16 id);
 
-void Func_02000ed0(struct ObjectRuntime *source) {
-  struct ObjectRuntime *flame = (struct ObjectRuntime *)Import_ActorCreate(
+void Func_02000ed0(struct Actor *source) {
+  struct Actor *flame = (struct Actor *)Import_ActorCreate(
       403, source->x, source->y, source->z);
-  struct ObjectRuntime *other;
+  struct Actor *other;
   struct EffectOptions options;
   s32 position[3];
   s32 step = Math_Cosine(source->angle) << 1;
@@ -59,7 +59,7 @@ void Func_02000ed0(struct ObjectRuntime *source) {
 
   flame->motionFlags = 0;
   Func_02004c98(flame, 1);
-  ObjectDispatch_SetSingleChildFlags(flame, 0);
+  Actor_SetSingleChildFlags(flame, 0);
   Func_02004d40();
   Func_02004e90(0);
   position[0] = flame->x;
@@ -74,7 +74,7 @@ void Func_02000ed0(struct ObjectRuntime *source) {
       break;
     for (id = 8; id != 64; id++) {
       other =
-          ((struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 20))[id];
+          ((struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 20))[id];
       if (other->script == 0)
         continue;
       if (source->x >> 20 == other->x >> 20 &&

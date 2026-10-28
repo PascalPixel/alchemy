@@ -38,15 +38,15 @@ extern u8 gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-struct ObjectRuntime *Object_GetById();
-s32 ObjectDispatch_SetSingleChildFlags();
-void ObjectMotion_EnableActionAndResetMotion();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_CommitCurrentPositionAndActivate();
+struct Actor *Actor_GetById();
+s32 Actor_SetSingleChildFlags();
+void Actor_Stop();
+void Actor_OffsetPositionAndResetMotion();
+void Actor_SetAngleToward();
+void Actor_SetSpeedParameters();
+void Actor_ArmCallback();
+void Actor_SetPositionAndReset();
+void Actor_WaitForMoveById();
 void Motion_SetVarCbAndRefresh();
 void FieldEvent_WaitFrames();
 s32 FieldMessage_ShowAtActor();
@@ -64,7 +64,7 @@ s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
 void Func_02004868(void *, s32, s32);
 s32 Func_02004a0c();
-struct ObjectRuntime *Func_02004a1c();
+struct Actor *Func_02004a1c();
 s32 Func_02004a24();
 s32 Func_02004a34();
 s32 Func_02004a44();
@@ -89,15 +89,15 @@ s32 Func_02004c7c();
 s32 Func_02004c8c();
 
 void Func_02000200(s32 mode, s32 id) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *sparks[4];
-  struct ObjectRuntime *spark;
+  struct Actor *object;
+  struct Actor *sparks[4];
+  struct Actor *spark;
   s32 x;
   s32 z;
   s32 hit;
   s32 i;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   x = object->x >> 20;
   hit = 0;
   z = object->z >> 20;
@@ -126,7 +126,7 @@ void Func_02000200(s32 mode, s32 id) {
       Func_02004c9c(310);
     object->gravity = 0x170a;
     object->motionFlags = 3;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
+    Actor_SetSingleChildFlags(Actor_GetById(id), 1);
     WaitFrames(5);
     for (i = 0; i < 60 && object->y > 0; i++)
       WaitFrames(1);
@@ -145,14 +145,14 @@ void Func_02000200(s32 mode, s32 id) {
     sparks[i] = spark;
     spark->scaleX = 0xa666;
     Func_02004a0c(spark, 1);
-    ObjectDispatch_SetSingleChildFlags(spark, 0);
+    Actor_SetSingleChildFlags(spark, 0);
     Func_02004c9c(154);
     i++;
     WaitFrames(5);
     if (i <= 2)
       goto create;
     Func_02000fa4();
-    ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
+    Actor_Stop(gAdventure.currentOwner);
     WaitFrames(30);
     for (i = 0; i <= 2; i++)
       Func_02004a24(sparks[i]);
@@ -160,15 +160,15 @@ void Func_02000200(s32 mode, s32 id) {
 }
 
 void Func_02000514(void) {
-  struct ObjectRuntime *door;
-  struct ObjectRuntime *block;
+  struct Actor *door;
+  struct Actor *block;
   struct DoorPlan plan;
   s32 facing;
   s32 i;
 
-  door = Object_GetById(15);
-  block = Object_GetById(16);
-  facing = (Object_GetById(gAdventure.currentOwner)->angle + 0x2000) & 0xc000;
+  door = Actor_GetById(15);
+  block = Actor_GetById(16);
+  facing = (Actor_GetById(gAdventure.currentOwner)->angle + 0x2000) & 0xc000;
   if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
     Func_02004c7c(block->x, block->z, 2, 255);
   if (Func_02004240(&plan) != 0) {
@@ -186,8 +186,8 @@ void Func_02000514(void) {
       Func_02004c7c(door->x - 0x80000, door->z, 2, 0);
       Func_02004c7c(door->x + 0x80000, door->z, 2, 0);
       Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
-      Object_SetModeById(15, 3);
-      ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
+      Actor_SetModeById(15, 3);
+      Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_WaitFrames(20);
       door->gravity = 0xccc;
       door->motionFlags = 3;
@@ -200,7 +200,7 @@ void Func_02000514(void) {
       }
       Func_02000fa4();
       Func_02004c9c(240);
-      Object_SetModeById(15, 8);
+      Actor_SetModeById(15, 8);
       FieldEvent_WaitFrames(60);
       Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02004a9c();

@@ -22,7 +22,7 @@ s32 Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
 void Func_02001ad4(s32 song);
 s32 Func_02001adc(s32 song);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -38,7 +38,7 @@ void Func_02000fbc(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
   Func_02001a64((s32)MsgYouHaveA);
   Func_02001a74(actor, 0);
   song = 0;

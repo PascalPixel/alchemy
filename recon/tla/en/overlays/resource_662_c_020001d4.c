@@ -3,20 +3,20 @@
 // Func_02001850 reports a wall. Left: register choice and the frame (the
 // native keeps the kind on the stack).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 extern s8 gData_02001974[][4];
 extern s32 gData_0200198c[];
 
-struct ObjectRuntime *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
-s32 Func_02001850(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
+s32 Func_02001850(struct Actor *object, s32 *position);
 
 s32 Func_020001d4(s32 *position) {
   s32 probe[3];
   s32 direction;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 kind, w, h, dx, dz, count, i, j;
   u8 *state;
 

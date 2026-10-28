@@ -641,7 +641,7 @@ BattleEffect_RunVolcano:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	ldr r1, [sp, #44]
 	lsls r3, r3, #7

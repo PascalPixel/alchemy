@@ -98,7 +98,7 @@ Func_080eb960:
 	str r3, [r1, #28]
 	mov r0, r8
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r3, #0
 	movs r2, #1
 	str r2, [sp, #16]
@@ -318,7 +318,7 @@ Func_080eb960:
 	strh r1, [r2, #6]
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 .L_080ebbe2:
 	mov r2, r11
 	cmp r2, #10

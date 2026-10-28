@@ -4,7 +4,7 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_0200223c();
 void Func_0200230c();
@@ -17,7 +17,7 @@ void Func_02000b28(s32 id) {
    * cleared; as plain statements the ARM9TDMI schedule clears it first (differ
    * 2). */
   do {
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     object->motionFlags = 4;
     height = object->terrainHeight;
     WORD_AT(object, 68) = 0;

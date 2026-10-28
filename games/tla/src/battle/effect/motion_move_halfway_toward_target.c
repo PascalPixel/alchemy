@@ -1,12 +1,12 @@
 /// @file
 /// Objects: follow a watched object.
 
-#include "object_runtime.h"
+#include "actor.h"
 
 /// Halves the distance to the watched object along x, y and z.
 /// obj: object to move.
-void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
-  struct ObjectRuntime *target = obj->watchedObject;
+void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
+  struct Actor *target = obj->watchedObject;
 
   obj->x += (target->x - obj->x) / 2;
   /* FAKEMATCH: separate CSE blocks keep each axis's own-position load and

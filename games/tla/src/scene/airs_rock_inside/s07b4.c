@@ -1,16 +1,16 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void Func_020006cc(struct ObjectRuntime *object);
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Func_020006cc(struct Actor *object);
 
 /// One step of two paired objects trading places: the effect work's halfword
 /// at 26 names the first, and its partner is the other id of its even and odd
@@ -22,8 +22,8 @@ void Func_020006cc(struct ObjectRuntime *object);
 void Func_020007b4(s32 mode, s32 step) {
   s16 *pair = (s16 *)((u8 *)Ram_HeapSlots->effectWork + 26);
   s32 even = *pair - ((*(u16 *)pair & 1) << 1);
-  struct ObjectRuntime *first = Object_GetById(*pair);
-  struct ObjectRuntime *second = Object_GetById(even + 1);
+  struct Actor *first = Actor_GetById(*pair);
+  struct Actor *second = Actor_GetById(even + 1);
   struct FieldSprite *firstSprite, *secondSprite;
   struct VramBlockCacheEntry *entry;
 

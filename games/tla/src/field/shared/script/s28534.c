@@ -5,7 +5,7 @@
 #include "map.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -51,24 +51,24 @@ extern const s32 gData_0802ec94[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802db88(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
 void GameFlag_ClearBit(s32 flag);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
+void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 s32 Field_CheckConfiguredKeys(void);
 
 /// Script command 0x20, a sibling of Func_080279b0 in The Broken Seal's later
-/// Object_MoveOnWorldMap layout (one probe ahead, then four probes 22.5 and 45
+/// Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5 and 45
 /// degrees off it; six retry headings). Records the kind of ground under the
 /// object in the event work (byte 0xd3a), moves at a run, and lets the shortcut
 /// keys post requests 252 and, while byte 0xd39 is set, clear flag 0x147 and
 /// post 253; turns at most 0x400 a step while moving.
-s32 Func_08028534(struct ObjectRuntime *object) {
+s32 Func_08028534(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[28];
@@ -83,7 +83,7 @@ s32 Func_08028534(struct ObjectRuntime *object) {
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
-  struct ObjectRuntime *ripple;
+  struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
   struct EventWork *work;
   struct WorldEventWork *worldWork;
@@ -204,9 +204,9 @@ update_object:
     work->heldKeys = gInput.held;
   }
   if (collision != 0)
-    ObjectDispatch_SelectAnimation(object, 1);
+    Actor_SelectAnimation(object, 1);
   else
-    ObjectDispatch_SelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gAdventure.keys230) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
@@ -238,7 +238,7 @@ update_object:
     object->action = 0;
     object->unk66 = 2;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
@@ -275,7 +275,7 @@ update_object:
       ripple = Func_08023220(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->animation;
-        ObjectDispatch_Initialize(ripple, gData_0802ec94);
+        Actor_StartScript(ripple, gData_0802ec94);
         ripple->motionFlags = 0;
         ripple->terrainId = kind;
         if (rippleSprite != 0) {

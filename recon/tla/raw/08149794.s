@@ -465,7 +465,7 @@ BattleEffect_RunPlasma:
 	movs r0, #8
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #36]
 	lsls r4, r4, #7

@@ -17,9 +17,9 @@ void Func_02005338();
 void Func_020053b8();
 void GameFlag_ClearBit();
 s32 GameFlag_Test();
-void ObjectMotion_SetActionVariant();
-s32 Object_GetById();
-void Object_SetPositionAndResetMotion();
+void Actor_SetSpritePriority();
+s32 Actor_GetById();
+void Actor_SetPositionAndResetMotion();
 void Task_Add();
 void Func_02000bf4();
 void Func_02000c34();
@@ -41,16 +41,16 @@ void Func_02002c1c(void) {
   t1 = Value1((s32 (*)())GameFlag_Test, 0x109);
   if (t1 == 0)
     goto L_0200acd2;
-  t2 = Value1((s32 (*)())Object_GetById, 9);
-  Call4((void (*)())Object_SetPositionAndResetMotion, t2, 0xd80000, 0,
+  t2 = Value1((s32 (*)())Actor_GetById, 9);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t2, 0xd80000, 0,
         0xd80000);
   Call3((void (*)())Func_02005230, 11, 0, 0);
   Call3((void (*)())Func_02005230, 13, 0, 0);
   Call3((void (*)())Func_02005230, 14, 0, 0);
   Call3((void (*)())Func_02005230, 15, 0, 0);
   Call3((void (*)())Func_02005230, 16, 0, 0);
-  t9 = Value1((s32 (*)())Object_GetById, 10);
-  Call4((void (*)())Object_SetPositionAndResetMotion, t9, 0x1780000, 0,
+  t9 = Value1((s32 (*)())Actor_GetById, 10);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t9, 0x1780000, 0,
         0xf80000);
   Call3((void (*)())Func_02005230, 12, 0, 0);
   Call3((void (*)())Func_02005230, 17, 0, 0);
@@ -120,6 +120,6 @@ L_0200adda:
   Func_02002ec4();
 L_0200ae24:
   Value2((s32 (*)())Task_Add, (s32)Func_020019d4, 0x480);
-  Call2((void (*)())ObjectMotion_SetActionVariant, gAdventure.currentOwner, 2);
+  Call2((void (*)())Actor_SetSpritePriority, gAdventure.currentOwner, 2);
   Call1((void (*)())Func_02005338, 0);
 }

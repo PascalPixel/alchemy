@@ -15,14 +15,14 @@
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
   s32 owner = gAdventure.currentOwner;
-  struct ObjectRuntime *anchor = work->object;
-  struct ObjectRuntime *leader = Object_GetById(owner);
+  struct Actor *anchor = work->object;
+  struct Actor *leader = Actor_GetById(owner);
   s32 position[3];
   s32 result;
 

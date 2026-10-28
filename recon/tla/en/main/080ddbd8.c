@@ -2,7 +2,7 @@
 // Draft, differ 76 of 208 (2026-10-18; was 239), ported from ☀️'s
 // BattleEffect_SpawnBurstParticleField: ⚓️ spawns object 672, its sprite's
 // second part sits 28 bytes in (☀️: 12), the target goes through
-// Object_SetPosition and the angle is read as a halfword. Counting the loop
+// Actor_SetTargetPosition and the angle is read as a halfword. Counting the loop
 // down from 23 spills the count to the stack word the listing keeps, and loop
 // hoists the position's address twice, as the listing's r10 and r11. Left: the
 // scene pointer takes r11 and the address copy r9 where the listing has them
@@ -47,10 +47,10 @@ struct BurstParticleVisualGroup {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct FieldActor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
 void Animation_ApplyChildValuesFar(struct FieldActor *object, u32 value);
-void ObjectDispatch_SetSingleChildFlagsFar(struct FieldActor *object,
+void Actor_SetSingleChildFlagsFar(struct FieldActor *object,
                                            s32 flags);
 
 void Func_080ddbd8(void) {
@@ -84,7 +84,7 @@ void Func_080ddbd8(void) {
       Vector_AddPolarOffset(0xa0000, (u16)work->angle, pos);
     }
 
-    obj = Object_Spawn(672, pos[0], pos[1], pos[2]);
+    obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
     child->flip = visual->flip;
@@ -100,19 +100,19 @@ void Func_080ddbd8(void) {
       obj->speed = 0x18000;
       obj->motionFlags = 0;
       Animation_ApplyChildValuesFar(obj, 11);
-      Object_SetMode(obj, 7);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+      Actor_SetMode(obj, 7);
+      Actor_StartScriptFar((struct DispatchObject *)obj,
                                    gBattleEffect_SharedParticleScript + 1);
 
       pos[0] = work->x;
       pos[1] = work->y;
       pos[2] = work->z;
-      ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
+      Actor_SetSingleChildFlagsFar(obj, 1);
       if ((u16)work->angle == 0xc000)
         Vector_AddPolarOffset(0xe0000, (u16)work->angle, pos);
       dist = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(dist, Random16(), pos);
-      Object_SetPosition((struct ObjectRuntime *)obj, pos[0], pos[1], pos[2]);
+      Actor_SetTargetPosition((struct Actor *)obj, pos[0], pos[1], pos[2]);
     }
     Sound_PlayFar(131);
     WaitFrames(2);

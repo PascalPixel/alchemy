@@ -1,12 +1,12 @@
 #include "types.h"
 #include "field_event.h"
 
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Math_Cosine();
 s32 Math_Sine();
 
 void Func_02000090(struct FieldActor *self) {
-  struct FieldActor *centre = Object_GetById(31);
+  struct FieldActor *centre = Actor_GetById(31);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
@@ -35,7 +35,7 @@ void Func_02000090(struct FieldActor *self) {
 /// byte at 98.
 // As ☀️'s SceneEffect_UpdateCounterDrivenOrbit does.
 void Func_020000ec(struct FieldActor *self) {
-  struct FieldActor *centre = Object_GetById(36);
+  struct FieldActor *centre = Actor_GetById(36);
   u16 angle = self->timer;
   s32 cosine = Math_Cosine(angle);
   s32 radius = self->speed + BYTE_AT(self, 98);

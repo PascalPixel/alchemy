@@ -54,10 +54,10 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);      // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void);      // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);      // BattleEffect_CountDownBattlerTints
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // ObjectGroup_UpdateMembers
+                   s32 frames);                    // Actor_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
@@ -241,7 +241,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

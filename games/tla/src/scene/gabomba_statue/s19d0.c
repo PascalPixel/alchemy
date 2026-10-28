@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void Func_020056b4(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(s32 id);
+void Func_020056b4(struct Actor *object);
 void Func_020056bc(void);
 void Func_0200580c(s32 value);
-struct ObjectRuntime *Func_020057bc(void);
+struct Actor *Func_020057bc(void);
 void Func_020057a4(s32 speed, s32 acceleration);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020057b4(void);
@@ -20,7 +20,7 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 void Func_020019d0(void) {
-  struct ObjectRuntime *actor = Object_GetById(26);
+  struct Actor *actor = Actor_GetById(26);
 
   Func_020056b4(actor);
   Func_0200580c(0);

@@ -8,7 +8,7 @@ Func_080e9db4:
 	lsls r3, r3, #18
 	ldr r7, [r3, #92]
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	ldr r0, .L_080e9e84
 	bl Task_Remove
@@ -16,7 +16,7 @@ Func_080e9db4:
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
 	adds r0, r5, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	adds r1, r5, #0
 	adds r1, #85
 	movs r3, #3

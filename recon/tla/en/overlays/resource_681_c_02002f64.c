@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -17,7 +17,7 @@
 
 extern u8 gData_0200530c[];
 extern u8 gData_020053d8[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02004e3c();
 void Func_02002ac8();
 s32 GameFlag_Test();
@@ -32,7 +32,7 @@ void Func_02004fcc();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void FieldEvent_WaitFrames();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 s32 Import_ActorCreate();
 void Func_02004dac();
 void Func_02004d9c();
@@ -58,11 +58,11 @@ s32 Func_02002f64(s32 a0, s32 a1, s32 a2, s32 a3) {
 L_0200bd8a:
   if (r2 != (178))
     goto L_0200be74;
-  v0 = Object_GetById(8);
+  v0 = Actor_GetById(8);
   r5 = 32;
   FIELD_AT(v0, u8, 35) = (FIELD_AT(v0, u8, 35)) | r5;
   Call2((void (*)())Func_02004e3c, v0, 3);
-  v1 = Object_GetById(9);
+  v1 = Actor_GetById(9);
   r5 = r5 | (FIELD_AT(v1, u8, 35));
   FIELD_AT(v1, u8, 35) = r5;
   Call2((void (*)())Func_02004e3c, v1, 3);
@@ -112,7 +112,7 @@ L_0200be92:
     goto L_0200be9a;
   goto L_0200c110;
 L_0200be9a:
-  v6 = Object_GetById(10);
+  v6 = Actor_GetById(10);
   r6 = v6;
   Call2((void (*)())Func_02004e3c, v6, 3);
   Call2((void (*)())Func_02002ac8, 8, 10);
@@ -161,16 +161,16 @@ L_0200bfc8:
   Event_StartScreenTransition();
   Call1((void (*)())FieldEvent_WaitFrames, 15);
   Call3((void (*)())Func_02004ebc, 11, 0x2a00000, 0x1800000);
-  v12 = Object_GetById(11);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v12, 0);
-  v13 = Object_GetById(11);
+  v12 = Actor_GetById(11);
+  Call2((void (*)())Actor_SetSingleChildFlags, v12, 0);
+  v13 = Actor_GetById(11);
   r6 = v13;
   v14 = Import_ActorCreate(0x144, FIELD_AT(r6, s32, 8), FIELD_AT(r6, s32, 12),
                             FIELD_AT(r6, s32, 16));
   r5 = v14;
   r0 = v14;
   if (r5 != 0) {
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r0, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, r0, 0);
     Func_02004dac(r5, (s32)gData_020053d8);
     Call2((void (*)())Func_02004d9c, r5, 1);
     Call2((void (*)())Animation_ApplyChildValues, r5, 14);
@@ -259,8 +259,8 @@ L_0200c142:
     Call6((void (*)())Func_02004dfc, 27, 15, 2, 1, r6, r6);
     Call6((void (*)())Func_02004dfc, 25, 25, 1, 1, r5, r6);
   }
-  v21 = Object_GetById(15);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v21, 0);
+  v21 = Actor_GetById(15);
+  Call2((void (*)())Actor_SetSingleChildFlags, v21, 0);
   v22 = GameFlag_Test(0x9c4);
   if (v22 == 0)
     goto L_0200c24c;

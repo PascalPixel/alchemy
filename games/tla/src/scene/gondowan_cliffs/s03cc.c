@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 void WaitFrames(s32 frames);
 
@@ -8,13 +8,13 @@ struct TileSprite {
   u16 tile;
 };
 
-void Func_020003cc(struct ObjectRuntime *object) {
+void Func_020003cc(struct Actor *object) {
   struct TileSprite *sprite = object->animation;
 
   sprite->tile -= 0x800;
 }
 
-void Func_020003dc(struct ObjectRuntime *object, s32 height) {
+void Func_020003dc(struct Actor *object, s32 height) {
   s32 count = 60;
 
   while (count != 0) {

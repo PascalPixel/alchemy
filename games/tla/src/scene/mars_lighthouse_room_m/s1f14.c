@@ -1,8 +1,8 @@
 #include "mars_lighthouse_room_m.h"
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
-  struct ObjectRuntime *object =
-      (struct ObjectRuntime *)Value4((s32 (*)())Func_02003128, 285, position->x,
+  struct Actor *object =
+      (struct Actor *)Value4((s32 (*)())Func_02003128, 285, position->x,
                                      position->y, position->z + 0xfffe0000);
   s32 angle;
 

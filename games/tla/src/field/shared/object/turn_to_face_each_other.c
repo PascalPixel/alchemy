@@ -14,7 +14,7 @@
 
 s32 ArcTan2(s32 y, s32 x);
 
-void Object_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
   void *first = ObjectTable_Get(firstId);
   void *second = ObjectTable_Get(secondId);
 
@@ -70,7 +70,7 @@ void ObjectTable_DestroyById(s32 id) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (object != NULL) {
-    Object_Destroy(object);
+    Actor_Destroy(object);
     work->objects[id] = NULL;
   }
 }

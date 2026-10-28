@@ -9,7 +9,7 @@
 // and the barriers measured there do the same here.
 #include "types.h"
 #include "field_sprite.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -34,7 +34,7 @@ struct EventWorkGrab {
 };
 
 s32 Func_080d59dc(void) {
-  struct ObjectRuntime *leader = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *leader = ObjectTable_Get(gAdventure.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   struct Work9cItemPosition *item = Func_080d5930(&leader->x);
   u8 *flags;
@@ -46,10 +46,10 @@ s32 Func_080d59dc(void) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  leader->watchedObject = (struct ObjectRuntime *)item;
-  Object_SetMode(leader, 2);
-  Object_SetPosition(leader, item->x, item->y, item->z);
-  Object_CommitPosition(leader);
+  leader->watchedObject = (struct Actor *)item;
+  Actor_SetMode(leader, 2);
+  Actor_SetTargetPosition(leader, item->x, item->y, item->z);
+  Actor_CommitPosition(leader);
   leader->action = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->unk66 = sprite->nextFrame;

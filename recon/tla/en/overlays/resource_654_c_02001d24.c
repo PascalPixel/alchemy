@@ -18,7 +18,7 @@ static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   Func_02003a90(actor, angle);
 }
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
 void Func_02001d24(void) {
   struct ShrineOfTheSeaGodObject *object;
@@ -55,9 +55,9 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(13, 0);
   ShrineOfTheSeaGod_CamSpeed(0x13333, 0x2666);
   ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
-  object = Object_GetById(13);
+  object = Actor_GetById(13);
   sprite = object->sprite;
-  ObjectMotion_SetActionVariant(13, 1);
+  Actor_SetSpritePriority(13, 1);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjLaunch(13, 4, 0);
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
@@ -66,22 +66,22 @@ void Func_02001d24(void) {
   sprite->rotation = 0xd000;
   object->motionFlags = 0;
   object->y += 0x60000;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
   Func_02003990(object, 164 << 17, 152 << 14, 168 << 16);
-  ObjectMotion_CommitCurrentPositionAndActivate(13);
+  Actor_WaitForMoveById(13);
   object->motionFlags = 3;
   object->height = 0x200000;
   object->field18 = 0x10000;
   sprite->rotation = 0;
   ShrineOfTheSeaGod_ObjMode(13, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(13), 1);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjLaunch(13, 4, 0);
   ShrineOfTheSeaGod_ObjCommit(13, 328, 184);
   ShrineOfTheSeaGod_ObjTurn(13, 0, 20);
   ShrineOfTheSeaGod_Jump(13, 256, 40);
-  ObjectMotion_SetActionVariant(13, 2);
+  Actor_SetSpritePriority(13, 2);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_MessagePut(0x200e, 0);
   ShrineOfTheSeaGod_Jump(13, 257, 20);
@@ -108,19 +108,19 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_CamSpeed(0x26666, 0x4ccc);
   ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
-  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 12);
-  Object_LinkObjectAndSetCallback(14, 12);
-  Object_LinkObjectAndSetCallback(13, 12);
+  Actor_WatchAndSetScript(gAdventure.currentOwner, 12);
+  Actor_WatchAndSetScript(14, 12);
+  Actor_WatchAndSetScript(13, 12);
   ShrineOfTheSeaGod_ObjWalk(12, 394, 220);
   ShrineOfTheSeaGod_ObjWalk(12, 370, 198);
   ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjCommit(14, 368, 180);
-  Object_LinkObjectAndSetCallback(14, 12);
+  Actor_WatchAndSetScript(14, 12);
   ShrineOfTheSeaGod_ObjWalk(12, 336, 198);
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
-  ObjectMotion_EnableActionAndResetMotion(13);
+  Actor_Stop(13);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ObjectMotion_ArmCallback(12, 0xd000, 0);
+  Actor_ArmCallback(12, 0xd000, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_ObjAngle(12, 0xb000);
   ShrineOfTheSeaGod_ObjLaunch(12, 4, 20);
@@ -156,12 +156,12 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjSpeed(12, 0x13333, 0x9999);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x13333, 0x9999);
   callback = gData_02003c58;
-  ObjectMotion_EnableActionAndSetCallback(12, callback);
+  Actor_SetMovementTypeById(12, callback);
   ShrineOfTheSeaGod_Wait(10);
-  Object_SetActionCallbackAndRefreshById(13, callback);
+  Actor_SetMovementTypeAndWaitById(13, callback);
   ShrineOfTheSeaGod_Wait(40);
-  ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
-  ObjectMotion_EnableActionAndResetMotion(14);
+  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(14);
   WaitFrames(1);
   Func_02003a78(14, 0, 40);
   ShrineOfTheSeaGod_ObjPlace(13, 0, 0);
@@ -171,11 +171,11 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 20);
   ShrineOfTheSeaGod_MessagePut(14, 0);
   ShrineOfTheSeaGod_ObjMode(14, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(14);
+  Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
   ShrineOfTheSeaGod_FlagSet(0x873);
   Func_020039e0();

@@ -15,14 +15,14 @@
 extern const u8 gData_02005394[];
 
 void Func_02000414(s32 id) {
-  struct ObjectRuntime *source = Object_GetById(id);
+  struct Actor *source = Actor_GetById(id);
   s32 i;
 
   i = 5;
 next:
   {
     s32 x = source->x + (Random16Far() << 4) - (Random16Far() << 4);
-    struct ObjectRuntime *object =
+    struct Actor *object =
         Func_02004bd8_(0x145, x, (Random16Far() << 3) + source->y + 0x40000,
                        source->z + (Random16Far() << 4) - (Random16Far() << 4));
 
@@ -35,7 +35,7 @@ next:
       radius = Random16Far();
       scale = (Random16Far() >> 1) + 0x4000;
       Func_02004bd0(object, gData_02005394);
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       object->velocityZ = Iwram_MulQ16(radius * 8, Math_Cosine(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sine(angle));

@@ -6,7 +6,7 @@ void Func_020008a4(void) {
 }
 
 void Func_020008d0(s32 a, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   Func_0200070c(id, 16);
   GameFlag_ClearBit(id + 0x203);
@@ -15,12 +15,12 @@ void Func_020008d0(s32 a, s32 id) {
 }
 
 void Func_02000904(s32 a, s32 id) {
-  OBJECT_BYTE(Object_GetById(id - 5), 98) = 0;
+  OBJECT_BYTE(Actor_GetById(id - 5), 98) = 0;
   GameFlag_SetBit(id + 0x313);
 }
 
 void Func_02000924(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     Func_0200070c(id, -16);
@@ -35,7 +35,7 @@ void Func_02000924(s32 id) {
 }
 
 void Func_0200095c(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     Func_0200070c(id, 16);

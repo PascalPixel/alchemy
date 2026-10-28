@@ -43,14 +43,14 @@ Func_080d59dc:
 	adds r0, r5, #0
 	movs r1, #2
 	str r6, [r5, #104]
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [r6, #4]
 	ldr r2, [r6, #8]
 	ldr r3, [r6, #12]
 	adds r0, r5, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r5, #0
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	adds r3, r5, #0
 	adds r3, #85
 	ldrb r2, [r3]

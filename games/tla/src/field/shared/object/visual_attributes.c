@@ -7,49 +7,49 @@
 #include "sound.h"
 #include "system.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "field_sprite.h"
 #include "edition.h"
 
-struct ObjectRuntime *Object_GetById(u32);
+struct Actor *Actor_GetById(u32);
 
-void Object_ResetTargetAndSetMode1(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_ResetTargetAndSetMode1(u32 objectId) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
     object->targetZ = 0x80000000;
-    Object_ResetMotion(object);
-    Object_SetMode(object, 1);
+    Actor_ResetMotion(object);
+    Actor_SetMode(object, 1);
   }
 }
 
-void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_ArmCallback(s32 objectId, s32 angle, s32 wait) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->action = angle;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gObjectMotion_StepAngleScript);
     Event_WaitFrames(wait);
   }
 }
 
-void ObjectMotion_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->action = angle;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gObjectMotion_StepAngleScript);
-    Object_RefreshSelectorById(objectId);
+    Actor_RefreshSelectorById(objectId);
   }
 }
 
-void ObjectMotion_SetActionVariant(u32 objectId, s32 priority) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_SetSpritePriority(u32 objectId, s32 priority) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL && (object->animationKind & 0xF) == 1) {
     struct FieldSprite *sprite = object->animation;
@@ -65,27 +65,27 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   u8 block;
   u32 tile;
 
-  sprite = (struct FieldSprite *)Object_GetById(sourceId);
-  sprite = ((struct ObjectRuntime *)sprite)->animation;
+  sprite = (struct FieldSprite *)Actor_GetById(sourceId);
+  sprite = ((struct Actor *)sprite)->animation;
   block = sprite->vramBlock;
   tile = sprite->tile;
 
-  sprite = (struct FieldSprite *)Object_GetById(targetId);
-  sprite = ((struct ObjectRuntime *)sprite)->animation;
+  sprite = (struct FieldSprite *)Actor_GetById(targetId);
+  sprite = ((struct Actor *)sprite)->animation;
   sprite->vramBlock = block;
   sprite->tile = tile;
 }
 
 void Func_080d390c(u32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+  Actor_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
 }
 
 void Func_080d3928(u32 id, s32 rotation) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->animation;
 
   if (object != NULL && sprite != NULL)

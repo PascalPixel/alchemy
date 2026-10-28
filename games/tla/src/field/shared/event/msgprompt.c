@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "input.h"
 
 void *FieldMessage_ShowAtActor(s32 object, s32 message);

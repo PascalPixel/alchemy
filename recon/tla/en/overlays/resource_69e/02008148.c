@@ -19,7 +19,7 @@
 // note, the address formed twice with one. The devices below need their
 // FAKEMATCH tags when this is adopted.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 // 16.16 fixed-point coordinates.
 union FieldCoordinate {
@@ -45,13 +45,13 @@ struct OrbitEffect {
   u16 angle;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 // Orbit actor 23.
 void Func_02000148(struct OrbitEffect *effect) {
-  struct ObjectRuntime *center = Object_GetById(23);
+  struct Actor *center = Actor_GetById(23);
   u16 *angle = &effect->angle;
   s32 turn = *angle;
   s32 sine;

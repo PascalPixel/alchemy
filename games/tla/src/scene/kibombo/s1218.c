@@ -10,8 +10,8 @@ void Func_02001218(void) {
   Func_02005a9c();
   Func_02005c3c(0);
   Func_02005b1c(7, gAdventure.currentOwner);
-  ObjectMotion_SetActionVariant(
-      7, Object_GetById(gAdventure.currentOwner)->sprite->priority);
+  Actor_SetSpritePriority(
+      7, Actor_GetById(gAdventure.currentOwner)->sprite->priority);
   WaitFrames(1);
   Kibombo_ObjArm(gAdventure.currentOwner, 0xa000, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
@@ -19,7 +19,7 @@ void Func_02001218(void) {
   Kibombo_ObjTurn(7, 0x2000);
   Func_02005b4c((s32)MsgNowThatIKnow);
   Kibombo_MessagePut(7, 0);
-  Object_GetById(7)->priorityFlags |= 1;
+  Actor_GetById(7)->priorityFlags |= 1;
   Kibombo_ObjWalk(7, 56, 420);
   Kibombo_ObjWalk(7, 40, 344);
   Func_02005b0c(7, 0, 0);

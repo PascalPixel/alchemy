@@ -34,7 +34,7 @@ Func_080eaa14:
 	ldr r3, [sp, #12]
 	movs r7, #0
 	ldrh r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r3, [r6, #80]
 	ldr r2, [sp, #12]

@@ -18,7 +18,7 @@
 #include "input.h"
 #include "frame.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -52,20 +52,20 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 s32 Func_0802d7b0(s32 x, s32 z, s32 layer, s32 height);
-s32 Func_0802d87c(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 void Sound_PlayFar(s32 cue);
 void Func_08029810(void);
-s32 Func_08029838(struct ObjectRuntime *object);
+s32 Func_08029838(struct Actor *object);
 
-s32 Func_080298c0(struct ObjectRuntime *object) {
+s32 Func_080298c0(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[10];
@@ -83,7 +83,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
   s32 cellZ;
   s32 angleIndex;
   u8 *wakeTimer;
-  struct ObjectRuntime *effect;
+  struct Actor *effect;
   struct PlayerSprite *sprite;
 
   heading = 0;
@@ -109,7 +109,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
           2) {
         object->y -= 0x10000;
       } else {
-        Object_SetMoveTarget(object, object->x, groundAhead, topZ);
+        Actor_SetMoveTarget(object, object->x, groundAhead, topZ);
         *action = 1;
         *climbing = heading;
         goto done;
@@ -138,7 +138,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
       Vector_AddPolarOffset(0x80000, (u16)angle, &position);
       position.y = object->y - position.z;
       position.z = object->z;
-      ObjectDispatch_SelectAnimation(object, 3);
+      Actor_SelectAnimation(object, 3);
       testPosition.x = object->x;
       testPosition.y = collision;
       testPosition.z = collision;
@@ -196,7 +196,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
       s32 speed;
 
       heading = (s16)angle;
-      Object_SetMoveTarget(object, position.x, position.y, position.z);
+      Actor_SetMoveTarget(object, position.x, position.y, position.z);
       speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                         Iwram_MulQ16(object->velocityZ, object->velocityZ));
       object->velocityX = collision;
@@ -217,7 +217,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
       if (effect != NULL) {
         effect->terrainHeight = object->terrainHeight;
         sprite = effect->animation;
-        ObjectDispatch_Initialize(effect, gData_0802ed28);
+        Actor_StartScript(effect, gData_0802ed28);
         effect->update = Func_08029810;
         effect->motionFlags = 2;
         if (collision == 0)
@@ -341,7 +341,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
-      ObjectDispatch_SelectAnimation(object, 3);
+      Actor_SelectAnimation(object, 3);
       goto done;
     }
   }
@@ -353,13 +353,13 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
     if (Func_0802d45c(*terrainId, faceX, faceZ) < y &&
         Func_080c8770(faceX, faceZ, 2)) {
       object->motionFlags = 0;
-      Object_SetMoveTarget(object, object->x, groundHere + 0xfffe0000, faceZ);
+      Actor_SetMoveTarget(object, object->x, groundHere + 0xfffe0000, faceZ);
       *action = 1;
       *climbing = 1;
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
-      ObjectDispatch_SelectAnimation(object, 3);
+      Actor_SelectAnimation(object, 3);
       goto done;
     }
   }
@@ -376,7 +376,7 @@ counted:
       work->heldKeys = gInput.held;
     }
   }
-  ObjectDispatch_SelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   if (collision != 0) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
@@ -398,7 +398,7 @@ counted:
   } else {
     s32 speed;
 
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
@@ -414,7 +414,7 @@ counted:
     if (effect != NULL) {
       effect->terrainHeight = object->terrainHeight;
       sprite = effect->animation;
-      ObjectDispatch_Initialize(effect, gData_0802ece0);
+      Actor_StartScript(effect, gData_0802ece0);
       effect->priorityFlags = 8;
       ((u8 *)effect)[99] = 100;
       effect->motionFlags = collision;

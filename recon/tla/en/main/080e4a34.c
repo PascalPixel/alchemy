@@ -21,7 +21,7 @@
 // and Func_080e42d4 runs as a callback unless 0xd48 was set, in which case
 // Func_080e4730 follows.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
 #include "adventure.h"
@@ -39,11 +39,11 @@ struct GrabEventWork {
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
+void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
 void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Task_Add(void (*callback)(void), s32 order);
 void Func_080e42d4(void);
@@ -61,15 +61,15 @@ void Func_080e45a0(void *sprite);
 void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
+void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object,
                                                s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-struct ObjectRuntime *Object_GetById(u32 actor);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 actor);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 
@@ -77,7 +77,7 @@ void Func_080e4a34(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
   struct GrabEventWork *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *owner;
+  struct Actor *owner;
   s32 pictureEntry;
   s32 particleEntry;
   s32 particleTiles;
@@ -100,7 +100,7 @@ void Func_080e4a34(void) {
   if (*(u16 *)((u8 *)owner->animation + 20) != 0x2020)
     goto end;
   Func_080dc954();
-  ObjectGroup_SetActionForOthers(owner, 1, 0);
+  Actor_SetOthersPaused(owner, 1, 0);
   if (Func_080dbcd8(owner->x, owner->z, owner->terrainId) == 0)
     event->standing = 1;
   else
@@ -122,7 +122,7 @@ void Func_080e4a34(void) {
   }
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
-  Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+  Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
   *motionFlags = 0;
   WaitFrames(2);
   for (frame = 0; frame < 40; frame++) {
@@ -162,9 +162,9 @@ void Func_080e4a34(void) {
       animation[5] &= 63;
       animation = owner->animation;
       animation[7] = (animation[7] & 63) | 64;
-      Object_SetMode(owner, 1);
-      ObjectDispatch_SetSingleChildFlagsFar(
-          Object_GetById(effect->firstObjectId), 0);
+      Actor_SetMode(owner, 1);
+      Actor_SetSingleChildFlagsFar(
+          Actor_GetById(effect->firstObjectId), 0);
       Camera_FollowActor(effect->firstObjectId, 1);
       owner->y = savedY;
       *motionFlags = savedFlags;
@@ -184,7 +184,7 @@ void Func_080e4a34(void) {
   gAdventure.pendingThird = 1;
   if (event->standing == 0)
     Task_Add(Func_080e42d4, 0x480);
-  ObjectGroup_SetActionForOthers(owner, 0, 16);
+  Actor_SetOthersPaused(owner, 0, 16);
   Resource_ResetEntry(pictureEntry);
   Resource_ResetEntry(particleEntry);
   BattleEffect_PrepareBufferInterpolation();

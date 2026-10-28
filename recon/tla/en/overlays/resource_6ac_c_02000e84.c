@@ -26,7 +26,7 @@ void Func_020031b8(s32 scene, s32 a1);
 void Func_020031f8(s32 id, s32 a, s32 b);
 void Func_02003270(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020032b0(s32 a);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Task_Add(void (*callback)(void), s32 priority);
 
 static __inline__ void SetValue(s32 id, s32 value) {
@@ -42,7 +42,7 @@ static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
 s32 Func_02000e84(void) {
   s16 scene = gAdventure.scene;
   s32 entrance = gAdventure.entrance;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6 || scene == (s32)&SceneId_Ov6ACRoom2 ||
       scene == (s32)&SceneId_Ov6ACRoom3 || scene == (s32)&SceneId_Ov6ACRoom4 ||
@@ -54,31 +54,31 @@ s32 Func_02000e84(void) {
   if (scene == (s32)&SceneId_Ov6ACRoom6) {
     switch (entrance) {
     case 1:
-      Object_SetPartAttribute(Object_GetById(8), 1);
+      Actor_SetPartAttribute(Actor_GetById(8), 1);
       Func_02000058(9, 4);
       Func_02003150(4);
       Func_02003150(5);
       break;
     case 2:
-      Object_SetPartAttribute(Object_GetById(8), 3);
+      Actor_SetPartAttribute(Actor_GetById(8), 3);
       Func_02000058(9, 5);
       Func_02003150(6);
       Func_02003150(7);
       break;
     case 3:
-      Object_SetPartAttribute(Object_GetById(8), 0);
+      Actor_SetPartAttribute(Actor_GetById(8), 0);
       Func_02000058(9, 2);
       Func_02003150(0);
       Func_02003150(1);
       break;
     case 4:
-      Object_SetPartAttribute(Object_GetById(8), 4);
+      Actor_SetPartAttribute(Actor_GetById(8), 4);
       Func_02000058(9, 3);
       Func_02003150(2);
       Func_02003150(3);
       break;
     }
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
     object->motionFlags = 0;
     object->z = 0x680000;
     Task_Add(Func_020000c0, 0x480);

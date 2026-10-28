@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -15,10 +15,10 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Map_GetTerrainHeight();
 s32 MapCell_GetAttributes();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_020005cc();
 
 s32 Func_0200079c(s32 a0, s32 a1, s32 a2, s32 a3) {
@@ -30,7 +30,7 @@ s32 Func_0200079c(s32 a0, s32 a1, s32 a2, s32 a3) {
   if ((FIELD_AT(a0, u16, 0)) == 0xffff)
     goto L_0200887c;
 L_020087b2:
-  v0 = Object_GetById(FIELD_AT(r8, u16, 0));
+  v0 = Actor_GetById(FIELD_AT(r8, u16, 0));
   r7 = v0;
   r10 = 34 + r7;
   v1 = Map_GetTerrainHeight(FIELD_AT(r7, u8, 34), FIELD_AT(r7, s32, 8),
@@ -42,7 +42,7 @@ L_020087b2:
   r5 = 0;
   FIELD_AT(r7, u8, 85) = r5;
   FIELD_AT((r7 + 85), u8, 4) = r5;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r7, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r7, 0);
   r6 = r6 >> 19;
   r6 = r6 + 4;
   r6 = r7;

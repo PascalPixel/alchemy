@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -15,7 +15,7 @@ void Func_0200063c();
 void Func_02000644();
 void Func_0200064c();
 void Event_AskYesNoWithActorAnimation();
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 void FieldMessage_ShowAtActor();
 
 void Func_020000f4(void) {
@@ -43,10 +43,10 @@ L_02008138:
 }
 
 void Func_0200014c(s32 actor) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   u16 facing;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -59,10 +59,10 @@ void Func_0200014c(s32 actor) {
 }
 
 void Func_0200019c(s32 actor) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   u16 facing;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -78,10 +78,10 @@ void Func_0200019c(s32 actor) {
 }
 
 void Func_020001fc(s32 actor) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   u16 facing;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -106,10 +106,10 @@ void Func_020001fc(s32 actor) {
 }
 
 void Func_02000288(s32 actor) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   u16 facing;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -125,10 +125,10 @@ void Func_02000288(s32 actor) {
 }
 
 void Func_020002e4(s32 actor) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   u16 facing;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;

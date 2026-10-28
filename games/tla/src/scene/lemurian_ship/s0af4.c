@@ -4,7 +4,7 @@ void Func_02000af4(void) {
   struct LemurianShipObject *leader;
 
   if (!GameFlag_Test(0x983)) {
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     Func_02002c68();
     Func_02002da8(0);
     LemurianShip_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
@@ -17,7 +17,7 @@ void Func_02000af4(void) {
     LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
     leader->field22 = 2;
     FieldEvent_WaitFrames(20);
-    ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+    Actor_Jump(gAdventure.currentOwner, 4, 0);
     LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x33333, 0x19999);
     LemurianShip_ObjCommit(gAdventure.currentOwner, 812, 88);
     FieldEvent_WaitFrames(20);
@@ -31,8 +31,8 @@ void Func_02000af4(void) {
 void Func_02000bf0(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
-  ObjectMotion_SetVariantCallback(id, 2);
+  Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
   gAdventure.battleRule24b = 2;
@@ -43,8 +43,8 @@ void Func_02000bf0(s32 id) {
 void Func_02000c50(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
-  ObjectMotion_SetVariantCallback(id, 2);
+  Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
   gAdventure.battleRule24b = 2;
@@ -55,8 +55,8 @@ void Func_02000c50(s32 id) {
 void Func_02000cb0(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
-  ObjectMotion_SetVariantCallback(id, 2);
+  Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
   gAdventure.battleRule24b = 2;
@@ -65,22 +65,22 @@ void Func_02000cb0(s32 id) {
 }
 
 void Func_02000d10(s32 id) {
-  struct LemurianShipObject *object = Object_GetById(id);
+  struct LemurianShipObject *object = Actor_GetById(id);
 
   LemurianShip_ObjSpeed(id, 0x33333, 0x19999);
   object->field48 = 0x8000;
   object->velocityY = 0x80000;
-  ObjectMotion_ResetAndSetPosition(id, 120, 120);
+  Actor_ResetAndSetPosition(id, 120, 120);
 }
 
 void Func_02000d44(void) {
   Func_02002c68();
   Func_02002da8(0);
   Func_02002de0(0);
-  ObjectMotion_SetVariantCallback(9, 2);
-  ObjectMotion_SetVariantCallback(10, 2);
-  ObjectMotion_SetVariantCallback(11, 2);
-  ObjectMotion_SetVariantCallback(12, 2);
+  Actor_StartRepeatedMotion(9, 2);
+  Actor_StartRepeatedMotion(10, 2);
+  Actor_StartRepeatedMotion(11, 2);
+  Actor_StartRepeatedMotion(12, 2);
   Motion_SetVarCbAndRefresh(13, 2);
   FieldEvent_WaitFrames(20);
   Func_02002de0(147);
@@ -89,7 +89,7 @@ void Func_02000d44(void) {
   Func_02000d10(11);
   Func_02000d10(12);
   Func_02000d10(13);
-  ObjectMotion_CommitCurrentPositionAndActivate(13);
+  Actor_WaitForMoveById(13);
   Func_02002cd0(9, 0, 0);
   Func_02002cd0(10, 0, 0);
   Func_02002cd0(11, 0, 0);
@@ -97,7 +97,7 @@ void Func_02000d44(void) {
   Func_02002cd0(13, 0, 0);
   FieldEvent_WaitFrames(20);
   Func_02002de0(52);
-  Object_SetActionCallbackAndRefreshById(8, gData_02002e9c);
+  Actor_SetMovementTypeAndWaitById(8, gData_02002e9c);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
    * state address before it builds the field offset (2 differ without it). */
   do {

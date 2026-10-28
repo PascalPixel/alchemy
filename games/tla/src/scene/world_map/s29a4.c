@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -12,15 +12,15 @@ struct EventWork {
 
 extern const u8 gData_02004eb8[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const u8 *action);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 actor, const u8 *action);
 s32 Task_Add(void (*callback)(void), s32 order);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -32,15 +32,15 @@ void Func_02004d78(s32 a, s32 b);
 void Func_02004db8(s32 value);
 void Func_02004df8(s32 value, s32 mode);
 
-static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
+static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
                                                         s32 acceleration) {
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 void Func_020029a4(void) {
-  struct ObjectRuntime *actor;
+  struct Actor *actor;
 
-  actor = Object_GetById(8);
+  actor = Actor_GetById(8);
   FieldEvent_WaitFrames(60);
   Func_02004c20();
   Func_02004db8(0);
@@ -49,13 +49,13 @@ void Func_020029a4(void) {
   actor->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
   WaitFrames(1);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
-  ObjectMotion_SetSpeedParameters_(8, 0x6666, 0x3333);
+  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+  Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
   actor->action = 0;
-  ObjectMotion_EnableActionAndSetCallback(8, gData_02004eb8);
+  Actor_SetMovementTypeById(8, gData_02004eb8);
   Task_Add(Func_020028cc, 0x480);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x100;
   Func_02004d78(0x10003, 1);

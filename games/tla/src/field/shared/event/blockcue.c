@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -16,12 +16,12 @@ extern u8 gAdventure[];
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
 s32 Func_080dbd48(s32 x, s32 z, s32 layer);
-s32 Func_080e4244(struct ObjectRuntime *object);
+s32 Func_080e4244(struct Actor *object);
 
 void Func_080e42d4(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
   u8 *party = gAdventure;
-  struct ObjectRuntime *object = ObjectTable_Get(*(s32 *)(party + 532));
+  struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
   s32 reason = 0;
 
   if (*(s8 *)(party + 707) != 0)

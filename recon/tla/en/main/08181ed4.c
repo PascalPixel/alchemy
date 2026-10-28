@@ -130,7 +130,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
 void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -337,7 +337,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       }
 
       Func_08158ce0(4, 16);
-      ObjectGroup_CountDownMemberTimers();
+      BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       WaitFrames(1);
     }

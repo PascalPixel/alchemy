@@ -63,7 +63,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -176,7 +176,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
       vine++;
     } while (i != VINE_COUNT);
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;

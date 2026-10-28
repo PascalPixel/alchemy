@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern char SceneId_Ov681Room2;
@@ -21,12 +21,12 @@ extern const u8 gData_02005d6c[];
 extern const u8 gData_02005e28[];
 extern u8 gData_020023c4[];
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
-void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Func_02004dac(struct Actor *object, const u8 *script);
 void Func_02005014(s32 cue);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 u32 Func_02004904(void);
-void Func_02004d9c(struct ObjectRuntime *object, s32 mode);
+void Func_02004d9c(struct Actor *object, s32 mode);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 
@@ -45,7 +45,7 @@ const void *Func_020009e8(void) {
   return gData_02005970;
 }
 
-void Func_02000a60(struct ObjectRuntime *object) {
+void Func_02000a60(struct Actor *object) {
   s32 value = 0;
 
   if ((gData_02005ee4 & 7) <= 0)
@@ -59,7 +59,7 @@ void Func_02000a60(struct ObjectRuntime *object) {
   gData_02005ee4++;
 }
 
-void Func_02000aac(struct ObjectRuntime *object) {
+void Func_02000aac(struct Actor *object) {
   s32 value = 0;
 
   if ((gData_02005ee4 & 7) <= 0)
@@ -74,7 +74,7 @@ void Func_02000aac(struct ObjectRuntime *object) {
 }
 
 void Func_02000af8(s32 unused, u32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u32 direction;
   /* FAKEMATCH: the state pointer pinned to r8 and loaded behind an empty asm,
    * with the direction read from r0 after it, loads first after the call;

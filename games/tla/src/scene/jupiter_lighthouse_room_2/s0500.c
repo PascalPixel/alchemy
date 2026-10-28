@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void WaitFrames(s32 frames);
@@ -28,20 +28,20 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
 /// 188 plays, and at cell (20, 39) it sets flag 0xa02 and copies map cells in
 /// three steps, each with cue 167.
 void Func_02000500(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct Adventure *party;
   s32 i;
 
   object->motionFlags = 3;
-  Object_GetById(id)->priorityFlags |= 1;
+  Actor_GetById(id)->priorityFlags |= 1;
   /* FAKEMATCH: the one-pass block loads gAdventure's address before the
    * owner's offset is built (one reordered row without it). */
   do {
     party = &gAdventure;
   } while (0);
-  Object_GetById(party->currentOwner)->priorityFlags |= 1;
+  Actor_GetById(party->currentOwner)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)
-    ObjectMotion_SetActionVariant(id, 3);
+    Actor_SetSpritePriority(id, 3);
   /* FAKEMATCH: the memory barrier reads the position again for the terrain
    * height, as the native does (differ 18 without). */
   asm("" ::: "memory");
@@ -56,8 +56,8 @@ void Func_02000500(s32 unused, s32 id) {
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
     GameFlag_SetBit(0xa02);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
-    ObjectMotion_SetActionVariant(id, 3);
+    Actor_SetSingleChildFlags(Actor_GetById(id), 0);
+    Actor_SetSpritePriority(id, 3);
     Func_0200227c(id, 0, 0);
     Func_0200220c(28, 39, 1, 1, 20, 39);
     CopyCells(28, 39, 1, 1, 20, 39);

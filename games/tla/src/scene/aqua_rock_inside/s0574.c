@@ -10,9 +10,9 @@ void Func_02000574(s32 unused, s32 id) {
   do {
   } while (0);
   layer = (s32 *)(map + 0x140);
-  Object_SetPartAttribute(Object_GetById(id), 0);
+  Actor_SetPartAttribute(Actor_GetById(id), 0);
   Func_02001e78(id);
-  Object_SetModeById(id, 3);
+  Actor_SetModeById(id, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
   Func_02003cdc();

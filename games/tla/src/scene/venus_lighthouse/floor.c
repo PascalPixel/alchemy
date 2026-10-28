@@ -51,11 +51,11 @@ void GameFlag_ClearBit(s32 flag);
 void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
 void WaitFrames(s32 frames);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
-void Object_RefreshSelectorById(s32 actor);
-void Object_SetPartAttribute(struct VenusActor *object, s32 value);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetMovementTypeById(s32 actor, const void *callback);
+void Actor_RefreshSelectorById(s32 actor);
+void Actor_SetPartAttribute(struct VenusActor *object, s32 value);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Func_02001b44(struct VenusActor *object, s32 x, s32 y, s32 z);
@@ -88,9 +88,9 @@ void Func_020006ac(void) {
 
   Import_EventStart();
   Import_EventResolvePendingActions(0);
-  ObjectMotion_EnableActionAndSetCallback(leader, gData_02001dd8);
-  Object_RefreshSelectorById(leader);
-  Object_SetPartAttribute(Import_ActorGet(leader), 6);
+  Actor_SetMovementTypeById(leader, gData_02001dd8);
+  Actor_RefreshSelectorById(leader);
+  Actor_SetPartAttribute(Import_ActorGet(leader), 6);
   {
     /* FAKEMATCH: the native copies the leader into r0 before it builds the
      * acceleration. */
@@ -98,7 +98,7 @@ void Func_020006ac(void) {
 
     actor->speed = 0x40000;
     who = leader;
-    ObjectMotion_SetSpeedParameters(who, 0x40000, 0x20000);
+    Actor_SetSpeedParameters(who, 0x40000, 0x20000);
   }
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
     Import_ActorGet(leader)->selectFlags &= ~1;
@@ -107,15 +107,15 @@ void Func_020006ac(void) {
     Import_ActorGet(leader)->selectFlags &= ~1;
     z = 238;
   }
-  ObjectMotion_SetPositionAndReset(leader, actor->xPixel, z * 4);
+  Actor_SetPositionAndReset(leader, actor->xPixel, z * 4);
   Import_EventWaitFrames(1);
   Import_ActorGet(leader)->selectFlags |= 1;
   Import_EventWaitFrames(20);
-  Object_SetPartAttribute(actor, 0);
+  Actor_SetPartAttribute(actor, 0);
   actor->update = Func_020005a8;
   Func_02001c34(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  Object_SetPartAttribute(Import_ActorGet(leader), 0);
+  Actor_SetPartAttribute(Import_ActorGet(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
   {
     void *none;

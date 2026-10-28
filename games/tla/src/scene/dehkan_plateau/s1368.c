@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f44[];
@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
@@ -64,12 +64,12 @@ void Func_02001368(void) {
 
   Func_02000708(gData_02003f52);
   Func_020012d8();
-  y = Object_GetById(gAdventure.currentOwner)->y;
+  y = Actor_GetById(gAdventure.currentOwner)->y;
   /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test
    * starts the constant first (one pair of instructions swapped). */
   __asm__ volatile("");
   if (y < 0x80000) {
-    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
 }

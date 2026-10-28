@@ -57,9 +57,9 @@ void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
+                   s32 timerFrames); // Actor_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void WaitFrames(s32 frames);
 
 // A rain of daggers on the first target (unused).
@@ -179,7 +179,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
         Sound_PlayFar(133);
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

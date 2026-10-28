@@ -21,7 +21,7 @@ void BattleMotion_FlashHit(s32 id) {
   s32 remaining;
 
   Unit_Get(id);
-  Object_SetMode(BattleObject_Get(id)->object, 5);
+  Actor_SetMode(BattleObject_Get(id)->object, 5);
 
   selected = selection;
   remaining = 1;

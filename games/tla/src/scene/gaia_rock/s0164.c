@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 #include "edition.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 // The Japanese edition drops an object with no cue; the later editions play
@@ -25,8 +25,8 @@ void Func_02000100(s32 id, s32 cue);
 /// clear, drops and sets the flag; object 19, while flag 0x921 is clear, copies
 /// cells at x 77, drops at (79, 12) and at x 81 sets the flag.
 void Func_02000164(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *p;
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *p;
 
   Call6((void (*)())Func_02000e44, 8, 90, 1, 1, 8, 91);
   if (id == 16 && Value1((s32 (*)())GameFlag_Test, 0x920) == 0 &&

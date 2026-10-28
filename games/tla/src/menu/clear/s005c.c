@@ -4,7 +4,7 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
 
@@ -18,7 +18,7 @@ extern u16 gData_020024f4[];
 
 void Fade_ToBlack(s32 vblanks);
 void Func_020021f8(void *source, void *destination);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Task_RemoveFar(void (*callback)(void));
 
 static __inline__ void Decode_(void *source, void *destination) {
@@ -98,13 +98,13 @@ scroll_pair:
   Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
   ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
   {
-    struct ObjectRuntime *leader;
+    struct Actor *leader;
     /* FAKEMATCH: the flag's zero is pinned to r5 as a halfword: the native
      * loads it from the pool after the call, where plainly it reuses the scroll
      * loop's zero kept in r5 (differ 20 with a byte pin). */
     register u16 zero asm("r5");
 
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     zero = 0;
     leader->motionFlags = zero;
   }

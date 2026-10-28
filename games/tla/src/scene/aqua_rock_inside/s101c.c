@@ -2,7 +2,7 @@
 
 void Func_0200101c(s32 unused, s32 id) {
   if ((u32)(id - 13) <= 2) {
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Func_02003d1c_(47, 45, 1, 1, object->x >> 20, object->z >> 20);
     GameFlag_SetBit(id + 0x244);
@@ -16,7 +16,7 @@ void Func_02001060(void) { Func_02003d1c_(8, 63, 7, 1, 8, 34); }
 /// column.
 void Func_0200107c(s32 unused, s32 id) {
   if ((u32)(id - 10) <= 1) {
-    struct ObjectRuntime *object = Object_GetById(10);
+    struct Actor *object = Actor_GetById(10);
 
     object->motionFlags = 0;
     {
@@ -28,7 +28,7 @@ void Func_0200107c(s32 unused, s32 id) {
       asm("" : "+l"(row) : : "memory");
       Func_02003d1c_(8, row, 1, 1, object->x >> 20, 34);
     }
-    object = Object_GetById(11);
+    object = Actor_GetById(11);
     object->motionFlags = 0;
     {
       s32 row = 33;

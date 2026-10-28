@@ -4,14 +4,14 @@
 /// 285. The including file names its overlay's copy and the imports it calls:
 /// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
 /// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY give the
-/// sprite the requested priority themselves before Object_SetSpritePriority,
+/// sprite the requested priority themselves before Scene_SetActorSpritePriority,
 /// as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
-extern struct FieldEffect *Object_GetById(s32 id);
+extern struct FieldEffect *Actor_GetById(s32 id);
 extern struct FieldActor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 #ifdef EFFECT_SPRITE_PRIORITY
 static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y, s32 z) {
@@ -21,15 +21,15 @@ static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y, s32 z) {
 extern void EFFECT_SET_MODE(struct FieldEffect *effect, s32 mode);
 extern void EFFECT_SET_SCRIPT(struct FieldEffect *effect, const s32 *script);
 extern const s32 *EFFECT_SCRIPTS[];
-extern void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect,
+extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
                                                u32 flags);
-extern void Object_SetSpritePriority(struct FieldEffect *effect, s32 priority);
-extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
+extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
+extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
-  struct FieldEffect *party = Object_GetById(gAdventure.currentOwner);
+  struct FieldEffect *party = Actor_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -55,12 +55,12 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   EFFECT_SET_MODE(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   EFFECT_SET_SCRIPT(effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Object_SetSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -68,7 +68,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Object_SetPartAttribute(effect, options->palette);
+    Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
 #ifdef EFFECT_SPRITE_PRIORITY
     /* FAKEMATCH(one-pass): the flag cleared in a once-only block; as a plain
@@ -81,7 +81,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #else
     effect->priorityFlags &= ~1;
 #endif
-    Object_SetSpritePriority(effect, options->priority);
+    Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {

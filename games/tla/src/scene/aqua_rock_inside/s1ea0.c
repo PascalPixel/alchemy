@@ -1,10 +1,10 @@
 #include "local.h"
 
-void Func_02001ea0(struct ObjectRuntime *object) {
+void Func_02001ea0(struct Actor *object) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
-    struct ObjectRuntime *child =
+    struct Actor *child =
         Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {

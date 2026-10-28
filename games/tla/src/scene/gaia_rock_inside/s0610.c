@@ -1,25 +1,25 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern const u8 gData_020050d0[];
 
 u32 Random16Far(void);
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
+void Func_02004dac(struct Actor *object, const u8 *script);
 
 s32 Func_02000610(void) {
-  struct FieldSprite *sprite = Object_GetById(9)->animation;
+  struct FieldSprite *sprite = Actor_GetById(9)->animation;
 
   sprite->rotation -= 0x300;
   return 0;
 }
 
 /// Randomly vary the scale.
-void Func_0200062c(struct ObjectRuntime *object) {
+void Func_0200062c(struct Actor *object) {
   u32 random = Random16Far();
   s32 scale = object->scaleX;
   s32 bias;
@@ -54,8 +54,8 @@ void Func_0200062c(struct ObjectRuntime *object) {
 }
 
 s32 Func_02000678(void) {
-  struct ObjectRuntime *source = Object_GetById(9);
-  struct ObjectRuntime *object;
+  struct Actor *source = Actor_GetById(9);
+  struct Actor *object;
   struct FieldSprite *sprite;
   s32 x = source->x;
 
@@ -65,7 +65,7 @@ s32 Func_02000678(void) {
   __asm__ volatile("" : "+r"(x));
   object = Import_ActorCreate(14, x + 0x80000, source->y - 0x20000, source->z);
   object->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02004dac(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;

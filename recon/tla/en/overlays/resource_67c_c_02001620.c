@@ -6,7 +6,7 @@
 // is a near copy. Translated from its listing; names and structure still to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -27,7 +27,7 @@ extern u8 gData_02004014[];
 extern u8 gData_0200407c[];
 extern u8 gData_020040ac[];
 extern u8 Func_02001598[];
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02003ef4();
 void FieldEvent_WaitFrames();
 void Func_02003e44();
@@ -36,14 +36,14 @@ void Func_02003d44();
 void Func_02003e7c();
 void Func_02003e74();
 void Func_02003e84();
-void ObjectMotion_EnableActionAndSetCallback();
+void Actor_SetMovementTypeById();
 void Func_02003e04();
 s32 Import_ActorCreate();
 s32 Random16Far();
-void Object_SetPartAttribute();
-void Object_SetSpritePriority();
+void Actor_SetPartAttribute();
+void Scene_SetActorSpritePriority();
 void Func_02003cc4();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Animation_SetStateFlags();
 void Func_02003ccc();
 void WaitFrames();
@@ -58,9 +58,9 @@ s32 Func_02001620(s32 a0, s32 a1, s32 a2) {
   /* sub (s32)stack, #12 */
   r11 = a1;
   r9 = a0;
-  v0 = Object_GetById(a0);
+  v0 = Actor_GetById(a0);
   r7 = v0;
-  v1 = Object_GetById(r11);
+  v1 = Actor_GetById(r11);
   r10 = v1;
   Call1((void (*)())Func_02003ef4, 78);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
@@ -75,7 +75,7 @@ s32 Func_02001620(s32 a0, s32 a1, s32 a2) {
   FIELD_AT(r7, u8, 85) = 0;
   FIELD_AT(r7, s32, 52) = 0x3333;
   FIELD_AT(r7, s32, 48) = 0x3333;
-  ObjectMotion_EnableActionAndSetCallback(r9, (s32)gData_02004034);
+  Actor_SetMovementTypeById(r9, (s32)gData_02004034);
   Call1((void (*)())Func_02003ef4, 194);
   Call1((void (*)())FieldEvent_WaitFrames, 45);
   Call2((void (*)())Func_02003e04, r9, 0x100);
@@ -95,10 +95,10 @@ L_020096f8:
   FIELD_AT(r5, s32, 12) = (FIELD_AT(r5, s32, 12)) + (((15 & v4) - 8) << 16);
   FIELD_AT(r5, s32, 52) = 0x3333;
   FIELD_AT(r5, u8, 85) = 0;
-  Call2((void (*)())Object_SetPartAttribute, r5, 2);
-  Call2((void (*)())Object_SetSpritePriority, r5, 1);
+  Call2((void (*)())Actor_SetPartAttribute, r5, 2);
+  Call2((void (*)())Scene_SetActorSpritePriority, r5, 1);
   Call2((void (*)())Func_02003cc4, r5, 7);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r5, 0);
   Call2((void (*)())Animation_SetStateFlags, r5, 1);
   Func_02003ccc(r5, (s32)gData_02003fe8);
   r6 = 128;
@@ -141,14 +141,14 @@ L_02009804:
   FIELD_AT(r5, s32, 76) = 0x7a0000;
   FIELD_AT(r5, s32, 104) = r10;
   FIELD_AT(r5, u8, 98) = ((16 - r8) << 3) + 15;
-  Call2((void (*)())Object_SetPartAttribute, r5, 2);
-  Call2((void (*)())Object_SetSpritePriority, r5, 1);
+  Call2((void (*)())Actor_SetPartAttribute, r5, 2);
+  Call2((void (*)())Scene_SetActorSpritePriority, r5, 1);
   r0 = r5;
   r1 = 7;
   goto L_0200985c;
 L_0200985c:
   Call2((void (*)())Func_02003cc4, r0, r1);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r5, 0);
   Call2((void (*)())Animation_SetStateFlags, r5, 1);
   Call3((void (*)())Vector_AddPolarOffsetFar, FIELD_AT(r5, s32, 76),
         FIELD_AT(r6, s16, 0), r5 + 8);
@@ -158,7 +158,7 @@ L_0200985c:
     FIELD_AT(r10, u8, 85) = r7;
     FIELD_AT(r10, s32, 52) = 0x3333;
     FIELD_AT(r10, s32, 48) = 0x3333;
-    ObjectMotion_EnableActionAndSetCallback(r11, (s32)gData_02004058);
+    Actor_SetMovementTypeById(r11, (s32)gData_02004058);
   }
   Call1((void (*)())WaitFrames, 8);
   r8 = r8 + 1;
@@ -187,9 +187,9 @@ L_020098d2:
   FIELD_AT(r5, s32, 104) = r10;
   FIELD_AT(r5, u8, 85) = 0;
   FIELD_AT((r5 + 85) - 50, u8, 0) = 1;
-  Call2((void (*)())Object_SetPartAttribute, r5, 2);
+  Call2((void (*)())Actor_SetPartAttribute, r5, 2);
   Call2((void (*)())Func_02003cc4, r5, 7);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r5, 0);
   Call2((void (*)())Animation_SetStateFlags, r5, 1);
   goto L_02009960;
 L_02009960:
@@ -209,8 +209,8 @@ L_02009960:
   Call1((void (*)())Func_02003ef4, 0x23e);
   Call2((void (*)())Func_02003e74, 0x10000, 0);
   Call1((void (*)())Func_02003e84, 80);
-  ObjectMotion_EnableActionAndSetCallback(r9, (s32)gData_0200407c);
-  ObjectMotion_EnableActionAndSetCallback(r11, (s32)gData_020040ac);
+  Actor_SetMovementTypeById(r9, (s32)gData_0200407c);
+  Actor_SetMovementTypeById(r11, (s32)gData_020040ac);
   FIELD_AT(r10, s32, 108) = (s32)Func_02001598;
   Call1((void (*)())WaitFrames, 120);
   FIELD_AT(r10, s32, 108) = r6;

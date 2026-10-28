@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// Raises the object's scale in sixteenths to full size and commits its
 /// position.
-void BattleEffect_SnapScaleToFull(struct ObjectRuntime *object) {
+void BattleEffect_SnapScaleToFull(struct Actor *object) {
   s32 next;
   s32 scale;
   s32 limit;
@@ -36,6 +36,6 @@ void BattleEffect_SnapScaleToFull(struct ObjectRuntime *object) {
       object->scaleX = next;
       object->scaleY = next;
     }
-    Object_CommitPosition(object);
+    Actor_CommitPosition(object);
   }
 }

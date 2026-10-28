@@ -2,23 +2,23 @@
 #include "macros.h"
 
 void Func_02000b5c(void) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
 }
 
 void Func_02000b78(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   *((u8 *)object + 98) = 1;
   object->priorityFlags |= 2;
-  Object_SetModeById(id, 1);
-  ObjectMotion_SetActionVariant(id, 3);
+  Actor_SetModeById(id, 1);
+  Actor_SetSpritePriority(id, 3);
   Func_020052c0(id);
 }
 
 void Func_02000bac(s32 id) {
-  *((u8 *)Object_GetById(id) + 98) = 1;
-  ObjectMotion_SetActionVariant(id, 2);
+  *((u8 *)Actor_GetById(id) + 98) = 1;
+  Actor_SetSpritePriority(id, 2);
   Func_020052c0(id);
 }
 
@@ -55,17 +55,17 @@ void Func_02000c74(void) {
 }
 
 void Func_02000c90(s32 id) {
-  Object_GetById(id)->scaleY = 0x800;
-  Object_SetPositionAndResetMotion_(Object_GetById(id), 0xd80000, 0, 0xd80000);
+  Actor_GetById(id)->scaleY = 0x800;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), 0xd80000, 0, 0xd80000);
 }
 
 void Func_02000cb4(s32 id) {
-  Object_GetById(id)->scaleY = 0x800;
-  Object_SetPositionAndResetMotion_(Object_GetById(id), 0x1780000, 0, 0xf80000);
+  Actor_GetById(id)->scaleY = 0x800;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), 0x1780000, 0, 0xf80000);
 }
 
 void Func_02000cd8(s32 id, s32 dy, s32 scale) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->scaleY += scale;
   object->y += dy;
@@ -73,7 +73,7 @@ void Func_02000cd8(s32 id, s32 dy, s32 scale) {
 }
 
 void Func_02000cf8(s32 id, s32 dy, s32 scale) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->scaleY -= scale;
   object->y -= dy;
@@ -93,25 +93,25 @@ s32 Func_02000d3c(void) {
 }
 
 void Func_02000d64(void) {
-  Object_SetModeById_(11, 2);
-  Object_SetModeById_(13, 3);
-  Object_SetModeById_(14, 3);
-  Object_SetModeById_(15, 3);
-  Object_SetModeById_(16, 3);
-  Object_SetModeById_(9, 0);
-  ObjectMotion_SetActionVariant_(9, 2);
-  Object_GetById_(9)->priorityFlags &= ~2;
-  Object_SetPositionAndResetMotion_(Object_GetById_(9), 0xd80000, 0x80000,
+  Actor_SetModeById_(11, 2);
+  Actor_SetModeById_(13, 3);
+  Actor_SetModeById_(14, 3);
+  Actor_SetModeById_(15, 3);
+  Actor_SetModeById_(16, 3);
+  Actor_SetModeById_(9, 0);
+  Actor_SetSpritePriority_(9, 2);
+  Actor_GetById_(9)->priorityFlags &= ~2;
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(9), 0xd80000, 0x80000,
                                     0xd80000);
   if (GameFlag_Test_(0x208)) {
-    Object_SetModeById_(9, 4);
-    Object_SetPositionAndResetMotion_(Object_GetById(gAdventure.currentOwner),
+    Actor_SetModeById_(9, 4);
+    Actor_SetPositionAndResetMotion_(Actor_GetById(gAdventure.currentOwner),
                                       0xd80000, 0xc0000, 0xd80000);
-    ObjectDispatch_SetSingleChildFlags_(
-        Object_GetById(gAdventure.currentOwner), 0);
+    Actor_SetSingleChildFlags_(
+        Actor_GetById(gAdventure.currentOwner), 0);
   }
-  Object_GetById_(11)->scaleY = 0x10000;
-  Object_SetPositionAndResetMotion_(Object_GetById_(11), 0xd80000, 0, 0xd80000);
+  Actor_GetById_(11)->scaleY = 0x10000;
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(11), 0xd80000, 0, 0xd80000);
   Func_02000c90(13);
   Func_02000c90(14);
   if (GameFlag_Test_(0x301)) {
@@ -123,25 +123,25 @@ void Func_02000d64(void) {
 }
 
 void Func_02000e60(void) {
-  Object_SetModeById_(12, 2);
-  Object_SetModeById_(17, 3);
-  Object_SetModeById_(18, 3);
-  Object_SetModeById_(19, 3);
-  Object_SetModeById_(20, 3);
-  Object_SetModeById_(10, 0);
-  ObjectMotion_SetActionVariant_(10, 2);
-  Object_GetById_(10)->priorityFlags &= ~2;
-  Object_SetPositionAndResetMotion_(Object_GetById_(10), 0x1780000, 0x80000,
+  Actor_SetModeById_(12, 2);
+  Actor_SetModeById_(17, 3);
+  Actor_SetModeById_(18, 3);
+  Actor_SetModeById_(19, 3);
+  Actor_SetModeById_(20, 3);
+  Actor_SetModeById_(10, 0);
+  Actor_SetSpritePriority_(10, 2);
+  Actor_GetById_(10)->priorityFlags &= ~2;
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(10), 0x1780000, 0x80000,
                                     0xf80000);
   if (GameFlag_Test_(0x209)) {
-    Object_SetModeById_(10, 4);
-    Object_SetPositionAndResetMotion_(Object_GetById(gAdventure.currentOwner),
+    Actor_SetModeById_(10, 4);
+    Actor_SetPositionAndResetMotion_(Actor_GetById(gAdventure.currentOwner),
                                       0x1780000, 0xc0000, 0xf80000);
-    ObjectDispatch_SetSingleChildFlags_(
-        Object_GetById(gAdventure.currentOwner), 0);
+    Actor_SetSingleChildFlags_(
+        Actor_GetById(gAdventure.currentOwner), 0);
   }
-  Object_GetById_(12)->scaleY = 0x10000;
-  Object_SetPositionAndResetMotion_(Object_GetById_(12), 0x1780000, 0,
+  Actor_GetById_(12)->scaleY = 0x10000;
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(12), 0x1780000, 0,
                                     0xf80000);
   Func_02000cb4(17);
   Func_02000cb4(18);

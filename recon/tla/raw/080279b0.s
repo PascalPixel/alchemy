@@ -285,12 +285,12 @@ Func_080279b0:
 	beq .L_08027bec
 	adds r0, r7, #0
 	movs r1, #9
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_08027bf4
 .L_08027bec:
 	adds r0, r7, #0
 	ldr r1, [sp, #4]
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 .L_08027bf4:
 	ldr r3, [sp, #16]
 	cmp r3, #0
@@ -346,7 +346,7 @@ Func_080279b0:
 	ldr r1, [r3]
 	adds r0, r7, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r1, [r7, #36]
 	ldr r6, .L_08027d38
 	adds r0, r1, #0
@@ -492,7 +492,7 @@ Func_080279b0:
 	beq .L_08027dc0
 	ldr r1, .L_08027e00
 	ldr r6, [r5, #80]
-	bl ObjectDispatch_Initialize
+	bl Actor_StartScript
 	add r0, sp, #16
 	ldrb r0, [r0]
 	adds r3, r5, #0

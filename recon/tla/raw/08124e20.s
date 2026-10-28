@@ -131,12 +131,12 @@ Func_08124e20:
 	bl BattleObject_Get
 	movs r1, #3
 	ldr r0, [r0]
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	bl BattleObject_Get
 	movs r1, #32
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_08124f46:
 	ldrb r7, [r6]
 	ldrb r2, [r6, #1]

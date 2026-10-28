@@ -22,7 +22,7 @@ const u8 *Func_02001890(void) {
 
 void Func_02001904(void) {
   if (!GameFlag_Test(0x307))
-    OBJECT_BYTE(Object_GetById(17), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
     Func_020058e0(20, 0, 0);
   Func_020006b4(15);
@@ -56,35 +56,35 @@ void Func_02001974(void) {
   Func_0200062c(18);
   Func_0200062c(19);
   Func_0200062c(20);
-  OBJECT_BYTE(Object_GetById(17), 98) = 1;
-  OBJECT_BYTE(Object_GetById(18), 98) = 1;
-  OBJECT_BYTE(Object_GetById(19), 98) = 1;
-  OBJECT_BYTE(Object_GetById(20), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(17), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(19), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(20), 98) = 1;
   if (!GameFlag_Test(0x214))
-    Object_SetModeById(17, 5);
+    Actor_SetModeById(17, 5);
   else
     Func_0200070c(17, -16);
   if (!GameFlag_Test(0x215))
-    Object_SetModeById(18, 5);
+    Actor_SetModeById(18, 5);
   else
     Func_0200070c(18, -16);
   if (!GameFlag_Test(0x216))
-    Object_SetModeById(19, 5);
+    Actor_SetModeById(19, 5);
   else
     Func_0200070c(19, -16);
   if (!GameFlag_Test(0x217))
-    Object_SetModeById(20, 5);
+    Actor_SetModeById(20, 5);
   else
     Func_0200070c(20, -16);
 }
 
 void Func_02001a70(void) {
   if (!GameFlag_Test(0x327))
-    OBJECT_BYTE(Object_GetById(15), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
     Func_020058e0(20, 0, 0);
   if (!GameFlag_Test(0x328))
-    OBJECT_BYTE(Object_GetById(16), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Func_020058e0(21, 0, 0);
   Func_020006b4(15);

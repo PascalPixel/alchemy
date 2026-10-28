@@ -12,7 +12,7 @@ void Func_02000048(struct FieldActor *object) {
 }
 
 void Func_02000080(s32 id) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
   /* FAKEMATCH: the sprite is loaded before the zero is built; a struct field, a

@@ -17,7 +17,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "serial_runtime.h"
 #include "text/msg_ids.h"
 
@@ -65,7 +65,7 @@ s32 Func_02000134(void) {
 
   work = Ram_HeapSlots->eventWork;
   result = 1;
-  if (((struct ObjectRuntime *)Object_GetById(4))->z > 0xe00000) {
+  if (((struct Actor *)Actor_GetById(4))->z > 0xe00000) {
     GameFlag_ClearBit(0x304);
   }
   if (work->raisedTrigger != 2) {

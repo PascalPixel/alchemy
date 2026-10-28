@@ -7,12 +7,12 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
+s32 Actor_GetById();
 extern u8 gAdventure[];
 
 void Func_02001644(void) {
   s32 t0;
 
-  t0 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   FIELD_AT((t0 + 0x22), u8, 0) = 0;
 }

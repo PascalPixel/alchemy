@@ -4,7 +4,7 @@
 // reloading gAdventure after room 1. Func_020018c8(10) goes through Call1
 // (86 to 85).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "io_reg.h"
 #include "game/edition.h"
@@ -22,8 +22,8 @@ s32 GameFlag_Test(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetWideSprite(s32 id, s32 wide);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetWideSprite(s32 id, s32 wide);
 s32 Func_02000038(s32 id);
 void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_02000b54(const u8 *entries);
@@ -70,7 +70,7 @@ s32 Func_02001418(void) {
       YampiDesertCave_Call1848(32, 13, 1, 1, 34, 12);
     }
     if (!GameFlag_Test(0x302))
-      Object_SetWideSprite(64, 1);
+      Actor_SetWideSprite(64, 1);
   }
   if (gAdventure.scene == (s32)&SceneId_Ov662Room3) {
     if ((u16)(gAdventure.entrance - 3) <= 2) {
@@ -101,7 +101,7 @@ s32 Func_02001418(void) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       YampiDesertCave_Call1848(12, 11, 1, 1, 8, 10);
 #else
-      struct ObjectRuntime *object = Object_GetById(13);
+      struct Actor *object = Actor_GetById(13);
 
       YampiDesertCave_Call1848(12, 11, 1, 1, object->x >> 20, object->z >> 20);
 #endif
@@ -127,8 +127,8 @@ s32 Func_02001418(void) {
           GameFlag_SetByte(0x278, 0);
         Task_Add(Func_020011e0, 0x480);
         GameFlag_SetBit(0x270);
-        ObjectMotion_SetActionVariant(16, 3);
-        Object_GetById(16)->collisionFlags = placed;
+        Actor_SetSpritePriority(16, 3);
+        Actor_GetById(16)->collisionFlags = placed;
       }
     }
   }

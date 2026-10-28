@@ -51,10 +51,10 @@ s32 Func_020002f8(void) {
 
 s32 Func_0200030c(void) {
   struct Adventure *party;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u8 flags;
 
-  object = Object_GetById(16);
+  object = Actor_GetById(16);
   flags = object->priorityFlags & ~1;
   party = &gAdventure;
   /* FAKEMATCH: the empty asm holds the store below gAdventure's address load,
@@ -66,7 +66,7 @@ s32 Func_0200030c(void) {
    * without it the offset's movs and lsls move above the strb (differ 2). */
   do {
   } while (0);
-  Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Ov65dRoom2) {
     if (GameFlag_Test(0x200)) {
       Func_02000620(0);

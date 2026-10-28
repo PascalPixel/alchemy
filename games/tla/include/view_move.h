@@ -4,7 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-struct ObjectRuntime;
+struct Actor;
 
 // The view moves of the field Psynergy scenes (kinds 19 and 27). Their work
 // sits in heap slot 92 (battle_fx_work[0]): Func_080e89e4 opens the map's
@@ -29,7 +29,7 @@ struct ViewMoveWork {
   s32 savedMaxZ;
   s16 edgeX; ///< -1 beside the low edge, 1 beside the high edge, else 0
   s16 edgeZ;
-  struct ObjectRuntime *objects[8];
+  struct Actor *objects[8];
   u16 spriteOffsets[8];
   s32 count;
 };

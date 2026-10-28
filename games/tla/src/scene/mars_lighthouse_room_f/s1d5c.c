@@ -2,14 +2,14 @@
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-s32 Func_02001d5c(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02001d5c(struct Actor *a, struct Actor *b) {
   if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&
       ABS(a->z - b->z) < 0x80000)
     return 1;
   return 0;
 }
 
-s32 Func_02001dc0(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02001dc0(struct Actor *a, struct Actor *b) {
   s32 dy;
 
   if (ABS(a->x - b->x) < 0xc0000) {

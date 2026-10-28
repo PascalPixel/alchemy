@@ -23,7 +23,7 @@ void Func_02002f34(void) {
       asm volatile("");
       object->field64 = value;
       object->motionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       Func_02005a24(object, 2);
       Func_02005a2c(object, gData_02005ca4);
       object->sprite->priority = 1;

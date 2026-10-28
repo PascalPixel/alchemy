@@ -24,7 +24,7 @@ void Func_02000ce8(void) {
    * it, 2 of 142 instructions differ in tla-en. */
   asm("" : "+l"(map) : "l"(&gAdventure));
   layer = &map->layers[1];
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
@@ -33,7 +33,7 @@ void Func_02000ce8(void) {
   ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
   leader->motionFlags = 0;
   leader->y = -50 << 16;
   leader->height = -50 << 16;
@@ -67,7 +67,7 @@ loop:
   Call3((void (*)())Func_020039b8, 0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
   WaitFrames(1);
   Func_020039e0();
@@ -89,7 +89,7 @@ void Func_02000e38(void) {
    * the barrier above, 4 of 95 differ, and with neither 2, in tla-en. */
   asm("" : "+l"(map) : "l"(&gAdventure));
   layer = &map->layers[1];
-  object = Object_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gAdventure.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
@@ -97,7 +97,7 @@ void Func_02000e38(void) {
   ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0x4000, 20);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
   object->motionFlags = 0;
   Func_02003b48(245);
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
@@ -122,7 +122,7 @@ loop:
 
 void Func_02000f18(s32 actor) {
   Func_02003aa0(actor);
-  Object_GetById(actor)->priorityFlags |= 0x20;
+  Actor_GetById(actor)->priorityFlags |= 0x20;
 }
 
 void Func_02000f34(void) {
@@ -146,7 +146,7 @@ void Func_02000fb8(void) {
   struct ShrineOfTheSeaGodObject *object;
 
   Func_02003b40();
-  object = Object_GetById(8);
+  object = Actor_GetById(8);
   if (object->x >> 20 == 21 && object->z >> 20 == 13)
     GameFlag_SetBit(0x207);
   else
@@ -154,7 +154,7 @@ void Func_02000fb8(void) {
 }
 
 void Func_02000fec(void) {
-  struct ShrineOfTheSeaGodObject *object = Object_GetById(8);
+  struct ShrineOfTheSeaGodObject *object = Actor_GetById(8);
 
   Func_02003b40();
   if (object->x >> 20 == 12)
@@ -172,7 +172,7 @@ void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
 }
 
 void Func_02001038(void) {
-  struct ShrineOfTheSeaGodObject *object = Object_GetById(8);
+  struct ShrineOfTheSeaGodObject *object = Actor_GetById(8);
   s32 z = object->z >> 20;
 
   if (z == 16) {
@@ -180,7 +180,7 @@ void Func_02001038(void) {
     Func_02003b08(0);
     Func_02001010(object);
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, z);
-    ObjectMotion_SetActionVariant(8, 3);
+    Actor_SetSpritePriority(8, 3);
     Func_020039e0();
     GameFlag_SetBit(0x301);
   }
@@ -188,19 +188,19 @@ void Func_02001038(void) {
 
 void Func_02001088(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
+      Actor_GetById(gAdventure.currentOwner);
   u32 id;
 
   for (id = 9; id <= 13;) {
-    u8 *flags = &Object_GetById(id)->priorityFlags;
+    u8 *flags = &Actor_GetById(id)->priorityFlags;
     u32 next = id + 1;
 
     if (leader->y > 0x100000) {
-      ObjectMotion_SetActionVariant(id, 2);
+      Actor_SetSpritePriority(id, 2);
       /* FAKEMATCH: the native ties the flag or to the constant's register. */
       *flags = *flags + 2 - (*flags & 2);
     } else {
-      ObjectMotion_SetActionVariant(id, 1);
+      Actor_SetSpritePriority(id, 1);
       *flags &= ~2;
     }
     id = next;
@@ -209,7 +209,7 @@ void Func_02001088(void) {
 
 void Func_020010e8(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
+      Actor_GetById(gAdventure.currentOwner);
   s32 y;
 
   Func_02003b28();
@@ -224,7 +224,7 @@ void Func_020010e8(void) {
 
 void Func_02001128(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
+      Actor_GetById(gAdventure.currentOwner);
   s32 y;
   s32 z;
 
@@ -236,32 +236,32 @@ void Func_02001128(void) {
     /* FAKEMATCH: loads the leader depth before it builds the threshold. */
     __asm__("");
     if (z < 0x1280000) {
-      ObjectMotion_SetActionVariant(10, 1);
-      ObjectMotion_SetActionVariant(11, 1);
-      ObjectMotion_SetActionVariant(12, 2);
+      Actor_SetSpritePriority(10, 1);
+      Actor_SetSpritePriority(11, 1);
+      Actor_SetSpritePriority(12, 2);
     } else {
-      ObjectMotion_SetActionVariant(10, 2);
-      ObjectMotion_SetActionVariant(11, 2);
-      ObjectMotion_SetActionVariant(12, 3);
+      Actor_SetSpritePriority(10, 2);
+      Actor_SetSpritePriority(11, 2);
+      Actor_SetSpritePriority(12, 3);
     }
   } else {
-    ObjectMotion_SetActionVariant(10, 2);
-    ObjectMotion_SetActionVariant(11, 2);
-    ObjectMotion_SetActionVariant(12, 3);
+    Actor_SetSpritePriority(10, 2);
+    Actor_SetSpritePriority(11, 2);
+    Actor_SetSpritePriority(12, 3);
   }
 }
 
 void Func_020011a0(void) {
-  struct ShrineOfTheSeaGodObject *first = Object_GetById(8);
-  struct ShrineOfTheSeaGodObject *second = Object_GetById(9);
+  struct ShrineOfTheSeaGodObject *first = Actor_GetById(8);
+  struct ShrineOfTheSeaGodObject *second = Actor_GetById(9);
 
   SET_POSITION(second, first->x, 0x140000, first->z);
 }
 
 void Func_020011c0(void) {
-  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~0x20;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags &= ~0x20;
 }
 
 void Func_020011e0(void) {
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
 }

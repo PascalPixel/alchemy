@@ -111,9 +111,9 @@ void EffectPosition_ProjectBattler(s32 actor,
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
+                   s32 timerFrames); // Actor_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
@@ -354,7 +354,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

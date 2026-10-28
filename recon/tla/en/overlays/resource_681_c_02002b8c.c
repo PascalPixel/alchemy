@@ -3,7 +3,7 @@
 // once per pending step, at frame 60 of each 240 they lean one way and at 180
 // come back.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -21,7 +21,7 @@ struct SwayState {
 extern struct SwayState gSceneState;
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02002b58(s32 id, s32 x, s32 z);
 
 void Func_02002b8c(void) {
@@ -35,7 +35,7 @@ void Func_02002b8c(void) {
     stopped |= 1;
   id = 8;
   do {
-    Object_GetById(id++)->movementState = stopped;
+    Actor_GetById(id++)->movementState = stopped;
   } while (id <= 16);
   if (stopped != 0)
     return;

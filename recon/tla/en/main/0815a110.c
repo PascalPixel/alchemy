@@ -188,7 +188,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Arms the H-blank DMA of the work's line table into BG2X.
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -476,7 +476,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

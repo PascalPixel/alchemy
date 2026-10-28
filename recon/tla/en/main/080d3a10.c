@@ -12,21 +12,21 @@
 // 0xc000, 0x4000) and the sprite offsets are signed bytes (subs #4).
 #include "types.h"
 #include "field_sprite.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void SetMapCellCollisionFar(s32 layer, s32 x, s32 z, s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 
 void Func_080d3a10(s32 id, u32 angle, s32 mode) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->animation;
   s32 position[3];
 
   if (object == NULL || sprite == NULL)
     return;
   if (mode != -1)
-    Object_SetMode(object, mode);
+    Actor_SetMode(object, mode);
   position[0] = object->x;
   angle = (angle + 0x2000) & 0xc000;
   position[2] = object->z;

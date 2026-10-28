@@ -49,7 +49,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void);                   // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);                   // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
@@ -254,7 +254,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       Func_081180e8(144);
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

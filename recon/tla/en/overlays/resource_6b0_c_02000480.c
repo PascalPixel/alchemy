@@ -26,18 +26,18 @@ struct SpriteView {
 
 extern const s32 *gData_02003840[];
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_020032e0(struct FieldActor *object, s32 mode);
 void Func_020032e8(struct FieldActor *object, const void *script);
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, u32 value);
-void Object_SetPartAttribute(struct FieldActor *object, s32 attribute);
-void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
+void Actor_SetSingleChildFlags(struct FieldActor *object, u32 value);
+void Actor_SetPartAttribute(struct FieldActor *object, s32 attribute);
+void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Object_GetById(0);
+  struct FieldActor *party = Actor_GetById(0);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -55,12 +55,12 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_020032e8((struct FieldActor *)effect,
                 gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
+  Actor_SetSingleChildFlags((struct FieldActor *)effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocityX = velocityX;
   effect->velocityY = velocityY;
   effect->velocityZ = velocityZ;
-  Object_SetSpritePriority((struct FieldActor *)effect,
+  Scene_SetActorSpritePriority((struct FieldActor *)effect,
                            party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
@@ -69,12 +69,12 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Object_SetPartAttribute((struct FieldActor *)effect, options->palette);
+    Actor_SetPartAttribute((struct FieldActor *)effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     do {
       ((struct SpriteView *)sprite)->priority = options->priority;
-      Object_SetSpritePriority((struct FieldActor *)effect, options->priority);
+      Scene_SetActorSpritePriority((struct FieldActor *)effect, options->priority);
     } while (0);
   }
   start = flags & EFFECT_USE_START_SCALE;

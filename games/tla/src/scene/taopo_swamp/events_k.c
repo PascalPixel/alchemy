@@ -2,11 +2,11 @@
 
 void Func_020022ac(void) {
   struct SceneState *state = &gSceneState;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct SpriteWork *sprite;
 
   if (state->mode != 2) {
-    object = Object_GetById(Func_02002998());
+    object = Actor_GetById(Func_02002998());
     sprite = object->animation;
     Func_02002898();
     Func_02002968(0);
@@ -32,7 +32,7 @@ void Func_02002334(void) {
 
   Func_0200237c();
   if (state->mode != 0) {
-    sprite = Object_GetById(Func_02002998())->animation;
+    sprite = Actor_GetById(Func_02002998())->animation;
     if (sprite->child)
       sprite->child[6] = 9;
     sprite->mode = (sprite->mode & 0xf7) | 1;
@@ -45,7 +45,7 @@ void Func_02002334(void) {
 
 void Func_0200237c(void) {
   struct SceneState *state = &gSceneState;
-  struct ObjectRuntime *object = Object_GetById(Func_02002998());
+  struct Actor *object = Actor_GetById(Func_02002998());
 
   state->x = (object->x & 0xfff00000) + 0x80000;
   state->z = (object->z & 0xfff00000) + 0x80000;

@@ -7,7 +7,7 @@
 // reaches 999, then frees the VRAM entries and the work.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct BeamSprite {
   u8 unk00[5];
@@ -45,13 +45,13 @@ struct BeamWork {
   u8 unkb09;
   u8 unkb0a;
   u8 side;
-  struct ObjectRuntime *first;
-  struct ObjectRuntime *second;
+  struct Actor *first;
+  struct Actor *second;
 };
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void *Resource_GetTableEntry(s32 id);
 void Func_020029a0(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -59,10 +59,10 @@ s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Resource_ResetEntry(s32 entry);
 void Func_02002b30(struct BeamSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-void Func_02002a20(struct ObjectRuntime *object);
-void Func_02002a28(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02002a20(struct Actor *object);
+void Func_02002a28(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002b68(s32 sound);
-void Func_0200105c(struct ObjectRuntime *object);
+void Func_0200105c(struct Actor *object);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Task_Add(void (*callback)(void), s32 priority);
@@ -72,8 +72,8 @@ void Func_02001080(void);
 void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork *work =
       HeapSlot_AllocFar(220, sizeof(struct BeamWork));
-  struct ObjectRuntime *carrier =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 460);
+  struct Actor *carrier =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   struct BeamSprite *sprite;
   struct BeamSpark *spark;
   s32 smallEntry;
@@ -81,8 +81,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   s32 tile;
   s32 i;
 
-  work->first = Object_GetById(a);
-  work->second = Object_GetById(b);
+  work->first = Actor_GetById(a);
+  work->second = Actor_GetById(b);
   Func_020029a0(Resource_GetTableEntry(0x1eb), work);
   smallEntry = Resource_FindFreeEntry();
   tile = VramCache_Load(smallEntry, 256, work);

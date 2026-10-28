@@ -13,21 +13,21 @@ Map_UpdateCurrentTileBlockFar:
 	.thumb_func
 WorldMap_LoadGraphicsFar:
 	overlay_veneer Func_0802be4c
-	.global Object_ResetMotion
+	.global Actor_ResetMotion
 	.thumb_func
-Object_ResetMotion:
-	overlay_veneer ObjectDispatch_StartIdle
-	.global Object_RefreshSelector
+Actor_ResetMotion:
+	overlay_veneer Actor_StartIdle
+	.global Actor_RefreshSelector
 	.thumb_func
-Object_RefreshSelector:
-	overlay_veneer ObjectDispatch_WaitForCommandEnd
-	.global Object_SetPosition
+Actor_RefreshSelector:
+	overlay_veneer Actor_WaitForCommandEnd
+	.global Actor_SetTargetPosition
 	.thumb_func
-Object_SetPosition:
-	overlay_veneer Object_SetMoveTarget
-	.global Object_CommitPosition
+Actor_SetTargetPosition:
+	overlay_veneer Actor_SetMoveTarget
+	.global Actor_CommitPosition
 	.thumb_func
-Object_CommitPosition:
+Actor_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeout
 	.global Map_GetScreenRelativePositionFar
 	.thumb_func

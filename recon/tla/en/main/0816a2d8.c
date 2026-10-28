@@ -81,12 +81,12 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
 void Sound_PlayFar(s32 cue);
-void Object_SetMode(struct MotionObject *object, s32 mode);
-s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
+void Actor_SetMode(struct MotionObject *object, s32 mode);
+s32 Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                            s32 value);
 // The target is a whole word here: variant 3 passes the user twice, loaded once
 // and copied, where an s16 parameter would load it again halved.
@@ -167,8 +167,8 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   else if (variant == 4) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
 
-    Object_SetMode(user, 2);
-    ObjectDispatch_SetAnimationSpeedFar(user, 48);
+    Actor_SetMode(user, 2);
+    Actor_SetAnimationSpeedFar(user, 48);
   } else
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
   if (variant == 4)
@@ -243,7 +243,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
       Func_08118088(effect->actors[0], 4);
     }
     Func_08158ce0(16, 16);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -259,7 +259,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     SummonEffect_RunCanvasMode2(effect);
   } else {
     if (variant == 4)
-      ObjectDispatch_SetAnimationSpeedFar(
+      Actor_SetAnimationSpeedFar(
           GetBattleObjectSlotFar(effect->actor)->object, 16);
     BattleEffect_EndCanvasLayer();
   }

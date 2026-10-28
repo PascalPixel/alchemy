@@ -59,7 +59,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void Func_08158ce0(s32 randomMask, u32 range);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
@@ -337,7 +337,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

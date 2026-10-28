@@ -13,7 +13,7 @@ Func_080d7b04:
 	ldr r0, [r3]
 	adds r7, #64
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #0
 	ldrsb r2, [r7, r2]
 	cmp r2, #0

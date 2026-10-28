@@ -1,28 +1,28 @@
 #include "types.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
-struct ObjectRuntime *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
+struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                    s32 angle) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 scale;
   /* FAKEMATCH: the limit's first byte is pinned to the r2 the native builds it
    * in; as a free temporary it takes r3 and the scale r2 (differ 30). */
   register s32 limit asm("r2");
 
   Sound_PlayFar(138);
-  object = Object_Spawn(278, x, y, z);
+  object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
     object->scaleY = 0x4000;
     object->scaleX = 0x4000;
     object->speedLimit = 0x30000;
     object->acceleration = 0x30000;
     object->actionFlags = 0;
-    Object_SetMode(object, 1);
+    Actor_SetMode(object, 1);
     scale = object->scaleX;
     /* FAKEMATCH: the barrier loads the scale before the 0x10000 limit is
      * started; without it the limit is started first (one reordered pair,

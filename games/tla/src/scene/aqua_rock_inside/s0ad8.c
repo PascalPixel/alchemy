@@ -9,7 +9,7 @@ void Func_02000ad8(void) {
 
 s32 Func_02000b24(s32 id, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
     struct MapCell *cells = map->layers[0].cells;
@@ -21,19 +21,19 @@ s32 Func_02000b24(s32 id, s32 value) {
 }
 
 void Func_02000b5c(void) {
-  struct ObjectRuntime *object = Object_GetById(12);
+  struct Actor *object = Actor_GetById(12);
 
   Func_02003d1c_(64, 43, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000b84(void) {
-  struct ObjectRuntime *object = Object_GetById(12);
+  struct Actor *object = Actor_GetById(12);
 
   Func_02003d1c_(64, 42, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000bac(void) {
-  struct ObjectRuntime *object = Object_GetById(12);
+  struct Actor *object = Actor_GetById(12);
 
   Func_02003d1c_(64, 41, 1, 1, object->x >> 20, object->z >> 20);
 }

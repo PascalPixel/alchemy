@@ -4,13 +4,13 @@
 // in the table. Shared with overlay 6a1 and others.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern const u16 gData_02002478[];
 extern const s8 gData_02002484[][4];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02002330(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
@@ -19,7 +19,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
 
 s32 Func_02000c78(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u16 shape = *(s16 *)((struct FieldSprite *)object->animation)->record;
   s16 i = 0;
   const s8 *rect;

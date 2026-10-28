@@ -1,4 +1,4 @@
-#include "object_runtime.h"
+#include "actor.h"
 
 struct BattleFxDefinition {
   u16 id;

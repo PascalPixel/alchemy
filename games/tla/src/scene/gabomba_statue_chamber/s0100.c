@@ -10,7 +10,7 @@ void Func_02000100(void) {
   volatile u16 *color = (volatile u16 *)0x0500021e;
   struct GabombaStatueChamberEventWork *work;
 
-  Object_SetModeById(8, 2);
+  Actor_SetModeById(8, 2);
   Call2((void (*)())Func_02001ec0, 0x10000, 2);
   Call2((void (*)())Func_02001eb8, 0x10003, 2);
   Func_02001ec8(20);
@@ -22,5 +22,5 @@ void Func_02000100(void) {
   Call2((void (*)())Func_02001eb8, 0x10000, 2);
   Func_02001ec8(20);
   WaitFrames(20);
-  Object_SetModeById(8, 1);
+  Actor_SetModeById(8, 1);
 }

@@ -4,12 +4,12 @@
 // and the y statement before the x statement do not move it.
 #include "types.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Math_Sine(s32 angle);
 
-s32 Func_02001064(struct ObjectRuntime *object) {
-  struct ObjectRuntime *anchor = object->watchedObject;
+s32 Func_02001064(struct Actor *object) {
+  struct Actor *anchor = object->watchedObject;
   s32 frame;
   s32 scale;
 

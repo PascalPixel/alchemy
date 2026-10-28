@@ -1,8 +1,8 @@
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002430(void) {
-  struct ObjectRuntime *first = Object_GetById(12);
-  struct ObjectRuntime *second = Object_GetById(13);
+  struct Actor *first = Actor_GetById(12);
+  struct Actor *second = Actor_GetById(13);
 
   gData_0200519c = first->x;
   gData_02005194 = first->z;

@@ -3263,13 +3263,13 @@ Func_08173aac:
 	ldr r5, [r0]
 	movs r1, #0
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #212
 	bl Sound_PlayFar
 .L_0817549e:
@@ -3281,7 +3281,7 @@ Func_08173aac:
 	bl GetBattleObjectSlotFar
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_081754b4:
 	mov r5, r11
 	cmp r5, #22
@@ -4567,7 +4567,7 @@ Func_08173aac:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	ldr r2, [sp, #52]
 	cmp r2, #1
 	bne .L_08175f0c

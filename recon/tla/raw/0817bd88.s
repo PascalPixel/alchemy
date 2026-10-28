@@ -556,7 +556,7 @@ BattleEffect_RunFirePuppet:
 	adds r0, r6, #0
 	bl Heap_Release
 .L_0817c202:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0

@@ -9,12 +9,12 @@
 #include "types.h"
 #include "lib/call.h"
 #include "io_reg.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02004d40(void);
 void Func_02004d48(void);
@@ -23,18 +23,18 @@ void Func_02004f30(s32 sound);
 void WaitFrames(s32 frames);
 void Func_02004cd8(s32 a, s32 b, s32 x, s32 z, s32 width, s32 height);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
-void Func_02004cb0(struct ObjectRuntime *object);
+void Func_02004cb0(struct Actor *object);
 
 void Func_020026a4(s32 x, s32 z) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
   s32 cellZ;
 
   object = Import_ActorCreate(288, x << 16, 0, z << 16);
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f44;
-  Object_SetSpritePriority(object, 0);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Scene_SetActorSpritePriority(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   ((struct FieldSprite *)object->animation)->blendMode = 2;
   Func_02004d40();
   Func_02004e90(0);

@@ -920,7 +920,7 @@ Func_02000864:
 	ldr r1, [r3]
 	movs r2, #0
 	movs r0, #8
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	ldr r0, .L_02008b2c
 	bl Func_02001a64
 	movs r1, #0
@@ -933,19 +933,19 @@ Func_02000864:
 	movs r0, #4
 	lsls r1, r1, #9
 	lsls r2, r2, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #216
 	movs r2, #184
 	movs r0, #4
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #4
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #4
 	movs r1, #216
 	movs r2, #168
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #4
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	b .L_02008b00
 .L_02008a1a:
 	movs r1, #128
@@ -953,13 +953,13 @@ Func_02000864:
 	movs r0, #4
 	lsls r1, r1, #9
 	lsls r2, r2, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #216
 	movs r2, #200
 	movs r0, #4
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #4
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r1, #200
 	movs r2, #192
 	lsls r1, r1, #5
@@ -967,11 +967,11 @@ Func_02000864:
 	movs r0, #4
 	adds r1, #153
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #4
 	movs r1, #216
 	movs r2, #168
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	bl Func_020007b8
 	cmp r0, #0
 	bge .L_02008aec
@@ -980,11 +980,11 @@ Func_02000864:
 	movs r0, #4
 	lsls r1, r1, #9
 	lsls r2, r2, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #200
 	movs r1, #216
 	movs r0, #4
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #5
 	bl Func_0200198c
 	movs r0, #8
@@ -992,7 +992,7 @@ Func_02000864:
 	movs r0, #5
 	bl Func_02001994
 	movs r0, #4
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #216
 	bl HeapSlot_Release
 	movs r0, #0
@@ -1037,9 +1037,9 @@ Func_02000864:
 	movs r0, #4
 	lsls r1, r1, #8
 	lsls r2, r2, #7
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #4
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 .L_02008b00:
 	movs r0, #116
 	adds r0, #255
@@ -1148,7 +1148,7 @@ Func_02000fbc:
 	ldr r1, [r3]
 	movs r2, #0
 	mov r0, r8
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	ldr r0, .L_0200911c
 	bl Func_02001a64
 	mov r0, r8
@@ -1471,7 +1471,7 @@ Func_0200145c:
 	ldr r1, [r3]
 	movs r2, #0
 	movs r0, #8
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	ldr r0, .L_020097f8
 	adds r0, r5, r0
 	bl Func_02001a64
@@ -1556,7 +1556,7 @@ Func_0200145c:
 	ldr r1, [r3]
 	movs r0, #8
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #202
@@ -1757,7 +1757,7 @@ Func_0200145c:
 	ldr r1, [r3]
 	movs r2, #0
 	movs r0, #8
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	ldr r0, .L_020098b8
 	bl Func_02001a64
 	movs r0, #8

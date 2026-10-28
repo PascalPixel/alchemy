@@ -13,7 +13,7 @@ void Func_02000798(void) {
   s32 moving;
 
   Func_02002dd8();
-  object = Object_GetById(8);
+  object = Actor_GetById(8);
   x = object->x >> 20;
   if (x == 16) {
     Func_02002c68();

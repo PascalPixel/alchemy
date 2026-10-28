@@ -12,7 +12,7 @@ void Func_02003d30(void) {
   Func_02004a24(0);
   Func_02004934(16, 0, 0);
   Func_02004934(17, 0, 0);
-  Object_GetById(15)->facing = 0xc000;
+  Actor_GetById(15)->facing = 0xc000;
   ShamanVillage_CamMove(0xe00000, -1, 0xb60000, 0);
   WaitFrames(1);
   Func_0200482c();
@@ -31,7 +31,7 @@ void Func_02003d30(void) {
   ShamanVillage_ObjArm(gAdventure.currentOwner, 0xe000, 0);
   ShamanVillage_ObjWalk2(16, 208, 264);
   ShamanVillage_ObjWalk(17, 240, 264);
-  Object_SetModeById(16, 1);
+  Actor_SetModeById(16, 1);
   FieldEvent_WaitFrames(10);
   ShamanVillage_ObjArm(16, angle, 0);
   ShamanVillage_ObjArm(17, angle, 0);
@@ -40,7 +40,7 @@ void Func_02003d30(void) {
   Func_020049f4();
   Func_0200498c((s32)MsgShamanMustFinishTrialRoad);
   ShamanVillage_MessagePut(0x200f, 0);
-  Object_SetModeById(15, 3);
+  Actor_SetModeById(15, 3);
   ShamanVillage_MessageOpen(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
     ShamanVillage_MessageOpen(0x200f, 0);

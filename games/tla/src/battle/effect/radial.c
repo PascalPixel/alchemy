@@ -82,7 +82,7 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
+    Actor_StartScriptFar((struct DispatchObject *)effect,
                                  (u32)gBattleEffect_SharedParticleScript);
 }
 

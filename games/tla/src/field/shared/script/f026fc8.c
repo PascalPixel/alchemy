@@ -1,8 +1,8 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "object_dispatch.h"
 
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 extern const s32 gData_0802ec88[];
 
 struct Child {
@@ -14,8 +14,8 @@ struct Child {
   u8 value1a;
 };
 
-void Func_08026fc8(struct ObjectRuntime *object, s32 mode) {
-  struct ObjectRuntime *created;
+void Func_08026fc8(struct Actor *object, s32 mode) {
+  struct Actor *created;
   struct Child *sprite;
 
   created = Func_08023220(14, object->x, object->y + 0x40000, object->z);
@@ -26,7 +26,7 @@ void Func_08026fc8(struct ObjectRuntime *object, s32 mode) {
     struct Child *child = created->animation;
 
     created->terrainHeight = object->terrainHeight;
-    ObjectDispatch_Initialize((struct DispatchObject *)created, gData_0802ec88);
+    Actor_StartScript((struct DispatchObject *)created, gData_0802ec88);
     created->motionFlags = 0;
     if (child != NULL) {
       Animation_ApplyChildArgument((struct DispatchChild *)child, 1);

@@ -19,7 +19,7 @@ Func_080ddda0:
 	adds r0, r5, #0
 	str r7, [r5, #104]
 	ldr r1, .L_080dde9c
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	ldr r0, [r6, #4]
 	add r5, sp, #8
 	str r0, [r5]
@@ -63,7 +63,7 @@ Func_080ddda0:
 	cmp r5, #0
 	bge .L_080dde08
 	ldr r0, [sp, #0]
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	ldr r3, .L_080ddea4
 	movs r0, #130
 	str r3, [r7, #108]
@@ -128,4 +128,4 @@ Func_080ddda0:
 .L_080ddea0:
 	.4byte 0xffe00000
 .L_080ddea4:
-	.4byte ObjectGroup_ApplyRandomChildValues
+	.4byte Actor_ApplyRandomChildValues

@@ -112,7 +112,7 @@ Func_02000250:
 	bl Func_02003198
 .L_0200833a:
 	movs r0, #13
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #32
@@ -134,14 +134,14 @@ Func_02000250:
 	cmp r0, #0
 	bne .L_020083d6
 	movs r0, #14
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r3, [r0]
 	movs r2, #128
 	orrs r3, r2
 	strb r3, [r0]
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	adds r1, r0, #0
 	adds r1, #35
 	ldrb r3, [r1]

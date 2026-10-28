@@ -6,14 +6,14 @@
 // a six-minute permute do not reproduce it.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "frame.h"
 #include "lib/call.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02003000(s32 a, s32 b, s32 c);
 void Func_02003008(void);
 void Func_02003048(void);
@@ -43,7 +43,7 @@ static inline void TundariaTower_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 void Func_020011e0(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   s32 angle;
   u32 i;
@@ -84,7 +84,7 @@ void Func_020011e0(void) {
   } while (i <= 16);
   Func_020031a8(188);
   Func_020030c8(gAdventure.currentOwner, 0x101);
-  Object_SetModeById(gAdventure.currentOwner, 22);
+  Actor_SetModeById(gAdventure.currentOwner, 22);
   Call3((void (*)())Func_02003000, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02003000, -1, -1, 0xe666);
   Func_02003008();

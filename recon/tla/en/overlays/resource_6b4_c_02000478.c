@@ -6,12 +6,12 @@
 // counter in sl) and the direction's address, which the native forms inside the
 // loop after the first call and this before the loop.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "vector3.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -21,13 +21,13 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 void Func_02000478(s32 radius, u32 count) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct EffectOptions options;
   struct Vector3 dir;
   u32 i;
   s32 angle;
 
-  object = Object_GetById(8);
+  object = Actor_GetById(8);
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;

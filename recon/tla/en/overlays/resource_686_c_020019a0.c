@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -21,7 +21,7 @@ extern u8 gData_02003788[];
 extern u8 gData_02003782[];
 extern u8 Func_020015ac[];
 extern u8 gData_02002ff0[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02002e24();
 void FieldEvent_WaitFrames();
 void Func_02002eec();
@@ -40,11 +40,11 @@ s32 Func_020019a0(s32 a0, s32 a1, s32 a2, s32 a3) {
   r5 = (s32)&gAdventure;
   r5 = r5 + 532;
   /* sub (s32)stack, #20 */
-  v0 = Object_GetById(FIELD_AT(r5, s32, 0));
+  v0 = Actor_GetById(FIELD_AT(r5, s32, 0));
   r7 = (s32)Data_02004030;
   r6 = v0;
   r9 = (s32)Ram_HeapSlots->mapWork;
-  Call2((void (*)())Object_SetModeById, FIELD_AT(r5, s32, 0), 0);
+  Call2((void (*)())Actor_SetModeById, FIELD_AT(r5, s32, 0), 0);
   r8 = (FIELD_AT(r7, s32, 4)) >> 19;
   FIELD_AT(r6, u8, 85) = 0;
   r10 = 85 + r6;

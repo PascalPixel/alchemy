@@ -81,11 +81,11 @@ ResourceMetadata_Register:
 	.global Func_02003cc4
 	.thumb_func
 Func_02003cc4:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02003ccc
 	.thumb_func
 Func_02003ccc:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -97,11 +97,11 @@ Func_02003cdc:
 	.global Func_02003ce4
 	.thumb_func
 Func_02003ce4:
-	overlay_veneer Object_SetPosition
+	overlay_veneer Actor_SetTargetPosition
 	.global Func_02003cec
 	.thumb_func
 Func_02003cec:
-	overlay_veneer Object_CommitPosition
+	overlay_veneer Actor_CommitPosition
 	.global Func_02003cf4
 	.thumb_func
 Func_02003cf4:
@@ -134,10 +134,10 @@ Func_02003d24:
 	.thumb_func
 Func_02003d2c:
 	overlay_veneer Func_08020210
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -182,70 +182,70 @@ Func_02003d84:
 	.thumb_func
 Party_LearnAbility:
 	overlay_veneer Party_LearnAbilityFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetSpeedParameters
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_EnableActionAndSetCallback
+Actor_SetSpeedParameters:
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_SetMovementTypeById
 	.thumb_func
-ObjectMotion_EnableActionAndSetCallback:
-	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global ObjectMotion_ResetAndSetPosition
+Actor_SetMovementTypeById:
+	overlay_veneer Actor_SetMovementTypeByIdFar
+	.global Actor_ResetAndSetPosition
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
-	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global ObjectMotion_SetPositionAndCommit
+Actor_ResetAndSetPosition:
+	overlay_veneer Actor_ResetAndSetPositionFar
+	.global Actor_SetPositionAndCommit
 	.thumb_func
-ObjectMotion_SetPositionAndCommit:
-	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_ResetAndSetPositionInMode2
+Actor_SetPositionAndCommit:
+	overlay_veneer Actor_SetPositionAndCommitFar
+	.global Actor_ResetAndSetPositionInMode2
 	.thumb_func
-ObjectMotion_ResetAndSetPositionInMode2:
-	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
-	.global ObjectMotion_SetPositionAndReset
+Actor_ResetAndSetPositionInMode2:
+	overlay_veneer Actor_ResetAndSetPositionInMode2Far
+	.global Actor_SetPositionAndReset
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+Actor_SetPositionAndReset:
+	overlay_veneer Actor_SetPositionAndResetFar
+	.global Actor_OffsetPositionAndResetMotion
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
-	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+Actor_OffsetPositionAndResetMotion:
+	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+	.global Actor_WaitForMoveById
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+Actor_WaitForMoveById:
+	overlay_veneer Actor_WaitForMoveByIdFar
 	.global Func_02003ddc
 	.thumb_func
 Func_02003ddc:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_02003de4
 	.thumb_func
 Func_02003de4:
-	overlay_veneer ObjectMotion_MoveToObjectFar
-	.global Object_SetModeById
+	overlay_veneer Actor_MoveToObjectFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_02003df4
 	.thumb_func
 Func_02003df4:
-	overlay_veneer Object_JumpDownLedgeFar
-	.global Object_TurnToFaceEachOther
+	overlay_veneer Actor_JumpDownLedgeFar
+	.global Actor_TurnToFaceEachOther
 	.thumb_func
-Object_TurnToFaceEachOther:
-	overlay_veneer Object_LinkPairFar
+Actor_TurnToFaceEachOther:
+	overlay_veneer Actor_TurnToFaceEachOtherFar
 	.global Func_02003e04
 	.thumb_func
 Func_02003e04:
-	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Object_SetPartAttribute
+	overlay_veneer Actor_ConfigureSpriteColorFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
 	.global Func_02003e14
 	.thumb_func
 Func_02003e14:
@@ -254,14 +254,14 @@ Func_02003e14:
 	.thumb_func
 Func_02003e1c:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global ObjectMotion_SetActionVariant
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
+	.global Actor_SetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+Actor_SetSpritePriority:
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_02003e34
 	.thumb_func
 Func_02003e34:
@@ -334,10 +334,10 @@ Func_02003eb4:
 	.thumb_func
 Func_02003ebc:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global ObjectMotion_CommitPositionAndActivate
+	.global Actor_CommitPositionAndActivate
 	.thumb_func
-ObjectMotion_CommitPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+Actor_CommitPositionAndActivate:
+	overlay_veneer Actor_CommitPositionAndActivateFar
 	.global Func_02003ecc
 	.thumb_func
 Func_02003ecc:

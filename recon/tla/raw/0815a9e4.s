@@ -1067,7 +1067,7 @@ BattleEffect_RunGaia:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0815b1e6:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	ldr r1, [sp, #48]
 	lsls r3, r3, #7

@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -16,19 +16,19 @@
        ->v)
 
 extern u8 gFrameCount[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02003aec();
 void Func_02003bcc();
 void GameFlag_SetBit();
 void Func_02003c54();
-void Object_SetPartAttribute();
-void Object_SetActionById();
+void Actor_SetPartAttribute();
+void Actor_SetActionById();
 s32 Random16Far();
 void Func_0200015c();
 void WaitFrames();
 void Camera_MoveWithinMapBounds();
 void FieldEvent_WaitFrames();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 s32 Func_02003ac4();
 void Func_02003acc();
 s32 Func_02003b74();
@@ -44,16 +44,16 @@ s32 Func_02001c00(s32 a0, s32 a1, s32 a2, s32 a3) {
   r5 = (s32)&gAdventure;
   r5 = r5 + 532;
   /* sub (s32)stack, #68 */
-  v0 = Object_GetById(FIELD_AT(r5, s32, 0));
+  v0 = Actor_GetById(FIELD_AT(r5, s32, 0));
   r7 = v0;
   Func_02003aec();
   Call1((void (*)())Func_02003bcc, 0);
   Call1((void (*)())GameFlag_SetBit, 0x260);
   Call1((void (*)())Func_02003c54, 133);
-  v1 = Object_GetById(FIELD_AT(r5, s32, 0));
-  Call2((void (*)())Object_SetPartAttribute, v1, 6);
-  Call2((void (*)())Object_SetModeById, FIELD_AT(r5, s32, 0), 10);
-  Call2((void (*)())Object_SetActionById, FIELD_AT(r5, s32, 0), 32);
+  v1 = Actor_GetById(FIELD_AT(r5, s32, 0));
+  Call2((void (*)())Actor_SetPartAttribute, v1, 6);
+  Call2((void (*)())Actor_SetModeById, FIELD_AT(r5, s32, 0), 10);
+  Call2((void (*)())Actor_SetActionById, FIELD_AT(r5, s32, 0), 32);
   r9 = (s32)((u8 *)stack + 28);
   FIELD_AT(r9, s32, 0) = 1;
   FIELD_AT(r9, s32, 4) = 14;
@@ -112,19 +112,19 @@ L_02009d02:
       goto L_02009d02;
   }
   Call1((void (*)())Func_02003c54, 188);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r7, 1);
+  Call2((void (*)())Actor_SetSingleChildFlags, r7, 1);
   r5 = (s32)&gAdventure;
   r5 = r5 + 532;
-  Call2((void (*)())Object_SetModeById, FIELD_AT(r5, s32, 0), 22);
+  Call2((void (*)())Actor_SetModeById, FIELD_AT(r5, s32, 0), 22);
   Call3((void (*)())Func_02003ac4, 0x50000, 0x80000, 0x10000);
   v6 = Func_02003ac4(-1, -1, 0xe666);
   Func_02003acc();
   v7 = Func_02003b74(FIELD_AT(r5, s32, 0), 1);
   Func_02003b6c();
-  Call2((void (*)())Object_SetModeById, FIELD_AT(r5, s32, 0), 4);
-  v8 = Object_GetById(FIELD_AT(r5, s32, 0));
-  Call2((void (*)())Object_SetPartAttribute, v8, 0);
-  ObjectMotion_WaitForAnimationChange(FIELD_AT(r5, s32, 0));
+  Call2((void (*)())Actor_SetModeById, FIELD_AT(r5, s32, 0), 4);
+  v8 = Actor_GetById(FIELD_AT(r5, s32, 0));
+  Call2((void (*)())Actor_SetPartAttribute, v8, 0);
+  Actor_WaitForAnimationChange(FIELD_AT(r5, s32, 0));
   Call1((void (*)())GameFlag_ClearBit, 0x260);
   FIELD_AT(r7, s32, 72) = 0x10000;
   FIELD_AT(r7, s32, 68) = 0x4000;

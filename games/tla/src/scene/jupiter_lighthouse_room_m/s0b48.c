@@ -8,9 +8,9 @@ extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Task_Add(void (*callback)(void), s32 priority);
 s32 Func_02000a78(void);
 
@@ -24,7 +24,7 @@ static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: the speeds are held in r5 and r6 across
    * the calls, four rows fewer). */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 /* FAKEMATCH: the angle passes through a block temporary: the native holds each
@@ -46,11 +46,11 @@ void Func_02000b48(void) {
   PLACE(2, 731, 232, 0xc000);
   PLACE(27, 731, 213, 0x4000);
   PLACE(26, 737, 202, 0);
-  ObjectMotion_EnableActionAndSetCallback(0, gData_0200558c);
-  ObjectMotion_EnableActionAndSetCallback(2, gData_02005644);
-  ObjectMotion_EnableActionAndSetCallback(26, gData_020055ec);
-  ObjectMotion_EnableActionAndSetCallback(27, gData_0200569c);
-  ObjectMotion_EnableActionAndSetCallback(3, gData_02005548);
+  Actor_SetMovementTypeById(0, gData_0200558c);
+  Actor_SetMovementTypeById(2, gData_02005644);
+  Actor_SetMovementTypeById(26, gData_020055ec);
+  Actor_SetMovementTypeById(27, gData_0200569c);
+  Actor_SetMovementTypeById(3, gData_02005548);
 }
 
 void Func_02000c08(void) {
@@ -59,8 +59,8 @@ void Func_02000c08(void) {
   PLACE(3, 816, 285, 0x2000);
   PLACE(1, 824, 302, 0xc000);
   PLACE(29, 821, 302, 0xc000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(1), 0);
-  ObjectMotion_EnableActionAndSetCallback(1, gData_02005524);
+  Actor_SetSingleChildFlags(Actor_GetById(1), 0);
+  Actor_SetMovementTypeById(1, gData_02005524);
   {
     /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
      * built before the callback's address is loaded; as an argument, 2 of 57
@@ -69,7 +69,7 @@ void Func_02000c08(void) {
 
     Task_Add((void (*)(void))Func_02000a78, priority);
   }
-  Object_SetModeById(0, 38);
-  Object_SetModeById(2, 31);
-  Object_SetModeById(3, 9);
+  Actor_SetModeById(0, 38);
+  Actor_SetModeById(2, 31);
+  Actor_SetModeById(3, 9);
 }

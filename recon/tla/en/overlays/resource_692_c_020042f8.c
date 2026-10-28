@@ -7,18 +7,18 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02004da8(s32 id, s32 owner);
 void Func_020042e0(s32 id);
 void WaitFrames(s32 frames);
 void Func_02004da0(s32 id, s32 a, s32 b);
-s32 Func_02004ed0(struct ObjectRuntime *object);
+s32 Func_02004ed0(struct Actor *object);
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004df8(s32 id);
@@ -27,7 +27,7 @@ void ObjectVisual_CopyAttributes(s32 id, s32 from);
 
 void Func_020042f8(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct MapCell *cells;
   u8 *shapes;
   u8 *cell;
@@ -44,7 +44,7 @@ void Func_020042f8(const u16 *table) {
   Func_020042e0(8);
   Func_020042e0(9);
   Func_020042e0(10);
-  Object_SetModeById(9, 0);
+  Actor_SetModeById(9, 0);
   WaitFrames(1);
   Func_02004da0(8, 0, 0);
   Func_02004da0(9, 0, 0);
@@ -53,7 +53,7 @@ void Func_020042f8(const u16 *table) {
   goto test;
 next:
   id = table[0];
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   flag = table[1];
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);

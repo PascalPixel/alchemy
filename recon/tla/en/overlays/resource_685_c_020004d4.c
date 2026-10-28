@@ -38,7 +38,7 @@ s32 Func_020004d4(void) {
   ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 513;
 #endif
   if (party->scene != (s32)&SceneId_Ov685Room1)
-    Object_GetById(party->currentOwner)->priorityFlags |= 32;
+    Actor_GetById(party->currentOwner)->priorityFlags |= 32;
   Func_020035ac(0);
   if (party->scene == (s32)&SceneId_Ov685Room4) {
     if (party->entrance == 98)
@@ -51,14 +51,14 @@ s32 Func_020004d4(void) {
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
       Func_0200361c_(10, 326);
       Func_020034d4_(10, 0x2980000, 0xe80000);
-      Object_GetById(10)->motionFlags = 4;
+      Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
       Func_020034d4_(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
-      Object_SetModeById(8, 11);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
+      Actor_SetModeById(8, 11);
+      Actor_SetSingleChildFlags(Actor_GetById(8), 0);
     }
   }
   return 0;

@@ -6,7 +6,7 @@
 // through a copy in r0 where this uses r2 and r4, and the callee-saved
 // registers and the pool order differ from there.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MarsLighthouseAerieSprite {
   u8 unk00[9];
@@ -20,18 +20,18 @@ struct MarsLighthouseAerieSprite {
 extern u32 Data_0200eb60;
 extern const u8 gData_02006ad0[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 s32 Math_Sine(s32 angle);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-struct ObjectRuntime *Func_02005574(s32 type, s32 x, s32 y, s32 z);
-void Func_0200556c(struct ObjectRuntime *object, const u8 *script);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
+void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020005a0(void);
 
 void Func_020004a4(void) {
-  struct ObjectRuntime *anchor = Object_GetById(8);
+  struct Actor *anchor = Actor_GetById(8);
   s32 offset = (Random16Far() * 48 >> 16) << 16;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
 
@@ -42,7 +42,7 @@ void Func_020004a4(void) {
     if (object != NULL) {
       sprite = object->animation;
       Func_0200556c(object, gData_02006ad0);
-      Object_SetPartAttribute(object, 10);
+      Actor_SetPartAttribute(object, 10);
       object->motionFlags = phase;
       object->action = Random16Far() & 0x0ffff000;
       object->unk66 = phase;

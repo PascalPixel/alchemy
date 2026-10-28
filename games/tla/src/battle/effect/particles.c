@@ -2,7 +2,7 @@
 #include "system.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 
@@ -17,15 +17,15 @@ struct ParticleTimer {
   u16 timer;
 };
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FallVector *pos);
 
 /// Each frame: one falling particle 8 to 24 pixels above the lifted object,
 /// 0 to 48 pixels out in a random direction.
 void BattleEffect_SpawnFallingParticles(void) {
-  struct ObjectRuntime *src;
+  struct Actor *src;
   struct FallVector pos;
-  struct ObjectRuntime *obj;
+  struct Actor *obj;
   u32 dist;
 
   src = ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->child;
@@ -36,13 +36,13 @@ void BattleEffect_SpawnFallingParticles(void) {
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);
 
-  obj = Object_Spawn(673, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;
-    Object_SetMode(obj, 0);
+    Actor_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+    Actor_StartScriptFar((struct DispatchObject *)obj,
                                  gBattleEffect_SharedParticleScript);
   }
 }

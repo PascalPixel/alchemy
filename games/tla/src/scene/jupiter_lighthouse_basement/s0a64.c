@@ -1,13 +1,13 @@
 #include "types.h"
 
-#include "object_runtime.h"
+#include "actor.h"
 #include "frame.h"
 
 u32 Random16Far(void);
 void Func_02001094(s32 x, s32 y, s32 z, s32 a, s32 speed, s32 b, s32 c,
                    s32 *params);
 
-s32 Func_02000a64(struct ObjectRuntime *object) {
+s32 Func_02000a64(struct Actor *object) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {

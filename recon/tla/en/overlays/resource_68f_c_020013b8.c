@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -26,19 +26,19 @@ extern u8 gData_0200326e[];
 s32 GameFlag_Test();
 void Func_02000548();
 void Func_0200058c();
-s32 Object_GetById();
-void ObjectDispatch_SetSingleChildFlags();
+s32 Actor_GetById();
+void Actor_SetSingleChildFlags();
 void Func_02003020();
 void Func_02002fc0();
 void Func_02002fe8();
 void Func_02003088();
 s32 MapCell_SetAttributes();
-void Object_LinkObjectAndSetCallback();
+void Actor_WatchAndSetScript();
 void Func_020011e0();
 void Func_02000404();
 s32 Func_02002f98();
-void Object_SetSpritePriority();
-void Object_SetPartAttribute();
+void Scene_SetActorSpritePriority();
+void Actor_SetPartAttribute();
 void Animation_SetStateFlags();
 void Func_02003168();
 void GameFlag_SetBit();
@@ -90,10 +90,10 @@ L_0200942a:
   r6 = v2;
   if (r6 != 0)
     goto L_020094c6;
-  v3 = Object_GetById(8);
+  v3 = Actor_GetById(8);
   r5 = v3;
-  v4 = Object_GetById(8);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v4, 0);
+  v4 = Actor_GetById(8);
+  Call2((void (*)())Actor_SetSingleChildFlags, v4, 0);
   FIELD_AT(r5, u8, 89) = r6;
   FIELD_AT((r5 + 89) - 4, u8, 0) = r6;
   FIELD_AT(r5, s32, 20) = 0x80000;
@@ -107,7 +107,7 @@ L_0200947a:
   Call6((void (*)())Func_02002fc0, 31, 85, 20, 85, 3, 4);
   Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
   Call3((void (*)())Func_02003088, 68, 0x1580000, 0x1740000);
-  v6 = Object_GetById(68);
+  v6 = Actor_GetById(68);
   FIELD_AT(v6, s32, 108) = (s32)Func_02000840;
   Call3((void (*)())Func_02003088, 8, 0, 0);
   goto L_020097c4;
@@ -149,7 +149,7 @@ L_02009568:
     goto L_02009584;
   MapCell_SetAttributes(0, 26, 33, 0xff00);
 L_02009584:
-  Call2((void (*)())Object_LinkObjectAndSetCallback, 8,
+  Call2((void (*)())Actor_WatchAndSetScript, 8,
         FIELD_AT((s32)(s32)&gAdventure, s32, 532));
 L_02009594:
   v11 = GameFlag_Test(0x109);
@@ -212,10 +212,10 @@ L_02009614:
     goto L_0200962e;
   goto L_020097c4;
 L_0200962e:
-  Call2((void (*)())Object_SetSpritePriority, r0, 1);
+  Call2((void (*)())Scene_SetActorSpritePriority, r0, 1);
   FIELD_AT(r5, u8, 85) = 0;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
-  Call2((void (*)())Object_SetPartAttribute, r5, 14);
+  Call2((void (*)())Actor_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Actor_SetPartAttribute, r5, 14);
   Call2((void (*)())Animation_SetStateFlags, r5, 1);
   goto L_020097c4;
 L_02009656:
@@ -230,7 +230,7 @@ L_02009656:
   Call3((void (*)())Func_02003088, 12, 0xc80000, 0x880000);
 L_02009694:
   Func_02003168((s32)gData_02003264);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
+  Call2((void (*)())Actor_SetSpritePriority, 12, 2);
   goto L_020097c4;
 L_020096a4:
   v15 = GameFlag_Test(0x94b);
@@ -255,7 +255,7 @@ L_0200970e:
   FIELD_AT(r0, s32, 108) = (s32)Func_020010d4;
   FIELD_AT(r5, s32, 0) = r0;
   FIELD_AT(r0, u8, 85) = 0;
-  Call2((void (*)())Object_SetSpritePriority, r0, 3);
+  Call2((void (*)())Scene_SetActorSpritePriority, r0, 3);
   goto L_020097c4;
 L_02009728:
   v18 = GameFlag_Test(0x109);

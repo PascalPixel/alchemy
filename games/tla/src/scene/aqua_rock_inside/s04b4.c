@@ -15,13 +15,13 @@ void Func_020004bc(s32 unused, s32 id) {
   register s32 objectId asm("r5") = id;
 
   layer = (s32 *)(map + 0x140);
-  Object_SetPartAttribute(Object_GetById(objectId), 0);
+  Actor_SetPartAttribute(Actor_GetById(objectId), 0);
   Func_02001e78(objectId);
-  Object_SetModeById(objectId, 3);
+  Actor_SetModeById(objectId, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
   Func_02003cdc();
-  column = (Object_GetById(12)->x >> 20) - 42;
+  column = (Actor_GetById(12)->x >> 20) - 42;
   Func_02003d7c();
   Func_02003eac(0);
   Func_02003ef4(0x22c);

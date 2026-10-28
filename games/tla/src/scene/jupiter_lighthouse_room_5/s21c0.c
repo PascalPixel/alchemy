@@ -1,33 +1,33 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-struct ObjectRuntime *Func_02002970(void);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+struct Actor *Func_02002970(void);
 
 void Func_020021c0(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
    * it copies the object to r10 (one reordered row). */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
+  Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   WaitFrames(1);
-  Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
+  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
   FieldEvent_WaitFrames(4);
   Func_02002970()->y -= 0x80000;
@@ -52,7 +52,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_020025e8 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02002248(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

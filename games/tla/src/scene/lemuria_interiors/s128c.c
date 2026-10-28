@@ -13,7 +13,7 @@ extern const u8 gData_02002dec[];
 struct FieldActor *Func_02002804(s32 type, s32 x, s32 y, s32 z);
 void Func_020027f4(struct FieldActor *object, s32 mode);
 void Func_020027fc(struct FieldActor *object, const void *script);
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 void Func_02002924(s32 cue);
 void FieldEvent_WaitFrames(s32 frames);
 

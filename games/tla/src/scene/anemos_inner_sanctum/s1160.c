@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern char SceneId_Ov6B0Room2;
 extern char SceneId_Ov6B0Room3;
 extern char SceneId_Ov6B0Room4;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
@@ -39,8 +39,8 @@ static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
 /// event at x 67, z 45 of room 3 and moving object 13 to object 12 at x 91,
 /// z 59 until flag 0xa84 is set.
 void Func_02001160(void) {
-  struct ObjectRuntime *leader =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *leader =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
   s32 x;
   s32 z;
 
@@ -71,7 +71,7 @@ void Func_02001160(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
       GameFlag_SetBit(0xa80);
-      ObjectMotion_SetActionVariant(8, 2);
+      Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
       GameFlag_SetBit(0xa81);
@@ -95,9 +95,9 @@ void Func_02001160(void) {
       GameFlag_SetBit(0xa84);
     if (x == 91 && z == 59) {
       if (!GameFlag_Test(0xa84)) {
-        s32 fromX = (Object_GetById(12)->x >> 16) << 16;
+        s32 fromX = (Actor_GetById(12)->x >> 16) << 16;
 
-        Func_020033e0(13, fromX, (Object_GetById(12)->z >> 16) << 16);
+        Func_020033e0(13, fromX, (Actor_GetById(12)->z >> 16) << 16);
         MoveObject(12, 0x2d80000, 0x1d80000);
       }
       GameFlag_SetBit(0xa85);

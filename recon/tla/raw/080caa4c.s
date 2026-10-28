@@ -231,10 +231,10 @@ Func_080caa4c:
 	strb r2, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r1, #12
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080cac18:
 	ldr r1, [r5, #8]
 .L_080cac1a:
@@ -273,7 +273,7 @@ Func_080caa4c:
 	adds r6, r0, #0
 	str r3, [r6, #20]
 	adds r1, r5, #0
-	bl ObjectDispatch_StartCameraFar
+	bl Actor_StartCameraFar
 	movs r3, #197
 	lsls r3, r3, #1
 	add r3, r8

@@ -1,14 +1,14 @@
 #include "types.h"
 #include "edition.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
-struct ObjectRuntime *Func_080eaf28(s32 *position, s32 mode);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_080eaf28(s32 *position, s32 mode);
+s32 Func_08020210(struct Actor *object, s32 *position);
 
 /// Whether the object 16 pixels in front of the current owner, along its
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
@@ -20,9 +20,9 @@ s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];
-  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *target;
-  struct ObjectRuntime *hit;
+  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *target;
+  struct Actor *hit;
   s32 id;
   s32 terrain;
   s32 result;
@@ -48,7 +48,7 @@ s32 Func_080cdc74(void) {
     return 0;
 #if LANGUAGE != LANGUAGE_JAPANESE
   id = gAdventure.pausedObject;
-  if (id != 1 && target == Object_GetById(id))
+  if (id != 1 && target == Actor_GetById(id))
     return 0;
 #endif
   position[0] = target->x;

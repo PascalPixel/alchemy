@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004c88(s32 id, s32 x, s32 z);
 
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
@@ -12,7 +12,7 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
 }
 
 void Func_02002618(s32 id, s32 dx, s32 dz) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL)
     PosSet(id, *(s16 *)((u8 *)object + 10) + dx,

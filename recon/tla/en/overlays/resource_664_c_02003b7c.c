@@ -12,13 +12,13 @@
 // the BLDCNT one 6), an empty asm after the WINOUT store (16), both statements
 // in one block (20), 10 minutes of alchemy permute.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "system/io_reg.h"
 
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02005e14(void);
 void Func_02005e1c(void);
@@ -28,7 +28,7 @@ void WaitFrames(s32 frames);
 void Func_02005d9c(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
-void Func_02005d7c(struct ObjectRuntime *object);
+void Func_02005d7c(struct Actor *object);
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                              s32 width, s32 height) {
@@ -36,15 +36,15 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
 }
 
 void Func_02003b7c(s32 x, s32 y) {
-  struct ObjectRuntime *marker;
+  struct Actor *marker;
   struct FieldSprite *sprite;
   s32 i, cellX, cellY;
 
   marker = Import_ActorCreate(288, x << 16, 0, y << 16);
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f44;
-  Object_SetSpritePriority(marker, 0);
-  ObjectDispatch_SetSingleChildFlags(marker, 0);
+  Scene_SetActorSpritePriority(marker, 0);
+  Actor_SetSingleChildFlags(marker, 0);
   sprite = marker->animation;
   sprite->blendMode = 2;
   Func_02005e14();

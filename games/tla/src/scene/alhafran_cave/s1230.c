@@ -12,12 +12,12 @@ void Func_02001230(const u16 *list) {
 loop:
   {
     u32 id = entry[0];
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s16 kind = entry[1];
     s16 flag = entry[2];
 
     object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02001320(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct FxScene13 {
   u16 angle;
@@ -8,8 +8,8 @@ struct FxScene13 {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   u8 unk18[8];
   s8 enabled;
 };
@@ -21,13 +21,13 @@ struct FxPosition13 {
 };
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
-void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValuesFar(struct Actor *object, s32 value);
 void WaitFrames(s32 frames);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
@@ -36,9 +36,9 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
 
 void Func_080e03cc(void) {
   struct FxScene13 *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *mainObject = scene->mainObject;
-  struct ObjectRuntime *secondary = scene->child;
-  struct ObjectRuntime *object;
+  struct Actor *mainObject = scene->mainObject;
+  struct Actor *secondary = scene->child;
+  struct Actor *object;
   struct FxPosition13 spawn;
   struct FxPosition13 origin;
   struct FxPosition13 target;
@@ -62,7 +62,7 @@ void Func_080e03cc(void) {
   spawn.x = scene->x;
   spawn.y = scene->y + 0x200000;
   spawn.z = scene->z;
-  object = Object_Spawn(278, spawn.x, spawn.y, spawn.z);
+  object = Actor_Spawn(278, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   BattleEffect_InitializeSharedScene();
@@ -70,7 +70,7 @@ void Func_080e03cc(void) {
   object->angle = mainObject->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
   Animation_ApplyChildValuesFar(object, 1);
   step = 0;
   do {
@@ -86,16 +86,16 @@ void Func_080e03cc(void) {
     step++;
   } while (step < steps);
   WaitFrames(10);
-  Object_SetMode(object, 6);
+  Actor_SetMode(object, 6);
   WaitFrames(15);
   for (index = 0; index < 10; index++) {
     object->y -= 0x20000;
     WaitFrames(1);
   }
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
   Sound_PlayFar(132);
   if (secondary != 0)
-    Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
+    Actor_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
                                         -0x90000);
   WaitFrames(20);
   for (index = 0; index < 13; index++) {
@@ -117,6 +117,6 @@ void Func_080e03cc(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  Object_Destroy(object);
+  Actor_Destroy(object);
   BattleEffect_PrepareBufferInterpolation();
 }

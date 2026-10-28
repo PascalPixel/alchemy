@@ -1,6 +1,6 @@
 #include "mars_lighthouse_room_m.h"
 
-s32 Func_020018c4(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_020018c4(struct Actor *a, struct Actor *b) {
   if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0x80000 &&
       (a->y - b->y >= 0 ? a->y - b->y : b->y - a->y) < 0x80000 &&
       (a->z - b->z >= 0 ? a->z - b->z : b->z - a->z) < 0x80000)
@@ -8,7 +8,7 @@ s32 Func_020018c4(struct ObjectRuntime *a, struct ObjectRuntime *b) {
   return 0;
 }
 
-s32 Func_02001928(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02001928(struct Actor *a, struct Actor *b) {
   s32 height;
 
   if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000) {

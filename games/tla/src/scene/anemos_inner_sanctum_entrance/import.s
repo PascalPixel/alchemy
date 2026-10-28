@@ -61,11 +61,11 @@ GameFlag_ClearBit:
 	.global Func_02000c5c
 	.thumb_func
 Func_02000c5c:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02000c64
 	.thumb_func
 Func_02000c64:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -73,11 +73,11 @@ Import_ActorCreate:
 	.global Func_02000c74
 	.thumb_func
 Func_02000c74:
-	overlay_veneer Object_SetPosition
+	overlay_veneer Actor_SetTargetPosition
 	.global Func_02000c7c
 	.thumb_func
 Func_02000c7c:
-	overlay_veneer Object_CommitPosition
+	overlay_veneer Actor_CommitPosition
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -86,10 +86,10 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02000c8c:
 	overlay_veneer GetMapCellCollisionFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -110,38 +110,38 @@ Func_02000cb4:
 	.thumb_func
 Func_02000cbc:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_EnableActionAndSetCallback
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetMovementTypeById
 	.thumb_func
-ObjectMotion_EnableActionAndSetCallback:
-	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Object_SetActionCallbackAndRefreshById
+Actor_SetMovementTypeById:
+	overlay_veneer Actor_SetMovementTypeByIdFar
+	.global Actor_SetMovementTypeAndWaitById
 	.thumb_func
-Object_SetActionCallbackAndRefreshById:
-	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+Actor_SetMovementTypeAndWaitById:
+	overlay_veneer Actor_SetMovementTypeAndWaitByIdFar
 	.global Func_02000cdc
 	.thumb_func
 Func_02000cdc:
-	overlay_veneer ObjectMotion_MoveToObjectFar
-	.global Object_SetModeById
+	overlay_veneer Actor_MoveToObjectFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_SetVariantCallback
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_StartRepeatedMotion
 	.thumb_func
-ObjectMotion_SetVariantCallback:
-	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Object_SetPartAttribute
+Actor_StartRepeatedMotion:
+	overlay_veneer Actor_StartRepeatedMotionFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
-	.global ObjectMotion_ArmCallback
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Func_02000d04
 	.thumb_func
 Func_02000d04:

@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -22,7 +22,7 @@ extern u8 gData_020022c0[];
 extern u8 gData_020022bc[];
 extern u8 gData_02002118[];
 extern u8 gData_02002110[];
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_0200034c();
 s32 Random16Far();
 void Func_02002054();
@@ -34,7 +34,7 @@ s32 Func_02000a80(s32 a0, s32 a1, s32 a2, s32 a3) {
 
   /* sub (s32)stack, #108 */
   r11 = (s32)Ram_HeapSlots->eventWork;
-  v0 = Object_GetById(8);
+  v0 = Actor_GetById(8);
   v1 = Func_0200034c(0, (FIELD_AT(v0, s32, 8)) >> 20,
                      (FIELD_AT(v0, s32, 16)) >> 20);
   stack[4] = (((v1 >> 8) - 1) << 16) >> 16;

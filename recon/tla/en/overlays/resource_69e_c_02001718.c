@@ -12,7 +12,7 @@
 // before the and.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -49,7 +49,7 @@ struct SparkWork {
   s16 vramEntry;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_ColouredOrbs;
@@ -58,15 +58,15 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
-s32 Func_020029f0(struct ObjectRuntime *object);
-s32 Func_020029f8(struct ObjectRuntime *object);
+s32 Func_020029f0(struct Actor *object);
+s32 Func_020029f8(struct Actor *object);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001538(void);
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work =
       HeapSlot_AllocFar(220, sizeof(struct SparkWork));
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;
   s32 entry;

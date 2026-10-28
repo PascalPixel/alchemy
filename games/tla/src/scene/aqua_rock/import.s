@@ -93,11 +93,11 @@ ResourceMetadata_Register:
 	.global Func_02002910
 	.thumb_func
 Func_02002910:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02002918
 	.thumb_func
 Func_02002918:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -105,15 +105,15 @@ Import_ActorCreate:
 	.global Func_02002928
 	.thumb_func
 Func_02002928:
-	overlay_veneer Object_Destroy
+	overlay_veneer Actor_Destroy
 	.global Func_02002930
 	.thumb_func
 Func_02002930:
-	overlay_veneer Object_SetPosition
+	overlay_veneer Actor_SetTargetPosition
 	.global Func_02002938
 	.thumb_func
 Func_02002938:
-	overlay_veneer Object_CommitPosition
+	overlay_veneer Actor_CommitPosition
 	.global Func_02002940
 	.thumb_func
 Func_02002940:
@@ -142,10 +142,10 @@ Func_02002968:
 	.thumb_func
 Func_02002970:
 	overlay_veneer Func_08020210
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -166,46 +166,46 @@ Func_02002998:
 	.thumb_func
 Func_020029a0:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetSpeedParameters
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_ResetAndSetPosition
+Actor_SetSpeedParameters:
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_ResetAndSetPosition
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
-	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global ObjectMotion_SetPositionAndCommit
+Actor_ResetAndSetPosition:
+	overlay_veneer Actor_ResetAndSetPositionFar
+	.global Actor_SetPositionAndCommit
 	.thumb_func
-ObjectMotion_SetPositionAndCommit:
-	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+Actor_SetPositionAndCommit:
+	overlay_veneer Actor_SetPositionAndCommitFar
+	.global Actor_OffsetPositionAndResetMotion
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
-	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+Actor_OffsetPositionAndResetMotion:
+	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+	.global Actor_WaitForMoveById
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+Actor_WaitForMoveById:
+	overlay_veneer Actor_WaitForMoveByIdFar
 	.global Func_020029d8
 	.thumb_func
 Func_020029d8:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global Object_SetPartAttribute
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
-	.global ObjectMotion_SetActionVariant
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
+	.global Actor_SetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+Actor_SetSpritePriority:
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_020029f8
 	.thumb_func
 Func_020029f8:
@@ -250,10 +250,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02002a48:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global ObjectMotion_CommitPositionAndActivate
+	.global Actor_CommitPositionAndActivate
 	.thumb_func
-ObjectMotion_CommitPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+Actor_CommitPositionAndActivate:
+	overlay_veneer Actor_CommitPositionAndActivateFar
 	.global Func_02002a58
 	.thumb_func
 Func_02002a58:

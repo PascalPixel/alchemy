@@ -72,8 +72,8 @@ u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+                   s32 timerFrames); // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void WaitFrames(s32 frames);
 
 // Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
@@ -251,7 +251,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
       }
     }
 
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

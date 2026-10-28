@@ -127,7 +127,7 @@ s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void DjinnRecovery_AddStandbyFar(s32 unitId, s32 element, s32 index);
 void Unit_CalculateFar(s32);
 void Sound_PlayFar(s32 cue);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_08123574(s32 side, u8 *counts);
 u32 BattleParty_IsUnitListed(u32 id);
@@ -536,8 +536,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnSet);
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(212);
-        Object_SetMode(BattleObject_Get(request->unitId)->object, 3);
-        ObjectDispatch_SetAnimationSpeedFar(
+        Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
+        Actor_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObject_Get(request->unitId)->object,
             32);
         Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);

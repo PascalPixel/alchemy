@@ -18,7 +18,7 @@ Func_080dacb8:
 	ldr r5, [r3]
 	mov r9, r0
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #128
 	lsls r1, r1, #1
 	str r0, [sp, #20]

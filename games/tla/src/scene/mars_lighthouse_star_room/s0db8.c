@@ -1,7 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_0200432c(s32 id, s32 x, s32 z);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
@@ -17,10 +17,10 @@ static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_02000db8(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
-  ObjectMotion_SetActionVariant(id, 3);
+  Actor_SetSingleChildFlags(Actor_GetById(id), 0);
+  Actor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
   /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
    * without) */
@@ -29,11 +29,11 @@ void Func_02000db8(s32 id) {
   object->collisionFlags = 0;
   if (id == 13) {
     Func_0200432c_(13, 175 << 18, 224 << 16);
-    Object_SetModeById(13, 10);
+    Actor_SetModeById(13, 10);
     Func_0200423c_(39, 22, 2, 1, 43, id);
   } else {
     Func_0200432c_(14, 165 << 18, 216 << 16);
-    Object_SetModeById(14, 9);
+    Actor_SetModeById(14, 9);
     Func_0200423c_(31, 21, 2, 2, 40, 12);
   }
 }

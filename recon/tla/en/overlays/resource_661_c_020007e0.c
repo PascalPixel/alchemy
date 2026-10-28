@@ -10,7 +10,7 @@
 // same entry test gives Func_020006ac 107 (its list goes to the stack).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 
@@ -22,12 +22,12 @@ extern u16 gData_020047d2[];
 extern u16 gData_020047ec[];
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004020(s32 layer, s32 x, s32 z);
-s32 Func_020041e0(struct ObjectRuntime *object);
+s32 Func_020041e0(struct Actor *object);
 s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 
 void Func_020007e0(void) {
@@ -46,7 +46,7 @@ void Func_020007e0(void) {
     goto done;
 next:
   {
-    struct ObjectRuntime *object = Object_GetById(*list);
+    struct Actor *object = Actor_GetById(*list);
     s32 set;
 
     list += 2;

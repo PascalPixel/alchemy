@@ -17,7 +17,7 @@
 // the smoke FieldEffect_DustPuffA (0x1e1).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "input.h"
 
@@ -57,8 +57,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -68,7 +68,7 @@ struct FxScene {
 
 struct FxEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 struct ObjectAnimation {
@@ -88,23 +88,23 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-s32 Func_08020330(struct ObjectRuntime *object);
+s32 Func_08020330(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
-void Object_Destroy(struct ObjectRuntime *object);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetMode(struct Actor *object, s32 mode);
+void Actor_Destroy(struct Actor *object);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
-void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
@@ -119,8 +119,8 @@ void Func_080e3d04(void) {
   struct SprayWork *work;
   struct FxEvent *event;
   struct FxScene *scene;
-  struct ObjectRuntime *caster;
-  struct ObjectRuntime *object;
+  struct Actor *caster;
+  struct Actor *object;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   void *pending;
@@ -201,16 +201,16 @@ void Func_080e3d04(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Object_Spawn(366, pos[0], pos[1], pos[2]);
+    object = Actor_Spawn(366, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = 0;
     object->scaleX = 0x14000;
     object->scaleY = 0x14000;
-    Object_SetMode(object, 2);
+    Actor_SetMode(object, 2);
     Sound_PlayFar(186);
     WaitFrames(50);
-    Object_Destroy(object);
+    Actor_Destroy(object);
     WaitFrames(10);
     goto end;
   }
@@ -218,14 +218,14 @@ void Func_080e3d04(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Object_Spawn(367, pos[0], pos[1], pos[2]);
+    object = Actor_Spawn(367, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = work->mode;
-    Object_SetMode(object, 2);
+    Actor_SetMode(object, 2);
     Sound_PlayFar(186);
     WaitFrames(45);
-    Object_Destroy(object);
+    Actor_Destroy(object);
     WaitFrames(10);
     goto end;
   }

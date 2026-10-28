@@ -10,7 +10,7 @@ extern char SceneId_Ov65FRoom4;
 extern char SceneId_Ov65FRoom5;
 extern char SceneId_Ov660Room3;
 
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 void Event_StartScreenTransition(void);
 void Func_02000a68(void);
 void Func_02000be4(void);
@@ -26,8 +26,8 @@ s32 Func_02000aa8(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov65FRoom4) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   } else if (gAdventure.scene == (s32)&SceneId_Ov65FRoom5) {
-    ObjectMotion_SetActionVariant(13, 1);
-    ObjectMotion_SetActionVariant(14, 1);
+    Actor_SetSpritePriority(13, 1);
+    Actor_SetSpritePriority(14, 1);
     if (GameFlag_Test(0x91f)) {
       /* FAKEMATCH(temporary): the angle in its own local; as Value4(...,
        * 0x4000), 4 of 128 instructions differ in tla-en. */

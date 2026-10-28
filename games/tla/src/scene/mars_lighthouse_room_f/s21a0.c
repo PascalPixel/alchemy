@@ -14,17 +14,17 @@ extern const u8 gData_02005d8c[];
 
 void Func_02001e20(void);
 void Func_02001ffc(void);
-void Func_020022d0(struct ObjectRuntime *object);
+void Func_020022d0(struct Actor *object);
 extern const u8 gData_02005d8c[];
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02005490(struct ObjectRuntime *object, const void *script);
+void Func_02005490(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-void Func_0200215c(struct ObjectRuntime *object, s32 part) {
+void Func_0200215c(struct Actor *object, s32 part) {
   /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
    * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
@@ -39,7 +39,7 @@ void Func_0200215c(struct ObjectRuntime *object, s32 part) {
     asm volatile("" : : "r"(three));
     ((struct SpriteParts *)object->animation)->part = part;
   }
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02005490(object, gData_02005d8c);
   object->action = zero;
   object->speedLimit = zero;
@@ -47,7 +47,7 @@ void Func_0200215c(struct ObjectRuntime *object, s32 part) {
 }
 
 void Func_020021a0(s32 *position, s32 speed, s32 mode) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005498_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
@@ -63,7 +63,7 @@ void Func_020021a0(s32 *position, s32 speed, s32 mode) {
 }
 
 void Func_020021e8(s32 *position, s32 speed, s32 mode) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005498_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
@@ -79,7 +79,7 @@ void Func_020021e8(s32 *position, s32 speed, s32 mode) {
 }
 
 void Func_02002230(s32 *position, s32 speed, s32 mode) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005498_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
@@ -94,7 +94,7 @@ void Func_02002230(s32 *position, s32 speed, s32 mode) {
   }
 }
 
-s32 Func_02002278(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02002278(struct Actor *a, struct Actor *b) {
   s32 dy;
 
   if (ABS(a->x - b->x) < 0xc0000) {
@@ -105,8 +105,8 @@ s32 Func_02002278(struct ObjectRuntime *a, struct ObjectRuntime *b) {
   return 0;
 }
 
-void Func_020022d0(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_020022d0(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct SpriteParts *parts;
@@ -136,20 +136,20 @@ void Func_020022d0(struct ObjectRuntime *object) {
   }
 }
 
-void Func_0200236c(struct ObjectRuntime *object, s32 unused) {
+void Func_0200236c(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02005480(object, 2);
   Func_02005490(object, gData_02005d8c);
-  Object_SetPartAttribute(object, 10);
+  Actor_SetPartAttribute(object, 10);
   object->action = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
 
 void Func_020023ac(s32 *position, s32 speed) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005498_(285, position[0], position[1], position[2] + 0xfffe0000);
   s32 spin;
 

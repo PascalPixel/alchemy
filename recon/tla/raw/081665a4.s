@@ -42,10 +42,10 @@ BattleEffect_RunRagnarok:
 	bl BattleEffect_FetchRectangleBlitters
 	movs r1, #2
 	ldr r0, [sp, #36]
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r1, #48
 	ldr r0, [sp, #36]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	mov r1, r11
 	add r5, sp, #64
 	movs r6, #36
@@ -648,7 +648,7 @@ BattleEffect_RunRagnarok:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	ldr r1, [sp, #52]
 	lsls r2, r2, #7
@@ -667,7 +667,7 @@ BattleEffect_RunRagnarok:
 .L_08166abe:
 	ldr r0, [sp, #36]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r0, .L_08166af4
 	bl Task_Remove
 	movs r0, #188

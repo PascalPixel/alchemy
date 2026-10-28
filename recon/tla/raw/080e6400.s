@@ -87,7 +87,7 @@ Func_080e6400:
 	bne .L_080e64a2
 	mov r0, r8
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldrh r2, [r5]
 .L_080e64a2:
 	movs r0, #240
@@ -308,7 +308,7 @@ Func_080e6400:
 	adds r3, r7, r0
 	ldr r0, [r3]
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldrh r2, [r5]
 .L_080e6646:
 	movs r1, #240
@@ -481,7 +481,7 @@ Func_080e6400:
 	adds r3, r7, r2
 	ldr r0, [r3]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080e678c:
 	mov r4, r8
 	ldr r3, [r4, #12]
@@ -568,7 +568,7 @@ Func_080e6400:
 	adds r3, r7, r2
 	ldr r0, [r3]
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080e682e:
 	mov r4, r8
 	ldr r3, [r4, #12]

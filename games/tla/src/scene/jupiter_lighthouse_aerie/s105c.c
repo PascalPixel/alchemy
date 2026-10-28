@@ -1,11 +1,11 @@
 #include "jupiter_lighthouse_aerie.h"
 
-void Func_0200105c(struct ObjectRuntime *object) {
+void Func_0200105c(struct Actor *object) {
   BYTE_AT(object, 99) = 0;
   WORD_AT(object, 108) = (s32)Func_02001010;
 }
 
-void Func_02001070(struct ObjectRuntime *object) {
+void Func_02001070(struct Actor *object) {
   WORD_AT(object, 108) = 0;
   Animation_ApplyChildValues(object, 4);
 }

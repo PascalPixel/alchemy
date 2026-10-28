@@ -33,7 +33,7 @@ void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
-s32 Object_SetModeById(u32 id, s32 mode);
+s32 Actor_SetModeById(u32 id, s32 mode);
 void Func_02001538(void);
 void Func_02002898(s32 message, s32 a1, s32 a2);
 void Func_020028b0(void);
@@ -45,8 +45,8 @@ void Func_02002918(s32 actor, s32 value);
 void Func_02002a40(s32 cue);
 void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
                    struct EffectParams *params);
-struct SparkActor *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct SparkActor *object, s32 flags);
+struct SparkActor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct SparkActor *object, s32 flags);
 u32 Random16Far(void);
 void Func_020029a8(s32 a0);
 
@@ -69,7 +69,7 @@ void Func_020006ac(void) {
     Func_02002978_(0x10003, 1);
     Func_02002988(30);
     Event_WaitTransitionFrames();
-    Object_SetModeById(0, 1);
+    Actor_SetModeById(0, 1);
     FieldEvent_WaitFrames(30);
     Func_02002898((s32)MsgFieldShowAnemosPower, 0, -2);
     Func_02002978_(0x10000, 0);
@@ -96,9 +96,9 @@ void Func_02000734(void) {
   u32 random2;
   u32 scaled;
 
-  actor = Object_GetById(22);
+  actor = Actor_GetById(22);
   Func_02002a40(190);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(22), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(22), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -136,5 +136,5 @@ void Func_02000734(void) {
       Func_02002918(22, 0x100);
   }
   Func_02002918(22, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(22), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(22), 1);
 }

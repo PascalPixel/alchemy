@@ -12,10 +12,10 @@
 // the second and third words after stepping the pointer by 2; not shaped yet.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void GameFlag_SetBit(s32 flag);
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
@@ -31,12 +31,12 @@ void Func_020053bc(const u16 *entry) {
 
   while ((value = *entry) != 0xffff) {
     u16 id = *entry++;
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s16 mode = *entry++;
     s16 flag = *entry++;
 
     object->collisionFlags &= 0xfe;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
   }
 }
@@ -50,7 +50,7 @@ void Func_02005428(const u16 *entry, s32 set, s32 step) {
     s32 id = work->target;
 
     if (id == entry[0]) {
-      struct ObjectRuntime *object = Object_GetById(id);
+      struct Actor *object = Actor_GetById(id);
       s32 mode = entry[1];
       s32 flag = entry[2];
 

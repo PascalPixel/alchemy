@@ -4,7 +4,7 @@
 // r8 and r10 only, and branch offsets follow.
 #include "types.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 #include "ram_buffer.h"
@@ -24,10 +24,10 @@ s32 Func_02002ed4();
 s32 GameFlag_Test();
 s32 Func_02002e6c();
 s32 Func_02002dfc();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02002df4();
 s32 Func_02002eec();
-void Object_SetModeById();
+void Actor_SetModeById();
 s32 Func_02000418();
 s32 Func_02002e44();
 s32 Func_02002edc();
@@ -197,7 +197,7 @@ L_0200a6d2:
     goto L_0200a6e2;
   goto L_0200ad2a;
 L_0200a6e2:
-  v26 = Object_GetById(8);
+  v26 = Actor_GetById(8);
   r5 = v26;
   FIELD_AT(r5, u8, 85) = 3;
   Call3((void (*)())Func_02002e6c, 8, 0xc80000, 0x580000);
@@ -231,7 +231,7 @@ L_0200a78e:
   if (v28 == 0)
     goto L_0200a7ae;
   Call3((void (*)())Func_02002e6c, 10, 0, 0);
-  Call2((void (*)())Object_SetModeById, 9, 4);
+  Call2((void (*)())Actor_SetModeById, 9, 4);
 L_0200a7ae:
   v29 = GameFlag_Test(0x201);
   if (v29 != 0)
@@ -303,7 +303,7 @@ L_0200a912:
   v40 = GameFlag_Test(0x9d9);
   if (v40 == 0)
     goto L_0200a93e;
-  v41 = Object_GetById(9);
+  v41 = Actor_GetById(9);
   r5 = v41;
   FIELD_AT(r5, u8, 85) = 3;
   Call3((void (*)())Func_02002e6c, 9, 0xc80000, 0x2d80000);
@@ -311,7 +311,7 @@ L_0200a93e:
   v42 = GameFlag_Test(0x9da);
   if (v42 == 0)
     goto L_0200a96c;
-  v43 = Object_GetById(10);
+  v43 = Actor_GetById(10);
   r5 = v43;
   Call3((void (*)())Func_02002e6c, 10, 0xe80000, 0x2d80000);
   FIELD_AT(r5, u8, 85) = 3;
@@ -368,7 +368,7 @@ L_0200aa16:
   Call3((void (*)())Func_02002e6c, 10, 0, 0);
   Event_StartScreenTransition();
   Call1((void (*)())FieldEvent_WaitFrames, 15);
-  v50 = Object_GetById(10);
+  v50 = Actor_GetById(10);
   r5 = v50;
   Call3((void (*)())Func_02002e6c, 10, 0x1480000, 0x2f80000);
   FIELD_AT(r5, s32, 12) = (FIELD_AT(r5, s32, 12)) + 8388608;
@@ -489,7 +489,7 @@ L_0200ac76:
   Call6((void (*)())Func_02002dfc, 22, 88, 15, 7, r5, 89);
   Call6((void (*)())Func_02002e04, 69, 24, 1, 4, 68, r6);
 L_0200ace4:
-  v57 = Object_GetById(FIELD_AT(r7, s32, 532));
+  v57 = Actor_GetById(FIELD_AT(r7, s32, 532));
   r5 = v57;
   FIELD_AT(r5, s32, 20) = r8;
   FIELD_AT(r5, s32, 12) = r8;
@@ -500,7 +500,7 @@ L_0200ad04:
   r3 = (s32)&SceneId_Ov686Room8;
   if (r2 != ((s32)&SceneId_Ov686Room8))
     goto L_0200ad2a;
-  v59 = Object_GetById(64);
+  v59 = Actor_GetById(64);
   r5 = v59;
   if (r5 == 0)
     goto L_0200ad2a;

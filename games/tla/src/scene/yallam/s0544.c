@@ -14,14 +14,14 @@ void Func_02000544(void) {
 
 void Func_02000584(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
   s16 angle = object->angle;
 
   Func_02002488();
   Func_02002590(0);
   BYTE_AT(object, 99) = 1;
   if (*(s16 *)(event + 358) == 0) {
-    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
     Func_02002520(MsgRunningAroundIn);
   } else {
     Func_02002520(MsgThereSALot);
@@ -35,14 +35,14 @@ void Func_02000584(void) {
 
 void Func_02000614(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
   s16 angle = object->angle;
 
   Func_02002488();
   Func_02002590(0);
   BYTE_AT(object, 99) = 1;
   if (*(s16 *)(event + 358) == 0) {
-    ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
     Func_02002520(MsgThereSAGame);
   } else {
     Func_02002520(MsgIOnceHeard);

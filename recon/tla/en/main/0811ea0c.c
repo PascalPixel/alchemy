@@ -39,7 +39,7 @@ extern char MsgNimblyDodgesBlow;
 
 s32 ArcTan2(s32 x, s32 y);
 struct BattleUnit *Unit_Get(s32 unitId);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void PartyStatus_DrawFar(s32 flags);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
 s32 BattleClass_GetAttackHop(s32 classId);
@@ -117,7 +117,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   frames = ResourceMetadata_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   if (work.kind == 10)
-    Object_SetMode(object, 2);
+    Actor_SetMode(object, 2);
   else
     BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
                                 BattleClass_GetAttackHop(unit->enemyId) << 16);
@@ -131,10 +131,10 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
         BattleClass_GetAttackHop(Unit_Get(plan->actorId2)->enemyId) << 16);
-    ObjectDispatch_SetAnimationSpeedFar(
+    Actor_SetAnimationSpeedFar(
         (struct DispatchObject *)partner->object, 16);
   }
-  ObjectDispatch_SetAnimationSpeedFar(
+  Actor_SetAnimationSpeedFar(
       (struct DispatchObject *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= 7)

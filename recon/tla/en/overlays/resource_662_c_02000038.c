@@ -4,20 +4,20 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 extern u16 gData_02001968[];
 extern s8 gData_02001974[][4];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02001848(s32 x, s32 z, s32 w, s32 h, s32 toX, s32 toZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
 
 s32 Func_02000038(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s16 sprite = ((struct ObjectAnimationState *)object->animation)->value28[0];
   s16 i;
   u16 kind;

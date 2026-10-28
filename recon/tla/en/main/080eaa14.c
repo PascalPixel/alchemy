@@ -18,7 +18,7 @@
 // blocked (0xff, bit 7 clear) by the new flag. Actors at x and z 0 only
 // toggle.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct SwitchCell {
@@ -46,11 +46,11 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 actor);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
-s32 Func_080eab70(struct ObjectRuntime *object);
+s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
@@ -58,10 +58,10 @@ s32 Func_080eab98(s32 unused, s32 key, s32 value);
 void Func_080eaa14(struct ActorFlag *list) {
   u8 *event = Ram_HeapSlots->eventWork;
 
-  *(struct ObjectRuntime **)(event + 0xcbc) = NULL;
+  *(struct Actor **)(event + 0xcbc) = NULL;
   for (; list->actor != 0xffff; list++) {
     register s32 change asm("r7") = 0;
-    struct ObjectRuntime *object = Object_GetById(list->actor);
+    struct Actor *object = Actor_GetById(list->actor);
     u8 frame = ((u8 *)object->animation)[24];
     u16 flag = list->flag;
 
@@ -84,7 +84,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       s32 height =
           Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
 
-      *(struct ObjectRuntime **)(event + 0xcbc) = object;
+      *(struct Actor **)(event + 0xcbc) = object;
       height >>= 19;
       if (GameFlag_Test(flag)) {
         height -= 4;

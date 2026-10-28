@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct ContextAnimation {
@@ -32,7 +32,7 @@ void GameFlag_SetBit(s32 flag);
 void ObjectEffect_PrepareContextEffect(s32 animation) {
   u32 zero;
   u8 param;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct ContextAnimation *context;
   struct ContextEffect *effect;
   struct Adventure *party;
@@ -60,7 +60,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   object->velocityZ = zero;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
-  Object_SetMode(object, mode);
+  Actor_SetMode(object, mode);
   WaitFrames(18);
 }
 

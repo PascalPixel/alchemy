@@ -61,7 +61,7 @@ void Func_02001a1c(void);
 void Func_02001a64(s32 message);
 void Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Sound_LoadPresetParameters(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
@@ -138,7 +138,7 @@ s32 Func_0200145c(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
     Func_02001a64((s32)MsgNotBadWould + msg);
     FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -172,7 +172,7 @@ s32 Func_0200145c(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
     /* FAKEMATCH: one scalar holds the row address, then its score, as in ☀️'s
      * entrance 9 */
     score = (u32)&gAdventure.linkTallies[3];
@@ -250,7 +250,7 @@ s32 Func_0200145c(void) {
       Func_02001ab4(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+      Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgNoteYouCan);
       Func_02001a74(8, 0);
       Func_02001a1c();

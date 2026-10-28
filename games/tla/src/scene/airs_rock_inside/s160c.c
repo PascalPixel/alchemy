@@ -7,8 +7,8 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   struct FieldActor *object = Import_ActorCreate(0x11d, x, y, z);
 
   Func_02005d5c(object, 1);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
-  Object_SetPartAttribute(object, 6);
+  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetPartAttribute(object, 6);
   Animation_SetStateFlags(object, 1);
   object->timer = 27;
   object->motionFlags = 0;

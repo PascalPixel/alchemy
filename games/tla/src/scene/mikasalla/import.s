@@ -30,10 +30,10 @@ Func_02000628:
 	.thumb_func
 Func_02000630:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:
@@ -50,34 +50,34 @@ Func_02000650:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetSpeedParameters
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_SetPositionAndReset
+Actor_SetSpeedParameters:
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_SetPositionAndReset
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_CenterOnColumn
+Actor_SetPositionAndReset:
+	overlay_veneer Actor_SetPositionAndResetFar
+	.global Actor_CenterOnColumn
 	.thumb_func
-ObjectMotion_CenterOnColumn:
-	overlay_veneer ObjectMotion_CenterOnColumnFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+Actor_CenterOnColumn:
+	overlay_veneer Actor_CenterOnColumnFar
+	.global Actor_OffsetPositionAndResetMotion
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
-	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+Actor_OffsetPositionAndResetMotion:
+	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+	.global Actor_WaitForMoveById
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
-	.global Object_SetModeById
+Actor_WaitForMoveById:
+	overlay_veneer Actor_WaitForMoveByIdFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_02000698
 	.thumb_func
 Func_02000698:
@@ -90,10 +90,10 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Func_020006a8:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Func_020006b8
 	.thumb_func
 Func_020006b8:
@@ -114,10 +114,10 @@ Func_020006d0:
 	.thumb_func
 Func_020006d8:
 	overlay_veneer Func_080c8580
-	.global ObjectMotion_CommitPositionAndActivate
+	.global Actor_CommitPositionAndActivate
 	.thumb_func
-ObjectMotion_CommitPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+Actor_CommitPositionAndActivate:
+	overlay_veneer Actor_CommitPositionAndActivateFar
 	.global Func_020006e8
 	.thumb_func
 Func_020006e8:

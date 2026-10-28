@@ -13,7 +13,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void Task_Add(void (*callback)(void), s32 priority);
-void Object_SetWideSprite(s32 id, s32 wide);
+void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_020018e0(void);
 void Func_020027e4(void);
 void Func_02002878(void);
@@ -89,7 +89,7 @@ s32 Func_02002614(void) {
     scene = gAdventure.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
       if (!Flag_Test(0x300))
-        Object_SetWideSprite(64, 1);
+        Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Func_02002878();

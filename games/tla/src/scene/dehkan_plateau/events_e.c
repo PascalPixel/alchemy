@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f44[];
@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
@@ -36,7 +36,7 @@ void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
 void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_020015b8(struct ObjectRuntime *object);
+void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
 
@@ -80,10 +80,10 @@ extern s32 gData_0200567c;
 extern s32 gData_02005678;
 
 void Func_02001ee8(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (Flag_Test(0x201) != 0) {
-    object = Object_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gAdventure.currentOwner);
     if (gData_0200567c != (object->x >> 20) ||
         gData_02005678 != (object->z >> 20))
       Flag_Clear(0x201);
@@ -94,9 +94,9 @@ void Func_02003cc0(s32 id);
 
 void Func_02001f38(s32 id) {
   Func_02003cc0(id);
-  Object_SetPartAttribute(Object_GetById(id), 15);
-  ObjectMotion_SetActionVariant(id, 1);
-  Object_GetById(id)->priorityFlags |= 2;
+  Actor_SetPartAttribute(Actor_GetById(id), 15);
+  Actor_SetSpritePriority(id, 1);
+  Actor_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02001f68(void) {
@@ -153,10 +153,10 @@ struct MapCells {
   u8 *cells;
 };
 
-void Func_02000e9c(struct ObjectRuntime *object);
-s32 Func_02003db0(struct ObjectRuntime *object);
+void Func_02000e9c(struct Actor *object);
+s32 Func_02003db0(struct Actor *object);
 
-void Func_0200200c(struct ObjectRuntime *object) {
+void Func_0200200c(struct Actor *object) {
   s32 x;
   u8 *cell;
 
@@ -188,14 +188,14 @@ void Func_0200200c(struct ObjectRuntime *object) {
 s32 Func_02003de0(void);
 s32 Func_02003d10(s32 owner);
 void Func_02000d78(const void *data);
-void Func_0200200c(struct ObjectRuntime *object);
+void Func_0200200c(struct Actor *object);
 extern const u8 gData_02003fc8[];
 
 void Func_020020dc(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (Func_02003de0() != 0) {
-    object = Object_GetById(Func_02003d10(gAdventure.currentOwner));
+    object = Actor_GetById(Func_02003d10(gAdventure.currentOwner));
     Func_02000d78(gData_02003fc8);
     Func_02003de8();
     Func_0200200c(object);

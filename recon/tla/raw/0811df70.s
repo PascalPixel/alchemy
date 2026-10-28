@@ -148,7 +148,7 @@ Func_0811df70:
 	adds r3, r3, r0
 	ldrb r1, [r3]
 	mov r0, r11
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_0811e08c:
 	adds r6, #1
 	adds r5, #2

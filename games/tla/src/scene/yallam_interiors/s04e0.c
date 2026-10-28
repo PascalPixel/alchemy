@@ -7,7 +7,7 @@
 s32 Func_02000a90(void);
 void Func_02000a60(s32 actor, s32 angle);
 void Func_02000a80(s32 actor);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 s32 Func_020004e0(void) {
   s32 item;
@@ -61,45 +61,45 @@ void Func_02000524(void) {
       Func_02000a18(message + 1);
       YallamInteriors_MessagePut(14, 0);
       Call2((void (*)())Func_02000a60, 14, 0xc000);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 1);
-      Call3((void (*)())ObjectMotion_ResetAndSetPosition,
+      Actor_SetSingleChildFlags(Actor_GetById(14), 1);
+      Call3((void (*)())Actor_ResetAndSetPosition,
             gAdventure.currentOwner, 488, 408);
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       YallamInteriors_ObjArm(gAdventure.currentOwner, 0, 0);
-      Call3((void (*)())ObjectMotion_ResetAndSetPosition, 14, 504, 408);
-      ObjectMotion_CommitCurrentPositionAndActivate(14);
-      ObjectMotion_SetAngleToward(14, gAdventure.currentOwner, 0);
+      Call3((void (*)())Actor_ResetAndSetPosition, 14, 504, 408);
+      Actor_WaitForMoveById(14);
+      Actor_SetAngleToward(14, gAdventure.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
         YallamInteriors_ObjSpeed(14, 0x6666, 0x3333);
-        Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 14, 568,
+        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 568,
               408);
-        ObjectMotion_CommitCurrentPositionAndActivate(14);
-        Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 14, 568,
+        Actor_WaitForMoveById(14);
+        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 568,
               360);
-        ObjectMotion_CommitCurrentPositionAndActivate(14);
-        Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 16, 632,
+        Actor_WaitForMoveById(14);
+        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 16, 632,
               346);
         YallamInteriors_ObjArm(16, 0x4000, 0);
-        Object_SetModeById(16, 0);
-        Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 14, 600,
+        Actor_SetModeById(16, 0);
+        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 600,
               360);
-        ObjectMotion_CommitCurrentPositionAndActivate(14);
-        Object_SetModeById(14, 0);
+        Actor_WaitForMoveById(14);
+        Actor_SetModeById(14, 0);
         YallamInteriors_ObjArm(14, 0x4000, 0);
-        Object_GetById(14)->collisionFlags = 129;
-        Object_GetById(14)->priorityFlags = 1;
-        ObjectMotion_SetActionVariant(14, 1);
-        Object_GetById(14)->priorityFlags |= 1;
+        Actor_GetById(14)->collisionFlags = 129;
+        Actor_GetById(14)->priorityFlags = 1;
+        Actor_SetSpritePriority(14, 1);
+        Actor_GetById(14)->priorityFlags |= 1;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         Func_020009f8(17, 0, 0);
 #endif
         YallamInteriors_FlagSet(0x301);
       } else {
-        Call3((void (*)())ObjectMotion_ResetAndSetPosition, 14, 491, 398);
-        ObjectMotion_CommitCurrentPositionAndActivate(14);
+        Call3((void (*)())Actor_ResetAndSetPosition, 14, 491, 398);
+        Actor_WaitForMoveById(14);
         YallamInteriors_ObjArm(14, 0x4000, 0);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 0);
+        Actor_SetSingleChildFlags(Actor_GetById(14), 0);
         Call2((void (*)())Func_02000a60, 14, 0);
       }
     } else {

@@ -11,11 +11,11 @@ s32 Func_02001380();
 s32 Func_020013f8();
 s32 FieldEvent_WaitFrames();
 s32 Func_02001408();
-s32 ObjectMotion_ArmCallback();
+s32 Actor_ArmCallback();
 s32 Func_020012f8();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_020013b8();
-s32 Object_SetModeById();
+s32 Actor_SetModeById();
 s32 Func_02001400();
 s32 Func_02001338();
 s32 Func_02001370();
@@ -33,7 +33,7 @@ void Func_0200049c(s32 a0) {
   Call1(FieldEvent_WaitFrames, 0x1e);
   Call1(Func_02001408, 0x94);
   Call1(FieldEvent_WaitFrames, 0x64);
-  Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
+  Call3(Actor_ArmCallback, 0, 0xc000, 0);
   Call1(FieldEvent_WaitFrames, 0x28);
   Call6(Func_020012f8, 0x52, 0x14, 0x46, 0, 3, 8);
   Call1(FieldEvent_WaitFrames, 3);
@@ -81,16 +81,16 @@ void Func_0200049c(s32 a0) {
   Call1(FieldEvent_WaitFrames, 0x46);
   Call1(Func_02001408, 0x7e);
   if (a0 == -1) {
-    t52 = Value1(Object_GetById, 0x1d);
+    t52 = Value1(Actor_GetById, 0x1d);
     Call2(Func_020013b8, 0x1d, FIELD_AT(gAdventure, s32, 532));
     FIELD_AT((t52 + 0x55), u8, 0) = 0;
     FIELD_AT(t52, s32, 12) = 0x200000;
-    Call2(Object_SetModeById, FIELD_AT(gAdventure, s32, 532), 0x1c);
+    Call2(Actor_SetModeById, FIELD_AT(gAdventure, s32, 532), 0x1c);
     Call1(Func_02001400, 0x1d);
     Call1(Func_02001338, 0x16);
     Call1(Func_02001370, 0x16);
     Call3(Func_020013b0, 0x1d, 0, 0);
-    Call2(Object_SetModeById, FIELD_AT(gAdventure, s32, 532), 1);
+    Call2(Actor_SetModeById, FIELD_AT(gAdventure, s32, 532), 1);
   } else {
     Call2(Func_020013f0, a0, 3);
     Call2(PartyInventory_GiveItem, a0, 0);

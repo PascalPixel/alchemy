@@ -1,55 +1,55 @@
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02001158(s32 id);
 void Func_02001108(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 
 s32 Func_02000f28(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
   Func_02001158(17);
   Func_02001158(18);
-  ObjectMotion_SetActionVariant(10, 2);
-  Object_GetById(12)->collisionFlags |= 4;
-  ObjectMotion_SetActionVariant(16, 2);
-  Object_GetById(16)->collisionFlags |= 4;
+  Actor_SetSpritePriority(10, 2);
+  Actor_GetById(12)->collisionFlags |= 4;
+  Actor_SetSpritePriority(16, 2);
+  Actor_GetById(16)->collisionFlags |= 4;
 
-  object = Object_GetById(18);
+  object = Actor_GetById(18);
   object->motionFlags = 0;
   object->y = -0x40000;
   object->terrainHeight = -0x40000;
-  Object_GetById(18)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(18, 1);
+  Actor_GetById(18)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(18, 1);
   Func_02001108(18, 0, 0);
 
-  object = Object_GetById(19);
+  object = Actor_GetById(19);
   object->motionFlags = 0;
   object->y = 0xc0000;
   object->terrainHeight = 0xc0000;
-  Object_GetById(19)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(19, 1);
+  Actor_GetById(19)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(19, 1);
   Func_02001108(19, 0, 0);
 
-  object = Object_GetById(20);
+  object = Actor_GetById(20);
   object->motionFlags = 0;
   object->y = 0xc0000;
   object->terrainHeight = 0xc0000;
-  Object_GetById(20)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(20, 1);
+  Actor_GetById(20)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(20, 1);
   Func_02001108(20, 0, 0);
 
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
-  Object_SetPartAttribute(Object_GetById(20), 4);
+  Actor_SetSingleChildFlags(Actor_GetById(19), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(20), 0);
+  Actor_SetPartAttribute(Actor_GetById(20), 4);
   return 0;
 }
 

@@ -25,7 +25,7 @@ Func_080decb8:
 	bl Sound_PlayFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r3, #0
 	str r3, [r5, #108]
 	movs r2, #1

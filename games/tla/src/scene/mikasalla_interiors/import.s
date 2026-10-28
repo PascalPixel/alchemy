@@ -30,26 +30,26 @@ Func_020005cc:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_020005e4
 	.thumb_func
 Func_020005e4:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_SetAngleToward
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_SetAngleToward
 	.thumb_func
-ObjectMotion_SetAngleToward:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Object_SetPartAttribute
+Actor_SetAngleToward:
+	overlay_veneer Actor_SetAngleTowardFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
 	.global Func_02000604
 	.thumb_func
 Func_02000604:
@@ -62,10 +62,10 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Func_02000614:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_SetActionVariant
+	.global Actor_SetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+Actor_SetSpritePriority:
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_02000624
 	.thumb_func
 Func_02000624:

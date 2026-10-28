@@ -6,7 +6,7 @@
 // it, and saves only r8 and r10; this draft's allocation differs throughout.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GlowState {
   s32 x; ///< 16.16 pixels
@@ -36,8 +36,8 @@ struct GlowWork {
   u8 unk000[0x400];
   struct GlowSprite sprites[16];
   struct GlowState states[16];
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *effect;
+  struct Actor *object;
+  struct Actor *effect;
   s32 x;
   s32 y;
   s32 z;
@@ -57,8 +57,8 @@ void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state);
 
 void Func_02001fd0(void) {
   struct GlowWork *work = Ram_HeapSlots->menuRuntime;
-  struct ObjectRuntime *object = work->object;
-  struct ObjectRuntime *effect = work->effect;
+  struct Actor *object = work->object;
+  struct Actor *effect = work->effect;
   s32 i, y;
 
   switch (work->stage) {

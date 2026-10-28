@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 a, s32 b);
+void Actor_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000048(void);
@@ -33,8 +33,8 @@ static inline void PlaceActor(s32 id, s32 x, s32 z) {
 
 /// One hop of object 12 by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
-  ObjectMotion_Launch(12, 5, 0);
-  ObjectMotion_CommitPositionAndActivate(12, dx, dz);
+  Actor_Jump(12, 5, 0);
+  Actor_CommitPositionAndActivate(12, dx, dz);
   FieldEvent_WaitFrames(3);
 }
 
@@ -42,18 +42,18 @@ static inline void Hop(s32 dx, s32 dz) {
 /// scale, then hops thirteen times while the leader follows, and object 13
 /// takes Func_02000048 as its update.
 void Func_02000110(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
 
   MapCopy(7, 13, 1, 1, 5, 13, 0);
   if (Flag_IsSet(0x96c))
     return;
-  object = Object_GetById(12);
+  object = Actor_GetById(12);
   Flag_Set(0x96c);
   Flag_Set(0x96e);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   PlaceActor(12, 176 << 15, 216 << 16);
-  ObjectMotion_Launch(12, 9, 0);
+  Actor_Jump(12, 9, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
   for (i = 29; i >= 0; i--) {
@@ -79,16 +79,16 @@ void Func_02000110(void) {
   object->angle = 0x3000;
   object->scaleY = 0x10000;
   object->scaleX = 0x10000;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 1);
-  ObjectMotion_SetActionVariant(12, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 1);
+  Actor_SetSpritePriority(12, 1);
   FieldEvent_WaitFrames(8);
-  ObjectMotion_Launch(12, 9, 0);
-  ObjectMotion_SetPositionAndReset(12, 120, 200);
-  Object_GetById(12)->priorityFlags |= 1;
-  ObjectMotion_SetPositionAndReset(12, 136, 200);
+  Actor_Jump(12, 9, 0);
+  Actor_SetPositionAndReset(12, 120, 200);
+  Actor_GetById(12)->priorityFlags |= 1;
+  Actor_SetPositionAndReset(12, 136, 200);
   FieldEvent_WaitFrames(3);
-  Object_SetModeById(gAdventure.currentOwner, 1);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xe000, 0);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
+  Actor_ArmCallback(gAdventure.currentOwner, 0xe000, 0);
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
@@ -97,13 +97,13 @@ void Func_02000110(void) {
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
   Hop(0, 16);
   Hop(16, 0);
   Hop(16, 0);
   Hop(16, 0);
   Hop(16, 0);
   Func_0200195c(12, 0, 0);
-  Object_GetById(13)->update = Func_02000048;
-  Object_GetById(13)->action = 0;
+  Actor_GetById(13)->update = Func_02000048;
+  Actor_GetById(13)->action = 0;
 }

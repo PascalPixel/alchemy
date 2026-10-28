@@ -298,10 +298,10 @@ BattleEffect_RunOdyssey:
 	bl Sound_PlayFar
 	movs r1, #2
 	ldr r0, [sp, #44]
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r1, #48
 	ldr r0, [sp, #44]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r7, [sp, #60]
 	movs r3, #80
 	movs r2, #36
@@ -1140,7 +1140,7 @@ BattleEffect_RunOdyssey:
 	bl Heap_Release
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r6, #240
 	ldr r3, [sp, #56]
 	lsls r6, r6, #7

@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000714(struct ObjectRuntime *object) {
+void Func_02000714(struct Actor *object) {
   s32 step;
 
   object->x += object->action << 8;
@@ -23,7 +23,7 @@ void Func_02000714(struct ObjectRuntime *object) {
 }
 
 void Func_02000758(s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *object = Func_02001ff8(0x11d, x, y, z);
+  struct Actor *object = Func_02001ff8(0x11d, x, y, z);
 
   if (object != NULL) {
     s8 *animation;
@@ -32,10 +32,10 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->action = 0;
     object->priorityFlags &= 0xfe;
-    Object_SetPartAttribute(object, 7);
+    Actor_SetPartAttribute(object, 7);
     animation = object->animation;
     animation[9] = (animation[9] & -13) | 4;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;

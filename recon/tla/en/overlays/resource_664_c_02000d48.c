@@ -9,26 +9,26 @@
 // pool). Left: as Func_020010b4's draft, the shot and the zero swap r6 and
 // r7, which moves most rows.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
 
 extern u8 gData_020061ac[], gData_02006194[];
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02000690(s32 layer, s32 x, s32 z);
-void Func_02005f8c(struct ObjectRuntime *object, s32 cue);
-void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
+void Func_02005f8c(struct Actor *object, s32 cue);
+void Func_02005d6c(struct Actor *object, const u8 *script);
 s32 Func_02000d18(s32 *a, s32 *b);
 s32 Func_02000cec(s32 *a, s32 *b);
 s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-void Func_02000d48(struct ObjectRuntime *shot) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_02000d48(struct Actor *shot) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
   u8 *hit;
   s32 near;
@@ -36,10 +36,10 @@ void Func_02000d48(struct ObjectRuntime *shot) {
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
       gAdventure.renderMode == 5) {
-    ObjectDispatch_SetAnimationSpeed(shot, 0);
+    Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(shot, 16);
+  Actor_SetAnimationSpeed(shot, 16);
   if (Func_02000690(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
     ((u8 *)shot)[0x63] = 0;
     shot->update = 0;

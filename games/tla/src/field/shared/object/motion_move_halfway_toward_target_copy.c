@@ -1,7 +1,7 @@
-#include "object_runtime.h"
+#include "actor.h"
 
-void ObjectMotion_MoveHalfwayTowardTargetCopy(struct ObjectRuntime *object) {
-  struct ObjectRuntime *target = object->watchedObject;
+void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
+  struct Actor *target = object->watchedObject;
 
   object->x += (target->x - object->x) / 2;
   /* FAKEMATCH: the ARM9 scheduling would load the target's y before the

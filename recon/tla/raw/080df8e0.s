@@ -19,7 +19,7 @@ Func_080df8e0:
 	str r3, [sp, #4]
 	mov r10, r1
 	ldr r7, [sp, #52]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #128
 	lsls r3, r3, #13
 	mov r2, r10
@@ -53,7 +53,7 @@ Func_080df8e0:
 	adds r1, #1
 	ands r1, r5
 	adds r0, r6, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r2, .L_080dfaa8
 	mov r3, r10
 	ands r3, r5
@@ -61,7 +61,7 @@ Func_080df8e0:
 	ldr r1, [r2, r3]
 	adds r0, r6, #0
 	mov r9, r3
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	adds r3, r6, #0
 	movs r0, #0
 	adds r3, #85
@@ -112,7 +112,7 @@ Func_080df8e0:
 	beq .L_080df9c0
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_080df9c0:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -193,10 +193,10 @@ Func_080df8e0:
 	beq .L_080dfa66
 	adds r0, r6, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [r7, #28]
 	adds r0, r6, #0
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080dfa66:
 	movs r3, #128
 	lsls r3, r3, #15

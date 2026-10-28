@@ -4,7 +4,7 @@
 // the blend fades a layer in; then cues 298 and 125, the leader is put on
 // layer 1 and flags 0x206 and 0x207 are set. Left: the native writes the blend after building both halves, with the count in r1, and tests the 352 frames against 351 where this draft compares with 352.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"
@@ -13,14 +13,14 @@ void Func_02001da0(void);
 void Func_02001da8(void);
 void Func_02001ee8(s32 skip);
 void Func_02001d60(void);
-void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(u32 id);
+void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(u32 id);
 void Func_02001e70(u32 id, s32 angle);
 void Func_02001f10(s32 cue);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000d3c(void) {
@@ -32,12 +32,12 @@ void Func_02000d3c(void) {
   Func_02001da0();
   Func_02001ee8(0);
   Func_02001d60();
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -8);
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -8);
+  Actor_WaitForMoveById(gAdventure.currentOwner);
   Func_02001e70(gAdventure.currentOwner, 0x4000);
   Func_02001f10(308);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
   step = 1;
   i = 0;
 climb:
@@ -53,12 +53,12 @@ climb:
   i++;
   if (i <= 351)
     goto climb;
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   Func_02001f10(298);
   WaitFrames(1);
   Func_02001f10(125);
   FieldEvent_WaitFrames(20);
-  Object_GetById(gAdventure.currentOwner)->terrainId = 1;
+  Actor_GetById(gAdventure.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);
   Func_02001da8();

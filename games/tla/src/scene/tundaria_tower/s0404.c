@@ -1,8 +1,8 @@
 #include "types.h"
 #include "field_event.h"
 
-struct FieldActor *Object_GetById();
-void ObjectDispatch_SetSingleChildFlags();
+struct FieldActor *Actor_GetById();
+void Actor_SetSingleChildFlags();
 s32 GameFlag_Test();
 void Func_02002f80();
 void Func_02000338();
@@ -18,11 +18,11 @@ void Func_02000404(u16 *table) {
   row = table;
 loop:
   {
-    object = Object_GetById(row[0]);
+    object = Actor_GetById(row[0]);
     animation = row[1];
     flag = row[2];
 
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02002f80(object, (u16)animation + GameFlag_Test((u16)flag));
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): the collision byte's address is built after the

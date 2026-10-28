@@ -1,7 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 
 void Func_02001b78(s32 *position, s32 base) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       ObjectCreate_(0x11d, position[0], position[1], position[2] - 0x20000);
   s32 angle;
 

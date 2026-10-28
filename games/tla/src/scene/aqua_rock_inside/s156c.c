@@ -2,7 +2,7 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-s32 Func_0200156c(struct ObjectRuntime *object) {
+s32 Func_0200156c(struct Actor *object) {
   u8 left;
 
   object->x += object->bounce;

@@ -12,7 +12,7 @@
 // second loop) and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 struct SprayParticle {
@@ -51,23 +51,23 @@ struct SprayScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *otherObject;
+  struct Actor *mainObject;
+  struct Actor *otherObject;
 };
 
 struct SprayEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 extern u32 gFrameCount;
 
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SprayParticle *particle);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 u32 Random16(void);
@@ -76,7 +76,7 @@ void Func_080e38c8(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
   struct SprayEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
@@ -11,7 +11,7 @@ extern u8 gData_02006598[];
 extern u8 gData_02006700[];
 extern u8 gData_02006790[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldMessage_Show(s32 message, s32 position);
 void Message_CloseFinishedWindows(void);
 void Func_02003bf0(void);
@@ -49,7 +49,7 @@ void Func_02000458(void) {
     Func_02004ba8(153, 4);
     FieldMessage_Show((s32)MsgBlank2, 4);
   }
-  if (Object_GetById(Func_02004e10()) != NULL)
+  if (Actor_GetById(Func_02004e10()) != NULL)
     Func_02004b28();
   Func_02003bf0();
   if (Flag_IsSet(0x147))

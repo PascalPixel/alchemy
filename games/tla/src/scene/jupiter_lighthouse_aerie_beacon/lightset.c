@@ -16,7 +16,7 @@ extern u16 gData_02006a50[];
 
 s32 GameFlag_Test();
 void Task_Add();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_020057c4();
 void Func_020059ec();
@@ -43,7 +43,7 @@ void Func_020040a0(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;

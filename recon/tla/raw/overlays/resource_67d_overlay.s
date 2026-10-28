@@ -129,7 +129,7 @@ Func_0200200c:
 	bne .L_0200a134
 	movs r0, #17
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #2
 	movs r0, #17
 	adds r1, #255
@@ -151,21 +151,21 @@ Func_0200200c:
 	bne .L_0200a186
 	movs r0, #9
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #11
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #5
 	movs r0, #12
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #11
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	movs r0, #11
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #24]
 	negs r3, r3
 	str r3, [r5, #24]

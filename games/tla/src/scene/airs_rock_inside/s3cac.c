@@ -1,10 +1,10 @@
 #include "types.h"
 #include "call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 Func_02000690(s32 kind, s32 x, s32 z);
@@ -17,10 +17,10 @@ void Func_02003b7c(s32 x, s32 y);
 /// gives, sets flag 0x200 and the counter's flag (312 on).
 void Func_02003cac(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 cell, row = 54;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   cell = Func_02000690(2, leader->x >> 20, leader->z >> 20);
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into

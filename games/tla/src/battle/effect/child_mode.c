@@ -18,7 +18,7 @@ struct ChildGroup {
 
 /// Sets the draw parameter (byte 5) of each active child of group to mode
 /// and marks the group for redrawing.
-void ObjectGroup_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
+void Actor_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
   s32 i;
 
   for (i = 0; i < group->count; i++) {

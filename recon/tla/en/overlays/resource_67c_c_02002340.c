@@ -5,7 +5,7 @@
 // its listing; names and structure still to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -20,7 +20,7 @@
 
 void Func_02003278();
 s32 Func_020032d4();
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02003cc4();
 s32 GameFlag_Test();
 void Func_02003d24();
@@ -28,7 +28,7 @@ s32 Func_02003d1c();
 void Func_0200349c();
 void Func_02003ddc();
 void Func_02003ea4();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_02003628();
 void Func_02003688();
 void Func_020036b8();
@@ -74,14 +74,14 @@ L_0200a39c:
     if (r7 != 7)
       goto L_0200a462;
   }
-  v0 = Object_GetById(12);
+  v0 = Actor_GetById(12);
   r6 = v0;
   r5 = 0;
   FIELD_AT(r6, u8, 85) = r5;
   FIELD_AT(r6, s32, 20) = r5;
   FIELD_AT(r6, s32, 12) = r5;
   Call2((void (*)())Func_02003cc4, v0, 0);
-  v1 = Object_GetById(13);
+  v1 = Actor_GetById(13);
   r6 = v1;
   FIELD_AT(r6, u8, 85) = r5;
   FIELD_AT(r6, s32, 20) = r5;
@@ -95,7 +95,7 @@ L_0200a39c:
     Func_020032d4(33, 0, 0);
   } else {
     Call3((void (*)())Func_020032d4, 33, 4, 0);
-    v3 = Object_GetById(12);
+    v3 = Actor_GetById(12);
     r6 = v3;
     Call2((void (*)())Func_0200349c, ((FIELD_AT(r6, s32, 8)) >> 20) - 42, 0);
   }
@@ -142,7 +142,7 @@ L_0200a52a:
   if ((u32)(r7 - 1) <= (u32)1) {
     Func_020032d4(33, 0, -2);
   }
-  v8 = Object_GetById(8);
+  v8 = Actor_GetById(8);
   r6 = v8;
   FIELD_AT(r6, u8, 85) = 0;
   FIELD_AT(r6, s32, 20) = 0;
@@ -154,10 +154,10 @@ L_0200a558:
   if (r5 != (162))
     goto L_0200a654;
   Call1((void (*)())Func_02003ea4, 0);
-  v9 = Object_GetById(9);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v9, 0);
-  v10 = Object_GetById(10);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v10, 0);
+  v9 = Actor_GetById(9);
+  Call2((void (*)())Actor_SetSingleChildFlags, v9, 0);
+  v10 = Actor_GetById(10);
+  Call2((void (*)())Actor_SetSingleChildFlags, v10, 0);
   Func_020032d4(33, 8, -2);
   Func_020032d4(40, 8, 8);
   v11 = GameFlag_Test(0xa66);
@@ -200,7 +200,7 @@ L_0200a65c:
     goto L_0200a66a;
   goto L_0200a7aa;
 L_0200a66a:
-  v14 = Object_GetById(FIELD_AT(r6, s32, 532));
+  v14 = Actor_GetById(FIELD_AT(r6, s32, 532));
   FIELD_AT(v14, u8, 35) = 32 | (FIELD_AT(v14, u8, 35));
   Value3((s32 (*)())Func_02003420, 12, 5, 4);
   Value3((s32 (*)())Func_02003420, 13, 3, 4);
@@ -247,7 +247,7 @@ L_0200a774:
 L_0200a78c:
   r5 = 12;
 L_0200a78e:
-  v22 = Object_GetById(r5);
+  v22 = Actor_GetById(r5);
   r6 = v22;
   r5 = r5 + 1;
   FIELD_AT(r6, u8, 85) = 0;
@@ -322,7 +322,7 @@ L_0200a866:
     goto L_0200a890;
   r5 = 13;
 L_0200a874:
-  v26 = Object_GetById(r5);
+  v26 = Actor_GetById(r5);
   r6 = v26;
   r5 = r5 + 1;
   FIELD_AT(r6, u8, 85) = 0;
@@ -339,7 +339,7 @@ L_0200a890:
   Call6((void (*)())Func_02003d24, 105, 105, 12, 13, 105, r5);
   r5 = 13;
 L_0200a8ca:
-  v27 = Object_GetById(r5);
+  v27 = Actor_GetById(r5);
   r6 = v27;
   v28 = GameFlag_Test(r5 + 580);
   if (v28 != 0) {
@@ -374,7 +374,7 @@ L_0200a944:
     goto L_0200a94c;
   goto L_0200aafe;
 L_0200a94c:
-  v30 = Object_GetById(FIELD_AT((s32)(s32)&gAdventure, s32, 532));
+  v30 = Actor_GetById(FIELD_AT((s32)(s32)&gAdventure, s32, 532));
   FIELD_AT(v30, u8, 35) = 32 | (FIELD_AT(v30, u8, 35));
   Value3((s32 (*)())Func_02003420, 10, 6, 4);
   Value3((s32 (*)())Func_02003420, 11, 3, 4);
@@ -431,7 +431,7 @@ L_0200aae6:
 L_0200aafe:
   r5 = 10;
 L_0200ab00:
-  v37 = Object_GetById(r5);
+  v37 = Actor_GetById(r5);
   r6 = v37;
   r5 = r5 + 1;
   FIELD_AT(r6, u8, 85) = 0;
@@ -439,7 +439,7 @@ L_0200ab00:
   FIELD_AT(r6, s32, 12) = 0;
   if (r5 <= 20)
     goto L_0200ab00;
-  v38 = Object_GetById(19);
+  v38 = Actor_GetById(19);
   r6 = v38;
   Call6((void (*)())Func_02003d1c, 23, 39, 1, 1, (FIELD_AT(r6, s32, 8)) >> 20,
         39);

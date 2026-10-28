@@ -1,6 +1,6 @@
 #include "types.h"
 
-void ObjectMotion_SnapToTerrain(void *object) {
+void Actor_SnapToTerrain(void *object) {
   s32 height;
 
   height = Map_GetTerrainHeightFar(0, *(s32 *)((u8 *)object + 8),

@@ -21,7 +21,7 @@ s32 Func_020020c4(void) {
   if (scene == (s32)&SceneId_Ov697Room1) {
     if (entrance <= 7) {
       GameFlag_SetBit(324);
-      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
       gData_02005b64[pattern & 7]();
     } else if (entrance == 55) {
       Func_02003900();

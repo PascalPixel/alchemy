@@ -1,8 +1,8 @@
 #include "islets.h"
 
-void Func_02003d0c(struct ObjectRuntime *object) {
+void Func_02003d0c(struct Actor *object) {
   struct IsletsVector position;
-  struct ObjectRuntime *hit;
+  struct Actor *hit;
   u32 i;
   s32 angle = object->angle >> 12;
 
@@ -25,11 +25,11 @@ void Func_02003d0c(struct ObjectRuntime *object) {
     i++;
     if (i <= 5)
       goto next;
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
   if (Func_02003e2c(object, &position) > 0)
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

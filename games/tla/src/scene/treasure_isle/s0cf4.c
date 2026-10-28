@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "flag_call.h"
 
@@ -16,7 +16,7 @@ extern char SceneId_Ov6afRoom4;
 extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_020003fc(void *cells, s32 index);
 void Func_02000ba0(void);
@@ -104,7 +104,7 @@ s32 Func_02000cf4(void) {
        * to the 12, as the native has them; unpinned, 12 of 241 instructions
        * differ in tla-en. */
       register u8 *flags asm("r2") =
-          (u8 *)Object_GetById(i + 9)->animation + 37;
+          (u8 *)Actor_GetById(i + 9)->animation + 37;
 
       *flags |= 12;
     }

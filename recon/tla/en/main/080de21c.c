@@ -12,7 +12,7 @@
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_slot.h"
 
 struct PendingEvent;
@@ -28,8 +28,8 @@ struct Effect04Scene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u8 unk1c[4];
@@ -55,13 +55,13 @@ void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
 void Animation_ApplyChildValuesFar(void *object, u32 value);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct Effect04Vector *position);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ResourceEntry *Object_ReplaceResourceEntry(void *sprite,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite,
                                                   struct ResourceEntry *last);
-void ObjectDispatch_InitializeFar(void *object, const void *script);
-s32 Func_08020210(struct ObjectRuntime *object,
+void Actor_StartScriptFar(void *object, const void *script);
+s32 Func_08020210(struct Actor *object,
                   struct Effect04Vector *position);
-s32 ScriptObject_CheckOverlapFar(struct ObjectRuntime *object,
+s32 ScriptObject_CheckOverlapFar(struct Actor *object,
                                  struct Effect04Vector *position);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
@@ -77,13 +77,13 @@ extern const u8 gData_080f0e58[];
 // front of it and flies off with three trailing copies, and the target is
 // pushed 16 pixels away unless something blocks it.
 void Func_080de21c(void) {
-  struct ObjectRuntime *copies[4];
+  struct Actor *copies[4];
   struct Effect04Vector pos;
   struct Effect04Scene *scene;
-  struct ObjectRuntime *target;
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *copy;
+  struct Actor *target;
+  struct Actor *source;
+  struct Actor *object;
+  struct Actor *copy;
   struct FieldParticle *slot;
   struct ResourceEntry *resource;
   struct PendingEvent *event;
@@ -118,7 +118,7 @@ void Func_080de21c(void) {
   pos.y = source->y + 0x100000;
   pos.z = source->z;
   Vector_AddPolarOffset(0x80000, scene->angle, &pos);
-  object = Object_Spawn(278, pos.x, pos.y, pos.z);
+  object = Actor_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
     BattleEffect_PrepareBufferInterpolation();
     return;
@@ -129,7 +129,7 @@ void Func_080de21c(void) {
   object->speedLimit = 0x40000;
   object->acceleration = 0x40000;
   object->motionFlags = 0;
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
   Animation_ApplyChildValuesFar(object, 3);
   scale = object->scaleX;
   if (scale < 0x10000) {
@@ -145,7 +145,7 @@ void Func_080de21c(void) {
 
   resource = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = Object_Spawn(278, object->x, object->y, object->z);
+    copy = copies[i] = Actor_Spawn(278, object->x, object->y, object->z);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
@@ -153,9 +153,9 @@ void Func_080de21c(void) {
       copy->speedLimit = 0x40000;
       copy->acceleration = 0x40000;
       copy->motionFlags = 0;
-      Object_SetMode(copy, 5);
+      Actor_SetMode(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
-      resource = Object_ReplaceResourceEntry(copy->animation, resource);
+      resource = Sprite_ShareVramCacheEntry(copy->animation, resource);
     }
   }
   marker = resource->vramBlock;
@@ -171,14 +171,14 @@ void Func_080de21c(void) {
     pos.y = scene->y + 0x100000;
     pos.z = scene->z;
   }
-  Object_SetPosition(object, pos.x, pos.y, pos.z);
-  ObjectDispatch_InitializeFar(object, gData_080f0ef8);
+  Actor_SetTargetPosition(object, pos.x, pos.y, pos.z);
+  Actor_StartScriptFar(object, gData_080f0ef8);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
-      Object_SetPosition(copy, pos.x, pos.y, pos.z);
-      ObjectDispatch_InitializeFar(copy, gData_080f0e58);
+      Actor_SetTargetPosition(copy, pos.x, pos.y, pos.z);
+      Actor_StartScriptFar(copy, gData_080f0e58);
     }
   }
 
@@ -196,7 +196,7 @@ void Func_080de21c(void) {
         ScriptObject_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = 0x10000;
       target->speedLimit = 0x10000;
-      Object_SetPosition(target, pos.x, pos.y, pos.z);
+      Actor_SetTargetPosition(target, pos.x, pos.y, pos.z);
     }
   }
 

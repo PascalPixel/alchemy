@@ -19,12 +19,12 @@
 #include "adventure.h"
 #include "input.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
 s32 Func_08118140(s32, s32);
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
@@ -88,18 +88,18 @@ s32 Func_0804b8b8(s32 slot) {
     if (redraw) {
       struct BattleObj *from;
       struct BattleObj *to;
-      struct ObjectRuntime *object;
-      struct ObjectRuntime *place;
+      struct Actor *object;
+      struct Actor *place;
 
       redraw = 0;
       newId = battle->partyUnits[slot] = owners[sel];
       from = GetBattleObjectSlotFar(current);
       to = GetBattleObjectSlotFar(newId);
       to->anchorX = from->anchorX;
-      place = (struct ObjectRuntime *)from->object;
-      object = (struct ObjectRuntime *)to->object;
+      place = (struct Actor *)from->object;
+      object = (struct Actor *)to->object;
       to->anchorZ = from->anchorZ;
-      Object_SetPositionAndResetMotionFar(object, place->x, place->y, place->z);
+      Actor_SetPositionAndResetMotionFar(object, place->x, place->y, place->z);
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleActor_CommitPlacementFar();
       selected[0] = newId;

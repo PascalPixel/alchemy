@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_sprite.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "work9c.h"
 
 void Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
@@ -8,8 +8,8 @@ void Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
 void Func_080d8d68(s32 index, s32 id, s32 other) {
   struct Work9c *work = WORK_9C;
   s32 priority = 2;
-  struct ObjectRuntime *first = ObjectTable_Get(id);
-  struct ObjectRuntime *second = ObjectTable_Get(other);
+  struct Actor *first = ObjectTable_Get(id);
+  struct Actor *second = ObjectTable_Get(other);
 
   if (first != NULL && second != NULL) {
     struct Work9cSlot *slot;
@@ -29,6 +29,6 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,
                   second->y + lift, second->z);
   }
-  Object_SetMode(first, 2);
-  Object_SetMode(second, 2);
+  Actor_SetMode(first, 2);
+  Actor_SetMode(second, 2);
 }

@@ -7,15 +7,15 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02004d9c();
-s32 ObjectDispatch_SetAnimationSpeed();
+s32 Actor_SetAnimationSpeed();
 
 s32 Func_020005dc(void) {
   s32 t0;
 
-  t0 = Value1(Object_GetById, 9);
+  t0 = Value1(Actor_GetById, 9);
   Call2(Func_02004d9c, t0, 3);
-  Call2(ObjectDispatch_SetAnimationSpeed, t0, 0);
+  Call2(Actor_SetAnimationSpeed, t0, 0);
   return 0;
 }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 struct RideEntry {
@@ -42,18 +42,18 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
-void Func_02002e6c(struct ObjectRuntime *object);
+void Func_02002e6c(struct Actor *object);
 #include "adventure.h"
 
-void Func_02003118(struct ObjectRuntime *object, s32 value);
+void Func_02003118(struct Actor *object, s32 value);
 void Func_020032b8(s32 value);
 void Func_02003238(s32 value);
 void Func_02003230(s32 a, s32 b);
@@ -66,7 +66,7 @@ void Task_RemoveFar(void (*callback)(void));
 void Func_0200055c(void);
 void Func_0200170c(void);
 
-s32 Func_02003084(struct ObjectRuntime *object) {
+s32 Func_02003084(struct Actor *object) {
   Func_02002e6c(object);
   SET_POSITION(object, 0, 0, 0);
   SET_VELOCITY(object, 0, 0, 0);

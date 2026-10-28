@@ -48,7 +48,7 @@ s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
 void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *);
-void ObjectDispatch_Initialize(struct DispatchObject *, u32);
+void Actor_StartScript(struct DispatchObject *, u32);
 s32 WaitFrames(s32);
 
 extern const s32 gObjectDispatch_CameraScript[];
@@ -56,7 +56,7 @@ extern const s32 gObjectDispatch_EndScript[];
 
 #endif
 
-void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
+void Actor_SelectAnimation(struct DispatchObject *object,
                                             s32 argument) {
   struct DispatchChild **items;
   struct DispatchChild *item;
@@ -81,7 +81,7 @@ void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object,
+void Actor_SetAnimationSpeed(struct DispatchObject *object,
                                          s32 value) {
   s32 count;
   struct DispatchChild *child;
@@ -106,7 +106,7 @@ void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
+void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
                                         s32 argument, s32 value) {
   struct DispatchChild **items;
   struct DispatchChild *item;
@@ -132,7 +132,7 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object,
+void Actor_SetSpriteRotation(struct DispatchObject *object,
                                         u32 value) {
   if (object != 0 && (object->kind & 0xf) == 1)
     object->target.child->value12 = value;
@@ -151,7 +151,7 @@ void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
+void Actor_RegisterSpriteMetadata(struct DispatchObject *object,
                                           s32 value) {
   if (object != 0 && (object->kind & 0xf) == 1) {
     struct DispatchChild *child = object->target.child;

@@ -7,7 +7,7 @@
 #include "iwram_call.h"
 #include "battle_work.h"
 
-void Object_Destroy(void *object);
+void Actor_Destroy(void *object);
 void Render_ResetTransformState(void);
 s32 GameFlag_Test(s32 flag);
 s32 Transform_ApplyLookAt(void *, void *);

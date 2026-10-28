@@ -92,8 +92,8 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+                   s32 timerFrames); // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
@@ -431,7 +431,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
       }
     }
 
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

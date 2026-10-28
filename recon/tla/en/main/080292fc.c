@@ -5,7 +5,7 @@
 // closer.
 // Near miss, differ 30 of 300, all instruction order but one register (127
 // is built in r0, the native r1): script command 0x1c, a sibling of
-// Object_MoveByKeys that moves an object along the nearest rail point within
+// Actor_MoveByKeys that moves an object along the nearest rail point within
 // 32 pixels of the direction pad's step. The native issues the opening
 // loads and constant halves in source order where sched2 here interleaves
 // them, and copies positions as in Func_08025698. Measured: the spilled
@@ -17,7 +17,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -71,14 +71,14 @@ extern const u16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-struct ObjectRuntime *Object_GetByIdFar(s32 id);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
+struct Actor *Actor_GetByIdFar(s32 id);
+void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
-s32 Func_080292fc(struct ObjectRuntime *object) {
+s32 Func_080292fc(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteAngle *sprite;
@@ -92,8 +92,8 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
   s32 count;
   u16 angle;
   s32 turn;
-  struct ObjectRuntime *first;
-  struct ObjectRuntime *second;
+  struct Actor *first;
+  struct Actor *second;
   struct KeyMoveWork *work;
 
   sprite = object->animation;
@@ -141,12 +141,12 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
     collisionFlags |= 1;
   } else {
     pair = &rail->pairs[best->pair - 1];
-    first = Object_GetByIdFar(pair->first);
-    second = Object_GetByIdFar(pair->second);
+    first = Actor_GetByIdFar(pair->first);
+    second = Actor_GetByIdFar(pair->second);
     if (first->x > second->x)
       speed = -speed;
-    first = Object_GetByIdFar(pair->first);
-    second = Object_GetByIdFar(pair->second);
+    first = Actor_GetByIdFar(pair->first);
+    second = Actor_GetByIdFar(pair->second);
     if (first->y > second->y) {
       speed = -speed;
       turn = 0xc000;
@@ -162,7 +162,7 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
       pair->speed += 0x8000;
       if (pair->speed > 0x20000)
         pair->speed = 0x20000;
-      object->watchedObject = (struct ObjectRuntime *)best;
+      object->watchedObject = (struct Actor *)best;
       position.x = best->x;
       position.y = best->y;
       position.z = best->z;
@@ -177,8 +177,8 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
       work->blockedSteps = 0;
     work->heldKeys = INPUT_HELD;
   }
-  ObjectDispatch_SelectAnimation(object, 29);
-  ObjectDispatch_SetAnimationSpeed(object, value);
+  Actor_SelectAnimation(object, 29);
+  Actor_SetAnimationSpeed(object, value);
   if (collisionFlags != 0) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
@@ -187,7 +187,7 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
     object->velocityY = 0;
     object->velocityZ = 0;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
   }
   object->step++;
   return 1;

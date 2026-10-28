@@ -29,7 +29,7 @@ Func_08023220:
 	lsls r3, r3, #4
 	adds r3, #255
 	ands r7, r3
-	bl ObjectDispatch_FindFreeObject
+	bl Actor_FindFreeObject
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_0802325c
@@ -128,7 +128,7 @@ Func_08023220:
 	mov r1, r9
 	ldr r2, [sp, #0]
 	mov r3, r11
-	bl Object_SetPositionAndResetMotion
+	bl Actor_SetPositionAndResetMotion
 	ldr r3, .L_08023364
 	movs r2, #128
 	str r3, [r6]

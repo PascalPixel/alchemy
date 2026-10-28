@@ -8,7 +8,7 @@
 
 #include "call.h"
 #include "ram_buffer.h"
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 GameFlag_ClearBit();
 s32 Func_02004f8c();
 
@@ -25,7 +25,7 @@ s32 PartyInventory_FindOwner(s32 item);
 void Func_02001fa0(void) {
   s32 t0;
 
-  t0 = Value1(Object_GetById, 0x42);
+  t0 = Value1(Actor_GetById, 0x42);
   FIELD_AT(t0, s32, 8) = 0x2280000;
   FIELD_AT(t0, s32, 16) = 0x1280000;
   FIELD_AT(t0, s32, 12) = -1966080;

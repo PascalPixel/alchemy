@@ -20,7 +20,7 @@ void Func_0200129c(const u16 *entry, s32 mode, s32 frame) {
 loop:
   id = work->objectId;
   if (id == entry[0]) {
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s32 kind = *++entry;
     s32 flag = entry[1];
 

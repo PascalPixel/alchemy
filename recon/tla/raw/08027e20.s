@@ -719,7 +719,7 @@ Func_08027e20:
 .L_080283b8:
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_080283e0
 	.2byte 0x0000
 .L_080283c4:
@@ -735,7 +735,7 @@ Func_08027e20:
 .L_080283d8:
 	mov r0, r8
 	movs r1, #2
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 .L_080283e0:
 	ldr r3, .L_08028520
 	ldr r1, .L_08028524
@@ -814,7 +814,7 @@ Func_08027e20:
 	ldr r2, [r3, #4]
 	mov r0, r8
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	mov r2, r8
 	ldr r1, [r2, #36]
 	ldr r6, .L_08028530

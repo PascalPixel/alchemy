@@ -74,7 +74,7 @@ s32 Func_0200242c(void) {
   u8 *map;
   s32 scene = gAdventure.scene;
   s32 entrance = gAdventure.entrance;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 piece;
   s32 px;
   s32 pz;
@@ -140,7 +140,7 @@ s32 Func_0200242c(void) {
   SetLayer(map, 376, 136 << 19, gMapCellBuffer + 272, gMapShapeGrid + 68);
   if (entrance == 55) {
     for (i = 9; i <= 12; i++)
-      Object_SetPartAttribute(Object_GetById(i), 3);
+      Actor_SetPartAttribute(Actor_GetById(i), 3);
     Func_02005828(0, 12, 1, 21, 0, 13);
     Func_02005828(34, 12, 1, 21, 34, 13);
     Func_02005828(68, 12, 1, 21, 68, 13);
@@ -174,7 +174,7 @@ s32 Func_0200242c(void) {
       Func_020058e0(12, 200 << 16, 152 << 16);
     }
     for (i = 9; i <= 12; i++)
-      Object_SetPartAttribute(Object_GetById(i), 3);
+      Actor_SetPartAttribute(Actor_GetById(i), 3);
   }
   piece = state->pattern;
   px = gData_02005bac[piece][0];
@@ -189,7 +189,7 @@ s32 Func_0200242c(void) {
   Func_020057e8();
   if (entrance == 55)
     return 0;
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (!GameFlag_Test(265))
     leader->terrainHeight = leader->y =
         Map_GetTerrainHeight(0, leader->x, leader->z);

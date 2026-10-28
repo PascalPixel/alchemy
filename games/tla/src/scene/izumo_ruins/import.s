@@ -33,19 +33,19 @@ GameFlag_SetBit:
 	.global Func_02001428
 	.thumb_func
 Func_02001428:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Func_02001438
 	.thumb_func
 Func_02001438:
 	overlay_veneer Func_080200c0
-	.global Object_SetPositionAndResetMotion
+	.global Actor_SetPositionAndResetMotion
 	.thumb_func
-Object_SetPositionAndResetMotion:
-	overlay_veneer Object_SetPositionAndResetMotionFar
+Actor_SetPositionAndResetMotion:
+	overlay_veneer Actor_SetPositionAndResetMotionFar
 	.global Func_02001448
 	.thumb_func
 Func_02001448:
@@ -62,10 +62,10 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02001460:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_02001470
 	.thumb_func
 Func_02001470:
@@ -86,26 +86,26 @@ Func_02001488:
 	.thumb_func
 Func_02001490:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_020014a0
 	.thumb_func
 Func_020014a0:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_020014a8
 	.thumb_func
 Func_020014a8:
-	overlay_veneer ObjectMotion_MoveToObjectFar
-	.global Object_SetModeById
+	overlay_veneer Actor_MoveToObjectFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global Object_SetPartAttribute
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
 	.global Func_020014c0
 	.thumb_func
 Func_020014c0:

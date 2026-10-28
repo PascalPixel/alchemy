@@ -65,8 +65,8 @@ void Func_02001054(void) {
     Func_02001500();
 }
 
-void Func_020010d8(struct ObjectRuntime *object) {
-  struct ObjectRuntime *child = Import_ActorCreate(
+void Func_020010d8(struct Actor *object) {
+  struct Actor *child = Import_ActorCreate(
       14, object->x, object->y + 0x40000, object->z + 0x40000);
   struct FieldSprite *parentSprite = object->animation;
 

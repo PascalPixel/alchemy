@@ -1,16 +1,16 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y);
+struct Actor *Func_080eaf28(s32 *position, s32 check_y);
 
-struct ObjectRuntime *Func_080eaeb4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+struct Actor *Func_080eaeb4(void) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 angle = ((leader->angle >> 12) + 2) & 12;
-  struct ObjectRuntime *found;
+  struct Actor *found;
 
   position[0] = leader->x;
   position[1] = leader->y;

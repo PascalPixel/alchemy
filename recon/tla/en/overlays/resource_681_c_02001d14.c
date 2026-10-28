@@ -3,12 +3,12 @@
 // a boulder drops in its place (flag 0x9ee) and the screen blends back.
 #include "types.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/io_reg.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004e5c(void);
 void Func_02004fcc(s32 mode);
 void Func_02004e24(s32 x, s32 y, s32 z);
@@ -16,23 +16,23 @@ void Func_02005014(s32 cue);
 void Func_02004ddc(void);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
 void Func_02004ebc(s32 id, s32 x, s32 z);
 void Func_02001c9c(void);
-void Func_02004dbc(struct ObjectRuntime *object);
+void Func_02004dbc(struct Actor *object);
 void Func_02004dd4(void);
 s32 Func_02004e64(void);
 
 void Func_02001d14(void) {
-  struct ObjectRuntime *person;
-  struct ObjectRuntime *boulder;
+  struct Actor *person;
+  struct Actor *boulder;
   volatile u16 level;
   s32 i;
 
   if (GameFlag_Test(0x9ee) || GameFlag_Test(0x9ba))
     return;
-  person = Object_GetById(12);
+  person = Actor_GetById(12);
   level = REG_BLDALPHA;
   Func_02004e5c();
   Func_02004fcc(0);

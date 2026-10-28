@@ -10,10 +10,10 @@
 // store comes after the adventure's pool load.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
@@ -25,13 +25,13 @@ void Func_02001e48(void);
 void Func_02001e50(void);
 void Func_02001ed0(s32 value);
 void Func_02001f00(s32 id);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 value);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 
 s32 Func_02000384(void) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 flag;
   s32 i;
 
@@ -44,13 +44,13 @@ s32 Func_02000384(void) {
   Func_02000300();
   flag = GameFlag_Test(265);
   if (flag == 0 && gAdventure.entrance == 11) {
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     leader->priorityFlags &= ~64;
     Func_02001e48();
     Func_02001ed0(0);
-    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
-    Object_SetModeById(gAdventure.currentOwner, 2);
-    ObjectDispatch_SetAnimationSpeed(leader, 64);
+    Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+    Actor_SetModeById(gAdventure.currentOwner, 2);
+    Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -0x780000;
     Event_StartScreenTransition();
@@ -70,11 +70,11 @@ s32 Func_02000384(void) {
     leader->motionFlags = 3;
     leader->velocityY = 0x30000;
     leader->gravity = 0x8000;
-    Object_SetModeById(gAdventure.currentOwner, 1);
+    Actor_SetModeById(gAdventure.currentOwner, 1);
     FieldEvent_WaitFrames(40);
     leader->gravity = 0x10000;
     leader->priorityFlags |= 64;
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
     Func_02001e50();
   }
   if (!GameFlag_Test(265) && gAdventure.entrance == 12)

@@ -13,7 +13,7 @@
 // register choice elsewhere.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "dma.h"
@@ -49,8 +49,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -69,7 +69,7 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct GlowParticle *particle);
 void Sound_PlayFar(s32 cue);
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
-void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 

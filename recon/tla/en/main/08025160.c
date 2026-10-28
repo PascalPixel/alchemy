@@ -7,7 +7,7 @@
 // target inside one of the map's rectangles (a list of s16 x0, z0, x1, z1 in
 // pixels, ended by x0 == -1) is pushed out to its nearest edge.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "map.h"
@@ -16,8 +16,8 @@
 #define TARGET_UNSET ((s32)0x80000000)
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-s32 Func_08025160(struct ObjectRuntime *cameraObject) {
-  struct ObjectRuntime *leader;
+s32 Func_08025160(struct Actor *cameraObject) {
+  struct Actor *leader;
   struct MapWork *bounds;
   s32 minX;
   s32 minZ;

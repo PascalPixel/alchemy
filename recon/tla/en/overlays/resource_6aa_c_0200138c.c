@@ -39,9 +39,9 @@ s32 Func_02004de0();
 s32 GameFlag_ClearBit();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_GetById();
+s32 Actor_SetMovementTypeById();
+s32 Actor_SetSpritePriority();
+s32 Actor_GetById();
 s32 Task_Add();
 s32 WaitFrames();
 extern u8 Data_02006878[];
@@ -138,15 +138,15 @@ L_020094ae:
   if (t21 == 0)
     goto L_020094d6;
   Call1((void (*)())GameFlag_SetBit, 0x230);
-  t23 = Value1((s32 (*)())Object_GetById, 18);
+  t23 = Value1((s32 (*)())Actor_GetById, 18);
   FIELD_AT(t23, u8, 35) |= 2;
   goto L_020094e0;
 L_020094d6:
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
 L_020094e0:
-  t26 = Value1((s32 (*)())Object_GetById, 20);
+  t26 = Value1((s32 (*)())Actor_GetById, 20);
   FIELD_AT(t26, u8, 35) |= 2;
-  Call2((void (*)())ObjectMotion_SetActionVariant, 20, 2);
+  Call2((void (*)())Actor_SetSpritePriority, 20, 2);
   t29 = Value1((s32 (*)())GameFlag_Test, 0xa47);
   if (t29 == 0)
     goto L_0200953c;
@@ -169,7 +169,7 @@ L_02009564:
   if (t38 == 0)
     goto L_0200958c;
   Call3((void (*)())Func_02004cd8, 8, 0x1480000, 0x780000);
-  t40 = Value1((s32 (*)())Object_GetById, 8);
+  t40 = Value1((s32 (*)())Actor_GetById, 8);
   FIELD_AT(t40, u8, 98) = 1;
 L_0200958c:
   t41 = Value1((s32 (*)())GameFlag_Test, 0xa30);
@@ -191,11 +191,11 @@ L_020095b4:
   t48 = FIELD_AT((s32)gAdventure, s32, 532);
   Call3((void (*)())Func_02004cd8, t48, 0, 0);
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
-  t51 = Value1((s32 (*)())Object_GetById, 18);
+  t51 = Value1((s32 (*)())Actor_GetById, 18);
   FIELD_AT(t51, u8, 35) |= 2;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t55 = Value1((s32 (*)())Object_GetById, 18);
+  t55 = Value1((s32 (*)())Actor_GetById, 18);
   t56 = FIELD_AT(t55, s16, 100);
   t57 = FIELD_AT(t55, s16, 102);
   Call3((void (*)())Func_02004cd8, 18, (t56 << 16), (t57 << 16));
@@ -232,7 +232,7 @@ L_020096b0:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
     goto L_02009784;
   Call1((void (*)())Func_02004d88, 0);
-  t72 = Value1((s32 (*)())Object_GetById, 12);
+  t72 = Value1((s32 (*)())Actor_GetById, 12);
   FIELD_AT(t72, u8, 35) |= 2;
   t74 = Value1((s32 (*)())GameFlag_Test, 0xa4d);
   if (t74 == 0)
@@ -286,44 +286,44 @@ L_020097c0:
   Call2((void (*)())Func_0200248c, 0, 1);
   if (v_r7 != 11)
     goto L_020097fa;
-  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11,
+  Call2((void (*)())Actor_SetMovementTypeById, 11,
         (s32)gData_02005314);
   Func_0200246c(0, 3);
   Call2((void (*)())Task_Add, (s32)Func_02001254, 0x480);
   Call1((void (*)())GameFlag_SetBit, 0x17d);
 L_020097fa:
   Call2((void (*)())Task_Add, (s32)Func_02001378, 0x480);
-  t93 = Value1((s32 (*)())Object_GetById, 11);
+  t93 = Value1((s32 (*)())Actor_GetById, 11);
   FIELD_AT(t93, s32, 108) = (s32)Func_020012bc;
   Call1((void (*)())Func_020022d8, 1);
   Call1((void (*)())Func_020002bc, (s32)gData_02005454);
-  t96 = Value1((s32 (*)())Object_GetById, 20);
-  t97 = Value1((s32 (*)())Object_GetById, 13);
+  t96 = Value1((s32 (*)())Actor_GetById, 20);
+  t97 = Value1((s32 (*)())Actor_GetById, 13);
   FIELD_AT(t97, s32, 108) = (s32)Func_02001344;
-  t98 = Value1((s32 (*)())Object_GetById, 14);
+  t98 = Value1((s32 (*)())Actor_GetById, 14);
   FIELD_AT(t98, s32, 108) = (s32)Func_02001344;
-  t99 = Value1((s32 (*)())Object_GetById, 15);
+  t99 = Value1((s32 (*)())Actor_GetById, 15);
   FIELD_AT(t99, s32, 108) = (s32)Func_02001344;
-  t100 = Value1((s32 (*)())Object_GetById, 16);
+  t100 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t100, s32, 108) = (s32)Func_02001344;
-  t101 = Value1((s32 (*)())Object_GetById, 17);
+  t101 = Value1((s32 (*)())Actor_GetById, 17);
   FIELD_AT(t101, s32, 108) = (s32)Func_02001344;
-  t102 = Value1((s32 (*)())Object_GetById, 18);
+  t102 = Value1((s32 (*)())Actor_GetById, 18);
   FIELD_AT(t102, s32, 108) = (s32)Func_02001344;
-  t103 = Value1((s32 (*)())Object_GetById, 13);
+  t103 = Value1((s32 (*)())Actor_GetById, 13);
   FIELD_AT(t103, s32, 104) = t96;
-  t104 = Value1((s32 (*)())Object_GetById, 14);
+  t104 = Value1((s32 (*)())Actor_GetById, 14);
   FIELD_AT(t104, s32, 104) = t96;
-  t105 = Value1((s32 (*)())Object_GetById, 15);
+  t105 = Value1((s32 (*)())Actor_GetById, 15);
   FIELD_AT(t105, s32, 104) = t96;
-  t106 = Value1((s32 (*)())Object_GetById, 16);
+  t106 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t106, s32, 104) = t96;
-  t107 = Value1((s32 (*)())Object_GetById, 17);
+  t107 = Value1((s32 (*)())Actor_GetById, 17);
   FIELD_AT(t107, s32, 104) = t96;
-  t108 = Value1((s32 (*)())Object_GetById, 18);
+  t108 = Value1((s32 (*)())Actor_GetById, 18);
   FIELD_AT(t108, s32, 104) = t96;
 L_02009884:
-  t109 = Value1((s32 (*)())Object_GetById, 9);
+  t109 = Value1((s32 (*)())Actor_GetById, 9);
   FIELD_AT(t109, u8, 35) |= 2;
   t111 = Value1((s32 (*)())GameFlag_Test, 0xa4e);
   if (t111 == 0)

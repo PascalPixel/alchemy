@@ -87,7 +87,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 
 #define THORN_INTERVAL 8
@@ -257,7 +257,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

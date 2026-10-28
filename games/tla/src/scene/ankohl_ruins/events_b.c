@@ -1,7 +1,7 @@
 #include "ankohl_ruins.h"
 
-s32 Func_020005c0(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_020005c0(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   ((struct FieldSprite *)object->animation)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
@@ -45,9 +45,9 @@ const u8 *Func_02000600(void) {
 }
 
 void Func_02000698(void) {
-  Object_GetById(gAdventure.currentOwner)->terrainId = 2;
+  Actor_GetById(gAdventure.currentOwner)->terrainId = 2;
 }
 
 void Func_020006b4(void) {
-  Object_GetById(gAdventure.currentOwner)->terrainId = 0;
+  Actor_GetById(gAdventure.currentOwner)->terrainId = 0;
 }

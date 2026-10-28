@@ -8,10 +8,10 @@ void Task_RemoveFar(void (*callback)(void));
 /// removes itself, stops the shaking, copies the landing cells and sets flag
 /// 0x201.
 void Func_02001f7c(void) {
-  struct ObjectRuntime *rider =
+  struct Actor *rider =
       ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork)->unk1cc;
-  struct ObjectRuntime *raft = Object_GetById(9);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *raft = Actor_GetById(9);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   s32 column;
@@ -25,7 +25,7 @@ void Func_02001f7c(void) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's
      * z before the leader's in the second test; as leader, 16 of 167
      * instructions differ in tla-en. */
-    struct ObjectRuntime *player = leader;
+    struct Actor *player = leader;
 
     if (raft->z + 0x180000 >= player->z && player->z >= raft->z) {
       player->z = raft->z + 0x180000;

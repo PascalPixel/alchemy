@@ -77,11 +77,11 @@ void Func_02003948(void) {
    */
   do {
   } while (0);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   Func_02005a9c();
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Object_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
   Kibombo_ObjSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
   x = leader->x;
   px = x >> 16;
@@ -90,7 +90,7 @@ void Func_02003948(void) {
   leader->facing = 0xc000;
   if (GameFlag_Test(0x202))
     Func_02003898();
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02005cd0);
   WaitFrames(12);
   Func_02005c9c(123);

@@ -2,7 +2,7 @@
 
 u32 __umodsi3(u32 a, u32 b);
 
-s32 Func_020002dc(struct ObjectRuntime *object) {
+s32 Func_020002dc(struct Actor *object) {
   switch (object->action) {
   case 6:
     object->scaleX -= 0x4000;
@@ -34,7 +34,7 @@ s32 Func_020002dc(struct ObjectRuntime *object) {
   return 1;
 }
 
-s32 Func_0200035c(struct ObjectRuntime *object) {
+s32 Func_0200035c(struct Actor *object) {
   object->motionFlags = 0;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
@@ -44,6 +44,6 @@ s32 Func_0200035c(struct ObjectRuntime *object) {
   do {
   } while (0);
   object->collisionFlags |= 8;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   return 0;
 }

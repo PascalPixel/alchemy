@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "mem.h"
 #include "iwram_call.h"
 #include "task.h"
@@ -17,35 +17,35 @@ s32 __divsi3(s32, s32);
 extern u32 gData_03001144;
 
 void Func_080d450c(s32 id, s32 use_setter) {
-  struct ObjectRuntime *obj = ObjectTable_Get(id);
+  struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
     Camera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
 }
 
 void Func_080d452c(s32 id, s32 use_setter) {
-  struct ObjectRuntime *obj = ObjectTable_Get(id);
+  struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
     Camera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
 }
 
 void Func_080d4548(void) {
-  Object_CommitPosition(
+  Actor_CommitPosition(
       ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
   Event_WaitFrames(2);
 }
 
-struct ObjectRuntime *Func_080d4568(void) {
+struct Actor *Func_080d4568(void) {
   return ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
 }
 
-void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition) {
-  struct ObjectRuntime *object;
+void Func_080d4580(struct Actor *target, s32 keepCurrentPosition) {
+  struct Actor *object;
 
   object = ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
   if (target != NULL) {
-    ObjectDispatch_StartCameraFar(object, NULL);
+    Actor_StartCameraFar(object, NULL);
     object->watchedObject = target;
     if (keepCurrentPosition == 0) {
       SET_POSITION(object, target->x, target->y, target->z);

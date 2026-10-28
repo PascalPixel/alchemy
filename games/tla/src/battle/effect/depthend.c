@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "mem.h"
 #include "iwram_call.h"
 #include "resource.h"
@@ -11,7 +11,7 @@ struct DepthScene {
   u8 unk02[2];
   s32 x;
   u8 unk08[8];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
   u8 unk14[0x7dc];
   s16 vramSlot;
   s16 active;

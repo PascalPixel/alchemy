@@ -31,10 +31,10 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -120,7 +120,7 @@ extern s32 gCameraSceneParameters[];
 
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
-void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);
@@ -200,7 +200,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
   }
   casterValue = caster[18];
-  ObjectDispatch_SetAnimationSpeedFar(caster, 0);
+  Actor_SetAnimationSpeedFar(caster, 0);
   caster[9] = 0;
   caster[10] = 0;
   caster[11] = 0;
@@ -354,7 +354,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 84) {
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x785, 0x20000);
-      ObjectDispatch_SetAnimationSpeedFar(caster, 128);
+      Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       work->transferMode = 3;
       work->transferValue = 0x06060606;
@@ -582,7 +582,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
     while (*(volatile s32 *)&work->vblanksSinceTransfer <= 1) {
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

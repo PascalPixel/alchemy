@@ -13,7 +13,7 @@ void Func_02003658(void);
 void Func_02003ff4(void);
 void Func_0200558c(void);
 void Func_0200567c(s32 id, s32 x, s32 z);
-struct ObjectRuntime *Func_0200573c(void);
+struct Actor *Func_0200573c(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -44,16 +44,16 @@ s32 Func_02000314(void) {
   } else if (gAdventure.entrance == 4) {
     Func_0200560c();
     Call1((void (*)())Func_02005784, 0);
-    Call2((void (*)())Object_SetModeById, 20, 8);
-    Call2((void (*)())Object_SetModeById, 21, 8);
-    Call2((void (*)())Object_SetModeById, 22, 7);
+    Call2((void (*)())Actor_SetModeById, 20, 8);
+    Call2((void (*)())Actor_SetModeById, 21, 8);
+    Call2((void (*)())Actor_SetModeById, 22, 7);
     Call3((void (*)())Func_0200567c, 19, 0x1f20000, 0x1400000);
     Call3((void (*)())Func_0200567c, 1, 0x21a0000, 0x1400000);
     Call3((void (*)())Func_0200567c, gAdventure.currentOwner, 0x1fa0000,
           0x1180000);
     Call1((void (*)())WaitFrames, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-    ((struct ObjectRuntime *)Value0((s32 (*)())Func_0200573c))->motionFlags = 0;
+    ((struct Actor *)Value0((s32 (*)())Func_0200573c))->motionFlags = 0;
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000,
           0x1380000, 1);
     Func_0200558c();
@@ -64,9 +64,9 @@ s32 Func_02000314(void) {
     Func_02003658();
     Func_02005614();
   } else if (gAdventure.entrance == 3) {
-    Call2((void (*)())Object_SetModeById, 20, 8);
-    Call2((void (*)())Object_SetModeById, 21, 8);
-    Call2((void (*)())Object_SetModeById, 22, 7);
+    Call2((void (*)())Actor_SetModeById, 20, 8);
+    Call2((void (*)())Actor_SetModeById, 21, 8);
+    Call2((void (*)())Actor_SetModeById, 22, 7);
     if (Value1((s32 (*)())GameFlag_Test, 0xa3d) == 0)
       Func_020029ac();
   } else if (gAdventure.entrance == 2) {

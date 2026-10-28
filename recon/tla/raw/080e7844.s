@@ -137,7 +137,7 @@ Func_080e7844:
 	adds r0, r4, #0
 	str r3, [sp, #28]
 	str r4, [sp, #24]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #2
@@ -889,7 +889,7 @@ Func_080e7844:
 	cmp r1, r2
 	beq .L_080e7f46
 	adds r0, r1, #0
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	ldr r1, [r0, #16]
 	adds r0, #34
@@ -900,7 +900,7 @@ Func_080e7844:
 	movs r1, #0
 	ldr r0, [sp, #24]
 	movs r2, #0
-	bl ObjectMotion_SetHorizontalPositionWithTerrain
+	bl Actor_SetHorizontalPositionWithTerrain
 .L_080e7f46:
 	ldr r3, [sp, #20]
 	cmp r3, #0

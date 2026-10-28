@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Func_02000690(s32 layer, s32 x, s32 z);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets an object's cells by its flag (its action parameter): when the flag is
@@ -14,7 +14,7 @@ void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 /// marks both cells (0xff00 and 0xd480), rises 4 pixels and takes priority 1;
 /// then it writes both cells back and moves the object's height
 /// (Func_02005df4).
-void Func_020006cc(struct ObjectRuntime *object) {
+void Func_020006cc(struct Actor *object) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   s32 ground = Func_02000690(0, x, z);
@@ -34,13 +34,13 @@ void Func_020006cc(struct ObjectRuntime *object) {
     // Through the field: through flags the byte, not the 2, would take the
     // result register.
     object->priorityFlags |= 2;
-    Object_SetSpritePriority(object, 3);
+    Scene_SetActorSpritePriority(object, 3);
   } else {
     cell |= 0xff00;
     ground |= 0xd480;
     *flags &= ~2;
     height += 4;
-    Object_SetSpritePriority(object, 1);
+    Scene_SetActorSpritePriority(object, 1);
   }
   Func_0200062c(0, x, z, ground);
   Func_0200062c(2, x, z, cell);

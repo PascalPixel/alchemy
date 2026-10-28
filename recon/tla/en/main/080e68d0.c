@@ -17,7 +17,7 @@
 // and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 struct RiseParticle {
@@ -40,8 +40,8 @@ struct RiseWork {
   s16 timer;
   s16 particleTile;
   s16 pictureTile;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *other;
+  struct Actor *object;
+  struct Actor *other;
   s16 mode;
 };
 
@@ -51,8 +51,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -67,7 +67,7 @@ struct FxScene {
 
 struct FxEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
@@ -77,29 +77,29 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_InitializeSharedScene(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
-void Object_Destroy(struct ObjectRuntime *object);
-void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, s32 value);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetMode(struct Actor *object, s32 mode);
+void Actor_Destroy(struct Actor *object);
+void Animation_ApplyChildValuesFar(struct Actor *object, s32 value);
 void Func_080dba5c(void);
 void Sound_PlayFar(s32 cue);
-void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
-s32 Func_08020330(struct ObjectRuntime *object);
+s32 Func_08020330(struct Actor *object);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
-s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
+s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbc04(s32 x, s32 z, s32 layer);
-struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
+struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 u32 Random16(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
@@ -113,11 +113,11 @@ void Func_080e716c(void);
 void Func_080e68d0(void) {
   struct RiseWork *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *caster = scene->mainObject;
+  struct Actor *caster = scene->mainObject;
   struct FxEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *other = NULL;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *target;
+  struct Actor *other = NULL;
+  struct Actor *object;
+  struct Actor *target;
   struct EffectSprite *sprite;
   struct RiseParticle *particle;
   s8 *alternate;
@@ -139,7 +139,7 @@ void Func_080e68d0(void) {
     Vector_AddPolarOffset(0x100000, scene->facing, &scene->x);
   }
   BattleEffect_InitializeSharedScene();
-  object = Object_Spawn(353, 0, 0, 0);
+  object = Actor_Spawn(353, 0, 0, 0);
   work->object = object;
   if (object == NULL)
     goto end;
@@ -154,14 +154,14 @@ void Func_080e68d0(void) {
     ((u8 *)object)[35] = 1;
   }
   object->angle = caster->angle;
-  Object_SetMode(object, 0);
+  Actor_SetMode(object, 0);
   alternate = &scene->alternate;
   if (*alternate != 0)
     Animation_ApplyChildValuesFar(object, 6);
   if (*alternate == 0)
-    other = Object_Spawn(354, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(354, scene->x, scene->y, scene->z);
   else
-    other = Object_Spawn(355, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(355, scene->x, scene->y, scene->z);
   work->other = other;
   if (other == NULL)
     goto end;
@@ -174,13 +174,13 @@ void Func_080e68d0(void) {
   Sound_PlayFar(138);
   Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
   WaitFrames(10);
-  Object_SetMode(object, 1);
+  Actor_SetMode(object, 1);
   WaitFrames(15);
   for (i = 9; i >= 0; i--) {
     object->y += -0x28000;
     WaitFrames(1);
   }
-  Object_SetMode(object, 2);
+  Actor_SetMode(object, 2);
   Sound_PlayFar(132);
 
   failed = 0;
@@ -368,8 +368,8 @@ void Func_080e68d0(void) {
   if (pictureEntry != 96)
     Resource_ResetEntry(pictureEntry);
 end:
-  Object_Destroy(object);
-  Object_Destroy(other);
+  Actor_Destroy(object);
+  Actor_Destroy(other);
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(92);
 }

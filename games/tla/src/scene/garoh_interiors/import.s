@@ -18,10 +18,10 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_020007bc:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
@@ -54,22 +54,22 @@ Func_020007fc:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_EnableActionAndSetCallback
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetMovementTypeById
 	.thumb_func
-ObjectMotion_EnableActionAndSetCallback:
-	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+Actor_SetMovementTypeById:
+	overlay_veneer Actor_SetMovementTypeByIdFar
 	.global Func_0200081c
 	.thumb_func
 Func_0200081c:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_02000824
 	.thumb_func
 Func_02000824:
-	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
 Motion_SetModeAndWaitAnimation:
@@ -78,10 +78,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global ObjectMotion_SetAngleToward
+	.global Actor_SetAngleToward
 	.thumb_func
-ObjectMotion_SetAngleToward:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
+Actor_SetAngleToward:
+	overlay_veneer Actor_SetAngleTowardFar
 	.global Func_02000844
 	.thumb_func
 Func_02000844:
@@ -98,10 +98,10 @@ Func_02000854:
 	.thumb_func
 Func_0200085c:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

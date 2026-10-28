@@ -1370,7 +1370,7 @@ BattleEffect_RunHealingMotes:
 	beq .L_0814f996
 	b .L_0814f5f4
 .L_0814f996:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r5, #240
 	ldr r3, [sp, #72]
 	lsls r5, r5, #7

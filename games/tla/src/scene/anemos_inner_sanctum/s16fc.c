@@ -7,7 +7,7 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02003398();
 s32 Func_02003488();
 s32 Func_02003328();
@@ -19,7 +19,7 @@ s32 Func_020033a0();
 void Func_020016fc(void) {
   s32 t0;
 
-  t0 = Value1(Object_GetById, 0xe);
+  t0 = Value1(Actor_GetById, 0xe);
   Func_02003398();
   Call1(Func_02003488, 0);
   FIELD_AT(t0, s32, 8) = 0x2180000;

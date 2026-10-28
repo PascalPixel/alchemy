@@ -4,13 +4,13 @@
 // (a FAKEMATCH(wrapper) on adoption) gained 4.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern const u16 gData_020022d0[];
 extern const s8 gData_020022dc[][4];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020021b0(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
@@ -23,7 +23,7 @@ static __inline__ void Func_020021b0_(s32 x, s32 z, s32 width, s32 height, s32 t
 
 s32 Func_02000af0(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u16 shape = *(s16 *)((struct FieldSprite *)object->animation)->record;
   s16 i = 0;
   const s8 *rect;

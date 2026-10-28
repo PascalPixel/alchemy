@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -23,7 +23,7 @@ extern u8 gData_02001828[];
 extern u8 gData_020017c0[];
 extern u8 gData_02001746[];
 extern u8 gData_02001748[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_020012e8();
 s32 __divsi3();
 void Func_020008f0();
@@ -71,11 +71,11 @@ L_02008960:
   FIELD_AT(r7, s32, 68) = r1;
   if ((FIELD_AT((s32)gData_020017b0, s32, 0)) != 1)
     goto L_02008980;
-  v0 = Object_GetById(17);
+  v0 = Actor_GetById(17);
   Value2((s32 (*)())Func_020012e8, v0, 1);
   goto L_0200898c;
 L_02008980:
-  v1 = Object_GetById(12);
+  v1 = Actor_GetById(12);
   Value2((s32 (*)())Func_020012e8, v1, 1);
 L_0200898c:
   if ((FIELD_AT(r7, s32, 76)) <= 0)
@@ -135,13 +135,13 @@ L_02008a0c:
   if ((FIELD_AT(r7, s32, 72)) != 0)
     goto L_02008b20;
   if ((FIELD_AT((s32)gData_020017b0, s32, 0)) == 1) {
-    v5 = Object_GetById(17);
+    v5 = Actor_GetById(17);
     Value2((s32 (*)())Func_020012e8, v5, 2);
     Call2((void (*)())Func_020008f0, 15, 0);
     Call2((void (*)())Func_020008f0, 14, 0);
     Call2((void (*)())Func_020008f0, 13, 0);
   } else {
-    v6 = Object_GetById(12);
+    v6 = Actor_GetById(12);
     Value2((s32 (*)())Func_020012e8, v6, 2);
     Call2((void (*)())Func_020008f0, 10, 0);
     Call2((void (*)())Func_020008f0, 9, 0);
@@ -324,10 +324,10 @@ L_02008cf6:
   goto L_02008d90;
 L_02008cfa:
   if (r11 == 0) {
-    v11 = Object_GetById(18);
+    v11 = Actor_GetById(18);
     Value2((s32 (*)())Func_020012e8, v11, 1);
   } else {
-    v12 = Object_GetById(19);
+    v12 = Actor_GetById(19);
     Value2((s32 (*)())Func_020012e8, v12, 1);
   }
   r2 = FIELD_AT(r6, u16, 14);
@@ -377,11 +377,11 @@ L_02008d6c:
     goto L_02008d9c;
   r0 = 20;
 L_02008d90:
-  v13 = Object_GetById(r0);
+  v13 = Actor_GetById(r0);
   Value2((s32 (*)())Func_020012e8, v13, 3);
   goto L_02008e7c;
 L_02008d9c:
-  v14 = Object_GetById(20);
+  v14 = Actor_GetById(20);
   Value2((s32 (*)())Func_020012e8, v14, 2);
   v15 = Math_Sine(*(s16 *)(r6 + 12));
   FIELD_AT(r6, s32, 0) = (((v15 << 1) + v15) << 4) + 7340032;
@@ -402,7 +402,7 @@ L_02008dde:
   }
   if ((r0 << 16) <= 0)
     goto L_02008e24;
-  v17 = Object_GetById(21);
+  v17 = Actor_GetById(21);
   Value2((s32 (*)())Func_020012e8, v17, 3);
   goto L_02008e76;
 L_02008e24:
@@ -413,11 +413,11 @@ L_02008e24:
   v19 = Math_Cosine(*(s16 *)(r6 + 12));
   FIELD_AT(r6, s32, 8) = (((v19 << 1) + v19) << 3) + 4718592;
   FIELD_AT(r6, u16, 12) = (FIELD_AT(r6, u16, 12)) + r5;
-  v20 = Object_GetById(21);
+  v20 = Actor_GetById(21);
   Value2((s32 (*)())Func_020012e8, v20, 2);
   goto L_02008e76;
 L_02008e6a:
-  v21 = Object_GetById(21);
+  v21 = Actor_GetById(21);
   Value2((s32 (*)())Func_020012e8, v21, 3);
 L_02008e76:
   r3 = FIELD_AT(r6, u16, 14);
@@ -536,11 +536,11 @@ L_02008fc2:
     Func_02000884(15, r8, 0, 0, r5);
     Func_02000884(14, r10, 0, 0, r5);
     Func_02000884(13, r9, 0, 0, r5);
-    v26 = Object_GetById(15);
+    v26 = Actor_GetById(15);
     Value2((s32 (*)())Func_020012e8, v26, 4);
-    v27 = Object_GetById(14);
+    v27 = Actor_GetById(14);
     Value2((s32 (*)())Func_020012e8, v27, 4);
-    v28 = Object_GetById(13);
+    v28 = Actor_GetById(13);
     Value2((s32 (*)())Func_020012e8, v28, 4);
   } else {
     r5 = 16;
@@ -549,11 +549,11 @@ L_02008fc2:
     Func_02000884(10, r8, 0, 0, r5);
     Func_02000884(9, r10, 0, 0, r5);
     Func_02000884(8, r9, 0, 0, r5);
-    v29 = Object_GetById(10);
+    v29 = Actor_GetById(10);
     Value2((s32 (*)())Func_020012e8, v29, 4);
-    v30 = Object_GetById(9);
+    v30 = Actor_GetById(9);
     Value2((s32 (*)())Func_020012e8, v30, 4);
-    v31 = Object_GetById(8);
+    v31 = Actor_GetById(8);
     Value2((s32 (*)())Func_020012e8, v31, 4);
   }
   r0 = 2;

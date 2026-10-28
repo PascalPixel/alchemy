@@ -174,7 +174,7 @@ Func_0804b8b8:
 	ldr r1, [r4, #8]
 	ldr r2, [r4, #12]
 	ldr r3, [r4, #16]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]

@@ -17,7 +17,7 @@ s32 Func_02005538();
 s32 Func_02005560();
 s32 Func_020055a8();
 s32 Func_02005648();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 WaitFrames();
 extern u8 Func_02002954[];
 extern u8 gData_020023c4[];
@@ -39,7 +39,7 @@ void Func_0200297c(void) {
 L_0200a99e:
   Func_02002800(-10, 0);
   t2 = FIELD_AT(v_r5, s32, 532);
-  t3 = Object_GetById(t2);
+  t3 = Actor_GetById(t2);
   *(s32 *)sp_ = ((s32)gData_020023c4 + 0x188);
   Func_02005560(t3, 0, ((s32)gData_020023c4 + 0x188));
   Func_02005648(0);

@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test();
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
@@ -20,7 +20,7 @@ void Func_020002f0(void);
 /// Func_020002f0 resets the room, both objects are waited on until they land
 /// (at most 30 frames each) and stop, and the camera follows the leader again.
 void Func_02000a74(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
 
   if (Value1(GameFlag_Test, 2576) + Value1(GameFlag_Test, 2578) +
@@ -51,7 +51,7 @@ void Func_02000a74(void) {
   GameFlag_ClearBit(2581);
   Func_020002f0();
   WaitFrames(2);
-  object = Object_GetById(18);
+  object = Actor_GetById(18);
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {
@@ -62,7 +62,7 @@ void Func_02000a74(void) {
     } while (object->y > object->terrainHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
-  object = Object_GetById(19);
+  object = Actor_GetById(19);
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {

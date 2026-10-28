@@ -5,7 +5,7 @@
 // blocked (Func_020054f8 returns 2), and leaves the stopping point in move;
 // returns 0 when it cannot move at all. Shared with overlay 6a1 and others.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct PushMove {
   s32 x; ///< 16.16 fixed-point pixels
@@ -19,13 +19,13 @@ struct PushMove {
 extern const s8 gData_02005f64[][4];
 extern const s32 gData_02005f7c[];
 
-struct ObjectRuntime *Func_02004bf4(s32 *step, s32 *a, s32 *direction);
-s32 Func_020054f8(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_02004bf4(s32 *step, s32 *a, s32 *direction);
+s32 Func_020054f8(struct Actor *object, s32 *position);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 Func_02004a8c(struct PushMove *move) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 stepIndex;
   s32 position[3];
   s32 direction;

@@ -2,7 +2,7 @@
 #include "iwram_call.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 #include "macros.h"
@@ -39,7 +39,7 @@ void BattleEffect_SwayParticle(struct SwayObject *object) {
 
 /// The particle circles 10 pixels above the scene's position, its radius in
 /// pixels the frames it has left; at 0 it runs the shared particle script.
-void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
+void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct OrbitVector pos;
   s16 life;
@@ -72,7 +72,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct DispatchObject *)object,
                                    gBattleEffect_SharedParticleScript);
     }
   }

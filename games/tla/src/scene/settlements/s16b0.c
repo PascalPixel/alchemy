@@ -2,10 +2,10 @@
 
 extern u32 gInput;
 extern const s16 gData_02002276[];
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 
-void Func_020016b0(struct ObjectRuntime *object) {
+void Func_020016b0(struct Actor *object) {
   s32 angle;
   s32 turn;
 
@@ -29,5 +29,5 @@ void Func_020016b0(struct ObjectRuntime *object) {
     turn = -0x1000;
   object->angle += turn;
   Func_02001fe0(object, 2);
-  ObjectDispatch_SetAnimationSpeed(object, 48);
+  Actor_SetAnimationSpeed(object, 48);
 }

@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_020000f0(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
 
   if (x == 38) {

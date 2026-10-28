@@ -8,18 +8,18 @@ extern const u8 gData_020045a4[];
 extern const u8 gData_020045f0[];
 
 void Func_02001a68(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH(pin): object 9 in r8, so the barrier below can hold it there;
    * as a plain local with the barrier, 14 of 144 instructions differ in
    * tla-en. */
-  register struct ObjectRuntime *object asm("r8") = Object_GetById(9);
+  register struct Actor *object asm("r8") = Actor_GetById(9);
   void (*update)(void);
   s32 result;
   u8 *done;
 
   Func_02003e64();
   Call1((void (*)())Func_02003fa4, 0);
-  Call3((void (*)())ObjectMotion_SetAngleToward, 9, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 9, gAdventure.currentOwner,
         0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
@@ -34,19 +34,19 @@ void Func_02001a68(void) {
       u8 unk295;
     } *)HeapSlot_AllocEwram(88, 0x298))
         ->unk295 = 99;
-    Call3((void (*)())ObjectMotion_Launch, gAdventure.currentOwner, 6, 0);
-    Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
+    Call3((void (*)())Actor_Jump, gAdventure.currentOwner, 6, 0);
+    Call3((void (*)())Actor_SetSpeedParameters, gAdventure.currentOwner,
           0x19999, 0xcccc);
-    Call3((void (*)())ObjectMotion_SetPositionAndCommit,
+    Call3((void (*)())Actor_SetPositionAndCommit,
           gAdventure.currentOwner, 152, 0x300);
     leader->update = (void (*)(void))Func_02001278;
-    Call2((void (*)())Object_SetPartAttribute,
-          Object_GetById(gAdventure.currentOwner), 15);
-    Call2((void (*)())Object_SetModeById, 9, 3);
+    Call2((void (*)())Actor_SetPartAttribute,
+          Actor_GetById(gAdventure.currentOwner), 15);
+    Call2((void (*)())Actor_SetModeById, 9, 3);
     Call1((void (*)())FieldEvent_WaitFrames, 20);
     Func_02003fc4();
-    Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x19999, 0xcccc);
-    Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
+    Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
+    Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
     update = (void (*)(void))Func_02000df8;
     /* FAKEMATCH(barrier): the callback is loaded before object 9 is copied for
      * its byte at 99; as the plain assignments, 2 of 144 instructions differ
@@ -55,11 +55,11 @@ void Func_02001a68(void) {
     done = (u8 *)object + 99;
     *done = 0;
     object->update = update;
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9,
+    Call2((void (*)())Actor_SetMovementTypeById, 9,
           (s32)gData_020045a4);
     Call1((void (*)())FieldEvent_WaitFrames, 30);
-    Object_GetById(10)->update = update;
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10,
+    Actor_GetById(10)->update = update;
+    Call2((void (*)())Actor_SetMovementTypeById, 10,
           (s32)gData_020045f0);
     do {
       Call1((void (*)())WaitFrames, 1);
@@ -83,7 +83,7 @@ void Func_02001a68(void) {
 void Func_02001bf4(void) {
   Func_02003e64();
   Func_02003fa4(0);
-  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
   Func_02003f24((s32)MsgMyPopS);
   Func_02003f2c(9, 0);
   Call2((void (*)())Func_02003f3c, 9, 0xb000);
@@ -97,16 +97,16 @@ void Func_02001c38(void) {
 }
 
 void Func_02001c4c(void) {
-  s32 y = Object_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
 
   asm volatile(
       ""
       : "+l"(y)); /* FAKEMATCH: the listing loads y before it builds 0x280000 */
   if (y < 0x280000) {
-    Object_GetById(11)->collisionFlags |= 8;
-    Object_GetById(12)->collisionFlags |= 8;
+    Actor_GetById(11)->collisionFlags |= 8;
+    Actor_GetById(12)->collisionFlags |= 8;
   } else {
-    Object_GetById(11)->collisionFlags &= ~8;
-    Object_GetById(12)->collisionFlags &= ~8;
+    Actor_GetById(11)->collisionFlags &= ~8;
+    Actor_GetById(12)->collisionFlags &= ~8;
   }
 }

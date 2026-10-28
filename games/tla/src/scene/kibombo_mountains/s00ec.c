@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 
 void Func_020000ec(void) {
-  struct ObjectRuntime *object = Object_GetById(11);
+  struct Actor *object = Actor_GetById(11);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;

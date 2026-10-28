@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct PuzzleCell {
   u8 kind;
@@ -19,9 +19,9 @@ struct SceneState {
 extern struct SceneState gSceneState;
 extern const u8 gData_02005ad4[];
 extern const u8 gData_02006ea8[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004288(s32 id, s32 value);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+void Func_02005624(struct Actor *object, s32 mode);
 s32 Func_02004224(s32 row, s32 column, s32 direction) {
   s32 value = gData_02005ad4[row * 4 + column];
 

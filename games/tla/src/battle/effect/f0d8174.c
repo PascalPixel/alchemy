@@ -2,7 +2,7 @@
 #include "system.h"
 #include "animspr.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "adventure.h"
 #include "effect_slot.h"
@@ -16,16 +16,16 @@ struct EffectVector {
 
 struct BattleFxScene;
 
-#define ObjectGroup_SetChildValueUnlessFifteenFar                              \
+#define Actor_SetChildValueUnlessFifteenFar                              \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define ObjectDispatch_ReleaseFar Object_Destroy
+#define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
-void Object_Destroy();
+void Actor_Destroy();
 
 struct EffectOwner {
   u8 unk00[8];
@@ -34,7 +34,7 @@ struct EffectOwner {
   struct AnimationObject *sprite;
 };
 
-struct ObjectRuntime *Object_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 actor);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
@@ -100,10 +100,10 @@ struct CaptureObject {
   void *callback;
 };
 
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetMode(struct Actor *object, s32 mode);
+void Actor_ArmCallback(s32 id, s32 value, s32 flags);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -134,7 +134,7 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   s32 y;
 
   other =
-      (struct DescendingOrbitObject *)Object_GetById(gAdventure.currentOwner);
+      (struct DescendingOrbitObject *)Actor_GetById(gAdventure.currentOwner);
   raw = arg->timer - 1;
   arg->timer = raw;
   value = arg->timer;
@@ -146,7 +146,7 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   y = arg->y + 0xFFFF0000;
   arg->y = y;
   if (y < other->y + 0x140000)
-    ObjectDispatch_ReleaseFar(arg);
+    Actor_ReleaseFar(arg);
 }
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);

@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "battle_unit.h"
 
 struct AnchorWork {
   u8 unk0000[0x1930];
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
 };
 
 struct DropEvent {
@@ -15,8 +15,8 @@ struct DropEvent {
   u16 item;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 PartyInventory_FindRoomFar(s32 item);
 void Func_080d3b28(s32 id, s32 item);
@@ -30,10 +30,10 @@ extern const u16 gData_080f0fc0[];
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
 void Func_080e716c(void) {
   struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
   struct EventWork *event;
   struct BattleUnit *unit;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 item;
   s32 id = 79;
 
@@ -41,7 +41,7 @@ void Func_080e716c(void) {
   event = Ram_HeapSlots->eventWork;
   unit = Unit_Get(gAdventure.currentOwner);
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (object == NULL) {
     object = Func_080200c0(489, anchor->x, anchor->y, anchor->z);
     if (object == NULL)

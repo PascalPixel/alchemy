@@ -34,7 +34,7 @@ Func_0810b5c4:
 	movs r3, #4
 	strb r3, [r2]
 	adds r0, r5, #0
-	bl Object_GetByIdFar
+	bl Actor_GetByIdFar
 	ldr r3, [r0, #80]
 	movs r1, #128
 	ldr r3, [r3, #40]

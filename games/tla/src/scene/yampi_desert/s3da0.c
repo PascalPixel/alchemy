@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct YampiDesertRideWork {
   s16 entry;
@@ -23,7 +23,7 @@ void Task_Add();
 void Func_020039b8(void);
 void Func_02003b80(void);
 s32 Func_020041f0(void);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02003da0(s32 unused, s32 value) {
   struct YampiDesertRideWork *work =
@@ -41,5 +41,5 @@ void Func_02003da0(s32 unused, s32 value) {
   work->value = value;
   Value2((s32 (*)())Task_Add, (s32)Func_020039b8, 0x48d);
   Value2((s32 (*)())Task_Add, (s32)Func_02003b80, 0x480);
-  Object_GetById(Func_020041f0())->priorityFlags |= 0x40;
+  Actor_GetById(Func_020041f0())->priorityFlags |= 0x40;
 }

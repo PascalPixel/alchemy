@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "scene_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s16 gData_02003d9e[];
 extern s16 gData_02003db2[];
@@ -12,7 +12,7 @@ extern s16 gData_02003dee[];
 extern s16 gData_02003e02[];
 
 s32 Func_02001084(s16 *table);
-void Func_02000fcc(struct ObjectRuntime *object);
+void Func_02000fcc(struct Actor *object);
 
 /// Picks the cell table for the room and entrance, finds the target in it and,
 /// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
@@ -35,7 +35,7 @@ void Func_02001110(s32 mode) {
     table = gData_02003e02;
   }
   if (mode == 2) {
-    struct ObjectRuntime *target;
+    struct Actor *target;
 
     Func_02001084(table);
     target = work->target;
@@ -43,7 +43,7 @@ void Func_02001110(s32 mode) {
     target->update = (void (*)(void))Func_02000fcc;
   }
   if (mode == 3) {
-    struct ObjectRuntime *target;
+    struct Actor *target;
 
     Func_02001084(table);
     target = work->target;

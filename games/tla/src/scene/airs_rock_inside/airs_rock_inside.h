@@ -36,11 +36,11 @@ extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 
 struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
-void Object_SetPartAttribute(struct FieldActor *object, s32 value);
+void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 value);
+void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 void Animation_SetStateFlags(struct FieldActor *object, s32 value);
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

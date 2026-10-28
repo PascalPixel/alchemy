@@ -22,17 +22,17 @@ void Func_020000c0(void) { Func_02001274_(16, 13, 0, 4, 8, 61, 52); }
 void Func_020000e0(void) { Func_02001274_(21, 9, 0, 2, 2, 57, 52); }
 
 void Func_02000100(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Test(0xf53) == 0) {
     Func_020011cc_(64, 0x1880000, 0x1580000);
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
-      ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
+      Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       Func_020011a4();
     }
   }
@@ -51,35 +51,35 @@ void Func_020001b0(void) {
 void Func_020001d4(void) { Func_0200121c(5); }
 
 void Func_020001e0(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(7, 22, 0, 3, 3, 56, 58);
   Func_020011cc_(8, 0x880000, 0x1780000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 23) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000260(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(9, 0x880000, 0xf80000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 15) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020002e0(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(10, 0x980000, 0x1080000);
@@ -87,72 +87,72 @@ void Func_020002e0(void) {
     Func_0200119c();
     Func_0200125c_(0);
     Func_02001204_(gAdventure.currentOwner, 0x102);
-    ObjectMotion_OffsetPositionAndResetMotion_(gAdventure.currentOwner, -16,
+    Actor_OffsetPositionAndResetMotion_(gAdventure.currentOwner, -16,
                                                0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000364(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(11, 0x880000, 0x1180000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 17) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020003e4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(12, 0x680000, 0x1180000);
   if (leader->x >> 20 == 6 && leader->z >> 20 == 17) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000464(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(13, 0x580000, 0x1080000);
   if (leader->x >> 20 == 5 && leader->z >> 20 == 16) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020004e4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(14, 0x680000, 0xf80000);
   if (leader->x >> 20 == 6 && leader->z >> 20 == 15) {
     LEADER_HOP();
-    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000564(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001274_(16, 13, 0, 4, 8, 61, 52);
   Func_020011cc_(8, 0x1180000, 0x1280000);
@@ -160,10 +160,10 @@ void Func_02000564(void) {
     Func_0200119c();
     Func_0200125c_(0);
     Func_02001204_(gAdventure.currentOwner, 0x102);
-    ObjectMotion_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 0,
+    Actor_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 0,
                                                -16);
     leader->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     Func_020011a4();
   }
 }
@@ -191,7 +191,7 @@ void Func_0200069c(void) {
 }
 
 void Func_020006cc(void) {
-  struct ObjectRuntime *object = Object_GetById(8);
+  struct Actor *object = Actor_GetById(8);
 
   GameFlag_SetBit(0x200);
   object->motionFlags = 0;
@@ -200,7 +200,7 @@ void Func_020006cc(void) {
 }
 
 void Func_02000704(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
 
   GameFlag_SetBit(0x201);
   object->motionFlags = 0;
@@ -209,7 +209,7 @@ void Func_02000704(void) {
 }
 
 void Func_02000740(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
 
   GameFlag_SetBit(0x202);
   object->motionFlags = 0;
@@ -218,7 +218,7 @@ void Func_02000740(void) {
 }
 
 void Func_0200077c(void) {
-  struct ObjectRuntime *object = Object_GetById(11);
+  struct Actor *object = Actor_GetById(11);
 
   GameFlag_SetBit(0x203);
   object->motionFlags = 0;
@@ -227,7 +227,7 @@ void Func_0200077c(void) {
 }
 
 void Func_020007b8(void) {
-  struct ObjectRuntime *object = Object_GetById(12);
+  struct Actor *object = Actor_GetById(12);
 
   GameFlag_SetBit(0x204);
   object->motionFlags = 0;
@@ -236,7 +236,7 @@ void Func_020007b8(void) {
 }
 
 void Func_020007f0(void) {
-  struct ObjectRuntime *object = Object_GetById(13);
+  struct Actor *object = Actor_GetById(13);
 
   GameFlag_SetBit(0x205);
   object->motionFlags = 0;
@@ -245,7 +245,7 @@ void Func_020007f0(void) {
 }
 
 void Func_0200082c(void) {
-  struct ObjectRuntime *object = Object_GetById(14);
+  struct Actor *object = Actor_GetById(14);
 
   GameFlag_SetBit(0x206);
   object->motionFlags = 0;
@@ -254,7 +254,7 @@ void Func_0200082c(void) {
 }
 
 void Func_02000868(void) {
-  struct ObjectRuntime *object = Object_GetById(8);
+  struct Actor *object = Actor_GetById(8);
 
   GameFlag_SetBit(0x200);
   object->motionFlags = 0;

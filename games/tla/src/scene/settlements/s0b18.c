@@ -23,7 +23,7 @@ s32 Func_02000b18(void) {
     if (GameFlag_Test(0x204)) {
       Func_020020c0(9, 0, 0);
       Place(21, 0xb80000, 0xb80000);
-      Object_GetById(21)->motionFlags = 0;
+      Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);
     }
 #endif

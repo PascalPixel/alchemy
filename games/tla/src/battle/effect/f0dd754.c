@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 /// The Broken Seal's FieldEffect_WatchLeaderDistance with this game's
@@ -9,7 +9,7 @@
 /// centre or the timer has run out, requests the effect's end.
 void Func_080dd754(void) {
   u8 *work;
-  struct ObjectRuntime *actor;
+  struct Actor *actor;
   s16 *timer;
   s32 dx;
   s32 dz;

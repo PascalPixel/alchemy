@@ -26,7 +26,7 @@ struct SettlementsSpawn {
   void *update;
 };
 
-void Effect_AdvanceMotion(struct ObjectRuntime *object);
+void Effect_AdvanceMotion(struct Actor *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
                    struct SettlementsSpawn *spawn);
 s32 Math_Sine(s32 angle);
@@ -34,7 +34,7 @@ s32 Math_Sine(s32 angle);
 void Func_02001620(s32 id) {
   struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u32 i;
 
   spawn.update = Effect_AdvanceMotion;

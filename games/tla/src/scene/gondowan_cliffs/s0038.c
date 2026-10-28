@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -16,7 +16,7 @@ struct TileSprite {
   u8 frame;
 };
 
-s32 Func_02000038(struct ObjectRuntime *object) {
+s32 Func_02000038(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
   struct TileSprite *sprite = object->animation;
 

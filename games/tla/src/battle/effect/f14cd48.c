@@ -36,7 +36,7 @@ void Animation_ApplyChildArgumentFar(void *group, s32 value);
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
-/// The Broken Seal's ObjectGroup_UpdateMembers as The Lost Age has it: the
+/// The Broken Seal's Actor_UpdateMembers as The Lost Age has it: the
 /// member count is a byte at 0x1b, the timers sit at 0x78dc of the effect
 /// work, and a member's frame is reset only when its parameter changes.
 void Func_0814cd48(s32 setId, s32 objectValue, s32 groupValue, s32 stateSlot,

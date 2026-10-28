@@ -5,7 +5,7 @@
 // back on the listing since.
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "adventure.h"
 #include "ram_buffer.h"
@@ -43,28 +43,28 @@ void GameFlag_SetBit();
 void Camera_MoveWithinMapBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
-void ObjectDispatch_SetSingleChildFlags();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_EnableActionAndResetMotion();
-void ObjectMotion_EnableActionAndSetCallback();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_WaitForAnimationChange();
+void Actor_SetSingleChildFlags();
+void Actor_ArmCallback();
+void Actor_WaitForMoveById();
+void Actor_CommitPositionAndActivate();
+void Actor_Stop();
+void Actor_SetMovementTypeById();
+void Actor_Jump();
+void Actor_OffsetPositionAndResetMotion();
+void Actor_ResetAndSetPosition();
+void Actor_SetAngleToward();
+void Actor_SetPositionAndReset();
+void Actor_SetSpeedParameters();
+void Actor_WaitForAnimationChange();
 void Camera_FollowActor();
-struct ObjectRuntime *Object_GetById();
-void Object_LinkObjectAndSetCallback();
-void Object_TurnToFaceEachOther();
-void Object_RefreshSelectorById();
-void Object_SetModeById();
+struct Actor *Actor_GetById();
+void Actor_WatchAndSetScript();
+void Actor_TurnToFaceEachOther();
+void Actor_RefreshSelectorById();
+void Actor_SetModeById();
 void FieldMessage_ShowAtActor();
 
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02001e80(s32 value);
 void Func_02001d20(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001d28(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -78,7 +78,7 @@ s32 Func_02000624(void) {
   void *event;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_02001e80(0);
   if (gAdventure.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
@@ -87,8 +87,8 @@ s32 Func_02000624(void) {
       ActorPlace(29, 0, 0);
       ActorPlace(30, 0, 0);
     } else {
-      Object_SetPartAttribute(Object_GetById(29), 3);
-      Object_SetPartAttribute(Object_GetById(30), 5);
+      Actor_SetPartAttribute(Actor_GetById(29), 3);
+      Actor_SetPartAttribute(Actor_GetById(30), 5);
     }
     if (FlagCheck(0x8ab)) {
       Func_02001d28(2, 110, 16, 10, 16, 64);
@@ -102,17 +102,17 @@ s32 Func_02000624(void) {
       ActorPlace(10, 0, 0);
     } else {
       Func_02001ef0(10, 0xc000);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-      ((struct FieldSprite *)Object_GetById(10)->animation)->nextFrame |= 8;
-      sprite = Object_GetById(10)->animation;
+      Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+      ((struct FieldSprite *)Actor_GetById(10)->animation)->nextFrame |= 8;
+      sprite = Actor_GetById(10)->animation;
       sprite->unk11 = (sprite->unk11 & 3) | 32;
-      ((struct FieldSprite *)Object_GetById(10)->animation)->unk19 = 1;
+      ((struct FieldSprite *)Actor_GetById(10)->animation)->unk19 = 1;
     }
   }
   Func_02000534();
   if (FlagCheck(0x8ff))
-    Object_SetPartAttribute(Object_GetById(33), 2);
+    Actor_SetPartAttribute(Actor_GetById(33), 2);
   else
-    Object_SetPartAttribute(Object_GetById(28), 2);
+    Actor_SetPartAttribute(Actor_GetById(28), 2);
   return 0;
 }

@@ -15,8 +15,8 @@
 #include "adventure.h"
 #include "animspr.h"
 
-#define ObjectDispatch_SetAnimationSpeedFar                                 \
-  ((void (*)(void *, s32))ObjectDispatch_SetAnimationSpeedFar)
+#define Actor_SetAnimationSpeedFar                                 \
+  ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
 void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object) {
   s8 *table = gBattleEffect_RandomChildValues;
@@ -40,7 +40,7 @@ void BattleEffect_PauseObject(s32 id) {
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
     object->value5b = 1;
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
   }
 }
 
@@ -54,6 +54,6 @@ void BattleEffect_ResumeObject(s32 id) {
       Animation_ApplyChildValuesFar(object, (s8)gAdventure.savedByte);
     }
     object->value5b = 0;
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
   }
 }

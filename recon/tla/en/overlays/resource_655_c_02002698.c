@@ -2,7 +2,7 @@
 // center and flag is set. Left: register choice.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
@@ -17,20 +17,20 @@ void WaitFrames(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
-void Func_020006ec(struct ObjectRuntime *object, struct ObjectRuntime *other);
+void Func_020006ec(struct Actor *object, struct Actor *other);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
-void Func_02003ba0(struct ObjectRuntime *object, s32 mode);
-void Func_02003ba8(struct ObjectRuntime *object, const void *script);
-struct ObjectRuntime *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
+void Func_02003ba0(struct Actor *object, s32 mode);
+void Func_02003ba8(struct Actor *object, const void *script);
+struct Actor *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
 void Func_02003c00(s32 a, s32 b, s32 c);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Func_02003c28(void);
@@ -40,13 +40,13 @@ void Func_02003c78(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
-s32 Func_02003db0(struct ObjectRuntime *object);
+s32 Func_02003db0(struct Actor *object);
 s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct ObjectRuntime *Func_02003dd8(s32 *position, s32 mode);
+struct Actor *Func_02003dd8(s32 *position, s32 mode);
 void Func_02003df8(s32 cue);
-void Effect_AdvanceMotionAtLeaderPriority(struct ObjectRuntime *object);
+void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 
-/// The effect fields of an ObjectRuntime, as field_effect.h names them.
+/// The effect fields of an Actor, as field_effect.h names them.
 struct EffectView {
   u8 unk00[0x30];
   s32 scaleRateX;
@@ -59,32 +59,32 @@ struct EffectView {
   u8 unk54[0x10];
   u16 spin;
   u8 unk66[6];
-  void (*update)(struct ObjectRuntime *object);
+  void (*update)(struct Actor *object);
 };
 
 extern const u8 gData_02003f14[];
 
 void FieldEvent_WaitFrames(s32 frames);
-void Effect_AdvanceMotion(struct ObjectRuntime *object);
+void Effect_AdvanceMotion(struct Actor *object);
 
 void Func_02002698(s32 id, s32 center, s32 flag) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 frame;
   u32 i;
 
   Func_02003df8(125);
-  Object_SetPartAttribute(Object_GetById(id), 7);
+  Actor_SetPartAttribute(Actor_GetById(id), 7);
   WaitFrames(2);
-  Object_SetModeById(id, 0);
-  Object_SetPartAttribute(Object_GetById(id), 7);
+  Actor_SetModeById(id, 0);
+  Actor_SetPartAttribute(Actor_GetById(id), 7);
   WaitFrames(4);
-  Object_SetPartAttribute(Object_GetById(id), 0);
-  leader = Object_GetById(center);
+  Actor_SetPartAttribute(Actor_GetById(id), 0);
+  leader = Actor_GetById(center);
   frame = 0;
   i = 0;
 loop:
   {
-    struct ObjectRuntime *object;
+    struct Actor *object;
     struct EffectView *effect;
 
     object = Func_02003bb0(
@@ -97,7 +97,7 @@ loop:
     frame = Func_02003d80(effect->sprite, frame);
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02003ba0(object, 2);
     Func_02003ba8(object, gData_02003f14);
     object->scaleX = 0xb333;

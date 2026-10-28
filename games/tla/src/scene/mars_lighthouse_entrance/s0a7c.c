@@ -21,7 +21,7 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02004d58(s32 a0, s32 a1);
 void Func_02004d60(s32 frames);
 void Func_02004dc8(void);

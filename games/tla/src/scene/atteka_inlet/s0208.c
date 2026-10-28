@@ -1,17 +1,17 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000ff8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -40,11 +40,11 @@ void Func_02000208(void) {
       Call4(Func_02001068, 9, 60 << 16, 362 << 16, angle << 8);
     }
     Call1(WaitFrames, 1);
-    Call3(ObjectMotion_SetSpeedParameters, 9, 0x20000, 0x10000);
-    Call3(ObjectMotion_Launch, 9, 6, 0);
-    Call3(ObjectMotion_SetPositionAndCommit, 9, 64, 336);
-    Call3(ObjectMotion_SetPositionAndReset, 9, 70, 308);
-    Call3(ObjectMotion_ArmCallback, 9, 0, 0);
+    Call3(Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
+    Call3(Actor_Jump, 9, 6, 0);
+    Call3(Actor_SetPositionAndCommit, 9, 64, 336);
+    Call3(Actor_SetPositionAndReset, 9, 70, 308);
+    Call3(Actor_ArmCallback, 9, 0, 0);
     {
       /* FAKEMATCH: as above (differ 2). */
       s32 angle = 160;
@@ -52,25 +52,25 @@ void Func_02000208(void) {
       Call4(Func_02001068, 10, 94 << 16, 272 << 16, angle << 7);
     }
     Call1(WaitFrames, 1);
-    Call3(ObjectMotion_SetSpeedParameters, 10, 0x20000, 0x10000);
-    Call3(ObjectMotion_Launch, 10, 6, 0);
-    Call3(ObjectMotion_SetPositionAndCommit, 10, 90, 288);
-    Call3(ObjectMotion_SetPositionAndReset, 10, 80, 316);
+    Call3(Actor_SetSpeedParameters, 10, 0x20000, 0x10000);
+    Call3(Actor_Jump, 10, 6, 0);
+    Call3(Actor_SetPositionAndCommit, 10, 90, 288);
+    Call3(Actor_SetPositionAndReset, 10, 80, 316);
     Call2(Func_020010b8, 10, 0);
-    Object_GetById(9)->velocityY = 0x40000;
+    Actor_GetById(9)->velocityY = 0x40000;
     Call1(FieldEvent_WaitFrames, 10);
     Call1(Func_02001098, (s32)MsgWhereDoYouThink);
     Call2(Func_020010a8, 0x4009, 0);
     Value3(Func_020010c8, 10, 265, 0);
     Call2(Func_020010a8, 10, 0);
-    Call3(ObjectMotion_ArmCallback, 9, 0x3000, 0);
+    Call3(Actor_ArmCallback, 9, 0x3000, 0);
     Call2(Func_020010a8, 0x4009, 0);
     Call2(Func_020010b8, 10, 0xb000);
-    Call2(Object_SetModeById, 10, 3);
+    Call2(Actor_SetModeById, 10, 3);
     Call2(Func_020010a8, 10, 0);
-    Call3(ObjectMotion_ArmCallback, 10, 0, 0);
+    Call3(Actor_ArmCallback, 10, 0, 0);
     Value3(Func_020010c8, 9, 264, 0);
-    Call3(ObjectMotion_ArmCallback, 9, 0, 20);
+    Call3(Actor_ArmCallback, 9, 0, 20);
     Call2(Func_020010a8, 0x4009, 0);
     Call2(Func_020010a8, 10, 0);
     Func_02000ff8(1, 16, 1, 1, 3, 19);

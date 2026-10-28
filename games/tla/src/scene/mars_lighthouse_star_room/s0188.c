@@ -2,7 +2,7 @@
 #include "edition.h"
 
 void Func_02000188(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   if (GameFlag_Test(0xa4b) == 0) {
@@ -22,7 +22,7 @@ void Func_02000188(void) {
 }
 
 void Func_020001e8(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   if (GameFlag_Test(0xa4b) == 0) {

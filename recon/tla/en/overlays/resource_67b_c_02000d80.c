@@ -5,7 +5,7 @@
 // to the ground; in Ov67bRoom1 a pull ahead lifts it out of
 // the water for 60 frames, spinning, and runs Func_02002a18. Left: a rough reading: the native keeps gAdventure in r10 (loading it after the flag test), the owner in r8, the carried object in r9 and the scene's address in r0 and 0x9e in r11, and places the flag-clear branch at the end; the alignment is poor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
@@ -14,17 +14,17 @@ extern char SceneId_Ov67bRoom1;
 extern u32 gFrameCount;
 s32 GameFlag_Test(s32 flag);
 void Func_02001e00(void);
-struct ObjectRuntime *Object_GetById(u32 id);
-s32 Func_02002970(struct ObjectRuntime *object, struct Vector3 *position);
-void Func_02001d30(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(u32 id);
+s32 Func_02002970(struct Actor *object, struct Vector3 *position);
+void Func_02001d30(struct Actor *object);
 void Func_020029f8(u32 id, s32 cue);
-void Func_02002930(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02002910(struct ObjectRuntime *object, s32 mode);
-void Func_02002938(struct ObjectRuntime *object);
+void Func_02002930(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002910(struct Actor *object, s32 mode);
+void Func_02002938(struct Actor *object);
 void WaitFrames(s32 frames);
 void Func_02002998(void);
 void Func_02002a48(s32 skip);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void FieldEvent_WaitFrames(s32 frames);
 u16 Random16Far(void);
@@ -32,7 +32,7 @@ void Func_020029a0(void);
 void Func_02002a18(s32 mode);
 
 void Func_02000d80(void) {
-  struct ObjectRuntime *leader, *carried;
+  struct Actor *leader, *carried;
   struct Vector3 ahead;
   s16 *scene = &gAdventure.scene;
   u32 owner;
@@ -43,8 +43,8 @@ void Func_02000d80(void) {
     return;
   }
   owner = gAdventure.currentOwner;
-  carried = *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0x1cc);
-  leader = Object_GetById(owner);
+  carried = *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0x1cc);
+  leader = Actor_GetById(owner);
   if (*scene == (s32)&SceneId_Ov67bRoom1 && leader->terrainHeight == 0)
     return;
   ahead.x = leader->x;
@@ -76,7 +76,7 @@ void Func_02000d80(void) {
     Func_02002998();
     Func_02002a48(0);
     leader->motionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(leader, 0);
+    Actor_SetSingleChildFlags(leader, 0);
     gAdventure.renderMode = 2;
     Func_02001d30(leader);
     FieldEvent_WaitFrames(5);

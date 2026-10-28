@@ -1,19 +1,19 @@
 /// @file
 /// Kibombo's setup.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
 extern u16 gData_02007948[4];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005a9c(void);
 void Func_02005aa4(void);
 void Func_02005c3c(s32 skip);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 u8 *Unit_Get(s32 unit);
 void Party_RemoveOwnerRestored(s32 unit);
@@ -48,7 +48,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 /// when flag 0x8fd is set, sets flag 0x86b and fades in with Func_02002c34
 /// scheduled.
 void Func_0200516c(void) {
-  struct ObjectRuntime *actor = Object_GetById(11);
+  struct Actor *actor = Actor_GetById(11);
   u8 *unit;
   s32 done;
 
@@ -59,8 +59,8 @@ void Func_0200516c(void) {
     actor->motionFlags = done;
     actor->y = 0x2a0000;
     actor->z += -0x2a0000;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
-    ObjectMotion_SetActionVariant(11, 1);
+    Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+    Actor_SetSpritePriority(11, 1);
     if (gAdventure.entrance == 19 && GameFlag_Test(7)) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
@@ -100,18 +100,18 @@ void Func_0200516c(void) {
   gData_02007948[2] = *(u16 *)0x050000ce;
   gData_02007948[3] = *(u16 *)0x050000ee;
   Func_020050ac();
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(30), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(31), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(32), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(33), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(34), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(35), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(30), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(31), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(32), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(33), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(34), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(35), 0);
   GameFlag_SetBit(0x209);
-  actor = Object_GetById(29);
+  actor = Actor_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
   Func_020031f0(29);
-  ObjectMotion_SetActionVariant(30, 3);
+  Actor_SetSpritePriority(30, 3);
   if (GameFlag_Test(0x8fd)) {
     Func_02005b0c(26, 0, 0);
     Func_02005b0c(27, 0, 0);

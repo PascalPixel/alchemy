@@ -163,7 +163,7 @@ Func_0817e0c0:
 	bl GetBattleObjectSlotFar
 	movs r1, #48
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r3, #36
 	ldrsh r0, [r5, r3]
 	bl GetBattleObjectSlotFar
@@ -666,7 +666,7 @@ Func_0817e0c0:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

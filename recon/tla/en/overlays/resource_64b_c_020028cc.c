@@ -14,33 +14,33 @@
 // the random value apart from its shifts in the else branch (no change).
 // alchemy permute, 5 minutes (25,361 candidates): nothing closer.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern u32 gFrameCount;
 extern const u8 gData_02004f10[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Func_02004b18(struct ObjectRuntime *object, s32 mode);
-void Func_02004b20(struct ObjectRuntime *object, const u8 *script);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Func_02004b18(struct Actor *object, s32 mode);
+void Func_02004b20(struct Actor *object, const u8 *script);
 
-static inline struct ObjectRuntime *CreateObject(s32 kind, s32 x, s32 y,
+static inline struct Actor *CreateObject(s32 kind, s32 x, s32 y,
                                                  s32 z) {
   return Func_02004b30(kind, x, y, z);
 }
 
 void Func_020028cc(void) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *obj;
+  struct Actor *leader;
+  struct Actor *obj;
   struct FieldSprite *spr;
   u32 value;
 
   if ((gFrameCount & 15) != 0)
     return;
-  leader = Object_GetById(8);
+  leader = Actor_GetById(8);
   obj =
       CreateObject(285, leader->x - 0x200000, leader->y, leader->z - 0x100000);
   if (obj == NULL)
@@ -64,7 +64,7 @@ void Func_020028cc(void) {
   spr->priority = ((struct FieldSprite *)leader->animation)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
-  Object_SetPartAttribute(obj, 9);
+  Actor_SetPartAttribute(obj, 9);
   Func_02004b18(obj, 2);
   Func_02004b20(obj, gData_02004f10);
 }

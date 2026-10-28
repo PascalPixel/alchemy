@@ -10,7 +10,7 @@
 // no closer form).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GlowState {
   s32 x; ///< 16.16 pixels
@@ -40,8 +40,8 @@ struct GlowWork {
   u8 unk000[0x400];
   struct GlowSprite sprites[16];
   struct GlowState states[16];
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *effect;
+  struct Actor *object;
+  struct Actor *effect;
   s32 x;
   s32 y;
   s32 z;
@@ -63,8 +63,8 @@ extern u8 gField_Tiles64D[];
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -72,11 +72,11 @@ void Resource_ResetEntry(s32 entry);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
-s32 Func_02002a24(struct ObjectRuntime *object);
-s32 Func_02002a2c(struct ObjectRuntime *object);
-struct ObjectRuntime *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
-void Func_0200285c(struct ObjectRuntime *object, s32 mode);
-void Func_02002874(struct ObjectRuntime *object);
+s32 Func_02002a24(struct Actor *object);
+s32 Func_02002a2c(struct Actor *object);
+struct Actor *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
+void Func_0200285c(struct Actor *object, s32 mode);
+void Func_02002874(struct Actor *object);
 void Import_SoundPlay(s32 cue);
 void WaitFrames(s32 frames);
 s32 Task_Add(void (*callback)(void), s32 order);
@@ -85,8 +85,8 @@ void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {
   struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *effect;
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *effect;
   struct GlowSprite *sprite;
   struct GlowState *state;
   s32 resource, tile, i;
@@ -116,9 +116,9 @@ void Func_020023a4(s32 id) {
   effect = Func_0200286c(290, object->x, object->y, object->z);
   work->effect = effect;
   Func_0200285c(effect, 1);
-  ObjectDispatch_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->priorityFlags = 2;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   ((struct GlowAnimation *)object->animation)->angle = 0x4000;
   object->x += -0xc0000;
   object->motionFlags = 0;

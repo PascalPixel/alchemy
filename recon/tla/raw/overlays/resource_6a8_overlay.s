@@ -157,7 +157,7 @@ Func_020003bc:
 .L_ja_020083ec:
 	movs r0, #17
 .L_ja_020083ee:
-	bl Object_GetById
+	bl Actor_GetById
 	adds r1, r0, #0
 	adds r0, r5, #0
 	movs r2, #24
@@ -170,7 +170,7 @@ Func_020003bc:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #176
 	lsls r2, r2, #1
 	adds r3, r7, r2
@@ -362,15 +362,15 @@ Func_020015d0:
 	ldr r0, [r6]
 	lsls r1, r1, #10
 	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #128
 	movs r2, #128
 	lsls r2, r2, #9
 	lsls r1, r1, #10
 	movs r0, #20
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #20
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #1
 	mov r8, r3
 	adds r0, #34
@@ -378,9 +378,9 @@ Func_020015d0:
 	strb r3, [r0]
 	movs r1, #3
 	movs r0, #20
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	ldr r0, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r5, #254
@@ -392,11 +392,11 @@ Func_020015d0:
 	lsls r1, r1, #1
 	lsls r2, r2, #1
 	ldr r0, [r6]
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	ldr r0, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0]
 	mov r2, r8
@@ -406,7 +406,7 @@ Func_020015d0:
 	lsls r1, r1, #8
 	movs r2, #0
 	ldr r0, [r6]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #161
 	bl Func_0200463c
 	bl Func_02004584
@@ -417,7 +417,7 @@ Func_020015d0:
 	add r3, r10
 	str r3, [r0, #12]
 	movs r0, #20
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0]
 	movs r1, #204
@@ -426,11 +426,11 @@ Func_020015d0:
 	movs r2, #200
 	strb r5, [r0]
 	movs r0, #20
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	movs r0, #20
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0]
 	mov r2, r8
@@ -473,9 +473,9 @@ Func_020015d0:
 	bl Func_0200455c
 	movs r1, #2
 	movs r0, #20
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #20
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r3, [r0]
 	mov r2, r8
@@ -705,7 +705,7 @@ Func_0200391c:
 	bl Func_020043c4
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_020043fc
 	ldr r3, .L_0200bbc4
@@ -1051,7 +1051,7 @@ Func_02003bc8:
 	bl Func_020043c4
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_020043fc
 	ldr r3, .L_ja_0200be8c
@@ -1426,7 +1426,7 @@ Func_02003bc8:
 	bl Func_020043c4
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	movs r5, #0
 	b .L_0200bd7e
 .L_0200bd56:
@@ -1747,7 +1747,7 @@ Func_02003ee8:
 	bl Func_020043c4
 	adds r0, r5, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	ldr r3, .L_0200bfec
 	str r3, [r5, #108]
 	b .L_0200c09a

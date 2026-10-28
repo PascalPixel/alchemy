@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -10,9 +10,9 @@ struct DoorStep {
 };
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -45,10 +45,10 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001cfc(0);
   Func_02001d4c(158);
   Func_02001bc4(step->script, step->x, step->z);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  Call3((void (*)())ObjectMotion_CenterOnColumn, gAdventure.currentOwner, 2,
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
   FieldEvent_WaitFrames(10);
   Func_02001cd4(countdown);

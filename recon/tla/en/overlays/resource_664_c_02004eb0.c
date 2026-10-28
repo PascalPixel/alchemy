@@ -5,18 +5,18 @@
 // native keeps the count in r6 and a zero in r7) and the native takes both
 // action field addresses and counts up before the parity test.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_02000550(void);
 
 void Func_02004eb0(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i = 0;
   struct FieldSprite *sprite;
 
@@ -29,8 +29,8 @@ loop:
   object->priorityFlags = 0;
   object->speedLimit = object->acceleration = (i << 12) + 0x8000;
   object->update = Func_02000550;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
-  Object_SetPartAttribute(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetPartAttribute(object, 2);
   if (i & 1) {
     object->action = 212;
     object->unk66 = 0;

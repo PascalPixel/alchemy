@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "magma_rock.h"
 #include "macros.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_020020d0(struct ObjectRuntime *object);
+void Func_020020d0(struct Actor *object);
 void Func_02002024(s32 x, s32 z);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
 void Func_020038dc(void);
@@ -21,7 +21,7 @@ void Func_020020f8(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
   if (cue == 0) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
 
     Func_020038dc();
     object = work->target;
@@ -34,7 +34,7 @@ void Func_020020f8(s32 mode, s32 cue) {
                   1);
   }
   if (mode == 3) {
-    struct ObjectRuntime *target;
+    struct Actor *target;
     /* FAKEMATCH(temporary): the attribute copies' last argument as a
      * local set first keeps it in r6; as the constant 8, 12 of 104
      * instructions differ in tla-en. */

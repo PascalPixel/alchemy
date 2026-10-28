@@ -124,7 +124,7 @@ extern u16 gData_08197410[];   // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // ObjectGroup_UpdateMembers
+                   s32 frames); // Actor_UpdateMembers
 void Sound_PlayFar(s32 cue);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer

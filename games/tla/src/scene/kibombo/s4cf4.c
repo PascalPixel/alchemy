@@ -28,13 +28,13 @@ void Func_02004cf4(void) {
   Kibombo_ObjArm(10, 0xb000, 20);
   Kibombo_ObjArm(10, 0xd000, 20);
   Motion_SetModeAndWaitAnimation(10, 3);
-  Object_SetModeById(9, 3);
+  Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
   Kibombo_ObjArm(10, 0xb000, 20);
   Kibombo_ObjArm(10, 0xd000, 20);
-  Object_GetById(10)->velocityY = 0x30000;
+  Actor_GetById(10)->velocityY = 0x30000;
   Kibombo_Wait(40);
-  Object_SetModeById(9, 3);
+  Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02005bd4(0x10000, 0);
   Func_02005be4(40);
@@ -48,9 +48,9 @@ void Func_02004cf4(void) {
   Kibombo_ObjArm(gAdventure.currentOwner, 0x8000, 40);
   Kibombo_ObjArm(10, 0xd000, 0);
   Kibombo_ObjArm(gAdventure.currentOwner, 0xc000, 10);
-  Object_SetModeById(10, 3);
+  Actor_SetModeById(10, 3);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
-  ObjectMotion_Launch(8, 4, 10);
+  Actor_Jump(8, 4, 10);
   Kibombo_MessagePut(0x2008, 0);
   Kibombo_ObjTurn(9, 0);
   Kibombo_ObjEmote(8, 259, 20);
@@ -58,11 +58,11 @@ void Func_02004cf4(void) {
   Kibombo_ObjEmote(9, 256, 20);
   Kibombo_MessagePut(9, 0);
   Kibombo_ObjTurn(8, 0x8000);
-  Object_SetModeById(8, 4);
+  Actor_SetModeById(8, 4);
   Kibombo_MessagePut(0x2008, 0);
   Kibombo_ObjTurn(8, 0x5000);
   Kibombo_MessagePut(0x2008, 0);
-  Object_SetModeById(8, 4);
+  Actor_SetModeById(8, 4);
   Kibombo_MessagePut(0x2008, 0);
   Kibombo_ObjArm(9, 0xd000, 0);
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
@@ -72,7 +72,7 @@ void Func_02004cf4(void) {
   Kibombo_MessagePut(9, 0);
   Kibombo_ObjTurn(9, 0x3000);
   Kibombo_MessagePut(9, 0);
-  Object_SetModeById(9, 4);
+  Actor_SetModeById(9, 4);
   Kibombo_MessagePut(9, 0);
   Kibombo_MessagePut(9, 0);
   Motion_SetModeAndWaitAnimation(10, 3);
@@ -80,16 +80,16 @@ void Func_02004cf4(void) {
   Kibombo_ObjTurn(10, 0);
   Kibombo_MessagePut(10, 0);
   Kibombo_ObjTurn(gAdventure.currentOwner, 0x8000);
-  Object_SetModeById(10, 3);
+  Actor_SetModeById(10, 3);
   Kibombo_MessagePut(10, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Kibombo_ObjSpeed(10, 0xcccc, 0x6666);
-  Object_SetModeById(10, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(10, 2);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != 0)
-    ObjectMotion_ResetAndSetPosition(10, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(10, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(10);
+  Actor_WaitForMoveById(10);
   Func_02005b0c(10, 0, 0);
   work = Ram_HeapSlots->eventWork;
   work->field1b4 = 16;

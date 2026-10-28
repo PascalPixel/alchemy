@@ -53,7 +53,7 @@ Func_080eace8:
 .L_080ead44:
 	ldr r1, [sp, #8]
 	ldrh r0, [r1]
-	bl Object_GetById
+	bl Actor_GetById
 	cmp r7, r0
 	bne .L_080eadd4
 	movs r3, #192

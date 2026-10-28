@@ -21,7 +21,7 @@ s32 Func_0200085c();
 s32 Func_02000864();
 s32 Func_0200086c();
 s32 GameFlag_ClearBit();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 WindowSystem_InitField();
 s32 WaitFrames();
 extern u8 MsgFinallyWeVe[];
@@ -38,7 +38,7 @@ s32 Func_02000318(void) {
   t0 = *(s32 *)((s32)gAdventure + 0x214);
   v_r6 = ((s32)gAdventure + 0x22c);
   t1 = *(u8 *)v_r6;
-  t2 = Value1((s32 (*)())Object_GetById, t0);
+  t2 = Value1((s32 (*)())Actor_GetById, t0);
   *(u8 *)(t2 + 85) = 0;
   *(u8 *)v_r6 = 1;
   Func_02000844();

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 
@@ -8,21 +8,21 @@ struct AnkohlRuinsEventWork {
   u8 unk000[0x154];
   s16 cue;
   u8 unk156[0x76];
-  struct ObjectRuntime *companion;
+  struct Actor *companion;
 };
 
 extern struct MapCell gMapCellBuffer[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-s32 Func_02002e0c(struct ObjectRuntime *object, s32 *position);
+struct Actor *Actor_GetById(s32 id);
+s32 Func_02002e0c(struct Actor *object, s32 *position);
 
 void Func_020010f4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *companion = work->companion;
+  struct Actor *companion = work->companion;
   struct MapCell *ground;
   struct MapCell *upper;
   s32 index;

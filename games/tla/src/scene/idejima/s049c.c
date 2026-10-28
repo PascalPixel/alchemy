@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -23,14 +23,14 @@ void Event_PrepareObjectAndApplyValue();
 void FieldEvent_WaitFrames();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
-void Object_TurnToFaceEachOther();
-void ObjectMotion_Launch();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_TurnToFaceEachOther();
+void Actor_Jump();
+void Actor_ArmCallback();
+void Actor_SetAngleToward();
+void Actor_ResetAndSetPosition();
+void Actor_WaitForMoveById();
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02003190();
 void Func_02003228();
 void Func_02003298();
@@ -39,9 +39,9 @@ void Func_020032e8(s32 countdown);
 void Import_ActorSetAttachedEffect();
 void Import_CameraSetSpeed();
 void Camera_MoveWithinMapBounds();
-void ObjectMotion_EnableActionAndSetCallback();
-void Object_RefreshSelectorById();
-void Object_SetActionCallbackAndRefreshById();
+void Actor_SetMovementTypeById();
+void Actor_RefreshSelectorById();
+void Actor_SetMovementTypeAndWaitById();
 void FieldMessage_Show();
 void Task_Wait();
 void Func_02000098();
@@ -52,7 +52,7 @@ extern const u8 gData_02003790[];
 
 /// A scene of actor 6 and the leader that ends by setting flag 0x865.
 void Func_0200049c(void) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
 
   Import_EventStart();
   Func_02003310(0);
@@ -63,37 +63,37 @@ void Func_0200049c(void) {
   Import_ActorSetAnimation(6, 18);
   Import_EventShowMessageAndWait(6, 0);
   Call6(Func_02003190, 38, 31, 2, 1, 14, 40);
-  Object_GetById(6)->motionFlags = 3;
-  ObjectMotion_Launch(6, 4, 0);
+  Actor_GetById(6)->motionFlags = 3;
+  Actor_Jump(6, 4, 0);
   Import_ActorSetAnimation(6, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(6), 1);
   FieldEvent_WaitFrames(20);
-  Object_TurnToFaceEachOther(6, gAdventure.currentOwner, 0);
+  Actor_TurnToFaceEachOther(6, gAdventure.currentOwner, 0);
   Import_EventShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Import_ActorShowEmote(6, 0x105, 20);
   Import_EventShowMessageAndWait(6, 0);
-  Call3(ObjectMotion_ArmCallback, 6, 0xe000, 20);
-  Call3(ObjectMotion_ArmCallback, 6, 0xa000, 40);
-  Call3(ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call3(Actor_ArmCallback, 6, 0xe000, 20);
+  Call3(Actor_ArmCallback, 6, 0xa000, 40);
+  Call3(Actor_ArmCallback, 6, 0x6000, 0);
   Import_ActorShowEmote(6, 0x100, 20);
   Import_EventShowMessageAndWait(6, 0);
-  ObjectMotion_SetAngleToward(6, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(6, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   Import_ActorSetAnimation(6, 3);
   Import_EventShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Import_EventShowMessageAndWait(6, 0);
-  Call3(ObjectMotion_SetSpeedParameters, 6, 0x19999, 0xcccc);
-  Call3(ObjectMotion_SetPositionAndReset, 6, 212, 680);
-  Call3(ObjectMotion_ArmCallback, 6, 0xe000, 20);
+  Call3(Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
+  Call3(Actor_SetPositionAndReset, 6, 212, 680);
+  Call3(Actor_ArmCallback, 6, 0xe000, 20);
   Import_EventShowMessageAndWait(6, 0);
   Import_ActorSetAnimation(6, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != 0)
-    ObjectMotion_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(6);
+  Actor_WaitForMoveById(6);
   Func_02003228(6, 0, 0);
   Event_PrepareObjectAndApplyValue(6, 1);
   GameFlag_SetBit(0x865);
@@ -112,7 +112,7 @@ static inline void FlagSet(s32 flag) {
 
 static inline void ActorPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 void Func_02000640(void) {
@@ -126,7 +126,7 @@ void Func_02000640(void) {
 
 void Func_02000664(void) {
   if (!FlagCheck(0x200)) {
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
     ActorPlace(gAdventure.currentOwner, 152, 756);
     FlagSet(0x200);
   }
@@ -135,7 +135,7 @@ void Func_02000664(void) {
 /// The three scenes of actors 8, 5 and 6 with the leader, each run once:
 /// flags 0x863, 0x864 and 0x865 record them.
 void Func_020006a8(void) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
 
   if (FlagCheck(0x863) == 0) {
     Import_EventStart();
@@ -147,42 +147,42 @@ void Func_020006a8(void) {
     Call3(Func_02003228, 6, 0, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
     Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 25, 42);
     Call1(Func_02000098, 8);
     Call3(Func_02003228, 8, 0x1380000, 0x29a0000);
     Call1(Task_Wait, 1);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
-    Call3(ObjectMotion_SetPositionAndReset, 8, 212, 680);
-    Call3(ObjectMotion_SetPositionAndReset, 8, 192, 712);
-    Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
-    Call1(Object_RefreshSelectorById, 8);
-    Call2(Object_SetActionCallbackAndRefreshById, 8, (s32)gData_02003650);
-    Call3(ObjectMotion_Launch, 8, 4, 20);
+    Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
+    Call3(Actor_SetPositionAndReset, 8, 212, 680);
+    Call3(Actor_SetPositionAndReset, 8, 192, 712);
+    Call3(Actor_ArmCallback, 8, 0x5000, 0);
+    Call1(Actor_RefreshSelectorById, 8);
+    Call2(Actor_SetMovementTypeAndWaitById, 8, (s32)gData_02003650);
+    Call3(Actor_Jump, 8, 4, 20);
     Call2(Import_EventShowMessageAndWait, 8, 0);
     Value3(Import_ActorShowEmote, 8, 257, 0);
     Call2(Import_EventShowMessageAndWait, 8, 0);
     Value3(Import_ActorShowEmote, 8, 0x100, 20);
     Call2(Import_EventShowMessageAndWait, 8, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0xd000, 0);
+    Call3(Actor_ArmCallback, 8, 0xd000, 0);
     Call2(Import_EventShowMessageAndWait, 8, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
+    Call3(Actor_ArmCallback, 8, 0x5000, 0);
     Call2(Import_EventShowMessageAndWait, 8, 0);
     Call2(Import_ActorSetAnimation, 8, 4);
     Call2(Import_EventShowMessageAndWait, 8, 0);
-    Call3(ObjectMotion_SetPositionAndReset, 8, 172, 756);
-    Call3(Object_TurnToFaceEachOther, 8, gAdventure.currentOwner, 0);
+    Call3(Actor_SetPositionAndReset, 8, 172, 756);
+    Call3(Actor_TurnToFaceEachOther, 8, gAdventure.currentOwner, 0);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Import_EventShowMessageAndWait, 0x6008, 0);
     Call2(Import_ActorSetAnimation, 8, 2);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != 0)
-      ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
+      Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
                                        ((s16 *)&leader->z)[1]);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
+    Call1(Actor_WaitForMoveById, 8);
     Call3(Func_02003228, 8, 0, 0);
     Call2(FieldMessage_Show, (s32)MsgIdejimaHeyFelix + 8, 1);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
     FlagSet(0x863);
     Import_EventEnd();
   }
@@ -197,18 +197,18 @@ void Func_020006a8(void) {
     Call3(Func_02003228, 6, 0, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
     Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003734);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+    Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
+    Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
     Call1(Func_02000098, 5);
-    Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
-    Call3(ObjectMotion_SetPositionAndReset, 5, 212, 680);
-    Call3(ObjectMotion_SetPositionAndReset, 5, 192, 712);
-    Call3(ObjectMotion_ArmCallback, 5, 0x6000, 0);
-    Call1(Object_RefreshSelectorById, 5);
+    Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
+    Call3(Actor_SetPositionAndReset, 5, 212, 680);
+    Call3(Actor_SetPositionAndReset, 5, 192, 712);
+    Call3(Actor_ArmCallback, 5, 0x6000, 0);
+    Call1(Actor_RefreshSelectorById, 5);
     Value3(Import_ActorShowEmote, 5, 259, 0);
-    Call3(ObjectMotion_Launch, 5, 4, 20);
+    Call3(Actor_Jump, 5, 4, 20);
     Call2(Import_EventShowMessageAndWait, 5, 0);
     Call2(Import_EventShowMessageAndWait, 5, 0);
     Call2(Import_ActorSetAttachedEffect, gAdventure.currentOwner, 258);
@@ -221,22 +221,22 @@ void Func_020006a8(void) {
     Call3(Func_02003298, 8, 0, 40);
     Value3(Import_ActorShowEmote, 5, 261, 40);
     Call2(Import_EventShowMessageAndWait, 5, 0);
-    Call3(ObjectMotion_ArmCallback, 5, 0xe000, 40);
+    Call3(Actor_ArmCallback, 5, 0xe000, 40);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000, 20);
+    Call3(Actor_ArmCallback, 8, 0x3000, 0);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xa000, 20);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
-    Call3(ObjectMotion_SetPositionAndReset, 5, 178, 728);
-    Call3(ObjectMotion_ArmCallback, 5, 0x6000, 0);
+    Call3(Actor_SetPositionAndReset, 5, 178, 728);
+    Call3(Actor_ArmCallback, 5, 0x6000, 0);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0xd000, 0);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xe000, 20);
+    Call3(Actor_ArmCallback, 8, 0xd000, 0);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 20);
     Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003790);
-    Call2(Object_SetActionCallbackAndRefreshById, 5, (s32)gData_02003790);
+    Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003790);
+    Call2(Actor_SetMovementTypeAndWaitById, 5, (s32)gData_02003790);
     Call2(Event_PrepareObjectAndApplyValue, 5, 1);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
     FlagSet(0x864);
     Import_EventEnd();
   }
@@ -250,20 +250,20 @@ void Func_020006a8(void) {
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
     Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003734);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+    Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
+    Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 14, 40);
-    Object_GetById(6)->motionFlags = 3;
-    Call3(ObjectMotion_Launch, 6, 4, 0);
+    Actor_GetById(6)->motionFlags = 3;
+    Call3(Actor_Jump, 6, 4, 0);
     Call2(Import_ActorSetAnimation, 6, 1);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
+    Actor_SetSingleChildFlags(Actor_GetById(6), 1);
     Call1(FieldEvent_WaitFrames, 20);
-    Call3(ObjectMotion_SetSpeedParameters, 6, 0x19999, 0xcccc);
-    Call3(ObjectMotion_SetPositionAndReset, 6, 212, 680);
-    Call3(ObjectMotion_SetPositionAndReset, 6, 192, 712);
-    Call3(ObjectMotion_ArmCallback, 6, 0x6000, 0);
-    Call1(Object_RefreshSelectorById, 6);
+    Call3(Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
+    Call3(Actor_SetPositionAndReset, 6, 212, 680);
+    Call3(Actor_SetPositionAndReset, 6, 192, 712);
+    Call3(Actor_ArmCallback, 6, 0x6000, 0);
+    Call1(Actor_RefreshSelectorById, 6);
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_ActorSetAttachedEffect, gAdventure.currentOwner, 258);
     Value3(Import_ActorShowEmote, 6, 263, 20);
@@ -278,9 +278,9 @@ void Func_020006a8(void) {
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
-    Call3(ObjectMotion_ArmCallback, 6, 0x8000, 40);
-    Call3(ObjectMotion_ArmCallback, 6, 0x2000, 40);
-    Call3(ObjectMotion_ArmCallback, 6, 0x6000, 0);
+    Call3(Actor_ArmCallback, 6, 0x8000, 40);
+    Call3(Actor_ArmCallback, 6, 0x2000, 40);
+    Call3(Actor_ArmCallback, 6, 0x6000, 0);
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Value3(Import_ActorShowEmote, 6, 257, 20);
     Call2(Import_EventShowMessageAndWait, 6, 0);
@@ -291,10 +291,10 @@ void Func_020006a8(void) {
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003790);
-    Call2(Object_SetActionCallbackAndRefreshById, 6, (s32)gData_02003790);
+    Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003790);
+    Call2(Actor_SetMovementTypeAndWaitById, 6, (s32)gData_02003790);
     Call2(Event_PrepareObjectAndApplyValue, 6, 1);
-    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
     FlagSet(0x865);
     Import_EventEnd();
   }

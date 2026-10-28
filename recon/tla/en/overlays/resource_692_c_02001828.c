@@ -7,7 +7,7 @@
 // sound 584, and the leader steps back a cell.
 #include "types.h"
 #include "io_reg.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_effect.h"
 
@@ -16,7 +16,7 @@ extern char SceneId_Ov692Room3;
 extern char SceneId_Ov692Room5;
 extern const s32 gData_0200502c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
@@ -27,9 +27,9 @@ void Func_02004d18(void);
 void Func_02004e90(s32 value);
 void Func_02004f30(s32 sound);
 void Func_02004d10(s32 a, s32 b, s32 c);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
 void Func_02004cd8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u32 Random16Far(void);
@@ -39,7 +39,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 
 void Func_02001828(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u32 facing = (leader->angle + 0x2000) & 0xc000;
   struct EffectOptions options;
   s32 position[3];
@@ -58,7 +58,7 @@ void Func_02001828(void) {
   Func_02004e90(0);
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner,
+  Actor_SetPositionAndReset(gAdventure.currentOwner,
                                    position[0] >> 16, position[2] >> 16);
   FieldEvent_WaitFrames(20);
   Func_02004f30(584);
@@ -82,9 +82,9 @@ void Func_02001828(void) {
     GameFlag_ClearBit(768);
     facing = 0;
     Func_02000694(0, 15, 13, 64);
-    ObjectMotion_SetActionVariant(15, 3);
+    Actor_SetSpritePriority(15, 3);
     for (i = 0; i != 7; i++)
-      Object_SetModeById(i + 9, 1);
+      Actor_SetModeById(i + 9, 1);
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     dstX = 92;
     baseX = 224 << 17;
@@ -98,7 +98,7 @@ void Func_02001828(void) {
     GameFlag_ClearBit(769);
     Func_02000694(0, 24, 15, 64);
     Func_02000694(0, 9, 16, 64);
-    Object_SetModeById(11, 4);
+    Actor_SetModeById(11, 4);
   } else if (scene == (s32)&SceneId_Ov692Room5) {
     if (gAdventure.entrance <= 8) {
       dstZ = 13;
@@ -152,7 +152,7 @@ void Func_02001828(void) {
     Func_02004cd8(78, 64, dstX, dstZ, 3, 5);
   }
   if (gAdventure.scene == (s32)&SceneId_Ov692Room2)
-    Object_GetById(15)->priorityFlags |= 1;
+    Actor_GetById(15)->priorityFlags |= 1;
   Func_02004f30(288);
   Func_02004f30(181);
   Func_02004d10(0x50000, 0x70000, 0x10000);
@@ -162,14 +162,14 @@ void Func_02001828(void) {
   Func_02004f30(584);
   *flags |= 64;
   FieldEvent_WaitFrames(20);
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffsetFar(0x100000, facing ^ 0x8000, position);
   leader->angle = facing;
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner,
+  Actor_SetPositionAndReset(gAdventure.currentOwner,
                                    ((s16 *)position)[1], ((s16 *)position)[5]);
-  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   Func_02004d48();
 }

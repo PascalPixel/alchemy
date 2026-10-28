@@ -17,11 +17,11 @@ void Func_02001d40(void);
 void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(u32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(u32 id, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
 void Func_02001f10(s32 cue);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000be8(void) {
@@ -51,11 +51,11 @@ rise:
   WaitFrames(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 328, 184);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 328, 184);
   FieldEvent_WaitFrames(20);
   Func_02001f10(308);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
   if (i != 0) {
   sink:
     if ((u32)(i - 33) <= 62) {
@@ -71,7 +71,7 @@ rise:
     if (i != 0)
       goto sink;
   }
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   Func_02001f10(298);
   WaitFrames(1);
   Func_02001f10(125);

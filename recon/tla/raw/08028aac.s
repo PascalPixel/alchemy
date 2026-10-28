@@ -437,7 +437,7 @@ Func_08028aac:
 	blt .L_08028e1e
 	adds r0, r7, #0
 	movs r1, #6
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_08028e36
 .L_08028e1e:
 	ldr r2, [sp, #12]
@@ -445,12 +445,12 @@ Func_08028aac:
 	beq .L_08028e2e
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_08028e36
 .L_08028e2e:
 	adds r0, r7, #0
 	movs r1, #2
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 .L_08028e36:
 	ldr r3, [sp, #12]
 	cmp r3, #0
@@ -518,7 +518,7 @@ Func_08028aac:
 	ldr r1, [r3]
 	adds r0, r7, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r1, [r7, #36]
 	ldr r6, .L_08028fbc
 	adds r0, r1, #0
@@ -679,7 +679,7 @@ Func_08028aac:
 	beq .L_0802903a
 	ldr r1, .L_080290e0
 	ldr r6, [r5, #80]
-	bl ObjectDispatch_Initialize
+	bl Actor_StartScript
 	adds r3, r5, #0
 	adds r3, #85
 	mov r4, r9
@@ -718,7 +718,7 @@ Func_08028aac:
 	ldr r1, [r3]
 	mov r3, r8
 	ands r1, r3
-	bl ObjectDispatch_SetChildByteValue
+	bl Actor_SetChildByteValue
 .L_0802903a:
 	movs r3, #192
 	lsls r3, r3, #18

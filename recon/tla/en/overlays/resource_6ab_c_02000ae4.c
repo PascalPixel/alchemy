@@ -8,7 +8,7 @@
 // after the create call (no change).
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
-extern struct ObjectRuntime *Data_02004cec;
+extern struct Actor *Data_02004cec;
 
 void Func_02000ab4(void);
 void Func_020042ac(s32 sound);
@@ -18,7 +18,7 @@ void VramCache_Load(s32 slot, s32 size, const u8 *tiles);
 
 void Func_02000ae4(s32 rise) {
   u8 *block;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
 
   object = Data_02004cec = Func_020041e4(0x1e9, 0x2be0000, 0, 0xe00000);

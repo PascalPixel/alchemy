@@ -7,7 +7,7 @@
 // (Func_02000fa4, cue 240, mode 8) before the camera follows the leader
 // again. Left: the native keeps object 16 in r10 and the address of the push state's stacked half in r8, and builds 0xc000 in r2; the falling loop and the six cell clears are close.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct PushState {
@@ -19,7 +19,7 @@ struct PushState {
   s32 unk14;
 };
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02004c7c(s32 x, s32 z, s32 layer, s32 value);
@@ -29,8 +29,8 @@ void Func_02004a94(void);
 void Func_02004a9c(void);
 void Func_02004be4(s32 skip);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000fa4(void);
@@ -38,10 +38,10 @@ void Func_02004c9c(s32 cue);
 void Camera_FollowActor(u32 id, s32 mode);
 
 void Func_02000514(void) {
-  struct ObjectRuntime *gate = Object_GetById(15);
-  struct ObjectRuntime *block = Object_GetById(16);
+  struct Actor *gate = Actor_GetById(15);
+  struct Actor *block = Actor_GetById(16);
   struct PushState push;
-  u32 facing = (Object_GetById(gAdventure.currentOwner)->angle + 0x2000) &
+  u32 facing = (Actor_GetById(gAdventure.currentOwner)->angle + 0x2000) &
                0xc000;
   s32 i;
 
@@ -62,8 +62,8 @@ void Func_02000514(void) {
       Func_02004c7c(gate->x - 0x80000, gate->z, 2, 0);
       Func_02004c7c(gate->x + 0x80000, gate->z, 2, 0);
       Func_02004c7c(gate->x + 0x180000, gate->z, 2, 0);
-      Object_SetModeById(15, 3);
-      ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
+      Actor_SetModeById(15, 3);
+      Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_WaitFrames(20);
       gate->gravity = 0xccc;
       gate->motionFlags = 3;
@@ -76,7 +76,7 @@ void Func_02000514(void) {
       }
       Func_02000fa4();
       Func_02004c9c(240);
-      Object_SetModeById(15, 8);
+      Actor_SetModeById(15, 8);
       FieldEvent_WaitFrames(60);
       Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02004a9c();

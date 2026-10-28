@@ -138,7 +138,7 @@ void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
@@ -512,7 +512,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

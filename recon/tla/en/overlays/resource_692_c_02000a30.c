@@ -15,17 +15,17 @@ void Func_02004d48(void);
 void Func_02004ee8(void);
 void Func_020006dc(const u8 *data);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
-void Func_0200063c(struct ObjectRuntime *object);
+void Func_0200063c(struct Actor *object);
 void Func_02004f30(s32 sound);
-void Func_02004cb0(struct ObjectRuntime *object);
+void Func_02004cb0(struct Actor *object);
 void Func_02004ce8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02000a30(void) {
-  struct ObjectRuntime *object =
-      *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
-  struct ObjectRuntime *copy;
+  struct Actor *object =
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
+  struct Actor *copy;
   s32 scene;
   s32 x;
   s32 z;

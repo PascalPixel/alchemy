@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -16,7 +16,7 @@
        ->v)
 
 extern u8 gFrameCount[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02001fac();
 void Func_02002044();
 void Func_02001f6c();
@@ -32,7 +32,7 @@ s32 Func_02000ef0(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 stack[18];
 
   /* sub (s32)stack, #72 */
-  v0 = Object_GetById(8);
+  v0 = Actor_GetById(8);
   r8 = v0;
   Func_02001fac();
   Call1((void (*)())Func_02002044, 0);

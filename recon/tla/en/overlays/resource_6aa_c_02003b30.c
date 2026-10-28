@@ -1,7 +1,7 @@
 // Draft, differ 12 of 207: overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
 // (scene/shared/effect_spawn.h) with the leader from gAdventure.currentOwner,
-// ObjectDispatch_SetSingleChildFlags for the sprite flags, the leader's sprite
-// priority through Object_SetSpritePriorityB, and the scale-to-target target
+// Actor_SetSingleChildFlags for the sprite flags, the leader's sprite
+// priority through Actor_SetSpritePriorityB, and the scale-to-target target
 // and frame count read before the start-scale test (the ☀️ form: 40). Left:
 // three pairs where the native schedules a load before a register copy and this
 // form the copy first: the gAdventure load before z's copy to sl in the
@@ -14,18 +14,18 @@
 
 extern const s32 *gData_0200686c[];
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 struct FieldEffect *Func_02004bd8(s32 type, s32 x, s32 y, s32 z);
 void Func_02004bc0(struct FieldEffect *effect, s32 mode);
 void Func_02004bd0(struct FieldEffect *effect, const s32 *script);
-void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Object_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
-void Object_SetPartAttribute(struct FieldEffect *effect, s32 value);
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
+void Actor_SetPartAttribute(struct FieldEffect *effect, s32 value);
 
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *party = Actor_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -41,12 +41,12 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_02004bc0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Func_02004bd0(effect, gData_0200686c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocityX = velocityX;
   effect->velocityY = velocityY;
   effect->velocityZ = velocityZ;
-  Object_SetSpritePriorityB(effect, party->sprite->priority);
+  Actor_SetSpritePriorityB(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -54,10 +54,10 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Object_SetPartAttribute(effect, options->palette);
+    Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Object_SetSpritePriorityB(effect, options->priority);
+    Actor_SetSpritePriorityB(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {
     effect->scaleX = options->startScaleX;

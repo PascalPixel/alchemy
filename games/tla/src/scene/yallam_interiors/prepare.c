@@ -26,24 +26,24 @@ s32 Func_0200086c(void) {
     if (Flag_IsSet(0x301)) {
       Call3((void (*)())Func_020009f8, 14, 0x2580000, 0x1680000);
       Call3((void (*)())Func_020009f8, 16, 0x2780000, 0x15a0000);
-      Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x4000, 0);
+      Call3((void (*)())Actor_ArmCallback, 16, 0x4000, 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       Call3((void (*)())Func_020009f8, 17, 0, 0);
 #endif
     } else {
       Call2((void (*)())Func_02000a60, 14, 0);
     }
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
-    Call2((void (*)())ObjectMotion_SetActionVariant, 11, 2);
+    Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+    Call2((void (*)())Actor_SetSpritePriority, 11, 2);
   }
   if (gAdventure.scene == (s32)&SceneId_Ov677Room2) {
     Call1((void (*)())Func_02000a48, 0);
-    Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
-    Object_GetById(12)->collisionFlags |= 4;
-    Call2((void (*)())ObjectMotion_SetActionVariant, 10, 2);
-    Object_GetById(10)->collisionFlags |= 4;
-    Call2((void (*)())ObjectMotion_SetActionVariant, 11, 2);
-    Object_GetById(11)->collisionFlags |= 4;
+    Call2((void (*)())Actor_SetSpritePriority, 12, 2);
+    Actor_GetById(12)->collisionFlags |= 4;
+    Call2((void (*)())Actor_SetSpritePriority, 10, 2);
+    Actor_GetById(10)->collisionFlags |= 4;
+    Call2((void (*)())Actor_SetSpritePriority, 11, 2);
+    Actor_GetById(11)->collisionFlags |= 4;
   }
   return 0;
 }

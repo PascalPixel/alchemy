@@ -21,10 +21,10 @@ Func_080c8748:
 	.thumb_func
 Func_080c8750:
 	overlay_veneer Func_080eaeb4
-	.global Object_SpawnFar
+	.global Actor_SpawnFar
 	.thumb_func
-Object_SpawnFar:
-	overlay_veneer Object_Spawn
+Actor_SpawnFar:
+	overlay_veneer Actor_Spawn
 	.global Func_080c8760
 	.thumb_func
 Func_080c8760:

@@ -10,7 +10,7 @@
 void Func_02005990(s32 direction);
 s32 Func_02000330(s32 value);
 s32 Func_020000fc(s32 value);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
+void Actor_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
 void ObjectEffect_StartContextEffect26(void);
 
 void Func_02000138(s32 direction) {
@@ -21,7 +21,7 @@ void Func_02000138(s32 direction) {
     if (state->field16[0] <= 0) {
       if (GameFlag_Test(2559)) {
         if (Func_02000330(0) == 0)
-          ObjectMotion_CommitPositionAndActivate(gAdventure.currentOwner, 0,
+          Actor_CommitPositionAndActivate(gAdventure.currentOwner, 0,
                                                  -16);
         return;
       }

@@ -3,25 +3,25 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 #include "frame.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void Func_0200114c(struct ObjectRuntime *object, s32 mode);
-void Func_02001154(struct ObjectRuntime *object, const void *script);
-struct ObjectRuntime *Func_0200115c(s32 kind, s32 x, s32 y, s32 z);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 id);
+void Func_0200114c(struct Actor *object, s32 mode);
+void Func_02001154(struct Actor *object, const void *script);
+struct Actor *Func_0200115c(s32 kind, s32 x, s32 y, s32 z);
 void Func_02001164(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200116c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 struct GabombaCatacombsVec;
-s32 Func_02001174(struct ObjectRuntime *object,
+s32 Func_02001174(struct Actor *object,
                   struct GabombaCatacombsVec *position);
 void Func_0200119c(void);
 void Func_020011a4(void);
@@ -72,10 +72,10 @@ static __inline__ void Func_0200127c_(s32 a, s32 b, s32 c) {
   Func_0200127c(a, b, c);
 }
 
-static __inline__ void ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 x,
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 x,
                                                                   s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, x, z);
+  Actor_OffsetPositionAndResetMotion(id, x, z);
 }
 
 static __inline__ void Func_0200125c_(s32 a) {

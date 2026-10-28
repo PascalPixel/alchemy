@@ -15,7 +15,7 @@
 // forms &unit and &slot at each call and reads the item as base plus offset,
 // where the draft keeps them in r8 to r11 and adds the slot to the base first.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 #include "lib/call.h"
@@ -30,8 +30,8 @@ s32 Func_02001188(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 u8 *Unit_Get(s32 unit);
 const u8 *Func_020010b8(s32 item);
-struct ObjectRuntime *Object_GetById(u32 id);
-void Func_020010a0(struct ObjectRuntime *object, s32 item);
+struct Actor *Actor_GetById(u32 id);
+void Func_020010a0(struct Actor *object, s32 item);
 void Func_02001108(s32 actor, s32 x, s32 z);
 void Func_020010b0(s32 item, s32 a);
 void FieldMessage_Show(const u8 *message, s32 a);
@@ -39,9 +39,9 @@ void Func_02001170(s32 a, s32 b);
 s32 Func_02001168(s32 a, s32 b);
 s32 Func_02001178(s32 frames);
 void Func_020011a8(s32 cue);
-void ObjectMotion_WaitForAnimationChange(u32 actor);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void Actor_WaitForAnimationChange(u32 actor);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_Jump(s32 actor, s32 speed, s32 frames);
 s32 Func_02001160(s32 actor, s32 emote, s32 frames);
 void Func_02000920(void);
 s32 GameFlag_Test(s32 flag);
@@ -55,9 +55,9 @@ void Party_AdjustCoins(s32 coins);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
-  (Object_GetById(10)->actionFlags &= ~1,                                      \
-   ObjectMotion_ResetAndSetPositionInMode2(10, x, 96),                         \
-   Object_SetModeById(10, 5))
+  (Actor_GetById(10)->actionFlags &= ~1,                                      \
+   Actor_ResetAndSetPositionInMode2(10, x, 96),                         \
+   Actor_SetModeById(10, 5))
 
 void Func_02000390(void) {
   s32 slot, unit;
@@ -81,7 +81,7 @@ ask:
   }
   unitData = Unit_Get(unit);
   Func_020010b8(ITEM(unitData, slot));
-  Func_020010a0(Object_GetById(18), ITEM(unitData, slot));
+  Func_020010a0(Actor_GetById(18), ITEM(unitData, slot));
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_WaitFrames(60);
   Func_020010b0(ITEM(unitData, slot), 2);
@@ -112,33 +112,33 @@ read:
   Func_02001178(30);
   FieldEvent_WaitFrames(120);
   Func_020011a8(11);
-  Object_SetModeById(10, 5);
-  ObjectMotion_WaitForAnimationChange(10);
+  Actor_SetModeById(10, 5);
+  Actor_WaitForAnimationChange(10);
   DANCE_TO(664);
   FieldEvent_WaitFrames(30);
   DANCE_TO(680);
-  ObjectMotion_Launch(10, 4, 90);
+  Actor_Jump(10, 4, 90);
   DANCE_TO(664);
   FieldEvent_WaitFrames(30);
   DANCE_TO(680);
-  ObjectMotion_Launch(10, 4, 90);
+  Actor_Jump(10, 4, 90);
   DANCE_TO(0x2a0);
-  ObjectMotion_Launch(10, 4, 30);
-  ObjectMotion_Launch(10, 4, 30);
-  Object_SetModeById(10, 5);
-  Object_SetModeById(10, 0);
+  Actor_Jump(10, 4, 30);
+  Actor_Jump(10, 4, 30);
+  Actor_SetModeById(10, 5);
+  Actor_SetModeById(10, 0);
   Func_020011a8(11);
   Func_02001168(0x10000, 1);
   Func_02001178(30);
   Call3((void (*)())Func_02001108, 20, 0x2a00000, 0x680000);
   Func_020011a8(0x90);
-  Object_SetModeById(20, 2);
-  ObjectMotion_WaitForAnimationChange(20);
+  Actor_SetModeById(20, 2);
+  Actor_WaitForAnimationChange(20);
   Func_02001108(20, 0, 0);
   FieldEvent_WaitFrames(4);
   Call3((void (*)())Func_02001108, 19, 0x2a00000, 0x680000);
-  Object_SetModeById(19, 4);
-  ObjectMotion_WaitForAnimationChange(19);
+  Actor_SetModeById(19, 4);
+  Actor_WaitForAnimationChange(19);
   FieldEvent_WaitFrames(15);
   Func_02001108(19, 0, 0);
   FieldEvent_WaitFrames(30);

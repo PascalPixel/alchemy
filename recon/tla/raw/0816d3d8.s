@@ -74,7 +74,7 @@ BattleEffect_RunStoneJustice:
 	ldr r0, [r0]
 	movs r1, #48
 	str r0, [sp, #20]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	mov r1, sp
 	mov r2, sp
 	adds r1, #56
@@ -166,7 +166,7 @@ BattleEffect_RunStoneJustice:
 	bne .L_0816d532
 	ldr r0, [sp, #20]
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_0816d532:
 	mov r5, r9
 	cmp r5, #64
@@ -377,7 +377,7 @@ BattleEffect_RunStoneJustice:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -395,7 +395,7 @@ BattleEffect_RunStoneJustice:
 .L_0816d6ea:
 	ldr r0, [sp, #20]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r0, .L_0816d710
 	bl Task_Remove
 	movs r0, #104

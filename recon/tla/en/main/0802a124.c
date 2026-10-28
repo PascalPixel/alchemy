@@ -1,5 +1,5 @@
 // Near miss, differ 64 of 470: script command 0x22, the sibling of
-// Func_080279b0 (The Broken Seal's Object_MoveOnWorldMap): moves an object
+// Func_080279b0 (The Broken Seal's Actor_MoveOnWorldMap): moves an object
 // on the world map by the direction pad at a fixed pace (L repeating runs
 // fast), records the held keys in the event work, and leaves object 0x164
 // behind it as a wake every fifth step. Left: the retry list's first store
@@ -17,7 +17,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -50,17 +50,17 @@ extern const s32 gData_0802ece0[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802db64(struct ObjectRuntime *object, struct FieldPosition *position);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
+s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
+void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
-s32 Func_08029838(struct ObjectRuntime *object);
+s32 Func_08029838(struct Actor *object);
 
-s32 Func_0802a124(struct ObjectRuntime *object) {
+s32 Func_0802a124(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;
@@ -77,7 +77,7 @@ s32 Func_0802a124(struct ObjectRuntime *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
-  struct ObjectRuntime *wake;
+  struct Actor *wake;
   struct PlayerSprite *wakeSprite;
   struct EventWork *work;
   u8 *wakeTimer;
@@ -153,7 +153,7 @@ update_object:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  ObjectDispatch_SelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 
   if (collision != 0) {
     object->targetX = 0x80000000;
@@ -174,7 +174,7 @@ update_object:
     *wakeTimer = 0;
     object->unk66 = 2;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
@@ -210,7 +210,7 @@ update_object:
     if (wake != 0) {
       wake->terrainHeight = object->terrainHeight;
       wakeSprite = wake->animation;
-      ObjectDispatch_Initialize(wake, gData_0802ece0);
+      Actor_StartScript(wake, gData_0802ece0);
       wake->priorityFlags = 8;
       ((u8 *)wake)[99] = 100;
       wake->motionFlags = collision;

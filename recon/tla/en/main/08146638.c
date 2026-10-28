@@ -9,10 +9,10 @@
 // Twin: The Broken Seal's BattleEffect_RunAstralBlast (effect kind 68 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), the rune palette and
-// resource 0x134 as in BattleEffect_RunShiningStar, Object_SetMode for the caster where The
+// resource 0x134 as in BattleEffect_RunShiningStar, Actor_SetMode for the caster where The
 // Broken Seal dispatches an argument to its children, one blitter from
 // BattleEffect_LoadBlitter(104, MAX), the callback at 0xc80, and the target thrown with
-// Object_ResetMotion and Object_SetPosition. The tables are not const (see
+// Actor_ResetMotion and Actor_SetTargetPosition. The tables are not const (see
 // BattleEffect_RunShiningStar).
 
 // BattleEffect_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
@@ -36,7 +36,7 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
@@ -52,12 +52,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames); // ObjectGroup_UpdateMembers
+                   s32 frames); // Actor_UpdateMembers
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
@@ -81,7 +81,7 @@ extern u8 gMapCellBuffer[];
 #define RING_STEPS 16 // dots drawn between two ring points
 #define FAR_DEPTH 399999
 
-#define ACTOR(id) ((struct ObjectRuntime *)GetBattleObjectSlotFar(id)->object)
+#define ACTOR(id) ((struct Actor *)GetBattleObjectSlotFar(id)->object)
 
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
@@ -97,9 +97,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   s32 i;
   u8 *graphics;
   s32 *camera;
-  struct ObjectRuntime *caster;
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *target;
+  struct Actor *caster;
+  struct Actor *source;
+  struct Actor *target;
   struct EffectStep *point;
   struct EffectStep *bolt;
   s32 start;
@@ -121,8 +121,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Object_SetMode(caster, 2);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
+  Actor_SetMode(caster, 2);
+  Actor_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
   BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
@@ -235,11 +235,11 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->velocityY = 0x50000;
           target->gravity = 0xab85;
           target->actionFlags = 0;
-          Object_ResetMotion(target);
+          Actor_ResetMotion(target);
           if (target->x < 0)
-            Object_SetPosition(target, target->x - 0x280000, 0, target->z);
+            Actor_SetTargetPosition(target, target->x - 0x280000, 0, target->z);
           else
-            Object_SetPosition(target, target->x + 0x280000, 0, target->z);
+            Actor_SetTargetPosition(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
             Func_081180e8(134);
           } else {
@@ -251,7 +251,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

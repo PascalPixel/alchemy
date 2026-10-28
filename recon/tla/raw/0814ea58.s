@@ -492,7 +492,7 @@ Func_0814ea58:
 	beq .L_0814ee24
 	b .L_0814ecfe
 .L_0814ee24:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r0, [sp, #52]
 	lsls r1, r1, #7

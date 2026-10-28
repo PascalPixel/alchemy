@@ -13,7 +13,7 @@ void Func_02000168();
 void Func_02004c80();
 s32 GameFlag_Test();
 s32 Map_GetTerrainHeight();
-void Object_SetSpritePriority();
+void Scene_SetActorSpritePriority();
 
 void Func_020001f8(s32 a0) {
   s32 t1, t2, t3, t4, v10, v11, v5, v6, v7, v8, v9;
@@ -43,7 +43,7 @@ L_02008268:
   v6 = (v6 | 0xff00);
   v8 = (v8 | 128);
   v7 = (v7 + 4);
-  Call2(Object_SetSpritePriority, v5, 2);
+  Call2(Scene_SetActorSpritePriority, v5, 2);
 L_02008282:
   Call4(Func_02000168, 0, v9, v10, v8);
   Call4(Func_02000168, 2, v9, v10, v6);

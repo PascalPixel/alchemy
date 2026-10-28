@@ -9,16 +9,16 @@
 // pool's zero ahead of it (differ 4, 8 with a memory clobber); a one-pass
 // block around the store differs 28; permute (4 min) found nothing.
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "system.h"
 
 extern const s32 Data_080f085c[];
 extern const s32 Data_080f0874[];
 
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Object_DriftAndDamp(struct ObjectRuntime *object);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void FieldEffect_UpdateParticleLinearMotion(struct Actor *object);
 
 struct ParticleSprite {
   u8 unk00[8];
@@ -31,8 +31,8 @@ struct ParticleSprite {
 
 // Kicks up a dust puff (object 285) where source stands, as ☀️'s
 // BattleEffect_SpawnBurstParticle.
-void Func_080d3378(struct ObjectRuntime *source, s32 param) {
-  struct ObjectRuntime *object;
+void Func_080d3378(struct Actor *source, s32 param) {
+  struct Actor *object;
   struct ParticleSprite *child;
   s32 speed;
   s32 rate = -0x1999;
@@ -42,19 +42,19 @@ void Func_080d3378(struct ObjectRuntime *source, s32 param) {
     child = object->animation;
     switch (Random16() & 1) {
     case 1:
-      Object_SetMode(object, 2);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      Actor_SetMode(object, 2);
+      Actor_StartScriptFar((struct DispatchObject *)object,
                                    Data_080f085c);
       break;
     default:
-      Object_SetMode(object, 1);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      Actor_SetMode(object, 1);
+      Actor_StartScriptFar((struct DispatchObject *)object,
                                    Data_080f0874);
       break;
     }
 
     if (param != 0)
-      Object_SetPartAttribute(object, param);
+      Actor_SetPartAttribute(object, param);
 
     object->motionFlags = 0;
     speed = Random16() % 10 + 5;
@@ -65,7 +65,7 @@ void Func_080d3378(struct ObjectRuntime *source, s32 param) {
     object->action = 0;
     object->priorityFlags |= 2;
     ((u8 *)object)[0x61] = 1;
-    object->update = (void (*)(void))Object_DriftAndDamp;
+    object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
     child->priority = ((struct ParticleSprite *)source->animation)->priority;
   }

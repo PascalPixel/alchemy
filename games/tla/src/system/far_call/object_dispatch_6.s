@@ -5,10 +5,10 @@
 	.thumb_func
 Func_08020210:
 	overlay_veneer Func_0802d87c
-	.global ObjectDispatch_SetSingleChildFlagsFar
+	.global Actor_SetSingleChildFlagsFar
 	.thumb_func
-ObjectDispatch_SetSingleChildFlagsFar:
-	overlay_veneer ObjectDispatch_SetChildByteValue
+Actor_SetSingleChildFlagsFar:
+	overlay_veneer Actor_SetChildByteValue
 	.global Animation_SetStateFlagsFar
 	.thumb_func
 Animation_SetStateFlagsFar:

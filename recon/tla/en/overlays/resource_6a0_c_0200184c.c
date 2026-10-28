@@ -2,26 +2,26 @@
 // resource_698_c_0200091c.c (overlay 698's Func_0200091c, differ 10 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "call.h"
 
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02002ba4();
 s32 GameFlag_Test();
 void Animation_ApplyChildValues();
 
 void Func_0200184c(void) {
-  struct ObjectRuntime *a = (struct ObjectRuntime *)Value1(Object_GetById, 9);
-  struct ObjectRuntime *b = (struct ObjectRuntime *)Value1(Object_GetById, 10);
-  struct ObjectRuntime *c = (struct ObjectRuntime *)Value1(Object_GetById, 23);
+  struct Actor *a = (struct Actor *)Value1(Actor_GetById, 9);
+  struct Actor *b = (struct Actor *)Value1(Actor_GetById, 10);
+  struct Actor *c = (struct Actor *)Value1(Actor_GetById, 23);
   struct FieldSprite *sprite = c->animation;
 
   Call3(Func_02002ba4, 24, 0x2000000, 0xf80000);
   Call3(Func_02002ba4, 23, 0x2000000, 0xf80000);
   Call3(Func_02002ba4, 9, 0x1d80000, 0x1000000);
   Call3(Func_02002ba4, 10, 0x2280000, 0x1000000);
-  ((struct ObjectRuntime *)Value1(Object_GetById, 24))->scaleX = 0;
+  ((struct Actor *)Value1(Actor_GetById, 24))->scaleX = 0;
   c->motionFlags = 0;
   c->y = c->terrainHeight;
   a->motionFlags = 0;
@@ -33,16 +33,16 @@ void Func_0200184c(void) {
     c->y += 0x1eb80;
     c->x += -0x28f40;
     sprite->rotation += 0x800;
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 9), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 11), 4);
+    Call2(Animation_ApplyChildValues, Value1(Actor_GetById, 9), 4);
+    Call2(Animation_ApplyChildValues, Value1(Actor_GetById, 11), 4);
   }
   if (Value1(GameFlag_Test, 0xa0b)) {
     b->y += 0x66640;
     c->y += 0x1eb80;
     c->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 10), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 12), 4);
+    Call2(Animation_ApplyChildValues, Value1(Actor_GetById, 10), 4);
+    Call2(Animation_ApplyChildValues, Value1(Actor_GetById, 12), 4);
   }
   if (Value1(GameFlag_Test, 0xa0a) && Value1(GameFlag_Test, 0xa0b)) {
     a->y += 0x199900;

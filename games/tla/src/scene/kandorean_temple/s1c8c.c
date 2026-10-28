@@ -12,16 +12,16 @@ struct MapWork170 {
 };
 
 void Func_02001c8c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 priority = ((struct FieldSprite *)leader->animation)->priority;
 
-  ObjectMotion_SetActionVariant(13, priority);
-  ObjectMotion_SetActionVariant(14, priority);
-  ObjectMotion_SetActionVariant(15, priority);
+  Actor_SetSpritePriority(13, priority);
+  Actor_SetSpritePriority(14, priority);
+  Actor_SetSpritePriority(15, priority);
 }
 
 void Func_02001cc4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
 
   struct MapCell *cell = &map->cells[Func_020053b0()];
@@ -49,14 +49,14 @@ void Func_02001d20(void) {
 void Func_02001d40(void) {
   Func_020051c0();
   Func_02005370(0);
-  ObjectMotion_EnableActionAndResetMotion(9);
+  Actor_Stop(9);
   WaitFrames(1);
-  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
   Func_02005280((s32)&MsgKandoreanTemple02);
   Func_020052a0(9, 0);
-  Object_GetById(9)->angle = 0x3000;
+  Actor_GetById(9)->angle = 0x3000;
   WaitFrames(1);
-  ObjectMotion_EnableActionAndSetCallback(9, gData_02005514);
+  Actor_SetMovementTypeById(9, gData_02005514);
   WaitFrames(1);
   Func_020051c8();
   GameFlag_SetBit(0x845);
@@ -65,10 +65,10 @@ void Func_02001d40(void) {
 void Func_02001db4(void) {
   Func_020051c0();
   Func_02005370(0);
-  ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
   Func_02005280((s32)&MsgKandoreanTemple03);
   Func_02005298(10, 0);
-  Object_GetById(10)->angle = 0x5000;
+  Actor_GetById(10)->angle = 0x5000;
   WaitFrames(1);
   Func_020051c8();
   GameFlag_SetBit(0x846);
@@ -93,7 +93,7 @@ void Func_02001e44(void) {
 }
 
 void Func_02001e58(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct Adventure *party;
@@ -118,14 +118,14 @@ void Func_02001e58(void) {
   party = &gAdventure;
   asm("");
   *flags = zero;
-  ObjectMotion_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
-  ObjectMotion_SetPositionAndReset(party->currentOwner, 168, 80);
+  Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
+  Actor_SetPositionAndReset(party->currentOwner, 168, 80);
   Func_020052b0(party->currentOwner, 0xc000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(party->currentOwner), 0);
-  Object_SetModeById(party->currentOwner, 13);
+  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
+  Actor_SetModeById(party->currentOwner, 13);
   Func_02005160(leader, 0xa80000, -0xc0000, 0x500000);
   Func_02005168(leader);
-  Object_SetModeById(party->currentOwner, 10);
+  Actor_SetModeById(party->currentOwner, 10);
   Func_020053d8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

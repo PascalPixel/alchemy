@@ -26,13 +26,13 @@ void Func_02004cb0(struct FieldActor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_020028ac(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct FieldActor *actor;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   s32 i;
 
-  object = Object_GetById(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
-  Object_SetPartAttribute(object, 0);
+  object = Actor_GetById(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
+  Actor_SetPartAttribute(object, 0);
   Func_02004f30(136);
   i = 0;
   do {
@@ -41,7 +41,7 @@ void Func_020028ac(void) {
     i++;
   } while (i != 16);
   GameFlag_SetBit(0x305);
-  other = Object_GetById(9);
+  other = Actor_GetById(9);
   Func_02004d40();
   Func_02004e90(0);
   Call3((void (*)())Func_02004d10, 0x20000, 0x10000, 0x10000);

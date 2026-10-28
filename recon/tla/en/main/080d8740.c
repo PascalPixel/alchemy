@@ -48,20 +48,20 @@ struct CaptureResource {
 };
 
 
-struct CaptureObject *Object_GetById(s32 id);
+struct CaptureObject *Actor_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct CaptureObject *object, s32 mode);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+struct CaptureObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetMode(struct CaptureObject *object, s32 mode);
 struct CaptureResource *
-Object_ReplaceResourceEntry(struct CaptureSprite *sprite,
+Sprite_ShareVramCacheEntry(struct CaptureSprite *sprite,
                             struct CaptureResource *resource);
 void Func_080090d0(struct CaptureObject *object);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
+void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
 void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void FieldParticle_SetCallback(void *slot, void *callback);
@@ -89,7 +89,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     s32 z;
   } position;
 
-  djinni = Object_GetById(arg);
+  djinni = Actor_GetById(arg);
   if (djinni == NULL)
     return;
 
@@ -104,11 +104,11 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   Motion_SetVarCbAndRefresh(arg, 1);
   WaitFrames(20);
   Sound_PlayFar(152);
-  ObjectMotion_Launch(arg, 3, 14);
+  Actor_Jump(arg, 3, 14);
   Sound_PlayFar(152);
-  ObjectMotion_Launch(arg, 5, 16);
+  Actor_Jump(arg, 5, 16);
   Sound_PlayFar(152);
-  ObjectMotion_Launch(arg, 7, 18);
+  Actor_Jump(arg, 7, 18);
   WaitFrames(20);
 
   kind = *djinni->sprite->resource;
@@ -116,7 +116,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Object_CreateFar(kind, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(kind, djinni->x, djinni->y, djinni->z);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -127,9 +127,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
       copy->callback = (void *)BattleEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
-      Object_SetMode(copy, 0);
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
-      resource = Object_ReplaceResourceEntry(copy->sprite, resource);
+      Actor_SetMode(copy, 0);
+      Actor_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
+      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;
     }
@@ -149,9 +149,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
   WaitFrames(20);
 
   position.x = djinni->x;

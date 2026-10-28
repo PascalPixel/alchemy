@@ -9,7 +9,7 @@
 #include "call.h"
 s32 Func_02003398();
 s32 Func_02003488();
-s32 ObjectMotion_SetPositionAndReset();
+s32 Actor_SetPositionAndReset();
 s32 FieldEvent_WaitFrames();
 s32 Func_02003328();
 s32 Func_020033e0();
@@ -21,7 +21,7 @@ extern u8 gAdventure[];
 void Func_02001660(void) {
   Func_02003398();
   Call1(Func_02003488, 0);
-  Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532),
+  Call3(Actor_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532),
         0x218, 0x168);
   Call1(FieldEvent_WaitFrames, 8);
   Call6(Func_02003328, 0x32, 0x16, 0x21, 0x16, 1, 1);

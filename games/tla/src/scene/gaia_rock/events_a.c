@@ -1,13 +1,13 @@
 #include "types.h"
 #include "adventure.h"
 #include "scene_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "edition.h"
 
 struct SceneEvent;
 
 void Func_02000bc0(s32 id, s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void Func_02000f24(s32 cue);
 
@@ -37,7 +37,7 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 // editions after the Japanese one also run the given cue first.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 void Func_02000100(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native
    * (differ 12 unpinned). */
   register s32 frames asm("r6");
@@ -53,7 +53,7 @@ void Func_02000100(s32 id) {
 }
 #else
 void Func_02000100(s32 id, s32 cue) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   /* FAKEMATCH: pinned, the flags' address is built in r2 with 85 in it first
    * (movs r2, #85; adds r2, r2, r5) and the 3 takes r3, as in the native
    * (unpinned they swap r2 and r3: differ 10). */

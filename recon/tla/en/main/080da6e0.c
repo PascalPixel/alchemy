@@ -11,7 +11,7 @@
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
-void Object_SetMode(void *object, s32 mode);
+void Actor_SetMode(void *object, s32 mode);
 void WaitFrames(s32 frames);
 s32 ArcTan2(s32 y, s32 x);
 
@@ -42,8 +42,8 @@ s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     nodes[i] = node;
     node = node->next;
   }
-  Object_SetMode(((void **)work)[0], 3);
-  Object_SetMode(((void **)work)[1], 3);
+  Actor_SetMode(((void **)work)[0], 3);
+  Actor_SetMode(((void **)work)[1], 3);
   WaitFrames(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame << 12;

@@ -16,7 +16,7 @@ extern u16 gData_020035e0[];
 
 s32 GameFlag_Test();
 void Task_Add();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02002b54();
 void Func_02002c44();

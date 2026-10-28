@@ -604,7 +604,7 @@ BattleEffect_RunDouse:
 	adds r5, #28
 	cmp r8, r0
 	bne .L_0813c4d8
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	ldr r1, [sp, #32]
 	lsls r3, r3, #7

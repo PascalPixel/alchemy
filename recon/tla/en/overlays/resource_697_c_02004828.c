@@ -2,21 +2,21 @@
 // resource_692_c_0200447c.c (overlay 692's Func_0200447c, differ 77 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_020059c0(void);
-struct ObjectRuntime *Func_02005a28(s32 *position, s32 mode);
+struct Actor *Func_02005a28(s32 *position, s32 mode);
 void Func_02005880(void);
 void Func_02005888(void);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02005a68(s32 sound);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Task_Wait(s32 frames);
-void Func_020057c8(struct ObjectRuntime *object, s32 mode);
-void Func_0200480c(struct ObjectRuntime *object, struct ObjectRuntime *to);
+void Func_020057c8(struct Actor *object, s32 mode);
+void Func_0200480c(struct Actor *object, struct Actor *to);
 void ObjectVisual_CopyAttributes(s32 id, s32 from);
 void Func_02004a94(s32 value);
 void Func_02005838(s32 a, s32 b, s32 c);
@@ -26,9 +26,9 @@ void Func_02004bc8(void);
 static __inline__ void Shake(s32 a, s32 b, s32 c) { Func_02005838(a, b, c); }
 
 void Func_02004828(const u16 *table) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *partner;
-  struct ObjectRuntime *trap;
+  struct Actor *leader;
+  struct Actor *partner;
+  struct Actor *trap;
   s32 position[3];
   s32 id;
   s32 flag;
@@ -36,8 +36,8 @@ void Func_02004828(const u16 *table) {
 
   if (Func_020059c0() != 0)
     return;
-  leader = Object_GetById(gAdventure.currentOwner);
-  partner = Object_GetById(8);
+  leader = Actor_GetById(gAdventure.currentOwner);
+  partner = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -47,7 +47,7 @@ void Func_02004828(const u16 *table) {
   goto test;
 next:
   id = table[0];
-  if (Object_GetById(id) != trap) {
+  if (Actor_GetById(id) != trap) {
     table += 2;
     goto test;
   }
@@ -59,15 +59,15 @@ next:
       Func_0200480c(partner, trap);
       Task_Wait(1);
       Func_02005a68(125);
-      Object_SetPartAttribute(Object_GetById(8), 7);
+      Actor_SetPartAttribute(Actor_GetById(8), 7);
       Task_Wait(2);
       Func_020057c8(partner, 0);
       ObjectVisual_CopyAttributes(id, 9);
-      Object_SetPartAttribute(Object_GetById(8), 0);
+      Actor_SetPartAttribute(Actor_GetById(8), 0);
       Task_Wait(2);
-      Object_SetPartAttribute(Object_GetById(8), 7);
+      Actor_SetPartAttribute(Actor_GetById(8), 7);
       Task_Wait(4);
-      Object_SetPartAttribute(Object_GetById(8), 0);
+      Actor_SetPartAttribute(Actor_GetById(8), 0);
       Func_02004a94(0);
       Func_0200480c(trap, partner);
       Task_Wait(1);
@@ -93,7 +93,7 @@ next:
         Task_Wait(8);
         leader->motionFlags = 3;
         Task_Wait(5);
-        Object_SetPositionAndResetMotion(partner, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         Task_Wait(2);
         Func_02005a68(188);
         Func_02004bc8();

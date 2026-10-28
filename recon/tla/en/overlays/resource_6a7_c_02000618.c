@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
 struct SceneWork {
@@ -17,7 +17,7 @@ struct SceneWork {
 
 extern char SceneId_Ov6a7Room1;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000064(void);
 void Func_02000af8(s32 scene, s32 entrance);
 void Func_02000b08(void);
@@ -29,7 +29,7 @@ s32 Func_02000618(void) {
     ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
     state = &gAdventure;
   } while (0);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {
     GameFlag_SetBit(0x90a);
     gAdventure.ownerOverride = 1;

@@ -5,9 +5,9 @@ void Func_020032e0(void);
 void Func_02003610(void);
 
 void Func_020040cc(void) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   Event_StartScreenTransition();
@@ -23,9 +23,9 @@ void Func_020040cc(void) {
   Func_02005b4c((s32)MsgLetUsNow);
   Kibombo_MessagePut(0x4000 + 17, 0);
   Kibombo_SePlay(26);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
-  Object_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
+  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_GetById(27)->motionFlags = 0;
+  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 172 << 17);
   Kibombo_CamSpeed(0x6666, 0xccc);
   Kibombo_CamMove(132 << 17, -1, 170 << 17, 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
@@ -58,14 +58,14 @@ void Func_02004294(void) {
   struct KibomboObject *object;
   s32 y;
 
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
-  Object_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
+  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_GetById(27)->motionFlags = 0;
+  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 172 << 17);
   Func_02003640(1, 1);
   WaitFrames(1);
   if (gData_02007950 != 0) {

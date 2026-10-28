@@ -26,8 +26,8 @@ s32 Func_0200443c();
 s32 GameFlag_GetByte();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_GetById();
+s32 Actor_SetSpritePriority();
+s32 Actor_GetById();
 s32 WaitFrames();
 extern u8 Data_02004cec[];
 extern u8 gAdventure[];
@@ -65,7 +65,7 @@ L_020083ac:
   if (v_r7 != 11)
     goto L_0200840a;
   t12 = FIELD_AT(v_r8, s32, 532);
-  t13 = Value1((s32 (*)())Object_GetById, t12);
+  t13 = Value1((s32 (*)())Actor_GetById, t12);
   t14 = FIELD_AT(v_r10, s32, 108);
   t15 = Value1((s32 (*)())GameFlag_GetByte, 0x340);
   t16 = Value1((s32 (*)())GameFlag_GetByte, 0x348);
@@ -99,9 +99,9 @@ L_0200842c:
   t24 = Value1((s32 (*)())GameFlag_Test, 0xa30);
   if (t24 != 0)
     goto L_02008452;
-  Call2((void (*)())ObjectMotion_SetActionVariant, 11, 3);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 12, 3);
-  t27 = Value1((s32 (*)())Object_GetById, 12);
+  Call2((void (*)())Actor_SetSpritePriority, 11, 3);
+  Call2((void (*)())Actor_SetSpritePriority, 12, 3);
+  t27 = Value1((s32 (*)())Actor_GetById, 12);
   FIELD_AT(t27, s32, 24) = 0xffff0000;
 L_02008452:
   t28 = Value1((s32 (*)())GameFlag_Test, 0xa4b);
@@ -140,7 +140,7 @@ L_020084c2:
   Call1((void (*)())Func_02000db8, 13);
   Call1((void (*)())Func_02000db8, 14);
 L_020084f8:
-  t45 = Value1((s32 (*)())Object_GetById, 13);
+  t45 = Value1((s32 (*)())Actor_GetById, 13);
   t46 = FIELD_AT(t45, s32, 8);
   if (t46 <= 0x1900000)
     goto L_0200853a;

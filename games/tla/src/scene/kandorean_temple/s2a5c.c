@@ -23,10 +23,10 @@ void Func_0200290c(void) {
   Func_02005398();
   Func_020053a0(0, 8, 9);
   Func_020053a0(1, 10, 11);
-  Object_SetModeById(8, 4);
-  Object_SetModeById(9, 4);
-  Object_SetModeById(10, 4);
-  Object_SetModeById(11, 4);
+  Actor_SetModeById(8, 4);
+  Actor_SetModeById(9, 4);
+  Actor_SetModeById(10, 4);
+  Actor_SetModeById(11, 4);
   Func_020053b8(gData_020054dc);
   {
     /* FAKEMATCH: the blend value pinned to r3, so it loads from the pool

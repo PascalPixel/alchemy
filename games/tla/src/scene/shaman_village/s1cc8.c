@@ -1,7 +1,7 @@
 #include "shaman_village.h"
 
 void Func_02001cc8(void) {
-  struct ShamanVillageObject *object = Object_GetById(14);
+  struct ShamanVillageObject *object = Actor_GetById(14);
 
   if (object->x >> 20 == 32 && object->z >> 20 == 11) {
     Func_020048c4();
@@ -31,12 +31,12 @@ void Func_02001d3c(void) {
   FieldEvent_WaitFrames(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
   ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x26666, 0x13333);
-  ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  Actor_Jump(gAdventure.currentOwner, 4, 0);
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 220);
   FieldEvent_WaitFrames(1);
   {
-    u8 *flags = &Object_GetById(gAdventure.currentOwner)->actionFlags;
+    u8 *flags = &Actor_GetById(gAdventure.currentOwner)->actionFlags;
 
     u32 value = *flags;
 
@@ -53,12 +53,12 @@ void Func_02001d3c(void) {
   WaitFrames(1);
   ShamanVillage_ObjSpeed(16, 0xcccc, 0x6666);
   ShamanVillage_ObjSpeed(17, 0xcccc, 0x6666);
-  ObjectMotion_ResetAndSetPositionInMode2(16, 104, 212);
+  Actor_ResetAndSetPositionInMode2(16, 104, 212);
   ShamanVillage_ObjWalk(17, 136, 212);
-  Object_SetModeById(16, 1);
+  Actor_SetModeById(16, 1);
   ShamanVillage_ObjArm(16, 0x4000, 0);
   ShamanVillage_ObjArm(17, 0x4000, 0);
-  ObjectMotion_SetVariantCallback(15, 1);
+  Actor_StartRepeatedMotion(15, 1);
   Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
   ShamanVillage_MessagePut(15, 0);
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
@@ -68,20 +68,20 @@ void Func_02001d3c(void) {
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 256);
   ShamanVillage_ObjTurn(gAdventure.currentOwner, 0xc000);
   ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x6666, 0x3333);
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 264);
   FieldEvent_WaitFrames(1);
-  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
   ShamanVillage_MessagePut(0x800f, 0);
-  ObjectMotion_SetVariantCallback(17, 1);
+  Actor_StartRepeatedMotion(17, 1);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
   ShamanVillage_MessagePut(0x8011, 0);
-  ObjectMotion_SetVariantCallback(16, 1);
+  Actor_StartRepeatedMotion(16, 1);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(16, 259, 0)

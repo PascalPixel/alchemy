@@ -1,14 +1,14 @@
 #include "local.h"
 
 void Func_02000e18(s32 value) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 speed;
   s32 i;
   u8 *flags;
 
   Func_02003d7c();
   Func_02003eac(0);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   flags = &object->motionFlags;
   speed = 0;
   *flags = 0;
@@ -28,7 +28,7 @@ void Func_02000e18(s32 value) {
     speed += 0x4000;
     object->y += speed;
     if ((i & 7) == 0)
-      Func_02002bd4(Object_GetById(15));
+      Func_02002bd4(Actor_GetById(15));
     WaitFrames(1);
   }
   Func_02003d84();

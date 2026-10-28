@@ -10,7 +10,7 @@
 // into r0 rather than r3, the scroll reset's 0x3f80 is built early, and
 // Data_0202de00 stays in r5 where the native loads it from the pool twice.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -32,13 +32,13 @@ extern u8 Data_0202de00[];
 u8 *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
 s32 Func_02004fe4(void);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020048a0(void);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02004ebc(s32 id, s32 x, s32 z);
 s32 Func_02004904(void);
-void Func_02004d9c(struct ObjectRuntime *object, s32 mode);
+void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dc4(void);
 void WaitFrames(s32 frames);
 void Func_02004de4(void *data);
@@ -62,7 +62,7 @@ s32 Func_02004280(void) {
       for (i = 0; i <= 13; i++)
         total += unit[i];
       Func_020044f8(total);
-      Object_GetById(Func_02004fe4())->priorityFlags |= 32;
+      Actor_GetById(Func_02004fe4())->priorityFlags |= 32;
       map[261] = 1;
       {
         volatile u16 control = *(volatile u16 *)0x0400000c & ~3;
@@ -76,7 +76,7 @@ s32 Func_02004280(void) {
       if (*stage == 9)
         Func_02004ebc(65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
-        struct ObjectRuntime *climber = Object_GetById(8);
+        struct Actor *climber = Actor_GetById(8);
         u32 angle = Func_02004904();
 
         climber->collisionFlags = 0;

@@ -9,7 +9,7 @@ struct TrapEntry {
 };
 
 void WaitFrames(s32 frames);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
 void Func_02004d40(void);
 void Func_02004d48(void);
@@ -26,7 +26,7 @@ static __inline__ void Func_02005838_(s32 a, s32 b, s32 c) {
 
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 flag;
 
   while (entry->actor != 0xffff) {
@@ -48,7 +48,7 @@ void Func_02004200(const void *data, s32 id) {
         WaitFrames(16);
         Func_02005838_(-1, -1, 0xe666);
         WaitFrames(8);
-        Object_SetPositionAndResetMotion(object, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         WaitFrames(2);
         Func_02004f30(188);
         Func_0200481c();

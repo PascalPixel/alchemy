@@ -59,11 +59,11 @@ Func_080cae5c:
 	ldr r2, [sp, #4]
 	adds r0, r6, #0
 	ldrb r1, [r2]
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, [sp, #0]
 	adds r0, r6, #0
 	ldrb r1, [r3]
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r2, r11
 	ldrb r1, [r2]
 	movs r3, #3
@@ -105,7 +105,7 @@ Func_080cae5c:
 	str r3, [r1, #16]
 	str r2, [r0, #4]
 	adds r0, r6, #0
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 .L_080caf32:
 	ldr r2, [sp, #4]
 	movs r3, #128

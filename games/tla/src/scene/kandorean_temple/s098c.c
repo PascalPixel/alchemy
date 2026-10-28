@@ -1,12 +1,12 @@
 #include "local.h"
 
 s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void Func_02000930(struct ObjectRuntime *object, s32 priority);
-s32 Func_02000864(struct ObjectRuntime *object);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Func_02000930(struct Actor *object, s32 priority);
+s32 Func_02000864(struct Actor *object);
 
 void Func_0200098c(s32 *position, s32 value) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005140_(0x11d, position[0], position[1], position[2] - 0x20000);
 
   if (object) {
@@ -23,11 +23,11 @@ void Func_0200098c(s32 *position, s32 value) {
   }
 }
 
-s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b);
+s32 Func_02000824(struct Actor *a, struct Actor *b);
 
-void Func_02000a0c(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *other = Object_GetById(12);
+void Func_02000a0c(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *other = Actor_GetById(12);
   s32 vx = object->bounce;
   s32 vz;
   struct FieldSprite *sprite;
@@ -51,7 +51,7 @@ void Func_02000a0c(struct ObjectRuntime *object) {
     /* FAKEMATCH: the call's first argument is copied before the Y scale store;
      * with the barrier alone it follows the action's halfword load, without
      * both the action is addressed before the store (differ 2 each). */
-    register struct ObjectRuntime *first asm("r0") = object;
+    register struct Actor *first asm("r0") = object;
 
     object->scaleY += object->acceleration;
     /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action, as

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 #include "scene_ids.h"
@@ -17,15 +17,15 @@ struct AnkohlRuinsEventWork {
   s16 alarm;
   u8 unk16c[0x60];
   /// Moved with the leader while the raft (object 9) carries them.
-  struct ObjectRuntime *unk1cc;
+  struct Actor *unk1cc;
 };
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 s32 Random16Far(void);
 
 extern s16 gData_02003780;
@@ -37,8 +37,8 @@ extern s32 gData_0200378c;
 s32 Task_Add(void (*callback)(void), s32 priority);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 void Func_02000b30(s32 id, s32 cue);
 void Func_0200160c(void);
 void Func_020019a0(void);
@@ -98,13 +98,13 @@ static inline void AnkohlRuins_Call2e94(s32 actor, s32 a, s32 b) {
 
 static inline void AnkohlRuins_ObjOffset(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(actor, x, z);
+  Actor_OffsetPositionAndResetMotion(actor, x, z);
 }
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 actor, s32 target);
-void Func_02002e34(struct ObjectRuntime *object, s32 a);
+void Func_02002e34(struct Actor *object, s32 a);
 void Func_02002e6c(s32 id, s32 a, s32 b);
 void Func_02002eb4(void);
 

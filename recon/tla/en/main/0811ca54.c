@@ -6,7 +6,7 @@
 // statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
 // BattlePres_RunUnitAction with its one-pass block, this game's heap slots and
-// Object_SetMode for the dispatch argument. In the reset loop the native stores
+// Actor_SetMode for the dispatch argument. In the reset loop the native stores
 // both copies of the work pointer (str r2, [sp, #4]; str r2, [sp]) before it
 // loads the actor (ldrsh r0, [r2, r6]); this draft loads between them. sched2:
 // the second store is caller-save's spill of r2, inserted before the call and
@@ -26,7 +26,7 @@
 #include "ram_buffer.h"
 #include "system.h"
 
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08138018(struct BattlePresentationWork *work);
 void Func_08138020(struct BattlePresentationWork *work);
 
@@ -62,8 +62,8 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     work.count = BattleParty_ListLivingUnits(1, (u16 *)work.actors);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
-  Object_SetMode(object, 3);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetMode(object, 3);
+  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);
@@ -93,7 +93,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     Func_08138020(&work);
     work.kind = 0;
     Func_08138018(&work);
-    Object_SetMode(object, 1);
+    Actor_SetMode(object, 1);
   } while (0);
   for (i = 0; i != work.count; i++)
     ObjMotRst(work.actors[i]);

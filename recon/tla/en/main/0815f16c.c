@@ -220,8 +220,8 @@ void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 void Transform_SetLookAt(void *, void *);
-void Object_SetMode(struct BattleObject *, s32);
-void ObjectDispatch_SetAnimationSpeedFar(struct BattleObject *, s32);
+void Actor_SetMode(struct BattleObject *, s32);
+void Actor_SetAnimationSpeedFar(struct BattleObject *, s32);
 s32 BattleUnit_GetEffectHeightFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **GetBattleObjectSlotFar(s32);
@@ -230,7 +230,7 @@ void BattleEffectKernels_IntegrateVector3(struct Particle *, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
@@ -601,7 +601,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     work->particle[i].vy = Random16() & 0xffff;
     work->particle[i].vz = Random16() & 0xffff;
   }
-  ObjectDispatch_SetAnimationSpeedFar(object, 0);
+  Actor_SetAnimationSpeedFar(object, 0);
   origin[0] = object->x;
   origin[1] = object->y + 0x500000;
   origin[2] = object->z;
@@ -719,7 +719,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Task_Remove(Func_08143001);
     HeapSlot_Release(188);
     HeapSlot_Release(104);
-    Object_SetMode(object, 3);
+    Actor_SetMode(object, 3);
     if (kind == 45)
       BattleEffect_RunProjectileVolley(action, 9);
     if (kind == 54)
@@ -728,7 +728,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       BattleEffect_RunProjectileVolley(action, 8);
     return;
   }
-  ObjectDispatch_SetAnimationSpeedFar(object, 16);
+  Actor_SetAnimationSpeedFar(object, 16);
   object->unk24 = save24;
   object->unk28 = save28;
   object->unk2c = save2c;
@@ -2275,7 +2275,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (frame == 14)
       Func_0814cd48(action->actor, 7, 5, 0, 4);
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->unk78e8 = 1;
     WaitFrames(1);
   }

@@ -21,7 +21,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     mask = 0x7e;
     mask &= *flags;
     *flags = mask;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     {
       struct Adventure *party = &gAdventure;
       s32 x = position[1];
@@ -32,11 +32,11 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
        * before the position (plain call: differ 2; owner read without the party
        * pointer: differ 12). */
       do {
-        ObjectMotion_SetPositionAndCommit(owner, x, z);
+        Actor_SetPositionAndCommit(owner, x, z);
       } while (0);
     }
     Func_02001074(object, 6);
-    ObjectDispatch_SetSingleChildFlags(object, 1);
+    Actor_SetSingleChildFlags(object, 1);
     *flags = saved;
     Func_020010e4();
     return 1;
@@ -45,7 +45,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 }
 
 void Func_02000cdc(void) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 x;
 

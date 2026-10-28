@@ -15,23 +15,23 @@
 #include "edition.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Func_02004d68(s32 owner);
 void Func_02004c20(void);
 void Func_02004db8(s32 value);
 void Func_02004e30(s32 cue);
-void Func_02004b18(struct ObjectRuntime *object, s32 mode);
-void Func_02004b48(struct ObjectRuntime *object);
-void Func_02004b50(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02004b58(struct ObjectRuntime *object);
+void Func_02004b18(struct Actor *object, s32 mode);
+void Func_02004b48(struct Actor *object);
+void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02004b58(struct Actor *object);
 void Func_02004c88(s32 owner, s32 a, s32 b);
 void Func_02004dc8(void);
 void Func_02004dc0(void);
@@ -40,15 +40,15 @@ void Func_02004df8(s32 a, s32 b);
 
 void Func_02000574(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *ship;
+  struct Actor *leader;
+  struct Actor *ship;
   s32 kind, dx, dz, distance;
 
   if (GameFlag_Test(0x8de) == 0)
     return;
   kind = Func_02004d68(gAdventure.currentOwner);
-  leader = Object_GetById(gAdventure.currentOwner);
-  ship = Object_GetById(8);
+  leader = Actor_GetById(gAdventure.currentOwner);
+  ship = Actor_GetById(8);
   dx = (leader->x - ship->x) >> 16;
   dz = (leader->z - ship->z) >> 16;
   distance = dx * dx + dz * dz;
@@ -68,7 +68,7 @@ void Func_02000574(void) {
   Func_02004b18(leader, 6);
   WaitFrames(6);
   Func_02004e30(152);
-  ObjectDispatch_SetSingleChildFlags(leader, 0);
+  Actor_SetSingleChildFlags(leader, 0);
   Func_02004b18(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;

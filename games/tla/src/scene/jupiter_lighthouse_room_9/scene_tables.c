@@ -23,13 +23,13 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 extern s32 gData_02002618;
 
-struct ObjectRuntime *Object_GetById();
-void ObjectMotion_SetActionVariant();
+struct Actor *Actor_GetById();
+void Actor_SetSpritePriority();
 s32 Func_02001978();
 s32 Func_02001c10();
 s32 Func_02001c50();
 s32 Func_02001c90();
-struct ObjectRuntime *Func_02000910();
+struct Actor *Func_02000910();
 
 void Func_02000054(void) {
   struct Adventure *party;
@@ -45,10 +45,10 @@ void Func_02000054(void) {
 void Func_0200007c(void) { Value4(Func_02001c90, 0x2200000, 0x1100000, 0, 6); }
 
 void Func_02000090(s32 id) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (gData_02002618 == 0) {
-    object = Object_GetById(8);
+    object = Actor_GetById(8);
     if (id == 30) {
       Value3(Func_02001c10, 8, 0x1280000, 0x2580000);
       object->y = 0;
@@ -64,11 +64,11 @@ void Func_02000090(s32 id) {
 }
 
 void Func_020000e8(s32 id) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *motion;
+  struct Actor *object;
+  struct Actor *motion;
 
-  if (gData_02002618 == 0 && Object_GetById(gAdventure.currentOwner)->y > 0) {
-    object = Object_GetById(8);
+  if (gData_02002618 == 0 && Actor_GetById(gAdventure.currentOwner)->y > 0) {
+    object = Actor_GetById(8);
     if (id == 50) {
       Value3(Func_02001c10, 8, 0x1e80000, 0x1180000);
       object->y = 0x200000;
@@ -94,35 +94,35 @@ void Func_020000e8(s32 id) {
 }
 
 void Func_0200018c(s32 arg) {
-  if (Object_GetById(gAdventure.currentOwner)->y == 0 &&
+  if (Actor_GetById(gAdventure.currentOwner)->y == 0 &&
       Func_02001978(arg) != 0)
     Func_02001c50(13);
 }
 
 void Func_020001bc(s32 arg) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 x;
   s32 z;
 
-  if (Object_GetById(gAdventure.currentOwner)->y == 0) {
-    leader = Object_GetById(gAdventure.currentOwner);
+  if (Actor_GetById(gAdventure.currentOwner)->y == 0) {
+    leader = Actor_GetById(gAdventure.currentOwner);
     x = leader->x >> 20;
     z = leader->z >> 20;
     if (x == 18 && z == 34)
-      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+      Actor_SetSpritePriority(gAdventure.currentOwner, 3);
     if (x == 8 && z == 39)
-      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+      Actor_SetSpritePriority(gAdventure.currentOwner, 3);
     if (Func_02001978(arg) != 0)
       Func_02001c50(14);
   }
 }
 
 void Func_02000228(s32 arg) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 x;
   s32 z;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader->y <= 0) {
     Func_0200018c(arg);
   } else {

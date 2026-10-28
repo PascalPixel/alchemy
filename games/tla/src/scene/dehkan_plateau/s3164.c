@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f52[];
@@ -9,7 +9,7 @@ extern const u8 gData_02003fc0[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000038(const void *data);
 void Func_02000584(const void *data);
 void Func_020012d8(void);
@@ -39,10 +39,10 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02003bf0(a, b, c, d, e, f);
 }
 
-static __inline__ void Actor_SetPosition(struct ObjectRuntime *object, s32 x,
+static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetPositionAndResetMotion(object, x, y, z);
+  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -52,10 +52,10 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 
 void Func_02003164(void) {
   if (Flag_Test(265) == 0) {
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
     if (gAdventure.entrance == 5) {
-      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+      Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
     }
   }
   Func_02000584(gData_02003f52);
@@ -64,7 +64,7 @@ void Func_02003164(void) {
   if (Flag_Test(0x840) != 0) {
     Func_02003cc0(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
-    Actor_SetPosition(Object_GetById(23), 210 << 18, 0, 240 << 15);
+    Actor_SetPosition(Actor_GetById(23), 210 << 18, 0, 240 << 15);
   } else {
     Func_02003db8(gData_02003fc0);
   }

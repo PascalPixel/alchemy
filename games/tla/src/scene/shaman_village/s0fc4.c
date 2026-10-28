@@ -21,7 +21,7 @@ void Func_02000fc4(void) {
     if (Func_02000f94()) {
       u32 price = Func_02004a8c(11);
 
-      Object_SetModeById(13, 5);
+      Actor_SetModeById(13, 5);
       FieldEvent_WaitFrames(30);
       Func_0200498c((s32)MsgShamanInnPaymentPrompt);
       Func_0200487c(price, 5);
@@ -29,9 +29,9 @@ void Func_02000fc4(void) {
       FieldMessage_ShowAtActor(12, 0);
       if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
         if ((u32)gAdventure.coins < price) {
-          Object_SetModeById(13, 6);
+          Actor_SetModeById(13, 6);
           FieldEvent_WaitFrames(20);
-          Object_SetModeById(13, 5);
+          Actor_SetModeById(13, 5);
           FieldEvent_WaitFrames(30);
           Func_0200498c((s32)MsgShamanInnPaymentPrompt + 3);
           Func_020049a4(12, 0);
@@ -39,7 +39,7 @@ void Func_02000fc4(void) {
           Func_02004a94(price);
         }
       }
-      Object_SetModeById(13, 6);
+      Actor_SetModeById(13, 6);
     } else {
       Func_0200498c((s32)MsgShamanSilentVillager);
       Func_020049a4(13, 0);

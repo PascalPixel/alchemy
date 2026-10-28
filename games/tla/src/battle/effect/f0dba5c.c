@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "mem.h"
 #include "iwram_call.h"
 #include "resource.h"
@@ -30,7 +30,7 @@ struct DepthScene {
   u8 unk02[2];
   s32 x;
   u8 unk08[8];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
   u8 unk14[0x7b4];
   struct DepthSprite sprite;
   s16 vramSlot;
@@ -43,7 +43,7 @@ void Camera_WorldToScreen(s32 *position);
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
   struct DepthSprite *sprite;
   s32 position[3];
   void *buffer;

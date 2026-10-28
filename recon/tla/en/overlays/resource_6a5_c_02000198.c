@@ -16,7 +16,7 @@
 // before the y updates (62, 73); alchemy permute 10 minutes (the counter
 // temporary, 18 to 16).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -28,17 +28,17 @@ extern s32 gData_02006470[];
 
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
-void Func_02005764(struct ObjectRuntime *object, const void *script);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
+void Func_02005764(struct Actor *object, const void *script);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_020059f4(s32 cue);
 void Func_020057ac(s32 a, s32 b, s32 c);
 void Func_02005954(s32 target, s32 mode);
 void Func_02005964(s32 frames);
-void SceneActor_ParkRecord(struct ObjectRuntime *object);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void SceneActor_ParkRecord(struct Actor *object);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void Actor_Stop(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020000ec(void);
 
@@ -57,20 +57,20 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
   Func_02005964(frames);
 }
 
-static inline struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
+static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y,
                                                   s32 z) {
   return Func_0200576c(type, x, y, z);
 }
 
 void Func_02000198(void) {
-  struct ObjectRuntime *center;
-  struct ObjectRuntime *effect;
+  struct Actor *center;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 spawn;
   u32 rise;
   s32 angle;
 
-  center = Object_GetById(36);
+  center = Actor_GetById(36);
   spawn = 0;
   switch (gData_02006a24) {
   case 0:
@@ -93,7 +93,7 @@ void Func_02000198(void) {
     center->scaleX = 0x10000;
     center->scaleY = 0x10000;
     SceneActor_ParkRecord(center);
-    ObjectMotion_EnableActionAndSetCallback(36, gData_0200641c);
+    Actor_SetMovementTypeById(36, gData_0200641c);
     break;
   case 25:
     gData_02006a24--;
@@ -137,18 +137,18 @@ void Func_02000198(void) {
     ColorBuffer_Interpolate(12);
     break;
   case 48:
-    ObjectMotion_EnableActionAndResetMotion(36);
+    Actor_Stop(36);
     GameFlag_SetBit(0x202);
     break;
   }
   if (spawn) {
     rise = ((u32)(Random16Far() * 80) >> 16) << 16;
     effect =
-        Object_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
+        Actor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
     if (effect != 0) {
       sprite = effect->animation;
       Func_02005764(effect, gData_02006470);
-      Object_SetPartAttribute(effect, 1);
+      Actor_SetPartAttribute(effect, 1);
       effect->motionFlags = 0;
       angle = Random16Far() & 0xffff000;
       effect->action = angle;

@@ -17,17 +17,17 @@ void Func_020059e8();
 void Func_02005a68();
 void GameFlag_SetBit();
 s32 GameFlag_Test();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetPositionAndReset();
-s32 Object_GetById();
-void Object_SetModeById();
+void Actor_ArmCallback();
+void Actor_SetPositionAndReset();
+s32 Actor_GetById();
+void Actor_SetModeById();
 void FieldMessage_Show();
 extern u8 MsgTrialRoadGiveUpPrompt[];
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
 
-  t1 = Value1((s32 (*)())Object_GetById, gAdventure.currentOwner);
+  t1 = Value1((s32 (*)())Actor_GetById, gAdventure.currentOwner);
   v_r5 = t1;
   v_r6 = FIELD_AT(0x3000000, s32, 108);
   t2 = Value1((s32 (*)())GameFlag_Test, 0x9ff);
@@ -35,11 +35,11 @@ s32 Func_02000330(void) {
     goto L_02008400;
   Func_02005880();
   Call1((void (*)())Func_020059e8, 0);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetPositionAndReset, gAdventure.currentOwner,
         (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
         (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
   Call1((void (*)())Func_02005a68, 229);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000,
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x4000,
         0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
   Call2((void (*)())FieldMessage_Show, v_r5, 13);
@@ -51,10 +51,10 @@ s32 Func_02000330(void) {
               gAdventure.currentOwner, 1);
   if (t9 != 0)
     goto L_02008400;
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000,
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x4000,
         0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call2((void (*)())Object_SetModeById, gAdventure.currentOwner, 22);
+  Call2((void (*)())Actor_SetModeById, gAdventure.currentOwner, 22);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())Func_02005960, gAdventure.currentOwner, 0x109, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 30);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWork154 {
@@ -24,7 +24,7 @@ extern const u8 gData_020013c4[];
 extern const u8 gData_020013ca[];
 extern const u8 gData_0200121c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -32,11 +32,11 @@ void WaitFrames(s32 frames);
 void FieldMessage_Show(s32 message, s32 mode);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -44,8 +44,8 @@ void Func_0200110c(void);
 void Func_020011ac(s32 skip);
 void Func_02001114(void);
 void Func_02001214(s32 cue);
-void Func_020010bc(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_020010c4(struct ObjectRuntime *object);
+void Func_020010bc(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_020010c4(struct Actor *object);
 void Func_020010cc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020010dc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001134(s32 id, s32 x, s32 z);
@@ -61,8 +61,8 @@ s32 Func_020011fc(void);
 void Func_02001204(void);
 void Func_02000038(const void *data);
 void Func_0200014c(const void *data);
-void Func_02000270(struct ObjectRuntime *object);
-void Func_020008d0(struct ObjectRuntime *object);
+void Func_02000270(struct Actor *object);
+void Func_020008d0(struct Actor *object);
 void Func_02000958(void);
 void Func_02000a28(void);
 void Func_02000c94(void);
@@ -114,8 +114,8 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
 
 void Func_02000dcc(void) {
@@ -124,10 +124,10 @@ void Func_02000dcc(void) {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   Flag_Clear(0x203);
-  ObjectMotion_SetActionVariant(64, 3);
+  Actor_SetSpritePriority(64, 3);
   Func_020011b4();
   b = 0x102;
   a = 1;
@@ -138,7 +138,7 @@ void Func_02000dcc(void) {
   Func_0200115c(11);
   if (Flag_Test(0x8c8) != 0) {
     Map_CopyAttributes(41, 13, 2, 1, 39, 13);
-    object = Object_GetById(11);
+    object = Actor_GetById(11);
     x = 162;
     z = 216;
     x <<= 18;
@@ -146,14 +146,14 @@ void Func_02000dcc(void) {
     /* FAKEMATCH: second barrier of the pair above: y is cleared before z is
      * shifted. */
     __asm__("" : "+r"(x), "+r"(y), "+r"(z));
-    Object_SetPositionAndResetMotion(object, x, y, z << 16);
+    Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }
   if (Flag_Test(0x8ca) != 0)
     Actor_Place(12, 712 << 16, 424 << 16);
   Func_020011dc(gData_020013c0);
   if (Flag_Test(0x9ef) != 0)
     Actor_Place(8, 568 << 16, 280 << 16);
-  Object_GetById(8)->priorityFlags &= 0xfe;
+  Actor_GetById(8)->priorityFlags &= 0xfe;
   Func_02000038(gData_020013ca);
   Func_020011c4(gData_020013c4);
   if (Flag_Test(0x8cb) != 0) {
@@ -192,17 +192,17 @@ void Func_02000fbc(void) {
 }
 
 void Func_02000fd8(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (Flag_Test(0x8cc) != 0) {
     Actor_Place(64, 0, 0);
   } else {
-    object = Object_GetById(64);
+    object = Actor_GetById(64);
     object->collisionFlags = 8;
     object->motionFlags = 2;
     object->y = 0x200000;
     object->terrainHeight = 0x200000;
     object->update = Func_02000a28;
-    Object_GetById(8)->scaleY = 0xcccc;
+    Actor_GetById(8)->scaleY = 0xcccc;
   }
 }

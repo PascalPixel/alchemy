@@ -9,15 +9,15 @@ Animation_SetWorkEntryFar:
 	.thumb_func
 ObjectSystem_InitializeFar:
 	overlay_veneer Func_080230e0
-	.global Object_SetMode
+	.global Actor_SetMode
 	.thumb_func
-Object_SetMode:
-	overlay_veneer ObjectDispatch_SelectAnimation
-	.global ObjectDispatch_SetAnimationSpeedFar
+Actor_SetMode:
+	overlay_veneer Actor_SelectAnimation
+	.global Actor_SetAnimationSpeedFar
 	.thumb_func
-ObjectDispatch_SetAnimationSpeedFar:
-	overlay_veneer ObjectDispatch_SetAnimationSpeed
-	.global ObjectDispatch_SetAnimationAndSpeedFar
+Actor_SetAnimationSpeedFar:
+	overlay_veneer Actor_SetAnimationSpeed
+	.global Actor_SetAnimationAndSpeedFar
 	.thumb_func
-ObjectDispatch_SetAnimationAndSpeedFar:
-	overlay_veneer ObjectDispatch_SetAnimationAndSpeed
+Actor_SetAnimationAndSpeedFar:
+	overlay_veneer Actor_SetAnimationAndSpeed

@@ -145,10 +145,10 @@ Func_080e3074:
 	adds r2, r2, r3
 	lsls r0, r0, #1
 	ldr r3, [r4, #16]
-	bl Object_Spawn
+	bl Actor_Spawn
 	movs r1, #2
 	mov r11, r0
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r11
 	str r5, [r0, #24]
 	str r6, [r0, #28]
@@ -363,16 +363,16 @@ Func_080e3074:
 	ldr r1, [r2, #8]
 	mov r0, r10
 	ldr r2, [r2, #12]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r2, [sp, #36]
 	movs r5, #0
 	movs r1, #24
 	ldrsh r0, [r2, r1]
 	movs r1, #1
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	mov r2, r10
 	adds r2, #85
 	movs r3, #0
@@ -515,10 +515,10 @@ Func_080e3074:
 	ldr r1, [r3, #8]
 	mov r0, r10
 	ldr r3, [r3, #16]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r2, r10
 	adds r2, #85
 	movs r3, #0
@@ -634,7 +634,7 @@ Func_080e3074:
 	bl Sound_PlayFar
 	mov r0, r11
 	movs r1, #6
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #52
@@ -717,7 +717,7 @@ Func_080e3074:
 	bl Sound_PlayFar
 	mov r0, r11
 	movs r1, #6
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r6, .L_080e3660
 	ldr r5, [sp, #8]
 	movs r7, #15
@@ -747,7 +747,7 @@ Func_080e3074:
 	movs r0, #136
 	bl Sound_PlayFar
 	mov r0, r11
-	bl Object_Destroy
+	bl Actor_Destroy
 	mov r0, r10
 	movs r3, #0
 	str r3, [r0, #108]

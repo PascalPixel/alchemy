@@ -10,7 +10,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "bg_scroll.h"
 
@@ -34,10 +34,10 @@ extern u8 Data_02002469[];
 void WaitFrames(s32 frames);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02002034(s32 id, s32 x, s32 z);
 void *Heap_AllocEwram(s32 size);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02001fdc(void);
@@ -53,7 +53,7 @@ void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Func_0200005c(void);
 void Func_020020b4(s32 cue);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue);
 void Func_02000138(u8 *grid, s32 count, s32 scale);
 void Func_02002044(s32 a, s32 b);
@@ -76,7 +76,7 @@ void Func_0200020c(s32 stage) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   if (stage == 4)
     palette = 0;
   gBgScroll[0].y = 0;
@@ -89,7 +89,7 @@ void Func_0200020c(s32 stage) {
   MAP_WORD(map, 0x11c) = 0xd000;
   Iwram_ClearWords((void *)0x050001c0, 32);
   WaitFrames(1);
-  Object_GetById(gAdventure.currentOwner)->animationKind = 0;
+  Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds(gData_02003d34[stage][0] << 16, -1,
@@ -159,17 +159,17 @@ void Func_0200020c(s32 stage) {
     if (stage == 4) {
       Func_02002034(8, (gData_02003d34[4][0] << 16) - 0x320000,
                     (gData_02003d34[4][1] << 16) - 0x1e0000);
-      Animation_SetStateFlags(Object_GetById(8), 1);
-      Object_SetModeById(8, 0);
-      Object_GetById(8)->scaleX = 0;
-      Object_GetById(8)->scaleY = 0;
+      Animation_SetStateFlags(Actor_GetById(8), 1);
+      Actor_SetModeById(8, 0);
+      Actor_GetById(8)->scaleX = 0;
+      Actor_GetById(8)->scaleY = 0;
       if (frame > 22) {
         s32 scale = (frame << 10) - 0x5400;
 
         if (scale > 0x10000)
           scale = 0x10000;
-        Object_GetById(8)->scaleX = scale;
-        Object_GetById(8)->scaleY = scale;
+        Actor_GetById(8)->scaleX = scale;
+        Actor_GetById(8)->scaleY = scale;
       }
       if (frame <= 31) {
         s32 step = frame / 4;

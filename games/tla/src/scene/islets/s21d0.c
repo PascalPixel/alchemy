@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern s32 gData_0200519c, gData_02005194, gData_02005198, gData_02005190;
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_020020ec(s32 x, s32 z, s32 layer, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -15,8 +15,8 @@ void WaitFrames(s32 frames);
 void Func_02003ffc(s32 cue);
 
 void Func_020021d0(void) {
-  struct ObjectRuntime *first = Object_GetById(12);
-  struct ObjectRuntime *second = Object_GetById(13);
+  struct Actor *first = Actor_GetById(12);
+  struct Actor *second = Actor_GetById(13);
   s32 firstX = first->x >> 20;
   s32 firstZ = first->z >> 20;
   s32 secondX = second->x >> 20;

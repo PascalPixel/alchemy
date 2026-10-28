@@ -6,7 +6,7 @@ void Func_020032b0(void);
 void Func_020032c8(void);
 void Func_020032e0(void);
 void Func_02003610(void);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 void Func_02000d74(void) {
   Func_020032c8();
@@ -25,9 +25,9 @@ void Func_02000d74(void) {
   Motion_SetModeAndWaitAnimation(17, 3);
   Func_02005b64(0x4011, 0);
   Func_02005c9c(26);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
-  Object_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 0x1580000);
+  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_GetById(27)->motionFlags = 0;
+  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 0x1580000);
   Func_02005ba4(0x6666, 0xccc);
   Kibombo_CamMove(0x1080000, -1, 0x1540000, 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
@@ -87,7 +87,7 @@ void Func_02000d74(void) {
   Func_02005b64(7, 0);
   Motion_SetModeAndWaitAnimation(7, 4);
   Func_02005b64(7, 0);
-  ObjectMotion_SetActionVariant(7, 2);
+  Actor_SetSpritePriority(7, 2);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 152, 0x182);
   Kibombo_ObjArm(7, 0xe000, 40);
@@ -104,12 +104,12 @@ void Func_02000d74(void) {
   Func_02005b64(5, 0);
   Kibombo_ObjArm(gAdventure.currentOwner, 0xe000, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
-  ObjectMotion_ResetAndSetPositionInMode2(26, 104, 0x170);
+  Actor_ResetAndSetPositionInMode2(26, 104, 0x170);
   FieldEvent_WaitFrames(20);
   Func_02005ba4(0xcccc, 0x1999);
   Kibombo_CamMove(0x6f0000, -1, 0x1640000, 1);
-  ObjectMotion_CommitCurrentPositionAndActivate(26);
-  Object_SetModeById(26, 1);
+  Actor_WaitForMoveById(26);
+  Actor_SetModeById(26, 1);
   Kibombo_ObjArm(26, 0xd000, 40);
   Func_02005b94(26, 0x100, 20);
   Func_02005b64(26, 0);

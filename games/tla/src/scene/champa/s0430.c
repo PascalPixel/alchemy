@@ -1,8 +1,8 @@
 #include "types.h"
 #include "text/msg_ids.h"
 
-s32 *Object_GetById(s32 id);
-void Object_SetActionCallback(s32 *object, s32 action);
+s32 *Actor_GetById(s32 id);
+void Actor_SetActionCallback(s32 *object, s32 action);
 void FieldEvent_WaitFrames(s32 frames);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
@@ -12,14 +12,14 @@ void Func_02002b04(s32 id, s32 flags);
 s32 Func_02002bb4(void);
 
 void Func_02000430(s32 actor) {
-  s32 *object = Object_GetById(actor);
+  s32 *object = Actor_GetById(actor);
 
   object[7] = 0x10000;
   object[6] = 0x10000;
   Func_02002adc((s32)MsgChampa07);
   Func_02002af4(actor, 0);
   Func_02002b04(actor, 0);
-  Object_SetActionCallback(object, 8);
+  Actor_SetActionCallback(object, 8);
 }
 
 void Func_02000468(s32 actor) {

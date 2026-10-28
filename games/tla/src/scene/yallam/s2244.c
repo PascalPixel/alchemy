@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "macros.h"
 
 extern char SceneId_Ov676Room1;
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02002470(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020023c8(void);
 
@@ -18,7 +18,7 @@ static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 void Func_02002244(void) {
   if (GameFlag_Test(0x300)) {
-    SET_POSITION(Object_GetById(9), 0xa80000, 0, 0xc00000);
+    SET_POSITION(Actor_GetById(9), 0xa80000, 0, 0xc00000);
   }
 }
 

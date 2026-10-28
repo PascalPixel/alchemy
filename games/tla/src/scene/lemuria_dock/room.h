@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -32,20 +32,20 @@ extern const u8 gData_0200057c[];
 extern const u8 gData_0200059c[];
 extern const struct WarpTarget gData_02000610;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Task_Add(void (*callback)(void), s32 priority);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
-void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
+void Actor_Jump(s32 id, s32 speed, s32 frames);
 void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
@@ -66,33 +66,33 @@ void Func_0200052c(s32 id, s32 a1, s32 a2, s32 a3);
 s32 Func_0200053c(void);
 void Func_02000544(s32 cue);
 
-static inline void ObjectMotion_CenterOnColumn_(s32 id, s32 column,
+static inline void Actor_CenterOnColumn_(s32 id, s32 column,
                                                 s32 offset) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CenterOnColumn(id, column, offset);
+  Actor_CenterOnColumn(id, column, offset);
 }
 
-static inline void ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+static inline void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                               s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
-static inline void ObjectMotion_CommitPositionAndActivate_(s32 id, s32 dx,
+static inline void Actor_CommitPositionAndActivate_(s32 id, s32 dx,
                                                            s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitPositionAndActivate(id, dx, dz);
+  Actor_CommitPositionAndActivate(id, dx, dz);
 }
 
-static inline void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
+static inline void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                     s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
-static inline void ObjectMotion_SetPositionAndReset_(s32 id, s32 x, s32 z) {
+static inline void Actor_SetPositionAndReset_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static inline void Func_0200052c_(s32 id, s32 a1, s32 a2, s32 a3) {

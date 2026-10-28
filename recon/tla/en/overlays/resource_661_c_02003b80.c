@@ -6,7 +6,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// One rising platform and what rides it.
 struct RideEntry {
@@ -22,7 +22,7 @@ struct RideEntry {
   s16 step;
   s16 unk14;
   s16 phase;
-  struct ObjectRuntime *rider;
+  struct Actor *rider;
 };
 
 struct RideWork {
@@ -41,7 +41,7 @@ extern u8 gData_020023c4[];
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u32 gFrameCount;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02003f88(u32 *oam, s32 depth);
 s32 Math_Sine(s32 angle);
 
@@ -58,12 +58,12 @@ void Func_02003b80(void) {
   s32 i;
 
   for (i = 15; i >= 0; i--, entry++) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
     s32 frame, h, x, y, z, sx, sy, depth;
 
     if (entry->id == 0 || entry->height == 0)
       continue;
-    object = Object_GetById(entry->id);
+    object = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
     for (h = 0; h < entry->height; h += 16) {
       if (count > 79)

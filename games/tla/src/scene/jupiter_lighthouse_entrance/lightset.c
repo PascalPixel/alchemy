@@ -16,7 +16,7 @@ extern u16 gData_020021e4[];
 
 s32 GameFlag_Test();
 void Task_Add();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02001a6c();
 void Func_02001b34();
@@ -47,7 +47,7 @@ void Func_02000378(s32 id) {
    * cleared; as plain statements the ARM9TDMI schedule clears it first (differ
    * 2). */
   do {
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     object->motionFlags = 4;
     height = object->terrainHeight;
     WORD_AT(object, 68) = 0;

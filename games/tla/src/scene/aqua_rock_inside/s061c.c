@@ -2,7 +2,7 @@
 #include "edition.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-void Func_0200061c(struct ObjectRuntime *object) {
+void Func_0200061c(struct Actor *object) {
   object->motionFlags = 3;
   do {
     WaitFrames(1);

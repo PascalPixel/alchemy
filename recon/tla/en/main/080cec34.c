@@ -11,14 +11,14 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
 struct SceneItemWork {
   u8 unk000[0x114];
-  struct ObjectRuntime *objects[16];
+  struct Actor *objects[16];
   u8 unk154[0x18a - 0x154];
   s8 mode;
 };
@@ -26,10 +26,10 @@ struct SceneItemWork {
 extern u8 gMapCellBuffer[];
 s16 *Func_080ceba8(void);
 s32 Func_080cec24(s32 value, s32 *out);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void Func_080d3b28(s32 id, s32 item);
 
@@ -44,7 +44,7 @@ void Func_080cec34(void) {
   s32 position[3];
   s32 kind;
   s32 buried;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (rows == NULL)
     return;
@@ -99,11 +99,11 @@ void Func_080cec34(void) {
               cell->collisionCode = 0;
           }
         }
-        Object_SetMode(object, 1);
-        ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+        Actor_SetMode(object, 1);
+        Actor_SetSingleChildFlagsFar(object, 0);
         if (GameFlag_Test(flag))
-          Object_SetMode(object, 2);
-        Object_ResetMotion(object);
+          Actor_SetMode(object, 2);
+        Actor_ResetMotion(object);
         S16_AT(object, 100) = object->x / 0x10000;
         S16_AT(object, 102) = object->z / 0x10000;
         BYTE_AT(object, 35) = 1;

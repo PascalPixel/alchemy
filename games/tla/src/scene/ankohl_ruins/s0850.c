@@ -4,7 +4,7 @@
 /// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
 /// track.
 void Func_02000850(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (id == 8 && gAdventure.scene == (s32)&SceneId_Ov686Room1) {
     if (object->x >> 20 == 4) {

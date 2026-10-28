@@ -1,6 +1,6 @@
 #include "types.h"
 #include "animspr.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct PairScene {
@@ -9,8 +9,8 @@ struct PairScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u8 unk1c[0x1c];
@@ -25,8 +25,8 @@ struct PairScene {
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
-  struct ObjectRuntime *user;
-  struct ObjectRuntime *target;
+  struct Actor *user;
+  struct Actor *target;
   struct PairScene *scene;
 
   scene = Ram_HeapSlots->effectWork;

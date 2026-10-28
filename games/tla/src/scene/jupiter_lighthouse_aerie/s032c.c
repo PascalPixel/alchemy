@@ -6,15 +6,15 @@
 // (Func_02002a78). With both flags set, flag 2591 is set. The fall wait is an
 // if around a do-while.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Actor_Stop(s32 id);
 void Func_02002ab8(s32 id, s32 a, s32 b);
 void Func_02002b68(s32 sound);
 void Func_02002a50(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
@@ -26,7 +26,7 @@ void Func_020001b4(void);
 void Func_02000264(void);
 
 void Func_0200032c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 i;
 
   if (id == 13) {
@@ -47,7 +47,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
+      Actor_Stop(gAdventure.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(66, 39, 1, 1, 70, 10);
@@ -80,7 +80,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
+      Actor_Stop(gAdventure.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(68, 39, 1, 1, 121, 10);

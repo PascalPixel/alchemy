@@ -21,7 +21,7 @@
 #include "map.h"
 #include "mem.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field/animspr.h"
 
 struct PlacedSprite {
@@ -109,7 +109,7 @@ void Func_0802386c(void) {
   s8 *basePriority;
   u8 *terrainId;
   u8 *animationKind;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 rightPriority;
   s32 priority;
   s32 x;

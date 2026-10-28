@@ -8,8 +8,8 @@ void Func_02000de4(void) {
   if ((u16)(gAdventure.entrance - 6) <= 1) {
     Func_02002fc0(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Func_02002fe8, 43, 41, 3, 3, 53, 37);
-    if (Object_GetById(gAdventure.currentOwner)->z >> 20 == 38) {
-      s16 angle = Object_GetById(gAdventure.currentOwner)->angle;
+    if (Actor_GetById(gAdventure.currentOwner)->z >> 20 == 38) {
+      s16 angle = Actor_GetById(gAdventure.currentOwner)->angle;
       s32 owner = gAdventure.currentOwner;
 
       if (angle < 0)

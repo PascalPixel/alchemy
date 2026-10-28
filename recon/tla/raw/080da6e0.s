@@ -96,11 +96,11 @@ Func_080da6e0:
 	ldr r3, [sp, #28]
 	movs r1, #3
 	ldr r0, [r3]
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [sp, #28]
 	ldr r0, [r1, #4]
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #4
 	bl WaitFrames
 	ldr r3, [sp, #24]

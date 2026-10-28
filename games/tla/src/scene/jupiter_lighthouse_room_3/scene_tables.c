@@ -10,13 +10,13 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gScenePlacements;
 }
 
-void Func_02000054(struct ObjectRuntime *object) {
+void Func_02000054(struct Actor *object) {
   if (object->x >> 20 == 14 && object->z >> 20 == 12)
     Func_02002360(object, 2);
 }
 
 void Func_02000070(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
+  struct Actor *object = Actor_GetById(10);
   struct PushedBlock block;
   s32 i;
   s32 x;
@@ -27,7 +27,7 @@ void Func_02000070(void) {
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
       GameFlag_Test_(0x200) == 0) {
     GameFlag_SetBit_(0x200);
-    ObjectMotion_SetActionVariant(10, 3);
+    Actor_SetSpritePriority(10, 3);
     object->motionFlags = 3;
     WaitFrames(5);
     Func_02002470(134);

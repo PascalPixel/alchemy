@@ -51,7 +51,7 @@ extern u8 MsgRightWhenI[];
 
 void Func_08108148(void);
 void Func_0810824c(void);
-struct FieldObject *Object_GetByIdFar(s32 objectId);
+struct FieldObject *Actor_GetByIdFar(s32 objectId);
 void *Func_080380f8(s32 portrait, s32 a, s32 b, s32 c);
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
@@ -70,7 +70,7 @@ s32 Func_0810b5c4(s32 objectId) {
   asm("" : "+l"(shop) : : "r1");
   shop->open = 1;
   shop->partyAction = 4;
-  shop->portrait = *Object_GetByIdFar(objectId)->sprite->portrait;
+  shop->portrait = *Actor_GetByIdFar(objectId)->sprite->portrait;
   window = Func_080380f8(shop->portrait, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;

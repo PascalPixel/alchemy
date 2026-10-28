@@ -10,7 +10,7 @@
 // asm after that store fixes it but lets the height and max stores rise
 // above it, and moving them after it changes the allocation (23).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct RideEntry {
   s16 id;
@@ -25,7 +25,7 @@ struct RideEntry {
   s16 step;
   s16 unk14;
   s16 phase;
-  struct ObjectRuntime *rider;
+  struct Actor *rider;
 };
 
 struct RideWork {
@@ -38,20 +38,20 @@ struct RideWork {
 extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
   struct RideEntry *entry = &work->entries[slot];
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *rider;
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *rider;
 
-  Object_GetById(id);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_GetById(id);
+  Actor_SetSingleChildFlags(object, 0);
   if (!GameFlag_Test(0x109)) {
     if (high < low) {
       s32 swap = low;

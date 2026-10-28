@@ -1,12 +1,12 @@
 #include "motobj.h"
 #include "b5_context.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = GetBattleObjectSlotFar(slot);
-  struct ObjectRuntime *object = context->object;
+  struct Actor *object = context->object;
 
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
@@ -15,9 +15,9 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   object->bounce = 0;
   object->actionFlags = 0;
   object->snapToTarget = 1;
-  Object_ResetMotion(object);
-  Object_SetPosition(object, context->anchorX, 0, context->anchorZ);
-  Object_SetMode(object, 1);
+  Actor_ResetMotion(object);
+  Actor_SetTargetPosition(object, context->anchorX, 0, context->anchorZ);
+  Actor_SetMode(object, 1);
 }
 
 /// Moves the object rate percent of the way to the target's object in the
@@ -26,8 +26,8 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
-  struct ObjectRuntime *obj = (struct ObjectRuntime *)slot->object;
-  struct ObjectRuntime *target = (struct ObjectRuntime *)targetSlot->object;
+  struct Actor *obj = (struct Actor *)slot->object;
+  struct Actor *target = (struct Actor *)targetSlot->object;
   s32 diffX = target->x - obj->x;
   s32 startX = obj->x;
   s32 dx = rate * diffX / 100;
@@ -49,7 +49,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) 
   obj->velocityY = 0;
   obj->bounce = 0;
   obj->actionFlags = 1;
-  Object_ResetMotion(obj);
-  Object_SetPosition(obj, x, 0, z);
-  Object_SetMode(obj, 2);
+  Actor_ResetMotion(obj);
+  Actor_SetTargetPosition(obj, x, 0, z);
+  Actor_SetMode(obj, 2);
 }

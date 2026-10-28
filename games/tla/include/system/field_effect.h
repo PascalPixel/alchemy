@@ -85,7 +85,7 @@ enum EffectSpawnFlags {
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
   s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to Object_SetPartAttribute
+  s32 palette;       ///< passed to Actor_SetPartAttribute
   s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
   s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size

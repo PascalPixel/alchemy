@@ -21,10 +21,10 @@ Animation_ApplyChildValuesToRecordFar:
 	.thumb_func
 Animation_ApplyChildValueToFirstFar:
 	overlay_veneer Animation_ApplyChildValueToFirst
-	.global ObjectDispatch_SetSpritePriorityFar
+	.global Actor_SetSpritePriorityDirectFar
 	.thumb_func
-ObjectDispatch_SetSpritePriorityFar:
-	overlay_veneer ObjectDispatch_SetSpritePriority
+Actor_SetSpritePriorityDirectFar:
+	overlay_veneer Actor_SetSpritePriorityDirect
 	.global ScriptObject_CheckOverlapFar
 	.thumb_func
 ScriptObject_CheckOverlapFar:

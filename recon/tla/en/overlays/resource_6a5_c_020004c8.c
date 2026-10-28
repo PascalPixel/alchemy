@@ -6,7 +6,7 @@
 // exactly, so it is back on its listing. Overlay 69e's Func_020001a4
 // (resource_69e_c_020001a4.c) is the same function.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "flag_call.h"
 
@@ -15,13 +15,13 @@ extern const u8 gData_020068b0[];
 
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
-void Func_02005764(struct ObjectRuntime *object, const void *script);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
+void Func_02005764(struct Actor *object, const void *script);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000090(void);
 
-static inline struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
+static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y,
                                                   s32 z) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters order the
    * arguments; a direct call loads the type first */
@@ -31,19 +31,19 @@ static inline struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x201 is set, spawns a particle
 /// at a random height above object 31 that circles it (Func_02000090).
 void Func_020004c8(void) {
-  struct ObjectRuntime *center;
-  struct ObjectRuntime *effect;
+  struct Actor *center;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
   if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Object_GetById(31);
+  center = Actor_GetById(31);
   if (Flag_IsSet(0x201) != 0) {
     u32 random;
 
     random = Random16Far();
-    effect = Object_Create(672, center->x,
+    effect = Actor_Create(672, center->x,
                            (s32)((u32)(random << 8) >> 16 << 16) + center->y -
                                0x1c0000,
                            center->z);
@@ -51,7 +51,7 @@ void Func_020004c8(void) {
     u32 random;
 
     random = Random16Far();
-    effect = Object_Create(672, center->x,
+    effect = Actor_Create(672, center->x,
                            (s32)((u32)(random << 6) >> 16 << 16) + center->y -
                                0x1c0000,
                            center->z);
@@ -59,7 +59,7 @@ void Func_020004c8(void) {
   if (effect != 0) {
     sprite = effect->animation;
     Func_02005764(effect, gData_020068b0);
-    Object_SetPartAttribute(effect, 1);
+    Actor_SetPartAttribute(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
     effect->action = angle;

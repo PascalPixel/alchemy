@@ -11,7 +11,7 @@ void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
 
 /// Counts down each target's flash timer; when one runs out, the target gets
 /// its own palette back.
-void ObjectGroup_CountDownMemberTimers(void) {
+void BattleEffect_CountDownBattlerTints(void) {
   u8 *base;
   s32 i;
   s32 index;

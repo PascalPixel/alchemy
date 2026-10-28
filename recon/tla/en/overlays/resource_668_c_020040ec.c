@@ -8,12 +8,12 @@
 // as a halfword pair, and it takes the absolute values through branches in
 // another order; registers differ from there on.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 extern u16 gData_02004ca4[];
 extern s8 gData_02004cb0[][4];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02004a54(s32 x, s32 z, s32 width, s32 height, s32 fromX, s32 fromZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
@@ -22,7 +22,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 s32 Func_020040ec(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u16 kind = *((struct ObjectAnimationState *)object->animation)->value28;
   u16 i = 0;
   s8 *box;

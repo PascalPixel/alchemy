@@ -1,8 +1,8 @@
 #include "room.h"
 
-void Func_02005528(struct ObjectRuntime *object, s32 mode);
+void Func_02005528(struct Actor *object, s32 mode);
 
-s32 Func_020033cc(struct ObjectRuntime *object) {
+s32 Func_020033cc(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {
@@ -36,7 +36,7 @@ s32 Func_020033cc(struct ObjectRuntime *object) {
   return 1;
 }
 
-s32 Func_02003478(struct ObjectRuntime *object) {
+s32 Func_02003478(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {

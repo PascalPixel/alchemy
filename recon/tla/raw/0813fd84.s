@@ -1287,7 +1287,7 @@ BattleEffect_RunCruelRuin:
 	ldr r2, [r2]
 	strh r2, [r3, #6]
 .L_081407ae:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #228
@@ -2409,7 +2409,7 @@ BattleEffect_RunCruelRuin:
 	adds r6, #36
 	cmp r7, #2
 	bne .L_08140f94
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #228

@@ -9,7 +9,7 @@
 // BattleEffect_ArmBg0HBlankDma.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct WaveFxWork {
   u16 lines[2][162];
@@ -56,13 +56,13 @@ s32 Trig_Sin(s32 angle);
 void BattleEffect_AdvanceHueCycle(void);
 void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
 struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
+void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -74,9 +74,9 @@ void Func_080dcb44(void) {
   struct WaveFxDescriptor *descriptor;
   struct WaveFxMetadata *metadata;
   struct WaveFxSprite *sprite;
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *target;
-  struct ObjectRuntime *object;
+  struct Actor *source;
+  struct Actor *target;
+  struct Actor *object;
   u16 *line;
   s32 i;
 
@@ -96,11 +96,11 @@ void Func_080dcb44(void) {
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
     BattleEffect_StartBufferInterpolation(1);
   }
-  BattleEffect_ApplyFlickerValue(Object_GetById(work->sourceId), 0);
+  BattleEffect_ApplyFlickerValue(Actor_GetById(work->sourceId), 0);
 
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
-    source = Object_GetById(work->sourceId);
-    target = Object_GetById(work->targetId);
+    source = Actor_GetById(work->sourceId);
+    target = Actor_GetById(work->targetId);
     if (source != NULL && target != NULL) {
       descriptor = Scene_FindActorPlacement(work->sourceId);
       from.x = source->x;
@@ -132,7 +132,7 @@ void Func_080dcb44(void) {
         object->update = (void (*)(void))BattleEffect_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;
-        Object_SetPosition(object, from.x, from.y, from.z);
+        Actor_SetTargetPosition(object, from.x, from.y, from.z);
       }
     }
   }

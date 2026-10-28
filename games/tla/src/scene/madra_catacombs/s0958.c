@@ -2,7 +2,7 @@
 
 void Func_02001134(s32 actor, s32 x, s32 z);
 void Func_0200113c(s32 actor, s32 target);
-void Object_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Func_020010dc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void WaitFrames(s32 frames);
@@ -49,7 +49,7 @@ void Func_02000958(void) {
   target = 10;
   actor = 20;
   for (i = 0; i < 10; i++) {
-    Object_SetModeById(actor, 0);
+    Actor_SetModeById(actor, 0);
     Func_0200113c(actor, target);
     target++;
     actor++;

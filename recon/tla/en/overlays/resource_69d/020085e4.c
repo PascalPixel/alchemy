@@ -20,13 +20,13 @@ extern u32 gFrameCount;
 s32 __modsi3();
 s32 GameFlag_Test();
 void Task_Add();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02001e28();
 void Func_02001ef8();
 void Func_02001e48();
 void Func_02001ed0();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void WaitFrames();
 void Camera_MoveWithinMapBounds();
 struct FieldActor *Func_02001ea8();
@@ -72,7 +72,7 @@ next:
 
 extern u8 gData_020026f8[];
 extern s32 gData_02002718;
-void ObjectDispatch_SetAnimationSpeed();
+void Actor_SetAnimationSpeed();
 s32 Func_02001ee8();
 void Func_02001ed8();
 void Func_02001db8();
@@ -106,13 +106,13 @@ void Func_02000990(struct FieldActor *ball) {
   s32 t;
 
   work = Ram_HeapSlots->eventWork;
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_SetAnimationSpeed(ball, 0);
+    Actor_SetAnimationSpeed(ball, 0);
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(ball, 16);
+  Actor_SetAnimationSpeed(ball, 16);
   t = ball->timer + 1;
   ball->timer = t;
   if ((t & 31) == 31)

@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -22,7 +22,7 @@ extern u8 gData_02003d50[];
 s32 Import_ActorCreate();
 s32 Math_Cosine();
 void Func_02003a54();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_02003aec();
 void Func_02003bcc();
 s32 MapCell_GetAttributes();
@@ -56,7 +56,7 @@ s32 Func_020011e4(s32 a0, s32 a1, s32 a2, s32 a3) {
   FIELD_AT(r6, u8, 85) = 0;
   r10 = v1 << 1;
   Call2((void (*)())Func_02003a54, r6, 1);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r6, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, r6, 0);
   Func_02003aec();
   Call1((void (*)())Func_02003bcc, 0);
   FIELD_AT((s32)((u8 *)stack + 56), s32, 0) = FIELD_AT(r6, s32, 8);

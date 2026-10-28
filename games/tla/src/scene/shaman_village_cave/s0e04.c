@@ -6,7 +6,7 @@ struct ShamanVillageCaveSceneWork {
 };
 
 s32 GameFlag_Test(s32 flag);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_020010e8(s32 id, s32 x, s32 z);
 void Func_020003cc(void);
 void Func_02000404(void);
@@ -19,7 +19,7 @@ static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
 }
 
 s32 Func_02000e04(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 516;
@@ -30,20 +30,20 @@ s32 Func_02000e04(void) {
   if (GameFlag_Test(83) || GameFlag_Test(163))
     GameFlag_SetBit(0x205);
   if (GameFlag_Test(0x9a8)) {
-    object = Object_GetById(15);
+    object = Actor_GetById(15);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->x = 0x2680000;
     object->y = 0;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02001060_(40, 19, 1, 1, 38, 19);
   }
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(16), 0);
-  Object_SetModeById(16, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetModeById(16, 1);
   if (GameFlag_Test(770)) {
-    object = Object_GetById(16);
-    Object_SetModeById(16, 5);
-    Object_SetPartAttribute(Object_GetById(16), 0);
+    object = Actor_GetById(16);
+    Actor_SetModeById(16, 5);
+    Actor_SetPartAttribute(Actor_GetById(16), 0);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
@@ -51,9 +51,9 @@ s32 Func_02000e04(void) {
   }
   if (GameFlag_Test(518))
     ShamanVillageCave_ObjPlace(17, 0x1480000, 0x3180000);
-  Object_SetPartAttribute(Object_GetById(19), 1);
-  Object_SetPartAttribute(Object_GetById(20), 0);
-  Object_SetPartAttribute(Object_GetById(21), 2);
+  Actor_SetPartAttribute(Actor_GetById(19), 1);
+  Actor_SetPartAttribute(Actor_GetById(20), 0);
+  Actor_SetPartAttribute(Actor_GetById(21), 2);
   if ((!GameFlag_Test(265) &&
        (gAdventure.entrance == 20 || gAdventure.entrance == 21)) ||
       GameFlag_Test(0xa71)) {

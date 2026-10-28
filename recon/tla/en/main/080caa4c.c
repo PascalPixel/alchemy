@@ -22,7 +22,7 @@
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_scene.h"
 #include "map.h"
 
@@ -39,18 +39,18 @@ extern const struct ScenePlacement gData_080f21d4[];
 void ObjectTable_Clear(void);
 void Event_SpawnObjectTable(s32 table, s32 first);
 s32 Map_GetTerrainHeightFar(u8 kind, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_StartCameraFar(void *object, void *effect);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartCameraFar(void *object, void *effect);
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080caa4c(s32 table) {
   struct EventWork *work;
   struct EventWorkPlacements *placements;
   struct ScenePlacement *entry;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *camera;
+  struct Actor *object;
+  struct Actor *camera;
   struct MapCell *cell;
   struct MapCell *above;
   s32 leader;
@@ -110,13 +110,13 @@ void Func_080caa4c(s32 table) {
       object->y += height;
       object->terrainHeight = object->y;
       object->motionFlags = 0;
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-      Object_SetMode(object, 12);
+      Actor_SetSingleChildFlagsFar(object, 0);
+      Actor_SetMode(object, 12);
     }
   }
 
   if (gAdventure.ownerOverride != 0) {
-    struct ObjectRuntime *stand = work->objects[8];
+    struct Actor *stand = work->objects[8];
 
     stand->x = object->x;
     stand->y = object->y;
@@ -130,7 +130,7 @@ void Func_080caa4c(s32 table) {
 
   camera = Func_080200c0(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
-  ObjectDispatch_StartCameraFar(camera, object);
+  Actor_StartCameraFar(camera, object);
   if (work->controlMode == 3) {
     u8 *effect = ResourceMetadata_RegisterFar(object->animation, 266);
 

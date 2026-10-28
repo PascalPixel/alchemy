@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 extern s16 gData_02002bda;
-extern struct ObjectRuntime *gData_02002bdc[];
+extern struct Actor *gData_02002bdc[];
 
 void Func_020015a0(s32 id, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object) {
     object->action = value;

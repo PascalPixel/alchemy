@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -17,7 +17,7 @@
 
 extern u8 IwramMulQ16[];
 extern u8 gFrameCount[];
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_020003d0();
 s32 Func_0200034c();
 s32 Math_Cosine();
@@ -32,7 +32,7 @@ s32 Func_0200054c(s32 a0, s32 a1, s32 a2, s32 a3) {
 
   r5 = (s32)Ram_HeapSlots->eventWork;
   /* sub (s32)stack, #88 */
-  v0 = Object_GetById(8);
+  v0 = Actor_GetById(8);
   r5 = r5 + 340;
   r9 = v0;
   r6 = r9;

@@ -1,5 +1,5 @@
 #include "scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 void Func_02000b84(s32 x, s32 y, s32 z);
@@ -7,14 +7,14 @@ void Func_02000f24(void);
 void Func_02002ca0(void);
 void Func_02004100(s32 actor, s32 a, s32 b);
 void Func_02004108(s32 actor, s32 a);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetModeById(u32 id, s32 mode);
 
-#define OBJ(p) ((struct ObjectRuntime *)(p))
+#define OBJ(p) ((struct Actor *)(p))
 
 void Func_02000fc8(void) {
-  struct ObjectRuntime *leader = OBJ(Object_GetById(gAdventure.currentOwner));
-  struct ObjectRuntime *partner = OBJ(Object_GetById(21));
+  struct Actor *leader = OBJ(Actor_GetById(gAdventure.currentOwner));
+  struct Actor *partner = OBJ(Actor_GetById(21));
   u32 i;
   s32 angle;
 
@@ -58,24 +58,24 @@ loop_3:
    * instructions differ in tla-en. */
   asm("");
   partner->priorityFlags &= ~2;
-  ObjectMotion_SetActionVariant(21, 2);
-  Object_SetPartAttribute(Object_GetById(21), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(21), 1);
+  Actor_SetSpritePriority(21, 2);
+  Actor_SetPartAttribute(Actor_GetById(21), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Scene_SetPositionAndCommit(21, 216, 184);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, angle, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, angle, 0);
   Func_020040e8(21, 0);
   FieldEvent_WaitFrames(20);
   Func_02002ca0();
   Func_020041f8(136);
   Func_02000f24();
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   FieldEvent_WaitFrames(20);
   Func_02004108(gAdventure.currentOwner, 0x102);
-  Object_SetModeById(gAdventure.currentOwner, 27);
+  Actor_SetModeById(gAdventure.currentOwner, 27);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(gAdventure.currentOwner, 28);
+  Actor_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(10);
   Func_020041f8(204);
   i = 0;
@@ -87,10 +87,10 @@ step_13:
   i++;
   if (i <= 13)
     goto step_13;
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Func_020041f8(153);
   partner->velocityY = 0x80000;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(21), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(21), 0);
   Scene_SetPositionAndCommit(21, 232, 168);
   FieldEvent_WaitFrames(3);
   Func_020041f8(204);

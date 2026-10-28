@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 
 void Func_020012dc();
 
@@ -21,6 +21,6 @@ void Func_020003bc(void) {
 }
 
 s32 Func_020003c8(s32 arg0) {
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, arg0, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, arg0, 0);
   return 0;
 }

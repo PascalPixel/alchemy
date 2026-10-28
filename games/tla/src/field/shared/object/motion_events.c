@@ -1,5 +1,5 @@
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "animspr.h"
 #include "system.h"
@@ -14,8 +14,8 @@ struct AnimationGroup {
 
 /// Waits, at most 90 frames, for an actor's animation to change or for its
 /// first entry's script to reach code 241.
-void ObjectMotion_WaitForAnimationChange(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_WaitForAnimationChange(u32 objectId) {
+  struct Actor *object = ObjectTable_Get(objectId);
   struct AnimationGroup *group;
   u32 saved;
   /* FAKEMATCH(pin): the saved number stored and read again through a pointer
@@ -40,12 +40,12 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
 }
 
 void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action) {
-  Object_SetModeById(objectId, action);
-  ObjectMotion_WaitForAnimationChange(objectId);
+  Actor_SetModeById(objectId, action);
+  Actor_WaitForAnimationChange(objectId);
 }
 
-void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId) {
-  struct ObjectRuntime *object;
+void Actor_Jump(u32 objectId, s32 speed, s32 eventId) {
+  struct Actor *object;
   u8 *objectFlags;
   s32 updatedFlags;
   s32 verticalVelocity;
@@ -66,25 +66,25 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId) {
   }
 }
 
-void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant) {
-  struct ObjectRuntime *object;
+void Actor_StartRepeatedMotion(u32 objectId, s32 variant) {
+  struct Actor *object;
 
   object = ObjectTable_Get(objectId);
   if (object != NULL && variant > 0) {
     if (variant > 3)
       variant = 3;
-    ObjectDispatch_InitializeFar(
+    Actor_StartScriptFar(
         (struct DispatchObject *)object,
         (u32)(gObject_VariantMotionScripts + ((3 - variant) << 7)));
   }
 }
 
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant) {
-  ObjectMotion_SetVariantCallback(objectId, variant);
-  Object_RefreshSelectorById(objectId);
+  Actor_StartRepeatedMotion(objectId, variant);
+  Actor_RefreshSelectorById(objectId);
 }
 
-void Object_DriftAndDamp(struct ObjectRuntime *object) {
+void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
   s32 driftX;
   s32 driftZ;
   s32 pos;

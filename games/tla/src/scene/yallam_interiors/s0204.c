@@ -30,7 +30,7 @@ void Func_02000244(void) {
 }
 
 void Func_0200029c(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -48,7 +48,7 @@ void Func_0200029c(s32 actor) {
 }
 
 void Func_020002fc(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -66,7 +66,7 @@ void Func_020002fc(s32 actor) {
 }
 
 void Func_0200035c(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -84,7 +84,7 @@ void Func_0200035c(s32 actor) {
 }
 
 void Func_020003bc(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -103,7 +103,7 @@ void Func_020003bc(s32 actor) {
 }
 
 void Func_02000424(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -125,7 +125,7 @@ void Func_02000480(void) {
 
   Func_020009b0();
   Func_02000a50(0);
-  ObjectMotion_SetVariantCallback(14, 2);
+  Actor_StartRepeatedMotion(14, 2);
   msg = (s32)MsgYallamInteriors31;
   Func_02000a18(msg);
   FieldMessage_ShowAtActor(14, 0);

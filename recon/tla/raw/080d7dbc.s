@@ -15,7 +15,7 @@ BattleEffect_UpdatePhasedRadialParticle:
 	adds r7, r0, #0
 	ldr r0, [r3]
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #64
 	adds r2, r2, r7
 	movs r6, #0

@@ -10,10 +10,10 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_020001b4
 	.thumb_func
 Func_020001b4:
@@ -22,22 +22,22 @@ Func_020001b4:
 	.thumb_func
 Func_020001bc:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
 Motion_SetModeAndWaitAnimation:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
-	.global ObjectMotion_Launch
+	.global Actor_Jump
 	.thumb_func
-ObjectMotion_Launch:
-	overlay_veneer ObjectMotion_LaunchFar
-	.global ObjectMotion_SetAngleToward
+Actor_Jump:
+	overlay_veneer Actor_JumpFar
+	.global Actor_SetAngleToward
 	.thumb_func
-ObjectMotion_SetAngleToward:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
+Actor_SetAngleToward:
+	overlay_veneer Actor_SetAngleTowardFar
 	.global Func_020001e4
 	.thumb_func
 Func_020001e4:

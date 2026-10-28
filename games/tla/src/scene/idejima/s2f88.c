@@ -1,8 +1,8 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 struct ActorSprite {
@@ -11,9 +11,9 @@ struct ActorSprite {
 };
 
 void Func_02002f88(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(id), 0);
   object->angle = 0x4000;
   object->motionFlags = 0;
   {

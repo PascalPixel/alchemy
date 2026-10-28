@@ -1154,7 +1154,7 @@ BattleEffect_RunRisingDragonEnemy:
 	cmp r8, r0
 	bne .L_0817df82
 .L_0817e020:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	mov r3, r11
 	subs r3, #32
 	cmp r3, #133

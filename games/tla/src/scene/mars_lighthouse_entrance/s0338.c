@@ -7,7 +7,7 @@ struct EffectHolder {
 };
 
 void GameFlag_SetBit(s32 flag);
-void Func_020001f8(struct ObjectRuntime *object);
+void Func_020001f8(struct Actor *object);
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
@@ -17,7 +17,7 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// position.
 void Func_02000338(s32 mode, s32 index) {
   struct EffectHolder *holder = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *object = Object_GetById(holder->objectId);
+  struct Actor *object = Actor_GetById(holder->objectId);
 
   if (index <= 7) {
     struct EffectOptions options;
@@ -35,7 +35,7 @@ void Func_02000338(s32 mode, s32 index) {
   if (mode == 1) {
     object->scaleY = 0x10000;
     GameFlag_SetBit(object->action);
-    Func_020001f8(Object_GetById(holder->objectId));
+    Func_020001f8(Actor_GetById(holder->objectId));
     object->x = object->y = object->z = 0;
   }
 }

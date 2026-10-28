@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_020036d0(void) {
-  if (Object_GetById(64) != 0)
+  if (Actor_GetById(64) != 0)
     Func_02004090(64, 0, 0);
   if (gAdventure.entrance == 2) {
     GameFlag_ClearBit(0xa29);

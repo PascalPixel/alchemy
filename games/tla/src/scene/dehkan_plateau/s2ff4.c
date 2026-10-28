@@ -7,7 +7,7 @@ void Func_02003c28(void);
 void Func_02003d78(s32 skip);
 void Func_02003df8(s32 cue);
 void Func_02003d00(s32 value);
-void ObjectMotion_SetActionVariant(s32 id, s32 variant);
+void Actor_SetSpritePriority(s32 id, s32 variant);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020030e4(void);
@@ -23,7 +23,7 @@ void Func_02002ff4(void) {
   Func_02003c28();
   Func_02003d78(0);
   if (gAdventure.scene == (s32)&SceneId_Ov655Room1)
-    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+    Actor_SetSpritePriority(gAdventure.currentOwner, 3);
   Func_02003df8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

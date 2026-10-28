@@ -50,7 +50,7 @@ void Func_02000de0(void) {
 }
 
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"

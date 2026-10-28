@@ -3,7 +3,7 @@
 // work's counters (999, 999, 0), links object and work both ways, hooks the
 // object's update (Func_02003cd8) and gives each sprite the object's priority.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct ResourceTableEntry {
   u16 unk0;
@@ -26,7 +26,7 @@ struct SparkleWork {
   u16 unka2;
   s16 vramEntry;
   u16 unka6;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 extern const u8 gData_020042bc[];
@@ -36,10 +36,10 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, const void *data);
 void Func_02004244(struct SparkleSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-s32 Func_02004254(struct ObjectRuntime *object);
+s32 Func_02004254(struct Actor *object);
 void Func_02003cd8(void);
 
-void Func_02003e54(struct ObjectRuntime *object, struct SparkleWork *work) {
+void Func_02003e54(struct Actor *object, struct SparkleWork *work) {
   struct SparkleSprite *sprite;
   s32 tile;
   s32 row;
@@ -55,7 +55,7 @@ void Func_02003e54(struct ObjectRuntime *object, struct SparkleWork *work) {
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02003cd8;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
-  object->watchedObject = (struct ObjectRuntime *)work;
+  object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     sprite = &work->sprites[row * 2];
     for (col = 1; col >= 0; col--) {

@@ -50,8 +50,8 @@ void Func_0200223c(void) {
         Func_020056c4(gData_02005b84[state->order[state->stage * 2 +
                                                   (s16)(state->mirrored ^ 1)] &
                                      7]);
-        Object_GetById(8)->terrainHeight = 0;
-        Object_GetById(8)->y = 0;
+        Actor_GetById(8)->terrainHeight = 0;
+        Actor_GetById(8)->y = 0;
       } else {
         Func_020058e0(8, 0, 0);
       }
@@ -59,7 +59,7 @@ void Func_0200223c(void) {
     }
   }
   {
-    struct ObjectRuntime *marker = Object_GetById(8);
+    struct Actor *marker = Actor_GetById(8);
 
     if (state->current == state->stage)
       marker->animationKind = 1;
@@ -76,27 +76,27 @@ void Func_0200223c(void) {
     case 601:
       Func_02005a68(124);
       if (state->mirrored != 0) {
-        Object_SetModeById(9, 6);
+        Actor_SetModeById(9, 6);
         if (state->timer > 600)
-          Object_SetModeById(10, 6);
+          Actor_SetModeById(10, 6);
       } else {
-        Object_SetModeById(11, 6);
+        Actor_SetModeById(11, 6);
         if (state->timer > 600)
-          Object_SetModeById(12, 6);
+          Actor_SetModeById(12, 6);
       }
       break;
     case 655:
       Func_02005a68(125);
-      Object_SetModeById(state->mirrored != 0 ? 10 : 12, 5);
+      Actor_SetModeById(state->mirrored != 0 ? 10 : 12, 5);
       break;
     case 653:
     case 708:
-      Object_GetById(8)->angle = 0xc000;
+      Actor_GetById(8)->angle = 0xc000;
       break;
     case 50:
     case 710:
       Func_02005a68(125);
-      Object_SetModeById(state->mirrored != 0 ? 9 : 11, 5);
+      Actor_SetModeById(state->mirrored != 0 ? 9 : 11, 5);
       break;
     case 70:
     case 730:

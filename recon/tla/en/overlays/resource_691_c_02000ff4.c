@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x15a];
@@ -14,10 +14,10 @@ struct MagmaRockEventWork {
   u16 value1b2;
 };
 
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02001738(void);
 
-void Func_02000ff4(struct ObjectRuntime *object) {
+void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
   s32 mask;
   u16 timer = object->action;
@@ -30,9 +30,9 @@ void Func_02000ff4(struct ObjectRuntime *object) {
     mask = 16;
   blink:
     if (timer & mask)
-      Object_SetPartAttribute(object, 10);
+      Actor_SetPartAttribute(object, 10);
     else
-      Object_SetPartAttribute(object, 0);
+      Actor_SetPartAttribute(object, 0);
   } else {
     object->update = Func_02001738;
     object->action = 1;

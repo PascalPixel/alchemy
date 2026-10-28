@@ -4,15 +4,15 @@
 // becomes its target (Func_02002930); after three misses it turns round and
 // sets its halfword at 0x5e. Returns 0. Left: the native keeps the try count in r10 and 256 in r9, rounds the spot toward zero through a test and add, and lays the loop out with its exit tests in another order.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "system/vector3.h"
 
 u16 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, struct Vector3 *v);
-void Func_02002930(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02002930(struct Actor *object, s32 x, s32 y, s32 z);
 
-s32 Func_02000384(struct ObjectRuntime *object) {
+s32 Func_02000384(struct Actor *object) {
   struct Vector3 spot;
   s32 tries = 0, distance, dx, dz, a, b;
 

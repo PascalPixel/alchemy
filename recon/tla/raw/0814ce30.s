@@ -1599,7 +1599,7 @@ BattleEffect_RunCybele:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0814da76:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7

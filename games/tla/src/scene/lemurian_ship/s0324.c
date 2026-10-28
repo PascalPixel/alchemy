@@ -10,8 +10,8 @@ struct LemurianShipWarp {
 extern struct LemurianShipWarp gData_02003904[];
 extern struct LemurianShipWarp gData_0200397c[];
 void Func_02002c28(s32 value, s32 x, s32 z);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
-void ObjectMotion_CenterOnColumn(s32 actor, s32 a, s32 b);
+void Actor_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
+void Actor_CenterOnColumn(s32 actor, s32 a, s32 b);
 
 void Func_02000324(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -26,7 +26,7 @@ void Func_02000324(void) {
   found = 0;
   i = 8;
 next:
-  object = Object_GetById(i);
+  object = Actor_GetById(i);
   if (object != NULL)
     object->motionFlags = 0;
   i++;
@@ -45,14 +45,14 @@ next2:
   if (found < 2 && GameFlag_Test(0x93f) && GameFlag_Test(0x9e4) == 0)
     found += 4;
   Func_02002de0(158);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_0200397c[found].x, gData_0200397c[found].z,
                        1, 2);
   Func_02002c28(gData_0200397c[found].value, gData_0200397c[found].x,
                 gData_0200397c[found].z + 60);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -4);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_CenterOnColumn(gAdventure.currentOwner, 2, -4);
   FieldEvent_WaitFrames(4);
   Func_02002d70(work->exit);
 }

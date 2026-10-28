@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 struct MagmaRockEffectOptions {
@@ -26,7 +26,7 @@ struct MagmaRockEventWork {
   s32 field1ac;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
@@ -49,7 +49,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    struct MagmaRockEffectOptions *options);
 
 void Func_020022ac(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct MagmaRockEffectOptions options;
   u32 i;
   s32 angle;
@@ -90,7 +90,7 @@ loop:
     goto loop;
   Func_02003c54(188);
   Func_02003b44(gAdventure.currentOwner, 0x101);
-  Object_SetModeById(gAdventure.currentOwner, 22);
+  Actor_SetModeById(gAdventure.currentOwner, 22);
   Call3((void (*)())Func_02003ac4, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
   Func_02003acc();

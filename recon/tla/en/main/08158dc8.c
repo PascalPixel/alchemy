@@ -38,7 +38,7 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
@@ -48,7 +48,7 @@ void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);       // ObjectGroup_UpdateMembers
+                   s32 timerFrames);       // Actor_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_0816442c(s32 group, s32 x, s32 y); // BattleEffect_PlaceFormationObjects
@@ -621,7 +621,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       } else {
         Func_08158ce0(4, 4);
       }
-      ObjectGroup_CountDownMemberTimers();
+      BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       WaitFrames(1);
     }

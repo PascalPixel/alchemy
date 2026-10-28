@@ -3698,7 +3698,7 @@ BattleEffect_RunDaedalus:
 	subs r3, #1
 	str r3, [r4]
 .L_081806b4:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232
@@ -4385,7 +4385,7 @@ BattleEffect_RunDaedalus:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

@@ -446,7 +446,7 @@ BattleEffect_RunWhirlwind:
 	ldrb r0, [r1, r3]
 	lsls r1, r0, #1
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r2, [sp, #36]
 	lsls r0, r0, #7

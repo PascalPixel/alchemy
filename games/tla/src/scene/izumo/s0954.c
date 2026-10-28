@@ -33,14 +33,14 @@ s32 Func_020009d0(void) {
   Task_Add(Func_0200060c, 0xc80);
   Func_02000de0(gData_02000e10);
   if (GameFlag_Test(0x927)) {
-    BYTE_AT(Object_GetById(15), 90) = 2;
-    Object_SetModeById(25, 5);
-    Object_SetModeById(26, 5);
-    Object_SetModeById(27, 5);
-    Object_SetModeById(28, 5);
-    Object_SetModeById(29, 6);
-    Object_SetModeById(30, 6);
-    Object_SetModeById(31, 5);
+    BYTE_AT(Actor_GetById(15), 90) = 2;
+    Actor_SetModeById(25, 5);
+    Actor_SetModeById(26, 5);
+    Actor_SetModeById(27, 5);
+    Actor_SetModeById(28, 5);
+    Actor_SetModeById(29, 6);
+    Actor_SetModeById(30, 6);
+    Actor_SetModeById(31, 5);
     if (gAdventure.entrance == 8 && GameFlag_Test(0x928) &&
         !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Event_StartScreenTransition();
@@ -48,12 +48,12 @@ s32 Func_020009d0(void) {
     }
     if (GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Call3((void (*)())Func_02000d40, 32, 200 << 16, 216 << 16);
-      ObjectMotion_SetActionVariant(32, 3);
-      Object_GetById(32)->motionFlags |= 2;
+      Actor_SetSpritePriority(32, 3);
+      Actor_GetById(32)->motionFlags |= 2;
       GameFlag_SetBit(0x302);
     }
   }
-  ObjectMotion_SetActionVariant(24, 3);
-  Object_GetById(24)->motionFlags |= 2;
+  Actor_SetSpritePriority(24, 3);
+  Actor_GetById(24)->motionFlags |= 2;
   return 0;
 }

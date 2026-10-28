@@ -35,7 +35,7 @@ struct ItemAnimation {
 extern char MsgItemBroke;
 
 struct BattleUnit *Unit_Get(s32 unitId);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 void Func_0811ddd8(struct BattlePlan *plan,
                    struct BattlePresentationWork *work);
@@ -73,16 +73,16 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     u8 *mode;
 
     /* FAKEMATCH(one-pass): the battle work is loaded before the mode's
-     * offset is built; as Object_SetMode(object, battle->byte 0x869) after the
+     * offset is built; as Actor_SetMode(object, battle->byte 0x869) after the
      * object, 4 of 289 instructions differ in tla-en. */
     do {
       battle = Ram_HeapSlots->battleWork;
     } while (0);
     mode = (u8 *)battle + 0x869;
     object = slot->object;
-    Object_SetMode(object, *mode);
+    Actor_SetMode(object, *mode);
   }
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else
@@ -129,7 +129,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     WaitFrames(60);
   }
   BattleEventRuntime_WaitForReady();
-  Object_SetMode(object, 1);
+  Actor_SetMode(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)
     ObjMotRst(work.actors[targetOrFadeIndex]);

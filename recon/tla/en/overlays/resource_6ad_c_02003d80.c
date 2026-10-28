@@ -3,11 +3,11 @@
 // resource_6ab_c_02003e04.c says what is left.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02005560(void);
 void Func_02005648(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -37,7 +37,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 }
 
 void Func_02003d80(void) {
-  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
+  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
    * plain local, 22 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
@@ -80,7 +80,7 @@ void Func_02003d80(void) {
   } while (i <= 16);
   Func_020056c0(188);
   Func_020055c0(gAdventure.currentOwner, 0x101);
-  Object_SetModeById(gAdventure.currentOwner, 49);
+  Actor_SetModeById(gAdventure.currentOwner, 49);
   SetWorkTriple(0x50000, 0x50000, 0x10000);
   SetWorkTriple(-1, -1, 0xe666);
   Func_02005518();
@@ -88,6 +88,6 @@ void Func_02003d80(void) {
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   Func_02005568();
 }

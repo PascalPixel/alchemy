@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -10,9 +10,9 @@ struct SceneEntrance;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
+void Actor_StartRepeatedMotion(s32 id, s32 variant);
 void FieldMessage_Show(const u8 *message, s32 flags);
 void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000e74(void);
@@ -38,11 +38,11 @@ extern const u8 gData_020014b8[];
 extern const u8 gData_02001554[];
 
 void Func_02000258(void) {
-  Func_02000e44(13, 18, 1, 1, 13, Object_GetById(8)->z >> 20);
+  Func_02000e44(13, 18, 1, 1, 13, Actor_GetById(8)->z >> 20);
 }
 
 void Func_0200027c(void) {
-  Func_02000e44(11, 14, 1, 1, 13, Object_GetById(8)->z >> 20);
+  Func_02000e44(11, 14, 1, 1, 13, Actor_GetById(8)->z >> 20);
 }
 
 void Func_020002a0(void) {
@@ -50,7 +50,7 @@ void Func_020002a0(void) {
 }
 
 void Func_020002c0(void) {
-  struct ObjectRuntime *object = Object_GetById(64);
+  struct Actor *object = Actor_GetById(64);
   s32 done;
 
   if (object == NULL)
@@ -64,12 +64,12 @@ void Func_020002c0(void) {
 }
 
 void Func_020002fc(void) {
-  if (Object_GetById(64) != NULL)
+  if (Actor_GetById(64) != NULL)
     Func_02000e8c(64, 0, 0);
 }
 
 void Func_02000314(void) {
-  struct ObjectRuntime *object = Object_GetById(64);
+  struct Actor *object = Actor_GetById(64);
 
   FieldMessage_Show(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x != 0) {
@@ -93,7 +93,7 @@ void Func_02000378(void) {
     Func_02000e74();
     Func_02000ef4(0);
     Func_02000ea4(MsgYouReGoing);
-    Call2((void (*)())ObjectMotion_SetVariantCallback, 20, 1);
+    Call2((void (*)())Actor_StartRepeatedMotion, 20, 1);
     FieldEvent_WaitFrames(15);
     Func_02000eb4(20, 0);
     GameFlag_SetBit(0x9ab);

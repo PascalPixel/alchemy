@@ -2,7 +2,7 @@
 // order and register choice. The same temporary as Func_080d50f8's (ground)
 // gives the native's registers (24 before). Left: as in Func_080d50f8, plus the
 // gAdventure pool load before the action flags' store, which an empty asm
-// before ObjectMotion_SetPositionAndCommit fixes (differ 6).
+// before Actor_SetPositionAndCommit fixes (differ 6).
 // Near miss, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
 // game's checks. On the ground, when the leader's map cell and the one north
 // of it are both climbable (attribute 0x40), the cell above is not a wall
@@ -20,7 +20,7 @@
 // one-slot moves.
 #include "types.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -29,7 +29,7 @@ struct ClimbSprite {
   u8 flags;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
 void Event_WaitFrames(s32 frames);
@@ -38,13 +38,13 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_08020258(s32 *position);
 s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
                                   s32 otherRadius);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 id);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 
 s32 Func_080d53b8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
   struct MapCell *ground;
@@ -86,25 +86,25 @@ s32 Func_080d53b8(void) {
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
-    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
-    Object_SetMode(leader, 6);
+    Actor_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
+    Actor_SetMode(leader, 6);
     WaitFrames(4);
-    Object_SetMode(leader, 7);
+    Actor_SetMode(leader, 7);
     leader->velocityY = 0x40000;
     WaitFrames(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
     leader->speedLimit = 0x10000;
     leader->velocityY = result;
-    Object_SetMode(leader, 12);
+    Actor_SetMode(leader, 12);
     WaitFrames(4);
     gAdventure.renderMode = 2;
     leader->actionFlags = 1;
     WaitFrames(8);
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
-    struct ObjectRuntime *entry;
+    struct Actor *entry;
     s32 radius = leader->radius - 2;
     s32 i;
 
@@ -123,14 +123,14 @@ s32 Func_080d53b8(void) {
 
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
-    Object_SetMode(leader, 11);
-    Object_SetPosition(leader, gridX << 16, leader->y + 0x80000,
+    Actor_SetMode(leader, 11);
+    Actor_SetTargetPosition(leader, gridX << 16, leader->y + 0x80000,
                        (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gAdventure.currentOwner);
     leader->motionFlags = 3;
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
     Event_WaitFrames(4);
     gAdventure.renderMode = 0;
     leader->actionFlags = 1;

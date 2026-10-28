@@ -25,5 +25,5 @@ void Func_02002c40(struct FieldActor *object) {
       Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Object_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
 }

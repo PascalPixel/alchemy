@@ -2918,7 +2918,7 @@ BattleEffect_RunFlora:
 	movs r0, #2
 	movs r1, #2
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r6, #240
 	ldr r5, [sp, #172]
 	lsls r6, r6, #7

@@ -30,7 +30,7 @@ Func_080eabd0:
 .L_080eac00:
 	mov r2, r11
 	ldrh r0, [r2]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	adds r7, r6, #0
 	adds r7, #34
@@ -72,7 +72,7 @@ Func_080eabd0:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r4, [sp, #0]
 	mov r1, r9
 	adds r4, #4
@@ -110,7 +110,7 @@ Func_080eabd0:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r3, r5, #0
 	adds r3, #34

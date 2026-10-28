@@ -4,51 +4,51 @@
 // flag. Overlay 681's Func_02004af0 is a copy with small changes.
 // Measured against its copies: overlay 681's Func_02004af0 (differ 163 of 218).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
 
 extern const u8 gData_020016cc[];
 extern const u8 gData_02001688[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000e74(void);
 void Func_02000ef4(s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 follow);
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
-void Func_02000e2c(struct ObjectRuntime *object, const u8 *script);
-struct ObjectRuntime *Func_02000e34(s32 type, s32 x, s32 y, s32 z);
+void Func_02000e2c(struct Actor *object, const u8 *script);
+struct Actor *Func_02000e34(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Func_02000f24(s32 cue);
 void Func_02000e54(s32 x, s32 y, s32 z);
 void Func_02000ebc(s32 id, s32 animation);
-void Func_02000e24(struct ObjectRuntime *object, s32 mode);
+void Func_02000e24(struct Actor *object, s32 mode);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000ecc(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02000e7c(void);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000bc0(s32 id, s32 flag) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 gravity = leader->gravity;
-  struct ObjectRuntime *pillar;
+  struct Actor *pillar;
   s32 i;
 
   Func_02000e74();
   Func_02000ef4(0);
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-  pillar = Object_GetById(id);
+  pillar = Actor_GetById(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
   Func_02000e2c(pillar, gData_020016cc);
   i = 15;
 dust:
   {
-    struct ObjectRuntime *dust =
+    struct Actor *dust =
         Func_02000e34(255, leader->x, leader->y + 0x100000, leader->z);
 
     if (dust != 0) {
@@ -102,7 +102,7 @@ fall:
   Camera_MoveWithinMapBounds(leader->x, leader->y, leader->z, 1);
   Func_02000ecc();
   FieldEvent_WaitFrames(20);
-  ObjectDispatch_SetSingleChildFlags(leader, 1);
+  Actor_SetSingleChildFlags(leader, 1);
   Func_02000e24(leader, 1);
   leader->velocityY = 0x40000;
   WaitFrames(20);

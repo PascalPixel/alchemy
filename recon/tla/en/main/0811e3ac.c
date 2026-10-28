@@ -49,7 +49,7 @@ void WaitFrames(s32 frames);
 void *Heap_AllocEwram(s32 size);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 void BattleObject_Reset();
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Sound_PlayFar(s32 cue);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
@@ -188,8 +188,8 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   }
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->actorId)->object;
-  Object_SetMode(actor, 3);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
+  Actor_SetMode(actor, 3);
+  Actor_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   WaitFrames(10);

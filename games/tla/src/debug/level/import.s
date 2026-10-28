@@ -98,22 +98,22 @@ Func_020006e4:
 	.thumb_func
 Func_020006ec:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_020006fc
 	.thumb_func
 Func_020006fc:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_WaitForAnimationChange
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_WaitForAnimationChange
 	.thumb_func
-ObjectMotion_WaitForAnimationChange:
-	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
+Actor_WaitForAnimationChange:
+	overlay_veneer Actor_WaitForAnimationChangeFar
 	.global Func_02000714
 	.thumb_func
 Func_02000714:

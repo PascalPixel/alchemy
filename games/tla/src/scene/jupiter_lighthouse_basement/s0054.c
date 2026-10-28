@@ -2,7 +2,7 @@
 #include "macros.h"
 
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -17,7 +17,7 @@ extern const u8 gData_0200236c[];
 s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-void Func_02001bec(struct ObjectRuntime *object, s32 mode);
+void Func_02001bec(struct Actor *object, s32 mode);
 void Func_02001ce4(s32 a);
 void Func_02001cec(s32 a, s32 b);
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -60,7 +60,7 @@ const u8 *Func_02000130(void) {
   return gData_020022e8;
 }
 
-void Func_0200015c(struct ObjectRuntime *object) {
+void Func_0200015c(struct Actor *object) {
   if (Random16Far() & 0xff) {
     s32 position[3];
     s32 radius;

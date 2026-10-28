@@ -12,14 +12,14 @@
 // or u16, the first test on the table itself (51), 25 minutes of alchemy
 // permute.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
 
 extern u16 gData_0200621c[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
@@ -27,26 +27,26 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void Func_020006cc(struct ObjectRuntime *object);
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Func_020006cc(struct Actor *object);
 
 void Func_020048c4(void) {
-  struct ObjectRuntime *first = 0, *second = 0, *leader;
+  struct Actor *first = 0, *second = 0, *leader;
   struct FieldSprite *firstSprite, *secondSprite;
   struct VramBlockCacheEntry *entry;
   u16 *pair;
   u32 id, i;
   s32 busy;
 
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   pair = gData_0200621c;
   if (*pair == 0xffff)
     goto found;
 search:
   id = *pair;
-  first = Object_GetById(id);
+  first = Actor_GetById(id);
   if (first->x >> 20 == leader->x >> 20 && first->z >> 20 == leader->z >> 20) {
-    second = Object_GetById(id - ((id & 1) << 1) + 1);
+    second = Actor_GetById(id - ((id & 1) << 1) + 1);
     goto found;
   }
   pair += 3;

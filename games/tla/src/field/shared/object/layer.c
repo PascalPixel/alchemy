@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct ObjectLayerAnimation {
@@ -12,8 +12,8 @@ struct ObjectLayerAnimation {
 };
 
 /// Gives the object the party leader's display layer.
-s32 Func_080d4ab4(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = ObjectTable_Get(gAdventure.currentOwner);
+s32 Func_080d4ab4(struct Actor *object) {
+  struct Actor *leader = ObjectTable_Get(gAdventure.currentOwner);
   s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
 
   if ((object->animationKind & 0xf) == 1) {

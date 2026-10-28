@@ -1,20 +1,20 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Func_020022bc(s32 a);
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
 void Func_02000454(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 i;
   s32 angle;
   s32 y;
@@ -25,10 +25,10 @@ void Func_02000454(void) {
     y = object->y;
   } while (0);
   if (y >= 0x200000) {
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
-    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
-    ObjectMotion_ResetAndSetPositionInMode2(gAdventure.currentOwner, 216, 680);
-    ObjectDispatch_SetAnimationSpeed(object, 64);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
+    Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+    Actor_ResetAndSetPositionInMode2(gAdventure.currentOwner, 216, 680);
+    Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
       object->y += 0x30000;

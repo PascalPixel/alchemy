@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -27,7 +27,7 @@ extern u8 gData_02003dd6[];
 extern u8 gData_02003dee[];
 extern u8 gData_02003de8[];
 extern u8 gData_02003e02[];
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02000668();
 s32 GameFlag_Test();
 void Func_02000ee4();
@@ -35,7 +35,7 @@ void Func_02003b0c();
 void Func_02003c0c();
 void Func_02003aa4();
 s32 Func_020006cc();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_02002518();
 void Func_02002d08();
 void Func_02003bec();
@@ -69,12 +69,12 @@ s32 Func_02002618(s32 a0, s32 a1, s32 a2, s32 a3) {
 L_0200a65e:
   goto L_0200a66c;
 L_0200a66c:
-  v0 = Object_GetById(FIELD_AT(r8, s32, 532));
+  v0 = Actor_GetById(FIELD_AT(r8, s32, 532));
   r5 = 32;
   FIELD_AT(v0, u8, 35) = (FIELD_AT(v0, u8, 35)) | r5;
-  v1 = Object_GetById(8);
+  v1 = Actor_GetById(8);
   FIELD_AT(v1, u8, 35) = (FIELD_AT(v1, u8, 35)) | r5;
-  v2 = Object_GetById(10);
+  v2 = Actor_GetById(10);
   r5 = r5 | (FIELD_AT(v2, u8, 35));
   FIELD_AT(v2, u8, 35) = r5;
   Func_02000668((s32)gData_02003d9e);
@@ -98,13 +98,13 @@ L_0200a66c:
   Func_020006cc(r6);
   v6 = GameFlag_Test(0x109);
   if (v6 == 0) {
-    v7 = Object_GetById(20);
+    v7 = Actor_GetById(20);
     FIELD_AT(v7, s32, 8) = (FIELD_AT(v7, s32, 8)) + 65536;
     FIELD_AT(v7, u8, 85) = r7;
     FIELD_AT((v7 + 85), u8, 4) = r7;
     FIELD_AT(v7, s32, 12) = (FIELD_AT(v7, s32, 12)) + 1572864;
     FIELD_AT(v7, s32, 20) = (FIELD_AT(v7, s32, 12)) + 1572864;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v7, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, v7, 0);
   }
   Call1((void (*)())Func_02002518, 20);
   r2 = FIELD_AT(r8, s16, 482);
@@ -126,7 +126,7 @@ L_0200a780:
   goto L_0200ac26;
 L_0200a788:
   r10 = 532 + r8;
-  v8 = Object_GetById(FIELD_AT(r8, s32, 532));
+  v8 = Actor_GetById(FIELD_AT(r8, s32, 532));
   FIELD_AT(v8, u8, 35) = 32 | (FIELD_AT(v8, u8, 35));
   r9 = 482 + r8;
   r2 = 482 + r8;
@@ -147,7 +147,7 @@ L_0200a788:
     goto L_0200a81c;
   v11 = GameFlag_Test(0x109);
   if (v11 == 0) {
-    v12 = Object_GetById(FIELD_AT(r10, s32, 0));
+    v12 = Actor_GetById(FIELD_AT(r10, s32, 0));
     FIELD_AT(v12, s32, 16) = (FIELD_AT(v12, s32, 16)) + 1048576;
     r1 = 0x100000;
     r3 = (FIELD_AT(v12, s32, 16)) + 1048576;
@@ -161,7 +161,7 @@ L_0200a81c:
 L_0200a822:
   v13 = GameFlag_Test(0x109);
   if (v13 == 0) {
-    v14 = Object_GetById(FIELD_AT(r10, s32, 0));
+    v14 = Actor_GetById(FIELD_AT(r10, s32, 0));
     FIELD_AT(v14, s32, 16) = (FIELD_AT(v14, s32, 16)) + 1048576;
     r1 = 0x100000;
     r3 = (FIELD_AT(v14, s32, 16)) + 1048576;
@@ -175,37 +175,37 @@ L_0200a848:
 L_0200a84e:
   v15 = GameFlag_Test(0x109);
   if (v15 == 0) {
-    v16 = Object_GetById(8);
+    v16 = Actor_GetById(8);
     FIELD_AT(v16, u8, 85) = r7;
-    v17 = Object_GetById(8);
+    v17 = Actor_GetById(8);
     r5 = 160;
     r5 = r5 << 15;
     FIELD_AT(v17, s32, 12) = (FIELD_AT(v17, s32, 12)) + r5;
-    v18 = Object_GetById(9);
+    v18 = Actor_GetById(9);
     FIELD_AT(v18, u8, 85) = r7;
-    v19 = Object_GetById(9);
+    v19 = Actor_GetById(9);
     FIELD_AT(v19, s32, 12) = (FIELD_AT(v19, s32, 12)) + r5;
     Call3((void (*)())Func_02000ee4, 19, 8, 0);
-    v20 = Object_GetById(10);
+    v20 = Actor_GetById(10);
     FIELD_AT(v20, u8, 85) = r7;
-    v21 = Object_GetById(10);
+    v21 = Actor_GetById(10);
     r5 = 160;
     r5 = r5 << 16;
     FIELD_AT(v21, s32, 12) = (FIELD_AT(v21, s32, 12)) + r5;
-    v22 = Object_GetById(11);
+    v22 = Actor_GetById(11);
     FIELD_AT(v22, u8, 85) = r7;
-    v23 = Object_GetById(11);
+    v23 = Actor_GetById(11);
     FIELD_AT(v23, s32, 12) = (FIELD_AT(v23, s32, 12)) + r5;
     Call3((void (*)())Func_02000ee4, 20, 10, 1);
-    v24 = Object_GetById(12);
+    v24 = Actor_GetById(12);
     FIELD_AT(v24, u8, 85) = r7;
-    v25 = Object_GetById(12);
+    v25 = Actor_GetById(12);
     r5 = 240;
     r5 = r5 << 16;
     FIELD_AT(v25, s32, 12) = (FIELD_AT(v25, s32, 12)) + r5;
-    v26 = Object_GetById(13);
+    v26 = Actor_GetById(13);
     FIELD_AT(v26, u8, 85) = r7;
-    v27 = Object_GetById(13);
+    v27 = Actor_GetById(13);
     FIELD_AT(v27, s32, 12) = (FIELD_AT(v27, s32, 12)) + r5;
     Call3((void (*)())Func_02000ee4, 21, 12, 0);
   }
@@ -217,7 +217,7 @@ L_0200a84e:
   Func_02000668((s32)gData_02003dc4);
   v29 = GameFlag_Test(0x109);
   if (v29 == 0) {
-    v30 = Object_GetById(15);
+    v30 = Actor_GetById(15);
     r6 = 128;
     r6 = r6 << 9;
     FIELD_AT(v30, s32, 8) = (FIELD_AT(v30, s32, 8)) + r6;
@@ -227,14 +227,14 @@ L_0200a84e:
     r5 = r5 << 13;
     FIELD_AT(v30, s32, 12) = (FIELD_AT(v30, s32, 12)) + r5;
     FIELD_AT(v30, s32, 20) = (FIELD_AT(v30, s32, 12)) + r5;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v30, 0);
-    v31 = Object_GetById(18);
+    Call2((void (*)())Actor_SetSingleChildFlags, v30, 0);
+    v31 = Actor_GetById(18);
     FIELD_AT(v31, s32, 8) = (FIELD_AT(v31, s32, 8)) + r6;
     FIELD_AT(v31, u8, 85) = r7;
     FIELD_AT((v31 + 85), u8, 4) = r7;
     FIELD_AT(v31, s32, 12) = (FIELD_AT(v31, s32, 12)) + r5;
     FIELD_AT(v31, s32, 20) = (FIELD_AT(v31, s32, 12)) + r5;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v31, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, v31, 0);
   }
   Call1((void (*)())Func_02002518, 15);
   Call1((void (*)())Func_02002518, 18);
@@ -263,7 +263,7 @@ L_0200a9c4:
     goto L_0200a9ee;
   v35 = GameFlag_Test(0x109);
   if (v35 == 0) {
-    v36 = Object_GetById(FIELD_AT(r10, s32, 0));
+    v36 = Actor_GetById(FIELD_AT(r10, s32, 0));
     FIELD_AT(v36, s32, 16) = (FIELD_AT(v36, s32, 16)) + 1048576;
     r2 = 0x100000;
     r3 = (FIELD_AT(v36, s32, 16)) + 1048576;
@@ -293,7 +293,7 @@ L_0200aa28:
   Func_02000668((s32)gData_02003dd6);
   v40 = GameFlag_Test(0x109);
   if (v40 == 0) {
-    v41 = Object_GetById(10);
+    v41 = Actor_GetById(10);
     r6 = 128;
     r6 = r6 << 9;
     FIELD_AT(v41, s32, 8) = (FIELD_AT(v41, s32, 8)) + r6;
@@ -303,14 +303,14 @@ L_0200aa28:
     r5 = r5 << 13;
     FIELD_AT(v41, s32, 12) = (FIELD_AT(v41, s32, 12)) + r5;
     FIELD_AT(v41, s32, 20) = (FIELD_AT(v41, s32, 12)) + r5;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v41, 0);
-    v42 = Object_GetById(12);
+    Call2((void (*)())Actor_SetSingleChildFlags, v41, 0);
+    v42 = Actor_GetById(12);
     FIELD_AT(v42, s32, 8) = (FIELD_AT(v42, s32, 8)) + r6;
     FIELD_AT(v42, u8, 85) = r7;
     FIELD_AT((v42 + 85), u8, 4) = r7;
     FIELD_AT(v42, s32, 12) = (FIELD_AT(v42, s32, 12)) + r5;
     FIELD_AT(v42, s32, 20) = (FIELD_AT(v42, s32, 12)) + r5;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v42, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, v42, 0);
   }
   Call1((void (*)())Func_02002518, 10);
   Call1((void (*)())Func_02002518, 12);
@@ -327,13 +327,13 @@ L_0200aaee:
   Func_02000668((s32)gData_02003dee);
   v43 = GameFlag_Test(0x109);
   if (v43 == 0) {
-    v44 = Object_GetById(13);
+    v44 = Actor_GetById(13);
     FIELD_AT(v44, s32, 8) = (FIELD_AT(v44, s32, 8)) + 65536;
     FIELD_AT(v44, u8, 85) = r7;
     FIELD_AT((v44 + 85), u8, 4) = r7;
     FIELD_AT(v44, s32, 12) = (FIELD_AT(v44, s32, 12)) + 1572864;
     FIELD_AT(v44, s32, 20) = (FIELD_AT(v44, s32, 12)) + 1572864;
-    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v44, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, v44, 0);
   }
   Call1((void (*)())Func_02002518, 13);
   v45 = GameFlag_Test(0x8da);
@@ -372,7 +372,7 @@ L_0200abea:
     goto L_0200ac20;
   v51 = GameFlag_Test(0x109);
   if (v51 == 0) {
-    v52 = Object_GetById(FIELD_AT(r8, s32, 532));
+    v52 = Actor_GetById(FIELD_AT(r8, s32, 532));
     FIELD_AT(v52, s32, 16) = (FIELD_AT(v52, s32, 16)) + 1048576;
     r2 = 0x100000;
     r3 = (FIELD_AT(v52, s32, 16)) + 1048576;
@@ -402,7 +402,7 @@ L_0200ac26:
   r5 = 133;
   r5 = r5 << 2;
   r5 = r5 + r8;
-  v55 = Object_GetById(FIELD_AT(r5, s32, 0));
+  v55 = Actor_GetById(FIELD_AT(r5, s32, 0));
   FIELD_AT(v55, u8, 35) = 32 | (FIELD_AT(v55, u8, 35));
   Func_02000668((s32)gData_02003e02);
   r3 = FIELD_AT(r8, s16, 482);
@@ -410,7 +410,7 @@ L_0200ac26:
     goto L_0200acda;
   v56 = GameFlag_Test(0x109);
   if (v56 == 0) {
-    v57 = Object_GetById(FIELD_AT(r5, s32, 0));
+    v57 = Actor_GetById(FIELD_AT(r5, s32, 0));
     FIELD_AT(v57, s32, 16) = (FIELD_AT(v57, s32, 16)) + 1048576;
     r1 = 0x100000;
     r3 = (FIELD_AT(v57, s32, 16)) + 1048576;

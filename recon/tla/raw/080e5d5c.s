@@ -144,7 +144,7 @@ Func_080e5d5c:
 	movs r3, #0
 	lsls r0, r0, #1
 	movs r2, #0
-	bl Object_Spawn
+	bl Actor_Spawn
 	mov r11, r0
 	ldr r4, [sp, #28]
 	movs r0, #192
@@ -207,7 +207,7 @@ Func_080e5d5c:
 	mov r0, r11
 	mov r10, r1
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #208
 	ldr r4, [sp, #24]
 	lsls r0, r0, #4
@@ -461,7 +461,7 @@ Func_080e5d5c:
 	bl Func_080dbed0
 	mov r0, r11
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #15
 	bl WaitFrames
 	movs r5, #24
@@ -663,7 +663,7 @@ Func_080e5d5c:
 	bl Func_080dbf94
 .L_080e62bc:
 	mov r0, r11
-	bl Object_Destroy
+	bl Actor_Destroy
 	ldr r0, [sp, #20]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #12]

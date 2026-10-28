@@ -38,7 +38,7 @@ void Func_02003254(void) {
   } else if (scene == (s32)&SceneId_Ov664Room8) {
     Func_02005f74(gData_02006072);
   } else if (scene == (s32)&SceneId_Ov664Room9) {
-    Object_GetById(10)->timer = 0;
+    Actor_GetById(10)->timer = 0;
     Func_02005f74(gData_0200607e);
   }
 }

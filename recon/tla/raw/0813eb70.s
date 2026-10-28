@@ -1174,7 +1174,7 @@ Func_0813eb70:
 	cmp r6, #32
 	bne .L_0813f3d0
 .L_0813f438:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r7, #240
 	ldr r5, [sp, #48]
 	lsls r7, r7, #7

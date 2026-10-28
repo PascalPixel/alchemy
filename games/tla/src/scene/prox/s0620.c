@@ -7,10 +7,10 @@
        ->v)
 
 #include "call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 s32 Func_02004464();
 s32 Func_020045ec();
 s32 Func_0200451c();
@@ -30,7 +30,7 @@ s32 Func_02000644(void) {
   u16 turn;
   s32 facing;
 
-  turn = Object_GetById(gAdventure.currentOwner)->angle + 0x5fff;
+  turn = Actor_GetById(gAdventure.currentOwner)->angle + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;

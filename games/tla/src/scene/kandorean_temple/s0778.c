@@ -2,11 +2,11 @@
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
-  struct ObjectRuntime *focus;
+  struct Actor *focus;
 };
 
-void Func_02000778(struct ObjectRuntime *object, s32 dz) {
-  struct ObjectRuntime *focus =
+void Func_02000778(struct Actor *object, s32 dz) {
+  struct Actor *focus =
       ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
   s32 position[3];
 

@@ -23,7 +23,7 @@ void Func_0200126c(s32 id);
 
 void Func_02000ecc(void) {
   s32 entrance;
-  struct ObjectRuntime *statue;
+  struct Actor *statue;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = CATACOMBS_SCREEN_EFFECT;
   Func_02001254(0);
@@ -60,7 +60,7 @@ void Func_02000ecc(void) {
     Call6(Func_02001164, 15, 18, 1, 1, 17, 18);
   if (gAdventure.scene == (s32)&SceneId_Ov673Room4 && GameFlag_Test(0x9ce) &&
       !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
-    statue = Object_GetById(0x40);
+    statue = Actor_GetById(0x40);
     Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;
     statue->terrainHeight += 0x100000;

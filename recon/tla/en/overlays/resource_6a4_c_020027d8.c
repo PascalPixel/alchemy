@@ -5,7 +5,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 s32 Func_020027d8(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02003488;

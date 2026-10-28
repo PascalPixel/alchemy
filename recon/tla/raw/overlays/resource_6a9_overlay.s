@@ -14,7 +14,7 @@ Func_02000454:
 	adds r3, r3, r2
 	mov r8, r0
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r2, r8
 	ldrh r3, [r2]
 	movs r2, #255
@@ -26,7 +26,7 @@ Func_02000454:
 .L_0200847a:
 	mov r3, r8
 	ldrh r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r2, r5, #0
 	movs r3, #0
@@ -36,7 +36,7 @@ Func_02000454:
 	strb r3, [r2]
 	movs r1, #0
 	str r3, [r5, #68]
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #16]
 	movs r0, #0
@@ -333,7 +333,7 @@ Func_020006a8:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldrh r1, [r0, #6]
 	movs r3, #128
 	lsls r3, r3, #6
@@ -362,7 +362,7 @@ Func_020006a8:
 .L_02008734:
 	mov r2, r8
 	ldrh r0, [r2]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r2, [r5]
 	ldr r3, [r6, #8]

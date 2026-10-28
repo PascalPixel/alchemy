@@ -10,7 +10,7 @@
 #include "event_work.h"
 #include "types.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -35,7 +35,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
       flag = 0x122;
       if (GameFlag_Test(flag) != 0) {
         s32 id;
-        struct ObjectRuntime *object;
+        struct Actor *object;
 
         GameFlag_ClearBit(flag);
         id = gAdventure.currentOwner;
@@ -47,7 +47,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         }
         Sound_PlayFar(159);
         object->y = object->terrainHeight;
-        Object_SetMode(object, 22);
+        Actor_SetMode(object, 22);
         Event_WaitFrames(15);
         Camera_FollowActor(id, 1);
         result = 3;
@@ -60,7 +60,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080d5fd4(void) {
-  struct ObjectRuntime *object = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *object = ObjectTable_Get(gAdventure.currentOwner);
   u8 *metadata =
       ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 

@@ -440,5 +440,5 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
   }
-  ObjectDispatch_InitializeFar((struct DispatchObject *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct DispatchObject *)object, Data_0812cacc);
 }

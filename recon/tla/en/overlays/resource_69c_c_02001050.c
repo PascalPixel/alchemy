@@ -11,7 +11,7 @@
 // width where this spills the map, and register choice throughout.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -27,17 +27,17 @@ struct PushTarget {
 extern const s8 gData_02002484[][4];
 extern const s32 gData_0200249c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void WaitFrames(s32 frames);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Func_020022e0(struct ObjectRuntime *object, s32 mode);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Func_020022e0(struct Actor *object, s32 mode);
 void Func_02002470(s32 sound);
-void Func_02002310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void Func_02002318(struct ObjectRuntime *object);
+void Func_02002310(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_WaitForMoveById(s32 id);
+void Func_02002318(struct Actor *object);
 void Func_02002330(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Func_02002430(void);
 void Func_02001300(void);
@@ -46,8 +46,8 @@ void Func_02001300(void);
 
 void Func_02001050(struct PushTarget target) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object = Object_GetById(target.id);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(target.id);
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
   s32 from[3];
@@ -67,37 +67,37 @@ void Func_02001050(struct PushTarget target) {
   width = (ABS(rect[0]) + ABS(rect[2])) >> 4;
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetSpeedParameters, gAdventure.currentOwner,
         0x8000, 0x1999);
-  Object_SetModeById(gAdventure.currentOwner, 8);
+  Actor_SetModeById(gAdventure.currentOwner, 8);
   WaitFrames(15);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (target.x - from[0]) >> 17,
                                             (target.z - from[2]) >> 17);
-  Object_GetById(gAdventure.currentOwner)->update = Func_02001300;
+  Actor_GetById(gAdventure.currentOwner)->update = Func_02001300;
   WaitFrames(4);
   Func_020022e0(object, 2);
   Func_02002470(239);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, target.id, 0x8000, 0x1999);
+  Call3((void (*)())Actor_SetSpeedParameters, target.id, 0x8000, 0x1999);
   Func_02002310(object, target.x, target.y, target.z);
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
+  Actor_WaitForMoveById(gAdventure.currentOwner);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Call3((void (*)())Actor_SetSpeedParameters, gAdventure.currentOwner,
         0x4ccc, 0x1999);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (gData_0200249c[step] << 16) >> 31,
                                             (gData_0200249c[step] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_WaitForMoveById(gAdventure.currentOwner);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   Func_02002318(object);
   Func_02002470(298);
   Func_02002470(213);
-  Object_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  Actor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Func_020022e0(object, 1);
   target.x = (target.x + (rect[0] << 16)) >> 20;
   target.z = (target.z + (rect[1] << 16)) >> 20;

@@ -8,15 +8,15 @@ void Func_02001a9c(void);
 void Func_02002820(void) {
   struct LemurianShipObject *object;
 
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
   if (LemurianShip_FlagCheck(0x93f)) {
-    object = Object_GetById(64);
+    object = Actor_GetById(64);
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(Object_GetById(64), 0x880000, 0xffe00000, 0x1880000);
+    LemurianShip_ObjSetPos(Actor_GetById(64), 0x880000, 0xffe00000, 0x1880000);
     object->height = 0xfff00000;
-    ObjectMotion_SetActionVariant(64, 3);
-    Object_SetPartAttribute(Object_GetById(64), 1);
+    Actor_SetSpritePriority(64, 3);
+    Actor_SetPartAttribute(Actor_GetById(64), 1);
     LemurianShip_ObjPlace(8, 0, 0);
     LemurianShip_ObjPlace(9, 0, 0);
     LemurianShip_ObjPlace(10, 0, 0);
@@ -26,10 +26,10 @@ void Func_02002820(void) {
     LemurianShip_WaitFrames(1);
   }
   if (LemurianShip_FlagCheck(0x9e4)) {
-    struct LemurianShipObject *marker = Object_GetById(64);
+    struct LemurianShipObject *marker = Actor_GetById(64);
 
     LemurianShip_ObjPlace(64, marker->x, marker->z + 0xfed00000);
-    Object_SetPartAttribute(Object_GetById(64), 0);
+    Actor_SetPartAttribute(Actor_GetById(64), 0);
     LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
     LemurianShip_CamSet(0x80000, 0x100000, 0xf80000, 0x1000000);
     Camera_FollowActor(gAdventure.currentOwner, 0);

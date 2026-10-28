@@ -83,10 +83,10 @@ Func_0811ca54:
 	ldr r0, [r0]
 	movs r1, #3
 	mov r10, r0
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r10
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldrh r3, [r5, #10]
 	cmp r3, #7
 	bhi .L_0811cb18
@@ -169,7 +169,7 @@ Func_0811ca54:
 	bl Func_08138018
 	mov r0, r10
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	add r5, sp, #8
 	ldr r3, [r5, #20]
 	adds r2, r5, #0

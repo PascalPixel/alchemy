@@ -3,13 +3,13 @@
 #include "field_event.h"
 #include "map.h"
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02004bc0(struct FieldActor *object, s32 value);
 s32 Func_02004db8(struct FieldActor *object);
 
 void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02004db8(object);

@@ -38,8 +38,8 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Animation_`, `Battle_`, `BattleEffect_`, `BattleUnit_`, `Camera_`,
 `EffectPosition_`, `EffectStep_`, `Event_`, `FacingObject_`, `FieldEffect_`,
 `FieldMotes_`, `Field_`, `Graphics_`, `Item_`, `Map_`, `MapAnimation_`,
-`Motion_`, `Object_`, `ObjectCamera_`, `ObjectDispatch_`, `ObjectEffect_`,
-`ObjectGroup_`, `ObjectMotion_`, `ObjectSystem_`, `ObjectTable_`,
+`Motion_`, `Actor_`, `ActorSystem_`, `ObjectCamera_`, `ObjectEffect_`,
+`ObjectSystem_`, `ObjectTable_`,
 `ObjectVisual_`, `OverlayObject_`, `Party_`, `ResourceTable_`, `Leader_`,
 `Scene_`, `SceneActor_`, `Script_` and `ScriptObject_`. Those only The Lost
 Age's code has so far:

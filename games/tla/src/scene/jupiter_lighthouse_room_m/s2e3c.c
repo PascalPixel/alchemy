@@ -6,7 +6,7 @@ void Scene_SetArrivalFlags();
 void Func_02002fc4();
 void Func_02003a38();
 void Func_02003ac0();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 GameFlag_Test();
 void Func_02004844();
 void Func_0200474c();
@@ -21,7 +21,7 @@ s32 Func_02002e3c(void) {
   Func_02002fc4(1);
   Func_02003a38();
   Func_02003ac0(20, 0);
-  object = Object_GetById(20);
+  object = Actor_GetById(20);
   if (GameFlag_Test(0xa0c)) {
     Call3(Func_02004844, 20, 0x3f80000, 0xf80000);
     Call6(Func_0200474c, 104, 42, 5, 11, 61, 42);

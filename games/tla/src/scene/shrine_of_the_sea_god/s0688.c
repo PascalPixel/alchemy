@@ -18,7 +18,7 @@ void Func_02000688(void) {
   Func_020039d8();
   Func_02003b08(0);
   Func_020039a0();
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   ShrineOfTheSeaGod_CamMove(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
   Func_02003b48(244);
@@ -32,11 +32,11 @@ void Func_02000688(void) {
   WaitFrames(10);
   Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
-  ObjectMotion_SetActionVariant(8, 1);
-  ObjectMotion_SetActionVariant(9, 1);
-  ObjectMotion_SetActionVariant(10, 1);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(8, 1);
+  Actor_SetSpritePriority(9, 1);
+  Actor_SetSpritePriority(10, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   WaitFrames(10);
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);

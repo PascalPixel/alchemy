@@ -4,13 +4,13 @@
 // object in r7 and its position pointer in r8, and from there the loads and the
 // constants fall in other registers.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 ArcTan2(s32 y, s32 x);
 s32 Func_02000620(s32 *a, s32 *b);
 
 // Test range and whether object faces other within 1/16 turn either side.
-s32 Func_02000658(struct ObjectRuntime *object, struct ObjectRuntime *other,
+s32 Func_02000658(struct Actor *object, struct Actor *other,
                   s32 range) {
   s32 *to = &other->x;
   s32 *from = &object->x;

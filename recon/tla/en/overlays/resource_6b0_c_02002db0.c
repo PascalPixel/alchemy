@@ -14,13 +14,13 @@ struct PushEvent {
 
 void Func_02002cb8(void);
 void Func_02003350(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02002db0(struct PushEvent *event) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x;
   s32 z;
   s32 mask;
@@ -42,7 +42,7 @@ void Func_02002db0(struct PushEvent *event) {
     object->angle = 0x4000;
     object->motionFlags = zero;
   }
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   {
     /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
@@ -55,7 +55,7 @@ void Func_02002db0(struct PushEvent *event) {
   } while (0);
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
-  Object_SetModeById(gAdventure.currentOwner, 28);
+  Actor_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
@@ -66,7 +66,7 @@ void Func_02002db0(struct PushEvent *event) {
     WaitFrames(1);
   }
   do {
-    Object_GetById(gAdventure.currentOwner)->animationKind = 0;
+    Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

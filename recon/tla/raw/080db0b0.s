@@ -15,10 +15,10 @@ Func_080db0b0:
 	sub sp, #20
 	mov r9, r0
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	adds r0, r5, #0
-	bl Object_GetById
+	bl Actor_GetById
 	mov r1, r8
 	cmp r1, #0
 	bne .L_080db0de
@@ -143,7 +143,7 @@ Func_080db0b0:
 	str r3, [r7, #20]
 	mov r0, r8
 	movs r1, #32
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r3, r10
 	lsls r3, r3, #16
 	mov r10, r3
@@ -252,14 +252,14 @@ Func_080db0b0:
 	movs r1, #6
 	str r2, [r7, #20]
 	mov r0, r8
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #6
 	bl WaitFrames
 	movs r0, #152
 	bl Sound_PlayFar
 	mov r0, r8
 	movs r1, #7
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r3, #192
 	mov r1, r8
 	lsls r3, r3, #10
@@ -278,12 +278,12 @@ Func_080db0b0:
 	strb r3, [r4]
 	movs r1, #0
 	mov r0, r8
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r0, #5
 	bl WaitFrames
 	mov r0, r8
 	movs r1, #16
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r5, .L_080db31c
 	mov r0, r11
 	strb r5, [r0]
@@ -389,7 +389,7 @@ Func_080db0b0:
 	str r3, [r7, #20]
 	mov r0, r8
 	movs r1, #7
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #2
 	ldr r3, [sp, #8]
 	negs r0, r0
@@ -420,10 +420,10 @@ Func_080db0b0:
 	strh r3, [r0, #18]
 	movs r1, #6
 	mov r0, r8
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	add r1, sp, #8
 	ldrb r1, [r1]
 	mov r2, r11

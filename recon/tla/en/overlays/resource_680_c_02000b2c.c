@@ -9,11 +9,11 @@
 // suggest.
 // Measured against its copies: overlay 681's Func_02004a5c (differ 28 of 66).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 struct MapCell {
@@ -23,7 +23,7 @@ struct MapCell {
 };
 
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *actor = Object_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   u8 *cells;
   s32 cellX;
   s32 cellZ;
@@ -38,5 +38,5 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   actor->y = actor->z - (cellZ << 20);
   actor->motionFlags = 0;
   actor->priorityFlags |= 2;
-  ObjectDispatch_SetSingleChildFlags(actor, 0);
+  Actor_SetSingleChildFlags(actor, 0);
 }

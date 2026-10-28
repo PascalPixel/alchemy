@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
@@ -11,10 +11,10 @@ struct EventDestination {
 };
 
 void WaitFrames(s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02004c20(void);
 void Func_02004c28(void);
 void Func_02004c88(s32 actor, s32 x, s32 z);
@@ -30,7 +30,7 @@ void Func_02004db0(void);
 void Func_02004db8(s32 value);
 void Func_02004df8(s32 value, s32 mode);
 void Func_02004e30(s32 cue);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
@@ -38,7 +38,7 @@ void Func_0200050c(void);
 /// Back to the map: actor 8's position is kept in the adventure.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(8);
+  struct Actor *leader = Actor_GetById(8);
 
   Func_02004c20();
   Func_02004db8(0);

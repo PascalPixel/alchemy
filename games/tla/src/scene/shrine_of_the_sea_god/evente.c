@@ -11,7 +11,7 @@ extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
 extern const u8 gData_02003cbc[];
 extern const u8 gData_02003c10[];
 
-void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
+void Actor_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
 void Func_02003b18(void);
 void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
@@ -37,15 +37,15 @@ void Func_02002c50(void);
 void Func_02002c88(void);
 
 void Func_02002e70(void) {
-  Object_SetModeById(8, 2);
-  Object_SetModeById(9, 0);
+  Actor_SetModeById(8, 2);
+  Actor_SetModeById(9, 0);
   Func_02003aa0(9);
 }
 
 void Func_02002e8c(void) {
-  Object_GetById(gAdventure.currentOwner)->layer = 2;
+  Actor_GetById(gAdventure.currentOwner)->layer = 2;
 }
 
 void Func_02002ea8(void) {
-  Object_GetById(gAdventure.currentOwner)->layer = 0;
+  Actor_GetById(gAdventure.currentOwner)->layer = 0;
 }

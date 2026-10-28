@@ -13,9 +13,9 @@ void Func_02002ca0(void) {
 
 void Func_02002ce0(s32 id) {
   Func_020040f8(id);
-  Object_SetPartAttribute(Object_GetById(id), 15);
-  ObjectMotion_SetActionVariant(id, 1);
-  Object_GetById(id)->priorityFlags |= 2;
+  Actor_SetPartAttribute(Actor_GetById(id), 15);
+  Actor_SetSpritePriority(id, 1);
+  Actor_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02002d10(void) {

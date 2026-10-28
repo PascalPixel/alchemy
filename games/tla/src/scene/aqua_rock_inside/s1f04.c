@@ -1,9 +1,9 @@
 #include "local.h"
 
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001f04(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 speed;
@@ -27,17 +27,17 @@ fall:
   object->y -= speed;
   object->angle += 0x2000;
   speed += -0xccc;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   WaitFrames(1);
   i--;
   if (i >= 0)
     goto fall;
   Func_02002bd4(object);
   Animation_ApplyChildValues(object, 0);
-  ObjectMotion_SetSpeedParameters_(gAdventure.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeedParameters_(gAdventure.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
   Func_02003ef4(215);
-  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 168, 200);
+  Actor_SetPositionAndCommit(gAdventure.currentOwner, 168, 200);
   Func_02003d84();
 }

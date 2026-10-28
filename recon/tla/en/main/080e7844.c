@@ -14,7 +14,7 @@
 // pointer at sp 72) and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "dma.h"
 
@@ -46,8 +46,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -57,7 +57,7 @@ struct FxScene {
 
 struct FxEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 struct ObjectAnimation {
@@ -74,11 +74,11 @@ void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
+s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -89,11 +89,11 @@ void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_080db9a8(struct ObjectRuntime *object, s32 facing);
+s32 Func_080db9a8(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value);
-void ObjectMotion_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -102,8 +102,8 @@ void Func_080e7844(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   u8 *vramWork = Ram_HeapSlots->windowTiles;
-  struct ObjectRuntime *caster = scene->mainObject;
-  struct ObjectRuntime *object;
+  struct Actor *caster = scene->mainObject;
+  struct Actor *object;
   struct ObjectAnimation *animation;
   struct EffectSprite *sprite;
   struct PuffParticle *particle;
@@ -150,7 +150,7 @@ void Func_080e7844(void) {
         Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {
       result = 2;
       found = i;
-      ((u8 *)Object_GetById(i))[35] |= 2;
+      ((u8 *)Actor_GetById(i))[35] |= 2;
       goto loaded;
     }
   }
@@ -384,9 +384,9 @@ loaded:
   } while (phase != 999);
 
   if (found != -1) {
-    object = Object_GetById(found);
+    object = Actor_GetById(found);
     Func_080dbdd4(object->x, object->z, object->terrainId, 0);
-    ObjectMotion_SetHorizontalPositionWithTerrain(found, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,

@@ -4,7 +4,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct FieldPosition {
   s32 x;
@@ -17,12 +17,12 @@ extern const u16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_080c8710(struct ObjectRuntime *object);
-s32 Func_080c8700(struct ObjectRuntime *object);
+s32 Func_080c8710(struct Actor *object);
+s32 Func_080c8700(struct Actor *object);
 s32 Func_0802da24(s32 *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
 /* FAKEMATCH: the held keys are read through a volatile pointer, again for each
  * test; as a plain field one read serves several (differ 43). */
@@ -33,8 +33,8 @@ s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 /// depth. Refuses steps into an occupied cell, from or onto a cell without
 /// attribute bit 6, or onto ground too high (up) or too low (down), and
 /// records the held keys in the event work. Returns 1.
-// As ☀️'s Object_MoveByKeys.
-s32 Object_MoveByKeys(struct ObjectRuntime *object) {
+// As ☀️'s Actor_MoveByKeys.
+s32 Actor_MoveByKeys(struct Actor *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
@@ -116,7 +116,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
       work->blockedSteps = 0;
     work->heldKeys = INPUT_HELD;
   }
-  ObjectDispatch_SelectAnimation(object, animation);
+  Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
@@ -125,7 +125,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
     object->velocityY = 0;
     object->velocityZ = 0;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
   }
   object->step++;
   return 1;

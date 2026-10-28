@@ -17,15 +17,15 @@ struct YallamObject {
   s16 timer;
 };
 
-struct YallamObject *Object_GetById(s32 id);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+struct YallamObject *Actor_GetById(s32 id);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Func_02002448(struct YallamObject *object, s32 mode);
 void Func_02002450(struct YallamObject *object, s32 x, s32 y, s32 z);
 s32 Func_020006a4(struct YallamObject *object);
 
 void Func_020006bc(s32 actor) {
-  struct YallamObject *object = Object_GetById(actor);
+  struct YallamObject *object = Actor_GetById(actor);
   u8 *state = &object->state;
   s16 *timer;
 
@@ -48,481 +48,481 @@ void Func_020006bc(s32 actor) {
   }
   switch (*timer) {
   case 0:
-    ObjectMotion_ResetAndSetPosition(actor, 344, 824);
+    Actor_ResetAndSetPosition(actor, 344, 824);
     (*timer)++;
     return;
   case 2:
-    ObjectMotion_ResetAndSetPosition(actor, 324, 820);
+    Actor_ResetAndSetPosition(actor, 324, 820);
     (*timer)++;
     return;
   case 4:
-    ObjectMotion_ResetAndSetPosition(actor, 320, 808);
+    Actor_ResetAndSetPosition(actor, 320, 808);
     (*timer)++;
     return;
   case 6:
-    ObjectMotion_ResetAndSetPosition(actor, 324, 796);
+    Actor_ResetAndSetPosition(actor, 324, 796);
     (*timer)++;
     return;
   case 8:
-    ObjectMotion_ResetAndSetPosition(actor, 344, 792);
+    Actor_ResetAndSetPosition(actor, 344, 792);
     (*timer)++;
     return;
   case 10:
-    ObjectMotion_ResetAndSetPosition(actor, 364, 796);
+    Actor_ResetAndSetPosition(actor, 364, 796);
     (*timer)++;
     return;
   case 12:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 808);
+    Actor_ResetAndSetPosition(actor, 368, 808);
     (*timer)++;
     return;
   case 14:
-    ObjectMotion_ResetAndSetPosition(actor, 364, 820);
+    Actor_ResetAndSetPosition(actor, 364, 820);
     (*timer)++;
     return;
   case 16:
-    ObjectMotion_ResetAndSetPosition(actor, 344, 824);
+    Actor_ResetAndSetPosition(actor, 344, 824);
     (*timer)++;
     return;
   case 18:
-    ObjectMotion_ResetAndSetPosition(actor, 324, 820);
+    Actor_ResetAndSetPosition(actor, 324, 820);
     (*timer)++;
     return;
   case 20:
-    ObjectMotion_ResetAndSetPosition(actor, 320, 808);
+    Actor_ResetAndSetPosition(actor, 320, 808);
     (*timer)++;
     return;
   case 22:
-    ObjectMotion_ResetAndSetPosition(actor, 324, 796);
+    Actor_ResetAndSetPosition(actor, 324, 796);
     (*timer)++;
     return;
   case 24:
-    ObjectMotion_ResetAndSetPosition(actor, 344, 792);
+    Actor_ResetAndSetPosition(actor, 344, 792);
     (*timer)++;
     return;
   case 26:
-    ObjectMotion_ResetAndSetPosition(actor, 364, 796);
+    Actor_ResetAndSetPosition(actor, 364, 796);
     (*timer)++;
     return;
   case 28:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 808);
+    Actor_ResetAndSetPosition(actor, 368, 808);
     (*timer)++;
     return;
   case 30:
-    ObjectMotion_ResetAndSetPosition(actor, 364, 820);
+    Actor_ResetAndSetPosition(actor, 364, 820);
     (*timer)++;
     return;
   case 32:
-    ObjectMotion_ResetAndSetPosition(actor, 344, 824);
+    Actor_ResetAndSetPosition(actor, 344, 824);
     (*timer)++;
     return;
   case 34:
-    ObjectMotion_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
-    ObjectMotion_ResetAndSetPosition(actor, 364, 820);
+    Actor_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
+    Actor_ResetAndSetPosition(actor, 364, 820);
     (*timer)++;
     return;
   case 36:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 808);
+    Actor_ResetAndSetPosition(actor, 368, 808);
     (*timer)++;
     return;
   case 38:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 808);
+    Actor_ResetAndSetPosition(actor, 392, 808);
     (*timer)++;
     return;
   case 40:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 744);
+    Actor_ResetAndSetPosition(actor, 392, 744);
     (*timer)++;
     return;
   case 42:
-    ObjectMotion_SetSpeedParameters(actor, 0x13333, 0x13333);
-    ObjectMotion_ResetAndSetPosition(actor, 372, 740);
+    Actor_SetSpeedParameters(actor, 0x13333, 0x13333);
+    Actor_ResetAndSetPosition(actor, 372, 740);
     (*timer)++;
     return;
   case 44:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 728);
+    Actor_ResetAndSetPosition(actor, 368, 728);
     (*timer)++;
     return;
   case 46:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 716);
+    Actor_ResetAndSetPosition(actor, 372, 716);
     (*timer)++;
     return;
   case 48:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 712);
+    Actor_ResetAndSetPosition(actor, 392, 712);
     (*timer)++;
     return;
   case 50:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 716);
+    Actor_ResetAndSetPosition(actor, 412, 716);
     (*timer)++;
     return;
   case 52:
-    ObjectMotion_ResetAndSetPosition(actor, 416, 728);
+    Actor_ResetAndSetPosition(actor, 416, 728);
     (*timer)++;
     return;
   case 54:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 740);
+    Actor_ResetAndSetPosition(actor, 412, 740);
     (*timer)++;
     return;
   case 56:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 744);
+    Actor_ResetAndSetPosition(actor, 392, 744);
     (*timer)++;
     return;
   case 58:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 740);
+    Actor_ResetAndSetPosition(actor, 372, 740);
     (*timer)++;
     return;
   case 60:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 728);
+    Actor_ResetAndSetPosition(actor, 368, 728);
     (*timer)++;
     return;
   case 62:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 716);
+    Actor_ResetAndSetPosition(actor, 372, 716);
     (*timer)++;
     return;
   case 64:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 712);
+    Actor_ResetAndSetPosition(actor, 392, 712);
     (*timer)++;
     return;
   case 66:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 716);
+    Actor_ResetAndSetPosition(actor, 412, 716);
     (*timer)++;
     return;
   case 68:
-    ObjectMotion_ResetAndSetPosition(actor, 416, 728);
+    Actor_ResetAndSetPosition(actor, 416, 728);
     (*timer)++;
     return;
   case 70:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 740);
+    Actor_ResetAndSetPosition(actor, 412, 740);
     (*timer)++;
     return;
   case 72:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 744);
+    Actor_ResetAndSetPosition(actor, 392, 744);
     (*timer)++;
     return;
   case 74:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 740);
+    Actor_ResetAndSetPosition(actor, 372, 740);
     (*timer)++;
     return;
   case 76:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 728);
+    Actor_ResetAndSetPosition(actor, 368, 728);
     (*timer)++;
     return;
   case 78:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 716);
+    Actor_ResetAndSetPosition(actor, 372, 716);
     (*timer)++;
     return;
   case 80:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 712);
+    Actor_ResetAndSetPosition(actor, 392, 712);
     (*timer)++;
     return;
   case 82:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 716);
+    Actor_ResetAndSetPosition(actor, 412, 716);
     (*timer)++;
     return;
   case 84:
-    ObjectMotion_ResetAndSetPosition(actor, 416, 728);
+    Actor_ResetAndSetPosition(actor, 416, 728);
     (*timer)++;
     return;
   case 86:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 740);
+    Actor_ResetAndSetPosition(actor, 412, 740);
     (*timer)++;
     return;
   case 88:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 744);
+    Actor_ResetAndSetPosition(actor, 392, 744);
     (*timer)++;
     return;
   case 90:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 740);
+    Actor_ResetAndSetPosition(actor, 372, 740);
     (*timer)++;
     return;
   case 92:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 728);
+    Actor_ResetAndSetPosition(actor, 368, 728);
     (*timer)++;
     return;
   case 94:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 716);
+    Actor_ResetAndSetPosition(actor, 372, 716);
     (*timer)++;
     return;
   case 96:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 712);
+    Actor_ResetAndSetPosition(actor, 392, 712);
     (*timer)++;
     return;
   case 98:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 696);
+    Actor_ResetAndSetPosition(actor, 392, 696);
     (*timer)++;
     return;
   case 100:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 692);
+    Actor_ResetAndSetPosition(actor, 412, 692);
     (*timer)++;
     return;
   case 102:
-    ObjectMotion_ResetAndSetPosition(actor, 416, 680);
+    Actor_ResetAndSetPosition(actor, 416, 680);
     (*timer)++;
     return;
   case 104:
-    ObjectMotion_ResetAndSetPosition(actor, 412, 668);
+    Actor_ResetAndSetPosition(actor, 412, 668);
     (*timer)++;
     return;
   case 106:
-    ObjectMotion_ResetAndSetPosition(actor, 392, 664);
+    Actor_ResetAndSetPosition(actor, 392, 664);
     (*timer)++;
     return;
   case 108:
-    ObjectMotion_ResetAndSetPosition(actor, 372, 668);
+    Actor_ResetAndSetPosition(actor, 372, 668);
     (*timer)++;
     return;
   case 110:
-    ObjectMotion_ResetAndSetPosition(actor, 368, 680);
+    Actor_ResetAndSetPosition(actor, 368, 680);
     (*timer)++;
     return;
   case 112:
-    ObjectMotion_ResetAndSetPosition(actor, 320, 680);
+    Actor_ResetAndSetPosition(actor, 320, 680);
     (*timer)++;
     return;
   case 114:
-    ObjectMotion_ResetAndSetPosition(actor, 316, 692);
+    Actor_ResetAndSetPosition(actor, 316, 692);
     (*timer)++;
     return;
   case 116:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 696);
+    Actor_ResetAndSetPosition(actor, 296, 696);
     (*timer)++;
     return;
   case 118:
-    ObjectMotion_ResetAndSetPosition(actor, 276, 692);
+    Actor_ResetAndSetPosition(actor, 276, 692);
     (*timer)++;
     return;
   case 120:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 680);
+    Actor_ResetAndSetPosition(actor, 272, 680);
     (*timer)++;
     return;
   case 122:
-    ObjectMotion_ResetAndSetPosition(actor, 276, 668);
+    Actor_ResetAndSetPosition(actor, 276, 668);
     (*timer)++;
     return;
   case 124:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 664);
+    Actor_ResetAndSetPosition(actor, 296, 664);
     (*timer)++;
     return;
   case 126:
-    ObjectMotion_ResetAndSetPosition(actor, 316, 668);
+    Actor_ResetAndSetPosition(actor, 316, 668);
     (*timer)++;
     return;
   case 128:
-    ObjectMotion_ResetAndSetPosition(actor, 320, 680);
+    Actor_ResetAndSetPosition(actor, 320, 680);
     (*timer)++;
     return;
   case 130:
-    ObjectMotion_ResetAndSetPosition(actor, 316, 692);
+    Actor_ResetAndSetPosition(actor, 316, 692);
     (*timer)++;
     return;
   case 132:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 696);
+    Actor_ResetAndSetPosition(actor, 296, 696);
     (*timer)++;
     return;
   case 134:
-    ObjectMotion_ResetAndSetPosition(actor, 276, 692);
+    Actor_ResetAndSetPosition(actor, 276, 692);
     (*timer)++;
     return;
   case 136:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 680);
+    Actor_ResetAndSetPosition(actor, 272, 680);
     (*timer)++;
     return;
   case 138:
-    ObjectMotion_ResetAndSetPosition(actor, 276, 668);
+    Actor_ResetAndSetPosition(actor, 276, 668);
     (*timer)++;
     return;
   case 140:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 664);
+    Actor_ResetAndSetPosition(actor, 296, 664);
     (*timer)++;
     return;
   case 142:
-    ObjectMotion_ResetAndSetPosition(actor, 316, 668);
+    Actor_ResetAndSetPosition(actor, 316, 668);
     (*timer)++;
     return;
   case 144:
-    ObjectMotion_ResetAndSetPosition(actor, 320, 680);
+    Actor_ResetAndSetPosition(actor, 320, 680);
     (*timer)++;
     return;
   case 146:
-    ObjectMotion_ResetAndSetPosition(actor, 316, 692);
+    Actor_ResetAndSetPosition(actor, 316, 692);
     (*timer)++;
     return;
   case 148:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 696);
+    Actor_ResetAndSetPosition(actor, 296, 696);
     (*timer)++;
     return;
   case 150:
-    ObjectMotion_ResetAndSetPosition(actor, 296, 728);
+    Actor_ResetAndSetPosition(actor, 296, 728);
     (*timer)++;
     return;
   case 152:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 728);
+    Actor_ResetAndSetPosition(actor, 272, 728);
     (*timer)++;
     return;
   case 154:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 740);
+    Actor_ResetAndSetPosition(actor, 268, 740);
     (*timer)++;
     return;
   case 156:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 744);
+    Actor_ResetAndSetPosition(actor, 248, 744);
     (*timer)++;
     return;
   case 158:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 740);
+    Actor_ResetAndSetPosition(actor, 228, 740);
     (*timer)++;
     return;
   case 160:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 162:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 716);
+    Actor_ResetAndSetPosition(actor, 228, 716);
     (*timer)++;
     return;
   case 164:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 712);
+    Actor_ResetAndSetPosition(actor, 248, 712);
     (*timer)++;
     return;
   case 166:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 716);
+    Actor_ResetAndSetPosition(actor, 268, 716);
     (*timer)++;
     return;
   case 168:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 728);
+    Actor_ResetAndSetPosition(actor, 272, 728);
     (*timer)++;
     return;
   case 170:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 740);
+    Actor_ResetAndSetPosition(actor, 268, 740);
     (*timer)++;
     return;
   case 172:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 744);
+    Actor_ResetAndSetPosition(actor, 248, 744);
     (*timer)++;
     return;
   case 174:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 740);
+    Actor_ResetAndSetPosition(actor, 228, 740);
     (*timer)++;
     return;
   case 176:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 178:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 716);
+    Actor_ResetAndSetPosition(actor, 228, 716);
     (*timer)++;
     return;
   case 180:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 712);
+    Actor_ResetAndSetPosition(actor, 248, 712);
     (*timer)++;
     return;
   case 182:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 716);
+    Actor_ResetAndSetPosition(actor, 268, 716);
     (*timer)++;
     return;
   case 184:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 728);
+    Actor_ResetAndSetPosition(actor, 272, 728);
     (*timer)++;
     return;
   case 186:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 740);
+    Actor_ResetAndSetPosition(actor, 268, 740);
     (*timer)++;
     return;
   case 188:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 744);
+    Actor_ResetAndSetPosition(actor, 248, 744);
     (*timer)++;
     return;
   case 190:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 740);
+    Actor_ResetAndSetPosition(actor, 228, 740);
     (*timer)++;
     return;
   case 192:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 194:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 716);
+    Actor_ResetAndSetPosition(actor, 228, 716);
     (*timer)++;
     return;
   case 196:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 712);
+    Actor_ResetAndSetPosition(actor, 248, 712);
     (*timer)++;
     return;
   case 198:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 716);
+    Actor_ResetAndSetPosition(actor, 268, 716);
     (*timer)++;
     return;
   case 200:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 728);
+    Actor_ResetAndSetPosition(actor, 272, 728);
     (*timer)++;
     return;
   case 202:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 740);
+    Actor_ResetAndSetPosition(actor, 268, 740);
     (*timer)++;
     return;
   case 204:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 744);
+    Actor_ResetAndSetPosition(actor, 248, 744);
     (*timer)++;
     return;
   case 206:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 760);
+    Actor_ResetAndSetPosition(actor, 248, 760);
     (*timer)++;
     return;
   case 208:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 764);
+    Actor_ResetAndSetPosition(actor, 228, 764);
     (*timer)++;
     return;
   case 210:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 776);
+    Actor_ResetAndSetPosition(actor, 224, 776);
     (*timer)++;
     return;
   case 212:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 788);
+    Actor_ResetAndSetPosition(actor, 228, 788);
     (*timer)++;
     return;
   case 214:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 792);
+    Actor_ResetAndSetPosition(actor, 248, 792);
     (*timer)++;
     return;
   case 216:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 840);
+    Actor_ResetAndSetPosition(actor, 248, 840);
     (*timer)++;
     return;
   case 218:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 844);
+    Actor_ResetAndSetPosition(actor, 228, 844);
     (*timer)++;
     return;
   case 220:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 856);
+    Actor_ResetAndSetPosition(actor, 224, 856);
     (*timer)++;
     return;
   case 222:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 868);
+    Actor_ResetAndSetPosition(actor, 228, 868);
     (*timer)++;
     return;
   case 226:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 868);
+    Actor_ResetAndSetPosition(actor, 268, 868);
     (*timer)++;
     return;
   case 228:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 856);
+    Actor_ResetAndSetPosition(actor, 272, 856);
     (*timer)++;
     return;
   case 230:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 844);
+    Actor_ResetAndSetPosition(actor, 268, 844);
     (*timer)++;
     return;
   case 232:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 840);
+    Actor_ResetAndSetPosition(actor, 248, 840);
     (*timer)++;
     return;
   case 234:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 844);
+    Actor_ResetAndSetPosition(actor, 228, 844);
     (*timer)++;
     return;
   case 236:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 856);
+    Actor_ResetAndSetPosition(actor, 224, 856);
     (*timer)++;
     return;
   case 238:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 868);
+    Actor_ResetAndSetPosition(actor, 228, 868);
     (*timer)++;
     return;
   case 223:
@@ -531,173 +531,173 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 872);
+    Actor_ResetAndSetPosition(actor, 248, 872);
     object->timer++;
     return;
   case 242:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 868);
+    Actor_ResetAndSetPosition(actor, 268, 868);
     (*timer)++;
     return;
   case 244:
-    ObjectMotion_ResetAndSetPosition(actor, 272, 856);
+    Actor_ResetAndSetPosition(actor, 272, 856);
     (*timer)++;
     return;
   case 246:
-    ObjectMotion_ResetAndSetPosition(actor, 268, 844);
+    Actor_ResetAndSetPosition(actor, 268, 844);
     (*timer)++;
     return;
   case 248:
-    ObjectMotion_ResetAndSetPosition(actor, 248, 840);
+    Actor_ResetAndSetPosition(actor, 248, 840);
     (*timer)++;
     return;
   case 250:
-    ObjectMotion_ResetAndSetPosition(actor, 228, 844);
+    Actor_ResetAndSetPosition(actor, 228, 844);
     (*timer)++;
     return;
   case 252:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 856);
+    Actor_ResetAndSetPosition(actor, 224, 856);
     (*timer)++;
     return;
   case 254:
-    ObjectMotion_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
-    ObjectMotion_ResetAndSetPosition(actor, 200, 856);
+    Actor_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
+    Actor_ResetAndSetPosition(actor, 200, 856);
     (*timer)++;
     return;
   case 256:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 744);
+    Actor_ResetAndSetPosition(actor, 200, 744);
     (*timer)++;
     return;
   case 258:
-    ObjectMotion_SetSpeedParameters(actor, 0x13333, 0x13333);
-    ObjectMotion_ResetAndSetPosition(actor, 180, 740);
+    Actor_SetSpeedParameters(actor, 0x13333, 0x13333);
+    Actor_ResetAndSetPosition(actor, 180, 740);
     (*timer)++;
     return;
   case 260:
-    ObjectMotion_ResetAndSetPosition(actor, 176, 728);
+    Actor_ResetAndSetPosition(actor, 176, 728);
     (*timer)++;
     return;
   case 262:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 716);
+    Actor_ResetAndSetPosition(actor, 180, 716);
     (*timer)++;
     return;
   case 264:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 712);
+    Actor_ResetAndSetPosition(actor, 200, 712);
     (*timer)++;
     return;
   case 266:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 716);
+    Actor_ResetAndSetPosition(actor, 220, 716);
     (*timer)++;
     return;
   case 268:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 270:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 740);
+    Actor_ResetAndSetPosition(actor, 220, 740);
     (*timer)++;
     return;
   case 272:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 744);
+    Actor_ResetAndSetPosition(actor, 200, 744);
     (*timer)++;
     return;
   case 274:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 740);
+    Actor_ResetAndSetPosition(actor, 180, 740);
     (*timer)++;
     return;
   case 276:
-    ObjectMotion_ResetAndSetPosition(actor, 176, 728);
+    Actor_ResetAndSetPosition(actor, 176, 728);
     (*timer)++;
     return;
   case 278:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 716);
+    Actor_ResetAndSetPosition(actor, 180, 716);
     (*timer)++;
     return;
   case 280:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 712);
+    Actor_ResetAndSetPosition(actor, 200, 712);
     (*timer)++;
     return;
   case 282:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 716);
+    Actor_ResetAndSetPosition(actor, 220, 716);
     (*timer)++;
     return;
   case 284:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 286:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 740);
+    Actor_ResetAndSetPosition(actor, 220, 740);
     (*timer)++;
     return;
   case 288:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 744);
+    Actor_ResetAndSetPosition(actor, 200, 744);
     (*timer)++;
     return;
   case 290:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 740);
+    Actor_ResetAndSetPosition(actor, 180, 740);
     (*timer)++;
     return;
   case 292:
-    ObjectMotion_ResetAndSetPosition(actor, 176, 728);
+    Actor_ResetAndSetPosition(actor, 176, 728);
     (*timer)++;
     return;
   case 294:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 716);
+    Actor_ResetAndSetPosition(actor, 180, 716);
     (*timer)++;
     return;
   case 296:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 712);
+    Actor_ResetAndSetPosition(actor, 200, 712);
     (*timer)++;
     return;
   case 298:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 716);
+    Actor_ResetAndSetPosition(actor, 220, 716);
     (*timer)++;
     return;
   case 300:
-    ObjectMotion_ResetAndSetPosition(actor, 224, 728);
+    Actor_ResetAndSetPosition(actor, 224, 728);
     (*timer)++;
     return;
   case 302:
-    ObjectMotion_ResetAndSetPosition(actor, 220, 740);
+    Actor_ResetAndSetPosition(actor, 220, 740);
     (*timer)++;
     return;
   case 304:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 744);
+    Actor_ResetAndSetPosition(actor, 200, 744);
     (*timer)++;
     return;
   case 306:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 740);
+    Actor_ResetAndSetPosition(actor, 180, 740);
     (*timer)++;
     return;
   case 308:
-    ObjectMotion_ResetAndSetPosition(actor, 176, 728);
+    Actor_ResetAndSetPosition(actor, 176, 728);
     (*timer)++;
     return;
   case 310:
-    ObjectMotion_ResetAndSetPosition(actor, 180, 716);
+    Actor_ResetAndSetPosition(actor, 180, 716);
     (*timer)++;
     return;
   case 312:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 712);
+    Actor_ResetAndSetPosition(actor, 200, 712);
     (*timer)++;
     return;
   case 314:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 680);
+    Actor_ResetAndSetPosition(actor, 200, 680);
     (*timer)++;
     return;
   case 316:
-    ObjectMotion_ResetAndSetPosition(actor, 212, 676);
+    Actor_ResetAndSetPosition(actor, 212, 676);
     (*timer)++;
     return;
   case 318:
-    ObjectMotion_ResetAndSetPosition(actor, 216, 664);
+    Actor_ResetAndSetPosition(actor, 216, 664);
     (*timer)++;
     return;
   case 320:
-    ObjectMotion_ResetAndSetPosition(actor, 212, 652);
+    Actor_ResetAndSetPosition(actor, 212, 652);
     (*timer)++;
     return;
   case 322:
-    ObjectMotion_ResetAndSetPosition(actor, 200, 648);
+    Actor_ResetAndSetPosition(actor, 200, 648);
     (*timer)++;
     return;
   case 1:

@@ -1,6 +1,6 @@
 #include "izumo_ruins.h"
 
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02001480(s32 x, s32 z, s32 layer, s32 height);
 
 /// Updates the cells under a pillar object by its flag (the object's action):
@@ -10,7 +10,7 @@ void Func_02001480(s32 x, s32 z, s32 layer, s32 height);
 /// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
 /// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
 /// are written back and Func_02001480 is given the cell's position and height.
-void Func_02000f30(struct ObjectRuntime *object) {
+void Func_02000f30(struct Actor *object) {
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
   s32 lower = Func_02000eac(0, column, row);
@@ -23,7 +23,7 @@ void Func_02000f30(struct ObjectRuntime *object) {
     lower &= ~0x80;
     if (object->terrainHeight >> 19 != height)
       height -= 4;
-    Object_SetSpritePriority(object, 3);
+    Scene_SetActorSpritePriority(object, 3);
   } else {
     if (lower >> 8 != 232)
       upper = (upper & 0xff) | 0xff00;
@@ -31,7 +31,7 @@ void Func_02000f30(struct ObjectRuntime *object) {
       upper = (upper & 0xff) | (232 << 8);
     lower |= 0x80;
     height += 4;
-    Object_SetSpritePriority(object, 2);
+    Scene_SetActorSpritePriority(object, 2);
   }
   Func_02000ee8(0, column, row, lower);
   Func_02000ee8(2, column, row, upper);

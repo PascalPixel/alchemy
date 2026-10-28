@@ -17,7 +17,7 @@ Func_080d50f8:
 	add r3, r11
 	ldr r0, [r3]
 	sub sp, #32
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #192
 	lsls r1, r1, #18
 	ldr r1, [r1, #32]
@@ -234,7 +234,7 @@ Func_080d50f8:
 	ldr r1, [sp, #12]
 	ldr r0, [r5]
 	mov r2, r9
-	bl ObjectMotion_SetPositionAndCommit
+	bl Actor_SetPositionAndCommit
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #48]
@@ -242,9 +242,9 @@ Func_080d50f8:
 	lsls r1, r1, #8
 	movs r2, #0
 	ldr r0, [r5]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	ldr r0, [r5]
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	adds r1, r7, #0
 	adds r1, #90
 	movs r3, #1
@@ -259,10 +259,10 @@ Func_080d50f8:
 	str r0, [sp, #8]
 	ldr r1, [sp, #8]
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	adds r0, r7, #0
 	movs r1, #13
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, .L_080d533c
 	ldr r0, [sp, #4]
 	ldr r2, [r7, #12]
@@ -273,9 +273,9 @@ Func_080d50f8:
 	add r2, r8
 	mov r1, r11
 	adds r0, r7, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #18
@@ -299,7 +299,7 @@ Func_080d50f8:
 .L_080d5344:
 	adds r0, r7, #0
 	movs r1, #10
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r2, r7, #0
 	adds r2, #85
 	movs r3, #3
@@ -315,7 +315,7 @@ Func_080d50f8:
 	orrs r2, r6
 	adds r1, r2, #0
 	str r2, [sp, #8]
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r0, #6
 	bl Event_WaitFrames
 	movs r5, #0

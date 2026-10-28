@@ -7,37 +7,37 @@
 // Left: mostly the choice among r1, r2 and r3 for the field addresses and
 // constants, and the pool offsets that follow.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern u32 gFrameCount;
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
-struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void Func_02005d8c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_02005dec(struct ObjectRuntime *object);
+s32 Func_02005dec(struct Actor *object);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
-void Func_02005d94(struct ObjectRuntime *object);
-void Object_SetModeById(u32 id, s32 mode);
-void Func_02005d7c(struct ObjectRuntime *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
+void Func_02005d94(struct Actor *object);
+void Actor_SetModeById(u32 id, s32 mode);
+void Func_02005d7c(struct Actor *object);
 
 void Func_02004cc8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *prepared, *lift;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *prepared, *lift;
   u8 priorityFlags;
   s32 height;
 
@@ -46,12 +46,12 @@ void Func_02004cc8(void) {
   priorityFlags = leader->priorityFlags;
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(leader, 0);
+  Actor_SetSingleChildFlags(leader, 0);
   leader->speedLimit = 0x18000;
   leader->acceleration = 0x18000;
   lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
   Func_02005d5c(lift, 2);
-  ObjectDispatch_SetSingleChildFlags(lift, 0);
+  Actor_SetSingleChildFlags(lift, 0);
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
@@ -66,7 +66,7 @@ void Func_02004cc8(void) {
   }
   Func_02005f94(288);
   FieldEvent_WaitFrames(10);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
@@ -82,13 +82,13 @@ void Func_02004cc8(void) {
   Func_02005d8c(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
   Func_02005d94(leader);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   Func_02005d5c(lift, 5);
   WaitFrames(12);
   Func_02005d7c(lift);
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
-  ObjectDispatch_SetSingleChildFlags(leader, 1);
+  Actor_SetSingleChildFlags(leader, 1);
   leader->priorityFlags = priorityFlags;
   Func_02005d7c(prepared);
   WaitFrames(1);

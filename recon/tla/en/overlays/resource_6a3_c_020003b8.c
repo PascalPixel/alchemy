@@ -19,16 +19,16 @@ void Func_020047dc(void);
 void Func_0200494c(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020048f4(void);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_020048b4(s32 id, s32 angle);
 void Func_02004924(s32 a, s32 b);
 void Func_0200491c(s32 a, s32 b);
 void Func_0200492c(s32 frames);
 void Func_020048cc(s32 id, s32 emote, s32 frames);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02002efc(s32 value);
 void Func_020000c4(void);
-void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
+void Actor_StartRepeatedMotion(s32 id, s32 variant);
 void Func_020048d4(s32 id, s32 emote);
 void Func_020048e4(s32 a, s32 b);
 void Sound_WaitForJingle(void);
@@ -47,8 +47,8 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
 }
 
 void Func_020003b8(s32 unused, s32 id) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(id);
   s32 x;
   s32 i;
 
@@ -71,15 +71,15 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_0200494c(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x10000, 0x8000);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x10000, 0x8000);
     x = leader->x >> 20;
     if (x == 64) {
-      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1032, 232);
-      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
+      Actor_SetPositionAndReset(gAdventure.currentOwner, 1032, 232);
+      Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
     } else if (x == 63) {
-      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
+      Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
     }
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 248);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 248);
     Func_020048b4_(gAdventure.currentOwner, 0);
     Func_02004924(0x10000, 0);
     Func_0200491c(0x10003, 0);
@@ -98,13 +98,13 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_020048cc(gAdventure.currentOwner, 257, 50);
     Func_020048b4_(gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(20);
-    Object_SetModeById(gAdventure.currentOwner, 22);
+    Actor_SetModeById(gAdventure.currentOwner, 22);
     FieldEvent_WaitFrames(40);
     Func_02002efc(0);
     Func_020000c4();
-    Object_SetModeById(gAdventure.currentOwner, 1);
-    Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
-    ObjectMotion_SetVariantCallback(4, 3);
+    Actor_SetModeById(gAdventure.currentOwner, 1);
+    Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+    Actor_StartRepeatedMotion(4, 3);
     Func_020048d4(4, 258);
     FieldEvent_WaitFrames(40);
     FieldEvent_WaitFrames(60);

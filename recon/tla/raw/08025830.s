@@ -292,7 +292,7 @@ Func_08025830:
 	ldr r2, [r7, #4]
 	adds r0, r6, #0
 	adds r3, r4, #0
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	b .L_08025b34
 .L_08025a84:
 	movs r1, #0
@@ -374,7 +374,7 @@ Func_08025830:
 	ldr r1, [r5]
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 .L_08025b34:
 	ldrh r3, [r6, #4]
 	movs r0, #1

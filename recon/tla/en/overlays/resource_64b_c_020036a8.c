@@ -12,7 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "iwram_call.h"
 
@@ -33,26 +33,26 @@ struct WorldMapSprite {
   s32 scale;
 };
 
-extern struct ObjectRuntime *gData_02006c08[];
+extern struct Actor *gData_02006c08[];
 extern u8 gData_02006bd4[];
 
 struct WorldMapPlacement *Func_02004e08(void);
 s32 Func_02004e10(void);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
-void Func_02004b20(struct ObjectRuntime *object, void *dispatch);
-void Func_02004b18(struct ObjectRuntime *object, s32 mode);
-void Func_02004b38(struct ObjectRuntime *object);
+struct Actor *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
+void Func_02004b20(struct Actor *object, void *dispatch);
+void Func_02004b18(struct Actor *object, s32 mode);
+void Func_02004b38(struct Actor *object);
 
 void Func_020036a8(void) {
   struct WorldMapPlacement *placement = Func_02004e08();
-  struct ObjectRuntime *leader = Object_GetById(Func_02004e10());
+  struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 leaderReach =
       leader->radius * ((struct WorldMapSprite *)leader->animation)->scale;
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *center = work->viewCenter;
-  struct ObjectRuntime **slot;
+  struct Actor *center = work->viewCenter;
+  struct Actor **slot;
   s32 x = center->x;
   s32 z = center->z;
   s32 left, right, top, bottom;
@@ -71,7 +71,7 @@ void Func_020036a8(void) {
   }
   slot = gData_02006c08;
   for (i = 0; i < 128 && placement->kind != 0; i++, slot++, placement++) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
     s32 px, pz;
 
     if (placement->unk01 == 15)

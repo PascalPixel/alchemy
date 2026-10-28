@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
@@ -12,9 +12,9 @@ struct EventCounters {
   u16 count;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
@@ -42,8 +42,8 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
-  Object_GetById(gAdventure.currentOwner)->scaleX = 0;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_GetById(gAdventure.currentOwner)->scaleX = 0;
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -73,9 +73,9 @@ void Func_02002e78(void) {
   if (seen == 0) {
     Func_02004c20();
     Func_02004db8(0);
-    scale = Object_GetById(gAdventure.currentOwner)->scaleX;
-    Object_GetById(gAdventure.currentOwner)->scaleX = 0;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+    scale = Actor_GetById(gAdventure.currentOwner)->scaleX;
+    Actor_GetById(gAdventure.currentOwner)->scaleX = 0;
+    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                        0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -136,7 +136,7 @@ void Func_02002e78(void) {
     Func_02004c88(6, 0, 0);
     Func_02004c88(9, 0, 0);
     Func_02004c88(5, 0, 0);
-    Object_GetById(gAdventure.currentOwner)->scaleX = scale;
+    Actor_GetById(gAdventure.currentOwner)->scaleX = scale;
     Func_02004c28();
   }
 }

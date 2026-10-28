@@ -21,7 +21,7 @@ extern u32 gFrameCount;
 
 void Func_020029d0();
 void Func_020029d8();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 GameFlag_Test();
 void GameFlag_SetBit();
 void WaitFrames();
@@ -33,7 +33,7 @@ s32 Math_Sine();
 u32 Random16Far();
 struct FieldActor *Func_02002828();
 void Func_02002820();
-void Object_SetPartAttribute();
+void Actor_SetPartAttribute();
 void Func_02002a40();
 void Func_02001650();
 
@@ -91,7 +91,7 @@ void Func_02000148(struct FieldActor *object) {
   struct FieldActor *center;
   u16 angle;
 
-  center = Object_GetById(23);
+  center = Actor_GetById(23);
   angle = object->timer;
   object->x = center->x + Math_Cosine(angle) * (object->speed + 3);
   {
@@ -131,7 +131,7 @@ void Func_020001a4(void) {
 
   if (!FlagCheck(0x201) && gFrameCount % 3 != 0)
     return;
-  center = Object_GetById(23);
+  center = Actor_GetById(23);
   if (FlagCheck(0x201))
     spark = Func_02002828(672, center->x,
                           (s32)((u32)(Random16Far() << 8) >> 16 << 16) +
@@ -146,7 +146,7 @@ void Func_020001a4(void) {
     return;
   sprite = spark->sprite;
   Func_02002820(spark, gData_02003214);
-  Object_SetPartAttribute(spark, 1);
+  Actor_SetPartAttribute(spark, 1);
   spark->motionFlags = 0;
   angle = Random16Far() & 0xffff000;
   spark->timer = angle;

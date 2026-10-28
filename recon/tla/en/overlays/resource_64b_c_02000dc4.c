@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "call.h"
 
@@ -19,9 +19,9 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, void *callback);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetMovementTypeById(s32 id, void *callback);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000d4c(void);
@@ -51,7 +51,7 @@ s32 Func_02000dc4(void) {
 
   if (GameFlag_Test(0x109) == 0 && GameFlag_Test(0x8de) != 0 &&
       gAdventure.ownerOverride == 0 && gAdventure.savedX != 0) {
-    struct ObjectRuntime *ship = Object_GetById(8);
+    struct Actor *ship = Actor_GetById(8);
 
     ship->x = gAdventure.savedX;
     ship->z = gAdventure.savedZ;
@@ -111,7 +111,7 @@ s32 Func_02000dc4(void) {
     break;
   case 2:
     if (GameFlag_Test(55) == 0) {
-      ObjectMotion_EnableActionAndSetCallback(9, gData_0200632c);
+      Actor_SetMovementTypeById(9, gData_0200632c);
       Func_02001e34();
     }
     break;
@@ -126,7 +126,7 @@ s32 Func_02000dc4(void) {
     break;
   case 72:
     Func_02003d44(2);
-    Object_SetPartAttribute(Object_GetById(7), 15);
+    Actor_SetPartAttribute(Actor_GetById(7), 15);
     Func_02004c88(7, 0x1c6d0000, 0x1c840000);
     WaitFrames(1);
     Func_02004cd8((s32)MsgIVeHeard);

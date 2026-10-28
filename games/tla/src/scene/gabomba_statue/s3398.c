@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -10,7 +10,7 @@ struct EventWork1ac {
 };
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_0200584c(void);
 void Func_02001c10(void);
 void Func_020020f0(s32 value);
@@ -42,7 +42,7 @@ s32 Func_02003398(void) {
       Func_020020f0(1);
     Func_02001c10();
   }
-  Object_GetById(Func_0200584c())->priorityFlags |= 0x20;
+  Actor_GetById(Func_0200584c())->priorityFlags |= 0x20;
   party = &gAdventure;
   /* FAKEMATCH: the native loads the adventure's address before it builds the
    * scene's offset; the plain read builds the offset first (one reordered pair,

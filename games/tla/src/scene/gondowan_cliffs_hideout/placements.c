@@ -1,18 +1,18 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern const u8 gData_02000318[];
 extern const u8 gData_02000270[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 id, s32 mode);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
-void ObjectMotion_Launch(s32 id, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
+void Actor_Jump(s32 id, s32 target, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_020001b4(void);
 void Func_020001bc(void);

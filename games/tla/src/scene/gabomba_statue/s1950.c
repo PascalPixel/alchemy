@@ -1,14 +1,14 @@
 #include "types.h"
 
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02001950(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count;) {
-    u8 *flags = &Object_GetById(first + i)->priorityFlags;
+    u8 *flags = &Actor_GetById(first + i)->priorityFlags;
     u32 next = i + 1;
 
     if (show)

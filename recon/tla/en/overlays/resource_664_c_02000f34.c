@@ -2,7 +2,7 @@
 // Func_02001b54 (the same listing, with Func_02000d48 as its shots' update),
 // whose draft holds its notes.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -10,20 +10,20 @@
 #include "system/vector3.h"
 
 s32 GameFlag_Test(s32 flag);
-void Func_02005f8c(struct ObjectRuntime *object, s32 cue);
+void Func_02005f8c(struct Actor *object, s32 cue);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_02000d48(void);
 
-void Func_02000f34(struct ObjectRuntime *object) {
+void Func_02000f34(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *shot;
+  struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
@@ -44,10 +44,10 @@ void Func_02000f34(struct ObjectRuntime *object) {
           object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
       pos->z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
     }
-    shot = (struct ObjectRuntime *)Import_ActorCreate(280, pos->x,
+    shot = (struct Actor *)Import_ActorCreate(280, pos->x,
                                                        object->y, pos->z);
     Func_02005d5c(shot, 2);
-    ObjectDispatch_SetSingleChildFlags(shot, 0);
+    Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->animation)->priority = 1;
     shot->motionFlags = 0;
     ((u8 *)shot)[0x62] = 0;

@@ -1,7 +1,7 @@
 // Draft, differ 34 of 76: overlay 6b0's copy of resource_6ab_c_02003f9c.c, with
 // this overlay's symbols; that header says what is left.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct Spot {
@@ -23,7 +23,7 @@ struct SpotState {
 
 extern struct SpotState Data_02004458;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -31,7 +31,7 @@ void Func_02002d40(struct SpotState *state, struct Spot *spot);
 void Func_02002db0(struct SpotState *state, struct Spot *spot);
 
 s32 Func_020030e0(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_02004458;

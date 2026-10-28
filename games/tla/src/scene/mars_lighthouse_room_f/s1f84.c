@@ -4,10 +4,10 @@ extern const u8 gData_02005d8c[];
 
 void Func_02001e20(void);
 void Func_02001ffc(void);
-void Func_02001f84(struct ObjectRuntime *object, s32 unused) {
+void Func_02001f84(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02005490(object, gData_02005d8c);
   object->action = 0;
   object->speedLimit = 0;
@@ -15,7 +15,7 @@ void Func_02001f84(struct ObjectRuntime *object, s32 unused) {
 }
 
 void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       Func_02005498_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {

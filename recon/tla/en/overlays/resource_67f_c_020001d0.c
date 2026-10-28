@@ -5,32 +5,32 @@
 // Measured against its copies: overlay 68F's Func_0200222c (differ 94 of 130),
 // overlay 691's Func_02002d08 (differ 94 of 130).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_020014a0(s32 id, s32 x, s32 z);
-s32 Func_02001508(struct ObjectRuntime *object);
+s32 Func_02001508(struct Actor *object);
 s32 Func_02001478(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020014c0(s32 id);
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
-void Func_02001428(struct ObjectRuntime *object, s32 mode);
+void Func_02001428(struct Actor *object, s32 mode);
 
 void Func_020001d0(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 height;
 
   if (list[0] != 0xffff) {
     do {
       u32 id = list[0];
-      struct ObjectRuntime *object = Object_GetById(id);
+      struct Actor *object = Actor_GetById(id);
       s32 flag = list[1];
       struct MapCell *cells = map->layers[object->terrainId].cells;
       u8 *shapes =
@@ -56,7 +56,7 @@ void Func_020001d0(u16 *list) {
       list += 2;
     } while (list[0] != 0xffff);
   }
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

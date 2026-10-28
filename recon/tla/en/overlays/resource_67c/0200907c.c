@@ -4,13 +4,13 @@
 #include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_0200107c(s32 unused, s32 id) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if ((u32)(id - 10) <= 1) {
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
     object->motionFlags = 0;
     Func_02003d1c(8, 33, 1, 1, object->x >> 20, 34);
-    object = Object_GetById(11);
+    object = Actor_GetById(11);
     object->motionFlags = 0;
     Func_02003d1c(8, 33, 1, 1, object->x >> 20, 34);
   }

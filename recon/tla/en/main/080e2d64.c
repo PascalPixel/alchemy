@@ -13,12 +13,12 @@
 // The work's follower object is put on the owner every frame.
 #include "types.h"
 #include "fixed_math.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct CarryWork {
   u8 unk0000[0x1b0c];
-  struct ObjectRuntime *follower;
+  struct Actor *follower;
   s16 state;
   s16 timer;
   s32 angle;
@@ -32,7 +32,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Func_080e2d64(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
+  struct Actor *owner = *(struct Actor **)(effect + 16);
   s32 timer = work->timer;
   s32 position[3];
 

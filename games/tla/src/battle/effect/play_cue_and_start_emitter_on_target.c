@@ -15,7 +15,7 @@
 #include "system.h"
 #include "field_event.h"
 
-s32 Object_GetById(u32);
+s32 Actor_GetById(u32);
 
 s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
   s32 nearest = 9999;
@@ -39,11 +39,11 @@ s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode
   s32 object;
   s32 result;
 
-  object = Object_GetById(target);
+  object = Actor_GetById(target);
   result = 0;
   if (object != 0) {
     Sound_PlayFar(0x7C);
-    Object_SetMode(object, 4);
+    Actor_SetMode(object, 4);
     WaitFrames(0xC);
     result = BattleEffect_StartRandomParticleEmitter(effect, mode);
   }

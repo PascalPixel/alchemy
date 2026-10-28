@@ -94,7 +94,7 @@ void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target,
                                                  s32 frames);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
-void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
+void Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ProjectScaledBattler(s32 actor,
                                         struct EffectPosition *position);
@@ -215,7 +215,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       mote->velocityY = Random16() & 0xffff;
       mote->velocityZ = Random16() & 0xffff;
     }
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -266,7 +266,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;

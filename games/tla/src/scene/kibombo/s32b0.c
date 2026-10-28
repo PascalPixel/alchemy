@@ -4,14 +4,14 @@ void Func_020032b0(void) {
   u32 i;
 
   for (i = 0; i <= 7; i++)
-    Object_SetModeById(i + 18, 5);
+    Actor_SetModeById(i + 18, 5);
 }
 
 void Func_020032c8(void) {
   u32 i;
 
   for (i = 0; i <= 7; i++)
-    Object_SetModeById(i + 18, 1);
+    Actor_SetModeById(i + 18, 1);
 }
 
 void Func_020032e0(void) {

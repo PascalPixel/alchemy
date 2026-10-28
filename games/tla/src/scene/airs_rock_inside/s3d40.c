@@ -4,7 +4,7 @@
 /// from the controlled object at (73, 72) and stamps the cells kept at
 /// (70, 74) in their place.
 void Func_02003d40(void) {
-  struct FieldActor *object = Object_GetById(Func_02005f84());
+  struct FieldActor *object = Actor_GetById(Func_02005f84());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;

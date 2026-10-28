@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "fx_scene.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
 // The Broken Seal has 1-16; ⚓️ adds 17-30.
@@ -270,7 +270,7 @@ void BattleEffect_DispatchRequestKind(void) {
      * (differ 2 without the barrier). */
     asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
-      ((struct ObjectRuntime *)scene->child)->movementState = 1;
+      ((struct Actor *)scene->child)->movementState = 1;
     Func_080dc978(scene->firstObjectId, targetId);
   } else if (animation == FIELD_FX_PAUSE) {
     // Let the object stopped last time go, then stop the target.

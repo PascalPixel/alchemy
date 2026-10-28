@@ -6,20 +6,20 @@
 // leader in r7, spread in r8 and the count in r10 (here r8, r10 and r7), and
 // its bitfield mask comes from r0 through a copy.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
 
 extern const u8 gData_02001540[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
-struct ObjectRuntime *Func_02001438(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Func_02001438(s32 type, s32 x, s32 y, s32 z);
 s32 Func_020014f0(void *sprite, s32 frame);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02001428(struct ObjectRuntime *object, s32 mode);
-void Func_02001430(struct ObjectRuntime *object, const u8 *script);
+void Func_02001428(struct Actor *object, s32 mode);
+void Func_02001430(struct Actor *object, const u8 *script);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(void);
@@ -31,14 +31,14 @@ struct DustSprite {
 };
 
 void Func_02000974(s32 spread) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 frame = 0;
   u32 i;
 
   i = 0;
 loop:
   {
-    struct ObjectRuntime *dust = Func_02001438(
+    struct Actor *dust = Func_02001438(
         0x11d, (i << 17) + leader->x - 0x80000,
         leader->y - (((Random16Far() * 14) >> 16) << 16) - 0x20000, leader->z);
 
@@ -46,7 +46,7 @@ loop:
       frame = Func_020014f0(dust->animation, frame);
       dust->motionFlags = 0;
       dust->collisionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(dust, 0);
+      Actor_SetSingleChildFlags(dust, 0);
       Func_02001428(dust, 2);
       Func_02001430(dust, gData_02001540);
       dust->scaleX = 0xb333;

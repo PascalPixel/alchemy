@@ -262,7 +262,7 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
 void Camera_ApplyVerticalShake(s32);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Task_Remove(void *);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -1664,7 +1664,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Heap_Release(texture);
     }
     Camera_ApplyVerticalShake(8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->frameDone = 1;
     WaitFrames(1);
     frame++;

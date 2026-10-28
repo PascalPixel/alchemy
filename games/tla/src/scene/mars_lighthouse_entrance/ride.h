@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct RideEntry {
   s16 a;
@@ -46,10 +46,10 @@ extern u8 gData_020023c4[];
 
 #define RIDE_WORK ((struct RideWork *)(gData_020023c4 + 0x188))
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 

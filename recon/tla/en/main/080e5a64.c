@@ -17,7 +17,7 @@
 // at 999 after 13 frames.
 #include "types.h"
 #include "fixed_math.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct ShineParticle {
@@ -40,7 +40,7 @@ struct ShineWork {
   u8 unk1150[0x230];
   struct ShineSprite sprites[12];
   u8 unk1560[0x348];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 state;
   s16 timer;
   s8 sparkles;

@@ -27,13 +27,13 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-s32 Func_02001a1c(struct ObjectRuntime *a, struct ObjectRuntime *b);
-s32 Func_02001a80(struct ObjectRuntime *a, struct ObjectRuntime *b);
+struct Actor *Actor_GetById(s32 id);
+s32 Func_02001a1c(struct Actor *a, struct Actor *b);
+s32 Func_02001a80(struct Actor *a, struct Actor *b);
 
-void Func_02001ae0(struct ObjectRuntime *object) {
+void Func_02001ae0(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -77,7 +77,7 @@ void Func_02001ae0(struct ObjectRuntime *object) {
   }
   slot = work->slots;
   for (i = 0; i < 4 && slot->id != 0; i++, slot++) {
-    struct ObjectRuntime *other = Object_GetById(slot->id);
+    struct Actor *other = Actor_GetById(slot->id);
 
     if (other->y == other->terrainHeight && Func_02001a80(object, other)) {
       if (slot->blocked == 0) {

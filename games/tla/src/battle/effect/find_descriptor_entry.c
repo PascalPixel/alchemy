@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -12,7 +12,7 @@ struct MenuFlagWork {
 
 struct FxGroup {
   u8 unk00[32];
-  struct ObjectRuntime *objects[8];
+  struct Actor *objects[8];
   u16 values[8];
   s32 count;
 };
@@ -43,8 +43,8 @@ s32 ArcTan2(s32 y, s32 x);
 /// collision flag 4 ten thirteenths; beyond 11 pixels the object must also lie
 /// within 0x2fff of id's facing. Returns -1 when none qualifies.
 s32 Field_FindNearbyTalkTarget(s32 id) {
-  struct ObjectRuntime *src;
-  struct ObjectRuntime *obj;
+  struct Actor *src;
+  struct Actor *obj;
   s32 best;
   s32 bestDist;
   s32 i;

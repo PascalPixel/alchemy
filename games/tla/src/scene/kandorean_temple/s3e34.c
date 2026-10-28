@@ -13,7 +13,7 @@ void Func_02003e34(struct FieldSprite *sprite, u32 frames, s32 step) {
   }
 }
 
-void Func_02003e60(struct ObjectRuntime *object, u32 frames, s32 step) {
+void Func_02003e60(struct Actor *object, u32 frames, s32 step) {
   /* FAKEMATCH: as Func_02003e34, the count pinned to r6 (differ 12 unpinned).
    */
   register u32 count asm("r6") = frames;

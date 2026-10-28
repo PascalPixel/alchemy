@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "task.h"
 #include "game_flags.h"
 #include "system.h"
@@ -22,7 +22,7 @@ void Event_WaitFrames(s32 frames) {
 }
 
 void Leader_StopMoving(void) {
-  struct ObjectRuntime *object =
+  struct Actor *object =
       ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
@@ -31,9 +31,9 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gAdventure.renderMode == 2)
-    Object_SetMode(object, 12);
+    Actor_SetMode(object, 12);
   else
-    Object_SetMode(object, 1);
+    Actor_SetMode(object, 1);
 }
 
 void Event_Start(void) {

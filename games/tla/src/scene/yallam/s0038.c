@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 struct TileSprite {
@@ -9,14 +9,14 @@ struct TileSprite {
   u16 tile;
 };
 
-s32 Func_02000038(struct ObjectRuntime *object) {
+s32 Func_02000038(struct Actor *object) {
   struct TileSprite *sprite = object->animation;
 
   sprite->tile = 0x8000;
   return 0;
 }
 
-s32 Func_02000044(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_02000044(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   return 0;
 }

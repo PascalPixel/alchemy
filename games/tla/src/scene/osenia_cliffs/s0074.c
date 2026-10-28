@@ -12,8 +12,8 @@ struct MapBits {
 
 void GameFlag_SetBit(s32 flag);
 void Task_Add(void (*callback)(void), s32 priority);
-void *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
+void *Actor_GetById(s32 id);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000190(void);
 void Func_02000198(s32 a, s32 b, s32 c);
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
@@ -27,7 +27,7 @@ s32 Func_02000074(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
   Task_Add(Func_020000fc, 0x480);
   {
-    u8 *flags = (u8 *)Object_GetById(gAdventure.currentOwner) + 35;
+    u8 *flags = (u8 *)Actor_GetById(gAdventure.currentOwner) + 35;
     u32 value = *flags;
     u32 bit = 32;
 
@@ -46,8 +46,8 @@ s32 Func_02000074(void) {
     asm volatile("" : "+l"(a2), "+l"(a1));
     Func_02000198(0, a1, a2);
   }
-  Object_SetModeById(12, 4);
-  Object_SetModeById(11, 4);
+  Actor_SetModeById(12, 4);
+  Actor_SetModeById(11, 4);
   {
     s32 flag = 0x104;
     s32 a0;

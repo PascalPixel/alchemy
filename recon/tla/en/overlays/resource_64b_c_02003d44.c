@@ -12,7 +12,7 @@
 #include "io_write_queue.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "lib/call.h"
 
@@ -25,7 +25,7 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02004b78(s32 a, s32 b, s32 c);
@@ -51,7 +51,7 @@ void Func_02003d44(s32 mode) {
   WaitFrames(1);
   GameFlag_ClearBit(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-  Object_GetById(gAdventure.currentOwner)->animationKind = 0;
+  Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

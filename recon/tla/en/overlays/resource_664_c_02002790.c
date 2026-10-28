@@ -5,7 +5,7 @@
 // Left: as Func_02002898's draft, the native keeps the saved values'
 // addresses in high registers across the two copies.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
@@ -18,12 +18,12 @@ extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
 s32 Func_02005f84(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005db4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 
 void Func_02002790(void) {
-  struct ObjectRuntime *actor = Object_GetById(Func_02005f84());
+  struct Actor *actor = Actor_GetById(Func_02005f84());
   s32 x = actor->x >> 20;
   s32 y = actor->y >> 20;
   s32 z = actor->z >> 20;

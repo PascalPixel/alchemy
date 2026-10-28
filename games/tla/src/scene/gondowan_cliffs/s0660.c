@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "adventure.h"
@@ -12,18 +12,18 @@
    } *)(base))                                                                 \
        ->v)
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffsetFar();
 void Func_0200120c(void);
 void Func_020012e4(s32);
-void Object_TurnToFaceEachOther(s32, s32, s32);
+void Actor_TurnToFaceEachOther(s32, s32, s32);
 void Func_0200128c(s32);
 void Func_02001294(s32, s32);
-void ObjectMotion_ArmCallback();
+void Actor_ArmCallback();
 void Func_02001214(void);
 
 void Func_02000660(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   struct {
     s32 x, y, z;
   } position;
@@ -38,10 +38,10 @@ void Func_02000660(void) {
   } else {
     Func_0200120c();
     Func_020012e4(0);
-    Object_TurnToFaceEachOther(16, gAdventure.currentOwner, 0);
+    Actor_TurnToFaceEachOther(16, gAdventure.currentOwner, 0);
     Func_0200128c((s32)MsgRrruffRrruff2);
     Func_02001294(16, 0);
-    Call3(ObjectMotion_ArmCallback, 16, 0x8000, 0);
+    Call3(Actor_ArmCallback, 16, 0x8000, 0);
     Func_02001214();
   }
 }

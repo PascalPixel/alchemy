@@ -7,8 +7,8 @@
        ->v)
 
 #include "call.h"
-s32 ObjectMotion_SetActionVariant();
+s32 Actor_SetSpritePriority();
 
 void Func_02000674(s32 a0, s32 a1) {
-  Call2(ObjectMotion_SetActionVariant, a1, 2);
+  Call2(Actor_SetSpritePriority, a1, 2);
 }

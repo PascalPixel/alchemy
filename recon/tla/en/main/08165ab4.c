@@ -115,9 +115,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // ObjectGroup_UpdateMembers
+                   s32 frames);   // Actor_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
@@ -383,7 +383,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

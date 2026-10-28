@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -20,13 +20,13 @@ void Func_02003148();
 void Func_020031a8();
 void Func_02002fc0();
 void FieldEvent_WaitFrames();
-void ObjectMotion_SetSpeedParameters();
-s32 Object_GetById();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_ResetAndSetPositionInMode2();
+void Actor_SetSpeedParameters();
+s32 Actor_GetById();
+void Actor_SetPositionAndReset();
+void Actor_ResetAndSetPositionInMode2();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void ObjectMotion_CommitCurrentPositionAndActivate();
+void Actor_WaitForMoveById();
 s32 Func_020030e8();
 s32 Func_02003050();
 
@@ -55,30 +55,30 @@ s32 Func_020005d0(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   r6 = (s32)&gAdventure;
   r6 = r6 + 532;
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, FIELD_AT(r6, s32, 0),
+  Call3((void (*)())Actor_SetSpeedParameters, FIELD_AT(r6, s32, 0),
         0x8000, 0x4000);
-  v0 = Object_GetById(FIELD_AT(r6, s32, 0));
+  v0 = Actor_GetById(FIELD_AT(r6, s32, 0));
   FIELD_AT(v0, u8, 85) = 0;
-  v1 = Object_GetById(FIELD_AT(r6, s32, 0));
+  v1 = Actor_GetById(FIELD_AT(r6, s32, 0));
   r5_1 = FIELD_AT(v1, s32, 8);
   r5_1 = r5_1 >> 19;
   r5_1 = r5_1 | r8;
-  v2 = Object_GetById(FIELD_AT(r6, s32, 0));
+  v2 = Actor_GetById(FIELD_AT(r6, s32, 0));
   r5_1 = r5_1 << 3;
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, FIELD_AT(r6, s32, 0),
+  Call3((void (*)())Actor_SetPositionAndReset, FIELD_AT(r6, s32, 0),
         r5_1, (*(s16 *)(v2 + 18)) | r8);
   Call1((void (*)())Func_020031a8, 123);
-  v3 = Object_GetById(FIELD_AT(r6, s32, 0));
+  v3 = Actor_GetById(FIELD_AT(r6, s32, 0));
   r5_2 = FIELD_AT(v3, s32, 8);
-  v4 = Object_GetById(FIELD_AT(r6, s32, 0));
+  v4 = Actor_GetById(FIELD_AT(r6, s32, 0));
   r5_2 = r5_2 >> 19;
   r5_2 = r5_2 << 3;
-  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2,
         FIELD_AT(r6, s32, 0), r5_2, ((*(s16 *)(v4 + 18)) | r8) - 16);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  ObjectMotion_CommitCurrentPositionAndActivate(FIELD_AT(r6, s32, 0));
+  Actor_WaitForMoveById(FIELD_AT(r6, s32, 0));
   v5 = Func_020030e8(FIELD_AT(r7, s16, 0));
   v6 = Func_02003050();
   /* add (s32)stack, #8 */

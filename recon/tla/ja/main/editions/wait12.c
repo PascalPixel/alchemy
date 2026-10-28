@@ -13,7 +13,7 @@ struct Object080eceac {
   s16 field24;
 };
 
-void Object_WaitTwelveFramesThenSetField18(struct Object080eceac *obj) {
+void Actor_WaitTwelveFramesThenSetField18(struct Object080eceac *obj) {
   BattleMotion_ApproachTargetFar(obj->field08, obj->field24, 0x18, 0x73333);
   WaitFrames(0xC);
   obj->field18 = 3;

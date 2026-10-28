@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct ReflectionSprite {
@@ -16,11 +16,11 @@ struct ReflectionAnimation {
   struct ReflectionSprite *sprite;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 
-void Func_020010d4(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_020010d4(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct ReflectionAnimation *leaderAnimation = leader->animation;
   struct ReflectionAnimation *animation = object->animation;
 

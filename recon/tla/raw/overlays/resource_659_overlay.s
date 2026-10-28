@@ -109,7 +109,7 @@ Func_02000624:
 	adds r3, r5, r2
 	ldr r0, [r3]
 	sub sp, #8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #32
@@ -149,13 +149,13 @@ Func_02000624:
 	b .L_020086b2
 .L_0200869a:
 	movs r0, #29
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #3
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #30
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #5
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_020086b2:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -216,18 +216,18 @@ Func_02000624:
 	movs r0, #10
 	bl Func_02001ef0
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r1, [r0, #80]
 	movs r3, #8
 	ldrb r2, [r1, #26]
 	movs r0, #10
 	orrs r3, r2
 	strb r3, [r1, #26]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r1, [r0, #80]
 	movs r3, #3
 	ldrb r2, [r1, #17]
@@ -236,7 +236,7 @@ Func_02000624:
 	movs r2, #32
 	orrs r3, r2
 	strb r3, [r1, #17]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, [r0, #80]
 	movs r3, #1
 	strb r3, [r2, #25]
@@ -249,15 +249,15 @@ Func_02000624:
 	cmp r0, #0
 	beq .L_0200878a
 	movs r0, #33
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #2
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	b .L_02008796
 .L_0200878a:
 	movs r0, #28
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #2
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_02008796:
 	movs r0, #0
 	add sp, #8

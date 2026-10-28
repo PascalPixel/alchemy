@@ -2,7 +2,7 @@
 
 void Func_02001148(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   Func_02001488();
   Func_020014e8(0);

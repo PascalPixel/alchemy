@@ -253,7 +253,7 @@ BattleEvent_Playback:
 	bl BattleObject_Get
 	movs r1, #5
 	ldr r0, [r0]
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r4, #164
 	lsls r4, r4, #1
 	movs r0, #168

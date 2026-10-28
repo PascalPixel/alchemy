@@ -37,7 +37,7 @@ Func_080e4730:
 	strb r2, [r3]
 	movs r1, #1
 	mov r0, r8
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	ldr r0, .L_080e4a1c
 	bl Task_Remove
 	ldr r0, .L_080e4a20
@@ -100,7 +100,7 @@ Func_080e4730:
 	ldr r1, [r3, #8]
 	mov r0, r8
 	ldr r3, [r3, #16]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	ldr r6, .L_080e4a18
 	movs r0, #133
 	lsls r0, r0, #2
@@ -143,7 +143,7 @@ Func_080e4730:
 	strh r3, [r2, #6]
 	mov r0, r8
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r3, r8
 	ldr r0, [r3, #80]
 	movs r1, #15
@@ -228,7 +228,7 @@ Func_080e4730:
 	bne .L_080e49b2
 	mov r0, r8
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r1, r8
 	ldr r0, [r1, #80]
 	movs r1, #0
@@ -236,10 +236,10 @@ Func_080e4730:
 	mov r3, r11
 	movs r2, #24
 	ldrsh r0, [r3, r2]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r6, r11
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r1, #1
 	movs r5, #24
 	ldrsh r0, [r6, r5]
@@ -332,7 +332,7 @@ Func_080e4730:
 	movs r1, #0
 	movs r2, #16
 	mov r0, r8
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	ldr r0, [sp, #32]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #28]

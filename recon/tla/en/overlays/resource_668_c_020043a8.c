@@ -11,7 +11,7 @@
 // leader, the object and the kind.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 
@@ -22,13 +22,13 @@ extern u16 gData_02004ca4[];
 extern s8 gData_02004cb0[][4];
 extern s32 gData_02004cc8[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
-struct ObjectRuntime *Func_020043a8(s32 *direction, s32 *slot, s32 *kind) {
+struct Actor *Func_020043a8(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime **entry;
-  struct ObjectRuntime *object;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor **entry;
+  struct Actor *object;
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 

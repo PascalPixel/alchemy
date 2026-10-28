@@ -2,7 +2,7 @@
 #define TLA_IZUMO_RUINS_H
 
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -15,7 +15,7 @@ struct IzumoRuinsEventWork {
   u8 unk156[0x56];
   s32 field1ac;
   u8 unk1b0[0xb0c];
-  struct ObjectRuntime *objectCbc;
+  struct Actor *objectCbc;
 };
 
 struct IzumoRuinsAnimation {
@@ -58,16 +58,16 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_02000bc0(s32 a, s32 b, s32 owner);
 s32 Func_02000eac(u32 layer, s32 x, s32 y);
 s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
-void Func_02000f30(struct ObjectRuntime *object);
-void Func_02001428(struct ObjectRuntime *object, s32 value);
+void Func_02000f30(struct Actor *object);
+void Func_02001428(struct Actor *object, s32 value);
 void Func_02001450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001460(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001488(void);
@@ -96,7 +96,7 @@ void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02001448(void);
 void Func_02001470(s32 a, s32 b, s32 c);
-s32 Func_02001508(struct ObjectRuntime *object);
+s32 Func_02001508(struct Actor *object);
 void Func_02001510(const void *data);
 void Func_020014e0(s32 value);
 void Func_020014f8(const void *data);

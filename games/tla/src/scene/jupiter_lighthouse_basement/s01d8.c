@@ -1,7 +1,7 @@
 #include "types.h"
 
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 #include "frame.h"
@@ -21,38 +21,38 @@ struct CellTarget {
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void Func_0200015c(struct ObjectRuntime *object);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Func_0200015c(struct Actor *object);
 void Func_020004dc(s32 mode);
-struct ObjectRuntime *Func_02001c04(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Func_02001c04(s32 type, s32 x, s32 y, s32 z);
 void Func_02001c34(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-struct ObjectRuntime *Func_02001cdc(void);
+struct Actor *Func_02001cdc(void);
 void Func_02001d3c(s32 id);
 void Func_02001d4c(s32 cue);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-void Func_020001d8(struct ObjectRuntime *object) {
+void Func_020001d8(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(object, 0);
     Map_EnableUpdateCallback();
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, 16);
   Map_DisableUpdateCallback();
   if (OBJECT_BYTE(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)

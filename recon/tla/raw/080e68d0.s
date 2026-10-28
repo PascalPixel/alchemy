@@ -70,7 +70,7 @@ Func_080e68d0:
 	adds r0, #255
 	movs r1, #0
 	movs r2, #0
-	bl Object_Spawn
+	bl Actor_Spawn
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #48
@@ -129,7 +129,7 @@ Func_080e68d0:
 	ldrh r3, [r4, #6]
 	movs r1, #0
 	strh r3, [r0, #6]
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r1, r10
 	adds r1, #65
 	str r1, [sp, #4]
@@ -166,7 +166,7 @@ Func_080e68d0:
 	ldr r2, [r2, #8]
 	ldr r3, [r4, #12]
 .L_080e6a10:
-	bl Object_Spawn
+	bl Actor_Spawn
 	str r0, [sp, #24]
 	movs r3, #200
 	lsls r3, r3, #5
@@ -217,7 +217,7 @@ Func_080e68d0:
 	bl WaitFrames
 	mov r0, r11
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #15
 	bl WaitFrames
 	movs r4, #9
@@ -238,7 +238,7 @@ Func_080e68d0:
 	bge .L_080e6a8a
 	mov r0, r11
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #132
 	bl Sound_PlayFar
 	movs r4, #0
@@ -993,9 +993,9 @@ Func_080e68d0:
 	bl Resource_ResetEntry
 .L_080e70ce:
 	mov r0, r11
-	bl Object_Destroy
+	bl Actor_Destroy
 	ldr r0, [sp, #24]
-	bl Object_Destroy
+	bl Actor_Destroy
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #92
 	bl HeapSlot_Release

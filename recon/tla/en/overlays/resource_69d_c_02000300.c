@@ -7,18 +7,18 @@
 // the priority as explicit byte masks (20 to 23); pinning i to r7, or i and the
 // phase, 37 to 43.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
-struct ObjectRuntime *Func_02001dc0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_02001dc0(s32 kind, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Func_02000244(struct ObjectRuntime *object);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Func_02000244(struct Actor *object);
 
 void Func_02000300(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
   s32 phase;
 
@@ -32,8 +32,8 @@ void Func_02000300(void) {
     object->update = (void (*)(void))Func_02000244;
     object->action = Random16Far();
     object->unk66 = phase;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
-    Object_SetPartAttribute(object, 2);
+    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetPartAttribute(object, 2);
     ((struct FieldSprite *)object->animation)->priority = 1;
     phase += 5;
   }

@@ -2,7 +2,7 @@
 #include "adventure.h"
 #include "field_effect.h"
 
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 
 /// Effect_AdvanceMotion with a fixed spin: moves the effect by its velocity,
 /// damps the X and Z velocity, steps the scale and turns the sprite 0x1000
@@ -14,7 +14,7 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   s32 velocityZ;
   s32 scaleRateX;
 
-  Object_GetById(gAdventure.currentOwner);
+  Actor_GetById(gAdventure.currentOwner);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
   effect->y += effect->velocity.y;

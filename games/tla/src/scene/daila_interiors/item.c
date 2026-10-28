@@ -23,7 +23,7 @@ struct DailaActor {
   s32 unk6c;
 };
 
-struct DailaActor *Object_GetById(s32 id);
+struct DailaActor *Actor_GetById(s32 id);
 s32 PartyInventory_Add(s32 item);
 s32 Func_02000d14(s32 item);
 void Func_02000da4(struct DailaActor *object, s32 mode);
@@ -38,14 +38,14 @@ void Func_02000730(void) {
   s32 savedY;
   s32 item;
 
-  saved48 = Object_GetById(9)->unk48;
+  saved48 = Actor_GetById(9)->unk48;
   item = 458;
-  saved28 = Object_GetById(9)->unk28;
-  savedY = Object_GetById(9)->y;
+  saved28 = Actor_GetById(9)->unk28;
+  savedY = Actor_GetById(9)->y;
   Import_EventStart();
   Import_EventResolvePendingActions(0);
   if (Func_02000d14(item) >= 0) {
-    Func_02000da4(Object_GetById(9), 3);
+    Func_02000da4(Actor_GetById(9), 3);
     Func_02000dfc(83);
     Func_02000ccc(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
@@ -54,7 +54,7 @@ void Func_02000730(void) {
     Func_02000d4c(13, 232 << 16, 194 << 16);
     GameFlag_SetBit(0xa20);
   } else {
-    Func_02000da4(Object_GetById(9), 3);
+    Func_02000da4(Actor_GetById(9), 3);
     Func_02000dfc(83);
     if (Func_02000878(item, 0) != -1) {
       Func_02000d4c(9, 0, 0);
@@ -63,16 +63,16 @@ void Func_02000730(void) {
     } else {
       Func_02000d4c(9, 0, 0);
       FieldEvent_WaitFrames(1);
-      Object_GetById(9)->unk28 = saved28;
-      Object_GetById(9)->y = savedY;
-      Object_GetById(9)->unk48 = saved48;
-      Object_GetById(9)->unk6c = 0;
-      Func_02000c9c(Object_GetById(9));
+      Actor_GetById(9)->unk28 = saved28;
+      Actor_GetById(9)->y = savedY;
+      Actor_GetById(9)->unk48 = saved48;
+      Actor_GetById(9)->unk6c = 0;
+      Func_02000c9c(Actor_GetById(9));
       Import_ActorSetSpritePriority(9, 1);
-      Object_GetById(9)->kind55 = 2;
-      Object_GetById(9)->speed1c = 0x13333;
-      Object_GetById(9)->speed18 = 0x13333;
-      Object_GetById(9)->flags59 |= 4;
+      Actor_GetById(9)->kind55 = 2;
+      Actor_GetById(9)->speed1c = 0x13333;
+      Actor_GetById(9)->speed18 = 0x13333;
+      Actor_GetById(9)->flags59 |= 4;
       Daila_ObjPlace(9, 232 << 16, 196 << 16);
     }
   }

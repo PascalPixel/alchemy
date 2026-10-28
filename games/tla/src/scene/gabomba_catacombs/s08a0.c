@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_020008a0(struct ObjectRuntime *object, s32 dz) {
+void Func_020008a0(struct Actor *object, s32 dz) {
   struct GabombaCatacombsFollower *follower;
   struct GabombaCatacombsVec position;
 

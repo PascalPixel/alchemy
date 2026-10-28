@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -8,16 +8,16 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
@@ -86,12 +86,12 @@ static __inline__ void Flag_Set(s32 flag) {
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitPositionAndActivate(id, x, z);
+  Actor_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, flags);
+  Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Walk(s32 id, s32 a, s32 b) {
@@ -121,7 +121,7 @@ static __inline__ void Emote(s32 id, s32 a, s32 b) {
 
 static __inline__ void Face(s32 id, s32 target, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetAngleToward(id, target, flags);
+  Actor_SetAngleToward(id, target, flags);
 }
 
 static __inline__ void Anim(s32 id, s32 mode) {
@@ -141,12 +141,12 @@ static __inline__ void Place(s32 id, s32 x, s32 y, s32 z) {
 
 static __inline__ void Speed(s32 id, s32 s, s32 a) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, s, a);
+  Actor_SetSpeedParameters(id, s, a);
 }
 
 static __inline__ void SetPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Turn(s32 id, s32 a) {
@@ -164,16 +164,16 @@ void Func_020029c8(void) {
   next = 16;
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
     next = 15;
-  ObjectMotion_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(10);
-  Object_GetById(4)->actionFlags &= 0xfe;
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);
-  Object_SetModeById(4, 13);
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  Object_SetModeById(4, 10);
+  Actor_GetById(4)->actionFlags &= 0xfe;
+  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_WaitForMoveById(4);
+  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetModeById(4, 13);
+  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_WaitForMoveById(4);
+  Actor_SetModeById(4, 10);
   FieldEvent_WaitFrames(10);
   Func_02002c90(123);
   Func_02002c30(next);
@@ -187,7 +187,7 @@ void Func_02002a58(void) {
   Func_02002c58(0);
   CommitPos(4, 0, -14);
   id = 4;
-  ObjectMotion_CommitPositionAndActivate(id, 16, 0);
+  Actor_CommitPositionAndActivate(id, 16, 0);
   Func_020029c8();
 }
 
@@ -202,7 +202,7 @@ void Func_02002a80(void) {
   id = 4;
   /* FAKEMATCH: the actor id comes between the distances and their negation. */
   __asm__ volatile("" : "+r"(id));
-  ObjectMotion_CommitPositionAndActivate(id, -x, -z);
+  Actor_CommitPositionAndActivate(id, -x, -z);
   Func_020029c8();
 }
 
@@ -215,6 +215,6 @@ void Func_02002ab0(void) {
   id = 4;
   /* FAKEMATCH: the actor id comes between the angle byte and its shift. */
   __asm__ volatile("" : "+r"(id));
-  ObjectMotion_ArmCallback(id, a << 8, 0);
+  Actor_ArmCallback(id, a << 8, 0);
   Func_020029c8();
 }

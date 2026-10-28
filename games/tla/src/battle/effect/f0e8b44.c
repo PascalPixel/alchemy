@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "map.h"
 #include "fixed_math.h"
 #include "view_move.h"
@@ -15,7 +15,7 @@
 /// beside neither. A held view does not move.
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *center = event->viewCenter;
+  struct Actor *center = event->viewCenter;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 x;

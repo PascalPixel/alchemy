@@ -16,12 +16,12 @@ void Func_02000c90(void) {
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Object_SetModeById(7, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(7, 2);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != 0)
-    ObjectMotion_ResetAndSetPosition(7, *(s16 *)((u8 *)leader + 10),
+    Actor_ResetAndSetPosition(7, *(s16 *)((u8 *)leader + 10),
                                      *(s16 *)((u8 *)leader + 18));
-  ObjectMotion_CommitCurrentPositionAndActivate(7);
+  Actor_WaitForMoveById(7);
   Func_02005b0c(7, 0, 0);
   GameFlag_ClearBit(0x92f);
   GameFlag_SetBit(0x92e);

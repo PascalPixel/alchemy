@@ -24,7 +24,7 @@ Func_080e25e8:
 	mov r11, r3
 	ldr r5, [r6, #108]
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #20]
 	movs r2, #204
 	asrs r3, r3, #20

@@ -5,8 +5,8 @@
 #include "field_sprite.h"
 #include "event_work.h"
 
-#include "object_runtime.h"
-#define Object_SetMode ((void (*)(struct FieldActor *, s32))Object_SetMode)
+#include "actor.h"
+#define Actor_SetMode ((void (*)(struct FieldActor *, s32))Actor_SetMode)
 
 struct FieldActor {
   u8 unk00[6];
@@ -45,9 +45,9 @@ void Event_Start(void);
 void Event_End(void);
 struct FieldActor *Actor_Get(s32 actor);
 void Actor_SetAnimation(s32 actor, s32 animation);
-struct FieldActor *Object_Create(s32 type, s32 x, s32 y, s32 z);
-void Object_SetScript(struct FieldActor *object, const void *script);
-void Object_SetPalette(struct FieldActor *object, s32 palette);
+struct FieldActor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
+void Actor_SetScript(struct FieldActor *object, const void *script);
+void Actor_SetPalette(struct FieldActor *object, s32 palette);
 void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);
 void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                      s32 height);

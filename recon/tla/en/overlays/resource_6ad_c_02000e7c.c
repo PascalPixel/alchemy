@@ -46,7 +46,7 @@ s32 Func_020056b8();
 s32 Func_020056c0();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Task_Add();
 extern u8 Func_02000514[];
 extern u8 Func_02000e68[];
@@ -186,10 +186,10 @@ L_02009092:
   Call1((void (*)())Func_02004938, 8);
   Call1((void (*)())Func_02004938, 9);
   Call1((void (*)())Func_02004938, 10);
-  t58 = Value1((s32 (*)())Object_GetById, 11);
+  t58 = Value1((s32 (*)())Actor_GetById, 11);
   t59 = FIELD_AT(t58, u8, 35);
   FIELD_AT(t58, u8, 35) = (t59 | 2);
-  t60 = Value1((s32 (*)())Object_GetById, 12);
+  t60 = Value1((s32 (*)())Actor_GetById, 12);
   t61 = FIELD_AT(t60, u8, 35);
   v_r5 = (2 | t61);
   FIELD_AT(t60, u8, 35) = v_r5;
@@ -314,9 +314,9 @@ L_020092c0:
   FIELD_AT(t97, s32, 428) = v_r8;
   Func_02005670();
   Call3((void (*)())Func_02005678, 0, 8, 9);
-  t100 = Value1((s32 (*)())Object_GetById, 8);
+  t100 = Value1((s32 (*)())Actor_GetById, 8);
   FIELD_AT(t100, u8, 98) = 1;
-  t101 = Value1((s32 (*)())Object_GetById, 9);
+  t101 = Value1((s32 (*)())Actor_GetById, 9);
   FIELD_AT(t101, u8, 98) = 1;
   if ((u32)(v_r7 - 5) <= (u32)1)
     goto L_02009300;
@@ -353,29 +353,29 @@ L_02009350:
     goto L_02009362;
   Call3((void (*)())Func_02005598, 17, 0x2180000, 0x2280000);
 L_02009362:
-  t108 = Value1((s32 (*)())Object_GetById, 16);
+  t108 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t108, u8, 85) = 0;
   t109 = Value1((s32 (*)())GameFlag_Test, 0xa38);
   v_r5 = 0;
   if (t109 == v_r5)
     goto L_0200939a;
   Call3((void (*)())Func_02005598, 16, 0x3280000, 0x1380000);
-  t111 = Value1((s32 (*)())Object_GetById, 16);
+  t111 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t111, s32, 12) = v_r5;
-  t112 = Value1((s32 (*)())Object_GetById, 16);
+  t112 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t112, s32, 20) = v_r5;
 L_0200939a:
   t113 = FIELD_AT((s32)gAdventure, s32, 532);
-  t114 = Value1((s32 (*)())Object_GetById, t113);
+  t114 = Value1((s32 (*)())Actor_GetById, t113);
   t115 = FIELD_AT(t114, u8, 35);
   FIELD_AT(t114, u8, 35) = (t115 | 64);
-  t116 = Value1((s32 (*)())Object_GetById, 10);
+  t116 = Value1((s32 (*)())Actor_GetById, 10);
   t117 = FIELD_AT(t116, u8, 35);
   FIELD_AT(t116, u8, 35) = (t117 | 192);
-  t118 = Value1((s32 (*)())Object_GetById, 11);
+  t118 = Value1((s32 (*)())Actor_GetById, 11);
   t119 = FIELD_AT(t118, u8, 35);
   FIELD_AT(t118, u8, 35) = (t119 | 128);
-  t120 = Value1((s32 (*)())Object_GetById, 12);
+  t120 = Value1((s32 (*)())Actor_GetById, 12);
   t121 = FIELD_AT(t120, u8, 35);
   FIELD_AT(t120, u8, 35) = (t121 | 128);
 L_020093e0:

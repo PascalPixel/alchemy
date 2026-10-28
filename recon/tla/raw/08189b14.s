@@ -811,7 +811,7 @@ BattleEffect_RunLegend:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r6, #240
 	ldr r5, [sp, #48]
 	lsls r6, r6, #7

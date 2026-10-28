@@ -12,7 +12,7 @@
 // r2 and r7) and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 struct SplashParticle {
@@ -48,8 +48,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -69,7 +69,7 @@ void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_08020330(struct ObjectRuntime *object);
+s32 Func_08020330(struct Actor *object);
 void BattleEffect_InitializeSharedScene(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -84,8 +84,8 @@ void Func_080e8c9c(void);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SplashParticle *particle);
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
@@ -94,8 +94,8 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e92b4(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *child = scene->child;
-  struct ObjectRuntime *caster = scene->mainObject;
+  struct Actor *child = scene->child;
+  struct Actor *caster = scene->mainObject;
   struct SplashAnimation *animation;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;

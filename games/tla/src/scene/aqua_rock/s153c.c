@@ -3,11 +3,11 @@
 void Func_02002998(void);
 void Func_020029a0(void);
 void Func_02002a48(s32 a);
-void Func_02001d30(struct ObjectRuntime *object);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Func_02001d30(struct Actor *object);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_0200153c(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 saved = object->motionFlags;
   s32 i;
   s32 angle;
@@ -15,10 +15,10 @@ void Func_0200153c(void) {
   Func_02002998();
   Func_02002a48(0);
   Event_StartScreenTransition();
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = -0x400000;
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
   for (i = 23; i >= 0; i--) {
     object->y += 0x20000;
     angle = object->angle;
@@ -32,7 +32,7 @@ void Func_0200153c(void) {
   Func_02001d30(object);
   object->motionFlags = saved;
   object->velocityY = 0xc0000;
-  ObjectDispatch_SetSingleChildFlags(object, 1);
-  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 680, 912);
+  Actor_SetSingleChildFlags(object, 1);
+  Actor_SetPositionAndCommit(gAdventure.currentOwner, 680, 912);
   Func_020029a0();
 }

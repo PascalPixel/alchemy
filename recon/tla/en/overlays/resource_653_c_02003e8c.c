@@ -16,16 +16,16 @@ void Func_02005270(s32 id, s32 value);
 void Func_02005290(s32 id, s32 a, s32 b);
 void Func_020053d8(s32 cue);
 void Func_02003e34(void *sprite, s32 x, s32 y);
-void Func_02003e60(struct ObjectRuntime *object, s32 a, s32 b);
+void Func_02003e60(struct Actor *object, s32 a, s32 b);
 void Func_02001f3c(void);
 void Func_02001c8c(void);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
+void Actor_Jump(s32 id, s32 height, s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 s32 Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 
 void Func_02003e8c(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
   u32 i;
 
@@ -38,13 +38,13 @@ void Func_02003e8c(void) {
         0x31c0000);
   Call1((void (*)())WaitFrames, 1);
   Event_StartScreenTransition();
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetPositionAndReset, gAdventure.currentOwner,
         400, 752);
   Call2((void (*)())Func_020052d8, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1b40000, 0x480000, 0x2980000,
         1);
   Func_020052e8();
-  Call3((void (*)())ObjectMotion_Launch, 12, 4, 0);
+  Call3((void (*)())Actor_Jump, 12, 4, 0);
   Func_02005280((s32)&MsgKandoreanTemple04);
   Call2((void (*)())Func_02005298, 12, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1c80000, 0, 0x2b00000, 1);
@@ -55,7 +55,7 @@ void Func_02003e8c(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_02005270, 13, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  object = Object_GetById(13);
+  object = Actor_GetById(13);
   sprite = object->animation;
   object->motionFlags = 0;
   i = 0;
@@ -83,13 +83,13 @@ rise13:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1b40000, 0x480000, 0x2980000,
         1);
   Func_020052e8();
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 476, 664);
-  Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x3000, 0);
-  Call2((void (*)())Object_SetModeById, 12, 4);
+  Call3((void (*)())Actor_SetSpeedParameters, 12, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 476, 664);
+  Call3((void (*)())Actor_ArmCallback, 12, 0x3000, 0);
+  Call2((void (*)())Actor_SetModeById, 12, 4);
   Call2((void (*)())Func_02005298, 0x100c, 0);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 474, 664);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 472, 648);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 474, 664);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 472, 648);
   Call3((void (*)())Func_02005230, 12, 0, 0);
   Call2((void (*)())Func_020052d8, 0x13333, 0x2666);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x16c0000, 0x480000, 0x2980000,
@@ -97,9 +97,9 @@ rise13:
   Func_020052e8();
   Call3((void (*)())Func_02005230, 12, 0x1480000, 0x2880000);
   Call1((void (*)())WaitFrames, 1);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 326, 664);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 320, 664);
-  Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x5000, 0);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 326, 664);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 320, 664);
+  Call3((void (*)())Actor_ArmCallback, 12, 0x5000, 0);
   Call2((void (*)())Func_02005298, 0x200c, 0);
   Call2((void (*)())Func_020052d8, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1560000, 0, 0x2b00000, 1);
@@ -111,7 +111,7 @@ rise13:
   Call2((void (*)())Func_02005270, 14, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020052d0, 14, 0x101);
-  object = Object_GetById(14);
+  object = Actor_GetById(14);
   object->motionFlags = 0;
   i = 0;
 rise14:
@@ -136,7 +136,7 @@ rise14:
         1);
   Func_020052e8();
   Call2((void (*)())Func_02005298, 0x200c, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x3000, 10);
+  Call3((void (*)())Actor_ArmCallback, 12, 0x3000, 10);
   Call2((void (*)())Func_02005298, 12, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1900000, 0, 0x2b00000, 1);
   Func_020052e8();
@@ -146,7 +146,7 @@ rise14:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_02005270, 15, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  object = Object_GetById(15);
+  object = Actor_GetById(15);
   sprite = object->animation;
   object->motionFlags = 0;
   i = 0;
@@ -176,9 +176,9 @@ fall15:
   Call3((void (*)())Func_02005290, 15, 0, 20);
   Call2((void (*)())Func_02005298, 0x100c, 0);
   Value3((s32 (*)())Func_020052c8, 15, 0x103, 20);
-  Call2((void (*)())Object_SetModeById, 15, 1);
-  Call3((void (*)())ObjectMotion_Launch, 15, 4, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 15, 0xb000, 20);
+  Call2((void (*)())Actor_SetModeById, 15, 1);
+  Call3((void (*)())Actor_Jump, 15, 4, 0);
+  Call3((void (*)())Actor_ArmCallback, 15, 0xb000, 20);
   Call2((void (*)())Func_02005298, 0x400f, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x16c0000, 0x480000, 0x2980000,
         1);
@@ -186,31 +186,31 @@ fall15:
   Value3((s32 (*)())Func_020052c8, 12, 0x102, 20);
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Call2((void (*)())Func_02005298, 15, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 12, 0xb000, 40);
-  Call2((void (*)())Object_SetModeById, 12, 4);
+  Call3((void (*)())Actor_ArmCallback, 12, 0xb000, 40);
+  Call2((void (*)())Actor_SetModeById, 12, 4);
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Call2((void (*)())Func_02005298, 15, 0);
   Value3((s32 (*)())Func_020052c8, 12, 0x105, 80);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x3000, 20);
-  Call2((void (*)())Object_SetModeById, 12, 3);
+  Call3((void (*)())Actor_ArmCallback, 12, 0x3000, 20);
+  Call2((void (*)())Actor_SetModeById, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 326, 664);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 328, 648);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
-  Object_SetPartAttribute(Object_GetById(12), 15);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 326, 664);
+  Call3((void (*)())Actor_SetPositionAndReset, 12, 328, 648);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetPartAttribute(Actor_GetById(12), 15);
   Call3((void (*)())Func_02005230, 12, 0x1b80000, 0x2580000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1900000, 0, 0x2b00000, 1);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 15, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 15, 400, 644);
+  Call3((void (*)())Actor_SetSpeedParameters, 15, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetPositionAndReset, 15, 400, 644);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())Func_020053d8, 188);
   Func_02001f3c();
   Call2((void (*)())Func_02005298, 12, 0);
   Task_RemoveFar(Func_02001c8c);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 15, 3);
-  Call2((void (*)())ObjectMotion_SetActionVariant, 15, 3);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 15, 400, 640);
+  Call2((void (*)())Actor_SetSpritePriority, 15, 3);
+  Call3((void (*)())Actor_SetPositionAndReset, 15, 400, 640);
   Call3((void (*)())Func_02005230, 15, 0, 0);
   Call3((void (*)())Func_02005230, 12, 0, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1900000, 0, 0x2f00000, 1);

@@ -221,10 +221,10 @@ Func_0816a2d8:
 	ldr r5, [r0]
 	movs r1, #2
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	b .L_0816a4a6
 .L_0816a496:
 	ldr r2, [sp, #16]
@@ -471,7 +471,7 @@ Func_0816a2d8:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r3, [sp, #8]
 	lsls r1, r1, #7
@@ -522,7 +522,7 @@ Func_0816a2d8:
 	bl GetBattleObjectSlotFar
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_0816a6e0:
 	bl BattleEffect_EndCanvasLayer
 .L_0816a6e4:

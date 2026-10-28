@@ -1,8 +1,8 @@
 #include "yampi_desert_cave.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02000c44(s32 id, u32 column, s32 row, s32 layer);
 
@@ -20,12 +20,12 @@ void Func_02000b54(const u16 *list) {
 loop:
   {
     u32 id = entry[0];
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s16 column = entry[1];
     s16 row = entry[2];
 
     object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02000c44(id, (u16)column, (u16)row, object->terrainId);
     entry += 3;
   }

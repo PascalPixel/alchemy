@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 s32 Func_0200129c(s32 id, s32 x, s32 z);
 s32 Func_02001234(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -17,12 +17,12 @@ static __inline__ void Func_02001234_(s32 a, s32 b, s32 c, s32 d, s32 e,
 /// Readies object id: when the flag is set, places it at (x, z) in cells;
 /// marks it, then calls Func_02001234 with the cell to the left of it.
 void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     if (GameFlag_Test(flag))
       Func_0200129c(id, x << 16, z << 16);
-    ObjectMotion_SetActionVariant(id, 3);
+    Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
     {
       /* FAKEMATCH: the first argument pinned to r0 and taken by an empty asm:
@@ -39,16 +39,16 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
 /// As Func_020007dc, with the cell above the object.
 void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
                    s32 flag) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   /* FAKEMATCH: b pinned to r8, where ⚓️ keeps it; without the pin the copy
    * below takes a's register (differ 5). */
   register s32 b asm("r8") = bArg;
 
-  if (Object_GetById(id) != 0) {
-    ObjectMotion_SetActionVariant(id, 3);
+  if (Actor_GetById(id) != 0) {
+    Actor_SetSpritePriority(id, 3);
     if (GameFlag_Test(flag))
       Func_0200129c(id, x << 16, z << 16);
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     object->priorityFlags |= 2;
     {
       /* FAKEMATCH: the second argument pinned to r1 and taken by an empty asm:

@@ -7,7 +7,7 @@ void Func_02001010(void) {
   Func_02002960_(62, 41, 1, 2, 33, 41);
   Func_02002968(125, 32, 3, 13, 96, 32);
   Func_02002968(61, 96, 3, 13, 32, 96);
-  Object_SetPartAttribute(Object_GetById(12), 5);
+  Actor_SetPartAttribute(Actor_GetById(12), 5);
   Func_02001f60(12);
   GameFlag_SetBit(0xa6b);
 }
@@ -18,7 +18,7 @@ void Func_02002a48(s32 a);
 void Func_020029f8(s32 id, s32 value);
 
 void Func_0200106c(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 saved = object->gravity;
   s32 i;
   struct Adventure *state;
@@ -39,7 +39,7 @@ void Func_0200106c(void) {
    * 2 without) */
   __asm__("");
   Func_020029f8(state->currentOwner, 0);
-  ObjectDispatch_SetSingleChildFlags(object, 1);
+  Actor_SetSingleChildFlags(object, 1);
   Func_02002910(object, 1);
   state->renderMode = 0;
   Func_020029a0();

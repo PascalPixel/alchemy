@@ -12,7 +12,7 @@
 // where the native loads the halfword first.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "vram_tab.h"
 
@@ -38,22 +38,22 @@ struct WorldMapOam {
   u16 size : 2;
 };
 
-struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void Resource_ResetEntry(s32 entry);
-void Func_02004598(struct ObjectRuntime *object);
-void Func_020045e4(struct ObjectRuntime *object);
+void Func_02004598(struct Actor *object);
+void Func_020045e4(struct Actor *object);
 
-static __inline__ struct ObjectRuntime *Func_02004b30_(s32 kind, s32 x, s32 y,
+static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
                                                        s32 z) {
   /* FAKEMATCH: forwarding through the inline, as Func_020039f4 needs (71
    * direct). */
   return Func_02004b30(kind, x, y, z);
 }
 
-void Func_02004634(struct ObjectRuntime *parent) {
-  struct ObjectRuntime *pair[2];
-  struct ObjectRuntime *child;
+void Func_02004634(struct Actor *parent) {
+  struct Actor *pair[2];
+  struct Actor *child;
   struct LinkedSprite *part;
   struct FieldSprite *sprite;
   struct LinkedEffectWork *work = Ram_HeapSlots->effectWork;
@@ -91,14 +91,14 @@ loop:
   if (++i <= 1)
     goto loop;
   {
-    struct ObjectRuntime *p = pair[0];
+    struct Actor *p = pair[0];
     struct FieldSprite *sp = p->animation;
 
     p->update = (void *)Func_020045e4;
     sp->priority = 1;
   }
   {
-    struct ObjectRuntime *p = pair[1];
+    struct Actor *p = pair[1];
     struct FieldSprite *sp = p->animation;
 
     sp->priority = 1;

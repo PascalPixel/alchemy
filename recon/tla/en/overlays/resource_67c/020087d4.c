@@ -32,7 +32,7 @@ void Func_020007d4(void) {
   __asm__ volatile("" : "+r"(priority));
   Func_02003d7c();
   Func_02003eac(0);
-  ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0xc000, 0);
+  Actor_ArmCallback_(gAdventure.currentOwner, 0xc000, 0);
   Func_020007a8();
   Func_02003ef4(78);
   FieldEvent_WaitFrames(60);

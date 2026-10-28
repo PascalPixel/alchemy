@@ -3,7 +3,7 @@
 // wrapped in one, or swapped with the next, kept when it helps) reaches 12
 // with an empty asm after `struct EventWork *work;`, and finds nothing closer.
 // Near miss, differ 24 of 503, instruction order only: script command 0x1a,
-// the twin of The Broken Seal's Object_MoveOnWorldMap in its Japanese layout
+// the twin of The Broken Seal's Actor_MoveOnWorldMap in its Japanese layout
 // (three probes 30 degrees apart, six retry headings), with this game's dash
 // keys, flag 0x163 beside the debug L key, and Field_CheckConfiguredKeys'
 // shortcut setting the event work's unk16a. Left, all scheduling: the opening
@@ -23,7 +23,7 @@
 #include "map.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -65,18 +65,18 @@ extern const s32 gData_0802ec94[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802db64(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
+void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 s32 Field_CheckConfiguredKeys(void);
 
-s32 Func_080279b0(struct ObjectRuntime *object) {
+s32 Func_080279b0(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;
@@ -94,7 +94,7 @@ s32 Func_080279b0(struct ObjectRuntime *object) {
   struct WorldCamera *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
-  struct ObjectRuntime *ripple;
+  struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
   struct EventWork *work;
 
@@ -174,9 +174,9 @@ update_object:
       work->blockedSteps = 0;
   }
   if (collision != 0)
-    ObjectDispatch_SelectAnimation(object, 9);
+    Actor_SelectAnimation(object, 9);
   else
-    ObjectDispatch_SelectAnimation(object, movementAnimation);
+    Actor_SelectAnimation(object, movementAnimation);
 
   if (collision != 0) {
     object->targetX = 0x80000000;
@@ -196,7 +196,7 @@ update_object:
     object->action = 0;
     object->unk66 = 2;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
@@ -232,7 +232,7 @@ update_object:
       ripple = Func_08023220(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->animation;
-        ObjectDispatch_Initialize(ripple, gData_0802ec94);
+        Actor_StartScript(ripple, gData_0802ec94);
         ripple->motionFlags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {

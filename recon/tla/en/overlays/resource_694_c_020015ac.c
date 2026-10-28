@@ -3,11 +3,11 @@
 // up onto (40, 680); a leader standing on its cell is launched after it to
 // (68, 680), linked to it, and flag 2535 is set.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_0200406c(void);
 void Func_02004074(void);
 void Func_02004204(s32 value);
@@ -21,18 +21,18 @@ s32 Math_Sine(s32 angle);
 void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_Launch(s32 id, s32 mode, s32 value);
-void Object_TurnToFaceEachOther(s32 id, s32 other, s32 value);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 mode, s32 value);
+void Actor_TurnToFaceEachOther(s32 id, s32 other, s32 value);
 void GameFlag_SetBit(s32 flag);
 
 void Func_020015ac(void) {
-  struct ObjectRuntime *object = Object_GetById(17);
-  struct ObjectRuntime *leader;
+  struct Actor *object = Actor_GetById(17);
+  struct Actor *leader;
   struct EffectOptions options;
   s32 velocity[3];
   s32 angle;
@@ -55,22 +55,22 @@ void Func_020015ac(void) {
     Func_02000430(object->x, object->y, object->z, velocity[0], velocity[1],
                   velocity[2], 0x20000, &options);
   }
-  Object_SetPartAttribute(Object_GetById(17), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 1);
-  ObjectMotion_SetSpeedParameters(17, 0x30000, 0x18000);
+  Actor_SetPartAttribute(Actor_GetById(17), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(17), 1);
+  Actor_SetSpeedParameters(17, 0x30000, 0x18000);
   object->velocityY = 0xc0000;
-  ObjectMotion_SetPositionAndCommit(17, 40, 680);
+  Actor_SetPositionAndCommit(17, 40, 680);
   FieldEvent_WaitFrames(10);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000,
+    Actor_Jump(gAdventure.currentOwner, 6, 0);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x20000,
                                     0x10000);
-    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 68, 680);
+    Actor_SetPositionAndCommit(gAdventure.currentOwner, 68, 680);
   }
   Func_0200401c(0, 0, 0);
-  Object_TurnToFaceEachOther(gAdventure.currentOwner, 17, 0);
+  Actor_TurnToFaceEachOther(gAdventure.currentOwner, 17, 0);
   FieldEvent_WaitFrames(10);
   GameFlag_SetBit(2535);
   Func_02004074();

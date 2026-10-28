@@ -16,10 +16,10 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 
-struct ObjectRuntime;
+struct Actor;
 
 s32 ObjectTable_ReadActiveValue(s32 localId);
-struct ObjectRuntime *ObjectTable_Get(s32 localId);
+struct Actor *ObjectTable_Get(s32 localId);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 s32 Func_080d5bec(s32 objectId, s32 *position);
 void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top,
@@ -54,7 +54,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 portrait;
   s32 flags;
   s32 message;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 x;
   s32 y;
   s32 found;

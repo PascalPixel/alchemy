@@ -287,7 +287,7 @@ BattleEffect_RunNirvana:
 	negs r3, r3
 	str r3, [r7, #24]
 .L_0816d382:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	lsls r4, r4, #7
 	adds r4, #232

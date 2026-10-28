@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_0200015c(s32 id);
 void Func_020004f4(s32 id, s32 x, s32 z);
 void Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 
 void Func_0200051c(s32 unused, s32 cell) {
   if (cell == 20) {
-    struct ObjectRuntime *object = Object_GetById(20);
+    struct Actor *object = Actor_GetById(20);
 
     if (!Flag_IsSet(0x8e7)) {
       s32 x = object->x >> 20;
@@ -22,7 +22,7 @@ void Func_0200051c(s32 unused, s32 cell) {
     }
   }
   if (cell == 13) {
-    struct ObjectRuntime *object = Object_GetById(13);
+    struct Actor *object = Actor_GetById(13);
 
     if (!Flag_IsSet(0x8e8)) {
       s32 x = object->x >> 20;

@@ -4,7 +4,7 @@
 // in each pass. Left: the native keeps x and z unshifted (r8, r7) and shifts
 // them at each use; this draft keeps them shifted.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern char MsgWeDidIt[];
 extern s32 Data_02006be8[8];
@@ -12,10 +12,10 @@ extern s32 Data_02006be8[8];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_0200050c(void);
 void Func_02004c20(void);
 void Func_02004c28(void);
@@ -37,17 +37,17 @@ void Func_02003144(void) {
   Func_02004c20();
   Func_02004db8(0);
   GameFlag_SetBit(0xa78);
-  ObjectMotion_SetPositionAndCommit(8, 0x1bf6, 0x2154);
+  Actor_SetPositionAndCommit(8, 0x1bf6, 0x2154);
   Func_0200050c();
-  x = Object_GetById(8)->x / 0x10000;
-  z = Object_GetById(8)->z / 0x10000;
+  x = Actor_GetById(8)->x / 0x10000;
+  z = Actor_GetById(8)->z / 0x10000;
   i = 0;
   {
   hide:
-    if (Object_GetById(i) != NULL) {
+    if (Actor_GetById(i) != NULL) {
       Data_02006be8[i] = i;
-      Object_GetById(i)->scaleX = 0;
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(i), 0);
+      Actor_GetById(i)->scaleX = 0;
+      Actor_SetSingleChildFlags(Actor_GetById(i), 0);
       Func_02004c88(i, x << 16, z << 16);
     } else {
       Data_02006be8[i] = -1;
@@ -56,8 +56,8 @@ void Func_02003144(void) {
     if (i <= 7)
       goto hide;
   }
-  Object_GetById(23)->scaleX = 0;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(23), 0);
+  Actor_GetById(23)->scaleX = 0;
+  Actor_SetSingleChildFlags(Actor_GetById(23), 0);
   Func_02004c88(23, x << 16, z << 16);
   Func_02004da8();
   Func_02004cd8((s32)MsgWeDidIt);
@@ -123,8 +123,8 @@ void Func_02003144(void) {
   {
   restore:
     if (Data_02006be8[i] >= 0) {
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(Data_02006be8[i]), 1);
-      Object_GetById(Data_02006be8[i])->scaleX = 0x10000;
+      Actor_SetSingleChildFlags(Actor_GetById(Data_02006be8[i]), 1);
+      Actor_GetById(Data_02006be8[i])->scaleX = 0x10000;
       Func_02004c88(Data_02006be8[i], 0, 0);
     }
     i++;

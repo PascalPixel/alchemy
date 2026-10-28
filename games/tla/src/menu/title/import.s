@@ -70,10 +70,10 @@ Func_020005ec:
 	.thumb_func
 FieldEvent_WaitFrames:
 	overlay_veneer FieldEvent_WaitFramesFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_02000604
 	.thumb_func
 Func_02000604:

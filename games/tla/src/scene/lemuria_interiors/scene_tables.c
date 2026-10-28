@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -25,8 +25,8 @@ void Func_020028fc();
 void Func_0200291c();
 void GameFlag_Test();
 void Event_AskYesNoWithActorAnimation();
-void ObjectMotion_ArmCallback();
-void Object_LinkObjectAndSetCallback();
+void Actor_ArmCallback();
+void Actor_WatchAndSetScript();
 void FieldMessage_ShowAtActor();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -50,7 +50,7 @@ void Func_02000058(s32 arg0) {
     goto L_02008082;
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors11);
   Call2((void (*)())Func_020028c4, arg0, 0);
-  Call2((void (*)())Object_LinkObjectAndSetCallback, 10, 4);
+  Call2((void (*)())Actor_WatchAndSetScript, 10, 4);
   goto L_020080f6;
 L_02008082:
   result1 = Value1((s32 (*)())GameFlag_Test, 0x965);
@@ -60,7 +60,7 @@ L_02008082:
   Call1((void (*)())Func_020028fc, 0);
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors08);
   Call2((void (*)())Func_020028c4, arg0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, arg0, 0x3000, 0);
+  Call3((void (*)())Actor_ArmCallback, arg0, 0x3000, 0);
   ((void (*)())Func_02002834)();
   goto L_020080f6;
 L_020080ba:
@@ -75,7 +75,7 @@ L_020080ba:
 L_020080dc:
   Value1((s32 (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020028c4, arg0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, arg0, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, arg0, 0x8000, 0);
 L_020080f6:
   return;
 }

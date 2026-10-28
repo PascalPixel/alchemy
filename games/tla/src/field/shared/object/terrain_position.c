@@ -7,19 +7,19 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-#define Object_SetPositionAndResetMotionFar                                    \
-  ((s32 (*)(struct ObjectRuntime *, s32, s32,                                  \
-            s32))Object_SetPositionAndResetMotionFar)
+#define Actor_SetPositionAndResetMotionFar                                    \
+  ((s32 (*)(struct Actor *, s32, s32,                                  \
+            s32))Actor_SetPositionAndResetMotionFar)
 
-void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
+  struct Actor *object = ObjectTable_Get(objectId);
   s32 terrainHeight;
 
   if (object != NULL) {
-    Object_ResetMotion(object);
-    Object_SetPositionAndResetMotionFar(object, x, object->y, z);
+    Actor_ResetMotion(object);
+    Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
           Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
@@ -29,14 +29,14 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void ObjectMotion_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
+void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
                                                            s32 z, s16 angle) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Actor *object = ObjectTable_Get(objectId);
   s32 terrainHeight;
 
   if (object != NULL) {
-    Object_ResetMotion(object);
-    Object_SetPositionAndResetMotionFar(object, x, object->y, z);
+    Actor_ResetMotion(object);
+    Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     object->angle = angle;
     if (object->motionFlags & 1) {
       terrainHeight =
@@ -47,13 +47,13 @@ void ObjectMotion_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
   }
 }
 
-void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
+  struct Actor *object = ObjectTable_Get(objectId);
   s32 terrainHeight;
 
   if (object != NULL) {
-    Object_ResetMotion(object);
-    Object_SetPositionAndResetMotionFar(object, x, y, z);
+    Actor_ResetMotion(object);
+    Actor_SetPositionAndResetMotionFar(object, x, y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
           Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
@@ -63,12 +63,12 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   }
 }
 
-void ObjectMotion_MoveToObject(u32 objectId, u32 otherId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
-  struct ObjectRuntime *other = ObjectTable_Get(otherId);
+void Actor_MoveToObject(u32 objectId, u32 otherId) {
+  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *other = ObjectTable_Get(otherId);
 
   if (object != NULL && other != NULL) {
-    Object_SetPositionAndResetMotionFar(object, other->x, other->y, other->z);
+    Actor_SetPositionAndResetMotionFar(object, other->x, other->y, other->z);
     object->terrainHeight = other->terrainHeight;
   }
 }

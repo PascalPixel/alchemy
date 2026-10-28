@@ -18,7 +18,7 @@ struct TrialRoadMover {
   s16 offset;
   s16 unk06[8];
   s16 bob;
-  struct ObjectRuntime *marker;
+  struct Actor *marker;
 };
 
 struct TrialRoadMovers {
@@ -42,7 +42,7 @@ void Func_02003f68(void) {
   s32 viewX = *(s32 *)(map + 228) & 0xffff0000;
   s32 viewZ = *(s32 *)(map + 232) & 0xffff0000;
   s32 cameraY = (*(s32 **)map)[1];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 frame;
   s32 height;
   s32 dx;
@@ -55,7 +55,7 @@ void Func_02003f68(void) {
   for (i = 15; i >= 0; i--, mover++) {
     if (mover->id == 0 || mover->offset == 0)
       continue;
-    object = Object_GetById(mover->id);
+    object = Actor_GetById(mover->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
     for (height = 0; height < mover->offset; height += 16) {
       if (count > 79)

@@ -2,19 +2,19 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern u8 gData_02006c08[];
 extern const u8 gWorldMapPackedTilesC[];
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 GameFlag_Test(s32 flag);
-void Func_02004b50(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void GameFlag_ClearBit(s32 flag);
 u32 Random16Far(void);
 void Func_02004c20(void);
@@ -26,14 +26,14 @@ void Func_02004c88(s32 id, s32 x, s32 z);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_02004d40(s32 value);
 s32 Task_Add(void (*callback)(void), s32 order);
 void Task_RemoveFar(void (*callback)(void));
 void Func_020036a8(void);
 void Func_020048f4(void);
 s32 Func_02004e10(void);
-void Func_02003bb8(struct ObjectRuntime *object, s32 value);
+void Func_02003bb8(struct Actor *object, s32 value);
 void Func_02004aa8(const u8 *a, u8 *b);
 void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
@@ -45,7 +45,7 @@ struct TileSprite {
   u8 frame;
 };
 
-s32 Func_02000388(struct ObjectRuntime *object) {
+s32 Func_02000388(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
   struct TileSprite *sprite = object->animation;
 
@@ -54,19 +54,19 @@ s32 Func_02000388(struct ObjectRuntime *object) {
   return 1;
 }
 
-s32 Func_020003a8(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_020003a8(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   return 0;
 }
 
 /// With flag 0x200 set the object is released, takes acceleration and speed
 /// limit 0x1000 and is sent to an offset of its position.
-s32 Func_020003b4(struct ObjectRuntime *object) {
+s32 Func_020003b4(struct Actor *object) {
   s32 x, z;
 
   if (!GameFlag_Test(0x200))
     return 1;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   x = object->x;
   object->acceleration = 0x1000;
   object->speedLimit = 0x1000;

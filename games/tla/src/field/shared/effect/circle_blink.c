@@ -8,7 +8,7 @@ extern u32 gFrameCount;
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Object_SetPartAttribute(struct FieldActor *object, s32 value);
+void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 
 /// Circles the object around the centre in words 68 and 76, twice as wide
 /// as it is deep, the radius growing with its height, one step of 256 per
@@ -30,5 +30,5 @@ void Effect_CircleAndBlink(struct FieldActor *object) {
       Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Object_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
 }

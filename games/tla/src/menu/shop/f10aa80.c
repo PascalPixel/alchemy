@@ -46,7 +46,7 @@ extern u8 MsgSanctumFarewell[];
 extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
 
 void Func_08108148(void);
-void *Object_GetByIdFar(s32 unitId);
+void *Actor_GetByIdFar(s32 unitId);
 s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
@@ -73,7 +73,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   shop->partyAction = listWindow;
 
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Object_GetByIdFar(unitId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(unitId) + 80) + 40);
 
   listWindow = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {

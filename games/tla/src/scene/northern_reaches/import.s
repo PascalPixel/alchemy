@@ -73,7 +73,7 @@ GameFlag_SetBit:
 	.global Func_02000a30
 	.thumb_func
 Func_02000a30:
-	overlay_veneer Object_CommitPosition
+	overlay_veneer Actor_CommitPosition
 	.global Func_02000a38
 	.thumb_func
 Func_02000a38:
@@ -82,10 +82,10 @@ Func_02000a38:
 	.thumb_func
 Func_02000a40:
 	overlay_veneer Func_080201f0
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
@@ -110,38 +110,38 @@ Func_02000a70:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetSpeedParameters
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_SetPositionAndCommit
+Actor_SetSpeedParameters:
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_SetPositionAndCommit
 	.thumb_func
-ObjectMotion_SetPositionAndCommit:
-	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_ResetAndSetPositionInMode2
+Actor_SetPositionAndCommit:
+	overlay_veneer Actor_SetPositionAndCommitFar
+	.global Actor_ResetAndSetPositionInMode2
 	.thumb_func
-ObjectMotion_ResetAndSetPositionInMode2:
-	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
-	.global ObjectMotion_OffsetPositionAndResetMotion
+Actor_ResetAndSetPositionInMode2:
+	overlay_veneer Actor_ResetAndSetPositionInMode2Far
+	.global Actor_OffsetPositionAndResetMotion
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
-	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+Actor_OffsetPositionAndResetMotion:
+	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+	.global Actor_WaitForMoveById
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+Actor_WaitForMoveById:
+	overlay_veneer Actor_WaitForMoveByIdFar
 	.global Func_02000ab0
 	.thumb_func
 Func_02000ab0:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_02000ac0
 	.thumb_func
 Func_02000ac0:
@@ -157,7 +157,7 @@ Func_02000ad0:
 	.global Func_02000ad8
 	.thumb_func
 Func_02000ad8:
-	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
+	overlay_veneer Actor_ArmCallbackAndRefreshFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -202,10 +202,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02000b30:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global ObjectMotion_OffsetPositionAndReset
+	.global Actor_OffsetPositionAndReset
 	.thumb_func
-ObjectMotion_OffsetPositionAndReset:
-	overlay_veneer ObjectMotion_OffsetPositionAndResetFar
+Actor_OffsetPositionAndReset:
+	overlay_veneer Actor_OffsetPositionAndResetFar
 	.global Func_02000b40
 	.thumb_func
 Func_02000b40:

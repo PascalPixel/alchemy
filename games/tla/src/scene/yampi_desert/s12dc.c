@@ -11,8 +11,8 @@ s32 Func_020012d4(s32 cell);
   }
 
 void Func_020012dc(void) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
-  struct FieldActor *object = Object_GetById(64);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct FieldActor *object = Actor_GetById(64);
   s32 column = leader->x >> 20;
   s32 row = leader->z >> 20;
 

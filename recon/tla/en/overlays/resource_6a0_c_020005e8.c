@@ -23,8 +23,8 @@ void Func_02002b2c();
 void Func_02002b54();
 void Func_02002ba4();
 s32 GameFlag_Test();
-void ObjectMotion_EnableActionAndResetMotion();
-s32 Object_GetById();
+void Actor_Stop();
+s32 Actor_GetById();
 void WaitFrames();
 
 void Func_020005e8(s32 a0) {
@@ -45,7 +45,7 @@ void Func_020005e8(s32 a0) {
 L_0200864c:
   v_r6 = 0;
 L_0200864e:
-  t6 = Value1((s32 (*)())Object_GetById, (v_r6 + 10));
+  t6 = Value1((s32 (*)())Actor_GetById, (v_r6 + 10));
   v_r5 = t6;
   t7 = Value0((s32 (*)())Func_020005a0);
   if (t7 == 0)
@@ -67,7 +67,7 @@ L_02008670:
 L_02008682:
   v_r6 = 0;
 L_02008684:
-  t9 = Value1((s32 (*)())Object_GetById, (v_r6 + 10));
+  t9 = Value1((s32 (*)())Actor_GetById, (v_r6 + 10));
   v_r5 = t9;
   FIELD_AT(v_r5, u8, 85) = 3;
   v_r6 = (v_r6 + 1);
@@ -85,7 +85,7 @@ L_020086a2:
   Call6((void (*)())Func_02002b2c, 72, 53, 8, 5, v_r5, 16);
   Call6((void (*)())Func_02002b2c, 70, 47, 1, 1, 8, 74);
   Call4((void (*)())Func_02002b54, 0x800000, 0xc00000, 0, 6);
-  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion,
+  Call1((void (*)())Actor_Stop,
         gAdventure.currentOwner);
   Call3((void (*)())Func_02002ba4, 20, 0, 0);
   if (v_r6 != 1)
@@ -94,7 +94,7 @@ L_020086a2:
 L_0200870a:
   v_r6 = 0;
 L_0200870c:
-  t16 = Value1((s32 (*)())Object_GetById, (v_r6 + 10));
+  t16 = Value1((s32 (*)())Actor_GetById, (v_r6 + 10));
   v_r5 = t16;
   t17 = Value0((s32 (*)())Func_020005a0);
   if (t17 == 0)
@@ -116,7 +116,7 @@ L_02008730:
 L_02008742:
   v_r6 = 0;
 L_02008744:
-  t19 = Value1((s32 (*)())Object_GetById, (v_r6 + 10));
+  t19 = Value1((s32 (*)())Actor_GetById, (v_r6 + 10));
   v_r5 = t19;
   t20 = Value0((s32 (*)())Func_020005a0);
   if (t20 == 0)

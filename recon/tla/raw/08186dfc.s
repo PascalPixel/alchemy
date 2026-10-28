@@ -2041,7 +2041,7 @@ BattleEffect_RunHaures:
 	ldr r0, [sp, #32]
 	bl Heap_Release
 .L_08187dfc:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	ldr r1, [sp, #88]
 	lsls r2, r2, #7
@@ -3000,7 +3000,7 @@ BattleEffect_RunHaures:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #88]
 	lsls r4, r4, #7

@@ -12,7 +12,7 @@
 // restored from the actor's word at 76, layer 2's slot is unblocked and the
 // event work's word at 0xcbc records the actor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct SwitchCell {
@@ -34,9 +34,9 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(u32 actor);
-struct ObjectRuntime *Func_080eaeb4(void);
-s32 Func_080eab70(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(u32 actor);
+struct Actor *Func_080eaeb4(void);
+s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
@@ -44,16 +44,16 @@ s32 Func_080eab98(s32 unused, s32 key, s32 value);
 void Func_080eace8(u16 *actors) {
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 
   if (effect != NULL && *(s16 *)(event + 358) != 0)
-    target = *(struct ObjectRuntime **)(effect + 20);
+    target = *(struct Actor **)(effect + 20);
   else
     target = Func_080eaeb4();
-  *(struct ObjectRuntime **)(event + 0xcbc) = NULL;
+  *(struct Actor **)(event + 0xcbc) = NULL;
 
   for (; *actors != 0xffff; actors++) {
-    if (target == Object_GetById(*actors)) {
+    if (target == Actor_GetById(*actors)) {
       struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
       struct SwitchCell *cells = map->layers[target->terrainId].cells;
       struct SwitchCell *blocks = map->layers[2].cells;
@@ -67,7 +67,7 @@ void Func_080eace8(u16 *actors) {
       cells[slot].flags = target->unk4c;
       shapes[slot] = tag;
       blocks[slot].block = 0;
-      *(struct ObjectRuntime **)(event + 0xcbc) = target;
+      *(struct Actor **)(event + 0xcbc) = target;
     }
   }
 }

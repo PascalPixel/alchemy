@@ -44,7 +44,7 @@ Func_080dd054:
 	str r1, [r2, #104]
 	mov r0, r11
 	ldr r1, .L_080dd424
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	mov r0, r11
 	bl BattleEffect_StartItemBreak
 	mov r9, r0
@@ -87,7 +87,7 @@ Func_080dd054:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	mov r0, r9
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	mov r0, r9
 	bl BattleEffect_SnapScaleToFull
 	movs r3, #128
@@ -146,10 +146,10 @@ Func_080dd054:
 	ldr r1, [r6]
 	ldr r3, [r6, #8]
 	mov r0, r9
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	mov r0, r9
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r2, r9
 	str r5, [r2, #36]
 	str r5, [r2, #40]
@@ -179,9 +179,9 @@ Func_080dd054:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	mov r0, r9
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	mov r0, r9
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	mov r0, r10
 	ldr r3, [r0, #8]
 	adds r1, r7, #0
@@ -255,7 +255,7 @@ Func_080dd054:
 .L_080dd266:
 	mov r0, r9
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, .L_080dd430
 	movs r2, #15
 	ldr r3, [r3]
@@ -284,7 +284,7 @@ Func_080dd054:
 	lsrs r3, r3, #30
 	ldrb r1, [r2, r3]
 	mov r0, r9
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #15
 	bl WaitFrames
 	movs r0, #204
@@ -301,7 +301,7 @@ Func_080dd054:
 	ldr r1, [r6]
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r2, [sp, #4]
 	movs r3, #204
 	strb r5, [r2]
@@ -321,14 +321,14 @@ Func_080dd054:
 	ldr r1, [r6]
 	adds r2, r2, r5
 	ldr r3, [r6, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r0, [sp, #24]
 	cmp r0, #1
 	bne .L_080dd330
 	ldr r2, [sp, #40]
 	movs r1, #24
 	ldrsh r0, [r2, r1]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #254
@@ -345,10 +345,10 @@ Func_080dd054:
 	ldr r2, [r0, #4]
 	ldr r3, [r0, #8]
 	mov r0, r11
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 .L_080dd330:
 	mov r0, r10
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	ldr r1, [sp, #12]
 	cmp r1, #0
 	bne .L_080dd396
@@ -412,7 +412,7 @@ Func_080dd054:
 	ldr r4, [sp, #40]
 	mov r0, r10
 	ldr r1, [r4, #60]
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	ldr r0, [sp, #40]
 	mov r1, r10
 	ldr r3, [r0, #56]
@@ -425,12 +425,12 @@ Func_080dd054:
 	str r3, [r4, #108]
 	mov r0, r9
 	movs r1, #4
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r0, r9
 	ldr r2, [r0, #12]
 	ldr r1, [r0, #8]
 	ldr r3, [r0, #16]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	ldr r3, [sp, #40]
 	ldr r0, [sp, #12]
 	movs r2, #24
@@ -446,7 +446,7 @@ Func_080dd054:
 	ldr r2, [sp, #40]
 	movs r1, #24
 	ldrsh r0, [r2, r1]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0]
 	movs r2, #1
@@ -468,7 +468,7 @@ Func_080dd054:
 .L_080dd424:
 	.4byte gData_080f0e60
 .L_080dd428:
-	.4byte ObjectGroup_ApplyRandomChildValues
+	.4byte Actor_ApplyRandomChildValues
 .L_080dd42c:
 	.4byte 0xfff00000
 .L_080dd430:

@@ -87,8 +87,8 @@ u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+                   s32 timerFrames); // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 void WaitFrames(s32 frames);
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
@@ -226,7 +226,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       }
       fleck->variant++;
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

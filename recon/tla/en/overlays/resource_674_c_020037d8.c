@@ -1,7 +1,7 @@
 // Draft, differ 235 of 171: overlay 674's copy of overlay 668's
 // Func_02004240 (the same listing), whose draft holds its notes.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/vector3.h"
 
 struct PushState {
@@ -15,13 +15,13 @@ struct PushState {
 
 extern s8 gData_0200407c[][4];
 extern s32 gData_02004094[];
-struct ObjectRuntime *Func_02003940(s32 *direction, s32 *number, s32 *kind);
-s32 Func_02003e2c(struct ObjectRuntime *object, struct Vector3 *cell);
+struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
+s32 Func_02003e2c(struct Actor *object, struct Vector3 *cell);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 s32 Func_020037d8(struct PushState *push) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct Vector3 cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;

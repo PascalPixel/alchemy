@@ -6,7 +6,7 @@
 // 136, shrinks spinning, and is removed with its sprite's VRAM entry.
 // Left: the native computes the wobble's field addresses inside its test and the action field's address after it (this draft shares them across the test), keeps the timer's address in r8 and the stage's in r5, and reads the sprite afresh in each stage.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "system/vector3.h"
 
@@ -14,9 +14,9 @@ s32 Math_Sine(s32 angle);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, struct Vector3 *v);
 void Func_02005c9c(s32 cue);
 void Resource_ResetEntry(s32 block);
-void Func_02005a3c(struct ObjectRuntime *object);
+void Func_02005a3c(struct Actor *object);
 
-void Func_02003308(struct ObjectRuntime *object) {
+void Func_02003308(struct Actor *object) {
   u8 *timer = (u8 *)object + 0x63;
   u8 *stage;
   struct Vector3 centre;

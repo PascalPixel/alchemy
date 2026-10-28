@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 struct AnchorWork {
   u8 unk0000[0x1930];
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
 };
 
 struct ModeEvent {
@@ -13,18 +13,18 @@ struct ModeEvent {
   u16 cue;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
 void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct ModeEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *anchor;
-  struct ObjectRuntime *object;
+  struct Actor *anchor;
+  struct Actor *object;
 
   anchor = ((struct AnchorWork *)Ram_HeapSlots->battleFxWork[0])->anchor;
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (anchor != NULL) {
     SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   }

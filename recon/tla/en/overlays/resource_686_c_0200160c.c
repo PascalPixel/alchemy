@@ -6,7 +6,7 @@
 // Func_020019a0 is the same with other cells.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "map.h"
 
@@ -33,7 +33,7 @@ extern s16 gData_02003780;
 extern s16 gData_02003782;
 extern s32 gData_02003788;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
@@ -46,7 +46,7 @@ void Func_02002e24(s32 a, s32 b, s32 c);
 void Func_02002eec(s32 cue);
 
 void Func_0200160c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
   s32 level;
@@ -57,7 +57,7 @@ void Func_0200160c(void) {
   s16 n;
   s32 top;
 
-  Object_SetModeById(gAdventure.currentOwner, 0);
+  Actor_SetModeById(gAdventure.currentOwner, 0);
   level = work->level >> 19;
   leader->motionFlags = 0;
   Func_02002e24(0x40000, 0x40000, 0x10000);

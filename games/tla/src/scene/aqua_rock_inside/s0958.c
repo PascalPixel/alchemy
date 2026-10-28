@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02003cf4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 
 void Func_02000958(s32 value) {
   s32 width = 1;
@@ -18,11 +18,11 @@ void Func_02000958(s32 value) {
   FieldEvent_WaitFrames(8);
   Func_02003cf4(108, 98, 19, 29, width, height);
   FieldEvent_WaitFrames(15);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
-  Object_GetById(gAdventure.currentOwner)->speedLimit =
-      Object_GetById(gAdventure.currentOwner)->acceleration = 0x8000;
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_GetById(gAdventure.currentOwner)->speedLimit =
+      Actor_GetById(gAdventure.currentOwner)->acceleration = 0x8000;
   Func_02003ef4(123);
-  ObjectMotion_ResetAndSetPositionInMode2(gAdventure.currentOwner, 312, 496);
+  Actor_ResetAndSetPositionInMode2(gAdventure.currentOwner, 312, 496);
   FieldEvent_WaitFrames(5);
   Func_02003e5c(value);
 }

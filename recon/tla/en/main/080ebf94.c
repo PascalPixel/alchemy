@@ -40,7 +40,7 @@ struct WorldMapWork {
   s32 unk648;
 };
 
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
@@ -61,7 +61,7 @@ void Func_080ebf94(void) {
 
   markerTiles = Heap_AllocEwram(32);
   oam = work->markers;
-  Object_GetById(Party_GetLeaderActor());
+  Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
   work->vramBlock = Resource_FindFreeEntry();

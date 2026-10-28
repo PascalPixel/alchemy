@@ -11,7 +11,7 @@ void Func_02000918(u16 *list) {
    * built on every pass */
   goto test;
   do {
-    struct FieldActor *object = Object_GetById(list[0]);
+    struct FieldActor *object = Actor_GetById(list[0]);
 
     if (GameFlag_Test(list[2])) {
       s32 index = Func_020041e0(object);

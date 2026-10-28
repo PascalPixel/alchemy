@@ -12,7 +12,7 @@
 // its offset, the cell's layer-2 entry clears its byte 2, and up to 64
 // copies are recorded in gData_02001000's list at 0x174c (count at 0x194c).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct TouchCell {
@@ -56,7 +56,7 @@ struct TouchCopies {
 extern struct TouchCopies gData_02001000;
 
 s32 Party_GetLeaderActor(void);
-struct ObjectRuntime *Object_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 actor);
 void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
                    s32 fromZ);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
@@ -64,8 +64,8 @@ struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height,
                    s32 toX, s32 toZ) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *owner =
-      Object_GetById(Party_GetLeaderActor());
+  struct Actor *owner =
+      Actor_GetById(Party_GetLeaderActor());
   struct TouchLayer *layer =
       ((struct TouchMap *)Ram_HeapSlots->mapWork)->layers;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);

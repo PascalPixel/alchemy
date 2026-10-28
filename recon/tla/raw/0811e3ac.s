@@ -246,10 +246,10 @@ Func_0811e3ac:
 	ldr r5, [r0]
 	movs r1, #3
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #128
 	lsls r0, r0, #19
 	movs r1, #253

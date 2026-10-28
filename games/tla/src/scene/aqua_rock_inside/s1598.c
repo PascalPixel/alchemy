@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/field_effect.h"
 
 extern u32 gFrameCount;
@@ -9,7 +9,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-void Func_02001598(struct ObjectRuntime *object) {
+void Func_02001598(struct Actor *object) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {

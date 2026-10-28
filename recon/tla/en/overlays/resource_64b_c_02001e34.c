@@ -6,7 +6,7 @@
 // coordinates in r9 and r8) and the order of the coordinate setup.
 #include "types.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
 extern u32 gInput;
@@ -27,24 +27,24 @@ extern char MsgWellThatS[];
 
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Party_RemoveActiveOwner(s32 owner);
 void Party_AddActiveOwner(s32 owner);
 void Djinn_AddToOwner(s32 owner, s32 element, s32 djinni);
 void DjinnRecovery_AddStandby(s32 owner, s32 element, s32 djinni);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void FieldMessage_ShowAtActor(s32 id, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void Func_020011fc(void);
-void Func_02004b50(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02004ba8(s32 a, s32 b);
 void Func_02004bf8(s32 value);
 void Func_02004c20(void);
@@ -71,8 +71,8 @@ void Func_02004e30(s32 cue);
    (s32)(base))
 
 void Func_02001e34(void) {
-  struct ObjectRuntime *djinni = Object_GetById(9);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *djinni = Actor_GetById(9);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = (leader->x - 0x27880000) / 2 + 0x27880000;
   s32 z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
   s32 owner;
@@ -104,11 +104,11 @@ void Func_02001e34(void) {
     Djinn_AddToOwner(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
-    ObjectMotion_SetAngleToward(owner, 9, 0);
+    Actor_SetAngleToward(owner, 9, 0);
     FieldEvent_WaitFrames(10);
     Func_02004d08(owner, 0x101, 60);
     djinni->unk66 = 1;
-    ObjectMotion_SetAngleToward(9, owner, 0);
+    Actor_SetAngleToward(9, owner, 0);
     WaitFrames(16);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgHey2));
     Func_02004cf0(9, 0);
@@ -128,16 +128,16 @@ void Func_02001e34(void) {
       djinni->scaleY += 0x800;
       WaitFrames(1);
     }
-    ObjectMotion_SetAngleToward(9, owner, 0);
-    ObjectMotion_SetAngleToward(owner, 9, 0);
+    Actor_SetAngleToward(9, owner, 0);
+    Actor_SetAngleToward(owner, 9, 0);
     WaitFrames(16);
     djinni->update = 0;
     Animation_ApplyChildValues(djinni, 0);
     djinni->gravity = 0x10000;
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
-      ObjectMotion_Launch(9, 2, 20);
-      ObjectMotion_Launch(9, 2, 20);
+      Actor_Jump(9, 2, 20);
+      Actor_Jump(9, 2, 20);
       Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren));
       FieldMessage_ShowAtActor(9, 0);
       if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
@@ -150,8 +150,8 @@ void Func_02001e34(void) {
       Func_02004cf0(9, 0);
     }
     Func_02004d08(owner, 0x100, 30);
-    ObjectMotion_Launch(9, 2, 20);
-    ObjectMotion_Launch(9, 2, 20);
+    Actor_Jump(9, 2, 20);
+    Actor_Jump(9, 2, 20);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgEvenIKnow));
     Func_02004cf0(9, 0);
     Func_02004d08(owner, 0x102, 30);
@@ -160,7 +160,7 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     Motion_SetVarCbAndRefresh(owner, 2);
     Func_02004cf0(9, 0);
-    ObjectMotion_Launch(9, 2, 30);
+    Actor_Jump(9, 2, 30);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 0;
     Func_02004b50(djinni, x, 0x100000, z);
@@ -168,7 +168,7 @@ void Func_02001e34(void) {
       djinni->angle += 0x1000;
       WaitFrames(1);
     }
-    Object_SetModeById(owner, 1);
+    Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
@@ -177,13 +177,13 @@ void Func_02001e34(void) {
       djinni->angle += 0x1000;
       WaitFrames(1);
     }
-    Object_SetModeById(owner, 22);
+    Actor_SetModeById(owner, 22);
     Func_02004cf0(9, 0);
     Func_02004d08(9, 0x102, 30);
-    ObjectMotion_SetAngleToward(9, owner, 0);
+    Actor_SetAngleToward(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
     Func_02004cf0(9, 0);
-    ObjectMotion_Launch(9, 2, 30);
+    Actor_Jump(9, 2, 30);
     FieldMessage_ShowAtActor(9, 0);
     i = 0;
   plead:
@@ -192,24 +192,24 @@ void Func_02001e34(void) {
 
       if (i == 7) {
         if (answer == 0) {
-          ObjectMotion_Launch(9, 2, 20);
-          ObjectMotion_Launch(9, 2, 20);
+          Actor_Jump(9, 2, 20);
+          Actor_Jump(9, 2, 20);
           Func_02004cd8(TUTORIAL_MESSAGE(MsgOhAllRight));
           Func_02004cf0(9, 0);
           goto joined;
         }
       } else if (answer == 1) {
-        ObjectMotion_Launch(9, 2, 20);
-        ObjectMotion_Launch(9, 2, 20);
+        Actor_Jump(9, 2, 20);
+        Actor_Jump(9, 2, 20);
         Func_02004cd8(i + TUTORIAL_MESSAGE(MsgOhComeOn));
         FieldMessage_ShowAtActor(9, 0);
         i++;
         goto plead;
       }
     }
-    Object_SetModeById(owner, 22);
-    ObjectMotion_Launch(9, 2, 20);
-    ObjectMotion_Launch(9, 4, 20);
+    Actor_SetModeById(owner, 22);
+    Actor_Jump(9, 2, 20);
+    Actor_Jump(9, 4, 20);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgIMSo));
     Func_02004cf0(9, 0);
   joined:
@@ -217,7 +217,7 @@ void Func_02001e34(void) {
     Func_02004e30(81);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
-    ObjectMotion_Launch(9, 2, 20);
+    Actor_Jump(9, 2, 20);
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
@@ -236,12 +236,12 @@ void Func_02001e34(void) {
   Func_02004b50(djinni, x, 0, z);
   FieldEvent_WaitFrames(30);
   Func_02004da8();
-  ObjectMotion_SetAngleToward(9, owner, 0);
-  ObjectMotion_SetAngleToward(owner, 9, 0);
-  Object_SetModeById(owner, 22);
+  Actor_SetAngleToward(9, owner, 0);
+  Actor_SetAngleToward(owner, 9, 0);
+  Actor_SetModeById(owner, 22);
   Func_02004cd8(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
-  ObjectMotion_Launch(9, 2, 20);
-  ObjectMotion_Launch(9, 2, 20);
+  Actor_Jump(9, 2, 20);
+  Actor_Jump(9, 2, 20);
   Func_02004cf0(9, 0);
   Motion_SetVarCbAndRefresh(9, 2);
   Func_02004cf0(9, 0);
@@ -254,35 +254,35 @@ void Func_02001e34(void) {
   Func_02004b50(djinni, 0x27880000, 0, 0x20a40000);
   FieldEvent_WaitFrames(30);
   Func_02004cf0(9, 0);
-  ObjectMotion_SetAngleToward(9, owner, 0);
+  Actor_SetAngleToward(9, owner, 0);
   Func_02004cf0(9, 0);
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
-  Object_SetModeById(owner, 22);
+  Actor_SetModeById(owner, 22);
   Motion_SetVarCbAndRefresh(9, 2);
   Func_02004cd8(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
   Func_02004cf0(9, 0);
-  ObjectMotion_SetPositionAndReset(9, x >> 16, z >> 16);
+  Actor_SetPositionAndReset(9, x >> 16, z >> 16);
 tutorial:
   Func_020011fc();
   Func_02004db0();
   return;
 refused:
-  Object_SetModeById(owner, 22);
+  Actor_SetModeById(owner, 22);
   Func_02004cd8(TUTORIAL_MESSAGE(MsgWellThatS));
-  ObjectMotion_Launch(9, 2, 20);
-  ObjectMotion_Launch(9, 2, 20);
+  Actor_Jump(9, 2, 20);
+  Actor_Jump(9, 2, 20);
   Func_02004cf0(9, 0);
   Func_02004d08(9, 0x100, 30);
   Func_02004cf0(9, 0);
   Flag_Set(0x16f);
   Flag_Set(0x171);
   Func_02004e28();
-  ObjectMotion_Launch(9, 2, 20);
+  Actor_Jump(9, 2, 20);
   Func_02004cf0(9, 0);
   Func_02004db0();
   Func_02004dd0(9, 0, 7);

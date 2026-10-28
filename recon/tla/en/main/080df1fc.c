@@ -66,24 +66,24 @@ extern u32 gData_0300122c;
 void BattleEffect_InitializeSharedScene(void);
 struct FxObject *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void BattleEffect_PrepareBufferInterpolation(void);
-void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
-void Object_CommitPosition(struct FxObject *object);
-void ObjectGroup_ApplyRandomChildValues(void);
+void Actor_SetTargetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
+void Actor_CommitPosition(struct FxObject *object);
+void Actor_ApplyRandomChildValues(void);
 void BattleEffect_SpawnFallingParticles(void);
 void Sound_PlayFar(s32 cue);
-void Object_SetMode(struct FxObject *object, s32 mode);
+void Actor_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct FxPosition *position);
 s32 ScriptObject_CheckOverlapFar(struct FxObject *object,
                                  struct FxPosition *position);
 s32 Func_08020210(struct FxObject *object, struct FxPosition *position);
-struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct FxObject *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object,
                                                 s32 magnitude, s32 angle);
-void Object_Destroy(struct FxObject *object);
+void Actor_Destroy(struct FxObject *object);
 void BattleEffect_SpawnRadialParticleRing(struct FxObject *object);
 
-static __inline__ s32 Object_ProbeRaised(struct FxObject *object,
+static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
                                          struct FxPosition *position) {
   s32 hit;
 
@@ -114,7 +114,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     return;
   BattleEffect_InitializeSharedScene();
   source->linked = target;
-  ObjectDispatch_InitializeFar((struct DispatchObject *)source,
+  Actor_StartScriptFar((struct DispatchObject *)source,
                                (u32)gData_080f0e60);
   /* FAKEMATCH: the position is reached through this pointer everywhere but
      in the steering loop's first part, which names the position itself;
@@ -135,19 +135,19 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   p->x = target->x;
   p->y = target->y + 0x100000;
   p->z = target->z;
-  Object_SetPosition(object, p->x + 0x100000, p->y, p->z);
-  Object_SetPosition(right, p->x - 0x100000, p->y, p->z);
-  Object_CommitPosition(object);
-  Object_CommitPosition(right);
+  Actor_SetTargetPosition(object, p->x + 0x100000, p->y, p->z);
+  Actor_SetTargetPosition(right, p->x - 0x100000, p->y, p->z);
+  Actor_CommitPosition(object);
+  Actor_CommitPosition(right);
   object->x = p->x + 0x100000;
   object->velocityX = 0;
   right->x = p->x - 0x100000;
   right->velocityX = 0;
-  target->callback = ObjectGroup_ApplyRandomChildValues;
+  target->callback = Actor_ApplyRandomChildValues;
   Task_Add((s32)BattleEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
-  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
+  Actor_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y - target->ground <= 0x180000) {
       object->y += 0x6000;
@@ -173,24 +173,24 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       position.x = target->x;
       position.y = target->y + 0x100000;
       position.z = target->z;
-      Object_SetPosition(anchors[0], position.x + 0x100000, position.y,
+      Actor_SetTargetPosition(anchors[0], position.x + 0x100000, position.y,
                          position.z);
-      Object_SetPosition(anchors[1], position.x - 0x100000, position.y,
+      Actor_SetTargetPosition(anchors[1], position.x - 0x100000, position.y,
                          position.z);
-      Object_SetMode(anchors[0], 1);
-      Object_SetMode(anchors[1], 1);
+      Actor_SetMode(anchors[0], 1);
+      Actor_SetMode(anchors[1], 1);
       continue;
     }
     position.x = target->x;
     position.y = target->y + 0x100000;
     position.z = target->z;
     Vector_AddPolarOffset(0x20000, angle, &position);
-    Object_SetPosition(anchors[0], position.x + 0x100000, position.y,
+    Actor_SetTargetPosition(anchors[0], position.x + 0x100000, position.y,
                        position.z);
-    Object_SetPosition(anchors[1], position.x - 0x100000, position.y,
+    Actor_SetTargetPosition(anchors[1], position.x - 0x100000, position.y,
                        position.z);
-    Object_CommitPosition(anchors[0]);
-    Object_CommitPosition(anchors[1]);
+    Actor_CommitPosition(anchors[0]);
+    Actor_CommitPosition(anchors[1]);
     position.x = target->x;
     position.y = target->ground;
     position.z = target->z;
@@ -200,10 +200,10 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
        of the drop path, as the ROM lays them out. */
     if (i != 0)
       goto blocked;
-    if (Object_ProbeRaised(target, p) > 0) {
+    if (Actor_ProbeRaised(target, p) > 0) {
     blocked:
-      Object_SetMode(anchors[0], 4);
-      Object_SetMode(anchors[1], 4);
+      Actor_SetMode(anchors[0], 4);
+      Actor_SetMode(anchors[1], 4);
       if ((gData_0300122c & 15) == 0)
         Sound_PlayFar(114);
       continue;
@@ -216,21 +216,21 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       Sound_PlayFar(175);
       x = p->x;
       z = p->z;
-      Object_SetMode(anchors[0], 4);
-      Object_SetMode(anchors[1], 4);
+      Actor_SetMode(anchors[0], 4);
+      Actor_SetMode(anchors[1], 4);
       WaitFrames(15);
       target->unk5b = i;
       target->speed = 0x3333;
       target->lift = 0x3333;
-      Object_SetPosition(target, p->x, p->y, p->z);
+      Actor_SetTargetPosition(target, p->x, p->y, p->z);
       anchors[0]->speed = 0x3333;
       anchors[0]->lift = 0x3333;
       second = anchors[1];
       second->speed = 0x3333;
       second->lift = 0x3333;
-      Object_SetPosition(anchors[0], p->x + 0x100000, p->y, p->z);
-      Object_SetPosition(second, p->x - 0x100000, p->y, p->z);
-      Object_CommitPosition(target);
+      Actor_SetTargetPosition(anchors[0], p->x + 0x100000, p->y, p->z);
+      Actor_SetTargetPosition(second, p->x - 0x100000, p->y, p->z);
+      Actor_CommitPosition(target);
       target->x = x;
       target->z = z;
       target->velocityX = i;
@@ -239,8 +239,8 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       break;
     }
   }
-  Object_SetMode(anchors[0], 4);
-  Object_SetMode(anchors[1], 4);
+  Actor_SetMode(anchors[0], 4);
+  Actor_SetMode(anchors[1], 4);
   Task_Remove((u32)BattleEffect_SpawnFallingParticles);
   Sound_PlayFar(135);
   WaitFrames(15);
@@ -253,10 +253,10 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     struct FxObject **walk = shards;
 
     for (i = 0; i < 20; i++) {
-      object = Object_Spawn(0x2a1, p->x, p->y, p->z);
+      object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+        Actor_StartScriptFar((struct DispatchObject *)object,
                                      (u32)gData_080f0e78);
         object->speed = Random16() + 0x20000;
         object->lift = 0x20000;
@@ -268,10 +268,10 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     }
   }
   Sound_PlayFar(131);
-  Object_Destroy(anchors[0]);
-  Object_Destroy(anchors[1]);
+  Actor_Destroy(anchors[0]);
+  Actor_Destroy(anchors[1]);
   Animation_ApplyChildValuesFar((struct DispatchObject *)target, work->palette);
-  ObjectDispatch_InitializeFar((struct DispatchObject *)target,
+  Actor_StartScriptFar((struct DispatchObject *)target,
                                (u32)(work->script));
   {
     /* FAKEMATCH: one zero, set before these stores, clears the mode

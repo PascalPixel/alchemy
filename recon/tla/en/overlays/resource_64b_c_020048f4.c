@@ -2,7 +2,7 @@
 // held, redraws the gauge and queues its sprite over the leader. Left: the
 // sprite word order and register choice around the stmia stores.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "vram_tab.h"
 
 extern u32 gInput;
@@ -10,7 +10,7 @@ extern s16 gData_02006e0e;
 extern s16 gData_02006e10;
 extern u32 Data_02006e14[3];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 s32 Func_02004e10(void);
 void Func_02004c08(s32 value);
@@ -22,7 +22,7 @@ void Func_02004ad0(u32 *oam, s32 priority);
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
   s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
-  struct ObjectRuntime *leader = Object_GetById(Func_02004e10());
+  struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 screen[3];
 
   if ((gInput & 3) != 0 && GameFlag_Test(0x106) == 0 && leader->y > 0x40000) {

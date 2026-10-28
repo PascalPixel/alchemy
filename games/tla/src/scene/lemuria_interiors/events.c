@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -16,9 +16,9 @@ void Func_020028fc();
 void Func_0200291c();
 void GameFlag_SetBit();
 void Event_AskYesNoWithActorAnimation();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetAngleToward();
-struct ObjectRuntime *Object_GetById();
+void Actor_ArmCallback();
+void Actor_SetAngleToward();
+struct Actor *Actor_GetById();
 void FieldMessage_ShowAtActor();
 
 void FieldEvent_WaitFrames();
@@ -71,18 +71,18 @@ L_020081dc:
 }
 
 void Func_020001ec(s32 arg0, s32 arg1) {
-  struct ObjectRuntime *object0;
+  struct Actor *object0;
   s32 value1;
   s32 result2;
   s32 result3;
 
-  object0 = Object_GetById(arg1);
+  object0 = Actor_GetById(arg1);
   value1 = object0->angle;
   Call1((void (*)())GameFlag_SetBit, 0x967);
   ((void (*)())Func_0200282c)();
   Call1((void (*)())Func_020028fc, 0);
   Value3((s32 (*)())Func_020028dc, arg1, 0x101, 30);
-  Call3((void (*)())ObjectMotion_SetAngleToward, arg1, 4, 20);
+  Call3((void (*)())Actor_SetAngleToward, arg1, 4, 20);
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors19);
   Value2((s32 (*)())FieldMessage_ShowAtActor, arg1, 0);
   result2 = Value0((s32 (*)())Func_0200291c);
@@ -97,7 +97,7 @@ L_0200824e:
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors19 + 2));
 L_0200825a:
   Call2((void (*)())Func_020028c4, arg1, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, arg1, value1, 0);
+  Call3((void (*)())Actor_ArmCallback, arg1, value1, 0);
   Value1((s32 (*)())FieldEvent_WaitFrames, 10);
   ((void (*)())Func_02002834)();
   return;

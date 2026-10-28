@@ -14,7 +14,7 @@ struct BattlePlan;
 struct BattleUnit;
 struct DispatchObject;
 struct FieldParticle;
-struct ObjectRuntime;
+struct Actor;
 struct SceneAreaNameRule;
 
 extern u16 gBattleEffect_CyclePatternWords[];
@@ -66,10 +66,9 @@ void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
-                                         s32 y, s32 z);
-void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *object,
-                                         s32 value);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+                                        s32 z);
+void Actor_SetAnimationSpeedFar(struct DispatchObject *object, s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
 void Window_CloseSharedFar(void);
@@ -149,9 +148,9 @@ void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32 Map_RenderAnimatedTilePicturesForObjectFar(void *object);
 #ifndef OWN_Object_Destroy
-void Object_Destroy(struct DispatchObject *work);
+void Actor_Destroy(struct DispatchObject *work);
 #endif
-void ObjectMotion_SnapToTerrain(void *object);
+void Actor_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Owner_RecalculateStatsFar
 void Unit_CalculateFar(s32);

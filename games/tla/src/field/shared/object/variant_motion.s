@@ -6,7 +6,7 @@
 	.global gData_080f0308
 gData_080f0308:
 	.incbin "games/tla/src/field/shared/object/variant_motion.table"
-@ Three 128-byte actions for ObjectMotion_SetVariantCallback, plus a final word.
+@ Three 128-byte actions for Actor_StartRepeatedMotion, plus a final word.
 	.global gObject_VariantMotionScripts
 gObject_VariantMotionScripts:
 	.4byte 23, 9, -16384, 23

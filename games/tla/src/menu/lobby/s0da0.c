@@ -7,28 +7,28 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void MessageArgument_ClearAll(void);
 void Func_020019e4(s32 value, s32 digits);
 void Func_02001a14(void);
 void Func_02001a64(s32 message);
 void Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 Func_02000da0(s32 actor) {
-  u32 facing = Object_GetById(4)->angle;
+  u32 facing = Actor_GetById(4)->angle;
   u16 *count;
   s32 base;
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gAdventure.linkTallies[4];

@@ -82,7 +82,7 @@ void Func_020001a8(void) {
 }
 
 void Func_020001f0(s32 actor) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -98,7 +98,7 @@ void Func_020001f0(s32 actor) {
 }
 
 void Func_02000250(s32 actor) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -114,7 +114,7 @@ void Func_02000250(s32 actor) {
 }
 
 void Func_020002b0(s32 actor) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -130,7 +130,7 @@ void Func_020002b0(s32 actor) {
 }
 
 void Func_0200030c(s32 actor) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -159,7 +159,7 @@ void Func_02000368(void) {
   Func_0200054c();
   Func_020005c4(0);
   for (id = 8; id <= 63; id++) {
-    u8 *actor = (u8 *)Object_GetById(id);
+    u8 *actor = (u8 *)Actor_GetById(id);
 
     if (actor != NULL) {
       u8 *flags = &actor[85];
@@ -182,9 +182,9 @@ void Func_02000368(void) {
   index -= 4;
   Func_02000534_(gData_0200064c[index].script, gData_0200064c[index].x,
                  gData_0200064c[index].z);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
-  Object_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_SetModeById(gAdventure.currentOwner, 2);
   Func_020005a4(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

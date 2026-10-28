@@ -4,7 +4,7 @@
 // frames, twice as large in mode 1; the object is then moved away and the
 // sprite freed.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/dma.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -17,9 +17,9 @@
 extern const u16 Field_Palette685[];
 
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void *Resource_GetTableEntry(s32 resourceId);
 void Func_020033dc(void *entry, u8 *destination);
@@ -43,7 +43,7 @@ struct FlashSprite {
 
 void Func_020029f8(s32 id, s32 mode) {
   u8 *work = HeapSlot_AllocFar(220, 0x428);
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
   u8 *sprite;
@@ -58,7 +58,7 @@ void Func_020029f8(s32 id, s32 mode) {
   }
   WaitFrames(2);
   object->scaleX = 0;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
   Func_020033dc(Resource_GetTableEntry(0x1e8), work);

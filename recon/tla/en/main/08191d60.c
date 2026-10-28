@@ -84,7 +84,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_08158ce0(s32 randomMask, u32 range);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -403,7 +403,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

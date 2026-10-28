@@ -14,7 +14,7 @@
 #include "ram_buffer.h"
 #include "fixed_point_position.h"
 
-#define Object_Destroy ((void (*)(void *))Object_Destroy)
+#define Actor_Destroy ((void (*)(void *))Actor_Destroy)
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   s32 storageKind;
@@ -77,7 +77,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
     }
     slot = BattleObject_FindSlot(no);
     if ((slot != NULL) && (slot->active != 0)) {
-      Object_Destroy(slot->object);
+      Actor_Destroy(slot->object);
       slot->object = NULL;
       slot->active = 0;
     }

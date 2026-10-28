@@ -19,7 +19,7 @@ s32 Func_02001aa4(void) {
 
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 521;
-  Object_GetById(Func_02001f00())->priorityFlags |= 0x20;
+  Actor_GetById(Func_02001f00())->priorityFlags |= 0x20;
   party = &gAdventure;
   /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the scene's
    * offset; read as a plain field the offset's first half is scheduled ahead of

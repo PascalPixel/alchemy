@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct LinkAnimation {
@@ -27,8 +27,8 @@ void Func_080d9194(s32 slot, s32 x0, s32 y0, s32 z0, s32 x1, s32 y1, s32 z1);
 void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
   struct LinkEntry *entries = Ram_HeapSlots->unk84[6];
   s32 layer = 2;
-  struct ObjectRuntime *first = ObjectTable_Get(firstId);
-  struct ObjectRuntime *second = ObjectTable_Get(secondId);
+  struct Actor *first = ObjectTable_Get(firstId);
+  struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != 0 && second != 0) {
     struct LinkEnds *ends;

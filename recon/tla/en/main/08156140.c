@@ -147,7 +147,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Render_ResetTransformState(void);
@@ -783,7 +783,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         }
       }
       Func_08158ce0(4, 4);
-      ObjectGroup_CountDownMemberTimers();
+      BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       WaitFrames(1);
     }

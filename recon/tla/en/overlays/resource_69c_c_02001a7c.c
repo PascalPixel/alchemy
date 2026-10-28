@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
 
@@ -55,7 +55,7 @@ struct CellMapWork {
 
 extern struct CellTarget gData_02002e34;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02002328(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
@@ -123,7 +123,7 @@ s32 Func_02001a7c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     }
   }
   if (GameFlag_Test(0x109)) {
-    struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+    struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
 

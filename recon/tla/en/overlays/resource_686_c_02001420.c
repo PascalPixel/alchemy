@@ -1,7 +1,7 @@
 // Draft, differ 154 of 179: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"

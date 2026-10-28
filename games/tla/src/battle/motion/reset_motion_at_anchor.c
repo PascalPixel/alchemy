@@ -12,10 +12,10 @@
 #include "motobj.h"
 #include "battle_work.h"
 
-#define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
-#define Object_SetPosition                                                     \
-  ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
-#define Object_SetMode ((void (*)(struct MotionObject *, s32))Object_SetMode)
+#define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
+#define Actor_SetTargetPosition                                                     \
+  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
+#define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
 
 s32 ArcTan2(s32, s32);
 
@@ -50,8 +50,8 @@ void ObjMotRst(s32 slotId) {
   object->verticalMotionPhase = zero;
   object->autoFaceMotion = zero;
   object->snapToTarget = 1;
-  Object_ResetMotion(object);
-  Object_SetPosition(object, slot->anchorX, 0, slot->anchorZ);
+  Actor_ResetMotion(object);
+  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
   z = slot->anchorZ;
   if (z < 0)
     z += 7;
@@ -70,7 +70,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->verticalMotionStrength = 0x7851;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_ResetMotion(object);
-  Object_SetPosition(object, slot->anchorX * 3, 0, slot->anchorZ);
-  Object_SetMode(object, 1);
+  Actor_ResetMotion(object);
+  Actor_SetTargetPosition(object, slot->anchorX * 3, 0, slot->anchorZ);
+  Actor_SetMode(object, 1);
 }

@@ -18,7 +18,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "scene_ids.h"
 
 struct PendingEvent {
@@ -81,7 +81,7 @@ s32 Func_080ce61c(u32 code) {
   struct PendingEvent *after;
   struct PendingEvent *during;
   struct PendingEvent *pending;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 selector;
   s32 target;
   s32 cost;

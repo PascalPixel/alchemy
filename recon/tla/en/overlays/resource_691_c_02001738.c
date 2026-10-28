@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -26,15 +26,15 @@ extern u8 gData_02003dd6[];
 extern u8 gData_02003dee[];
 extern u8 Func_020015e4[];
 void Func_02003c4c();
-void Object_SetPartAttribute();
+void Actor_SetPartAttribute();
 s32 Random16Far();
 s32 Func_0200015c();
 s32 Import_ActorCreate();
-void ObjectDispatch_SetSingleChildFlags();
+void Actor_SetSingleChildFlags();
 void Func_02003a54();
-void Object_SetSpritePriority();
+void Scene_SetActorSpritePriority();
 s32 Func_020010cc();
-s32 Object_GetById();
+s32 Actor_GetById();
 
 s32 Func_02001738(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5, r9, r8, r10, r2, r3, v0, r11, r0, r7, r6, v1, v2, r4, v3, v4, v5, r1,
@@ -51,7 +51,7 @@ s32 Func_02001738(s32 a0, s32 a1, s32 a2, s32 a3) {
   if (((FIELD_AT(r5, s32, 0)) & 15) == 0) {
     Call2((void (*)())Func_02003c4c, r8, 136);
   }
-  Value2((s32 (*)())Object_SetPartAttribute, r8, 10);
+  Value2((s32 (*)())Actor_SetPartAttribute, r8, 10);
   r11 = 100 + r8;
   r2 = 0;
   r3 = FIELD_AT(r8, s16, 100);
@@ -111,26 +111,26 @@ L_02009818:
   FIELD_AT(v5, s32, 12) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 12);
   FIELD_AT(v5, s32, 16) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 16);
   FIELD_AT(v5, u8, 85) = r6;
-  Value2((s32 (*)())ObjectDispatch_SetSingleChildFlags, v5, 0);
+  Value2((s32 (*)())Actor_SetSingleChildFlags, v5, 0);
   Call2((void (*)())Func_02003a54, *(s32 *)(r7 + r5), 3);
   r5 = (s32)Func_02001528;
   FIELD_AT((*(s32 *)(r7 + r5)), u8, 98) = 3 - r10;
   FIELD_AT(*(s32 *)(r7 + r5), s32, 104) = r8;
   FIELD_AT(*(s32 *)(r7 + r5), s32, 108) = r5;
-  Call2((void (*)())Object_SetPartAttribute, *(s32 *)(r7 + r5), 3);
+  Call2((void (*)())Actor_SetPartAttribute, *(s32 *)(r7 + r5), 3);
   r4 = 1;
   r10 = r10 + r4;
   if (r10 != 4)
     goto L_02009818;
   FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 85) = r6;
-  Value2((s32 (*)())ObjectDispatch_SetSingleChildFlags, FIELD_AT(r7, s32, 0),
+  Value2((s32 (*)())Actor_SetSingleChildFlags, FIELD_AT(r7, s32, 0),
          0);
   Call2((void (*)())Func_02003a54, FIELD_AT(r7, s32, 0), 3);
-  Call2((void (*)())Object_SetSpritePriority, FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())Scene_SetActorSpritePriority, FIELD_AT(r7, s32, 0), 3);
   FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 98) = 3;
   FIELD_AT(FIELD_AT(r7, s32, 0), s32, 104) = r8;
   FIELD_AT(FIELD_AT(r7, s32, 0), s32, 108) = r5;
-  Call2((void (*)())Object_SetPartAttribute, FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())Actor_SetPartAttribute, FIELD_AT(r7, s32, 0), 3);
   r4 = 0;
   r0 = 0;
   r1 = (s32)&gAdventure;
@@ -170,7 +170,7 @@ L_02009918:
   v10 = Func_020010cc(r0, r1, (s32)gData_02003dee);
   r0 = v10;
 L_0200991e:
-  v11 = Object_GetById(r0);
+  v11 = Actor_GetById(r0);
   FIELD_AT(v11, u8, 98) = 4;
   FIELD_AT(v11, s32, 104) = r8;
   FIELD_AT(v11, s32, 108) = (s32)Func_020015e4;
@@ -181,7 +181,7 @@ L_0200991e:
 L_0200993e:
   if (r3 <= 0x16c)
     goto L_02009954;
-  Call2((void (*)())Object_SetPartAttribute, r8, 0);
+  Call2((void (*)())Actor_SetPartAttribute, r8, 0);
   FIELD_AT(r8, s32, 108) = 0;
   r0 = v12;
 L_02009954:

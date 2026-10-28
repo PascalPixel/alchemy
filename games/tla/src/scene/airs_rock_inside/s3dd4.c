@@ -23,10 +23,10 @@ void Func_02003e7c(struct FieldActor *source) {
   WORD_AT(object, 28) = 0x6666;
   WORD_AT(object, 24) = 0x6666;
   object->motionFlags = 0;
-  Object_SetPartAttribute(object, 2);
-  Object_SetSpritePriority(object, 1);
+  Actor_SetPartAttribute(object, 2);
+  Scene_SetActorSpritePriority(object, 1);
   Func_02005d5c(object, 1);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
   Func_02005d6c(object, gData_02006084);
 }

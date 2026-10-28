@@ -319,7 +319,7 @@ BattleEffect_RunBreak:
 	cmp r1, r3
 	bne .L_0814e90e
 .L_0814e9cc:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #32]
 	lsls r4, r4, #7

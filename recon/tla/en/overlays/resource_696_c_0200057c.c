@@ -21,14 +21,14 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200479c(void *resource, void *destination);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 void Import_SoundPlay(s32 cue);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 u32 Random16Far(void);
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
-void Object_SetPartAttribute(void *object, s32 value);
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Actor_SetPartAttribute(void *object, s32 value);
 void Effect_CircleAndBlink(union FieldObject *object);
 void Camera_FollowActor(s32 id, s32 flag);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -53,13 +53,13 @@ void Func_02000378(void);
 void Func_02000420(void);
 void Func_02000508(union FieldObject *object);
 
-#define OBJ14_BYTE(offset) (((u8 *)Object_GetById(14))[offset])
+#define OBJ14_BYTE(offset) (((u8 *)Actor_GetById(14))[offset])
 
 void Func_0200057c(void) {
   u16 *buffer;
   u16 zero;
   struct FieldEffect *effect;
-  struct ObjectRuntime *source;
+  struct Actor *source;
   struct EffectOptions options;
   s32 velocity[3];
   s32 x;
@@ -73,8 +73,8 @@ void Func_0200057c(void) {
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
   Heap_Release(buffer);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
-  ObjectMotion_SetActionVariant(14, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(14, 1);
   *(volatile u16 *)0x04000008 = 0x40d;
   *(volatile u16 *)0x04000008 &= ~3;
   *(volatile u16 *)0x04000008 |= 1;
@@ -91,15 +91,15 @@ void Func_0200057c(void) {
   Import_SoundPlay(246);
   OBJ14_BYTE(0x62) = 9;
   OBJ14_BYTE(0x63) = 1;
-  Object_GetById(14)->update = Func_02000458;
+  Actor_GetById(14)->update = Func_02000458;
   for (i = 0; i != 45; i++) {
     u32 frame = gFrameCount & 3;
 
     if (frame == 0) {
       effect = (struct FieldEffect *)Import_ActorCreate(
-          672, Object_GetById(14)->x, Object_GetById(14)->y,
-          Object_GetById(14)->z);
-      source = Object_GetById(14);
+          672, Actor_GetById(14)->x, Actor_GetById(14)->y,
+          Actor_GetById(14)->z);
+      source = Actor_GetById(14);
       ((struct FieldSprite *)effect->sprite)->priority =
           ((struct FieldSprite *)source->animation)->priority;
       effect->priorityFlags |= 1;
@@ -110,8 +110,8 @@ void Func_0200057c(void) {
       effect->scaleRateX = Random16Far() & 0xffff;
       Import_ActorSetMode((struct FieldActor *)effect, 7);
       Import_ActorSetScript((struct FieldActor *)effect, gData_02004ae0);
-      ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
-      Object_SetPartAttribute(effect, 2);
+      Actor_SetSingleChildFlags((struct FieldActor *)effect, 0);
+      Actor_SetPartAttribute(effect, 2);
       effect->update = Effect_CircleAndBlink;
     }
     FieldEvent_WaitFrames(1);
@@ -196,17 +196,17 @@ void Func_0200057c(void) {
   Task_RemoveFar(Func_02000378);
   OBJ14_BYTE(0x63) = 0;
   WaitFrames(30);
-  Object_GetById(14)->update = 0;
-  Object_SetPartAttribute(Object_GetById(14), 6);
+  Actor_GetById(14)->update = 0;
+  Actor_SetPartAttribute(Actor_GetById(14), 6);
   Func_0200486c();
   FieldEvent_WaitFrames(60);
   REG_BLDCNT = 0;
   Func_020047d4();
   Func_020047bc();
   Func_0200488c(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
-  Object_GetById(14)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(14)->priorityFlags |= 1;
   REG_DISPCNT |= 0x400;
   Func_0200482c();
   WaitFrames(1);

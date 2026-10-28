@@ -78,8 +78,8 @@ s32 Task_Remove(void (*callback)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
-void Object_SetMode(struct MotionObject *object, s32 mode);
-void Object_ResetMotion(struct MotionObject *object);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
+void Actor_ResetMotion(struct MotionObject *object);
 void HeapSlot_Release(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -102,7 +102,7 @@ void Func_08118088(s32 actor, s32 mode);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 
@@ -217,7 +217,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         caster->velocityX = 8 << 16;
       if (mode == 1)
         caster->velocityX = -caster->velocityX;
-      Object_SetMode(caster, 2);
+      Actor_SetMode(caster, 2);
       work->shakeFrames = 4;
       Sound_PlayFar(136);
     }
@@ -238,7 +238,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       caster->velocityZ = 0;
       stepX = (target->x * 60 / 100 - caster->x) / slide;
       stepY = (target->y - caster->y) / slide;
-      Object_ResetMotion(caster);
+      Actor_ResetMotion(caster);
     }
 
     if (frame > 17) {
@@ -412,7 +412,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(12, 12);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

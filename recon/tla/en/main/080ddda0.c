@@ -35,9 +35,9 @@ void BattleEffect_InitializeSharedScene(void);
 void *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude,
                                                 s32 angle);
-void Object_CommitPosition(void *object);
+void Actor_CommitPosition(void *object);
 void Sound_PlayFar(s32 sound);
-void ObjectGroup_ApplyRandomChildValues(void);
+void Actor_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleEffect_PrepareBufferInterpolation(void);
 
@@ -59,7 +59,7 @@ void FieldEffect_RunLiftOnTarget(void) {
 
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
-  ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject,
+  Actor_StartScriptFar((struct DispatchObject *)mainObject,
                                (u32)(gBattleEffect_SharedParticleScript + 12));
 
   x = scene->x;
@@ -80,8 +80,8 @@ void FieldEffect_RunLiftOnTarget(void) {
                                                  *(u16 *)((u8 *)anchor + 6));
   }
 
-  Object_CommitPosition(anchors[0]);
-  ((struct EffectChild *)child)->callback = ObjectGroup_ApplyRandomChildValues;
+  Actor_CommitPosition(anchors[0]);
+  ((struct EffectChild *)child)->callback = Actor_ApplyRandomChildValues;
   Sound_PlayFar(130);
   ((struct EffectChild *)child)->flag = 4;
 

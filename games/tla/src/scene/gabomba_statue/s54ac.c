@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MapLayer {
   u8 *cells;
@@ -13,12 +13,12 @@ struct MapLayers {
 };
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-s32 Func_02005844(struct ObjectRuntime *object);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+struct Actor *Actor_GetById(s32 id);
+s32 Func_02005844(struct Actor *object);
+void Func_02005624(struct Actor *object, s32 mode);
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   u8 *cell = ((struct MapLayers *)Ram_HeapSlots->mapWork)->layers[layer].cells;
 
   cell += Func_02005844(object) * 4;

@@ -24,21 +24,21 @@ struct DjinniObject {
   void *update;
 };
 
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void WaitFrames(s32 frames);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void Object_SetMode(void *object, s32 mode);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetMode(void *object, s32 mode);
 void Camera_WorldToScreen(void *position);
 void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value);
 u32 Random16(void);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
-void Object_Destroy(void *object);
+void Actor_Destroy(void *object);
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
 void BattleEffect_SpinUpAngle(void *obj);
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
@@ -60,8 +60,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   void *slot;
   s8 *slotState;
 
-  djinni = Object_GetById(djinniId);
-  leader = Object_GetById(gAdventure.currentOwner);
+  djinni = Actor_GetById(djinniId);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (djinni == NULL)
     return;
 
@@ -69,7 +69,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x201090);
   WaitFrames(30);
-  ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
+  Actor_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
   Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -83,7 +83,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   WaitFrames(80);
   djinni->update = BattleEffect_ShrinkObjectAndDestroySlow;
-  Object_SetMode(djinni, 3);
+  Actor_SetMode(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x;
@@ -120,9 +120,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -194,5 +194,5 @@ void BattleEffect_ShrinkObjectAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Object_Destroy(obj);
+    Actor_Destroy(obj);
 }

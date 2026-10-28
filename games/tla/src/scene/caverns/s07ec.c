@@ -1,7 +1,7 @@
 #include "caverns.h"
 #include "field_sprite.h"
 
-void Func_020007ec(struct ObjectRuntime *object) {
+void Func_020007ec(struct Actor *object) {
   object->x += object->bounce;
   object->y += object->gravity;
   object->z += object->unk4c;

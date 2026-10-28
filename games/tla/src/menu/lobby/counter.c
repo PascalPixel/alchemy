@@ -18,7 +18,7 @@ void Func_02001a14(void);
 void Func_02001a1c(void);
 void Func_02001a64(s32 message);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 
 /// The lobby clerk: offers the link battle, or reports on the one waiting.
 s32 Func_02000bb0(void) {
@@ -29,7 +29,7 @@ s32 Func_02000bb0(void) {
   msg = (s32)MsgPleaseSpeakTo;
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
   if (Func_0200006c(0) == 0)
     WaitFrames(1);
   if (Func_0200006c(0) == 0) {

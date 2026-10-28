@@ -13,7 +13,7 @@ Func_080daecc:
 	sub sp, #12
 	str r0, [sp, #8]
 	str r1, [sp, #4]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r2, r3, #0
@@ -95,7 +95,7 @@ Func_080daecc:
 	mov r11, r1
 	movs r1, #0
 	mov r8, r3
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r2, r7, #0
 	movs r3, #0
 	adds r2, #85
@@ -111,7 +111,7 @@ Func_080daecc:
 	adds r3, r3, r1
 	str r3, [r7, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r2, #240
 	mov r7, r10
 	lsls r2, r2, #12

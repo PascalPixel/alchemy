@@ -16,7 +16,7 @@
 #include "mem.h"
 #include "system.h"
 #include "resource.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 // One spark: where it circles round, its angle and radius, and its age in
@@ -41,9 +41,9 @@ struct SparkWork {
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
 
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
@@ -51,7 +51,7 @@ void Camera_WorldToScreen(s32 *position);
 void Func_080eb960(s32 objectId) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   u16 angle = object->angle;
   s32 entry;
@@ -81,7 +81,7 @@ void Func_080eb960(s32 objectId) {
   }
   object->scaleX = 0;
   object->scaleY = 0x10000;
-  ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSingleChildFlagsFar(object, 0);
   spawning = 1;
   phase = 0;
   next = 0;
@@ -146,7 +146,7 @@ void Func_080eb960(s32 objectId) {
       }
       if (frame == 64) {
         object->angle = angle;
-        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+        Actor_SetSingleChildFlagsFar(object, 1);
       }
       if (frame == 10)
         spawning = 0;

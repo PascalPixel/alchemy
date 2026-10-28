@@ -1,11 +1,11 @@
 #include "types.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
-void Func_02001ad0(struct ObjectRuntime *object);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Func_02001ad0(struct Actor *object);
 
-void Func_020019d4(struct ObjectRuntime *object) {
+void Func_020019d4(struct Actor *object) {
   /* FAKEMATCH: a volatile first read keeps the second read of the frame counter
    * after the call; plain, it is hoisted above the branch */
   u32 frame = *(volatile u32 *)&gFrameCount;

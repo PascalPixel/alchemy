@@ -12,13 +12,13 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 void Func_020006cc(u16 *ids) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u8 *blocked;
   struct MapWork *map;
   struct MapCell **cells;
@@ -26,7 +26,7 @@ void Func_020006cc(u16 *ids) {
 
   goto check;
 loop:
-  object = Object_GetById(*ids);
+  object = Actor_GetById(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
   if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 0x40) {

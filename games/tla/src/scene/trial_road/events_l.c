@@ -1,7 +1,7 @@
 #include "trial_road.h"
 
 void Func_020007e8(void) {
-  if (Object_GetById(16)->z >> 20 == 23)
+  if (Actor_GetById(16)->z >> 20 == 23)
     Func_020059c0();
   else
     Func_02005918(gAdventure.currentOwner, 6, 0);

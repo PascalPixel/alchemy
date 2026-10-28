@@ -12,14 +12,14 @@
 // options or after them (16 to 40), the loop as do, while or goto, an options
 // pointer; permute found nothing better.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 #include "lib/call.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
@@ -38,12 +38,12 @@ void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_02005ec4(u32 id, s32 mode);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005dd4(void);
 
 void Func_0200505c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   u32 i;
 
@@ -84,7 +84,7 @@ void Func_0200505c(void) {
   }
   Func_02005f94(188);
   Func_02005ec4(gAdventure.currentOwner, 257);
-  Object_SetModeById(gAdventure.currentOwner, 22);
+  Actor_SetModeById(gAdventure.currentOwner, 22);
   Call3((void (*)())Func_02005dcc, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
   Func_02005dd4();

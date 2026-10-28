@@ -49,10 +49,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -113,7 +113,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetAnimationSpeedFar(void *object, s32 value);
 
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
@@ -209,7 +209,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else if (frame == 0) {
       Func_0814cd48(effect->actor, -1, 2, 0, -1);
-      ObjectDispatch_SetAnimationSpeedFar(caster, 32);
+      Actor_SetAnimationSpeedFar(caster, 32);
     }
 
     vertices = Heap_AllocEwram(32);
@@ -341,11 +341,11 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     } else {
       Func_08158ce0(8, 8);
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

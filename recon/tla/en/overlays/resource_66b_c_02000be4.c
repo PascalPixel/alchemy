@@ -7,7 +7,7 @@
 // while it is raised. The same listing as overlay 661's Func_020039b8 and
 // 697's Func_02003da0. Left: the native keeps the table in r9, the cell flags base in r11, the collision cursor in r8 and the count in r10, takes the shape grid from the stack, and stores the cell flags through a shared tail.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
@@ -24,12 +24,12 @@ struct SwingActor {
   s16 speed;
   s16 unk14;
   s16 bob;
-  struct ObjectRuntime *shadow;
+  struct Actor *shadow;
 };
 
 extern u8 gData_020023c4[];
 extern s32 gMapCollision[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200131c(s32 cue);
 s32 GameFlag_Test(s32 flag);
 s32 Math_Sine(s32 angle);
@@ -41,14 +41,14 @@ void Func_02000be4(void) {
   u8 *cells = *(u8 **)(map + 0x138);
   s32 *collision = gMapCollision + *(s16 *)(table + 2);
   struct SwingActor *swing = (struct SwingActor *)(table + 4);
-  struct ObjectRuntime *actor, *shadow;
+  struct Actor *actor, *shadow;
   s32 n, cell, flag;
   u8 *flags;
 
   for (n = 0; n <= 15; n++, swing++, collision++) {
     if (swing->id == 0)
       continue;
-    actor = Object_GetById(swing->id);
+    actor = Actor_GetById(swing->id);
     if (actor->x == 0 && actor->z == 0)
       continue;
     if (swing->phase == swing->riseAt) {

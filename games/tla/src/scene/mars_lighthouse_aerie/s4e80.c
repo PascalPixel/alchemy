@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "edition.h"
 
@@ -10,18 +10,18 @@ struct MarsLighthouseAerieParty {
   s16 held;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02004e80(s32 from, s32 to) {
-  struct ObjectRuntime *found = Object_GetById(from);
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *target;
+  struct Actor *found = Actor_GetById(from);
+  struct Actor *object;
+  struct Actor *target;
   struct Adventure *party = &gAdventure;
 
   party->savedByte = 0;
   object = found;
   ((struct MarsLighthouseAerieParty *)party)->held = to;
-  target = Object_GetById(to);
+  target = Actor_GetById(to);
   target->update = object->update;
   object->update = NULL;
 }

@@ -279,7 +279,7 @@ Func_080e3d04:
 	str r3, [r0, #8]
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_080e3f2a
@@ -294,7 +294,7 @@ Func_080e3d04:
 	str r3, [r5, #24]
 	str r3, [r5, #28]
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #186
 	bl Sound_PlayFar
 	movs r0, #50
@@ -322,7 +322,7 @@ Func_080e3d04:
 	str r3, [r0, #8]
 	movs r0, #112
 	adds r0, #255
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_080e3f82
@@ -332,14 +332,14 @@ Func_080e3d04:
 	adds r3, #85
 	strb r6, [r3]
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #186
 	bl Sound_PlayFar
 	movs r0, #45
 .L_080e3f96:
 	bl WaitFrames
 	adds r0, r5, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 	movs r0, #10
 	bl WaitFrames
 	b .L_080e4222

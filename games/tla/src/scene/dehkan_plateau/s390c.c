@@ -1,18 +1,18 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "task.h"
 
 extern const u8 gData_02003fb0[];
-extern struct ObjectRuntime *gData_02004420;
+extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
 extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000038(const void *data);
 void Func_02001804(void);
 void Func_020019b8(void);
@@ -35,14 +35,14 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02003bf0(a, b, c, d, e, f);
 }
 
-static __inline__ void Actor_SetPosition(struct ObjectRuntime *object, s32 x,
+static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetPositionAndResetMotion(object, x, y, z);
+  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 void Func_0200390c(void) {
-  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
+  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
   s32 entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;

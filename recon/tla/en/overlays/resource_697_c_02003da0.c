@@ -25,7 +25,7 @@ struct TrialRoadMover {
   s16 speed;
   s16 unk14;
   s16 bob;
-  struct ObjectRuntime *marker;
+  struct Actor *marker;
 };
 
 struct TrialRoadMovers {
@@ -46,15 +46,15 @@ void Func_02003da0(void) {
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
   struct TrialRoadMover *mover = work->movers;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *marker;
+  struct Actor *object;
+  struct Actor *marker;
   s32 cell;
   u8 *attributes;
   s32 i;
   for (i = 0; i <= 15; i++, collision++, mover++) {
     if (mover->id == 0)
       continue;
-    object = Object_GetById(mover->id);
+    object = Actor_GetById(mover->id);
     if (object->x == 0 && object->z == 0)
       continue;
     if (mover->phase == mover->upAt) {

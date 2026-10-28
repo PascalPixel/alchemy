@@ -4,7 +4,7 @@
 // Func_02001598, 681's Func_02001548 and 692's Func_02002c48. Left: instruction
 // order and registers around the two random calls.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 
@@ -14,7 +14,7 @@ void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-void Func_020040b0(struct ObjectRuntime *object) {
+void Func_020040b0(struct Actor *object) {
   struct EffectOptions options;
   struct Vector3 position;
   s32 frame = gFrameCount & 7;

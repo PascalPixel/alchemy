@@ -7,9 +7,9 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
-s32 Object_SetModeById();
-s32 ObjectMotion_SetActionVariant();
+s32 Actor_GetById();
+s32 Actor_SetModeById();
+s32 Actor_SetSpritePriority();
 s32 GameFlag_Test();
 s32 Func_0200290c();
 s32 Func_020028b4();
@@ -22,7 +22,7 @@ s32 GameFlag_SetBit();
 s32 Party_RemoveActiveOwner();
 s32 Func_0200299c();
 s32 Func_02002a04();
-s32 Object_SetActionCallback();
+s32 Actor_SetActionCallback();
 extern u8 gAdventure[];
 extern char SceneId_VenusLighthouseEntrance;
 
@@ -35,14 +35,14 @@ s32 Func_02000128(void) {
   s32 t33;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
-  Call2(Object_SetModeById, 0xa, 5);
-  Call2(ObjectMotion_SetActionVariant, 0xa, 1);
-  Call2(Object_SetModeById, 0xb, 5);
-  Call2(ObjectMotion_SetActionVariant, 0xb, 1);
-  Call2(ObjectMotion_SetActionVariant, 0xe, 2);
-  Call2(ObjectMotion_SetActionVariant, 0x13, 2);
+  Call2(Actor_SetModeById, 0xa, 5);
+  Call2(Actor_SetSpritePriority, 0xa, 1);
+  Call2(Actor_SetModeById, 0xb, 5);
+  Call2(Actor_SetSpritePriority, 0xb, 1);
+  Call2(Actor_SetSpritePriority, 0xe, 2);
+  Call2(Actor_SetSpritePriority, 0x13, 2);
   t7 = Value1(GameFlag_Test, 0x892);
   if (t7 != 0) {
     Call3(Func_0200290c, 0xa, 0, 0);
@@ -88,15 +88,15 @@ s32 Func_02000128(void) {
   }
   t33 = Value1(GameFlag_Test, 0x893);
   if (t33 == 0) {
-    Call2(Object_SetModeById, 0x16, 5);
-    Call2(ObjectMotion_SetActionVariant, 0x16, 1);
+    Call2(Actor_SetModeById, 0x16, 5);
+    Call2(Actor_SetSpritePriority, 0x16, 1);
   } else {
     Call3(Func_0200290c, 0x16, 0x280000, 0xf80000);
-    t37 = Value1(Object_GetById, 0x16);
+    t37 = Value1(Actor_GetById, 0x16);
     FIELD_AT(t37, u16, 6) = 0x4000;
     Call3(Func_02002a04, 0x16, 0x4000, 0);
-    Call2(ObjectMotion_SetActionVariant, 0x16, 3);
-    Call2(Object_SetActionCallback, Value1(Object_GetById, 0x16), 8);
+    Call2(Actor_SetSpritePriority, 0x16, 3);
+    Call2(Actor_SetActionCallback, Value1(Actor_GetById, 0x16), 8);
   }
   return 0;
 }

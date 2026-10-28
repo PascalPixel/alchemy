@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000d64(struct ObjectRuntime *object, s32 limit) {
+void Func_02000d64(struct Actor *object, s32 limit) {
   s32 frames = 60;
 
   while (frames != 0) {

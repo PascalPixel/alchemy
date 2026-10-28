@@ -276,7 +276,7 @@ Func_0802a124:
 .L_0802a346:
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	ldr r0, [sp, #16]
 	cmp r0, #0
 	beq .L_0802a3a2
@@ -328,7 +328,7 @@ Func_0802a124:
 	ldr r1, [r3]
 	adds r0, r7, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r1, [r7, #36]
 	ldr r6, .L_0802a47c
 	adds r0, r1, #0
@@ -466,7 +466,7 @@ Func_0802a124:
 	ldr r1, .L_0802a528
 	str r3, [r5, #20]
 	ldr r6, [r5, #80]
-	bl ObjectDispatch_Initialize
+	bl Actor_StartScript
 	adds r2, r5, #0
 	adds r2, #35
 	movs r3, #8

@@ -26,7 +26,7 @@ void Func_02001208();
 void Camera_MoveWithinMapBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
-void Object_SetModeById();
+void Actor_SetModeById();
 void FieldMessage_ShowAtActor();
 void Message_CloseFinishedWindows();
 
@@ -70,8 +70,8 @@ void Func_0200087c(void) {
 
     Call4(Func_020010f0, 18, 0xda0000, 0x1400000, turn);
   }
-  Call2(Object_SetModeById, 4, 19);
-  Call2(Object_SetModeById, 0, 39);
+  Call2(Actor_SetModeById, 4, 19);
+  Call2(Actor_SetModeById, 0, 39);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call2(Motion_SetVarCbAndRefresh, 21, 2);

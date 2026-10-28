@@ -508,7 +508,7 @@ BattleEffect_RunCrystal:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r4, [sp, #52]
 	lsls r1, r1, #7

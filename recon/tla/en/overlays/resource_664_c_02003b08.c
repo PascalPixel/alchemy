@@ -11,8 +11,8 @@
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 s32 __divsi3(s32 a, s32 b);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 s32 Func_02000690(u32 layer, s32 x, s32 y);
 void Func_02002790(void);
 void Func_02003b7c(s32 x, s32 y);
@@ -24,14 +24,14 @@ static inline void FlagOn(u8 *flags, s32 bit) {
 }
 
 void Func_02003b08(void) {
-  if (*(s16 *)((u8 *)Object_GetById(gAdventure.currentOwner) + 18) <= 653) {
+  if (*(s16 *)((u8 *)Actor_GetById(gAdventure.currentOwner) + 18) <= 653) {
     Func_02005e14();
     Func_02005f2c(0);
     Func_02005f94(186);
-    BYTE_AT(Object_GetById(gAdventure.currentOwner), 90) &= ~1;
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
-    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 376, 668);
-    FlagOn(&BYTE_AT(Object_GetById(gAdventure.currentOwner), 90), 1);
+    BYTE_AT(Actor_GetById(gAdventure.currentOwner), 90) &= ~1;
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+    Actor_SetPositionAndCommit(gAdventure.currentOwner, 376, 668);
+    FlagOn(&BYTE_AT(Actor_GetById(gAdventure.currentOwner), 90), 1);
     Func_02005e1c();
   }
 }
@@ -45,7 +45,7 @@ static inline s32 RowTop(s32 row) {
 
 void Func_02003cac(void) {
   s16 *room = (s16 *)Ram_HeapSlots->eventWork;
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 kind = Func_02000690(2, leader->x >> 20, leader->z >> 20) >> 8;
   s32 row;
 

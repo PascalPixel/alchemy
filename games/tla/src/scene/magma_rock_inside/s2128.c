@@ -11,8 +11,8 @@ void Func_02002128(void) {
   } while (0);
   *(work + 0xd38) = 1;
   if (!GameFlag_Test(0x304)) {
-    Object_SetPartAttribute(Object_GetById(22), 15);
+    Actor_SetPartAttribute(Actor_GetById(22), 15);
     Func_02004da0(22, 632 << 16, 312 << 16);
-    Object_GetById(22)->scaleX = Object_GetById(22)->scaleY = 0x1000;
+    Actor_GetById(22)->scaleX = Actor_GetById(22)->scaleY = 0x1000;
   }
 }

@@ -17,7 +17,7 @@
 // loads y (4 to 2).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -26,7 +26,7 @@ struct EventWork1ac {
   s32 screenEffect;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02003198();
@@ -40,7 +40,7 @@ static __inline__ void EasternAlhafraShip_ObjPlace(s32 actor, s32 x, s32 z) {
 }
 
 s32 Func_02000250(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   if (gAdventure.entrance == 99) {
@@ -68,12 +68,12 @@ s32 Func_02000250(void) {
   }
   if (GameFlag_Test(0x900))
     EasternAlhafraShip_ObjPlace(13, 0x1880000, 0x2880000);
-  Object_GetById(13)->priorityFlags |= 32;
+  Actor_GetById(13)->priorityFlags |= 32;
   Func_02003298(15, 457);
   if (!GameFlag_Test(0x901)) {
     if (!GameFlag_Test(0x109)) {
-      Object_GetById(14)->priorityFlags |= 128;
-      object = Object_GetById(15);
+      Actor_GetById(14)->priorityFlags |= 128;
+      object = Actor_GetById(15);
       object->priorityFlags |= 64;
       object->y += 0x100000;
       object->terrainHeight += 0x100000;

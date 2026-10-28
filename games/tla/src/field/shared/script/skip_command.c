@@ -1,10 +1,10 @@
 #include "script.h"
 #include "types.h"
 
-void ObjectDispatch_Release();
+void Actor_Release();
 
-s32 ObjectDispatch_ReleaseAndClear(void *object) {
-  ObjectDispatch_Release(object);
+s32 Actor_ReleaseAndClear(void *object) {
+  Actor_Release(object);
   return 0;
 }
 

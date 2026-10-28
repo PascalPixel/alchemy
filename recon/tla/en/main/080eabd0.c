@@ -13,7 +13,7 @@
 // same slot in layer 2's cell table. The leader is then lifted onto the
 // terrain if below it, as in Func_080ea7c0.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -37,22 +37,22 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(u32 actor);
-s32 Func_080eab70(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(u32 actor);
+s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 
 void Func_080eabd0(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct SwitchCell *blocks = map->layers[2].cells;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 height;
 
   for (; *actors != 0xffff; actors++) {
-    struct ObjectRuntime *object = Object_GetById(*actors);
+    struct Actor *object = Actor_GetById(*actors);
     u32 key = Func_080202f0(object->terrainId, object->x, object->z);
     s32 level =
         Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
@@ -64,7 +64,7 @@ void Func_080eabd0(u16 *actors) {
 
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+    Actor_SetSingleChildFlagsFar(object, 0);
     tag = Func_080eab98(object->terrainId, key, level + 4);
     flags = ((u8 *)&cells[slot])[3];
     object->unk4c = flags;
@@ -72,7 +72,7 @@ void Func_080eabd0(u16 *actors) {
     shapes[slot] = tag;
     blocks[slot].block = 0xff;
   }
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

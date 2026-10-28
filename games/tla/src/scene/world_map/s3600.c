@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
-extern struct ObjectRuntime *gData_02006c08[];
+extern struct Actor *gData_02006c08[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004e30(s32 value);
 
 /// The event countdown takes before when the party leader's x is less than
@@ -15,8 +15,8 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
   /* FAKEMATCH(pin): after copied to r6 on entry; as plain after, 18 of 33
    * instructions differ in tla-en. */
   register s32 elseValue asm("r6") = after;
-  struct ObjectRuntime *target = gData_02006c08[slot - 100];
-  struct ObjectRuntime *owner;
+  struct Actor *target = gData_02006c08[slot - 100];
+  struct Actor *owner;
   struct EventWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gAdventure's address before it builds the
@@ -28,7 +28,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Object_GetById(gAdventure.currentOwner);
+    owner = Actor_GetById(gAdventure.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->x < target->x)
       work->countdown = thenValue;
@@ -43,8 +43,8 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
   /* FAKEMATCH(pin): after copied to r6 on entry; as plain after, 18 of 33
    * instructions differ in tla-en. */
   register s32 elseValue asm("r6") = after;
-  struct ObjectRuntime *target = gData_02006c08[slot - 100];
-  struct ObjectRuntime *owner;
+  struct Actor *target = gData_02006c08[slot - 100];
+  struct Actor *owner;
   struct EventWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gAdventure's address before it builds the
@@ -56,7 +56,7 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Object_GetById(gAdventure.currentOwner);
+    owner = Actor_GetById(gAdventure.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->z < target->z)
       work->countdown = thenValue;

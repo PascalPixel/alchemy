@@ -23,7 +23,7 @@ static inline void ObjEmote(s32 actor, s32 emote) {
 }
 
 s32 Func_02000a78(void) {
-  struct ObjectRuntime *object = Object_GetById(1);
+  struct Actor *object = Actor_GetById(1);
 
   if (object != NULL) {
     struct FieldSprite *sprite = object->animation;

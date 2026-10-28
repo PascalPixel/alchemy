@@ -3,7 +3,7 @@
 /// Sets flag 0xa04 or 0xa05 when the object stands on cell (20, 36) or
 /// (32, 36), then waits up to 30 frames for it to land and lifts it there.
 void Func_02000134(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 placed = 0;
   s32 i;
   /* FAKEMATCH: the mode pinned to r2 before an empty asm is built after the
@@ -52,13 +52,13 @@ s32 Func_020001d4(void) {
 }
 
 s32 Func_02000250(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
   s32 x;
 
   Scene_SetArrivalFlags(0);
   if (GameFlag_Test(0xa04)) {
-    object = Object_GetById(14);
+    object = Actor_GetById(14);
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
@@ -66,22 +66,22 @@ s32 Func_02000250(void) {
     Func_02002368(object->x, object->z, 0, 0);
   }
   if (GameFlag_Test(0xa05)) {
-    object = Object_GetById(15);
+    object = Actor_GetById(15);
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
     Func_020023b0_(15, 0x2080000, 0x2480000);
     Func_02002368(object->x, object->z, 0, 0);
   }
-  Object_GetById(8)->priorityFlags |= 32;
-  Object_GetById(9)->priorityFlags |= 32;
-  Object_GetById(10)->priorityFlags |= 32;
-  Object_GetById(11)->priorityFlags |= 32;
-  ObjectMotion_SetActionVariant(8, 3);
-  ObjectMotion_SetActionVariant(10, 3);
-  ObjectMotion_SetActionVariant(9, 3);
-  ObjectMotion_SetActionVariant(11, 3);
-  Object_GetById(10)->priorityFlags |= 2;
+  Actor_GetById(8)->priorityFlags |= 32;
+  Actor_GetById(9)->priorityFlags |= 32;
+  Actor_GetById(10)->priorityFlags |= 32;
+  Actor_GetById(11)->priorityFlags |= 32;
+  Actor_SetSpritePriority(8, 3);
+  Actor_SetSpritePriority(10, 3);
+  Actor_SetSpritePriority(9, 3);
+  Actor_SetSpritePriority(11, 3);
+  Actor_GetById(10)->priorityFlags |= 2;
   Func_020023d0(8);
   Func_020023d0(9);
   Func_020023d0(10);

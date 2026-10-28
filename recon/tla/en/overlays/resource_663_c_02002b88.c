@@ -9,17 +9,17 @@
 // before the 32 is built. Measured: the switch inside an if instead of the
 // early return, no change.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "lib/call.h"
 
 extern s32 gData_02004698;
 s32 Func_02003cc8(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02003b80(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 
 void Func_02002b88(void) {
-  struct ObjectRuntime *actor = Object_GetById(Func_02003cc8());
+  struct Actor *actor = Actor_GetById(Func_02003cc8());
   s32 level;
 
   actor->priorityFlags |= 32;

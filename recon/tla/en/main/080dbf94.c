@@ -10,30 +10,30 @@
 // before the z store and the zero to fp after it.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MoveScene {
   u16 mode;
   u8 unk02[14];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 struct MapCell;
 u8 Func_080dbde8(s32 x, s32 z, s32 layer);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
-void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object,
+void Actor_SetSpritePriorityDirectFar(struct Actor *object,
                                          s32 priority);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const s32 *script);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 extern const s32 gData_080f0e78[];
 
-void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *mainObject =
+void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z) {
+  struct Actor *mainObject =
       ((struct MoveScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 start[3];
   s32 i;

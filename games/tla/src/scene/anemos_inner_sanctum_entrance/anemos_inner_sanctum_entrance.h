@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 #include "scene_ids.h"
@@ -20,11 +20,11 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void Object_SetActionCallbackAndRefreshById(s32 id, const void *script);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_StartRepeatedMotion(s32 id, s32 variant);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void Actor_SetMovementTypeAndWaitById(s32 id, const void *script);
 void Func_02000494(void);
 void Func_02000be0(u16 value);
 void Func_02000ca4(s32 message, s32 a, s32 b);

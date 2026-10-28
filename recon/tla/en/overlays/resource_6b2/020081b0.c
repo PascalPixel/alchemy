@@ -12,17 +12,17 @@
 
 extern s32 gData_020007e4;
 
-struct FieldActor *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct FieldActor *object, s32 value);
+struct FieldActor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 void WaitFrames(s32 frames);
-void ObjectMotion_SetActionVariant(u32, s32);
+void Actor_SetSpritePriority(u32, s32);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void Object_SetModeById(u32, s32);
+void Actor_ArmCallback(s32 id, s32 value, s32 flags);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetModeById(u32, s32);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 u32 Random16Far(void);
 void GameFlag_SetBit(s32 flag);
@@ -44,14 +44,14 @@ static inline void Talk(s32 a, s32 b) { LAYER Func_02000600(a, b); }
 static inline void Say(s32 a, s32 b) { LAYER Func_020005a0(a, b); }
 static inline void Turn(s32 a, s32 b, s32 c) { LAYER Func_020005c0(a, b, c); }
 static inline void Arm(s32 a, s32 b, s32 c) {
-  LAYER ObjectMotion_ArmCallback(a, b, c);
+  LAYER Actor_ArmCallback(a, b, c);
 }
 static inline void Hop(s32 a, s32 b, s32 c) {
-  LAYER ObjectMotion_Launch(a, b, c);
+  LAYER Actor_Jump(a, b, c);
 }
-static inline void Mode(s32 a, s32 b) { LAYER Object_SetModeById(a, b); }
+static inline void Mode(s32 a, s32 b) { LAYER Actor_SetModeById(a, b); }
 static inline void Variant(s32 a, s32 b) {
-  LAYER ObjectMotion_SetActionVariant(a, b);
+  LAYER Actor_SetSpritePriority(a, b);
 }
 static inline void Pose(s32 a, s32 b) { LAYER Func_020005b0(a, b); }
 static inline void ModeWait(s32 a, s32 b) {
@@ -63,7 +63,7 @@ void Func_020001b0(void) {
 
   Func_02000568();
   Func_020005f8(0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   WaitFrames(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);
@@ -96,11 +96,11 @@ void Func_020001b0(void) {
   Pose(11, 0x8000);
   Mode(11, 4);
   Say(0x400b, 0);
-  object = Object_GetById(11);
+  object = Actor_GetById(11);
   BYTE_AT(object, 98) = ((Random16Far() * 80) >> 16) + 40;
   BYTE_AT(object, 99) = 0;
   WORD_AT(object, 108) = (s32)Func_02000060;
-  object = Object_GetById(12);
+  object = Actor_GetById(12);
   BYTE_AT(object, 98) = ((Random16Far() * 80) >> 16) + 40;
   BYTE_AT(object, 99) = 2;
   WORD_AT(object, 108) = (s32)Func_02000060;

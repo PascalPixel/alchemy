@@ -1808,7 +1808,7 @@ BattleEffect_RunNeptune:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #60]
 	lsls r4, r4, #7

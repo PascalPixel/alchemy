@@ -7,9 +7,9 @@
        ->v)
 
 #include "call.h"
-s32 ObjectDispatch_SetSingleChildFlags();
+s32 Actor_SetSingleChildFlags();
 
 s32 Func_02000654(s32 a0) {
-  Call2(ObjectDispatch_SetSingleChildFlags, a0, 0);
+  Call2(Actor_SetSingleChildFlags, a0, 0);
   return 0;
 }

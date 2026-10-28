@@ -12,7 +12,7 @@ void Func_020013e4(void);
 
 void Func_02001424(void) {
   u32 frame = gFrameCount;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
   u32 x;
   s32 z;
@@ -39,7 +39,7 @@ void Func_02001424(void) {
   object->priorityFlags &= 0xfe;
   sprite = object->animation;
   sprite->priority = 2;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->scaleX = 0x8000;
   object->scaleY = 0x8000;
   *(s32 *)&object->watchedObject = 60;

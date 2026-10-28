@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct EventWorkCbc {
   u8 unk000[0xcbc];
@@ -11,7 +11,7 @@ extern const u8 gData_020013c0[];
 extern const u8 gData_020013c4[];
 extern const u8 gData_020013ca[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020011e4(const void *data);
 void Func_020011cc(const void *data);

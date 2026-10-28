@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003318(struct ObjectRuntime *object);
+void Func_02003310(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02003318(struct Actor *object);
 void Func_02003328(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y, s32 width,
                    s32 height);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
@@ -26,20 +26,20 @@ static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
 /// By the entrance taken, sets that entrance's flag, moves its actor to the
 /// middle of its cell and copies a cell picture column twice beside it.
 void Func_02001a94(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 column;
   s32 target[3];
 
   if (gAdventure.entrance == 1) {
-    object = Object_GetById(8);
+    object = Actor_GetById(8);
     GameFlag_SetBit(0x301);
     column = 11;
   } else if (gAdventure.entrance == 3) {
-    object = Object_GetById(9);
+    object = Actor_GetById(9);
     GameFlag_SetBit(0x302);
     column = 26;
   } else {
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
     GameFlag_SetBit(0x303);
     column = 53;
   }

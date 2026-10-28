@@ -12,8 +12,8 @@
 #include "motobj.h"
 #include "field_event.h"
 
-#define ObjectDispatch_SetAnimationSpeedFar                                 \
-  ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_SetAnimationSpeedFar)
+#define Actor_SetAnimationSpeedFar                                 \
+  ((s32 (*)(struct FieldActor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0, BattleEffect_RunProjectileVolleyB, 0)
 
@@ -63,18 +63,18 @@ void BattleEffect_RunVolleyBMode10WithAction(struct BattleEffectArgument *effect
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Object_SetMode(object, 2);
-  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetMode(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 10);
-  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunVolleyBMode11WithAction(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Object_SetMode(object, 2);
-  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetMode(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 11);
-  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }

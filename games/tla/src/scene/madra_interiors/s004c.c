@@ -31,7 +31,7 @@ void Func_020000a4(void) {
 }
 
 void Func_020000fc(void) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load. */

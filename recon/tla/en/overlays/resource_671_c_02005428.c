@@ -17,14 +17,14 @@
 // extension still apart).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GabombaStatueEffectWork {
   u8 unk00[0x1a];
   s16 objectId;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 
@@ -39,7 +39,7 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
     if (id == *list) {
       /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
        * local, 27 of 61 instructions differ in tla-en. */
-      register struct ObjectRuntime *object asm("r6") = Object_GetById(id);
+      register struct Actor *object asm("r6") = Actor_GetById(id);
       s32 a;
       s32 flag;
 

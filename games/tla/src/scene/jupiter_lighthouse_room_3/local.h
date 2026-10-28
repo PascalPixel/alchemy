@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 #include "iwram_call.h"
@@ -28,13 +28,13 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_SetSpritePriority(u32 id, s32 variant);
 void Scene_SetArrivalFlags(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Task_Add(void (*callback)(void), s32 priority);
-void Func_02002360(struct ObjectRuntime *object, s32 a);
+void Func_02002360(struct Actor *object, s32 a);
 void Func_02002368();
 void Func_020023b0(s32 id, s32 x, s32 z);
 void Func_020023d0(s32 id);
@@ -45,7 +45,7 @@ void Func_02002458(s32 x, s32 z, s32 a, s32 b);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);
 void Func_02002470(s32 cue);
-void Func_02000054(struct ObjectRuntime *object);
+void Func_02000054(struct Actor *object);
 void Func_02000404(void);
 void Func_02000c78(s32 id);
 s32 Func_02000dcc(struct PushedBlock *block);
@@ -87,19 +87,19 @@ static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   FieldEvent_WaitFrames(frames);
 }
 
-static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {
+static __inline__ struct Actor *Actor_GetById_(s32 id) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Object_GetById(id);
+  return Actor_GetById(id);
 }
 
-static __inline__ void Object_SetModeById_(u32 id, s32 mode) {
+static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetModeById(id, mode);
+  Actor_SetModeById(id, mode);
 }
 
-static __inline__ void ObjectMotion_SetActionVariant_(u32 id, s32 variant) {
+static __inline__ void Actor_SetSpritePriority_(u32 id, s32 variant) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetActionVariant(id, variant);
+  Actor_SetSpritePriority(id, variant);
 }
 
 static __inline__ s32 Map_GetTerrainHeight_(s32 layer, s32 x, s32 z) {

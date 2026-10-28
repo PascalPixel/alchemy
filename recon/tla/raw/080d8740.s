@@ -12,7 +12,7 @@ Func_080d8740:
 	push {r7}
 	sub sp, #52
 	adds r5, r0, #0
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d875e
@@ -51,19 +51,19 @@ Func_080d8740:
 	movs r1, #3
 	movs r2, #14
 	adds r0, r5, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #152
 	bl Sound_PlayFar
 	movs r1, #5
 	movs r2, #16
 	adds r0, r5, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #152
 	bl Sound_PlayFar
 	movs r1, #7
 	movs r2, #18
 	adds r0, r5, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #20
 	bl WaitFrames
 	ldr r3, [r6, #80]
@@ -116,13 +116,13 @@ Func_080d8740:
 	bl Animation_ApplyChildValuesFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	mov r1, r10
 	ldr r0, [r5, #80]
-	bl Object_ReplaceResourceEntry
+	bl Sprite_ShareVramCacheEntry
 	mov r1, r8
 	str r1, [r5, #104]
 	mov r10, r0
@@ -153,13 +153,13 @@ Func_080d8740:
 	cmp r7, #0
 	bge .L_080d887a
 	adds r0, r6, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 	mov r5, r11
 	movs r7, #7
 .L_080d889a:
 	ldmia r5!, {r0}
 	subs r7, #1
-	bl Object_Destroy
+	bl Actor_Destroy
 	cmp r7, #0
 	bge .L_080d889a
 	mov r2, r8
@@ -178,13 +178,13 @@ Func_080d8740:
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r5]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #28
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #20
 	bl WaitFrames
 	ldr r3, [r6, #8]
@@ -252,7 +252,7 @@ Func_080d8740:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d8970:
-	.4byte ObjectMotion_MoveHalfwayTowardTargetCopy
+	.4byte Actor_MoveHalfwayTowardTargetCopy
 .L_080d8974:
 	.4byte gAdventure
 .L_080d8978:

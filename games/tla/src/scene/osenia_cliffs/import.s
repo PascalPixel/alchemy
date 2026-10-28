@@ -10,14 +10,14 @@ Task_Add:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Object_SetModeById
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_02000190
 	.thumb_func
 Func_02000190:

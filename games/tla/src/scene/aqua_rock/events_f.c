@@ -1,14 +1,14 @@
 #include "local.h"
 
-void Func_02001670(struct ObjectRuntime *object) {
+void Func_02001670(struct Actor *object) {
   struct FieldSprite *sprite = object->animation;
 
   object->action += 0x100;
   sprite->rotation = Math_Sine(object->action) / 64 + 0x600;
 }
 
-void Func_020015e8(struct ObjectRuntime *object);
-void Func_02001630(struct ObjectRuntime *object);
+void Func_020015e8(struct Actor *object);
+void Func_02001630(struct Actor *object);
 
 /// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
 /// at z 824, then settles them under cue 298 and leaves object 21 rocking;
@@ -29,7 +29,7 @@ void Func_0200169c(void) {
   i = 17;
 scatter:
   {
-    struct ObjectRuntime *object = Object_GetById(i);
+    struct Actor *object = Actor_GetById(i);
 
     object->speedLimit = 0x4000;
     object->acceleration = 0x400;
@@ -41,22 +41,22 @@ scatter:
     goto scatter;
   FieldEvent_WaitFrames(60);
   Func_02002958(64, 69, 11, 4, 87, 53);
-  ObjectMotion_ResetAndSetPosition_(17, 392, 824);
-  ObjectMotion_ResetAndSetPosition_(18, 424, 824);
-  ObjectMotion_ResetAndSetPosition_(19, 456, 824);
-  ObjectMotion_ResetAndSetPosition_(20, 488, 824);
-  ObjectMotion_ResetAndSetPosition_(21, 520, 824);
+  Actor_ResetAndSetPosition_(17, 392, 824);
+  Actor_ResetAndSetPosition_(18, 424, 824);
+  Actor_ResetAndSetPosition_(19, 456, 824);
+  Actor_ResetAndSetPosition_(20, 488, 824);
+  Actor_ResetAndSetPosition_(21, 520, 824);
   FieldEvent_WaitFrames(240);
   Func_02002958(64, 66, 11, 7, 87, 50);
   i = 17;
 settle:
-  Object_GetById(i)->update = (void (*)(void))Func_02001630;
+  Actor_GetById(i)->update = (void (*)(void))Func_02001630;
   if (++i <= 21)
     goto settle;
   Func_02002a70(298);
   FieldEvent_WaitFrames(60);
   {
-    struct ObjectRuntime *object = Object_GetById(21);
+    struct Actor *object = Actor_GetById(21);
 
     object->update = (void (*)(void))Func_02001670;
     object->action = 0;

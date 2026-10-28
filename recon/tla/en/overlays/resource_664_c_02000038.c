@@ -31,12 +31,12 @@ void Func_02000038(s16 *entry) {
 next:
   {
     s32 id = (u16)entry[0];
-    struct FieldActor *object = Object_GetById(id);
+    struct FieldActor *object = Actor_GetById(id);
     s32 kind = entry[1];
     s32 flag = entry[2];
 
     object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02000128(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
     entry += 3;
   }
@@ -45,7 +45,7 @@ next:
 }
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
   u8 *cell = ((struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork)
                  ->layers[layer]
                  .cells;
@@ -89,7 +89,7 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
 }
 
 void Func_020004d4(struct FieldActor *object) {
-  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
 
   if (Random16Far() & 255) {
     object->x = ((Random16Far_() & 255) << 16) + 0xb00000;
@@ -108,11 +108,11 @@ void Func_02000908(s16 *entry) {
     return;
 next:
   {
-    struct FieldActor *object = Object_GetById((u16)entry[0]);
+    struct FieldActor *object = Actor_GetById((u16)entry[0]);
     s32 flag = entry[2];
     s32 kind = entry[1];
 
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02005d5c(object, (u16)kind * 3 + GameFlag_Test((u16)flag));
     object->motionFlags = 0;
     object->collisionFlags &= ~1;

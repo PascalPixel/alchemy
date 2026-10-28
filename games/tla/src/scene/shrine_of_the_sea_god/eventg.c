@@ -58,7 +58,7 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
 }
 
 void Func_0200380c(void) {
-  struct ShrineOfTheSeaGodObject *object = Object_GetById(64);
+  struct ShrineOfTheSeaGodObject *object = Actor_GetById(64);
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
@@ -74,9 +74,9 @@ void Func_0200380c(void) {
 }
 
 void Func_02003854(s32 id) {
-  struct ShrineOfTheSeaGodObject *object = Object_GetById(id);
+  struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
 
-  ObjectMotion_SetActionVariant(id, 3);
+  Actor_SetSpritePriority(id, 3);
   Func_02003aa0(id);
   object->priorityFlags |= 2;
   object->motionFlags = 0;

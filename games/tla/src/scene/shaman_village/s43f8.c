@@ -6,7 +6,7 @@ void Func_020048ac(s32 mode);
 void Func_02002878(void);
 void Func_020043c8(void);
 void Func_02004394(void);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 
 struct IoReg16 {
   u16 value;
@@ -70,7 +70,7 @@ void Func_02004534(void) {
 
   ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       521;
-  Object_GetById(12)->collisionFlags = 8;
+  Actor_GetById(12)->collisionFlags = 8;
   if (GameFlag_Test(0x9fe)) {
     /* FAKEMATCH: the local starts the facing before the other arguments, as the
      * native has; as a plain argument it is started third (one reordered row).
@@ -89,8 +89,8 @@ void Func_02004534(void) {
     Func_020048ac(1);
     Func_020048c4();
     Func_02004a24(0);
-    Object_SetModeById(gAdventure.currentOwner, 41);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+    Actor_SetModeById(gAdventure.currentOwner, 41);
+    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                        0);
     WaitFrames(1);
     Event_StartScreenTransition();
@@ -106,7 +106,7 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_stand;
     }
-    Object_SetModeById(gAdventure.currentOwner, 42);
+    Actor_SetModeById(gAdventure.currentOwner, 42);
     FieldEvent_WaitFrames(10);
     i = 0;
     goto test_turn;
@@ -118,11 +118,11 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_turn;
     }
-    ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
-    Object_SetModeById(gAdventure.currentOwner, 1);
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
-    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 813, 120);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+    Actor_Jump(gAdventure.currentOwner, 4, 0);
+    Actor_SetModeById(gAdventure.currentOwner, 1);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
+    Actor_SetPositionAndCommit(gAdventure.currentOwner, 813, 120);
+    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                        1);
     Func_020048cc();
     if (gAdventure.entrance == 30) {

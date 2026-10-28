@@ -1,8 +1,8 @@
 #include "shaman_village.h"
 
 void Func_020043c8(void) {
-  s32 variant = Object_GetById(gAdventure.currentOwner)->sprite->priority;
+  s32 variant = Actor_GetById(gAdventure.currentOwner)->sprite->priority;
 
-  ObjectMotion_SetActionVariant(21, variant);
-  ObjectMotion_SetActionVariant(14, variant);
+  Actor_SetSpritePriority(21, variant);
+  Actor_SetSpritePriority(14, variant);
 }

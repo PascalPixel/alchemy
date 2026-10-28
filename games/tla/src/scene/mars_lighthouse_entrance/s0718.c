@@ -21,7 +21,7 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02004d58(s32 a0, s32 a1);
 void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
@@ -54,7 +54,7 @@ void Func_02000798(void) {
 }
 
 void Func_02000808(void) {
-  struct ObjectRuntime *object = Object_GetById(20);
+  struct Actor *object = Actor_GetById(20);
 
   if (!Flag_IsSet(0xa47)) {
     Func_02004de0(0x23d);
@@ -86,7 +86,7 @@ void Func_0200085c(s32 state, s32 frame) {
 
 void Func_020008f4(s32 unused, s32 id) {
   if (id == 8) {
-    struct ObjectRuntime *object = Object_GetById(8);
+    struct Actor *object = Actor_GetById(8);
 
     if (object->x >> 20 == 20) {
       FieldEvent_WaitFrames(5);

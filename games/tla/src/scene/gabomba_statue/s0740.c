@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s32 gData_02005af0;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_0200584c(void);
-struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
+struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 
 void Func_02000740(void) {
   s32 step = gData_02005af0;
@@ -13,8 +13,8 @@ void Func_02000740(void) {
   if (step != 0) {
     s32 turn = step * 1092;
     s32 delta = -turn;
-    struct ObjectRuntime *leader = Object_GetById(Func_0200584c());
-    struct ObjectRuntime *near = Func_020005b4(leader, 358);
+    struct Actor *leader = Actor_GetById(Func_0200584c());
+    struct Actor *near = Func_020005b4(leader, 358);
 
     if (near != NULL) {
       u16 angle = near->angle;

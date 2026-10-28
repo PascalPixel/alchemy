@@ -14,7 +14,7 @@ s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
 void Func_02003308(struct KibomboObject *object);
 
 void Func_02003504(void) {
-  struct KibomboObject *center = Object_GetById(17);
+  struct KibomboObject *center = Actor_GetById(17);
   struct KibomboObject *spark;
   s32 previous = 0;
   u32 i;
@@ -22,9 +22,9 @@ void Func_02003504(void) {
 
   Func_02005c9c(154);
   for (i = 0; i <= 7; i++) {
-    Object_SetPartAttribute(Object_GetById(17), 7);
+    Actor_SetPartAttribute(Actor_GetById(17), 7);
     WaitFrames(2);
-    Object_SetPartAttribute(Object_GetById(17), 0);
+    Actor_SetPartAttribute(Actor_GetById(17), 0);
     WaitFrames(2);
   }
   Func_02005c9c(209);
@@ -34,7 +34,7 @@ void Func_02003504(void) {
       previous = Func_02005c44(spark->sprite, previous);
       spark->motionFlags = 0;
       spark->sprite->priority = 1;
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
+      Actor_SetSingleChildFlags(spark, 0);
       Func_02005a24(spark, 1);
       spark->field64 = 0;
       spark->field4c = 0;

@@ -25,11 +25,11 @@ struct WarpWork {
 
 extern struct WarpWork gData_020070a8;
 
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-struct ObjectRuntime *Func_020055e8(void);
+struct Actor *Func_020055e8(void);
 void Func_020054b0(void);
 void Func_02003af0(void);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
@@ -37,7 +37,7 @@ void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003d80(void);
 
 s32 Func_02003f18(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct WarpWork *work = &gData_020070a8;
@@ -65,20 +65,20 @@ s32 Func_02003f18(void) {
 }
 
 void Func_02003fc8(s32 dx, s32 dz, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct WarpWork *work = &gData_020070a8;
   s32 x = GameFlag_GetByte(work->positionFlag);
   s32 z = GameFlag_GetByte(work->positionFlag + 8);
 
   if (x != 0 || z != 0) {
-    struct ObjectRuntime *other;
+    struct Actor *other;
 
     GameFlag_SetByte(work->positionFlag, 0);
     GameFlag_SetByte(work->positionFlag + 8, 0);
     object->z = ((z + dz) << 20) + 0x80000;
     object->x = ((x + dx) << 20) + 0x80000;
-    other = *(struct ObjectRuntime **)(event + 460);
+    other = *(struct Actor **)(event + 460);
     other->x = object->x;
     other->z = object->z;
     Func_020054b0();

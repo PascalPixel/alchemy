@@ -25,11 +25,11 @@ GameFlag_ClearBit:
 	.global Func_02000f7c
 	.thumb_func
 Func_02000f7c:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02000f84
 	.thumb_func
 Func_02000f84:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -42,10 +42,10 @@ Func_02000f94:
 	.thumb_func
 Func_02000f9c:
 	overlay_veneer Func_080201f0
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -70,26 +70,26 @@ Func_02000fcc:
 	.thumb_func
 Func_02000fd4:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_ResetAndSetPosition
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_ResetAndSetPosition
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
-	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+Actor_ResetAndSetPosition:
+	overlay_veneer Actor_ResetAndSetPositionFar
 	.global Func_02000fec
 	.thumb_func
 Func_02000fec:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global ObjectMotion_SetVariantCallback
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_StartRepeatedMotion
 	.thumb_func
-ObjectMotion_SetVariantCallback:
-	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Object_SetPartAttribute
+Actor_StartRepeatedMotion:
+	overlay_veneer Actor_StartRepeatedMotionFar
+	.global Actor_SetPartAttribute
 	.thumb_func
-Object_SetPartAttribute:
-	overlay_veneer Object_SetPartAttributeFar
+Actor_SetPartAttribute:
+	overlay_veneer Actor_SetPartAttributeFar
 	.global Func_02001004
 	.thumb_func
 Func_02001004:

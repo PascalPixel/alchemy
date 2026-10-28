@@ -6,7 +6,7 @@
 #include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_0200048c(u16 *list, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 flag;
 
   while (list[0] != 0xffff) {
@@ -24,7 +24,7 @@ void Func_0200048c(u16 *list, s32 id) {
         WaitFrames(16);
         Call3((void (*)())Func_02001470, -1, -1, 0xe666);
         WaitFrames(8);
-        Object_SetPositionAndResetMotion(object, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         WaitFrames(2);
         Func_02001538(188);
         Func_02000aa8();

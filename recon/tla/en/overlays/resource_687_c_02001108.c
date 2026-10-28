@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -20,13 +20,13 @@ extern u8 Func_020010a8[];
 void Func_02001fac();
 void Func_02002044();
 void GameFlag_SetBit();
-void ObjectMotion_SetSpeedParameters();
-s32 Object_GetById();
-void ObjectMotion_ResetAndSetPositionInMode2();
+void Actor_SetSpeedParameters();
+s32 Actor_GetById();
+void Actor_ResetAndSetPositionInMode2();
 void Func_02001fec();
 void Camera_MoveWithinMapBounds();
 void Func_02001ffc();
-void ObjectMotion_CommitCurrentPositionAndActivate();
+void Actor_WaitForMoveById();
 void Func_02002054();
 void Func_02001f74();
 void WaitFrames();
@@ -48,14 +48,14 @@ s32 Func_02001108(s32 a0, s32 a1, s32 a2, s32 a3) {
   Func_02001fac();
   Call1((void (*)())Func_02002044, 0);
   Call1((void (*)())GameFlag_SetBit, 0x8dd);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x10000, 0x8000);
-  v0 = Object_GetById(8);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
+  v0 = Actor_GetById(8);
   FIELD_AT(v0, u16, 6) = 0xc000;
-  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 8, 0x160, 0x108);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0x160, 0x108);
   Call2((void (*)())Func_02001fec, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1600000, -1, 0xc40000, 1);
   Func_02001ffc();
-  Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
+  Call1((void (*)())Actor_WaitForMoveById, 8);
   Call1((void (*)())Func_02002054, 78);
   Call1((void (*)())Func_02002054, 0x22c);
   FIELD_AT((s32)((u8 *)stack + 98), u16, 0) = 23755;

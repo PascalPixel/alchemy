@@ -788,15 +788,15 @@ BattleEffect_RunSerac:
 	str r1, [r6, #68]
 	adds r0, r6, #0
 	strb r2, [r3]
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #0
 	mov r3, r8
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r6, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_0816e292:
 	ldr r2, [sp, #52]
 	cmp r2, #63
@@ -1185,7 +1185,7 @@ BattleEffect_RunSerac:
 	movs r0, #8
 	str r5, [r3, #16]
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r6, [sp, #56]
 	lsls r0, r0, #7

@@ -8,7 +8,7 @@
 // branches (the step 0x24000 in r1, the sprite in r1), some loads one
 // instruction off, and the literal pool's order.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "frame.h"
 
 struct MarsLighthouseAerieSprite {
@@ -25,15 +25,15 @@ extern u32 Data_02006b68;
 extern const u8 gData_02005b54[];
 extern const u8 gData_02006180[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 s32 Math_Sine(s32 angle);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void SceneActor_ParkRecord(struct ObjectRuntime *object);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void SceneActor_ParkRecord(struct Actor *object);
 void Task_RemoveFar(void (*callback)(void));
-struct ObjectRuntime *Func_02005574(s32 type, s32 x, s32 y, s32 z);
-void Func_0200556c(struct ObjectRuntime *object, const u8 *script);
+struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
+void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020055c4(s32 a, s32 b, s32 c);
 void Func_0200575c(s32 a, s32 b);
 void Func_0200576c(s32 a);
@@ -46,9 +46,9 @@ static __inline__ void SetScale(s32 a, s32 b, s32 c) {
 }
 
 void Func_02003370(void) {
-  struct ObjectRuntime *anchor = Object_GetById(8);
+  struct Actor *anchor = Actor_GetById(8);
   s32 spawn = 0;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
 
   switch (Data_02006ccc) {
@@ -72,7 +72,7 @@ void Func_02003370(void) {
     anchor->scaleX = 0x10000;
     anchor->scaleY = 0x10000;
     SceneActor_ParkRecord(anchor);
-    ObjectMotion_EnableActionAndSetCallback(8, gData_02005b54);
+    Actor_SetMovementTypeById(8, gData_02005b54);
     break;
   case 25:
     Data_02006ccc--;
@@ -109,7 +109,7 @@ void Func_02003370(void) {
     if (object != NULL) {
       sprite = object->animation;
       Func_0200556c(object, gData_02006180);
-      Object_SetPartAttribute(object, 1);
+      Actor_SetPartAttribute(object, 1);
       object->motionFlags = 0;
       object->action = Random16Far() & 0x0ffff000;
       object->unk66 = 0;

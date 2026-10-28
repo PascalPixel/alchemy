@@ -67,7 +67,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 // Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // BattleEventRuntime_StartPhase through its far call.
@@ -191,7 +191,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
     angle -= 0x800;

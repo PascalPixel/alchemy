@@ -10,7 +10,7 @@ Func_02000198:
 	push {r6, r7}
 	movs r0, #4
 	sub sp, #4
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	bl Func_020012e0
 	movs r0, #0
@@ -26,7 +26,7 @@ Func_02000198:
 	movs r0, #4
 	adds r1, #255
 	lsls r2, r2, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	b .L_020081dc
 .L_020081ce:
 	movs r1, #253
@@ -34,7 +34,7 @@ Func_02000198:
 	movs r0, #4
 	lsls r1, r1, #1
 	lsls r2, r2, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 .L_020081dc:
 	cmp r6, #0
 	beq .L_020081e2
@@ -92,7 +92,7 @@ Func_02000198:
 	adds r2, #255
 	movs r0, #4
 	adds r1, #255
-	bl ObjectMotion_SetPositionAndCommit
+	bl Actor_SetPositionAndCommit
 	movs r1, #192
 	lsls r1, r1, #8
 	movs r0, #4
@@ -103,31 +103,31 @@ Func_02000198:
 	bl Func_02001448
 	movs r0, #16
 	movs r1, #2
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r0, #18
 	movs r1, #2
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r0, #17
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #16
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r0, #17
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r1, #160
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #18
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #25
 	bl FieldEvent_WaitFrames
 	movs r0, #4
 	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r1, #129
 	movs r0, #4
 	lsls r1, r1, #1
@@ -135,7 +135,7 @@ Func_02000198:
 	movs r2, #12
 	movs r0, #4
 	movs r1, #24
-	bl ObjectMotion_CommitPositionAndActivate
+	bl Actor_CommitPositionAndActivate
 	movs r1, #192
 	lsls r1, r1, #8
 	movs r0, #4
@@ -157,13 +157,13 @@ Func_02000198:
 	movs r0, #20
 	movs r1, #0
 	movs r2, #8
-	bl ObjectMotion_OffsetPositionAndResetMotion
+	bl Actor_OffsetPositionAndResetMotion
 	movs r1, #192
 	movs r2, #192
 	movs r0, #21
 	lsls r1, r1, #10
 	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -176,7 +176,7 @@ Func_02000198:
 	movs r0, #21
 	lsls r1, r1, #1
 	lsls r2, r2, #1
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	movs r0, #244
 	movs r1, #1
 	movs r2, #154
@@ -186,7 +186,7 @@ Func_02000198:
 	lsls r0, r0, #17
 	bl Camera_MoveWithinMapBounds
 	movs r0, #21
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #21
 	movs r1, #0
 	movs r2, #0
@@ -399,13 +399,13 @@ Func_02000198:
 	movs r2, #0
 	movs r0, #17
 	lsls r1, r1, #6
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #17
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #3
 	movs r0, #16
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r1, #129
@@ -425,7 +425,7 @@ Func_02000198:
 	movs r2, #24
 	movs r0, #16
 	negs r1, r1
-	bl ObjectMotion_CommitPositionAndActivate
+	bl Actor_CommitPositionAndActivate
 	movs r0, #16
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
@@ -434,7 +434,7 @@ Func_02000198:
 	bl Func_02001390
 	movs r0, #4
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #176
 	lsls r1, r1, #8
 	movs r0, #18
@@ -462,19 +462,19 @@ Func_02000198:
 	movs r0, #16
 	movs r1, #18
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #17
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #60
 	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #18
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #60
 	bl FieldEvent_WaitFrames
 	movs r1, #6
@@ -493,24 +493,24 @@ Func_02000198:
 	movs r1, #17
 	movs r2, #0
 	movs r0, #16
-	bl Object_TurnToFaceEachOther
+	bl Actor_TurnToFaceEachOther
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r0, #16
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #192
 	movs r0, #17
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #176
 	movs r0, #18
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #244
 	movs r1, #1
 	movs r2, #163
@@ -541,14 +541,14 @@ Func_02000198:
 	bl Func_02001390
 	movs r0, #16
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #16
 	movs r1, #0
 	bl Func_02001390
 	movs r0, #18
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r1, #10
 	adds r1, #255
 	movs r2, #35
@@ -567,7 +567,7 @@ Func_02000198:
 	movs r2, #0
 	movs r0, #18
 	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #18
 	movs r1, #0
 	bl Func_02001390
@@ -578,37 +578,37 @@ Func_02000198:
 	movs r0, #17
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #16
 	movs r1, #0
 	movs r0, #17
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r0, #17
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r1, #128
 	movs r0, #17
 	lsls r1, r1, #6
 	bl Func_020013a0
 	movs r0, #17
 	movs r1, #4
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #17
 	movs r1, #0
 	bl Func_02001390
 	movs r0, #16
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #16
 	movs r1, #0
 	bl Func_02001390
 	movs r0, #18
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #192
 	movs r2, #0
 	movs r0, #17
 	lsls r1, r1, #6
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #17
 	movs r1, #0
 	bl Func_02001390
@@ -658,7 +658,7 @@ Func_02000198:
 	bl Func_02001390
 	movs r1, #3
 	movs r0, #17
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r1, #131
@@ -671,7 +671,7 @@ Func_02000198:
 	bl Func_02001390
 	movs r1, #3
 	movs r0, #16
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #128
@@ -687,7 +687,7 @@ Func_02000198:
 	ldr r0, .L_020088e0
 	bl Camera_MoveWithinMapBounds
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	movs r5, #0
 	adds r0, #85
 	movs r1, #192
@@ -696,19 +696,19 @@ Func_02000198:
 	strb r5, [r0]
 	lsls r1, r1, #9
 	movs r0, #16
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_020088e4
 	movs r0, #16
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r1, #128
 	movs r2, #128
 	lsls r2, r2, #7
 	movs r0, #18
 	lsls r1, r1, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_020088e8
 	movs r0, #18
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #7
@@ -716,12 +716,12 @@ Func_02000198:
 	adds r2, #51
 	movs r0, #17
 	adds r1, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_020088ec
 	movs r0, #17
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r0, #16
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r1, #192
 	lsls r1, r1, #7
 	movs r0, #16
@@ -765,20 +765,20 @@ Func_02000198:
 	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #16
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #60
 	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #16
 	bl Func_02001390
 	movs r0, #17
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r0, #18
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r2, #0
 	movs r1, #18
 	movs r0, #17
-	bl Object_TurnToFaceEachOther
+	bl Actor_TurnToFaceEachOther
 	movs r0, #20
 	bl FieldEvent_WaitFrames
 	b .L_020088f0
@@ -796,25 +796,25 @@ Func_02000198:
 .L_020088f0:
 	movs r0, #18
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #3
 	movs r0, #17
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_SetAngleToward
+	bl Actor_SetAngleToward
 	movs r1, #128
 	movs r2, #128
 	lsls r2, r2, #8
 	movs r0, #16
 	lsls r1, r1, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_02008be0
 	movs r0, #16
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r0, #230
 	movs r1, #228
 	lsls r0, r0, #9
@@ -840,7 +840,7 @@ Func_02000198:
 	bne .L_02008992
 	movs r0, #18
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #18
 	movs r1, #0
 	bl Func_02001390
@@ -861,12 +861,12 @@ Func_02000198:
 	adds r1, #255
 .L_0200898a:
 	adds r2, #255
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	b .L_0200821e
 .L_02008992:
 	movs r0, #18
 	movs r1, #4
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -881,7 +881,7 @@ Func_02000198:
 	bl Func_02001390
 	movs r0, #18
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #18
 	movs r1, #0
 	bl Func_02001390
@@ -889,78 +889,78 @@ Func_02000198:
 	movs r0, #18
 	movs r1, #0
 	movs r2, #24
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r0, #17
 	movs r1, #0
 	movs r2, #24
-	bl ObjectMotion_CommitPositionAndActivate
+	bl Actor_CommitPositionAndActivate
 	movs r0, #17
 	movs r1, #0
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #208
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #18
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #16
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	ldr r1, .L_02008be8
 	movs r0, #16
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r0, #16
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r1, #192
 	movs r0, #18
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #17
 	movs r1, #0
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #16
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #50
 	bl FieldEvent_WaitFrames
 	movs r0, #18
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #17
 	movs r1, #3
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #3
 	movs r0, #16
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #60
 	bl FieldEvent_WaitFrames
 	movs r0, #4
 	movs r1, #16
-	bl Object_LinkObjectAndSetCallback
+	bl Actor_WatchAndSetScript
 	movs r1, #252
 	movs r2, #185
 	movs r0, #18
 	lsls r1, r1, #1
 	lsls r2, r2, #1
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r1, #252
 	movs r2, #176
 	lsls r2, r2, #1
 	movs r0, #17
 	lsls r1, r1, #1
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	ldr r1, .L_02008bec
 	movs r0, #16
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r0, #17
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #18
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #16
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r0, #16
 	movs r1, #0
 	bl Func_020013a0
@@ -971,7 +971,7 @@ Func_02000198:
 	movs r0, #16
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #152
 	movs r2, #152
 	lsls r1, r1, #7
@@ -979,7 +979,7 @@ Func_02000198:
 	movs r0, #17
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #152
 	movs r2, #152
 	lsls r1, r1, #7
@@ -987,7 +987,7 @@ Func_02000198:
 	adds r1, #204
 	adds r2, #102
 	movs r0, #18
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r1, #200
@@ -997,17 +997,17 @@ Func_02000198:
 	adds r2, #204
 	adds r1, #153
 	movs r0, #20
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #20
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	adds r0, #85
 	strb r3, [r0]
 	ldr r1, .L_02008bf0
 	movs r0, #20
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	movs r0, #20
-	bl Object_RefreshSelectorById
+	bl Actor_RefreshSelectorById
 	movs r1, #152
 	movs r2, #152
 	lsls r1, r1, #7
@@ -1015,7 +1015,7 @@ Func_02000198:
 	adds r2, #102
 	movs r0, #20
 	adds r1, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #152
 	movs r1, #144
 	lsls r0, r0, #7
@@ -1034,7 +1034,7 @@ Func_02000198:
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #254
@@ -1045,45 +1045,45 @@ Func_02000198:
 	negs r1, r1
 	movs r0, #18
 	negs r2, r2
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #40
 	movs r2, #20
 	movs r0, #17
 	negs r1, r1
 	negs r2, r2
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #40
 	movs r2, #20
 	movs r0, #16
 	negs r1, r1
 	negs r2, r2
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #40
 	movs r2, #20
 	movs r0, #20
 	negs r1, r1
 	negs r2, r2
-	bl ObjectMotion_CommitPositionAndActivate
+	bl Actor_CommitPositionAndActivate
 	movs r1, #138
 	movs r0, #18
 	negs r1, r1
 	movs r2, #0
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #138
 	movs r0, #17
 	negs r1, r1
 	movs r2, #0
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #138
 	movs r0, #16
 	negs r1, r1
 	movs r2, #0
-	bl ObjectMotion_OffsetPositionAndReset
+	bl Actor_OffsetPositionAndReset
 	movs r1, #138
 	movs r0, #20
 	negs r1, r1
 	movs r2, #0
-	bl ObjectMotion_CommitPositionAndActivate
+	bl Actor_CommitPositionAndActivate
 	movs r0, #16
 	movs r1, #0
 	movs r2, #0

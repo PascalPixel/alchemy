@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct JupiterLighthouseAerieWork *work =
       (struct JupiterLighthouseAerieWork *)gData_02003488;
@@ -9,13 +9,13 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
   s32 z = GameFlag_GetByte(work->flag + 8);
 
   if (x != 0 || z != 0) {
-    struct ObjectRuntime *shadow;
+    struct Actor *shadow;
 
     GameFlag_SetByte(work->flag, 0);
     GameFlag_SetByte(work->flag + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
-    shadow = *(struct ObjectRuntime **)(event + 460);
+    shadow = *(struct Actor **)(event + 460);
     shadow->x = object->x;
     shadow->z = object->z;
     Func_02002a18();

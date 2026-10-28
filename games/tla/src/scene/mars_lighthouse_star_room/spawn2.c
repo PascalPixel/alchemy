@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
-void Func_020041cc(struct ObjectRuntime *object, s32 mode);
-struct ObjectRuntime *Func_020041e4();
+void Func_020041cc(struct Actor *object, s32 mode);
+struct Actor *Func_020041e4();
 void Func_020015ec(void);
 
-void Func_02001928(struct ObjectRuntime *object, s32 priority);
+void Func_02001928(struct Actor *object, s32 priority);
 
 struct SpriteParts {
   u8 unk00[9];
@@ -15,14 +15,14 @@ struct SpriteParts {
 };
 extern const u8 gData_02004744[];
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_020041dc(struct ObjectRuntime *object, const void *script);
+void Func_020041dc(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-void Func_02001928(struct ObjectRuntime *object, s32 part) {
+void Func_02001928(struct Actor *object, s32 part) {
   /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
    * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
@@ -37,7 +37,7 @@ void Func_02001928(struct ObjectRuntime *object, s32 part) {
     asm volatile("" : : "r"(three));
     ((struct SpriteParts *)object->animation)->part = part;
   }
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_020041dc(object, gData_02004744);
   object->action = zero;
   object->speedLimit = zero;
@@ -45,7 +45,7 @@ void Func_02001928(struct ObjectRuntime *object, s32 part) {
 }
 
 void Func_0200196c(s32 *position, s32 speed, s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
 
   if (object != NULL) {

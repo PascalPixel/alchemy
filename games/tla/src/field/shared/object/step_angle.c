@@ -1,6 +1,6 @@
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
+s32 Actor_StepAngle(struct Actor *object) {
   s32 delta = 0;
 
   if (object != NULL) {

@@ -89,13 +89,13 @@ Func_080e9af4:
 	ldr r3, [r7, #16]
 	ldr r1, [r7, #8]
 	adds r0, r7, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	adds r0, r7, #0
 	movs r1, #0
 	bl BattleEffect_SetObjectUpdateMode
 	movs r1, #5
 	adds r0, r7, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #130
 	bl Sound_PlayFar
 	movs r0, #1

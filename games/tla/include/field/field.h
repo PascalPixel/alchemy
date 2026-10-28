@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct DispatchObject;
 struct EffectPosition;
@@ -20,11 +20,10 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Event_ValidatePackedId(u32 packed_id);
 void Map_RenderAnimatedTilePicture(u8 *object, u32 position);
 void Camera_FollowActor(s32 id, s32 flag);
-void Object_UpdateAllMotion(void);
-void Object_UpdateAllThumb(void);
+void Actor_UpdateAllMotion(void);
+void Actor_UpdateAllThumb(void);
 #ifndef OWN_ObjectDispatch_SetSingleChildFlags
-void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct DispatchObject *object, u32 value);
 #endif
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
@@ -40,7 +39,7 @@ struct EffectPosition;
 struct EffectStep;
 struct FacingObject;
 struct FieldActor;
-struct ObjectRuntime;
+struct Actor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -61,7 +60,7 @@ extern const u32 gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
 extern const struct ScenePlacement gScenePlacementsEntrance99[];
 extern const struct SceneRegion gSceneRegions[];
-extern struct ObjectRuntime gSnapshotObjects[];
+extern struct Actor gSnapshotObjects[];
 extern const u8 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];
 extern const s32 gLinkLobby_SlotValues[];
@@ -98,38 +97,36 @@ void Func_02001c94(void);
 void Func_02001c9c(void);
 void Func_020023a4(void *object);
 void Func_0200258c(void);
-void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002a34(s32 a, s32 b);
 void Func_02002a44(void);
 void Func_02002a4c(void);
 void Func_02002a54(void);
-void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
+void Func_02002a5c(struct Actor *object, s32 mode);
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 void Func_080caa2c(u32 objectId);
-void Object_SetSquareSprite(u32 objectId);
+void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_CenterOnFollowedPointFar(void);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-s32 Object_IsTargetUnset(void *arg0);
+s32 Actor_IsTargetUnset(void *arg0);
 #ifndef OWN_Object_SetPartAttribute
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 #endif
-void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
-void ObjectDispatch_StartCameraFar(void *object, void *effect);
+void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+void Actor_StartCameraFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);
-void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset,
-                                            s32 z_offset);
-void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset,
-                                         s32 z_offset);
-void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
-void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
-void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
-void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant);
+void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
+void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
+void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ObjectSystem_Configure(s32 mode);
 s32 Party_AddActiveOwnerFar(s32 event_id);
 void Party_RemoveActiveOwnerFar(s32 owner);

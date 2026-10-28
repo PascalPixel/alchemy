@@ -1,7 +1,7 @@
 #include "sea_of_time.h"
 
 void Func_020018a8(s32 x, s32 z, s32 actor) {
-  Object_GetById(actor)->collisionFlags |= 16;
+  Actor_GetById(actor)->collisionFlags |= 16;
   Func_02001fdc(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
@@ -30,12 +30,12 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   spark.mode = 1;
   spark.life = 276;
   Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
-  Object_GetById(actor)->scale = 0x1999;
+  Actor_GetById(actor)->scale = 0x1999;
   Func_020018a8(x, z, actor);
   for (i = 0; i != 10; i++) {
-    Object_GetById(actor)->scale += 0x1999;
+    Actor_GetById(actor)->scale += 0x1999;
     FieldEvent_WaitFrames(1);
   }
-  Object_GetById(actor)->scale = 0x10000;
+  Actor_GetById(actor)->scale = 0x10000;
   FieldEvent_WaitFrames(20);
 }

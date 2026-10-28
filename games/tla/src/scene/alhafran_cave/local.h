@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern char SceneId_Ov66aRoom1;
@@ -53,13 +53,13 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectGroup_ApplyRandomChildValues(void);
+void Actor_ApplyRandomChildValues(void);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 a, s32 b);
-void Func_020013f0(struct ObjectRuntime *object, s32 mode);
+void Func_020013f0(struct Actor *object, s32 mode);
 void Func_02001400(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001408(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001420(s32 x, s32 z, s32 a, s32 b);

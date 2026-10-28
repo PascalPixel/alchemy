@@ -1,6 +1,6 @@
 #include "local.h"
 
-s32 Func_02002c1c(struct ObjectRuntime *object) {
+s32 Func_02002c1c(struct Actor *object) {
   u8 *steps;
   s32 v;
   u8 n;

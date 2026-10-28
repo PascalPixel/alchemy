@@ -2,14 +2,14 @@
 #include "field_event.h"
 #include "flag_call.h"
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 s32 Math_Cosine(u32 angle);
 s32 Math_Sine(u32 angle);
 
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
 void Func_02000148(struct FieldActor *self) {
-  struct FieldActor *centre = Object_GetById(23);
+  struct FieldActor *centre = Actor_GetById(23);
   u16 angle = self->timer;
   s32 sine;
   s32 x;

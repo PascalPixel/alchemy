@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct SceneState {
   u8 unk000[0x164];
@@ -17,7 +17,7 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02004380(s32 x, s32 z, s32 a);
 void Func_0200567c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005854(s32 sound);
@@ -37,7 +37,7 @@ void Func_020044d0(s32 value) {
   s32 id;
 
   for (id = state->firstId; id < state->endId; id++) {
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Func_02004380((object->x >> 20) - state->originX,
                   (object->z >> 20) - state->originZ, value);

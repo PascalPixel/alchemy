@@ -217,14 +217,14 @@ Event_SpawnObjectTable:
 	ldr r2, [r0, #12]
 	ldr r3, [r0, #16]
 	adds r0, r6, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 .L_080ca892:
 	cmp r6, #0
 	beq .L_080ca98a
 	adds r0, r6, #0
 	movs r1, #1
 	ldr r7, [r6, #80]
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r3, r6, #0
 	adds r3, #84
 	ldrb r3, [r3]
@@ -270,7 +270,7 @@ Event_SpawnObjectTable:
 	mov r3, r8
 	ldr r1, [r3, #4]
 	adds r0, r6, #0
-	bl Object_SetActionCallback
+	bl Actor_SetActionCallback
 	ldr r2, [r6, #8]
 	cmp r2, #0
 	bge .L_080ca906

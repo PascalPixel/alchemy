@@ -4,11 +4,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_effect.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetModeById(u32 id, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
@@ -38,7 +38,7 @@ static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
 }
 
 void Func_0200539c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
   u32 i;
@@ -76,7 +76,7 @@ void Func_0200539c(void) {
   }
   Func_020059f4(188);
   Func_02005904(gAdventure.currentOwner, 0x101);
-  Object_SetModeById(gAdventure.currentOwner, 49);
+  Actor_SetModeById(gAdventure.currentOwner, 49);
   Func_020057ac_(0x50000, 0x50000, 0x10000);
   Func_020057ac_(-1, -1, 0xe666);
   Func_020057b4();
@@ -84,6 +84,6 @@ void Func_0200539c(void) {
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   Func_0200581c();
 }

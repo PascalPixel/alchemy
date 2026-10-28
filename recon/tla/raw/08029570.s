@@ -247,11 +247,11 @@ Func_08029570:
 	adds r0, r4, #0
 	ldr r1, [sp, #16]
 	str r4, [sp, #0]
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	ldr r4, [sp, #0]
 	movs r1, #8
 	adds r0, r4, #0
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	ldr r0, [sp, #20]
 	movs r3, #4
 	strb r3, [r0, #23]
@@ -305,7 +305,7 @@ Func_08029570:
 	ldr r3, [r0, #8]
 	ldr r1, [r1]
 	adds r0, r4, #0
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldr r4, [sp, #0]
 	mov r1, r9
 	ldr r2, [r4, #8]

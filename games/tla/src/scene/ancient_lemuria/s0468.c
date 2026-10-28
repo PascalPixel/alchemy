@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern u8 MsgLemuriaStayExploring[];
@@ -10,17 +10,17 @@ extern u8 MsgLemuriaStayExploringAlternate[];
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetModeById(u32 id, s32 mode);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void Actor_Jump(s32 id, s32 speed, s32 frames);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_WaitForMoveById(s32 id);
 void Func_02000080(s32 id);
 void Func_02001914(void);
 void Func_0200191c(void);
@@ -37,25 +37,25 @@ void Func_02001a2c(s32 value);
 /// frame for 24 frames while it grows back to full size, then leaves it facing
 /// 0x3000.
 void Func_02000468(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 i;
-  struct ObjectRuntime *p;
+  struct Actor *p;
 
   if (Value1(GameFlag_Test, 0x96d))
     return;
   if (!GameFlag_Test(0x96c))
     return;
-  object = Object_GetById(12);
+  object = Actor_GetById(12);
   Call1(GameFlag_SetBit, 0x96d);
   GameFlag_ClearBit(0x96e);
   Func_02000080(13);
   Call3(Func_0200195c, 12, 270 << 16, 184 << 16);
   object->y = 22 << 16;
-  ObjectMotion_Launch(12, 11, 0);
+  Actor_Jump(12, 11, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
-  Call3(ObjectMotion_SetSpeedParameters, 12, 0x23333, 0x11999);
-  Call3(ObjectMotion_ResetAndSetPositionInMode2, 12, 312, 184);
+  Call3(Actor_SetSpeedParameters, 12, 0x23333, 0x11999);
+  Call3(Actor_ResetAndSetPositionInMode2, 12, 312, 184);
   for (i = 23; i >= 0; i--) {
     {
       /* FAKEMATCH(temporary): the turn in its own register; as a plain
@@ -76,5 +76,5 @@ void Func_02000468(void) {
   p->angle = 0x3000;
   p->scaleY = 0x10000;
   p->scaleX = 0x10000;
-  ObjectMotion_CommitCurrentPositionAndActivate(12);
+  Actor_WaitForMoveById(12);
 }

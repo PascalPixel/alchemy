@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern u32 gFrameCount;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
@@ -17,7 +17,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 /// Shakes the camera diagonally by one pixel every three frames.
 void Func_02001364(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = *(s16 *)((u8 *)object + 10);
   s32 z = *(s16 *)((u8 *)object + 18);
 

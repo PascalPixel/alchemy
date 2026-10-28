@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
@@ -19,24 +19,24 @@ struct PushMove {
 extern s8 gData_02001974[][4];
 extern s32 gData_0200198c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000754(void);
-void Func_02001828(struct ObjectRuntime *object, s32 mode);
-void Func_02001838(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02001840(struct ObjectRuntime *object);
+void Func_02001828(struct Actor *object, s32 mode);
+void Func_02001838(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02001840(struct Actor *object);
 void Func_02001848(s32 x, s32 z, s32 w, s32 h, s32 toX, s32 toZ);
 void Func_02001938(void);
 void Func_02001960(s32 song);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
 void WaitFrames(s32 frames);
 
 void Func_02000458(struct PushMove move) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *object = Object_GetById(move.slot);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(move.slot);
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
   s32 from[3];
@@ -54,35 +54,35 @@ void Func_02000458(struct PushMove move) {
   h = (ABS(gData_02001974[move.kind][1]) + ABS(gData_02001974[move.kind][3])) >>
       4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x1999);
-  Object_SetModeById(gAdventure.currentOwner, 8);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x1999);
+  Actor_SetModeById(gAdventure.currentOwner, 8);
   WaitFrames(15);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (move.x - from[0]) >> 17,
                                             (move.z - from[2]) >> 17);
-  Object_GetById(gAdventure.currentOwner)->update = Func_02000754;
+  Actor_GetById(gAdventure.currentOwner)->update = Func_02000754;
   WaitFrames(4);
   Func_02001828(object, 2);
   Func_02001960(239);
-  ObjectMotion_SetSpeedParameters(move.slot, 0x8000, 0x1999);
+  Actor_SetSpeedParameters(move.slot, 0x8000, 0x1999);
   Func_02001838(object, move.x, move.y, move.z);
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x1999);
+  Actor_WaitForMoveById(gAdventure.currentOwner);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x1999);
   offset = gData_0200198c[i] << 16;
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             offset >> 31, offset >> 17);
   if (move.callback != NULL)
     move.callback();
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_WaitForMoveById(gAdventure.currentOwner);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   Func_02001840(object);
   Func_02001960(298);
   Func_02001960(213);
-  Object_SetPositionAndResetMotion(object, move.x, object->y, move.z);
+  Actor_SetPositionAndResetMotion(object, move.x, object->y, move.z);
   Func_02001828(object, 1);
   move.x = (move.x + (gData_02001974[move.kind][0] << 16)) >> 20;
   move.z = (move.z + (gData_02001974[move.kind][1] << 16)) >> 20;

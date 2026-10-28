@@ -7,7 +7,7 @@
 // rest is register choice in the spawn loop and the phase switch.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "effect_sprite.h"
 
@@ -25,7 +25,7 @@ struct ScatterWork {
   u8 tiles[0x1000];
   struct EffectSprite sprites[64];
   struct ScatterParticle particles[64];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 phase;
   s16 timer;
   s16 spawnCount;
@@ -54,7 +54,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct ScatterParticle *p);
 void BattleEffect_IntegrateVector3(struct ScatterParticle *particle, s32 frames,
                                s32 flags);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 void Func_080d92a4(s32 target, struct ScatterVector *position);
 
@@ -63,7 +63,7 @@ void Func_080e0618(void) {
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = work->object;
+  struct Actor *object = work->object;
   struct ScatterVector position;
   struct EffectSprite *sprite;
   struct ScatterParticle *particle;
@@ -117,7 +117,7 @@ void Func_080e0618(void) {
     d = Random16();
     position.y = scene->y + c * 3 - d * 3;
     position.z = scene->z;
-    Object_SetPositionAndResetMotionFar(object, position.x, position.y,
+    Actor_SetPositionAndResetMotionFar(object, position.x, position.y,
                                         position.z);
     if (work->timer == 20) {
       work->phase++;
@@ -126,7 +126,7 @@ void Func_080e0618(void) {
     break;
   }
   case 1:
-    Object_SetPositionAndResetMotionFar(object, scene->x, scene->y, scene->z);
+    Actor_SetPositionAndResetMotionFar(object, scene->x, scene->y, scene->z);
     if (work->timer == 6) {
       work->phase++;
       work->timer = -1;
@@ -149,7 +149,7 @@ void Func_080e0618(void) {
     }
     break;
   case 3:
-    Object_SetMode(object, 3);
+    Actor_SetMode(object, 3);
     work->spawnCount = 3;
     object->y += work->timer << 17;
     if (work->timer == 10) {

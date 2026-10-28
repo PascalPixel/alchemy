@@ -9,7 +9,7 @@ void Func_02000c5c(void) { Func_02000b7c(20, 21, 0x337, 1); }
 void Func_02000c70(void) { Func_02000b7c(21, 20, 0x337, 0); }
 
 void Func_02000c84(void) {
-  s32 y = Object_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
 
   /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2
    * without it, as in Func_020007b4). */

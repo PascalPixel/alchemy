@@ -1,7 +1,7 @@
 #include "tundaria_tower.h"
 
 void Func_0200137c(void) {
-  if ((Object_GetById(gAdventure.currentOwner)->y >> 19) != 0)
+  if ((Actor_GetById(gAdventure.currentOwner)->y >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);
   else
     MapCell_SetAttributes(0, 14, 17, 0x3200);

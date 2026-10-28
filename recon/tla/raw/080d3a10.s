@@ -11,7 +11,7 @@ Func_080d3a10:
 	sub sp, #12
 	mov r8, r1
 	adds r5, r2, #0
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r7, [r6, #80]
 	cmp r6, #0
@@ -23,7 +23,7 @@ Func_080d3a10:
 	cmp r5, r2
 	beq .L_080d3a3e
 	adds r1, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080d3a3e:
 	ldr r1, [r6, #8]
 	mov r5, sp

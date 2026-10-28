@@ -16,7 +16,7 @@
 #include "ram_buffer.h"
 #include "fx_scene.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "animspr.h"
 
 // ⚓️'s composite sprite (as polar_target.c's CompositeAnimation).
@@ -69,7 +69,7 @@ void Func_080decb8(void) {
   u32 order;
 
   Sound_PlayFar(SE_CLOAK);
-  Object_SetMode((struct ObjectRuntime *)caster, 0);
+  Actor_SetMode((struct Actor *)caster, 0);
   caster->hook = 0;
 
   for (n = 0; n < 10; n++) {

@@ -1,13 +1,13 @@
 #include "types.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern s32 gData_080f3944;
 
 void Func_080d8fa8(s32 a0, s32 a1, s32 a2, s32 a3);
 
-void Func_080d9978(struct ObjectRuntime *object) {
+void Func_080d9978(struct Actor *object) {
   u8 *parts = object->animation;
 
   parts[22] = 253;
@@ -18,12 +18,12 @@ void Func_080d9978(struct ObjectRuntime *object) {
     Func_080d8fa8(0, 12, 13, 0);
 }
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 s32 Func_080d99b8(s32 firstId, s32 secondId) {
-  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *first = Object_GetById(firstId);
-  struct ObjectRuntime *second = Object_GetById(secondId);
+  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *first = Actor_GetById(firstId);
+  struct Actor *second = Actor_GetById(secondId);
   s32 x = owner->x >> 20;
   s32 y = owner->y >> 20;
   s32 z = owner->z >> 20;

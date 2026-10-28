@@ -6,14 +6,14 @@
 // them walking with their facing steps (Func_02002d48) at 0, still at 100
 // and 220, and walking in place at 130. Left: the native's loops are goto loops (the first stand loop is entered from both exits), keeps the owed counter's address in r8, and stores the wrapped step from a pool zero.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
 extern u8 gSceneState[];
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(u32 id);
-void Object_SetModeById(u32 id, s32 mode);
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02002d48(s32 id, s32 dx, s32 dz);
 
 void Func_02002d7c(void) {
@@ -25,15 +25,15 @@ void Func_02002d7c(void) {
 
   if (*(s16 *)(work + 0x166) != 0 || GameFlag_Test(0x218)) {
     for (i = 11; i <= 18; i++)
-      Object_GetById(i)->movementState = 1;
+      Actor_GetById(i)->movementState = 1;
     return;
   }
   for (i = 11; i <= 18; i++)
-    Object_GetById(i)->movementState = 0;
-  if (Object_GetById(gAdventure.currentOwner)->y < -0xc0000) {
+    Actor_GetById(i)->movementState = 0;
+  if (Actor_GetById(gAdventure.currentOwner)->y < -0xc0000) {
     work = Ram_HeapSlots->eventWork;
     for (i = 11; i <= 18; i++)
-      Object_GetById(i)->movementState = 1;
+      Actor_GetById(i)->movementState = 1;
     *(s16 *)(work + 0x16a) = 200;
     return;
   }
@@ -44,7 +44,7 @@ void Func_02002d7c(void) {
     switch (*step) {
     case 0:
       for (i = 11; i <= 18; i++)
-        Object_SetModeById(i, 2);
+        Actor_SetModeById(i, 2);
       Func_02002d48(11, 0, 1);
       Func_02002d48(12, 0, -1);
       Func_02002d48(13, 0, 1);
@@ -57,11 +57,11 @@ void Func_02002d7c(void) {
     case 100:
     case 220:
       for (i = 11; i <= 18; i++)
-        Object_SetModeById(i, 1);
+        Actor_SetModeById(i, 1);
       break;
     case 130:
       for (i = 11; i <= 18; i++) {
-        Object_SetModeById(i, 2);
+        Actor_SetModeById(i, 2);
         Func_02002d48(i, 0, 0);
       }
       break;

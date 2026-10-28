@@ -44,7 +44,7 @@ ObjectEffect_EndContextEffect:
 	ands r3, r2
 	str r3, [r5, #16]
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #30
 	bl WaitFrames
 	movs r6, #1
@@ -65,9 +65,9 @@ ObjectEffect_EndContextEffect:
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	add r3, r9
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r5, #0
-	bl Object_CommitPosition
+	bl Actor_CommitPosition
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

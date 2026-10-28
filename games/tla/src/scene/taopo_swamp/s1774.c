@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 #include "edition.h"
@@ -14,7 +14,7 @@ extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002120(void);
 void Func_020028d0(s32 id, s32 x, s32 z);
 void Func_02002840(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
@@ -30,12 +30,12 @@ void Func_0200151c(void);
 void Func_02001684(void);
 void Func_020016fc(void);
 void Func_02001618(void);
-void Object_SetWideSprite(s32 id, s32 wide);
+void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_02002960(s32 a);
 void Func_02002614(const u8 *holes, const u8 *more, void (*update)(void));
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Func_020027f8(struct ObjectRuntime *object, s32 mode);
+void Func_020027f8(struct Actor *object, s32 mode);
 void Func_02002980(void);
 void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
 void Func_02002084(s32 a);
@@ -49,7 +49,7 @@ s32 Func_02001774(void) {
   s32 scene = gAdventure.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
-  struct ObjectRuntime *object, *dummy, *piece;
+  struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
   *effect = 0;
@@ -61,13 +61,13 @@ s32 Func_02001774(void) {
       if (GameFlag_Test(id + 0x8d8))
         Func_020028d0(id, 0, 0);
       else
-        Object_GetById(id)->scaleY = 0x14000;
+        Actor_GetById(id)->scaleY = 0x14000;
     }
-    ObjectMotion_SetActionVariant(13, 3);
-    Object_GetById(13)->collisionFlags = 0;
+    Actor_SetSpritePriority(13, 3);
+    Actor_GetById(13)->collisionFlags = 0;
     if (GameFlag_Test(0x220))
       Call6(Func_02002840, 50, 16, 1, 2, 47, 16);
-    dummy = Object_GetById(14);
+    dummy = Actor_GetById(14);
     if (dummy != 0) {
       dummy->scaleX = 0xc000;
       dummy->scaleY = 0xc000;
@@ -79,9 +79,9 @@ s32 Func_02001774(void) {
   } else if (scene == (s32)&SceneId_Ov678Room3) {
     *effect = 516;
     if (!GameFlag_Test(0x300))
-      Object_SetWideSprite(0x40, 1);
+      Actor_SetWideSprite(0x40, 1);
     if (!GameFlag_Test(769))
-      Object_SetWideSprite(65, 1);
+      Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
     *effect = 516;
     Func_02002960(0);
@@ -105,20 +105,20 @@ s32 Func_02001774(void) {
     Task_Add(Func_02001684, 0x480);
     if (gAdventure.entrance == 3 || gAdventure.entrance == 5)
       Func_02002614(gData_02002abc, 0, Func_02001424);
-    piece = Object_GetById(8);
+    piece = Actor_GetById(8);
     piece->motionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(piece, 0);
+    Actor_SetSingleChildFlags(piece, 0);
     if (GameFlag_Test(545)) {
       Call6(Func_02002840, 28, 8, 1, 1, 26, 8);
       Func_020027f8(piece, 0);
     } else {
       Call6(Func_02002840, 22, 8, 1, 1, 26, 8);
-      ObjectMotion_SetActionVariant(8, 3);
+      Actor_SetSpritePriority(8, 3);
       piece->priorityFlags |= 2;
       if (!GameFlag_Test(0x220))
         Func_020027f8(piece, 7);
     }
-    piece = Object_GetById(9);
+    piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (GameFlag_Test(0xa6f)) {
       Call3(Func_020028d0, 9, 0x1080000, 0x1a80000);
@@ -134,16 +134,16 @@ s32 Func_02001774(void) {
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
       Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
-      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
       Call2(Task_Add, Func_020016fc, 0x480);
       Call2(Task_Add, Func_02001618, 0x480);
-      object = Object_GetById(10);
+      object = Actor_GetById(10);
       object->motionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       if (GameFlag_Test(545)) {
         Func_020027f8(object, 0);
       } else {
-        ObjectMotion_SetActionVariant(10, 3);
+        Actor_SetSpritePriority(10, 3);
         object->priorityFlags |= 2;
         if (!GameFlag_Test(0x220))
           Func_020027f8(object, 7);
@@ -156,25 +156,25 @@ s32 Func_02001774(void) {
     if (!GameFlag_Test(824)) {
       GameFlag_SetBit(825);
     } else if (GameFlag_Test(826)) {
-      Object_SetModeById(8, 3);
+      Actor_SetModeById(8, 3);
       Call3(Func_020028d0, 8, 0xb80000, 0x1580000);
-      Object_GetById(8)->collisionFlags = 0;
-      Object_GetById(8)->priorityFlags |= 2;
-      ObjectMotion_SetActionVariant(8, 3);
+      Actor_GetById(8)->collisionFlags = 0;
+      Actor_GetById(8)->priorityFlags |= 2;
+      Actor_SetSpritePriority(8, 3);
       Call6(Func_02002840, 11, 19, 1, 1, 11, 21);
     }
     if (!GameFlag_Test(827)) {
       GameFlag_SetBit(828);
     } else if (GameFlag_Test(829)) {
-      Object_SetModeById(9, 3);
+      Actor_SetModeById(9, 3);
       Call3(Func_020028d0, 9, 0x1f80000, 0xb80000);
-      Object_GetById(9)->collisionFlags = 0;
-      Object_GetById(9)->priorityFlags |= 2;
+      Actor_GetById(9)->collisionFlags = 0;
+      Actor_GetById(9)->priorityFlags |= 2;
       Call6(Func_02002840, 30, 13, 1, 1, 31, 11);
     }
   } else if (scene == (s32)&SceneId_Ov678Room10) {
     *effect = 516;
-    piece = Object_GetById(19);
+    piece = Actor_GetById(19);
     if (GameFlag_Test(0x330)) {
       Call3(Func_020028d0, 19, 0x1e00000, 0xf80000);
       if (!GameFlag_Test(265))
@@ -188,26 +188,26 @@ s32 Func_02001774(void) {
     if (!GameFlag_Test(817)) {
       GameFlag_SetBit(818);
     } else if (GameFlag_Test(819)) {
-      Object_SetModeById(9, 3);
+      Actor_SetModeById(9, 3);
       Call3(Func_020028d0, 9, 0x780000, 0xf80000);
-      Object_GetById(9)->collisionFlags = 0;
-      Object_GetById(9)->priorityFlags |= 2;
+      Actor_GetById(9)->collisionFlags = 0;
+      Actor_GetById(9)->priorityFlags |= 2;
       Call6(Func_02002840, 7, 17, 1, 1, 7, 15);
     } else {
-      Object_SetModeById(9, 0);
+      Actor_SetModeById(9, 0);
     }
     if (!GameFlag_Test(820)) {
       GameFlag_SetBit(821);
     } else {
       Call6(Func_02002840, 27, 14, 1, 1, 27, 13);
       if (GameFlag_Test(822)) {
-        Object_SetModeById(10, 3);
+        Actor_SetModeById(10, 3);
         Call3(Func_020028d0, 10, 0x1980000, 0x1080000);
-        Object_GetById(10)->collisionFlags = 0;
-        Object_GetById(10)->priorityFlags |= 2;
+        Actor_GetById(10)->collisionFlags = 0;
+        Actor_GetById(10)->priorityFlags |= 2;
         Call6(Func_02002840, 25, 18, 1, 1, 25, 16);
       } else {
-        Object_SetModeById(10, 0);
+        Actor_SetModeById(10, 0);
       }
     }
   } else if (scene == (s32)&SceneId_Ov678Room11) {
@@ -215,15 +215,15 @@ s32 Func_02001774(void) {
     if (!GameFlag_Test(0x340)) {
       GameFlag_SetBit(833);
     } else {
-      Object_SetModeById(8, 0);
+      Actor_SetModeById(8, 0);
       Call6(Func_02002840, 7, 39, 1, 1, 7, 38);
     }
     if (!GameFlag_Test(834))
       GameFlag_SetBit(835);
     else
-      Object_SetModeById(9, 0);
+      Actor_SetModeById(9, 0);
     if (!GameFlag_Test(840))
-      Object_SetWideSprite(0x40, 0);
+      Actor_SetWideSprite(0x40, 0);
     entrance = gAdventure.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (GameFlag_Test(0x340))

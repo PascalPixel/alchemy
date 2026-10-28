@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global ObjectDispatch_StartCameraFar
+	.global Actor_StartCameraFar
 	.thumb_func
-ObjectDispatch_StartCameraFar:
-	overlay_veneer ObjectDispatch_StartCamera
+Actor_StartCameraFar:
+	overlay_veneer Actor_StartCamera
 	.global Func_080200e0
 	.thumb_func
 Func_080200e0:

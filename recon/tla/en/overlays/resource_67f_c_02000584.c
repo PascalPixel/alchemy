@@ -5,21 +5,21 @@
 // Measured against its copies: overlay 68F's Func_020025e0 (differ 92 of 150),
 // overlay 691's Func_020030bc (differ 92 of 150).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 
 extern u8 gMapShapeGrid[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
 void Func_020014a8(s32 id, s32 target);
 void Func_0200056c(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_020014a0(s32 id, s32 x, s32 z);
-s32 Func_02001508(struct ObjectRuntime *object);
+s32 Func_02001508(struct Actor *object);
 s32 Func_02001478(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020014c0(s32 id);
@@ -36,7 +36,7 @@ void Func_02000584(u16 *list) {
   Func_0200056c(8);
   Func_0200056c(9);
   Func_0200056c(10);
-  Object_SetModeById(9, 0);
+  Actor_SetModeById(9, 0);
   WaitFrames(1);
   Func_020014a0(8, 0, 0);
   Func_020014a0(9, 0, 0);
@@ -46,7 +46,7 @@ void Func_02000584(u16 *list) {
 body:
   {
     u32 id = list[0];
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s32 flag = list[1];
     struct MapCell *cells = map->layers[object->terrainId].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);

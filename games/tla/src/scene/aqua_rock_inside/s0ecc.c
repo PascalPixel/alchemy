@@ -5,7 +5,7 @@ void Func_02003cfc(void);
 void Func_02003d04(void);
 
 void Func_02000ecc(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 49) {
     s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
@@ -13,9 +13,9 @@ void Func_02000ecc(s32 unused, s32 id) {
 
     Func_02003d7c();
     Func_02003eac(0);
-    ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
+    Actor_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
     Func_02003ef4(0x22d);
-    Object_SetModeById(9, 2);
+    Actor_SetModeById(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
       layer[3] -= 0x10000;
@@ -26,13 +26,13 @@ void Func_02000ecc(s32 unused, s32 id) {
      * loop hoists both. */
     i = 13;
   place:
-    object = Object_GetById(i);
+    object = Actor_GetById(i);
     object->x = object->action << 16;
     object->z = *(s16 *)((u8 *)object + 102) << 16;
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
-    ObjectMotion_SetActionVariant(i, 3);
+    Actor_SetSpritePriority(i, 3);
     i++;
     if (i <= 15)
       goto place;

@@ -9,7 +9,7 @@ void Func_020004e4(s32 a, s32 b) {
   const s8 *z = gData_02000ee0 + 1;
 
   for (i = 9; i <= 14; i++) {
-    struct ObjectRuntime *object = Object_GetById(i);
+    struct Actor *object = Actor_GetById(i);
 
     if (object->x >> 20 != *x)
       return;
@@ -39,7 +39,7 @@ void Func_02000534(s32 a) {
       Func_020004e4(0, a);
     }
   } else {
-    if (Object_GetById(party->currentOwner)->y > -0x1c0000)
+    if (Actor_GetById(party->currentOwner)->y > -0x1c0000)
       Func_02000d14();
   }
 }

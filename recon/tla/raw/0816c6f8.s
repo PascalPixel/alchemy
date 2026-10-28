@@ -227,7 +227,7 @@ BattleEffect_RunGeode:
 	strh r0, [r5]
 	ldr r0, [sp, #32]
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r3, #8
 	str r3, [sp, #0]
 	movs r1, #16
@@ -1253,7 +1253,7 @@ BattleEffect_RunGeode:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0816d0ae:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r3, [sp, #80]
 	lsls r1, r1, #7
@@ -1272,7 +1272,7 @@ BattleEffect_RunGeode:
 .L_0816d0d4:
 	ldr r0, [sp, #32]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #104
 	bl HeapSlot_Release
 	ldr r0, .L_0816d12c

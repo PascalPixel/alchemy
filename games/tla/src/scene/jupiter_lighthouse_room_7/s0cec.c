@@ -1,17 +1,17 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 void Func_02002bec(void);
 void Func_02002c24(void);
 
 void Func_02000cec(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *first = Object_GetById(18);
-  struct ObjectRuntime *second = Object_GetById(19);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *first = Actor_GetById(18);
+  struct Actor *second = Actor_GetById(19);
   s32 position[3];
   s32 found = 0;
   s32 x;

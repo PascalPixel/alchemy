@@ -215,8 +215,8 @@ s32 Func_08124cc4(s32 side) {
           BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
           BattleEvent_Push(11, id);
           if (BattleParty_IsUnitListed(id)) {
-            Object_SetMode((struct ObjectRuntime *)BattleObject_Get(id)->object, 3);
-            ObjectDispatch_SetAnimationSpeedFar(
+            Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
+            Actor_SetAnimationSpeedFar(
                 (struct DispatchObject *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;

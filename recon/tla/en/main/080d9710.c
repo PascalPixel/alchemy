@@ -10,12 +10,12 @@
 // A sibling of Func_080d9104 and Func_080d92d4.
 #include "types.h"
 #include "fixed_math.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct ChainWork {
-  struct ObjectRuntime *from;
-  struct ObjectRuntime *to;
+  struct Actor *from;
+  struct Actor *to;
 };
 
 extern s32 gData_080f3940;
@@ -25,8 +25,8 @@ void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
 
 void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   struct ChainWork *work;
-  struct ObjectRuntime *from;
-  struct ObjectRuntime *to;
+  struct Actor *from;
+  struct Actor *to;
 
   /* FAKEMATCH: spills the third argument before the work loads (differ 8
    * without it). */

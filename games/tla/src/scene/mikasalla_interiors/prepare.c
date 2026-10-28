@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"

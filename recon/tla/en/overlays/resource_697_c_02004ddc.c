@@ -51,10 +51,10 @@ s32 ArcTan2(s32 dz, s32 dx);
 s32 GameFlag_GetByte(s32 flag);
 void *Resource_GetTableEntry(s32 id);
 void Func_02005770(const void *source, void *destination);
-void Func_020057f8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_020057f0(struct ObjectRuntime *object);
+void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_020057f0(struct Actor *object);
 
-static __inline__ void TurnToward(struct ObjectRuntime *rival, s32 x, s32 z) {
+static __inline__ void TurnToward(struct Actor *rival, s32 x, s32 z) {
   s32 turn;
   u16 angle;
 
@@ -73,8 +73,8 @@ void Func_02004ddc(void) {
   struct TrialRoadReplay *state = &gSceneState;
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
-  struct ObjectRuntime *rival = Object_GetById(state->id);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *rival = Actor_GetById(state->id);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct LinkSignature *signature;
   s32 x;
   s32 z;
@@ -134,7 +134,7 @@ void Func_02004ddc(void) {
     }
     if (signature->partner == 0)
       return;
-    rival = Object_GetById(signature->partner);
+    rival = Actor_GetById(signature->partner);
     if (rival == 0)
       return;
     rival->x = signature->partnerX << 16;

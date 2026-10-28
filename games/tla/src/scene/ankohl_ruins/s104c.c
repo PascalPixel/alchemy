@@ -9,7 +9,7 @@ void Func_02000b78(s32 kind, s32 a, s32 x, s32 y, s32 z, s32 b);
 /// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
 /// place five objects between them, as Func_02000e60 does for object 8.
 void Func_02000c24(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
   s32 toColumn;
@@ -68,7 +68,7 @@ void Func_02000c24(s32 unused, s32 id) {
 /// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
 /// Func_02000b78 place four objects between them.
 void Func_02000e60(s32 unused, s32 id) {
-  struct ObjectRuntime *pillar = Object_GetById(id);
+  struct Actor *pillar = Actor_GetById(id);
   s32 column = pillar->x >> 20;
   s32 row = pillar->z >> 20;
 
@@ -107,12 +107,12 @@ void Func_02000e60(s32 unused, s32 id) {
 }
 
 void Func_0200104c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
   if (id == 10 && x == 15 && z == 24) {
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
     object->y -= 0x20000;
     FieldEvent_WaitFrames(1);
     object->y -= 0x20000;
@@ -121,11 +121,11 @@ void Func_0200104c(s32 unused, s32 id) {
     FieldEvent_WaitFrames(1);
     object->y -= 0x80000;
     FieldEvent_WaitFrames(1);
-    Object_SetModeById(9, 3);
+    Actor_SetModeById(9, 3);
     Func_02002e6c(10, 0, 0);
     Func_02002eec(188);
     FieldEvent_WaitFrames(45);
-    Object_SetModeById(9, 4);
+    Actor_SetModeById(9, 4);
     Func_02002eec(564);
     GameFlag_SetBit(0x9dd);
   }

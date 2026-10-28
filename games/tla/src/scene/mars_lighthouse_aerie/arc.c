@@ -6,8 +6,8 @@ s32 Math_Sine(s32 angle);
 
 /// Swings the object along an arc beside its watched object, drawing it behind
 /// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
-void Func_020005a0(struct ObjectRuntime *object) {
-  struct ObjectRuntime *parent;
+void Func_020005a0(struct Actor *object) {
+  struct Actor *parent;
   u16 *pangle = (u16 *)&object->action;
   u16 angle;
   struct FieldSprite *sprite;

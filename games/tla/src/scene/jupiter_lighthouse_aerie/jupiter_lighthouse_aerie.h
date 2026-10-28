@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -38,10 +38,10 @@ extern s32 gData_02003318;
 extern u16 gData_02003340[];
 extern u8 gData_02003488[];
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
@@ -51,7 +51,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 u32 Random16Far(void);
 void Func_02000858(s32 mode);
 void Func_02000e80(void);
-void Func_02001010(struct ObjectRuntime *object);
+void Func_02001010(struct Actor *object);
 void Func_02001e78(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
                    struct JupiterLighthouseAerieSpark *spark);
 void Func_020023b0(void);
@@ -62,7 +62,7 @@ void Func_020024a8(struct JupiterLighthouseAerieWork *work,
 void Func_02002640(void);
 void Func_02002a18(void);
 void Func_02002a40(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-struct ObjectRuntime *Func_02002af8(void);
+struct Actor *Func_02002af8(void);
 void Func_02002b28(s32 id, s32 a);
 void Func_02002b68(s32 cue);
 

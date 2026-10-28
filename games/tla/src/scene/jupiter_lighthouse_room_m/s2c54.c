@@ -29,7 +29,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 /// stamped again, and with 2591 set the arrival is chosen by flags 2595, 2593
 /// and 2596 and the entrance.
 s32 Func_02002c54(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   Func_02004994(8, 1);
@@ -43,11 +43,11 @@ s32 Func_02002c54(void) {
   Func_02004984();
   Func_0200498c(0, 512, 21, 22);
   gData_02005a3c = 0;
-  object = Object_GetById(24);
+  object = Actor_GetById(24);
   object->motionFlags = 0;
   object->y = 0;
   object->terrainHeight = 0;
-  object = Object_GetById(25);
+  object = Actor_GetById(25);
   object->motionFlags = 0;
   object->y = 0x200000;
   object->terrainHeight = 0x200000;
@@ -83,7 +83,7 @@ s32 Func_02002c54(void) {
       }
     }
   }
-  Object_GetById(23)->motionFlags = 0;
+  Actor_GetById(23)->motionFlags = 0;
   if (GameFlag_Test_(2573))
     Func_02004844(23, 0, 0);
   if (gAdventure.entrance == 99)

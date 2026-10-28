@@ -61,14 +61,14 @@ ObjectEvent_RemoveFar:
 	.thumb_func
 Func_080c8418:
 	overlay_veneer Func_080cf050
-	.global Object_SetWideSpriteFar
+	.global Actor_SetWideSpriteFar
 	.thumb_func
-Object_SetWideSpriteFar:
-	overlay_veneer Object_SetWideSprite
-	.global Object_ReturnHomeFar
+Actor_SetWideSpriteFar:
+	overlay_veneer Actor_SetWideSprite
+	.global Actor_ReturnHomeFar
 	.thumb_func
-Object_ReturnHomeFar:
-	overlay_veneer Object_ReturnHome
+Actor_ReturnHomeFar:
+	overlay_veneer Actor_ReturnHome
 	.global Func_080c8430
 	.thumb_func
 Func_080c8430:

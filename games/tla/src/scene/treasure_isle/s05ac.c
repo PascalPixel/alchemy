@@ -97,13 +97,13 @@ void Func_02000728(void) {
   }
 }
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 
 /// Called through the scene table with an object id: in each of the first
 /// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
 /// a given x and z in the second room runs Func_02000728 instead.
 void Func_02000760(s32 unused, s32 id) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
 
   if (gAdventure.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)

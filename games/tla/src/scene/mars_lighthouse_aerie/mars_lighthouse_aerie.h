@@ -4,24 +4,24 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
 struct SceneEvent;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void FieldEvent_WaitFrames(s32 frames);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_Stop(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Task_RemoveFar(void (*callback)(void));
-void Func_02000038(struct ObjectRuntime *object);
+void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
 void Func_02004fac(void);
@@ -63,8 +63,8 @@ struct MarsLighthouseAerieParty {
 
 s32 Task_Add(void (*callback)(void), s32 priority);
 s32 Func_0200508c(u16 *list);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 
 static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */

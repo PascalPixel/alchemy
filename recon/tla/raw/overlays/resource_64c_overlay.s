@@ -234,7 +234,7 @@ Func_0200020c:
 	bl Heap_AllocEwram
 	mov r10, r0
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
 	b .L_02008274
 .L_0200826c:
@@ -242,7 +242,7 @@ Func_0200020c:
 .L_02008270:
 	.4byte gData_02003dbe
 .L_02008274:
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	mov r1, r11
 	cmp r1, #4
 	bne .L_02008282
@@ -294,7 +294,7 @@ Func_0200020c:
 	lsls r4, r4, #2
 	adds r3, r3, r4
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r1, r8
 	adds r0, #84
 	strb r1, [r0]
@@ -762,17 +762,17 @@ Func_0200020c:
 	movs r0, #8
 	bl Func_02002034
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #1
 	bl Animation_SetStateFlags
 	movs r1, #0
 	movs r0, #8
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	str r5, [r0, #24]
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	str r5, [r0, #28]
 	cmp r7, #22
 	ble .L_020086c6
@@ -787,10 +787,10 @@ Func_0200020c:
 	lsls r5, r5, #9
 .L_020086b6:
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	str r5, [r0, #24]
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	str r5, [r0, #28]
 .L_020086c6:
 	cmp r7, #31
@@ -1419,7 +1419,7 @@ Func_02000d64:
 	bl Func_02002094
 	mov r8, r0
 	bl Func_0200209c
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #80]
 	ldrh r2, [r0, #32]
 	ldr r3, [r3, #12]
@@ -1775,7 +1775,7 @@ Func_02001400:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #84
 	strb r5, [r0]
 	movs r2, #218
@@ -2836,7 +2836,7 @@ Func_02001d90:
 	ldrh r3, [r3, #2]
 	lsrs r6, r3, #5
 	bl Func_0200209c
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_02009e38
 	movs r2, #3
 	ldr r3, [r3]

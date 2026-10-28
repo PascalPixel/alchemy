@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_0200063c(struct ObjectRuntime *object) {
+void Func_0200063c(struct Actor *object) {
   s32 count;
   s32 busy;
 

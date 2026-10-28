@@ -1,14 +1,14 @@
 #include "room.h"
 
 void Func_020003b4(void) {
-  if (Object_GetById(15)->z >> 20 == 14) {
+  if (Actor_GetById(15)->z >> 20 == 14) {
     Func_020027ac(0, 65);
     Func_020027ac(2, 19);
   } else {
     Func_020027ac(0, 17);
     Func_020027ac(2, 67);
   }
-  if (Object_GetById(16)->x >> 20 == 6) {
+  if (Actor_GetById(16)->x >> 20 == 6) {
     Func_020027ac(1, 65);
     Func_020027ac(3, 3);
   } else {
@@ -57,7 +57,7 @@ void Func_020004f8(void) {
 }
 
 void Func_02000514(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
 
   Func_02005598(10, 0, 0);
   Func_02005598(9, S16_AT(object, 100) << 16, S16_AT(object, 102) << 16);

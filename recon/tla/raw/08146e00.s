@@ -1570,7 +1570,7 @@ BattleEffect_RunProcne:
 .L_08147a14:
 	.4byte 0xfffff000
 .L_08147a18:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r5, #240
 	ldr r3, [sp, #88]
 	lsls r5, r5, #7

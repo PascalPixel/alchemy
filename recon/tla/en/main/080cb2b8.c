@@ -13,7 +13,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "map.h"
 #include "iwram_call.h"
 
@@ -70,7 +70,7 @@ extern struct MapCell gMapBlocks[];
 extern struct MapCell gMapCellBuffer[];
 
 s32 Party_GetLeaderActor(void);
-struct ObjectRuntime *Func_080cb8e8(void);
+struct Actor *Func_080cb8e8(void);
 u32 Party_CountActiveOwnersFar(void);
 struct UnitStepView *Unit_Get(s32 owner);
 void Func_080cb1dc(s32 x, s32 y, s32 z);
@@ -89,7 +89,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
   struct StepWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Func_080cb8e8();
+  struct Actor *leader = Func_080cb8e8();
   s16 previousHp[8];
   struct MapCell *tile;
   struct UnitStepView *unit;

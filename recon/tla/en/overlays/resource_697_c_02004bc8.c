@@ -2,18 +2,18 @@
 // resource_692_c_0200481c.c (overlay 692's Func_0200481c, differ 93 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
 extern const s32 gData_02006284[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 struct FieldActor *Func_020057d8(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
-void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020057c8(struct FieldEffect *effect, s32 mode);
 void Func_020057d0(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
@@ -21,7 +21,7 @@ s32 Math_Sine(s32 angle);
 void Func_02004a14(union FieldObject *object);
 
 void Func_02004bc8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;
@@ -37,7 +37,7 @@ void Func_02004bc8(void) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags(effect, 0);
       Func_020057c8(effect, 2);
       Func_020057d0(effect, gData_02006284);
       effect->velocity.y = 0;

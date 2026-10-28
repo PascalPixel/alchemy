@@ -28,7 +28,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
     BattleActor_RemoveFromLists(arg0);
     BattleObject_MarkForRelease(arg0);
     runtime = BattleObject_Get(arg0);
-    Object_Destroy((struct DispatchObject *)runtime->object);
+    Actor_Destroy((struct DispatchObject *)runtime->object);
     runtime->object = 0;
     runtime->active = 0;
   }

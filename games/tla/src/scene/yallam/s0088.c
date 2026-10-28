@@ -1,6 +1,6 @@
 #include "yallam.h"
 
-s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target,
+s32 Func_02000088(struct Actor *object, struct Actor *target,
                   s32 range, s32 force) {
   s32 result = 0;
   s32 *targetPos;

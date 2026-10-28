@@ -17,7 +17,7 @@ Func_080d4d08:
 	adds r3, r5, r2
 	ldr r0, [r3]
 	sub sp, #24
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #1
 	negs r3, r3
 	str r3, [sp, #8]
@@ -281,14 +281,14 @@ Func_080d4d08:
 	bl Event_Start
 	movs r1, #6
 	adds r0, r6, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #6
 	bl WaitFrames
 	movs r0, #152
 	bl Sound_PlayFar
 	adds r0, r6, #0
 	movs r1, #7
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r3, #192
 	lsls r3, r3, #10
 	str r3, [r6, #48]
@@ -307,7 +307,7 @@ Func_080d4d08:
 	movs r1, #254
 	ands r1, r2
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r3, .L_080d5064
 	movs r5, #133
 	lsls r5, r5, #2
@@ -317,13 +317,13 @@ Func_080d4d08:
 	ldrsh r1, [r7, r2]
 	movs r3, #10
 	ldrsh r2, [r7, r3]
-	bl ObjectMotion_SetPositionAndCommit
+	bl Actor_SetPositionAndCommit
 	adds r0, r6, #0
 	movs r1, #6
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	ldr r1, [sp, #0]
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r0, [r3, #32]
@@ -380,13 +380,13 @@ Func_080d4d08:
 	movs r1, #129
 	lsls r1, r1, #1
 	adds r0, r6, #0
-	bl Object_FindNearestFacingTarget
+	bl Actor_FindNearestFacingTarget
 	cmp r0, #0
 	bne .L_080d5004
 	movs r1, #4
 	adds r1, #255
 	adds r0, r6, #0
-	bl Object_FindNearestFacingTarget
+	bl Actor_FindNearestFacingTarget
 	cmp r0, #0
 	beq .L_080d5078
 .L_080d5004:
@@ -398,7 +398,7 @@ Func_080d4d08:
 	cmp r3, #0
 	beq .L_080d5078
 	movs r1, #7
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r5, .L_080d5074
 	ldr r3, [r6, #12]
 	movs r0, #2
@@ -481,7 +481,7 @@ Func_080d4d08:
 	bne .L_080d50ce
 	adds r0, r6, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #6
 	bl WaitFrames
 	b .L_080d4d82

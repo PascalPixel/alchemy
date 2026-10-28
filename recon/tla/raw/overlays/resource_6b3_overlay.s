@@ -226,7 +226,7 @@ Func_02000318:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	ldrb r7, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	mov r8, r3
 	mov r2, r8
@@ -720,7 +720,7 @@ Func_02000318:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	ldrb r7, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	mov r8, r3
 	mov r2, r8

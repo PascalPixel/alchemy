@@ -2,9 +2,9 @@
 
 void Func_020031f0(s32 id) {
   Func_02005b8c(id);
-  Object_SetPartAttribute(Object_GetById(id), 15);
-  ObjectMotion_SetActionVariant(id, 1);
-  Object_GetById(id)->priorityFlags |= 2;
+  Actor_SetPartAttribute(Actor_GetById(id), 15);
+  Actor_SetSpritePriority(id, 1);
+  Actor_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02003220(void) {
@@ -25,15 +25,15 @@ void Func_0200324c(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 15;
-    struct KibomboObject *object = Object_GetById(id);
+    struct KibomboObject *object = Actor_GetById(id);
 
     Func_020031f0(id);
     zero = 0;
     asm("" : "+r"(zero));
     object->motionFlags = zero;
   }
-  Object_GetById(15)->y = 0x200000;
-  Object_GetById(16)->y = zero;
+  Actor_GetById(15)->y = 0x200000;
+  Actor_GetById(16)->y = zero;
   Func_02003220();
 }
 
@@ -42,7 +42,7 @@ void Func_02003288(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 26;
-    struct KibomboObject *object = Object_GetById(id);
+    struct KibomboObject *object = Actor_GetById(id);
 
     Func_020031f0(id);
     {

@@ -10,30 +10,30 @@
 // slot are used, and 0x3ffff becomes a 0x40000 compare.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "frame.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02005560(void);
 void Func_02005648(s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct ObjectRuntime *Func_020055e8(void);
+struct Actor *Func_020055e8(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020054b8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_020054b8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_020056c0(s32 sound);
-void Func_020054c0(struct ObjectRuntime *object);
+void Func_020054c0(struct Actor *object);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_02005568(void);
 
 void Func_0200167c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *linked = actor->watchedObject;
-  struct ObjectRuntime *shadow;
+  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *linked = actor->watchedObject;
+  struct Actor *shadow;
   s32 facing;
   s32 i;
 
@@ -42,7 +42,7 @@ void Func_0200167c(void) {
   i = 0;
   *(u16 *)(work + 0xd46) = 0;
   actor->motionFlags = 4;
-  ObjectDispatch_SetSingleChildFlags(actor, 0);
+  Actor_SetSingleChildFlags(actor, 0);
   if (*((u8 *)linked + 0x63) != 0) {
   rise:
     actor->x = linked->x;
@@ -64,7 +64,7 @@ void Func_0200167c(void) {
   actor->velocityY = 0x60000;
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
-  ObjectDispatch_SetSingleChildFlags(actor, 1);
+  Actor_SetSingleChildFlags(actor, 1);
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   shadow = Func_020055e8();
   shadow->speedLimit = 0x80000;
@@ -90,7 +90,7 @@ void Func_0200167c(void) {
       goto settle;
   }
   Func_020054c0(shadow);
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gAdventure.currentOwner, 1);
   *(u16 *)(work + 0xd46) = 1;
   *(u16 *)(work + 0x154) = 0;

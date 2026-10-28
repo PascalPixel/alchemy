@@ -22,7 +22,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_display.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -89,7 +89,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
@@ -117,7 +117,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   s32 y;
   u8 *graphics;
   struct BattleCamera *camera;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct EffectStep *step;
   s32 i;
   s32 j;
@@ -464,7 +464,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

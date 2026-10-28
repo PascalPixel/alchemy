@@ -2,7 +2,7 @@
 #define TLA_MARS_LIGHTHOUSE_ROOM_M_H
 
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -43,7 +43,7 @@ struct MarsLighthouseRoomMRideWork {
   u16 value0c;
   s16 value0e;
   u8 unk10[0x60];
-  struct ObjectRuntime *handle;
+  struct Actor *handle;
 };
 
 extern u32 gFrameCount;
@@ -60,19 +60,19 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Task_Add(void (*callback)(void), s32 priority);
 
-void Func_02003118(struct ObjectRuntime *object, s32 value);
-void Func_02003120(struct ObjectRuntime *object, const void *script);
-struct ObjectRuntime *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
+void Func_02003118(struct Actor *object, s32 value);
+void Func_02003120(struct Actor *object, const void *script);
+struct Actor *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_02001988(void);
-void Func_02001aec(struct ObjectRuntime *object);
-void Func_02001cc4(struct ObjectRuntime *object, s32 layer);
+void Func_02001aec(struct Actor *object);
+void Func_02001cc4(struct Actor *object, s32 layer);
 void Func_02001b64(void);
 
 extern const u8 gData_020032d4[];
@@ -97,9 +97,9 @@ s32 Func_020016e8(u16 *list);
 void Func_0200170c(void);
 void Func_0200166c(void);
 void Func_0200168c(void);
-s32 Func_02001de0(struct ObjectRuntime *a, struct ObjectRuntime *b);
-void Func_02001e38(struct ObjectRuntime *object);
-void Func_02001ed4(struct ObjectRuntime *object);
+s32 Func_02001de0(struct Actor *a, struct Actor *b);
+void Func_02001e38(struct Actor *object);
+void Func_02001ed4(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(void);
 void Func_020031e0(void);
@@ -114,7 +114,7 @@ void Func_020032a0(void);
 void Func_02003148(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

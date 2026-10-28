@@ -9,9 +9,9 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void Import_SoundPlay(s32 cue);
 
@@ -28,16 +28,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
   Func_02002a44();
-  Func_02002a5c(Object_GetById(5), 2);
+  Func_02002a5c(Actor_GetById(5), 2);
   FieldEvent_WaitFrames(20);
   Func_020023a4(object);
-  Func_02002a5c(Object_GetById(5), 0);
+  Func_02002a5c(Actor_GetById(5), 0);
   Func_02002a54();
   Func_02002a4c();
   Field_StartPaletteTransition(8);
 }
 
-void VenusLighthouseEntrance_UpdateSparkTrail(struct ObjectRuntime *object) {
+void VenusLighthouseEntrance_UpdateSparkTrail(struct Actor *object) {
   Func_0200260c(object, object->x, object->y, object->z);
   if (++object->action % 8 == 0)
     Import_SoundPlay(125);

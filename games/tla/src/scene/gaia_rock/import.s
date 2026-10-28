@@ -37,11 +37,11 @@ GameFlag_SetBit:
 	.global Func_02000e24
 	.thumb_func
 Func_02000e24:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02000e2c
 	.thumb_func
 Func_02000e2c:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Func_02000e34
 	.thumb_func
 Func_02000e34:
@@ -49,15 +49,15 @@ Func_02000e34:
 	.global Func_02000e3c
 	.thumb_func
 Func_02000e3c:
-	overlay_veneer Object_SetPosition
+	overlay_veneer Actor_SetTargetPosition
 	.global Func_02000e44
 	.thumb_func
 Func_02000e44:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_02000e54
 	.thumb_func
 Func_02000e54:
@@ -65,7 +65,7 @@ Func_02000e54:
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:
-	overlay_veneer ObjectDispatch_SetSpritePriorityFar
+	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -82,22 +82,22 @@ Func_02000e74:
 	.thumb_func
 Func_02000e7c:
 	overlay_veneer Event_EndFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_02000e8c
 	.thumb_func
 Func_02000e8c:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_SetVariantCallback
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_StartRepeatedMotion
 	.thumb_func
-ObjectMotion_SetVariantCallback:
-	overlay_veneer ObjectMotion_SetVariantCallbackFar
+Actor_StartRepeatedMotion:
+	overlay_veneer Actor_StartRepeatedMotionFar
 	.global Func_02000ea4
 	.thumb_func
 Func_02000ea4:
@@ -142,10 +142,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02000ef4:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Object_Spawn
+	.global Actor_Spawn
 	.thumb_func
-Object_Spawn:
-	overlay_veneer Object_SpawnFar
+Actor_Spawn:
+	overlay_veneer Actor_SpawnFar
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:

@@ -2,31 +2,31 @@
 #include "adventure.h"
 #include "field_event.h"
 
-void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
+void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 struct FieldActor *Func_02001ea8(void);
 
 void Func_02001790(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads x and
    * z before it copies the object to r10 (one reordered row). */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
+  Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   WaitFrames(1);
-  Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
+  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
   FieldEvent_WaitFrames(4);
   Func_02001ea8()->y += 0xfff80000;
@@ -51,7 +51,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_02001bb8 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02001818(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

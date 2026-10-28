@@ -91,7 +91,7 @@ Func_0811c710:
 	bne .L_0811c7c6
 	adds r0, r6, #0
 	movs r1, #3
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_0811c7c6:
 	adds r5, #1
 	cmp r5, r11

@@ -13,7 +13,7 @@
 // added (as an s16 sum the constant loads from the pool, differ 73).
 #include "types.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "script_object_runtime.h"
 #include "iwram_call.h"
 
@@ -28,8 +28,8 @@ struct FieldPosition {
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
-s32 Func_0802d87c(struct ObjectRuntime *object, struct FieldPosition *position);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 
 s32 Func_08025830(struct ScriptObjectRuntime *object) {
@@ -77,7 +77,7 @@ s32 Func_08025830(struct ScriptObjectRuntime *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &candidatePosition) !=
+      if (Func_0802d87c((struct Actor *)object, &candidatePosition) !=
           0)
         goto roam;
       probePosition.x = object->x;
@@ -85,38 +85,38 @@ s32 Func_08025830(struct ScriptObjectRuntime *object) {
       travelDistance += 0x80000;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
+      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading + 0x2000, &probePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
+      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.z = object->z;
       probePosition.y = object->y;
       Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
+      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.z = object->z;
       probePosition.y = object->y;
       Vector_AddPolarOffset(travelDistance, heading + 0x4000, &probePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
+      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading - 0x4000, &probePosition);
-      if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
+      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       object->flags59 |= 2;
-      Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,
+      Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
                            candidatePosition.y, candidatePosition.z);
       goto done;
     }
@@ -143,10 +143,10 @@ back:
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (Func_0802d87c((struct ObjectRuntime *)object, &candidatePosition) != 0)
+    if (Func_0802d87c((struct Actor *)object, &candidatePosition) != 0)
       goto back;
     object->flags59 &= ~2;
-    Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,
+    Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
                          candidatePosition.y, candidatePosition.z);
   }
 done:

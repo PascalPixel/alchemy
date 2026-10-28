@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWork154 {
@@ -9,12 +9,12 @@ struct EventWork154 {
 };
 
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Func_020012a8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_020012e8(void);
@@ -40,17 +40,17 @@ void Func_02000f38(void) {
     Func_02001348_(8, 0x900000, 0xe00000);
   else
     Func_02001348_(8, 0xe00000, 0xe00000);
-  ObjectMotion_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(10);
-  Object_GetById(4)->actionFlags &= 0xfe;
+  Actor_GetById(4)->actionFlags &= 0xfe;
   Func_020012a8_(96, 14, 72, 14, 2, 1);
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);
-  Object_SetModeById(4, 13);
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  Object_SetModeById(4, 10);
+  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_WaitForMoveById(4);
+  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetModeById(4, 13);
+  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_WaitForMoveById(4);
+  Actor_SetModeById(4, 10);
   FieldEvent_WaitFrames(14);
   Func_02001448(123);
   Func_020013d0(value);

@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "edition.h"
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
 void Func_02001e80(s32 id);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02001094(void);
 void Func_02001e10(s32 id, s32 x, s32 z);
@@ -21,9 +21,9 @@ void Func_02001c44(void) {
   char *scene;
 
   for (i = 0; i <= 17; i++)
-    ObjectMotion_SetActionVariant(i + 15, 2);
+    Actor_SetSpritePriority(i + 15, 2);
   Func_02001e80(8);
-  Object_GetById(8)->y = 0;
+  Actor_GetById(8)->y = 0;
   if (GameFlag_Test(0x8ff)) {
     Func_02001094();
     Func_02001e10(10, 0, 0);

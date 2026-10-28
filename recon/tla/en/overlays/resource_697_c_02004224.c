@@ -24,7 +24,7 @@ struct TrialRoadMover {
   s16 unk12;
   s16 unk14;
   s16 unk16;
-  struct ObjectRuntime *marker;
+  struct Actor *marker;
 };
 
 struct TrialRoadMovers {
@@ -33,7 +33,7 @@ struct TrialRoadMovers {
   struct TrialRoadMover movers[16];
 };
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
 struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low,
@@ -41,12 +41,12 @@ struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low,
   struct TrialRoadMovers *work =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
   struct TrialRoadMover *mover = &work->movers[index];
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *marker;
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *marker;
   s32 swap;
 
-  Object_GetById(id);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_GetById(id);
+  Actor_SetSingleChildFlags(object, 0);
   if (!GameFlag_Test(265)) {
     if (high < low) {
       swap = high;

@@ -232,7 +232,7 @@ Func_0816e65c:
 	bl Func_0814cd48
 	movs r1, #32
 	ldr r0, [sp, #28]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_0816e82e:
 	movs r0, #32
 	bl Heap_AllocEwram
@@ -712,7 +712,7 @@ Func_0816e65c:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0816ebf2:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -731,7 +731,7 @@ Func_0816e65c:
 .L_0816ec16:
 	ldr r0, [sp, #28]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #104
 	bl HeapSlot_Release
 	ldr r0, .L_0816ec54

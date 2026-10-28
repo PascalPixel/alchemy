@@ -5,9 +5,9 @@
 
 #define WAVE_FX_SLOT 88
 
-struct ObjectRuntime;
-struct ObjectRuntime *Object_GetById(s32 id);
-void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+struct Actor;
+struct Actor *Actor_GetById(s32 id);
+void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080dcadc(void);
 void Func_080dcb44(void);
@@ -17,7 +17,7 @@ void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
 
   Func_080dcadc();
   Task_Remove((TaskFunc)Func_080dcb44);
-  BattleEffect_ApplyFlickerValue(Object_GetById(*(u16 *)(work + 0x290)), 1);
+  BattleEffect_ApplyFlickerValue(Actor_GetById(*(u16 *)(work + 0x290)), 1);
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(WAVE_FX_SLOT);
 }

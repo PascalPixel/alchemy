@@ -1,6 +1,6 @@
 #include "types.h"
 #include "text/msg_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -9,12 +9,12 @@ extern const u8 gData_02005d7c[];
 extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
 extern u32 gData_02005d8c[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u8 *Unit_Get(s32 owner);
 void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void WaitFrames(s32 frames);
 void Func_02005754(const u8 *message);
 void Func_02005764(s32 id, s32 value);
@@ -25,8 +25,8 @@ void GameFlag_ClearBit(s32 flag);
 void Func_02001b38(void);
 void Func_02001b68(void);
 void Func_02002394(void);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void Actor_SetMovementTypeById(s32 id, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 void Func_02005674(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020053bc(const u8 *data);
 void Func_02005824(void);
@@ -42,21 +42,21 @@ void Func_0200564c(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020057a4(s32 speed, s32 acceleration);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
-struct ObjectRuntime *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02005644(struct ObjectRuntime *object);
+void Func_02005644(struct Actor *object);
 void Func_02005794(s32 id, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
+void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_0200578c(s32 id, s32 a, s32 b);
 void Func_020057e4(s32 a, s32 b);
@@ -66,7 +66,7 @@ void Func_020057c4(s32 exit);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
@@ -76,12 +76,12 @@ static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
 
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, frames);
+  Actor_ArmCallback(id, angle, frames);
 }
 
 static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Func_02005774_(s32 id, s32 value) {
@@ -100,8 +100,8 @@ void Func_02002f70(void) {
   s32 index = Func_02003604();
   s32 x;
   s32 z;
-  struct ObjectRuntime *spark;
-  struct ObjectRuntime *actor;
+  struct Actor *spark;
+  struct Actor *actor;
   s32 fast;
   s32 slow;
 
@@ -109,7 +109,7 @@ void Func_02002f70(void) {
   Func_0200580c(0);
   Camera_SetBounds(-1, -1, -1, 0);
   Func_020048a4(19, 11, gData_02005d8c[index], 16);
-  Object_SetModeById(15, 5);
+  Actor_SetModeById(15, 5);
   Func_02005714(11, 0, 0);
   Func_02005714(12, 0, 0);
   Func_02005714(13, 0, 0);
@@ -138,8 +138,8 @@ void Func_02002f70(void) {
   Camera_SetBounds(220 << 17, -1, 156 << 17, 1);
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(24, 0x10000, 0x8000);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02005ccc);
-  Object_SetActionCallbackAndRefreshById(24, gData_02005d24);
+  Actor_SetMovementTypeById(5, gData_02005ccc);
+  Actor_SetMovementTypeAndWaitById(24, gData_02005d24);
   Func_02005754(MsgGabombaSawEnergyFlow);
   Func_02005764(5, 0);
   Actor_Turn(24, 0xb000, 0);
@@ -155,10 +155,10 @@ void Func_02002f70(void) {
   z = (z << 20) + (184 << 16);
   spark = Func_0200563c(434, x, 0, z);
   spark->motionFlags |= 4;
-  ObjectDispatch_SetSingleChildFlags(spark, 0);
+  Actor_SetSingleChildFlags(spark, 0);
   Func_02005624(spark, 1);
   WaitFrames(1);
-  actor = Object_GetById(5);
+  actor = Actor_GetById(5);
   actor->angle = ArcTan2(spark->z - actor->z, spark->x - actor->x);
   /* FAKEMATCH: the native stores the angle before it starts the camera call's
    * constants; without the barrier the -1 is started first (one reordered pair,
@@ -184,13 +184,13 @@ void Func_02002f70(void) {
   Actor_Turn(24, 0xd000, 0);
   Camera_SetBounds(220 << 17, -1, 132 << 17, 1);
   Func_020057b4();
-  ObjectMotion_Launch(24, 4, 10);
+  Actor_Jump(24, 4, 10);
   Func_02005764(0x4018, 0);
   Motion_SetModeAndWaitAnimation(7, 4);
   Func_02005764(0x8007, 0);
   Func_0200578c(24, 257, 40);
   Func_02005764(0x8006, 0);
-  Object_SetModeById(23, 4);
+  Actor_SetModeById(23, 4);
   Func_02005764(0x9017, 0);
   FieldEvent_WaitFrames(20);
   Func_020057e4(0x10000, 0);
@@ -204,7 +204,7 @@ void Func_02002f70(void) {
 void Func_02003338(void) {
   Func_0200533c();
   Func_02005724(23, gAdventure.currentOwner);
-  Object_SetPartAttribute(Object_GetById(23), 15);
+  Actor_SetPartAttribute(Actor_GetById(23), 15);
   WaitFrames(10);
   Func_02005754(MsgGabombaChannelTiming);
   Func_02005764(23, 0);

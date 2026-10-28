@@ -15,15 +15,15 @@
 // dependents and win the tie). Measured: the terrain query through Value3, both
 // drops to the ground through one inline helper (no change).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020004f4(s32 id, s32 x, s32 z);
@@ -37,21 +37,21 @@ s32 Func_02001184(void);
 void Func_0200118c(s32 actor, s32 value);
 
 s32 Func_0200063c(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 scene;
   s32 flag;
   s32 height;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
-  Object_GetById(Func_02001184())->priorityFlags |= 0x20;
+  Actor_GetById(Func_02001184())->priorityFlags |= 0x20;
   scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov66fRoom1) {
-    ObjectMotion_SetActionVariant(18, 1);
-    ObjectMotion_SetActionVariant(19, 1);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
-    Object_GetById(19)->collisionFlags = 0;
-    Object_GetById(19)->priorityFlags |= 2;
-    Object_GetById(12)->collisionFlags = 0;
+    Actor_SetSpritePriority(18, 1);
+    Actor_SetSpritePriority(19, 1);
+    Actor_SetSingleChildFlags(Actor_GetById(19), 0);
+    Actor_GetById(19)->collisionFlags = 0;
+    Actor_GetById(19)->priorityFlags |= 2;
+    Actor_GetById(12)->collisionFlags = 0;
     if (GameFlag_Test(0x222)) {
       Call6((void (*)())Func_0200106c, 30, 35, 1, 1, 28, 34);
       Call6((void (*)())Func_0200106c, 30, 34, 1, 1, 28, 33);
@@ -61,15 +61,15 @@ s32 Func_0200063c(void) {
     if (GameFlag_Test(0x223))
       Call6((void (*)())Func_0200106c, 49, 28, 1, 1, 47, 28);
     else
-      ObjectMotion_SetActionVariant(14, 1);
+      Actor_SetSpritePriority(14, 1);
     if (GameFlag_Test(0x224))
       Call6((void (*)())Func_0200106c, 53, 35, 1, 1, 53, 36);
     flag = GameFlag_Test(0x202);
     if (flag == 0) {
-      struct ObjectRuntime *lift;
+      struct Actor *lift;
 
-      Object_GetById(16)->priorityFlags |= 0x80;
-      lift = Object_GetById(17);
+      Actor_GetById(16)->priorityFlags |= 0x80;
+      lift = Actor_GetById(17);
       lift->priorityFlags |= 0x40;
       lift->y = 0xe00000;
       lift->terrainHeight = 0xe00000;
@@ -81,10 +81,10 @@ s32 Func_0200063c(void) {
     if (GameFlag_Test(0x882))
       Func_020010d4(13, 0, 0);
     else
-      Object_GetById(13)->scaleY = 0x14000;
+      Actor_GetById(13)->scaleY = 0x14000;
   } else if (scene == (s32)&SceneId_Ov66fRoom2) {
-    ObjectMotion_SetActionVariant(8, 1);
-    ObjectMotion_SetActionVariant(9, 1);
+    Actor_SetSpritePriority(8, 1);
+    Actor_SetSpritePriority(9, 1);
     Func_02001174();
     Func_0200117c(0, 0x9e8, 8, 9);
     if (GameFlag_Test(0x210))
@@ -92,7 +92,7 @@ s32 Func_0200063c(void) {
     if (GameFlag_Test(0x211))
       Call6((void (*)())Func_0200106c, 8, 30, 1, 1, 10, 30);
     if (GameFlag_Test(0x8e7)) {
-      object = Object_GetById(20);
+      object = Actor_GetById(20);
       Call3((void (*)())Func_020010d4, 20, 0x480000, 0x1c80000);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
@@ -101,7 +101,7 @@ s32 Func_0200063c(void) {
       Call6((void (*)())Func_0200106c, 3, 28, 1, 1, 4, 28);
     }
     if (GameFlag_Test(0x8e8)) {
-      object = Object_GetById(13);
+      object = Actor_GetById(13);
       Call3((void (*)())Func_020010d4, 13, 0x1c80000, 0x1e80000);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);

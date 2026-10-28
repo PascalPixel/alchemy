@@ -28,7 +28,7 @@ void Func_02001a74(s32 actor, s32 flags);
 void Func_02001a7c(s32 actor, s32 animation, s32 flags);
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(const u8 *message, s32 flags);
 
 static __inline__ s32 Flag_Test(s32 flag) {
@@ -43,7 +43,7 @@ s32 Func_02001130(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
     Flag_Test(0x2f4);
     base = GameFlag_Test(actor + 0x2f0);
@@ -121,10 +121,10 @@ s32 Func_0200122c(s32 actor) {
   FieldMessage_ShowAtActor(actor, 0);
   FieldEvent_WaitFrames(1);
   if (message == (s32)MsgYouLookA) {
-    ObjectMotion_SetVariantCallback(14, 1);
-    Object_SetModeById(14, 4);
+    Actor_StartRepeatedMotion(14, 1);
+    Actor_SetModeById(14, 4);
     FieldEvent_WaitFrames(15);
-    ObjectMotion_SetAngleToward(14, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(14, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(5);
     FieldMessage_ShowAtActor(14, 0);
   }
@@ -136,7 +136,7 @@ s32 Func_02001304(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if (!Flag_Test(0x204)) {
     if (Party_CountActiveOwners() == 8)
       message = (s32)MsgUpToThree;
@@ -160,7 +160,7 @@ s32 Func_02001388(s32 id) {
   Func_02001a14();
   Func_02001ab4(0);
   gs = &gAdventure;
-  ObjectMotion_SetAngleToward(id, gs->currentOwner, 0);
+  Actor_SetAngleToward(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
     Func_020019e4(gs->linkTallies[2], 5);
     Func_02001a64((s32)MsgYouVeWon);

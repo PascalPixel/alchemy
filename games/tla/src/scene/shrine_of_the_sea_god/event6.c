@@ -72,11 +72,11 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_ObjMode(gAdventure.currentOwner, 3);
   ShrineOfTheSeaGod_ObjModeWait(14, 3);
   ShrineOfTheSeaGod_ObjMode(14, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(14);
+  Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
   ShrineOfTheSeaGod_ObjPlace(13, 0, 0);
   GameFlag_SetBit(0x872);

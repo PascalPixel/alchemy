@@ -4,14 +4,14 @@
 // shares one pointer. Tried: a single index (51), chained stores, pointer
 // locals (32), an s32 mode cast at the call, a minute of alchemy permute.
 #include "../../../../games/tla/include/types.h"
-#include "../../../../games/tla/include/object_runtime.h"
+#include "../../../../games/tla/include/actor.h"
 
 extern u16 gSceneState[];
 extern const s16 gData_0200533c[][2];
 
 s32 GameFlag_Test(s32 flag);
 s32 Func_02004fe4(void);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02004ebc(s32 id, s32 x, s32 z);
 void Func_02002b04(u32 id, s8 mode);
 void Func_02002b8c(void);
@@ -24,7 +24,7 @@ void Func_02002cb4(u8 mode) {
 
     gSceneState[0] = 0;
     gSceneState[1] = 0;
-    Object_GetById(Func_02004fe4())->priorityFlags |= 0x40;
+    Actor_GetById(Func_02004fe4())->priorityFlags |= 0x40;
     for (i = 0, id = 8; id <= 16; i++, id++) {
       Func_02004ebc(id, gData_0200533c[i][0] << 19, gData_0200533c[i][1] << 19);
       Func_02002b04(id, mode);

@@ -323,7 +323,7 @@ Func_0818d5a8:
 .L_0818d820:
 	mov r0, r9
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r3, #238
 	ldr r1, [sp, #60]
 	lsls r3, r3, #7
@@ -378,7 +378,7 @@ Func_0818d5a8:
 	bl __divsi3
 	str r0, [sp, #32]
 	mov r0, r9
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 .L_0818d89a:
 	mov r2, r11
 	cmp r2, #17
@@ -983,7 +983,7 @@ Func_0818d5a8:
 	movs r0, #12
 	movs r1, #12
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	ldr r1, [sp, #60]
 	lsls r3, r3, #7

@@ -2,7 +2,7 @@
 #include "map.h"
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02001508(object);

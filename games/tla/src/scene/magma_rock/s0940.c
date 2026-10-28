@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "scene_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern s16 gData_02003d98[];
@@ -13,7 +13,7 @@ extern s16 gData_02003de8[];
 
 void Func_02003aa4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c14(s16 *table);
-void Func_0200074c(struct ObjectRuntime *object);
+void Func_0200074c(struct Actor *object);
 
 void Func_02000940(void) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -39,5 +39,5 @@ void Func_02000940(void) {
       Func_02003c14(gData_02003de8);
     }
   }
-  Func_0200074c(*(struct ObjectRuntime **)(event + 0xcbc));
+  Func_0200074c(*(struct Actor **)(event + 0xcbc));
 }

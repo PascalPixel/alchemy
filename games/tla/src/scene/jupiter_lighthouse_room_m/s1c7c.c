@@ -10,13 +10,13 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200488c(const u8 *message);
 void Func_0200489c(s32 actor, s32 a, s32 b);
-struct ObjectRuntime *Func_020048cc(s32 actor, s32 emote, s32 frames);
+struct Actor *Func_020048cc(s32 actor, s32 emote, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020048b4(s32 actor, s32 a);
-void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset,
+void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset,
                                          s32 z_offset);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
@@ -70,10 +70,10 @@ void Func_02001c7c(void) {
   PLACE(2, 731, 232, 0xa000);
   PLACE(27, 731, 213, 0x4000);
   PLACE(26, 737, 202, 0);
-  Object_SetModeById(0, 1);
-  Object_SetModeById(2, 1);
-  Object_SetModeById(26, 1);
-  Object_SetModeById(27, 1);
+  Actor_SetModeById(0, 1);
+  Actor_SetModeById(2, 1);
+  Actor_SetModeById(26, 1);
+  Actor_SetModeById(27, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200488c(MsgIMSorry);
@@ -82,14 +82,14 @@ void Func_02001c7c(void) {
   Camera_MoveWithinMapBounds(705 << 16, 0, 177 << 16, 1);
   Func_020048f4();
   FieldEvent_WaitFrames(30);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(2), 0);
-  Object_SetModeById(2, 32);
+  Actor_SetSingleChildFlags(Actor_GetById(2), 0);
+  Actor_SetModeById(2, 32);
   FieldEvent_WaitFrames(10);
   JupiterLighthouseRoomM_Func_020048b4(0, 0x6000);
   Func_0200489c(0, 0, 5);
   Func_020048cc(26, 0x107, 30);
   Func_0200489c(26, 0, 5);
-  ObjectMotion_OffsetPositionAndReset(26, 24, 0);
+  Actor_OffsetPositionAndReset(26, 24, 0);
   FieldEvent_WaitFrames(20);
   do {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead

@@ -9,14 +9,14 @@
 #include "call.h"
 s32 Func_02000fcc();
 s32 Func_0200104c();
-s32 ObjectMotion_SetVariantCallback();
+s32 Actor_StartRepeatedMotion();
 s32 FieldEvent_WaitFrames();
 s32 Func_0200103c();
 s32 Func_02001034();
 s32 Func_02001044();
 s32 Func_02000fbc();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
+s32 Actor_GetById();
+s32 Actor_ResetAndSetPosition();
 s32 Func_0200101c();
 extern u8 MsgIAmTheGuardian[];
 extern u8 gAdventure[];
@@ -26,7 +26,7 @@ void Func_02000a8c(void) {
 
   Func_02000fcc();
   Call1(Func_0200104c, 0);
-  Call2(ObjectMotion_SetVariantCallback, 8, 2);
+  Call2(Actor_StartRepeatedMotion, 8, 2);
   Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Func_0200103c, 0x10000, 0);
   Call2(Func_02001034, 0x10003, 1);
@@ -36,9 +36,9 @@ void Func_02000a8c(void) {
   Call2(Func_02001034, 0x10000, 0);
   Call1(Func_02001044, 0x3c);
   Call1(FieldEvent_WaitFrames, 0x3c);
-  t12 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t12 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t12 != 0) {
-    Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
+    Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
   Call1(FieldEvent_WaitFrames, 0x14);

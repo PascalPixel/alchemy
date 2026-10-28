@@ -660,7 +660,7 @@ BattleEffect_RunFume:
 	adds r0, r6, #0
 	bl Heap_Release
 .L_0817cbd4:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	ldr r2, [sp, #80]
 	ldr r1, [r2, #24]
 	lsls r1, r1, #1

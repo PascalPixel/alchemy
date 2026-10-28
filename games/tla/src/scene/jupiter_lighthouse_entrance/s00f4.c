@@ -7,15 +7,15 @@
        ->v)
 
 #include "call.h"
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02001b1c();
 s32 GameFlag_Test();
 s32 Func_02001ab4();
 s32 Func_02001a7c();
 s32 Func_02001b0c();
 s32 Func_02001acc();
-s32 ObjectMotion_OffsetPositionAndResetMotion();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
+s32 Actor_OffsetPositionAndResetMotion();
+s32 Actor_WaitForMoveById();
 s32 Func_02001a84();
 extern u8 gAdventure[];
 
@@ -23,7 +23,7 @@ void Func_020000f4(void) {
   s32 t0;
   s32 t2;
 
-  t0 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
   Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   t2 = Value1(GameFlag_Test, 0xfe2);
   if (t2 == 0) {
@@ -33,10 +33,10 @@ void Func_020000f4(void) {
         Func_02001a7c();
         Call1(Func_02001b0c, 0);
         Call2(Func_02001acc, FIELD_AT(gAdventure, s32, 532), 0x102);
-        Call3(ObjectMotion_OffsetPositionAndResetMotion,
+        Call3(Actor_OffsetPositionAndResetMotion,
               FIELD_AT(gAdventure, s32, 532), -16, 0);
         FIELD_AT(t0, s32, 40) = 0x60000;
-        Call1(ObjectMotion_CommitCurrentPositionAndActivate,
+        Call1(Actor_WaitForMoveById,
               FIELD_AT(gAdventure, s32, 532));
         Func_02001a84();
       }

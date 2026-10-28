@@ -16,7 +16,7 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 void Func_02000f8c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct AquaRockEventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
   s32 y = object->y;

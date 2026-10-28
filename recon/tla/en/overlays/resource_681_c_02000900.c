@@ -8,7 +8,7 @@
 // 30 case), where the native rebuilds it in each test and sets r6 to it only
 // after flag 0x206.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -21,7 +21,7 @@
 extern s32 gData_020056c4[];
 extern s32 gData_02005728[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -40,7 +40,7 @@ struct EventWork900 {
 };
 
 void Func_02000900(struct Counted *object) {
-  struct Counted *other = (struct Counted *)Object_GetById(9);
+  struct Counted *other = (struct Counted *)Actor_GetById(9);
 
   if (object->count == 30 || other->count == 30) {
     ((struct EventWork900 *)Ram_HeapSlots->eventWork)->timer = 42;

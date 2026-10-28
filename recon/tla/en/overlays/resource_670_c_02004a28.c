@@ -38,13 +38,13 @@ void Func_02005bc4();
 void Func_02005c9c();
 void GameFlag_SetBit();
 void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_SetActionVariant();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-s32 Object_GetById();
-void Object_SetModeById();
-void Object_SetPartAttribute();
-void Object_SetPositionAndResetMotion();
+void Actor_SetSpritePriority();
+void Actor_SetPositionAndReset();
+void Actor_SetSpeedParameters();
+s32 Actor_GetById();
+void Actor_SetModeById();
+void Actor_SetPartAttribute();
+void Actor_SetPositionAndResetMotion();
 void WaitFrames();
 extern u8 MsgLookTheGreatGabomba[];
 extern u8 gData_02007950[];
@@ -52,20 +52,20 @@ extern u8 gData_02007950[];
 void Func_02004a28(void) {
   s32 t1, t5, t7, t10, t12, t22, t43, v_r5, v_r6;
 
-  t1 = Value1((s32 (*)())Object_GetById, 14);
+  t1 = Value1((s32 (*)())Actor_GetById, 14);
   v_r6 = t1;
   Func_02004524();
-  Call2((void (*)())ObjectMotion_SetActionVariant, 17, 1);
+  Call2((void (*)())Actor_SetSpritePriority, 17, 1);
   Call1((void (*)())Func_02005c9c, 0x240);
-  t5 = Value1((s32 (*)())Object_GetById, 12);
-  Call2((void (*)())Object_SetPartAttribute, t5, 7);
-  t7 = Value1((s32 (*)())Object_GetById, 13);
-  Call2((void (*)())Object_SetPartAttribute, t7, 7);
+  t5 = Value1((s32 (*)())Actor_GetById, 12);
+  Call2((void (*)())Actor_SetPartAttribute, t5, 7);
+  t7 = Value1((s32 (*)())Actor_GetById, 13);
+  Call2((void (*)())Actor_SetPartAttribute, t7, 7);
   Call1((void (*)())WaitFrames, 8);
-  t10 = Value1((s32 (*)())Object_GetById, 12);
-  Call2((void (*)())Object_SetPartAttribute, t10, 0);
-  t12 = Value1((s32 (*)())Object_GetById, 13);
-  Call2((void (*)())Object_SetPartAttribute, t12, 0);
+  t10 = Value1((s32 (*)())Actor_GetById, 12);
+  Call2((void (*)())Actor_SetPartAttribute, t10, 0);
+  t12 = Value1((s32 (*)())Actor_GetById, 13);
+  Call2((void (*)())Actor_SetPartAttribute, t12, 0);
   Call1((void (*)())WaitFrames, 8);
   Call3((void (*)())Func_02005b94, 17, 0x100, 20);
   Call1((void (*)())Func_02005b4c, (s32)&MsgLookTheGreatGabomba);
@@ -75,11 +75,11 @@ void Func_02004a28(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())Func_02005c9c, 233);
   FIELD_AT(v_r6, s32, 28) = 0x1999;
-  t22 = Value1((s32 (*)())Object_GetById, 14);
-  Call4((void (*)())Object_SetPositionAndResetMotion, t22, 0x1080000, 0x180000,
+  t22 = Value1((s32 (*)())Actor_GetById, 14);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t22, 0x1080000, 0x180000,
         0x1340000);
   Call1((void (*)())WaitFrames, 1);
-  Call2((void (*)())Object_SetModeById, 14, 3);
+  Call2((void (*)())Actor_SetModeById, 14, 3);
   v_r5 = 0;
 L_0200cae8:
   FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + 0x400);
@@ -128,7 +128,7 @@ L_0200cb5e:
   Call1((void (*)())WaitFrames, 1);
   if ((u32)v_r5 <= (u32)3)
     goto L_0200cb5e;
-  Call4((void (*)())Object_SetPositionAndResetMotion,
+  Call4((void (*)())Actor_SetPositionAndResetMotion,
         FIELD_AT(gData_02007950, s32, 0), 0, 0, 0);
   v_r5 = 0;
 L_0200cb96:
@@ -153,8 +153,8 @@ L_0200cbb2:
   Call2((void (*)())Func_02003640, 1, 1);
   Call2((void (*)())Func_020036e0, 1, 0);
   Call1((void (*)())Func_02005c9c, 132);
-  t43 = Value1((s32 (*)())Object_GetById, 14);
-  Call4((void (*)())Object_SetPositionAndResetMotion, t43, 0x1080000, 0x180000,
+  t43 = Value1((s32 (*)())Actor_GetById, 14);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t43, 0x1080000, 0x180000,
         0x1340000);
   Call1((void (*)())WaitFrames, 1);
   v_r5 = 0;
@@ -181,8 +181,8 @@ L_0200cc1c:
   Call2((void (*)())Func_02005b64, 0x4011, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
   Call2((void (*)())Func_02005b64, 0x4011, 0);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 17, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 17, 0x108, 0x140);
+  Call3((void (*)())Actor_SetSpeedParameters, 17, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetPositionAndReset, 17, 0x108, 0x140);
   Call3((void (*)())Func_02005b0c, 17, 0, 0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x203;
   Event_FinishScreenTransition();

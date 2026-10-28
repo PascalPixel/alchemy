@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -15,8 +15,8 @@ void GameFlag_SetBit();
 
 void FieldEvent_WaitFrames();
 void Func_02000d68();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_ArmCallback();
+void Actor_CommitPositionAndActivate();
+void Actor_ArmCallback();
 void Func_02000d28();
 void GameFlag_SetBit();
 void Func_02001094();
@@ -24,23 +24,23 @@ void Func_020010ac();
 void GameFlag_Test();
 
 void Func_02000e20(void) {
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 16, 0);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 16, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   ((void (*)())Func_02000d68)();
   return;
 }
 
 void Func_02000e44(void) {
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
-  Value3((s32 (*)())ObjectMotion_CommitPositionAndActivate, 4, -16, 0);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
+  Value3((s32 (*)())Actor_CommitPositionAndActivate, 4, -16, 0);
   Value1((s32 (*)())FieldEvent_WaitFrames, 10);
   Value0((s32 (*)())Func_02000d68);
   return;
 }
 
 void Func_02000e6c(void) {
-  Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   ((void (*)())Func_02000d68)();
   return;

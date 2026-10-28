@@ -50,11 +50,11 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void);         // Palette_StepFadeTransfer
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // ObjectGroup_UpdateMembers
+                   s32 frames);                    // Actor_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
@@ -296,7 +296,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "map.h"
 #include "adventure.h"
 #include "view_move.h"
@@ -29,7 +29,7 @@ void Map_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 // screen along the asked direction instead.
 void Func_080e89e4(s32 direction) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *center = event->viewCenter;
+  struct Actor *center = event->viewCenter;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   register s32 viewX asm("r11") = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
@@ -97,5 +97,5 @@ void Func_080e89e4(s32 direction) {
   map->maxX = maxX << 19;
   map->minZ = minZ << 19;
   map->maxZ = maxZ << 19;
-  Object_ResetMotion(center);
+  Actor_ResetMotion(center);
 }

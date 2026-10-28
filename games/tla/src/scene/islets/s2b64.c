@@ -20,16 +20,16 @@ s32 Func_02002b64(void) {
 }
 
 void Func_02002bd8(void) {
-  s32 y = Object_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
 
   asm volatile(
       ""
       : "+l"(y)); /* FAKEMATCH: the listing loads y before it builds 0x80000 */
   if (y > 0x80000) {
-    Object_GetById(9)->collisionFlags &= ~8;
-    Object_GetById(10)->collisionFlags &= ~8;
+    Actor_GetById(9)->collisionFlags &= ~8;
+    Actor_GetById(10)->collisionFlags &= ~8;
   } else {
-    Object_GetById(9)->collisionFlags |= 8;
-    Object_GetById(10)->collisionFlags |= 8;
+    Actor_GetById(9)->collisionFlags |= 8;
+    Actor_GetById(10)->collisionFlags |= 8;
   }
 }

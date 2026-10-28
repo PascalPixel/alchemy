@@ -13,7 +13,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 
@@ -23,7 +23,7 @@ void Func_02001a1c(void);
 void Func_02001a64(s32 message);
 s32 Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 s32 Window_Create();
 void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
@@ -31,13 +31,13 @@ s32 DebugParty_LoadPreset();
 void MessageArgument_ClearAll(void);
 
 s32 Func_02000da0(s32 actor) {
-  u32 facing = ((struct ObjectRuntime *)Object_GetById(4))->angle;
+  u32 facing = ((struct Actor *)Actor_GetById(4))->angle;
   u16 *count;
   s32 base;
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gAdventure.linkTallies[4];

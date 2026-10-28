@@ -1,10 +1,10 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct EmitterWork {
   u8 unk000[0x14];
-  struct ObjectRuntime *actors[(0xca4 - 0x14) / 4];
+  struct Actor *actors[(0xca4 - 0x14) / 4];
   s8 revealActive;
 };
 
@@ -26,10 +26,10 @@ extern const u8 gBattleEffect_ParticleScript[];
 extern const u8 Data_080f01b8[];
 s32 Party_GetLeaderActor(void);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScriptFar(struct Actor *object,
                                   const u8 *script);
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -40,11 +40,11 @@ void Marker_MoveLeaderAwayFromEmitter(void);
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
-struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
+struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor,
                                                               s32 item) {
   struct EmitterWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *picture = work->actors[actor];
-  struct ObjectRuntime *object;
+  struct Actor *picture = work->actors[actor];
+  struct Actor *object;
   struct EffectVisual *visual;
   s32 position[3];
   u8 *buffer;
@@ -69,9 +69,9 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
     do {
       if (object->script != NULL) {
         if (object->update == BattleEffect_SpawnRandomParticleAtPosition)
-          Object_Destroy(object);
+          Actor_Destroy(object);
         if (object->script == (s32 *)gBattleEffect_ParticleScript)
-          Object_Destroy(object);
+          Actor_Destroy(object);
       }
       i--;
       object++;
@@ -82,7 +82,7 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
       Func_080200c0(489, position[0], position[1] + 0x100000, position[2]);
   if (picture == NULL)
     return NULL;
-  ObjectDispatch_InitializeFar(picture, gData_080effd8);
+  Actor_StartScriptFar(picture, gData_080effd8);
   visual = picture->animation;
   zero = 0;
   visual->value1a = zero;
@@ -108,14 +108,14 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
   HeapSlot_Release(68);
   picture->update = Marker_MoveLeaderAwayFromEmitter;
   if (work->revealActive != 0) {
-    struct ObjectRuntime *marker = Ram_HeapSlots->scriptObjects;
+    struct Actor *marker = Ram_HeapSlots->scriptObjects;
     s32 j;
 
     for (j = 0; j <= 63; j++, marker++) {
       if (marker->script != NULL && marker->script == (s32 *)Data_080f01b8 &&
           marker->x >> 20 == picture->x >> 20 &&
           marker->z >> 20 == picture->z >> 20) {
-        Object_Destroy(marker);
+        Actor_Destroy(marker);
         break;
       }
     }

@@ -75,7 +75,7 @@ u8 *Func_020001e8(void) {
 }
 
 void Func_02000220(void) {
-  s32 y = Object_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
 
   /* FAKEMATCH: a one-pass block loads the height before the threshold is built
    * (one reordered row). */
@@ -88,7 +88,7 @@ void Func_02000220(void) {
 }
 
 s32 Func_02000258(void) {
-  struct ObjectRuntime *object = Object_GetById(8);
+  struct Actor *object = Actor_GetById(8);
 
   Func_020015f0(gData_02001be0, object->x, object->y + 0x1c0000, object->z);
   return 0;

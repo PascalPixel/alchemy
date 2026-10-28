@@ -4,7 +4,7 @@
 /// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
 /// row 12.
 void Func_0200042c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (id == 10) {
     s32 row = object->z >> 20;

@@ -9,7 +9,7 @@
 // the object in r4, spilled around the cell test, and the box sizes and the
 // kind on the stack), which moves nearly every row.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system/vector3.h"
 
 struct PushState {
@@ -23,13 +23,13 @@ struct PushState {
 
 extern s8 gData_02004cb0[][4];
 extern s32 gData_02004cc8[];
-struct ObjectRuntime *Func_020043a8(s32 *direction, s32 *number, s32 *kind);
-s32 Func_02004a64(struct ObjectRuntime *object, struct Vector3 *cell);
+struct Actor *Func_020043a8(s32 *direction, s32 *number, s32 *kind);
+s32 Func_02004a64(struct Actor *object, struct Vector3 *cell);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 s32 Func_02004240(struct PushState *push) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct Vector3 cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;

@@ -10,7 +10,7 @@
 s32 Camera_MoveWithinMapBounds();
 s32 Func_0200577c();
 s32 Func_020059f4();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 WaitFrames();
 extern u8 Data_02006a1c[];
 extern u8 gData_02005a20[];
@@ -35,7 +35,7 @@ void Func_02003c58(s32 p0) {
   v_r5 = v_r2;
 L_0200bc8e:
   t2 = *(s32 *)v_r5;
-  t3 = Object_GetById(t2);
+  t3 = Actor_GetById(t2);
   *(u8 *)(t3 + 85) = 0;
   v_r8 = (v_r8 + 1);
   v_r5 = (v_r5 + 4);
@@ -62,13 +62,13 @@ L_0200bcca:
   v_r6 = (s32)gData_02005a20;
 L_0200bcd2:
   t8 = *(s32 *)v_r6;
-  t9 = Object_GetById(t8);
+  t9 = Actor_GetById(t8);
   t10 = FIELD_AT(t9, s32, 16);
   FIELD_AT(t9, s32, 16) = (t10 - v_r9);
   t11 = *(s32 *)v_r6;
-  t12 = Object_GetById(t11);
+  t12 = Actor_GetById(t11);
   t13 = *(s32 *)v_r6;
-  t14 = Object_GetById(t13);
+  t14 = Actor_GetById(t13);
   t15 = FIELD_AT(t14, s32, 16);
   FIELD_AT(t12, s32, 64) = t15;
   v_r7 = (v_r7 + 1);

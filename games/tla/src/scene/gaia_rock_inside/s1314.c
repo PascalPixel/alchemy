@@ -8,10 +8,10 @@
 
 #include "call.h"
 s32 Import_ActorCreate();
-s32 Object_SetPartAttribute();
-s32 Object_SetSpritePriority();
+s32 Actor_SetPartAttribute();
+s32 Scene_SetActorSpritePriority();
 s32 Func_02004d9c();
-s32 ObjectDispatch_SetSingleChildFlags();
+s32 Actor_SetSingleChildFlags();
 s32 Animation_SetStateFlags();
 s32 Func_02004dac();
 extern u8 gData_02005208[];
@@ -24,10 +24,10 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 28) = 0x6666;
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
-  Call2(Object_SetPartAttribute, t0, 2);
-  Call2(Object_SetSpritePriority, t0, 1);
+  Call2(Actor_SetPartAttribute, t0, 2);
+  Call2(Scene_SetActorSpritePriority, t0, 1);
   Call2(Func_02004d9c, t0, 1);
-  Call2(ObjectDispatch_SetSingleChildFlags, t0, 0);
+  Call2(Actor_SetSingleChildFlags, t0, 0);
   Call2(Animation_SetStateFlags, t0, 1);
   Call2(Func_02004dac, t0, (s32)gData_02005208);
 }

@@ -5,10 +5,10 @@ extern s16 gData_020023f2;
 extern struct FieldActor *gData_020023f4[];
 extern s16 gData_020024f6;
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 
 void Func_02000fd8(s32 id, s32 value) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
 
   if (object != NULL) {
     s16 *count;

@@ -156,15 +156,15 @@ BattleEffect_RunDeathPlunge:
 	str r2, [sp, #20]
 	bl EffectPosition_ProjectBattler
 	mov r0, r9
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	adds r3, r5, #0
 	movs r2, #0
 	mov r0, r9
 	adds r1, r6, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	movs r1, #2
 	mov r0, r9
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r3, r9
 	movs r2, #1
 	adds r3, #88
@@ -267,13 +267,13 @@ BattleEffect_RunDeathPlunge:
 	movs r3, #0
 	strb r3, [r2]
 	mov r0, r9
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	mov r4, r9
 	ldr r3, [r4, #16]
 	mov r0, r9
 	movs r1, #0
 	movs r2, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 .L_08188950:
 	ldr r0, [sp, #56]
 	ldr r3, [r0, #24]
@@ -608,7 +608,7 @@ BattleEffect_RunDeathPlunge:
 	subs r3, r3, r4
 	str r3, [r0, #12]
 	mov r0, r9
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_08188bf8:
 	ldr r5, [sp, #44]
 	cmp r5, #54

@@ -4,35 +4,35 @@
 // base in r7, the anchor in r8 and the count in r10, with 0 in r6 for the
 // motion flags; a six-minute permute found nothing closer.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void Func_02003a54(struct ObjectRuntime *object, s32 a);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Func_02003a54(struct Actor *object, s32 a);
 void Func_020015e4(void);
 void Func_02001528(void);
 
 void Func_02002518(u16 id) {
-  struct ObjectRuntime *parts[4];
-  struct ObjectRuntime *anchor;
+  struct Actor *parts[4];
+  struct Actor *anchor;
   s32 i;
 
-  if (Object_GetById(id)->update != Func_020015e4)
+  if (Actor_GetById(id)->update != Func_020015e4)
     return;
-  anchor = Object_GetById(id)->watchedObject;
+  anchor = Actor_GetById(id)->watchedObject;
   parts[0] = Import_ActorCreate(0x15f, anchor->x + 0x10000,
                                  anchor->y + 0x200000, anchor->z);
   i = 1;
 next:
   {
     u8 *first = parts[0]->animation;
-    struct ObjectRuntime *part = Import_ActorCreate(0x15f, 0, 0, 0);
+    struct Actor *part = Import_ActorCreate(0x15f, 0, 0, 0);
     u8 *sprite = part->animation;
 
     sprite[16] = first[16];
@@ -42,26 +42,26 @@ next:
     part->y = parts[0]->y;
     part->z = parts[0]->z;
     part->motionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(part, 0);
+    Actor_SetSingleChildFlags(part, 0);
     Func_02003a54(parts[i], 3);
     part = parts[i];
     BYTE_AT(part, 98) = i - 1;
     part->watchedObject = anchor;
     part->update = Func_02001528;
-    Object_SetPartAttribute(part, 3);
+    Actor_SetPartAttribute(part, 3);
   }
   if (++i != 4)
     goto next;
   parts[0]->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(parts[0], 0);
+  Actor_SetSingleChildFlags(parts[0], 0);
   Func_02003a54(parts[0], 3);
-  Object_SetSpritePriority(parts[0], 3);
+  Scene_SetActorSpritePriority(parts[0], 3);
   {
-    struct ObjectRuntime *part = parts[0];
+    struct Actor *part = parts[0];
 
     BYTE_AT(part, 98) = 3;
     part->watchedObject = anchor;
     part->update = Func_02001528;
-    Object_SetPartAttribute(part, 3);
+    Actor_SetPartAttribute(part, 3);
   }
 }

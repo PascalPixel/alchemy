@@ -12,7 +12,7 @@
 // pairs, the spill of the sprite pointer among them.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "effect_sprite.h"
 #include "bg_scroll.h"
@@ -49,7 +49,7 @@ struct RingEvent {
   s16 count;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 void Func_080e7fec(s32 x, s32 y);
@@ -60,7 +60,7 @@ void Func_080eb298(struct EffectSprite *sprite, s32 *position);
 void Func_080e807c(void) {
   struct RingWork *work = Ram_HeapSlots->battleFxWork[0];
   struct RingEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 *pos = position;
   struct RingMote *mote;

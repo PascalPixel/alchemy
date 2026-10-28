@@ -48,7 +48,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
     sprite = object->sprite;
     object->update = update;
     sprite->priority = 1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02005a24(object, 5);
     Animation_SetStateFlags(object, 1);
   }

@@ -23,7 +23,7 @@
 // #4, bgt, cmp #2, blt); nested ifs fold the lower bound to above 1.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 #include "system/io_reg.h"
@@ -31,13 +31,13 @@
 
 extern char SceneId_Ov663Room1, SceneId_Ov663Room2, SceneId_Ov663Room3;
 extern const u8 gData_02003d94[], gData_02003e4c[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02002c24(s32 offset);
 void Func_02003b68(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void Func_02001b54(void);
 void Func_02003bf8(s32 id, s32 x, s32 z);
@@ -57,22 +57,22 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001f7c(void);
 
-#define LEADER() Object_GetById(gAdventure.currentOwner)
+#define LEADER() Actor_GetById(gAdventure.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
 
 /// An object that sways (Func_02001b54) from the given phase.
 #define SWAY(id, phase)                                                        \
-  (Object_GetById(id)->action = (phase),                                       \
-   Object_GetById(id)->update = Func_02001b54,                                 \
-   ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0))
+  (Actor_GetById(id)->action = (phase),                                       \
+   Actor_GetById(id)->update = Func_02001b54,                                 \
+   Actor_SetSingleChildFlags(Actor_GetById(id), 0))
 
 /// A step that hangs at the given height and sways.
 #define HANG(id, height, phase)                                                \
-  (Object_GetById(id)->motionFlags = 0, Object_GetById(id)->y = (height),      \
+  (Actor_GetById(id)->motionFlags = 0, Actor_GetById(id)->y = (height),      \
    SWAY(id, phase))
 
 s32 Func_02002ca0(void) {
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 *beam;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
@@ -130,7 +130,7 @@ s32 Func_02002ca0(void) {
       Call6(Func_02003b68, 68, 0, 79, 0, 11, 10);
       Call6(Func_02003b80, 38, 9, 1, 1, 0x10, 9);
       Call6(Func_02003b80, 38, 9, 1, 1, 24, 9);
-      Object_SetPartAttribute(Object_GetById(8), 6);
+      Actor_SetPartAttribute(Actor_GetById(8), 6);
     }
   }
   if (gAdventure.scene == (s32)&SceneId_Ov663Room2) {
@@ -189,14 +189,14 @@ s32 Func_02002ca0(void) {
       HANG(19, 0x500000, 90);
       HANG(18, 0xffd00000, 100);
       HANG(20, 0x900000, 180);
-      Object_GetById(21)->motionFlags = 0;
-      Object_GetById(21)->y = 0xff700000;
-      ObjectMotion_SetActionVariant(21, 2);
-      Object_GetById(21)->priorityFlags |= 2;
-      Object_GetById(21)->action = 180;
-      ((u8 *)Object_GetById(21))[98] = 1;
-      Object_GetById(21)->update = Func_02001b54;
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(21), 0);
+      Actor_GetById(21)->motionFlags = 0;
+      Actor_GetById(21)->y = 0xff700000;
+      Actor_SetSpritePriority(21, 2);
+      Actor_GetById(21)->priorityFlags |= 2;
+      Actor_GetById(21)->action = 180;
+      ((u8 *)Actor_GetById(21))[98] = 1;
+      Actor_GetById(21)->update = Func_02001b54;
+      Actor_SetSingleChildFlags(Actor_GetById(21), 0);
       break;
     }
   }
@@ -206,28 +206,28 @@ s32 Func_02002ca0(void) {
     case 2:
     case 3:
       Task_Add(Func_02002b88, 0x480);
-      Object_GetById(8)->motionFlags = 0;
-      Object_GetById(8)->y = 0xfff80000;
-      ObjectMotion_SetActionVariant(8, 2);
-      Object_GetById(8)->action = 60;
-      ((u8 *)Object_GetById(8))[98] = 0;
-      Object_GetById(8)->update = Func_02001b54;
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
-      Object_GetById(9)->motionFlags = 0;
-      Object_GetById(9)->y = 0xfff80000;
-      ObjectMotion_SetActionVariant(9, 2);
-      Object_GetById(9)->action = 180;
-      ((u8 *)Object_GetById(9))[98] = 0;
-      Object_GetById(9)->update = Func_02001b54;
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
-      Object_GetById(10)->terrainId = 2;
-      ObjectMotion_SetActionVariant(10, 1);
-      Object_GetById(10)->y = 0xd00000;
-      Object_GetById(10)->terrainHeight = Object_GetById(10)->y;
-      Object_GetById(11)->terrainId = 2;
-      ObjectMotion_SetActionVariant(11, 1);
-      Object_GetById(11)->y = 0xd00000;
-      Object_GetById(11)->terrainHeight = Object_GetById(11)->y;
+      Actor_GetById(8)->motionFlags = 0;
+      Actor_GetById(8)->y = 0xfff80000;
+      Actor_SetSpritePriority(8, 2);
+      Actor_GetById(8)->action = 60;
+      ((u8 *)Actor_GetById(8))[98] = 0;
+      Actor_GetById(8)->update = Func_02001b54;
+      Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+      Actor_GetById(9)->motionFlags = 0;
+      Actor_GetById(9)->y = 0xfff80000;
+      Actor_SetSpritePriority(9, 2);
+      Actor_GetById(9)->action = 180;
+      ((u8 *)Actor_GetById(9))[98] = 0;
+      Actor_GetById(9)->update = Func_02001b54;
+      Actor_SetSingleChildFlags(Actor_GetById(9), 0);
+      Actor_GetById(10)->terrainId = 2;
+      Actor_SetSpritePriority(10, 1);
+      Actor_GetById(10)->y = 0xd00000;
+      Actor_GetById(10)->terrainHeight = Actor_GetById(10)->y;
+      Actor_GetById(11)->terrainId = 2;
+      Actor_SetSpritePriority(11, 1);
+      Actor_GetById(11)->y = 0xd00000;
+      Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
       if (GameFlag_Test(0x310))
         Call3(Func_02003bf8, 10, 0x1f80000, 0x3680000);
       if (GameFlag_Test(785))
@@ -248,7 +248,7 @@ s32 Func_02002ca0(void) {
       Func_02002c24(0x480000);
     case 4:
     case 5:
-      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+      Actor_SetSpritePriority(gAdventure.currentOwner, 1);
       break;
     case 8:
     case 9:
@@ -268,7 +268,7 @@ s32 Func_02002ca0(void) {
       REG_BG2CNT |= 2;
       REG_BG3CNT &= ~3;
       REG_BG3CNT |= 3;
-      Object_GetById(12)->priorityFlags |= 2;
+      Actor_GetById(12)->priorityFlags |= 2;
       Func_02003c80(0);
       if (GameFlag_Test(0x879))
         Call3(Func_02003bf8, 13, 0xb80000, 0x1180000);
@@ -294,7 +294,7 @@ s32 Func_02002ca0(void) {
         REG_BLDALPHA = 0x1000;
         REG_BLDCNT = 0x3f42;
         REG_DISPCNT &= ~0x200;
-        Object_SetPartAttribute(Object_GetById(12), 6);
+        Actor_SetPartAttribute(Actor_GetById(12), 6);
       }
       break;
     case 12:
@@ -318,9 +318,9 @@ s32 Func_02002ca0(void) {
         Call6(Func_02003b80, 52, 2, 9, 9, 29, 9);
         Call6(Func_02003b68, 52, 66, 29, 73, 9, 9);
       } else {
-        Object_SetPartAttribute(Object_GetById(14), 6);
+        Actor_SetPartAttribute(Actor_GetById(14), 6);
       }
-      ObjectMotion_SetActionVariant(14, 1);
+      Actor_SetSpritePriority(14, 1);
       Func_02003b50();
       WaitFrames(1);
       if (GameFlag_Test(265)) {

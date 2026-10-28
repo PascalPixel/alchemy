@@ -314,12 +314,12 @@ SceneSequence_Run:
 	cmp r3, #2
 	bne .L_080cbbc8
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	str r7, [r0, #24]
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 .L_080cbbc8:
 	bl Func_080cb05c
 	movs r0, #2
@@ -541,7 +541,7 @@ SceneSequence_Run:
 	bl GameFlag_SetBit
 	bl Func_080cb8e8
 	mov r9, r0
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	ldr r3, [sp, #8]
 	movs r4, #254
 	lsls r4, r4, #1
@@ -634,7 +634,7 @@ SceneSequence_Run:
 .L_080cbe4c:
 	mov r0, r9
 	movs r1, #22
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r3, r8
 	ldrsh r0, [r6, r3]
 	movs r1, #1
@@ -667,7 +667,7 @@ SceneSequence_Run:
 	bne .L_080cbea4
 	mov r0, r9
 	movs r1, #36
-	bl Object_SetMode
+	bl Actor_SetMode
 	b .L_080cbeac
 	.2byte 0x0000
 .L_080cbe9c:
@@ -677,7 +677,7 @@ SceneSequence_Run:
 .L_080cbea4:
 	mov r0, r9
 	movs r1, #19
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080cbeac:
 	movs r0, #59
 	bl Sound_PlayFar

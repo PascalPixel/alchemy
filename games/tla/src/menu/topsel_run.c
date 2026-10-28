@@ -6,7 +6,7 @@ void PartyStatus_CreateWindow(s32 flags);
 s32 Menu_SelectTopEntry(s32);
 s32 Window_CloseAndRelease(void);
 s32 DjinnMenu_Open(void);
-s32 Object_GetTriggerTileAheadOfCurrentFar(void);
+s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 Func_080f8000(void);
 s32 Func_080f8010(void);
@@ -27,7 +27,7 @@ loop:
 
   switch (selection) {
   case 0:
-    ret = Object_GetTriggerTileAheadOfCurrentFar();
+    ret = Actor_GetTriggerTileAheadOfCurrentFar();
     if (ret == 0)
       ret = 0xff;
     *(u16 *)(state + 0x162) = ret;

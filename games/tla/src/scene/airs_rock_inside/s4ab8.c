@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
-void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(u32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(u32 id, s32 x, s32 z);
 
 /// When the event work's warp number (0x154) is set, plays cue 186 and moves
 /// the leader to that warp's place (warps 50 to 55), inside an event.
@@ -25,15 +25,15 @@ void Func_02004ab8(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(186);
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
     // left from a position read, because the other warps give theirs as
     // constants.
-    Object_GetById(gAdventure.currentOwner);
-    Object_GetById(gAdventure.currentOwner);
+    Actor_GetById(gAdventure.currentOwner);
+    Actor_GetById(gAdventure.currentOwner);
     x = 148;
     z = 632;
     break;
@@ -58,7 +58,7 @@ void Func_02004ab8(void) {
     z = 188;
     break;
   }
-  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, x, z);
-  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Actor_SetPositionAndCommit(gAdventure.currentOwner, x, z);
+  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   Func_02005e1c();
 }

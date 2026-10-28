@@ -1,10 +1,10 @@
 #include "local.h"
 #include "edition.h"
 
-void Func_0200061c(struct ObjectRuntime *object);
+void Func_0200061c(struct Actor *object);
 
 void Func_02000644(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 x;
 
   if (id == 9) {

@@ -421,7 +421,7 @@ Func_0802632c:
 .L_0802667c:
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	b .L_080266ac
 	.2byte 0x0000
 .L_08026688:
@@ -441,7 +441,7 @@ Func_0802632c:
 .L_080266a4:
 	adds r0, r6, #0
 	ldr r1, [sp, #8]
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 .L_080266ac:
 	ldr r2, [sp, #12]
 	cmp r2, #0
@@ -489,7 +489,7 @@ Func_0802632c:
 	ldr r2, [r3, #4]
 	adds r0, r6, #0
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	adds r2, r6, #0
 	adds r2, #100
 	movs r0, #0

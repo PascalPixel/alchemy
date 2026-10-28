@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000ea4(struct ObjectRuntime *object) {
+void Func_02000ea4(struct Actor *object) {
   s32 dx, dy, dz;
 
   object->x += dx = object->bounce;

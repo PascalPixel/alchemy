@@ -8,7 +8,7 @@
 // (FieldEffect_SparkleFade, FieldEffect_StarSparkleFade), still unnamed there.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "effect_sprite.h"
 
@@ -26,7 +26,7 @@ struct ScatterWork {
   u8 tiles[0x1000];
   struct EffectSprite sprites[64];
   struct ScatterParticle particles[64];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 phase;
   s16 timer;
   s16 spawnCount;
@@ -48,8 +48,8 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_Destroy(struct ObjectRuntime *object);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_Destroy(struct Actor *object);
 void *Resource_GetTableEntry(s32 id);
 void Resource_DecodeType01(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -58,8 +58,8 @@ s32 VramCache_Load(s32 slot, s32 size, void *data);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 void WaitFrames(s32 frames);
-void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
+void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
+struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_Remove(void (*callback)(void));
@@ -72,8 +72,8 @@ void Func_080e09c0(void) {
   struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *caster = scene->mainObject;
-  struct ObjectRuntime *object;
+  struct Actor *caster = scene->mainObject;
+  struct Actor *object;
   struct EffectSprite *sprite;
   struct ScatterParticle *particle;
   s32 slotA;
@@ -86,13 +86,13 @@ void Func_080e09c0(void) {
     scene->z += 0x40000;
   }
   BattleEffect_InitializeSharedScene();
-  object = Object_Spawn(363, 0, 0, 0);
+  object = Actor_Spawn(363, 0, 0, 0);
   if (object != 0) {
     object->angle = caster->angle;
     object->motionFlags = 0;
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
-    Object_SetMode(object, 0);
+    Actor_SetMode(object, 0);
     Sound_PlayFar(138);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                           work);
@@ -122,7 +122,7 @@ void Func_080e09c0(void) {
     }
 
     Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
-    Object_SetMode(object, 1);
+    Actor_SetMode(object, 1);
     WaitFrames(10);
     for (i = 15; i >= 0; i--) {
       object->y += -0x20000;
@@ -155,7 +155,7 @@ void Func_080e09c0(void) {
     }
     Resource_ResetEntry(slotA);
     Resource_ResetEntry(slotB);
-    Object_Destroy(object);
+    Actor_Destroy(object);
   }
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(92);

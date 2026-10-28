@@ -15,7 +15,7 @@
 // kept.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 #define OBJ_PALETTE_14 ((u16 *)0x050003c0)
@@ -49,8 +49,8 @@ extern u32 gFrameCount;
 
 s32 Party_GetLeaderActor(void);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 Func_080e989c(s32 counter, s32 level);
 void Camera_WorldToScreen(s32 *position);
 
@@ -62,7 +62,7 @@ void Camera_WorldToScreen(s32 *position);
 // player, flattened to three quarters of its height.
 void Func_080e9940(void) {
   struct GlowWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime *player =
+  struct Actor *player =
       ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   u16 *palette;

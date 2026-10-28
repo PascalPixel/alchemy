@@ -2,7 +2,7 @@
 // Func_0200180c: its draft (resource_698_c_0200180c.c) with this overlay's
 // symbols: differ 47 of 76. Left: what that draft's header records.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct Spot {
@@ -24,7 +24,7 @@ struct SpotState {
 
 extern struct SpotState Data_020068b4;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -32,7 +32,7 @@ void Func_020040f0(struct SpotState *state, struct Spot *spot);
 void Func_02004160(struct SpotState *state, struct Spot *spot);
 
 s32 Func_02004490(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_020068b4;

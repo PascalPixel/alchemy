@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_02000348();
 s32 Func_02003bc8();
 s32 Func_02003c88();
@@ -17,11 +17,11 @@ s32 Func_02003bd0();
 /// cell value Func_02000348 returns (its high byte 0xff when the object is
 /// away) into two places; with the leader 208 pixels up a block copy follows.
 void Func_02000620(void) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *leader;
+  struct Actor *object;
+  struct Actor *leader;
   s32 value;
 
-  object = (struct ObjectRuntime *)Value1(Object_GetById, 11);
+  object = (struct Actor *)Value1(Actor_GetById, 11);
   value = Value3(Func_02000348, 3, 70, 67);
   Func_02003bc8();
   Call1(Func_02003c88, 0);
@@ -37,7 +37,7 @@ void Func_02000620(void) {
     Call4(Func_02000384, 2, 33, 54, value);
   }
   leader =
-      (struct ObjectRuntime *)Value1(Object_GetById, gAdventure.currentOwner);
+      (struct Actor *)Value1(Actor_GetById, gAdventure.currentOwner);
   if ((leader->y >> 19) == 26)
     Call6(Func_02003b80, 70, 67, 1, 1, 33, 54);
   Func_02003bd0();

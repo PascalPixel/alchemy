@@ -11,14 +11,14 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 void WaitFrames(s32);
 
 void Camera_FollowActor(s32 id, s32 flag) {
-  struct ObjectRuntime *obj;
-  struct ObjectRuntime *target;
+  struct Actor *obj;
+  struct Actor *target;
   struct EventWork *work;
   struct MapWork *map;
 
@@ -28,7 +28,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
   map = Ram_HeapSlots->mapWork;
   if (obj != 0) {
     map->origin = &target->x;
-    ObjectDispatch_StartCameraFar(target, obj);
+    Actor_StartCameraFar(target, obj);
     if (flag == 0) {
       SET_POSITION(target, obj->x, obj->y, obj->z);
       WaitFrames(1);

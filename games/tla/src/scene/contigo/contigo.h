@@ -9,40 +9,40 @@
 
 struct ContigoObject;
 
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_020040e4(s32 actor, s32 target);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
-void ObjectMotion_EnableActionAndResetMotion(s32 actor);
+void Actor_SetMovementTypeById(s32 actor, const void *script);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *script);
+void Actor_Stop(s32 actor);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_0200412c(s32 message);
 void Func_02004144(s32 speaker, s32 flags);
-void Object_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Func_0200417c(s32 actor, s32 emote);
 void Func_02004174(s32 actor, s32 height, s32 frames);
 void Func_0200415c(s32 actor, s32 angle);
 void Func_0200418c(s32 speed, s32 acceleration);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Func_0200413c(s32 actor, s32 a, s32 b);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 void Func_020042b4(s32 cue);
 void Func_020040dc(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020040d4(s32 actor, s32 x, s32 z);
-void Object_SetPartAttribute(struct ContigoObject *object, s32 value);
-struct ContigoObject *Object_GetById(s32 id);
+void Actor_SetPartAttribute(struct ContigoObject *object, s32 value);
+struct ContigoObject *Actor_GetById(s32 id);
 void Func_0200406c(void);
 void Func_02004074(void);
 void Func_02004204(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
-void ObjectMotion_WaitForAnimationChange(s32 actor);
+void Actor_WaitForAnimationChange(s32 actor);
 void Func_0200419c(void);
 void Func_02003e54(struct ContigoObject *object, const void *effect);
 void Func_02003f54(struct ContigoObject *object);
@@ -69,7 +69,7 @@ void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 
 static inline void Contigo_ObjFollow(s32 actor, s32 target) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_LinkObjectAndSetCallback(actor, target);
+  Actor_WatchAndSetScript(actor, target);
 }
 
 static inline void Contigo_Wait(s32 frames) {
@@ -79,22 +79,22 @@ static inline void Contigo_Wait(s32 frames) {
 
 static inline void Contigo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Contigo_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Contigo_ObjCommit(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndCommit(actor, x, z);
+  Actor_SetPositionAndCommit(actor, x, z);
 }
 
 static inline void Contigo_ObjTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(actor, angle, frames);
+  Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void Contigo_ObjMoveTo(s32 actor, s32 target) {
@@ -104,17 +104,17 @@ static inline void Contigo_ObjMoveTo(s32 actor, s32 target) {
 
 static inline void Contigo_ObjAction(s32 actor, const void *script) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_EnableActionAndSetCallback(actor, script);
+  Actor_SetMovementTypeById(actor, script);
 }
 
 static inline void Contigo_ObjActionRefresh(s32 actor, const void *script) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetActionCallbackAndRefreshById(actor, script);
+  Actor_SetMovementTypeAndWaitById(actor, script);
 }
 
 static inline void Contigo_ObjReset(s32 actor) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_EnableActionAndResetMotion(actor);
+  Actor_Stop(actor);
 }
 
 static inline void Contigo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -139,7 +139,7 @@ static inline void Contigo_MessagePut(s32 speaker, s32 flags) {
 
 static inline void Contigo_ObjMode(s32 actor, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_SetModeById(actor, mode);
+  Actor_SetModeById(actor, mode);
 }
 
 static inline void Contigo_ObjEmote(s32 actor, s32 emote) {
@@ -170,7 +170,7 @@ static inline void Contigo_CamSpeed(s32 speed, s32 acceleration) {
 
 static inline void Contigo_ObjLaunch(s32 actor, s32 speed, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_Launch(actor, speed, frames);
+  Actor_Jump(actor, speed, frames);
 }
 
 static inline void Contigo_ObjShake(s32 actor, s32 a, s32 b) {

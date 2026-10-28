@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02000404(void);
 void Func_02000490(void);
 void Func_02002b28(void);
@@ -31,12 +31,12 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
 
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void ObjSetPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void ObjCall2bf8(s32 id, s32 a) {
@@ -52,7 +52,7 @@ void Func_0200051c(void) {
     Func_02002b28();
     Func_02002c58(0);
     PLACE(26, 744 << 16, 0x01010000, 0x4000);
-    Object_GetById(4)->velocityY = 0x50000;
+    Actor_GetById(4)->velocityY = 0x50000;
     ObjSpeed(4, 0x20000, 0x10000);
     ObjSetPos(4, 720, 244);
     ObjCall2bf8(4, 0x2000);
@@ -68,7 +68,7 @@ void Func_020005b8(void) {
     Func_02002b28();
     Func_02002c58(0);
     PLACE(26, 744 << 16, 256 << 16, 0x4000);
-    Object_GetById(4)->velocityY = 0x50000;
+    Actor_GetById(4)->velocityY = 0x50000;
     ObjSpeed(4, 0x20000, 0x10000);
     ObjSetPos(4, 720, 244);
     ObjCall2bf8(4, 0x2000);

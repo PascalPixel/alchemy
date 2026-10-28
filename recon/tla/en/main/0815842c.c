@@ -86,7 +86,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -216,7 +216,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

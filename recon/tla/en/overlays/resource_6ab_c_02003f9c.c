@@ -7,7 +7,7 @@
 // in r6 and the index in r7, here the other way round (an asm on the state,
 // other declaration orders and permute for 4 minutes change nothing).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct Spot {
@@ -29,7 +29,7 @@ struct SpotState {
 
 extern struct SpotState gData_02004cf4;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -37,7 +37,7 @@ void Func_02003bfc(struct SpotState *state, struct Spot *spot);
 void Func_02003c6c(struct SpotState *state, struct Spot *spot);
 
 s32 Func_02003f9c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02004cf4;

@@ -10,8 +10,8 @@ extern const u8 gData_02006710[];
 extern const u8 gData_02006890[];
 extern const u8 gData_02006a0c[];
 
-s32 Func_0200004c(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_0200004c(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   return 0;
 }
 
@@ -36,7 +36,7 @@ void Func_020000bc(void) {
 }
 
 void Func_020000d0(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   u32 facing = object->angle;
 
   if (facing == 0 || facing == 0x8000) {
@@ -47,11 +47,11 @@ void Func_020000d0(void) {
       x--;
     else
       x++;
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
     if (object->x >> 20 != x || object->z >> 20 != z) {
-      object = Object_GetById(11);
+      object = Actor_GetById(11);
       if (object->x >> 20 != x || object->z >> 20 != z) {
-        object = Object_GetById(12);
+        object = Actor_GetById(12);
         if (object->x >> 20 != x || object->z >> 20 != z) {
           Func_02005600();
           return;

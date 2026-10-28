@@ -40,8 +40,8 @@ void Task_RemoveFar(void (*callback)(void));
 
 void Func_02001474(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gAdventure.currentOwner);
-  struct ShrineOfTheSeaGodObject *stone = Object_GetById(14);
+      Actor_GetById(gAdventure.currentOwner);
+  struct ShrineOfTheSeaGodObject *stone = Actor_GetById(14);
   struct ShrineOfTheSeaGodSprite *sprite = stone->sprite;
   struct EffectOptions options;
   u32 i;
@@ -49,13 +49,13 @@ void Func_02001474(void) {
 
   Func_020039d8();
   Func_02003b08(0);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 408, 328);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 408, 328);
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
   GameFlag_SetBit(0x230);
   WaitFrames(1);
   leader->motionFlags = 3;
-  ObjectMotion_SetActionVariant(14, 3);
+  Actor_SetSpritePriority(14, 3);
   stone->priorityFlags |= 2;
   Task_Add(Func_02001464, 0x480);
   do
@@ -93,7 +93,7 @@ void Func_02001474(void) {
     WaitFrames(1);
   }
   Func_020039c0();
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
   leader->layer = 0;
   WaitFrames(10);

@@ -601,7 +601,7 @@ BattleEffect_RunWyrdCurse:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -619,7 +619,7 @@ BattleEffect_RunWyrdCurse:
 .L_0816f568:
 	ldr r0, [sp, #20]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r0, #104
 	bl HeapSlot_Release
 	ldr r0, .L_0816f590

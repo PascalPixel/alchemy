@@ -3,8 +3,8 @@
 extern const u8 MsgBlazeTabletInscription[];
 
 void FieldMessage_Show(const u8 *message, s32 mode);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Func_020030cc(void);
 void Func_02004d40(void);
 void Func_02004d48(void);
@@ -16,10 +16,10 @@ void Func_020032d8(void) {
     FieldMessage_Show(MsgBlazeTabletInscription, 1);
     Func_02004d48();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 107);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 107);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_020030cc();
   }
@@ -32,9 +32,9 @@ void Func_02003348(void) {
     FieldMessage_Show(MsgBlazeTabletInscription, 1);
     Func_02004d48();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 280, 136);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 280, 136);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_020030cc();
   }
@@ -47,9 +47,9 @@ void Func_020033b0(void) {
     FieldMessage_Show(MsgBlazeTabletInscription, 1);
     Func_02004d48();
   } else {
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_020030cc();
   }

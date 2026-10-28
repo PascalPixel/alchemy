@@ -27,7 +27,7 @@ s32 Shop_CanServe(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Obj;
-struct Object_0801c0dc;
+struct Actor_0801c0dc;
 struct RenderInput;
 struct WindowSprite;
 struct UiPanel;
@@ -59,7 +59,7 @@ void Resource_ScheduleOwnerReset(void);
 void *Text_FormatPlayTime(s32, u8 *);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
-void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
+void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 

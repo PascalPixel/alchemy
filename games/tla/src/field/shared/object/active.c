@@ -1,14 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "dma.h"
 #include "mem.h"
 #include "resource.h"
 #include "edition.h"
 
-struct ObjectRuntime *Object_GetById(u32);
+struct Actor *Actor_GetById(u32);
 void Func_08038248(s32 resource, u8 *buffer);
 void ResourceMetadata_ClearRecordFar(void *record);
 
@@ -16,7 +16,7 @@ void ResourceMetadata_ClearRecordFar(void *record);
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
 void Func_080d3b28(u32 id, s32 resource) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;
   /* FAKEMATCH(temporary): the zero set between the allocation and its 0x400
@@ -60,7 +60,7 @@ void Event_SetMessageId(s32 message) {
 s32 ObjectTable_ReadActiveValue(s32 key) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
-  struct ObjectRuntime *object = event->objects[key & 0x0fff];
+  struct Actor *object = event->objects[key & 0x0fff];
 
   if (object != NULL && object->animationKind == 1)
     result = *((struct ObjectAnimationState *)object->animation)->value28;
@@ -71,7 +71,7 @@ s32 ObjectTable_FindActiveByValue(s32 value) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
   s32 index = 8;
-  struct ObjectRuntime *object = event->objects[index];
+  struct Actor *object = event->objects[index];
 
   if (object != NULL && object->animationKind == 1 &&
       *((struct ObjectAnimationState *)object->animation)->value28 == value) {

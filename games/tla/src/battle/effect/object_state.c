@@ -8,11 +8,11 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "edition.h"
 
-void ObjectMotion_SnapToTerrain(void *object) {
-  struct ObjectRuntime *state = object;
+void Actor_SnapToTerrain(void *object) {
+  struct Actor *state = object;
   s32 height;
 
   height = Map_GetTerrainHeightFar(0, state->x, state->z);

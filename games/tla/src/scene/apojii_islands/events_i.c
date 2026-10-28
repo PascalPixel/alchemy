@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02001308(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
     u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
@@ -14,12 +14,12 @@ void Func_02001308(s32 id) {
 }
 
 void Func_02001338(s32 entrance) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 i;
 
   Func_02001cc4();
   Func_02001dcc(0);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   leader->motionFlags = 0;
   /* FAKEMATCH: the native clears the motion flags before it addresses the
    * priority flags (differ 2 without the barrier). */
@@ -40,7 +40,7 @@ void Func_02001338(s32 entrance) {
     __asm__ volatile("" : "+r"(angle));
     leader->angle = angle + 0x1000;
     if ((i & 7) == 0)
-      Func_020010d8(Object_GetById(15));
+      Func_020010d8(Actor_GetById(15));
     WaitFrames(1);
   }
   Func_02001ccc();
@@ -50,7 +50,7 @@ void Func_02001338(s32 entrance) {
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-s32 Func_020013d8(struct ObjectRuntime *object) {
+s32 Func_020013d8(struct Actor *object) {
   s32 params[10];
 
   if (gFrameCount & 1) {

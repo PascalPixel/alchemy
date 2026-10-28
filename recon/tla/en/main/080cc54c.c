@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 8 of 138 in tla-en, instruction
 // order and register choice. No empty asm before any one statement lowers it.
-// Near miss, differ 8 of 138: ☀️'s Object_GetTriggerTileAheadOfCurrent
-// (far stub Object_GetTriggerTileAheadOfCurrentFar in table_26), with ⚓️'s
+// Near miss, differ 8 of 138: ☀️'s Actor_GetTriggerTileAheadOfCurrent
+// (far stub Actor_GetTriggerTileAheadOfCurrentFar in table_26), with ⚓️'s
 // leader lookup Func_080cb8e8, a 16-pixel height window, the search event
 // test Func_080ccd78(3, code) and, on the world map with ownerOverride set,
 // 99 where the world map collision is 3. The one-pass block (FAKEMATCH on
@@ -42,7 +42,7 @@ s32 Map_GetTerrainHeightFar(s32 kind, s32 x, s32 z);
 s32 Func_080ccd78(s32 kind, s32 code);
 s32 GetWorldMapCollisionFar(s32 *position);
 
-s32 Object_GetTriggerTileAheadOfCurrent(void) {
+s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *mapBytes;
   struct Object *leader;

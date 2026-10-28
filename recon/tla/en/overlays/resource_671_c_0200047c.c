@@ -9,7 +9,7 @@
 #include "types.h"
 
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
@@ -34,7 +34,7 @@ struct SceneState {
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 struct IoReg16 {
@@ -52,23 +52,23 @@ extern const u8 gData_02005948[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 handle, s32 size, void *source);
-struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
+struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 void Func_02001950(s32 show, s32 first, u32 count);
 void Func_02002394(void);
 void Func_02004380(s32 x, s32 z, s32 a);
 void Func_020055cc(const u8 *data, void *buffer);
 void Func_0200561c(void *animation, s32 a);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+void Func_02005624(struct Actor *object, s32 mode);
 void Func_0200567c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020056b4(struct ObjectRuntime *object);
+void Func_020056b4(struct Actor *object);
 void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_02005824(void);
@@ -101,8 +101,8 @@ static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position) {
   Vector_AddPolarOffsetFar(radius, angle, position);
 }
 
-s32 Func_0200047c(struct ObjectRuntime *object) {
-  struct ObjectRuntime *owner = object->watchedObject;
+s32 Func_0200047c(struct Actor *object) {
+  struct Actor *owner = object->watchedObject;
 
   if (owner != NULL) {
     u8 *phase = &OBJECT_BYTE(object, 98);

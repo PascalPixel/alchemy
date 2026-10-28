@@ -1,6 +1,6 @@
 #include "types.h"
 #include "effect_slot.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EffectVector {
@@ -11,7 +11,7 @@ struct EffectVector {
 
 extern u32 gVBlankCount;
 
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
@@ -24,7 +24,7 @@ void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 /// starts it over and state 2 clears its slot.
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct EffectVector position;
-  struct ObjectRuntime *source;
+  struct Actor *source;
   /* FAKEMATCH: the state is pinned to r8, the register the native gives
      it; free, global allocation trades it with the state's address in
      r10 once the two barriers below lengthen their lives (differ 14). */
@@ -34,7 +34,7 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   s32 magnitude;
   s32 angle;
 
-  source = Object_GetById(gAdventure.currentOwner);
+  source = Actor_GetById(gAdventure.currentOwner);
   state = effect->state;
 
   if (state == 0) {

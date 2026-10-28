@@ -13,7 +13,7 @@
 // needs (40 to 38).
 #include "types.h"
 #include "text/msg_ids.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -22,12 +22,12 @@ extern const u8 gData_02005d7c[];
 extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
 extern u32 gData_02005d8c[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u8 *Unit_Get(s32 owner);
 void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void WaitFrames(s32 frames);
 void Func_02005754(const u8 *message);
 void Func_02005764(s32 id, s32 value);
@@ -38,8 +38,8 @@ void GameFlag_ClearBit(s32 flag);
 void Func_02001b38(void);
 void Func_02001b68(void);
 void Func_02002394(void);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void Actor_SetMovementTypeById(s32 id, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 void Func_02005674(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020053bc(const u8 *data);
 void Func_02005824(void);
@@ -55,21 +55,21 @@ void Func_0200564c(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020057a4(s32 speed, s32 acceleration);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
-struct ObjectRuntime *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02005644(struct ObjectRuntime *object);
+void Func_02005644(struct Actor *object);
 void Func_02005794(s32 id, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
+void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_0200578c(s32 id, s32 a, s32 b);
 void Func_020057e4(s32 a, s32 b);
@@ -80,7 +80,7 @@ void Func_020057c4(s32 exit);
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
@@ -92,13 +92,13 @@ static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_ArmCallback(id, angle, frames);
+  Actor_ArmCallback(id, angle, frames);
 }
 
 static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Func_02005774_(s32 id, s32 value) {
@@ -124,7 +124,7 @@ static __inline__ void Func_02005764_(s32 id, s32 value) {
   Func_02005764(id, value);
 }
 
-struct ObjectRuntime *Func_020057bc(void);
+struct Actor *Func_020057bc(void);
 void Event_FinishScreenTransition(void);
 void Func_0200581c(void);
 s32 FieldMessage_ShowAtActor();
@@ -174,7 +174,7 @@ void Func_02002a64(void) {
   Actor_Turn(5, 0x8000, 0);
   Actor_Turn(7, 0, 0);
   Func_02005774_(6, 0x8000);
-  Object_SetModeById(6, 3);
+  Actor_SetModeById(6, 3);
   Func_02005764_(0x4006, 0);
   FieldMessage_ShowAtActor(0x6005, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
@@ -195,7 +195,7 @@ void Func_02002a64(void) {
     Actor_Walk(7, 364, 308);
     Actor_Turn(gAdventure.currentOwner, 0xe000, 0);
     Func_02005774_(7, 0x6000);
-    Object_SetModeById(7, 3);
+    Actor_SetModeById(7, 3);
     Func_02005764(cue, 0);
   }
   Func_02005774_(23, 0x8000);
@@ -210,7 +210,7 @@ void Func_02002a64(void) {
   Func_02005764_(0x4007, 0);
   Func_0200578c_ArgsFirst(7, 256, 40);
   Func_02005764_(0x4007, 0);
-  Object_SetModeById(23, 3);
+  Actor_SetModeById(23, 3);
   Func_02005764_(0x4017, 0);
   Func_0200578c_ArgsFirst(7, 265, 10);
   Func_02005764_(0x4007, 0);
@@ -229,9 +229,9 @@ void Func_02002a64(void) {
   Func_02005764_(0x4007, 0);
   Actor_Turn(5, 0x8000, 0);
   Func_02005774_(6, 0x8000);
-  Object_SetModeById(gAdventure.currentOwner, 3);
-  Object_SetModeById(23, 3);
-  Object_SetModeById(5, 3);
+  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(23, 3);
+  Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
   Func_02005774_(23, 0xb000);
@@ -250,7 +250,7 @@ void Func_02002a64(void) {
   Func_02005764_(0x2005, 0);
   Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
-  Object_SetModeById(23, 3);
+  Actor_SetModeById(23, 3);
   Func_02005764_(23, 0);
   Func_02005774_(23, 0x8000);
   Func_02005764_(23, 0);
@@ -258,10 +258,10 @@ void Func_02002a64(void) {
   Actor_SetSpeed(6, 0x19999, 0xcccc);
   Actor_SetSpeed(23, 0x19999, 0xcccc);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
-  ObjectMotion_EnableActionAndSetCallback(7, gData_02005c40);
-  ObjectMotion_EnableActionAndSetCallback(23, gData_02005c40);
-  ObjectMotion_EnableActionAndSetCallback(6, gData_02005c40);
-  Object_SetActionCallbackAndRefreshById(5, gData_02005c40);
+  Actor_SetMovementTypeById(7, gData_02005c40);
+  Actor_SetMovementTypeById(23, gData_02005c40);
+  Actor_SetMovementTypeById(6, gData_02005c40);
+  Actor_SetMovementTypeAndWaitById(5, gData_02005c40);
   GameFlag_SetBit(0x8f6);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

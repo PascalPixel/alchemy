@@ -4,11 +4,11 @@
 // loads the list entry between the halves of 0xffff; this form schedules each
 // one step off.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-s32 ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+s32 Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_020005cc(s32 terrain, s32 x, s32 z, s32 height);
 
 void Func_02000668(u16 *list) {
@@ -18,12 +18,12 @@ void Func_02000668(u16 *list) {
   goto check;
 loop:
   {
-    struct ObjectRuntime *object = Object_GetById(*list);
+    struct Actor *object = Actor_GetById(*list);
     s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     list += 3;
     Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,
                   (height >> 19) + 4);

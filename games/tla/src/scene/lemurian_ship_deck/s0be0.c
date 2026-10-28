@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "scene_ids.h"
 
 extern const u8 gData_020020dc[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_020020c4(const void *data);
 void Func_02000188(void);
@@ -50,8 +50,8 @@ s32 Func_02000be0(void) {
      * without it, tla-en differs. */
     do {
     } while (0);
-    Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
-    Object_SetModeById(8, 1);
+    Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
+    Actor_SetModeById(8, 1);
     Func_020020c4(gData_020020dc);
     AddCallback(Func_02000188, 0x480);
     if (party->entrance == 99)

@@ -21,10 +21,10 @@ void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
 void Func_02000950(s32, s32, s32, s32);
 void Func_020009c0(s32, s32, s32, s32);
 void Func_02000a10(s32, s32, s32, s32, s32);
-void Func_02000c4c(struct ObjectRuntime *, void *);
-void Func_02000d4c(struct ObjectRuntime *);
+void Func_02000c4c(struct Actor *, void *);
+void Func_02000d4c(struct Actor *);
 void GameFlag_SetBit(s32);
-struct ObjectRuntime *Object_GetById(s32);
+struct Actor *Actor_GetById(s32);
 
 void Func_02000660(void) {
   struct Adventure *party;
@@ -59,7 +59,7 @@ void Func_020006e8(s32 actor) {
 }
 
 void Func_0200070c(void) {
-  Func_02000e5c(19, ((u8 *)Object_GetById(19))[0x62], 0x310);
+  Func_02000e5c(19, ((u8 *)Actor_GetById(19))[0x62], 0x310);
 }
 
 void Func_02000724(void) {
@@ -76,11 +76,11 @@ void Func_02000740(void) {}
 void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
-  Func_02000c4c(Object_GetById(actor), gData_02001860);
-  Func_02000c4c(Object_GetById(gAdventure.currentOwner), gData_020017b0);
+  Func_02000c4c(Actor_GetById(actor), gData_02001860);
+  Func_02000c4c(Actor_GetById(gAdventure.currentOwner), gData_020017b0);
   WaitFrames(100);
-  Func_02000d4c(Object_GetById(actor));
-  Func_02000d4c(Object_GetById(gAdventure.currentOwner));
+  Func_02000d4c(Actor_GetById(actor));
+  Func_02000d4c(Actor_GetById(gAdventure.currentOwner));
 }
 
 const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }

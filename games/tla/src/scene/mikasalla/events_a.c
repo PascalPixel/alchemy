@@ -11,7 +11,7 @@ extern struct WarpEntry gData_0200073c[];
 void Func_02000610(s32 map, s32 x, s32 z);
 void Func_020006b8(s32 value);
 void Func_020006f0(s32 value);
-void ObjectMotion_CenterOnColumn(s32 id, s32 a, s32 b);
+void Actor_CenterOnColumn(s32 id, s32 a, s32 b);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -21,11 +21,11 @@ static __inline__ void Func_02000610_(s32 map, s32 x, s32 z) {
   Func_02000610(map, x, z);
 }
 
-static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column,
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
   /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
    * order; the direct call negates the offset last (differ 2). */
-  ObjectMotion_CenterOnColumn(id, column, offset);
+  Actor_CenterOnColumn(id, column, offset);
 }
 
 void Func_0200009c(void) {
@@ -37,7 +37,7 @@ void Func_0200009c(void) {
   Func_02000648();
   Func_020006d0(0);
   for (id = 8; id <= 63; id++) {
-    u8 *actor = (u8 *)Object_GetById(id);
+    u8 *actor = (u8 *)Actor_GetById(id);
 
     if (actor != NULL) {
       u8 *flags = &actor[85];
@@ -64,18 +64,18 @@ void Func_0200009c(void) {
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
   asm("");
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   {
     s32 mode = 2;
 
     /* FAKEMATCH: the mode passes through an asm so that it is set before the
      * owner id is loaded (differ 2 without it). */
     __asm__("" : "+l"(mode));
-    Object_SetModeById(gAdventure.currentOwner, mode);
+    Actor_SetModeById(gAdventure.currentOwner, mode);
   }
   if (index != 4) {
-    ObjectMotion_CenterOnColumn_(gAdventure.currentOwner, 2, -8);
+    Actor_CenterOnColumn_(gAdventure.currentOwner, 2, -8);
     FieldEvent_WaitFrames(10);
   }
   Func_020006b8(*choice);

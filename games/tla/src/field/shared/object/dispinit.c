@@ -20,7 +20,7 @@ extern const s32 gData_0802f1b8[];
 extern const s32 gData_0802f1e8[];
 
 void Func_08023510(struct DispatchObject *object, s32 argument) {
-  ObjectDispatch_Initialize(object, gData_0802f1e8);
+  Actor_StartScript(object, gData_0802f1e8);
   object->argument = argument;
 }
 
@@ -79,5 +79,5 @@ void Func_08023524(struct DispatchObject *object) {
     script = gData_0802f098;
     break;
   }
-  ObjectDispatch_Initialize(object, script);
+  Actor_StartScript(object, script);
 }

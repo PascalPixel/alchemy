@@ -3,7 +3,7 @@
 void Func_02003524(void) {
   Func_020051c0();
   Func_02005370(0);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -20,7 +20,7 @@ void Func_02003574(void) {
 }
 
 void Func_02003584(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   u32 i;
   s32 delta;
   struct Adventure *party;
@@ -28,8 +28,8 @@ void Func_02003584(void) {
   Func_020051c0();
   Func_02005370(0);
   object->motionFlags = 0;
-  ObjectMotion_SetActionVariantValue(gAdventure.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetActionVariantValue(gAdventure.currentOwner, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   object->angle = 0;
   {
@@ -40,10 +40,10 @@ void Func_02003584(void) {
     register s32 mode asm("r1") = 16;
 
     __asm__("" : "+l"(owner) : "l"(mode));
-    Object_SetModeById(*owner, mode);
+    Actor_SetModeById(*owner, mode);
   }
   for (i = 0; i <= 7; i++) {
-    Object_SetPositionAndResetMotion(object, object->x, object->y,
+    Actor_SetPositionAndResetMotion(object, object->x, object->y,
                                      object->z + 0x30000);
     WaitFrames_(1);
   }
@@ -55,11 +55,11 @@ void Func_02003584(void) {
    * instructions differ in tla-en. */
   asm volatile("" : "+l"(party));
   Func_020052d0(party->currentOwner, 258);
-  Object_SetModeById_(party->currentOwner, 27);
+  Actor_SetModeById_(party->currentOwner, 27);
   FieldEvent_WaitFrames_(30);
-  Object_SetModeById_(party->currentOwner, 28);
+  Actor_SetModeById_(party->currentOwner, 28);
   FieldEvent_WaitFrames_(10);
-  ObjectMotion_SetActionVariant_(party->currentOwner, 3);
+  Actor_SetSpritePriority_(party->currentOwner, 3);
   for (i = 0; i <= 39; i++) {
     {
       s32 scale = object->scaleX;

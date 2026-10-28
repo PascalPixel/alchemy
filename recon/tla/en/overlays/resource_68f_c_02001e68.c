@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -21,7 +21,7 @@ s32 Func_02002fe0();
 void Vector_AddPolarOffsetFar();
 s32 Map_GetTerrainHeight();
 s32 Func_02002f80();
-void ObjectDispatch_SetAnimationSpeed();
+void Actor_SetAnimationSpeed();
 s32 Func_02003028();
 void Func_02002fb0();
 void Func_02002fb8();
@@ -79,7 +79,7 @@ L_02009edc:
   FIELD_AT(r5, s32, 52) = 0x1999;
   FIELD_AT(r5, u16, 100) = 0;
   Call2((void (*)())Func_02002f80, r5, 2);
-  Call2((void (*)())ObjectDispatch_SetAnimationSpeed, r5, 48);
+  Call2((void (*)())Actor_SetAnimationSpeed, r5, 48);
   FIELD_AT(r5, s32, 108) = (s32)Func_020017dc;
   goto L_0200a01a;
 L_02009f70:

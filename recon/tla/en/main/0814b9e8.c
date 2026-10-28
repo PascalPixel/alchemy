@@ -91,11 +91,11 @@ extern const u8 gData_08199340[];    // the quad's face
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void);               // ☀️ ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);               // ☀️ BattleEffect_CountDownBattlerTints
 void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
+                   s32 timerFrames); // ☀️ Actor_UpdateMembers
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,
                    s32 *size); // the canvas preparer
 void EffectPosition_ProjectBattler(s32 id,
@@ -280,7 +280,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     }
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

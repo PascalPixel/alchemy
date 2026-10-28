@@ -25,7 +25,7 @@ FieldEffect_RunDouse:
 	movs r2, #0
 	movs r3, #0
 	str r1, [sp, #12]
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r7, r0, #0
 	movs r6, #0
 	cmp r7, #0
@@ -224,7 +224,7 @@ FieldEffect_RunDouse:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	adds r0, #255
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080deff0
@@ -332,7 +332,7 @@ FieldEffect_RunDouse:
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #2
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080df0c0
@@ -352,7 +352,7 @@ FieldEffect_RunDouse:
 	orrs r2, r3
 	strb r2, [r1, #9]
 	movs r1, #8
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #7
 	bl Animation_ApplyChildValuesFar
@@ -424,7 +424,7 @@ FieldEffect_RunDouse:
 	cmp r6, #11
 	blt .L_080df0e2
 	adds r0, r7, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 	bl BattleEffect_PrepareBufferInterpolation
 .L_080df156:
 	add sp, #52

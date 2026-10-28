@@ -15,17 +15,17 @@ struct LemurianShipWarp {
 extern struct LemurianShipWarp gData_02003904[];
 extern struct LemurianShipWarp gData_0200397c[];
 void Func_02002c28(s32 value, s32 x, s32 z);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
-void ObjectMotion_CenterOnColumn(s32 actor, s32 a, s32 b);
+void Actor_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
+void Actor_CenterOnColumn(s32 actor, s32 a, s32 b);
 
 static inline void LemurianShip_ObjOffset(s32 actor, s32 a, s32 b) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer. */
-  ObjectMotion_OffsetPositionAndResetMotion(actor, a, b);
+  Actor_OffsetPositionAndResetMotion(actor, a, b);
 }
 
 static inline void LemurianShip_ObjCenter(s32 actor, s32 a, s32 b) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer. */
-  ObjectMotion_CenterOnColumn(actor, a, b);
+  Actor_CenterOnColumn(actor, a, b);
 }
 
 void Func_0200021c(void) {
@@ -41,7 +41,7 @@ void Func_0200021c(void) {
   found = 0;
   i = 8;
 next:
-  object = Object_GetById(i);
+  object = Actor_GetById(i);
   if (object != NULL)
     object->motionFlags = 0;
   i++;
@@ -58,12 +58,12 @@ next2:
   if (i < 10)
     goto next2;
   Func_02002de0(158);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_02003904[found].x, gData_02003904[found].z,
                        1, 2);
   Func_02002c28(gData_02003904[found].value, gData_02003904[found].x,
                 gData_02003904[found].z + 60);
-  Object_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
   LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
   {
     s32 owner = gAdventure.currentOwner;

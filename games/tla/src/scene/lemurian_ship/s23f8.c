@@ -1,9 +1,9 @@
 #include "lemurian_ship.h"
 
 void Func_020023f8(void) {
-  struct LemurianShipObject *leader = Object_GetById(gAdventure.currentOwner);
+  struct LemurianShipObject *leader = Actor_GetById(gAdventure.currentOwner);
 
-  ObjectMotion_SetActionVariant(8, leader->sprite->priority);
+  Actor_SetSpritePriority(8, leader->sprite->priority);
 }
 
 void Func_0200241c(void) {
@@ -14,10 +14,10 @@ void Func_0200241c(void) {
 }
 
 void Func_0200245c(s32 id) {
-  struct LemurianShipObject *object = Object_GetById(id);
+  struct LemurianShipObject *object = Actor_GetById(id);
 
-  Object_GetById(id)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(id, 1);
+  Actor_GetById(id)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
   object->y = 0;
   object->height = 0;

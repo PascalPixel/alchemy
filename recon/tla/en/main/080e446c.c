@@ -2,7 +2,7 @@
 // differs in instruction order.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct EffectSprite {
@@ -27,7 +27,7 @@ struct EffectSprite {
 struct EffectScene {
   u16 mode;
   u8 unk02[14];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 struct EffectParticle {
@@ -42,8 +42,8 @@ struct EffectParticle {
 
 void Func_080eaf98(struct EffectSprite *sprite, s32 width, s32 height,
                    u32 shape, s32 tiles);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);

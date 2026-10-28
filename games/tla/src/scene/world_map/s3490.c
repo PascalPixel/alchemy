@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -18,10 +18,10 @@ void Func_02004d40(s32 value);
 void Func_02004db8(s32 value);
 void Func_02004df8(s32 value, s32 mode);
 
-static __inline__ void ObjectMotion_SetPositionAndCommit_(s32 actor, s32 x,
+static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
                                                           s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndCommit(actor, x, z);
+  Actor_SetPositionAndCommit(actor, x, z);
 }
 
 static __inline__ void Func_02004df8_(s32 value, s32 mode) {
@@ -32,27 +32,27 @@ static __inline__ void Func_02004df8_(s32 value, s32 mode) {
 void Func_02003490(void) {
   Func_02004c20();
   Func_02004db8(0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_GetById(gAdventure.currentOwner)->update = Func_0200343c;
-  Object_GetById(gAdventure.currentOwner)->acceleration = 0x2000;
-  Object_GetById(gAdventure.currentOwner)->speedLimit = 0x20000;
+  Actor_GetById(gAdventure.currentOwner)->update = Func_0200343c;
+  Actor_GetById(gAdventure.currentOwner)->acceleration = 0x2000;
+  Actor_GetById(gAdventure.currentOwner)->speedLimit = 0x20000;
   WaitFrames(5);
   Func_02004df8_(0xc000, 60);
   Event_StartScreenTransition();
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14537, 8577);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14465, 8662);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14452, 8766);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14387, 8828);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14331, 8888);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14284, 8904);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8870);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8831);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8772);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14537, 8577);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14465, 8662);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14452, 8766);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14387, 8828);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14331, 8888);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14284, 8904);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8870);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8831);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8772);
   Func_02004df8_(0x14000, 120);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14275, 8736);
-  ObjectMotion_SetPositionAndCommit_(gAdventure.currentOwner, 14257, 8720);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14275, 8736);
+  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004c28();

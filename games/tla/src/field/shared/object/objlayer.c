@@ -103,7 +103,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
-void ObjectDispatch_StopCallbacksAndHideLayers(void) {
+void ActorSystem_ResumeProjectionAndHideLayers(void) {
   u16 dispcnt;
 
   Task_ResumeAll(Func_0802386c);
@@ -115,4 +115,4 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   REG_DISPCNT = dispcnt & 0xe1ff;
 }
 
-s32 ObjectDispatch_ReturnTrue(void) { return 1; }
+s32 Actor_ReturnTrue(void) { return 1; }

@@ -49,7 +49,7 @@ Func_080e4a34:
 	mov r0, r8
 	movs r1, #1
 	movs r2, #0
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	mov r3, r8
 	adds r3, #34
 	ldr r0, [r5, #8]
@@ -132,7 +132,7 @@ Func_080e4a34:
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
 	mov r0, r8
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	ldr r6, [sp, #16]
 	movs r3, #0
 	movs r0, #2
@@ -286,13 +286,13 @@ Func_080e4a34:
 	orrs r2, r3
 	strb r2, [r1, #7]
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [sp, #44]
 	movs r6, #24
 	ldrsh r0, [r1, r6]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r3, [sp, #44]
 	movs r1, #1
 	movs r2, #24
@@ -382,7 +382,7 @@ Func_080e4a34:
 	movs r1, #0
 	movs r2, #16
 	mov r0, r8
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	ldr r0, [sp, #36]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #32]

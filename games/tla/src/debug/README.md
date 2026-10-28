@@ -26,7 +26,7 @@ overlay and address. `make progress` gives the counts.
 ## Function prefixes
 
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`GameFlag_`, `Input_`, `Map_`, `Object_`, `ObjectMotion_`, `Scene_` and
+`GameFlag_`, `Input_`, `Map_`, `Actor_`, `Scene_` and
 `Unit_`. Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |

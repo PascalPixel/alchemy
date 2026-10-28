@@ -7,14 +7,14 @@ struct SpriteParts {
 };
 extern const u8 gData_020032d4[];
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02003120(struct ObjectRuntime *object, const void *script);
+void Func_02003120(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-void Func_02001cc4(struct ObjectRuntime *object, s32 part) {
+void Func_02001cc4(struct Actor *object, s32 part) {
   /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
    * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
@@ -29,7 +29,7 @@ void Func_02001cc4(struct ObjectRuntime *object, s32 part) {
     asm volatile("" : : "r"(three));
     ((struct SpriteParts *)object->animation)->part = part;
   }
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_02003120(object, gData_020032d4);
   object->action = zero;
   object->speedLimit = zero;
@@ -38,7 +38,7 @@ void Func_02001cc4(struct ObjectRuntime *object, s32 part) {
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
 
   if (object != 0) {
@@ -55,7 +55,7 @@ void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
 
   if (object != 0) {
@@ -72,7 +72,7 @@ void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
 
   if (object != 0) {
@@ -87,7 +87,7 @@ void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
   }
 }
 
-s32 Func_02001de0(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 Func_02001de0(struct Actor *a, struct Actor *b) {
   s32 height;
 
   if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000) {

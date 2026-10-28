@@ -24,17 +24,17 @@ void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_02004e48(s32 a, s32 b);
 void Func_02004e40(s32 a, s32 b);
 void Func_02004e50(s32 frames);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Func_02004dc0(s32 id, s32 value);
 u32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 void Func_02004ea0(void);
-void Func_02002c48(struct ObjectRuntime *object);
+void Func_02002c48(struct Actor *object);
 
 void Func_02002cd0(s32 a, s32 b) {
-  struct ObjectRuntime *first = Object_GetById(a);
-  struct ObjectRuntime *second = Object_GetById(b);
-  struct ObjectRuntime *object;
+  struct Actor *first = Actor_GetById(a);
+  struct Actor *second = Actor_GetById(b);
+  struct Actor *object;
   s32 i;
 
   Func_02004f30(78);
@@ -51,7 +51,7 @@ void Func_02002cd0(s32 a, s32 b) {
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
-  ObjectMotion_EnableActionAndSetCallback(a, gData_02005590);
+  Actor_SetMovementTypeById(a, gData_02005590);
   Func_02004f30(194);
   FieldEvent_WaitFrames(45);
   Func_02004dc0(a, 256);
@@ -65,10 +65,10 @@ void Func_02002cd0(s32 a, s32 b) {
     object->speedLimit = 0x80000;
     object->acceleration = 0x3333;
     object->motionFlags = 0;
-    Object_SetPartAttribute(object, 10);
-    Object_SetSpritePriority(object, 1);
+    Actor_SetPartAttribute(object, 10);
+    Scene_SetActorSpritePriority(object, 1);
     Func_02004c98(object, 7);
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
     Func_02004ca0(object, gData_02005544);
     REG_BLDALPHA = 0x1004;
@@ -91,10 +91,10 @@ void Func_02002cd0(s32 a, s32 b) {
     object->unk4c = 0x7a0000;
     object->watchedObject = second;
     ((u8 *)object)[0x62] = ((16 - i) << 3) + 15;
-    Object_SetPartAttribute(object, 10);
-    Object_SetSpritePriority(object, 1);
+    Actor_SetPartAttribute(object, 10);
+    Scene_SetActorSpritePriority(object, 1);
     Func_02004c98(object, 7);
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
     Vector_AddPolarOffsetFar(object->unk4c, object->action, &object->x);
     Func_02004ca0(object, gData_02005560);
@@ -103,7 +103,7 @@ void Func_02002cd0(s32 a, s32 b) {
       second->motionFlags = 0;
       second->acceleration = 0x3333;
       second->speedLimit = 0x3333;
-      ObjectMotion_EnableActionAndSetCallback(b, gData_020055b4);
+      Actor_SetMovementTypeById(b, gData_020055b4);
     }
     WaitFrames(8);
   }
@@ -122,9 +122,9 @@ void Func_02002cd0(s32 a, s32 b) {
     object->watchedObject = second;
     object->motionFlags = 0;
     object->priorityFlags = 1;
-    Object_SetPartAttribute(object, 10);
+    Actor_SetPartAttribute(object, 10);
     Func_02004c98(object, 7);
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
     Func_02004ca0(object, gData_02005570);
   }
@@ -139,8 +139,8 @@ void Func_02002cd0(s32 a, s32 b) {
   Func_02004f30(574);
   Func_02004e40(0x10000, 0);
   Func_02004e50(80);
-  ObjectMotion_EnableActionAndSetCallback(a, gData_020055d8);
-  ObjectMotion_EnableActionAndSetCallback(b, gData_02005608);
+  Actor_SetMovementTypeById(a, gData_020055d8);
+  Actor_SetMovementTypeById(b, gData_02005608);
   second->update = (void (*)(void))Func_02002c48;
   WaitFrames(120);
   second->update = 0;

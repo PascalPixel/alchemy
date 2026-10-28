@@ -87,11 +87,11 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // ObjectGroup_UpdateMembers
+                   s32 frames); // Actor_UpdateMembers
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
@@ -429,7 +429,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
       Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
 
     Func_08158ce0(16, 16);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;

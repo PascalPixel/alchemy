@@ -24,7 +24,7 @@ s32 Func_02000054(struct KibomboObject *object) {
     dx += ((Random16Far() * 3) >> 16) << 16;
     dy += ((Random16Far() * 3) >> 16) << 16;
 
-    Object_SetPositionAndResetMotion(object, object->field44 + dx,
+    Actor_SetPositionAndResetMotion(object, object->field44 + dx,
                                      object->field48 + dy, object->z);
   }
   return 1;

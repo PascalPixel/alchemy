@@ -12,7 +12,7 @@ void Func_020011c8(void) {
 
 void Func_020011d4(void) {
   Func_02002198();
-  Object_GetById(gAdventure.currentOwner)->priorityFlags += 254;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags += 254;
   Func_02000f2c();
   Func_02000fd0();
 }

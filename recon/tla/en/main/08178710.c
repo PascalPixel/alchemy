@@ -43,10 +43,10 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -107,8 +107,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
-void Object_SetMode(void *object, s32 mode);
+void Actor_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetMode(void *object, s32 mode);
 
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
@@ -178,8 +178,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   endY[0] = 0;
   endY[1] = 0;
   caster = *GetBattleObjectSlotFar(effect->actor);
-  ObjectDispatch_SetAnimationSpeedFar(caster, 48);
-  Object_SetMode(caster, 2);
+  Actor_SetAnimationSpeedFar(caster, 48);
+  Actor_SetMode(caster, 2);
   EffectPosition_ProjectBattler(effect->actor, &source);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
@@ -393,12 +393,12 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
       Heap_Release(model);
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     Func_08158ce0(2, 2);
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

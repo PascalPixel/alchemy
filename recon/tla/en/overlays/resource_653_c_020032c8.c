@@ -10,9 +10,9 @@ void Func_02005158(void);
 void Func_020053d8(s32 cue);
 
 void Func_020032c8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *statue = Object_GetById(10);
-  struct ObjectRuntime *ride = Func_020052f0();
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *statue = Actor_GetById(10);
+  struct Actor *ride = Func_020052f0();
   s16 i;
   s32 limit;
 
@@ -59,7 +59,7 @@ fall:
   Func_02000cf8(19, 0xc000, limit);
   Func_02000cf8(20, 0, limit);
   WaitFrames(1);
-  if (Object_GetById(20)->scaleY > limit)
+  if (Actor_GetById(20)->scaleY > limit)
     goto fall;
   gData_0200629c = 0;
   GameFlag_ClearBit(0x20d);
@@ -69,12 +69,12 @@ fall:
   Func_02005230(18, 0, 0);
   Func_02005230(19, 0, 0);
   Func_02005230(20, 0, 0);
-  Object_SetModeById(10, 1);
-  Object_SetPositionAndResetMotion(Object_GetById(10), 0x1780000, 0, 0xf80000);
+  Actor_SetModeById(10, 1);
+  Actor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0, 0xf80000);
   statue->priorityFlags |= 2;
-  ObjectMotion_SetActionVariant(10, 3);
-  Object_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSpritePriority(10, 3);
+  Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
   WaitFrames(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

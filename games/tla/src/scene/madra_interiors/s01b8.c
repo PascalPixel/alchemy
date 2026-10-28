@@ -1,7 +1,7 @@
 #include "madra_interiors.h"
 
 void Func_020001b8(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -24,9 +24,9 @@ void Func_020001b8(s32 actor) {
 void Func_0200023c(void) {
   Func_02001d50();
   Func_02001eb8(0);
-  ObjectMotion_SetAngleToward(14, 4, 0);
-  ObjectMotion_Launch(14, 6, 20);
-  ObjectMotion_SetAngleToward(4, 14, 0);
+  Actor_SetAngleToward(14, 4, 0);
+  Actor_Jump(14, 6, 20);
+  Actor_SetAngleToward(4, 14, 0);
   Func_02001e18((s32)MsgMadraInteriors18);
   Func_02001e30(14, 0);
   ActorTurn(14, 0x2000, 0);
@@ -123,19 +123,19 @@ void Func_02000428(void) {
   if (!FlagCheck(0x211)) {
     FlagSet(0x211);
     Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
-    ObjectMotion_CommitPositionAndActivate(14, -12, 0);
+    Actor_CommitPositionAndActivate(14, -12, 0);
     FieldEvent_WaitFrames(20);
     Motion_SetVarCbAndRefresh(14, 2);
     FieldEvent_WaitFrames(20);
     Func_02001e30(14, 0);
     Func_02001e48(14, 265, 30);
     FieldEvent_WaitFrames(20);
-    ObjectMotion_CommitPositionAndActivate(14, 12, 0);
-    ObjectMotion_SetAngleToward(14, 4, 0);
+    Actor_CommitPositionAndActivate(14, 12, 0);
+    Actor_SetAngleToward(14, 4, 0);
     Func_02001e30(14, 0);
   } else {
     Func_02001e18((s32)MsgMadraInteriors97);
-    ObjectMotion_SetAngleToward(14, 4, 0);
+    Actor_SetAngleToward(14, 4, 0);
     Func_02001e30(14, 0);
   }
 }
@@ -156,7 +156,7 @@ void Func_02000534(void) {
   if (FlagCheck(0x8ab)) {
     ActorPlace(26, 0x3780000, 0x80000);
   } else {
-    Func_02001d38(Object_GetById(26), 242);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(26), 0);
+    Func_02001d38(Actor_GetById(26), 242);
+    Actor_SetSingleChildFlags(Actor_GetById(26), 0);
   }
 }

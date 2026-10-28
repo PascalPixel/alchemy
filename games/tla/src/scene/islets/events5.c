@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -13,23 +13,23 @@ void Func_02003e64();
 void Func_02003f7c();
 void Func_02003fa4();
 void Func_02003ffc();
-void ObjectDispatch_SetSingleChildFlags();
-struct ObjectRuntime *Object_GetById();
-void Object_SetModeById();
+void Actor_SetSingleChildFlags();
+struct Actor *Actor_GetById();
+void Actor_SetModeById();
 void Func_02003f84();
 
 void Func_02003620(void) {
   s32 v5;
-  struct ObjectRuntime *object0;
+  struct Actor *object0;
 
   ((void (*)())Func_02003e64)();
   Call1((void (*)())Func_02003fa4, 0);
   Call1((void (*)())Func_02003ffc, 0x226);
   v5 = &gAdventure;
   v5 = (v5 + 0x214);
-  object0 = Object_GetById(*(s32 *)((u8 *)v5 + 0));
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, (s32)object0, 0);
-  Call2((void (*)())Object_SetModeById, *(s32 *)((u8 *)v5 + 0), 18);
+  object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
+  Call2((void (*)())Actor_SetSingleChildFlags, (s32)object0, 0);
+  Call2((void (*)())Actor_SetModeById, *(s32 *)((u8 *)v5 + 0), 18);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
   ((void (*)())Event_FinishScreenTransition)();

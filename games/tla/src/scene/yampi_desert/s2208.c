@@ -1,14 +1,14 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern s32 gData_02004808;
 
 s32 GameFlag_Test(s32 flag);
-void Func_02003fe0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-s32 Func_020021f0(struct ObjectRuntime *object);
+void Func_02003fe0(struct Actor *object, s32 x, s32 y, s32 z);
+s32 Func_020021f0(struct Actor *object);
 
-void Func_02002208(struct ObjectRuntime *object) {
+void Func_02002208(struct Actor *object) {
   u8 *state = (u8 *)object + 98;
 
   switch (*state) {

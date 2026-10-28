@@ -52,10 +52,10 @@ void Func_02001710(void) {
   Func_02000f00();
   GabombaStatueChamber_Wait(40);
   GabombaStatueChamber_SePlay(185);
-  Object_GetById(8)->motionFlags = 0;
+  Actor_GetById(8)->motionFlags = 0;
   Func_02001064();
   GabombaStatueChamber_ObjSpeed(8, 0x6666, 0x3333);
-  ObjectMotion_SetPositionAndCommit(8, 424, 152);
+  Actor_SetPositionAndCommit(8, 424, 152);
   GabombaStatueChamber_ObjTurn(12, 0x5000);
   Func_02001e48((s32)MsgIMightBe);
   Func_02001e60(0x400c, 0);
@@ -69,7 +69,7 @@ void Func_02001710(void) {
   FieldMessage_ShowAtActor(0x4005, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     GabombaStatueChamber_ObjTurn(7, 0);
-    Object_SetModeById(7, 3);
+    Actor_SetModeById(7, 3);
     Func_02001e60(0x4007, 0);
     EVENT_WORK->field1c4++;
   } else {
@@ -83,7 +83,7 @@ void Func_02001710(void) {
   GabombaStatueChamber_Wait(20);
   Func_02001e60(0x4006, 0);
   GabombaStatueChamber_ObjTurn(11, 0);
-  Object_SetModeById(11, 4);
+  Actor_SetModeById(11, 4);
   Func_02001e60(0x400b, 0);
   GabombaStatueChamber_ObjTurn(11, 0xd000);
   Func_02001e60(0x400b, 0);
@@ -92,18 +92,18 @@ void Func_02001710(void) {
   Func_02001e60(0x400b, 0);
   GabombaStatueChamber_ObjArm(7, 0x8000, 0);
   GabombaStatueChamber_ObjArm(7, 0x8000, 20);
-  Object_SetModeById(gAdventure.currentOwner, 3);
-  Object_SetModeById(7, 3);
-  Object_SetModeById(5, 3);
+  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(7, 3);
+  Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
   GabombaStatueChamber_ObjSpeed(11, 0xcccc, 0x6666);
   GabombaStatueChamber_ObjSpeed(7, 0xcccc, 0x6666);
   GabombaStatueChamber_ObjSpeed(5, 0x10000, 0x8000);
   GabombaStatueChamber_ObjSpeed(6, 0x13333, 0x9999);
-  ObjectMotion_EnableActionAndSetCallback(11, gData_02001f4c);
-  ObjectMotion_EnableActionAndSetCallback(7, gData_02001f4c);
-  ObjectMotion_EnableActionAndSetCallback(5, gData_02001f4c);
-  Object_SetActionCallbackAndRefreshById(6, gData_02001f4c);
+  Actor_SetMovementTypeById(11, gData_02001f4c);
+  Actor_SetMovementTypeById(7, gData_02001f4c);
+  Actor_SetMovementTypeById(5, gData_02001f4c);
+  Actor_SetMovementTypeAndWaitById(6, gData_02001f4c);
   GabombaStatueChamber_FlagSet(0x8fd);
   Func_02001da8();
 }

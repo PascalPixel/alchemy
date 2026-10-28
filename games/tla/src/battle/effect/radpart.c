@@ -21,22 +21,22 @@ struct EffectVector {
 extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void WaitFrames(s32 frames);
 void BattleEffect_AdvanceSpinAngle();
-void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
+void Actor_Jump(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
-void Object_Destroy(void *object);
+void Actor_Destroy(void *object);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z);
 void Func_080d7b04(struct FieldParticle *slot);
 void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
 u32 Random16(void);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void Object_SetMode(void *object, s32 mode);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetMode(void *object, s32 mode);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -50,7 +50,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   s32 scale;
   s32 count;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (object == NULL)
     return;
   BattleEffect_InitializeSlots();
@@ -69,14 +69,14 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   object->update = BattleEffect_AdvanceSpinAngle;
   WaitFrames(40);
   Sound_PlayFar(153);
-  ObjectMotion_Launch(id, 12, 22);
+  Actor_Jump(id, 12, 22);
 
   // 24 sparks from the object's place on screen, one a frame.
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
   Camera_WorldToScreen(&position);
-  Object_Destroy(object);
+  Actor_Destroy(object);
   Sound_PlayFar(164);
   slot = scene->slots;
   count = 23;
@@ -95,9 +95,9 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
   WaitFrames(40);
   Sound_PlayFar(164);
   WaitFrames(100);
@@ -160,5 +160,5 @@ void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Object_Destroy(obj);
+    Actor_Destroy(obj);
 }

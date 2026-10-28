@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -17,7 +17,7 @@
 
 extern u8 Func_02000c40[];
 s32 Math_Cosine();
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02000d40();
 s32 Func_020005a0();
 
@@ -29,11 +29,11 @@ s32 Func_02000dc0(s32 a0, s32 a1) {
   v0 = Math_Cosine(FIELD_AT(r6_1, u16, 6));
   r5_1 = v0;
   r10_1 = 98 + r6_1;
-  v1 = Object_GetById((FIELD_AT(r6_1, s16, 102)) + (FIELD_AT(r6_1, u8, 98)));
+  v1 = Actor_GetById((FIELD_AT(r6_1, s16, 102)) + (FIELD_AT(r6_1, u8, 98)));
   r4 = 133;
   r4 = r4 << 2;
   r8_1 = v1;
-  v2 = Object_GetById(FIELD_AT((s32)(s32)&gAdventure + r4, s32, 0));
+  v2 = Actor_GetById(FIELD_AT((s32)(s32)&gAdventure + r4, s32, 0));
   r5_1 = r5_1 << 1;
   r7_1 = v2;
   FIELD_AT(r6_1, s32, 8) = (FIELD_AT(r6_1, s32, 8)) + r5_1;

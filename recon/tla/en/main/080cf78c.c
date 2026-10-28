@@ -19,7 +19,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "display_transition.h"
 #include "map.h"
 
@@ -54,7 +54,7 @@ void Func_080cf78c(void) {
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u16 *scanlineData;
   u32 i;
   s32 k;

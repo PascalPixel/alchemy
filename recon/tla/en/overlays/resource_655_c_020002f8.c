@@ -9,33 +9,33 @@
 // on that edge.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 #include "flag_call.h"
 
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 Func_02003d20(void);
-struct ObjectRuntime *Func_02003dd8(s32 *position, s32 mode);
+struct Actor *Func_02003dd8(s32 *position, s32 mode);
 void Func_02003c28(void);
 void Func_02003c30(void);
 void Func_02003df8(s32 cue);
 void Func_02003c00(s32 a, s32 b, s32 c);
-void Func_02003ba0(struct ObjectRuntime *object, s32 mode);
+void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 
 void Func_020002f8(u16 *list) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *target;
+  struct Actor *leader;
+  struct Actor *target;
   s32 position[3];
 
   if (Func_02003d20() != 0)
     return;
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -47,7 +47,7 @@ next:
     s32 id = list[0];
     s32 flag;
 
-    if (Object_GetById(id) != target) {
+    if (Actor_GetById(id) != target) {
       list += 2;
       goto test;
     }
@@ -55,14 +55,14 @@ next:
     Func_02003c28();
     if (GameFlag_Test(flag) == 0) {
       Func_02003df8(125);
-      Object_SetPartAttribute(Object_GetById(id), 7);
+      Actor_SetPartAttribute(Actor_GetById(id), 7);
       WaitFrames(2);
       Func_02003ba0(target, 0);
-      Object_SetPartAttribute(Object_GetById(id), 0);
+      Actor_SetPartAttribute(Actor_GetById(id), 0);
       WaitFrames(2);
-      Object_SetPartAttribute(Object_GetById(id), 7);
+      Actor_SetPartAttribute(Actor_GetById(id), 7);
       WaitFrames(4);
-      Object_SetPartAttribute(Object_GetById(id), 0);
+      Actor_SetPartAttribute(Actor_GetById(id), 0);
       Func_02000974(0);
       GameFlag_SetBit(flag);
     } else {
@@ -85,7 +85,7 @@ next:
         WaitFrames(8);
         leader->motionFlags = 3;
         WaitFrames(5);
-        Object_SetPositionAndResetMotion(target, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(target, 0, 0, 0);
         WaitFrames(2);
         Func_02003df8(188);
         Func_02000aa8();

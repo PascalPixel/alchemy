@@ -41,7 +41,7 @@
 #include "graphics.h"
 #include "io_reg.h"
 #include "mem.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "system.h"
 
@@ -54,7 +54,7 @@ void BattleEffect_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
+                   s32 timerFrames); // Actor_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
 
 // A row of Data_08198348, one for each variant.

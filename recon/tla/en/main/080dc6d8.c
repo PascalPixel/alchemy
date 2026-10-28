@@ -16,12 +16,12 @@
 // set), otherwise the current effect object stops; the event work's byte
 // 0xcb7 is set either way.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct FinishWork {
   u8 unk000[16];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u8 unk014[8];
   s16 quantity;
   u8 unk01e[4];
@@ -36,7 +36,7 @@ extern char MsgBlank2;
 
 s32 GameFlag_Test(s32 flag);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
+void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
 void MessageArgument_PushFar(s32, s32);
 void FieldMessage_ShowFar(s32 message, s32 flags);
@@ -45,10 +45,10 @@ void EffectRuntime_StopCurrentObject(void);
 void Func_080dc6d8(void) {
   struct FinishWork *work = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = work->object;
+  struct Actor *object = work->object;
   s32 quantity = work->quantity;
 
-  Object_SetMode(object, 20);
+  Actor_SetMode(object, 20);
   /* FAKEMATCH: the one-pass block ends the stores before the sound test. */
   do {
     object->targetX = object->x;
@@ -64,16 +64,16 @@ void Func_080dc6d8(void) {
   }
   if (work->showQuantity != 0) {
     work->messageShown = 1;
-    ObjectGroup_SetActionForOthers(object, 1, 0);
+    Actor_SetOthersPaused(object, 1, 0);
     MessageArgument_PushFar(quantity, 4);
     FieldMessage_ShowFar((s32)&MsgBlank2, work->messageRow);
-    ObjectGroup_SetActionForOthers(object, 0, 16);
+    Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = 0;
   }
   if (GameFlag_Test(320)) {
     if (work->sound != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
-    Object_SetMode(object, 21);
+    Actor_SetMode(object, 21);
   } else {
     EffectRuntime_StopCurrentObject();
   }

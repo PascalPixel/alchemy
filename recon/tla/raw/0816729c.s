@@ -3007,7 +3007,7 @@ BattleEffect_RunJudgment:
 	adds r3, #30
 	strh r3, [r2, #6]
 .L_081689c8:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r6, [sp, #88]
 	lsls r0, r0, #7

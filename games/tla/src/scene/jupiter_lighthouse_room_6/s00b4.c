@@ -19,7 +19,7 @@ void Func_02000108(void) {
 }
 
 void Func_02000154(void) {
-  struct JupiterLighthouseRoom6Object *object = Object_GetById(12);
+  struct JupiterLighthouseRoom6Object *object = Actor_GetById(12);
 
   if (!JupiterLighthouseRoom6_FlagCheck(0xa19) && object->x >> 20 == 4 &&
       object->z >> 20 == 37) {

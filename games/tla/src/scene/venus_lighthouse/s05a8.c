@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Object_SetPartAttribute(void *object, s32 value);
+void Actor_SetPartAttribute(void *object, s32 value);
 void Import_SoundPlay(s32 cue);
 s32 Random16Far(void);
 

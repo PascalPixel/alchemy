@@ -1,21 +1,21 @@
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern const s32 gData_080f0e78[];
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 
 /// The object spins as it rises for 31 frames, shrinks, and bursts into 8
 /// particles (object 673).
 // As ☀️'s UpdateRisingParticleBurst.
 void UpdateRisingParticleBurst(void *object) {
-  struct ObjectRuntime *src = object;
-  struct ObjectRuntime *child;
+  struct Actor *src = object;
+  struct Actor *child;
   s32 i;
   s32 dist;
   u32 spread;
@@ -36,7 +36,7 @@ void UpdateRisingParticleBurst(void *object) {
     WaitFrames(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Object_Spawn(673, src->x, src->y, src->z);
+    child = Actor_Spawn(673, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps
@@ -44,7 +44,7 @@ void UpdateRisingParticleBurst(void *object) {
        * UpdateRisingParticleBurst. */
       s32 unit = 0x10000;
 
-      ObjectDispatch_InitializeFar((struct DispatchObject *)child,
+      Actor_StartScriptFar((struct DispatchObject *)child,
                                    gData_080f0e78);
       speed = Random16();
       child->acceleration = unit;
@@ -59,5 +59,5 @@ void UpdateRisingParticleBurst(void *object) {
     }
   }
   Sound_PlayFar(131);
-  Object_Destroy(src);
+  Actor_Destroy(src);
 }

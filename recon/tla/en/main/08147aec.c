@@ -39,7 +39,7 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 // The rising grains live in the map buffer.
@@ -52,12 +52,12 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void);                   // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);                   // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // ObjectGroup_UpdateMembers
+                   s32 frames);                    // Actor_UpdateMembers
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_SelectLivingTargets(
@@ -138,7 +138,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     // When the first target's animation kind is 2 the formation stands 8
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
-    if (((struct ObjectRuntime *)GetBattleObjectSlotFar(effect->actors[0])
+    if (((struct Actor *)GetBattleObjectSlotFar(effect->actors[0])
              ->object)
             ->animationKind == 2)
       alternate = 1;
@@ -453,7 +453,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Func_08158ce0(8, 8);
-      ObjectGroup_CountDownMemberTimers();
+      BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       WaitFrames(1);
     }

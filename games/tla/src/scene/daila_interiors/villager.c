@@ -8,15 +8,15 @@ struct DailaActor {
   u16 facing;
 };
 
-struct DailaActor *Object_GetById(s32 id);
-void Object_SetModeById(s32 actor, s32 mode);
+struct DailaActor *Actor_GetById(s32 id);
+void Actor_SetModeById(s32 actor, s32 mode);
 void Func_02000ddc(s32 slot, s32 actor);
 void Func_02000dec(s32 slot, s32 actor);
 s32 Func_02000dd4(void);
 void Func_02000de4(s32 actor);
 
 void Func_02000270(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -33,7 +33,7 @@ void Func_02000270(s32 actor) {
 }
 
 void Func_020002d0(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -50,7 +50,7 @@ void Func_020002d0(s32 actor) {
 }
 
 void Func_02000330(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -68,7 +68,7 @@ void Func_02000330(s32 actor) {
 
 void Func_02000390(s32 actor) {
   s32 msg;
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -113,7 +113,7 @@ void Func_02000390(s32 actor) {
 }
 
 void Func_02000498(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -130,7 +130,7 @@ void Func_02000498(s32 actor) {
 }
 
 void Func_020004f4(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -147,7 +147,7 @@ void Func_020004f4(s32 actor) {
 }
 
 void Func_02000554(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -164,7 +164,7 @@ void Func_02000554(s32 actor) {
 }
 
 void Func_020005b4(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
   __asm__("");
@@ -224,7 +224,7 @@ void Func_020006c4(void) {
   Import_EventSetMessageId((s32)MsgDailaInteriorsWatchingPractice);
   Import_EventShowMessageAndWait(26, 0);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(26, 3);
+  Actor_SetModeById(26, 3);
   FieldEvent_WaitFrames(30);
   Import_EventShowMessageAndWait(26, 0);
   Import_EventEnd();

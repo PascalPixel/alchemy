@@ -41,12 +41,12 @@ void Func_02003030(void) {
       object->priorityFlags &= ~1;
       mask = 13;
       /* FAKEMATCH: ⚓️ builds the priority mask before loading the sprite, as in
-       * ObjectGroup_Spawn; the bit-field store loads the sprite first (differ
+       * Actor_SpawnGroup; the bit-field store loads the sprite first (differ
        * 4). */
       asm volatile("" : "+l"(mask) : : "memory");
       part = (u8 *)object->sprite;
       part[9] = (part[9] & -mask) | 8;
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->scaleX = 0x8000;
       object->scaleY = 0x8000;
       object->field68 = 60;

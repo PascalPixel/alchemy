@@ -49,7 +49,7 @@ struct CastAnimation {
 extern char MsgCastLacksPp;
 extern char MsgPsynergyBlocked;
 
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 void PartyStatus_DrawFar(s32 flags);
 void Sound_PlayFar(s32 cue);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
@@ -105,7 +105,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       if ((target <= 7) != (unit <= 7))
         BattlePres_SetActorRecordMode(unit, 1);
     } else {
-      Object_SetMode(object, ((u8 *)Ram_HeapSlots->battleWork)[0x869]);
+      Actor_SetMode(object, ((u8 *)Ram_HeapSlots->battleWork)[0x869]);
     }
   }
   if (!(mode & 2)) {

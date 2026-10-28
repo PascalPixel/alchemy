@@ -1,6 +1,6 @@
 #include "jupiter_lighthouse_aerie.h"
 
-void Func_02001010(struct ObjectRuntime *object) {
+void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;
   u8 *step = &BYTE_AT(object, 99);
   s32 phase = *step & 3;

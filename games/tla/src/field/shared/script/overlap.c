@@ -9,12 +9,12 @@
 #include "system.h"
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values) {
+s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values) {
   s32 index;
   u8 *flags;
-  struct ObjectRuntime *entry = Ram_HeapSlots->scriptObjects;
+  struct Actor *entry = Ram_HeapSlots->scriptObjects;
 
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
@@ -27,11 +27,11 @@ s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values) {
   return 0;
 }
 
-struct ObjectRuntime *
-ScriptObject_FindOverlappingEntry(struct ObjectRuntime *object, s32 *values) {
+struct Actor *
+ScriptObject_FindOverlappingEntry(struct Actor *object, s32 *values) {
   s32 index;
   u8 *flags;
-  struct ObjectRuntime *entry = Ram_HeapSlots->scriptObjects;
+  struct Actor *entry = Ram_HeapSlots->scriptObjects;
 
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {

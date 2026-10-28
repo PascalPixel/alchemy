@@ -12,7 +12,7 @@ Func_02000080:
 	push {r5, r6, r7}
 	mov r7, r8
 	push {r7}
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #5
 	mov r9, r0
 	mov r11, r1
@@ -69,7 +69,7 @@ Func_02000080:
 	bl Func_020041dc
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	mov r1, r8
 	movs r2, #128
 	lsls r2, r2, #10
@@ -219,7 +219,7 @@ Func_020002f4:
 	lsls r3, r3, #2
 	add r3, r8
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	movs r0, #208
 	mov r2, r10
@@ -279,12 +279,12 @@ Func_020002f4:
 	bne .L_02008452
 	movs r0, #11
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #12
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #12
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_02008558
 	str r3, [r0, #24]
 .L_02008452:
@@ -360,7 +360,7 @@ Func_020002f4:
 	bl Func_02000db8
 .L_020084f8:
 	movs r0, #13
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	movs r1, #200
 	lsls r1, r1, #17
@@ -509,7 +509,7 @@ Func_02000bd8:
 	bl Func_0200444c
 	movs r1, #5
 	movs r0, #13
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	ldr r0, .L_02008c84
 	bl Func_0200437c
 	movs r0, #13
@@ -517,7 +517,7 @@ Func_02000bd8:
 	bl Func_02004394
 	movs r0, #13
 	movs r1, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #58
@@ -532,7 +532,7 @@ Func_02000bd8:
 	lsls r2, r2, #2
 	adds r5, r5, r2
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #128
 	adds r6, r0, #0
 	lsls r1, r1, #7
@@ -540,7 +540,7 @@ Func_02000bd8:
 	bl Func_020043a4
 	ldr r0, [r5]
 	movs r1, #28
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	ldr r5, .L_02008c8c
 	ldr r0, [r5]
 	adds r3, r0, #0
@@ -605,7 +605,7 @@ Func_02000bd8:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	movs r1, #1
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #58
@@ -624,7 +624,7 @@ Func_02000bd8:
 .L_02008ce4:
 	.4byte Data_02004cec
 .L_02008ce8:
-	bl Object_SetPositionAndResetMotion
+	bl Actor_SetPositionAndResetMotion
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [r5]
@@ -794,17 +794,17 @@ Func_02000e80:
 	ldr r0, [r7, #0]
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #170
 	ldr r0, [r7, #0]
 	lsls r1, r1, #2
 	movs r2, #186
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	lsls r1, r1, #8
 	movs r2, #40
 	ldr r0, [r7, #0]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #0
 	bl Func_0200446c
 	movs r0, #141
@@ -1013,9 +1013,9 @@ Func_02000e80:
 	ldr r1, .L_ja_02009204
 	adds r2, #204
 	ldr r0, [r7, #0]
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r0, [r7, #0]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	movs r6, #254
@@ -1027,11 +1027,11 @@ Func_02000e80:
 	adds r1, #158
 	movs r2, #170
 	ldr r0, [r7, #0]
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	ldr r0, [r7, #0]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0, #0]
 	movs r5, #1
@@ -1044,7 +1044,7 @@ Func_02000e80:
 	bl Func_020041ec
 .L_ja_02009192:
 	ldr r0, [r7, #0]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	adds r3, r6, #0
@@ -1054,11 +1054,11 @@ Func_02000e80:
 	lsls r1, r1, #2
 	movs r2, #186
 	ldr r0, [r7, #0]
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	ldr r0, [r7, #0]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0, #0]
 	orrs r3, r5
@@ -1201,17 +1201,17 @@ Func_02000e80:
 	ldr r0, [r6]
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #170
 	ldr r0, [r6]
 	lsls r1, r1, #2
 	movs r2, #186
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	ldr r0, [r6]
 	lsls r1, r1, #8
 	movs r2, #80
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #2
 	ldr r0, [r6]
 	adds r1, #255
@@ -1265,9 +1265,9 @@ Func_02000e80:
 	ldr r1, .L_02009058
 	adds r2, #204
 	ldr r0, [r6]
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r0, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #254
@@ -1278,11 +1278,11 @@ Func_02000e80:
 	movs r2, #170
 	adds r1, #158
 	ldr r0, [r6]
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	ldr r0, [r6]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #1
@@ -1404,17 +1404,17 @@ Func_02000e80:
 	ldr r0, [r7]
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #170
 	ldr r0, [r7]
 	lsls r1, r1, #2
 	movs r2, #186
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	lsls r1, r1, #8
 	movs r2, #40
 	ldr r0, [r7]
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #0
 	bl Func_0200446c
 	movs r0, #141
@@ -1623,9 +1623,9 @@ Func_02000e80:
 	ldr r1, .L_020093dc
 	adds r2, #204
 	ldr r0, [r7]
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r0, [r7]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #254
@@ -1636,11 +1636,11 @@ Func_02000e80:
 	movs r2, #170
 	adds r1, #158
 	ldr r0, [r7]
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r0, #1
 	bl FieldEvent_WaitFrames
 	ldr r0, [r7]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #1
@@ -1780,7 +1780,7 @@ Func_02001424:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #8
 	str r3, [r5, #24]
@@ -1822,7 +1822,7 @@ Func_020015ec:
 	ldr r0, [r3]
 	sub sp, #4
 	mov r8, r2
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -1937,7 +1937,7 @@ Func_020015ec:
 	mov r5, r8
 	adds r5, #84
 .L_020096ea:
-	bl Object_GetById
+	bl Actor_GetById
 	adds r4, r0, #0
 	ldr r2, [r4, #12]
 	ldr r3, [r4, #20]
@@ -2009,7 +2009,7 @@ Func_020017c8:
 	ldr r0, [r3]
 	sub sp, #4
 	mov r8, r2
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2123,7 +2123,7 @@ Func_020017c8:
 	mov r5, r8
 	adds r5, #84
 .L_020098c4:
-	bl Object_GetById
+	bl Actor_GetById
 	adds r4, r0, #0
 	ldr r2, [r4, #12]
 	ldr r3, [r4, #20]
@@ -2421,13 +2421,13 @@ Func_02001df0:
 	mov r0, r10
 	str r1, [sp, #0]
 	ands r7, r3
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r6, #2
 	cmp r5, #0
 	beq .L_02009e7e
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	adds r3, r5, #0
 	movs r2, #128
 	adds r3, #98
@@ -2444,7 +2444,7 @@ Func_02001df0:
 	strh r1, [r2]
 	mov r0, r10
 	strh r7, [r3, #4]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r1, r9
 	str r0, [r1, #8]
 	ldr r2, [sp, #0]
@@ -2555,7 +2555,7 @@ Func_02001fcc:
 	ldr r6, [r3, #108]
 	bl Func_02004464
 	mov r8, r0
-	bl Object_GetById
+	bl Actor_GetById
 	bl Party_CountActiveOwners
 	movs r5, #0
 	adds r7, r0, #0
@@ -2690,7 +2690,7 @@ Func_02002148:
 	lsls r1, r1, #2
 	adds r3, r5, r1
 	ldr r0, [r3, #0]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, .L_ja_0200a100
 	adds r5, r0, #0
 	mov sl, r2
@@ -2904,7 +2904,7 @@ Func_02002148:
 	lsls r1, r1, #2
 	adds r3, r5, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, .L_0200a340
 	adds r6, r0, #0
 	str r2, [sp, #0]
@@ -3202,7 +3202,7 @@ Func_0200236c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	movs r0, #131
 	lsls r0, r0, #1
@@ -3373,7 +3373,7 @@ Func_020024d4:
 	bl Func_020041dc
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	mov r1, r10
 	movs r2, #128
 	lsls r2, r2, #10
@@ -3779,7 +3779,7 @@ Func_0200274c:
 	adds r3, r3, r0
 	ldr r0, [r3]
 	ldr r6, .L_0200aa48
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r1, [r5, #8]
 	ldr r3, [r0, #8]
 	subs r2, r1, r3
@@ -3895,7 +3895,7 @@ Func_02002ad0:
 	adds r3, #98
 	ldrb r0, [r3]
 	sub sp, #12
-	bl Object_GetById
+	bl Actor_GetById
 	mov r3, r11
 	adds r7, r0, #0
 	adds r3, #102
@@ -3932,7 +3932,7 @@ Func_02002ad0:
 	ldr r1, [r5]
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
-	bl Object_SetPositionAndResetMotion
+	bl Actor_SetPositionAndResetMotion
 	ldr r3, .L_0200ab64
 	mov r2, r10
 	str r3, [r7, #108]
@@ -4166,7 +4166,7 @@ Func_02002dc4:
 	bl Func_020041cc
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_0200420c
 	ldr r3, .L_0200b06c
@@ -4512,7 +4512,7 @@ Func_02003070:
 	bl Func_020041cc
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_0200420c
 	ldr r3, .L_ja_0200b11c
@@ -4884,7 +4884,7 @@ Func_02003070:
 	bl Func_020041cc
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	movs r5, #0
 	b .L_0200b226
 .L_0200b1fe:
@@ -5205,7 +5205,7 @@ Func_02003390:
 	bl Func_020041cc
 	adds r0, r5, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	ldr r3, .L_0200b494
 	str r3, [r5, #108]
 	b .L_0200b542
@@ -5572,7 +5572,7 @@ Func_02003930:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	movs r2, #0
 	asrs r4, r3, #20
@@ -5671,7 +5671,7 @@ Func_02003c6c:
 	ldr r0, [r1]
 	sub sp, #8
 	mov r10, r1
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r3, [r6, #8]
 	movs r2, #64
@@ -5716,9 +5716,9 @@ Func_02003c6c:
 	strb r2, [r3]
 	mov r3, r10
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r2, #226
 	movs r3, #128
 	lsls r2, r2, #4
@@ -5748,7 +5748,7 @@ Func_02003c6c:
 	strh r3, [r1, #14]
 	ldr r0, [r2]
 	movs r1, #28
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #16
 	bl FieldEvent_WaitFrames
 .L_0200bd34:
@@ -5779,7 +5779,7 @@ Func_02003c6c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	adds r0, #84
 	strb r3, [r0]
@@ -5824,7 +5824,7 @@ Func_02003e04:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	sub sp, #68
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	bl Func_020042dc
 	movs r0, #0
@@ -5946,7 +5946,7 @@ Func_02003e04:
 	bl Func_020043bc
 	ldr r0, [r5]
 	movs r1, #49
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #160
 	movs r1, #160
 	movs r2, #128
@@ -5977,7 +5977,7 @@ Func_02003e04:
 	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #1
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	bl Func_020042e4
 	add sp, #68
 	pop {r3, r5}
@@ -6007,7 +6007,7 @@ Func_02003f9c:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	ldr r6, .L_0200c048
 	asrs r3, r3, #20

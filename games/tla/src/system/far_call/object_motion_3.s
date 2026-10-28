@@ -31,10 +31,10 @@ Func_080c88e8:
 	.thumb_func
 Func_080c88f0:
 	overlay_veneer Func_080d4aa8
-	.global ObjectMotion_ResetTargetsAndVelocityFar
+	.global Actor_ResetTargetsAndVelocityFar
 	.thumb_func
-ObjectMotion_ResetTargetsAndVelocityFar:
-	overlay_veneer ObjectMotion_ResetTargetsAndVelocity
+Actor_ResetTargetsAndVelocityFar:
+	overlay_veneer Actor_ResetTargetsAndVelocity
 	.global ObjectEffect_StartContextEffect26Far
 	.thumb_func
 ObjectEffect_StartContextEffect26Far:

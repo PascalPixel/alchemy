@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
-void Func_02003b38(struct ObjectRuntime *object);
-void Func_02003b70(struct ObjectRuntime *object);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Func_02003b38(struct Actor *object);
+void Func_02003b70(struct Actor *object);
 void Func_02004e30(s32 value);
 
-void Func_02003bb8(struct ObjectRuntime *object, s32 mode) {
+void Func_02003bb8(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Animation_ApplyChildValues(object, 0);

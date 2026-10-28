@@ -10,29 +10,29 @@
 // 0x80000 in r5 and the routine in r10, and saves r9 too. Measured: Value2
 // for the products (67).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
-void Func_02005f8c(struct ObjectRuntime *object, s32 cue);
+void Func_02005f8c(struct Actor *object, s32 cue);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_020010b4(void);
 
-void Func_02001290(struct ObjectRuntime *object) {
+void Func_02001290(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *shot;
+  struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
   s32 i;
@@ -41,7 +41,7 @@ void Func_02001290(struct ObjectRuntime *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   for (i = 0; i != 3;)
-    Object_GetById(13 + i++);
+    Actor_GetById(13 + i++);
   if (object->action == 240) {
     shot = 0;
     if (!GameFlag_Test(0x250))
@@ -55,7 +55,7 @@ void Func_02001290(struct ObjectRuntime *object) {
       position.z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
     }
     for (i = 0; i != 3; i++) {
-      shot = Object_GetById(13 + i);
+      shot = Actor_GetById(13 + i);
       if (shot->update == 0)
         break;
     }
@@ -63,7 +63,7 @@ void Func_02001290(struct ObjectRuntime *object) {
     shot->y = object->y;
     shot->z = position.z;
     Func_02005d5c(shot, 2);
-    ObjectDispatch_SetSingleChildFlags(shot, 0);
+    Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->animation)->priority = 1;
     shot->priorityFlags |= 32;
     shot->motionFlags = 0;

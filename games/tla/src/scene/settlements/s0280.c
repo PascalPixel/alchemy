@@ -6,12 +6,12 @@ void Func_02000290(void) { Func_02002158(11, 2, 14); }
 
 void Func_020002a0(void) { Func_02002158(23, 3, 19); }
 
-s32 Func_020002b0(struct ObjectRuntime *object) {
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+s32 Func_020002b0(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
   return 0;
 }
 
-s32 Func_020002bc(struct ObjectRuntime *object) {
+s32 Func_020002bc(struct Actor *object) {
   u8 *phase = (u8 *)object + 0x62;
   s32 step = *phase & 63;
   s16 *animation = object->animation;

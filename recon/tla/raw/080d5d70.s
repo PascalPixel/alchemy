@@ -47,7 +47,7 @@ Func_080d5d70:
 	str r3, [r5, #56]
 	str r3, [r5, #64]
 	adds r1, r6, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #18
 	bl WaitFrames
 	pop {r3}

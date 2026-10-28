@@ -2,7 +2,7 @@
 // the people by the story flags for entrances 5 and 7.
 #include "types.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -17,9 +17,9 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_0200231c(s32 entrance);
 void Func_02002214(s32 actor, s32 x, s32 z);
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02002274(s32 actor, s32 animation);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 s32 Func_0200200c(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
@@ -44,18 +44,18 @@ s32 Func_0200200c(void) {
     Call3((void (*)())Func_02002214, 19, 0, 0);
   }
   if (gAdventure.entrance == 5 && !GameFlag_Test(0x927)) {
-    Call2((void (*)())Object_SetModeById, 17, 5);
+    Call2((void (*)())Actor_SetModeById, 17, 5);
     Call2((void (*)())Func_02002274, 17, 0x101);
   }
   if (gAdventure.entrance == 7 && !GameFlag_Test(0x927)) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
 
-    Call2((void (*)())Object_SetModeById, 9, 5);
-    Call2((void (*)())Object_SetModeById, 10, 5);
-    Call2((void (*)())Object_SetModeById, 11, 5);
-    Call2((void (*)())Object_SetModeById, 12, 5);
-    object = Object_GetById(11);
-    object->scaleX = -Object_GetById(11)->scaleX;
+    Call2((void (*)())Actor_SetModeById, 9, 5);
+    Call2((void (*)())Actor_SetModeById, 10, 5);
+    Call2((void (*)())Actor_SetModeById, 11, 5);
+    Call2((void (*)())Actor_SetModeById, 12, 5);
+    object = Actor_GetById(11);
+    object->scaleX = -Actor_GetById(11)->scaleX;
   }
   return 0;
 }

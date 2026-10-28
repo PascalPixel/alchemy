@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02002e04(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
     u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
@@ -14,12 +14,12 @@ void Func_02002e04(s32 id) {
 }
 
 void Func_02002e34(s32 entrance) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 i;
 
   Func_02003d7c();
   Func_02003eac(0);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   leader->motionFlags = 0;
   /* FAKEMATCH: the native clears the motion flags before it addresses the
    * priority flags (differ 2 without the barrier). */
@@ -40,7 +40,7 @@ void Func_02002e34(s32 entrance) {
     __asm__ volatile("" : "+r"(angle));
     leader->angle = angle + 0x1000;
     if ((i & 7) == 0)
-      Func_02002bd4(Object_GetById(15));
+      Func_02002bd4(Actor_GetById(15));
     WaitFrames(1);
   }
   Func_02003d84();
@@ -52,7 +52,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.
-s32 Func_02002ed4(struct ObjectRuntime *object) {
+s32 Func_02002ed4(struct Actor *object) {
   s32 params[10];
 
   if (gFrameCount & 1) {

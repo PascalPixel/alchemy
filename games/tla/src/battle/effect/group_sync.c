@@ -2,11 +2,11 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "fx_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct FxGroup {
   u8 unk00[32];
-  struct ObjectRuntime *objects[8];
+  struct Actor *objects[8];
   u16 values[8];
   s32 count;
 };
@@ -25,8 +25,8 @@ void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime **objects;
-  struct ObjectRuntime *obj;
+  struct Actor **objects;
+  struct Actor *obj;
   s32 i;
 
   group->count = 0;

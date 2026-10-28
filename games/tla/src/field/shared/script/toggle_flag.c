@@ -18,11 +18,11 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
 }
 
 struct DispatchObject;
-void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
+void Actor_SelectAnimation(struct DispatchObject *object,
                                             s32 argument);
 
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
-  ObjectDispatch_SelectAnimation(
+  Actor_SelectAnimation(
       (struct DispatchObject *)interpreter,
       interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;

@@ -13,12 +13,12 @@ void Func_02000e2c(void) {
 
   done = GameFlag_Test(0x202);
   if (!done && GameFlag_Test(0x204)) {
-    object = Object_GetById(8);
+    object = Actor_GetById(8);
     column = object->x >> 20;
     if (column == 35) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Object_GetById(gAdventure.currentOwner);
+        leader = Actor_GetById(gAdventure.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
         FieldEvent_WaitFrames(20);
@@ -26,20 +26,20 @@ void Func_02000e2c(void) {
         LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, column, row);
         object->motionFlags = done;
-        ObjectMotion_SetActionVariant(8, 3);
+        Actor_SetSpritePriority(8, 3);
         if (object->z > leader->z)
-          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+          Actor_SetSpritePriority(gAdventure.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           WaitFrames(1);
         }
-        Object_SetModeById(8, 3);
+        Actor_SetModeById(8, 3);
         LemurianShip_ObjPlace(10, 0x2380000, 0x980000);
         FieldEvent_WaitFrames(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
-          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-          Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+          Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+          Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
         }
         Func_02002c70();
       }
@@ -47,12 +47,12 @@ void Func_02000e2c(void) {
   }
   done = GameFlag_Test(0x203);
   if (!done && GameFlag_Test(0x205)) {
-    object = Object_GetById(9);
+    object = Actor_GetById(9);
     column = object->x >> 20;
     if (column == 29) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Object_GetById(gAdventure.currentOwner);
+        leader = Actor_GetById(gAdventure.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
         FieldEvent_WaitFrames(20);
@@ -60,20 +60,20 @@ void Func_02000e2c(void) {
         LemurianShip_MapCopy(29, 68, 29, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, column, row);
         object->motionFlags = done;
-        ObjectMotion_SetActionVariant(9, 3);
+        Actor_SetSpritePriority(9, 3);
         if (object->z > leader->z)
-          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+          Actor_SetSpritePriority(gAdventure.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           WaitFrames(1);
         }
-        Object_SetModeById(9, 3);
+        Actor_SetModeById(9, 3);
         LemurianShip_ObjPlace(11, 0x1d80000, 0x980000);
         FieldEvent_WaitFrames(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {
-          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-          Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+          Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+          Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
         }
         Func_02002c70();
       }

@@ -14,7 +14,7 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-union FieldObject *Object_GetById(s32 id);
+union FieldObject *Actor_GetById(s32 id);
 
 /// Effect_AdvanceMotion, then gives the effect's sprite the leader's sprite
 /// priority, so the effect is drawn at the leader's depth.
@@ -61,7 +61,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
    * address; without it, 2 of 59 instructions differ in tla-en. */
   do {
   } while (0);
-  leader = Object_GetById(party->currentOwner);
+  leader = Actor_GetById(party->currentOwner);
   to = (struct EffectSpriteAttributes *)effect->sprite;
   from = (struct EffectSpriteAttributes *)leader->effect.sprite;
   source = from->bits;

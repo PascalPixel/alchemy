@@ -1,6 +1,6 @@
 #include "types.h"
 #include "system.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 #include "macros.h"
@@ -14,16 +14,16 @@ void FieldEffect_RunPly(void);
 void EffectRuntime_StopCurrentObject();
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ResourceEntry *Object_ReplaceResourceEntry(void *sprite,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite,
                                                   struct ResourceEntry *last);
-void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, u32 value);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 s32 Resource_ResetEntry(u32 entry);
-void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
-void Func_080de8d0(struct ObjectRuntime *object);
+void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *particle);
+void Func_080de8d0(struct Actor *object);
 
 /// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
 void FieldEffect_RunPlyOnTarget(void) {
@@ -35,8 +35,8 @@ void FieldEffect_RunPlyOnTarget(void) {
 /// object flashes for 60 frames, emits sparks and flies off.
 void FieldEffect_RunPly(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *target = scene->mainObject;
-  struct ObjectRuntime *object;
+  struct Actor *target = scene->mainObject;
+  struct Actor *object;
   struct ResourceEntry *last;
   u8 marker;
   s32 i;
@@ -45,7 +45,7 @@ void FieldEffect_RunPly(void) {
 
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = Object_Spawn(296, target->x, target->y + 0x200000, target->z);
+    object = Actor_Spawn(296, target->x, target->y + 0x200000, target->z);
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
@@ -53,7 +53,7 @@ void FieldEffect_RunPly(void) {
       object->action = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
-      last = Object_ReplaceResourceEntry(object->animation, last);
+      last = Sprite_ShareVramCacheEntry(object->animation, last);
     }
     WaitFrames(1);
   }
@@ -62,7 +62,7 @@ void FieldEffect_RunPly(void) {
   Sound_PlayFar(130);
   WaitFrames(110);
 
-  target = Object_Spawn(296, 0, 0, 0);
+  target = Actor_Spawn(296, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;
@@ -105,8 +105,8 @@ void FieldEffect_RunPly(void) {
     target->acceleration = 0x6666;
     target->actionFlags = 0;
     Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
-    Object_CommitPosition(target);
-    Object_Destroy(target);
+    Actor_CommitPosition(target);
+    Actor_Destroy(target);
   }
   if (marker != 0x60)
     Resource_ResetEntry(marker);

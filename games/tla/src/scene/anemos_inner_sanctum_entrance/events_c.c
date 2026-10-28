@@ -58,13 +58,13 @@ s32 Func_02000740(void) {
     SetObjectValue(12, 3);
     SetObjectValue(13, 128);
     SetObjectValue(14, 129);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
-    Object_GetById(9)->priorityFlags |= 0xc0;
-    Object_GetById(10)->priorityFlags |= 0x80;
-    Object_GetById(11)->priorityFlags |= 0x80;
-    Object_GetById(12)->priorityFlags |= 0x80;
-    Object_GetById(13)->priorityFlags |= 0x80;
-    Object_GetById(14)->priorityFlags |= 0x80;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
+    Actor_GetById(9)->priorityFlags |= 0xc0;
+    Actor_GetById(10)->priorityFlags |= 0x80;
+    Actor_GetById(11)->priorityFlags |= 0x80;
+    Actor_GetById(12)->priorityFlags |= 0x80;
+    Actor_GetById(13)->priorityFlags |= 0x80;
+    Actor_GetById(14)->priorityFlags |= 0x80;
     if (GameFlag_Test(0x200)) {
       Func_02000be0(1);
       Func_02000494();

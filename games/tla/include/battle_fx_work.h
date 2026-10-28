@@ -66,7 +66,7 @@ struct BattleFxWork {
   /// BattleEffectWork's objects 16 to 63; not named through this view.
   u8 unk781c[0xc0];
   /// Each target's flash timer in frames, for effect->actors[n]: set by
-  /// ObjectGroup_UpdateMembers, counted down by ObjectGroup_CountDownMemberTimers.
+  /// Actor_UpdateMembers, counted down by BattleEffect_CountDownBattlerTints.
   u8 actorTimers[8];
   s32 vblanksSinceTransfer; ///< 1 on a canvas copy's VBlank, then counts up
   /// 1 once the effect has drawn a frame; the canvas transfer callback copies

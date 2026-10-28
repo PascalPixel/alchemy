@@ -3,14 +3,14 @@
 /// The cell watch's work: the object found on the leader's cell.
 struct CellWatch {
   u8 unk00[0x14];
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 extern u16 gData_02005500[];
 extern u16 gData_0200550c[];
 
 s32 Func_02000dcc(u16 *table);
-void Func_02000da4(struct ObjectRuntime *object);
+void Func_02000da4(struct Actor *object);
 
 /// The cell watch's callback: in modes 2 and 3 it finds the object on the
 /// leader's cell in the room's table (room 4 has its own) and sets it blinking
@@ -29,7 +29,7 @@ void Func_02000e20(s32 mode) {
     table = gData_0200550c;
   }
   if (mode == 2) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
 
     Func_02000dcc(table);
     object = watch->object;
@@ -37,7 +37,7 @@ void Func_02000e20(s32 mode) {
     object->update = (void (*)(void))Func_02000da4;
   }
   if (mode == 3) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
 
     Func_02000dcc(table);
     object = watch->object;

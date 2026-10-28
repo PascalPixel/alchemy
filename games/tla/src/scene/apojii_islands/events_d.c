@@ -3,20 +3,20 @@
 void Func_02000974(void) {
   Func_02001cc4();
   Func_02001dcc(0);
-  Object_GetById(17)->update = (void (*)(void))Func_02000770;
+  Actor_GetById(17)->update = (void (*)(void))Func_02000770;
   Func_02001d44((s32)&MsgWhatWhatJust);
-  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 16, 0);
+  Actor_SetAngleToward(gAdventure.currentOwner, 16, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ObjectMotion_ArmCallback(16, 0, 0);
+  Actor_ArmCallback(16, 0, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
-  ObjectMotion_ArmCallback_(16, 0x8000, 0);
+  Actor_ArmCallback_(16, 0x8000, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
-  ObjectMotion_ArmCallback_(16, 0xe000, 0);
+  Actor_ArmCallback_(16, 0xe000, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
   Func_02001d6c(16, 0x102, 20);
   Func_02001d54(16, 0);
-  ObjectMotion_Launch(16, 2, 25);
+  Actor_Jump(16, 2, 25);
   Func_02001d54(16, 0);
   Motion_SetVarCbAndRefresh(16, 1);
   Func_02001d54(16, 0);
@@ -29,7 +29,7 @@ void Func_02000974(void) {
 void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
 
 void Func_02000a68(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
   if (GameFlag_Test(0xf9b) == 0) {
@@ -38,17 +38,17 @@ void Func_02000a68(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gAdventure.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
+      Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       Func_02001ccc();
     }
   }
 }
 
 void Func_02000af8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
   if (GameFlag_Test(0xf9a) == 0) {
@@ -57,10 +57,10 @@ void Func_02000af8(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gAdventure.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
+      Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       Func_02001ccc();
     }
   }
@@ -69,7 +69,7 @@ void Func_02000af8(void) {
 void Func_02000b88(void) { Func_02001e0c_(67, 38, 11, 6, 67, 8, 1); }
 
 void Func_02000ba8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
   if (GameFlag_Test(0xf9e) == 0) {
@@ -78,10 +78,10 @@ void Func_02000ba8(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gAdventure.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
+      Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       Func_02001ccc();
     }
   }
@@ -92,12 +92,12 @@ void Func_02000c38(void) {
 
   Func_02001cc4();
   Func_02001dcc(0);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
-  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   Func_02001e2c(123);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_CenterOnColumn_(gAdventure.currentOwner, 2, -6);
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_CenterOnColumn_(gAdventure.currentOwner, 2, -6);
   FieldEvent_WaitFrames(10);
   Func_02001d94(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
@@ -106,7 +106,7 @@ void Func_02000c38(void) {
 }
 
 s32 Func_02000cb4(void) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
   u16 facing;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
@@ -115,17 +115,17 @@ s32 Func_02000cb4(void) {
   Func_02001cc4();
   Func_02001dcc(0);
   if (facing) {
-    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
     Func_02001d44((s32)&MsgWhyDoesMy);
     Func_02001d54(9, 0);
-    ObjectMotion_ArmCallback_(9, 0x2000, 0);
+    Actor_ArmCallback_(9, 0x2000, 0);
   }
   Func_02001ccc();
   return 0;
 }
 
 s32 Func_02000d20(void) {
-  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
   u16 facing;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */

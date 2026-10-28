@@ -1,8 +1,8 @@
 #include "local.h"
 
-s32 Func_02001228(struct ObjectRuntime *object) {
+s32 Func_02001228(struct Actor *object) {
   s32 y = object->y;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   s32 scale;
 
   if (y + object->velocityY < object->terrainHeight) {
@@ -12,7 +12,7 @@ s32 Func_02001228(struct ObjectRuntime *object) {
       spark->scaleX = scale;
       spark->scaleY = scale;
       Func_02002800(spark, gData_02002a48);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
+      Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
     Func_020029b0(106);

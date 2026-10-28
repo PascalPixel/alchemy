@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02000428(s32 a) {
-  ObjectMotion_SetActionVariant_(gAdventure.currentOwner, 3);
+  Actor_SetSpritePriority_(gAdventure.currentOwner, 3);
   Func_020028e0_(gAdventure.currentOwner, 6, 0x1000);
   Func_020029b0_(0x136);
   GameFlag_SetBit_(0x122);
@@ -9,7 +9,7 @@ void Func_02000428(s32 a) {
 }
 
 void Func_02000464(s32 a, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (id == 9) {
     if (object->x >> 20 == 17) {

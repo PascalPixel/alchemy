@@ -17,7 +17,7 @@
 // barriers): 14 with a one-pass block around the three stores after the fall.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "task.h"
@@ -40,7 +40,7 @@ struct GlowWork {
 
 struct GlowScene {
   u8 unk00[0x10];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
   u8 unk14[4];
   s16 unk18;
   s16 unk1a;
@@ -50,7 +50,7 @@ struct GlowScene {
 
 struct GlowEvent {
   u8 unk000[0x14];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
   u8 unk154[0xbf0];
   s16 glow;
   s16 glowHeld;
@@ -61,9 +61,9 @@ extern char ResourceId_RingOrb;
 void WaitFrames(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
@@ -72,14 +72,14 @@ void Func_080e9af4(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *player = scene->mainObject;
+  struct Actor *player = scene->mainObject;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   s32 position[3];
   s32 found;
   s32 slot;
-  struct ObjectRuntime **list;
+  struct Actor **list;
   s32 tile;
   s32 i;
   s32 n;
@@ -95,9 +95,9 @@ void Func_080e9af4(void) {
   Func_080eaf98(sprite, 15, 15, 0x80000000, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
-  Object_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
+  Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
   BattleEffect_SetObjectUpdateMode(player, 0);
-  Object_SetMode(player, 5);
+  Actor_SetMode(player, 5);
   Sound_PlayFar(130);
   WaitFrames(1);
   work->unk1030 = 0;

@@ -4,7 +4,7 @@
 void Func_02000038(void) { Func_02000de8(gData_02000e10); }
 
 void Func_02000048(void) {
-  struct FieldActor *actor = Object_GetById(12);
+  struct FieldActor *actor = Actor_GetById(12);
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
 
@@ -25,7 +25,7 @@ void Func_02000048(void) {
       Func_02000da0();
       Func_02000d88(22, 257, 0);
       FieldEvent_WaitFrames(60);
-      ObjectMotion_ArmCallback(22, 0x8000, 0);
+      Actor_ArmCallback(22, 0x8000, 0);
       FieldEvent_WaitFrames(60);
       Func_02000d88(22, 256, 0);
       FieldEvent_WaitFrames(60);
@@ -35,7 +35,7 @@ void Func_02000048(void) {
       Func_02000d88(22, 262, 0);
       FieldEvent_WaitFrames(30);
       Func_02000d70(22, 0);
-      ObjectMotion_ArmCallback(22, 0x4000, 0);
+      Actor_ArmCallback(22, 0x4000, 0);
       Func_02000d08();
       Flag_Set(0x924);
     }

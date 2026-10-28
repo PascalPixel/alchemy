@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02000958(void);
 
@@ -9,8 +9,8 @@ void Func_02000958(void);
 /// each steps 12 pixels outward unless flag 0x109 is set too, and Func_02000958
 /// runs.
 void Func_0200102c(void) {
-  struct ObjectRuntime *left = Object_GetById(8);
-  struct ObjectRuntime *right = Object_GetById(9);
+  struct Actor *left = Actor_GetById(8);
+  struct Actor *right = Actor_GetById(9);
 
   left->scaleX = 0x14000;
   right->scaleX = -0x14000;

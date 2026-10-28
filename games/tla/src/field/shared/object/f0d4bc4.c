@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -13,8 +13,8 @@ struct ObjectLayerAnimation {
 };
 
 void SceneActor_UpdateFacingTowardTarget(void);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 
@@ -43,12 +43,12 @@ struct ObjectAnimation {
   struct ObjectAnimationEntry *entries[1];
 };
 
-/// The Broken Seal's Object_FindNearestFacingTarget: the nearest object
+/// The Broken Seal's Actor_FindNearestFacingTarget: the nearest object
 /// within 40 pixels in the direction self faces, if its first animation is id.
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
+struct Actor *Actor_FindNearestFacingTarget(struct Actor *self,
                                                      s32 id) {
-  struct ObjectRuntime *entry;
-  struct ObjectRuntime *found;
+  struct Actor *entry;
+  struct Actor *found;
   s32 cnt;
   s32 best;
   s32 dy;

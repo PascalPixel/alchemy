@@ -18,7 +18,7 @@ void Func_02000388(void) {
 
   Func_02000cb4();
   Func_02000d44(0);
-  ObjectMotion_SetVariantCallback(8, 2);
+  Actor_StartRepeatedMotion(8, 2);
   FieldEvent_WaitFrames(20);
   Func_02000d24(0x10000, 0);
   Func_02000d1c(0x10003, 1);
@@ -33,7 +33,7 @@ void Func_02000388(void) {
 }
 
 void Func_02000408(void) {
-  struct ObjectRuntime *object = Object_GetById(15);
+  struct Actor *object = Actor_GetById(15);
 
   object->motionFlags = 0;
   object->scaleX = 0x4000;
@@ -41,15 +41,15 @@ void Func_02000408(void) {
   Func_02000cb4();
   Func_02000d44(0);
   Func_02000d64(151);
-  Object_SetPartAttribute(Object_GetById(8), 7);
-  Object_SetPartAttribute(Object_GetById(15), 7);
+  Actor_SetPartAttribute(Actor_GetById(8), 7);
+  Actor_SetPartAttribute(Actor_GetById(15), 7);
   FieldEvent_WaitFrames(20);
   Func_02000d64(190);
   Func_02000cdc(15, 8);
   WaitFrames(1);
-  ObjectMotion_EnableActionAndSetCallback(8, gData_02000ea4);
-  Object_SetActionCallbackAndRefreshById(15, gData_02000e20);
-  Object_SetActionCallbackAndRefreshById(15, gData_02000e5c);
+  Actor_SetMovementTypeById(8, gData_02000ea4);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e20);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e5c);
   FieldEvent_WaitFrames(10);
   Func_02000cbc();
 }

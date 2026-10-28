@@ -3,7 +3,7 @@
 // to the ground's height and then drifts forward 2 pixels a frame, ending at
 // height -4 or row 50. Left: as Func_02002250's draft.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "graphics/vram_tab.h"
 
@@ -16,7 +16,7 @@ struct Bubble {
 };
 
 struct BubbleWork {
-  struct ObjectRuntime *source;
+  struct Actor *source;
   u16 block;
   u16 next;
   u8 unk08[4];
@@ -35,7 +35,7 @@ void Func_020023c0(void) {
   s32 lift = (*(s32 **)map)[1];
   struct BubbleWork *work = &gData_020034f0;
   u32 tile = gResourceTableEntries[work->block].offset >> 5;
-  struct ObjectRuntime *source;
+  struct Actor *source;
   struct Bubble *bubble;
   s32 i, x, y, z, screenX, screenY, depth;
 

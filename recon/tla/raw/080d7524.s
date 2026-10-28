@@ -12,14 +12,14 @@ Func_080d7524:
 	push {r7}
 	sub sp, #52
 	mov r9, r0
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_080d7770
 	adds r7, r0, #0
 	movs r0, #133
 	lsls r0, r0, #2
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	str r0, [sp, #16]
 	movs r1, #128
 	ldrh r3, [r0, #6]
@@ -51,7 +51,7 @@ Func_080d7524:
 	adds r1, r5, #0
 	movs r2, #0
 	mov r0, r9
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #4
@@ -61,7 +61,7 @@ Func_080d7524:
 	mov r0, r9
 	bl Func_080d47b4
 	mov r0, r9
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r3, #254
@@ -181,13 +181,13 @@ Func_080d7524:
 	bl Animation_ApplyChildValuesFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	ldr r0, [r5, #80]
 	ldr r1, [sp, #12]
-	bl Object_ReplaceResourceEntry
+	bl Sprite_ShareVramCacheEntry
 	mov r1, r10
 	str r0, [sp, #12]
 	str r1, [r5, #104]
@@ -214,7 +214,7 @@ Func_080d7524:
 	mov r0, r9
 	movs r1, #6
 	movs r2, #5
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #24
 	bl WaitFrames
 	movs r6, #0
@@ -255,7 +255,7 @@ Func_080d7524:
 	str r3, [r7, #60]
 	adds r0, r7, #0
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [r7, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -278,12 +278,12 @@ Func_080d7524:
 .L_080d7770:
 	.4byte gAdventure
 .L_080d7774:
-	.4byte ObjectMotion_AdvanceSpinAngle
+	.4byte FieldEffect_AdvanceSpinAngle
 .L_080d7778:
 	.4byte 0x0004cccc
 .L_080d777c:
 	.4byte 0x0004e666
 .L_080d7780:
-	.4byte ObjectMotion_MoveHalfwayTowardTarget
+	.4byte Actor_MoveHalfwayTowardTarget
 .L_080d7784:
 	.4byte 0x0013ffff

@@ -4,7 +4,7 @@
 // Func_02003c90) thrown out in random directions with random lift, then two
 // screen shakes (Func_02003b98). Left: the native keeps x and z in r9 and r10, the first rock in r11 and the loop counts in r8, its frame is 4 bytes smaller, and its dust loop computes the scatter in place; the alignment is poor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -15,23 +15,23 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_02003c90(void *sprite, void *source);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
-void Func_02003b28(struct ObjectRuntime *object, s32 mode);
+void Func_02003b38(struct Actor *object, const u8 *script);
+void Func_02003b28(struct Actor *object, s32 mode);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Func_02003b58(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003b98(s32 a, s32 b, s32 c);
 extern u8 gData_02003dfc[];
 
 void Func_02001dc4(s32 x, s32 z) {
-  struct ObjectRuntime *first, *rock;
+  struct Actor *first, *rock;
   struct EffectOptions options;
   struct Vector3 v;
   s32 i;
 
-  first = (struct ObjectRuntime *)Import_ActorCreate(255, x, 0, z);
+  first = (struct Actor *)Import_ActorCreate(255, x, 0, z);
   options.priority = 1;
   options.startScaleX = 0x20000;
   options.startScaleY = 0x20000;
@@ -56,10 +56,10 @@ rocks:
   {
     rock = first;
     if (i != 0) {
-      rock = (struct ObjectRuntime *)Import_ActorCreate(255, x, 0, z);
+      rock = (struct Actor *)Import_ActorCreate(255, x, 0, z);
       Func_02003c90(rock->animation, first->animation);
     }
-    ObjectDispatch_SetSingleChildFlags(rock, 0);
+    Actor_SetSingleChildFlags(rock, 0);
     Func_02003b38(rock, gData_02003dfc);
     Func_02003b28(rock, 2);
     rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;

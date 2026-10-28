@@ -40,9 +40,9 @@ void Func_02004ec0(void);
 void Func_02004ec8(s32 a, s32 b, s32 c);
 void Func_02004f08(s32 id, s32 value);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetModeById(u32 id, s32 mode);
-void Object_SetActionCallback(struct ObjectRuntime *object, s32 value);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetModeById(u32 id, s32 mode);
+void Actor_SetActionCallback(struct Actor *object, s32 value);
 void Func_02004da0(s32 id, s32 x, s32 z);
 void Func_020034bc(void);
 void Func_020034f0(void);
@@ -56,7 +56,7 @@ void Func_02003630(void);
   }
 
 static __inline__ void Raise(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 2;
   object->terrainHeight = object->y = 40 << 16;
@@ -64,8 +64,8 @@ static __inline__ void Raise(s32 id) {
 }
 
 static __inline__ void Lower(s32 id, s32 height) {
-  Object_GetById(id)->motionFlags = 0;
-  Object_GetById(id)->terrainHeight = Object_GetById(id)->y = height;
+  Actor_GetById(id)->motionFlags = 0;
+  Actor_GetById(id)->terrainHeight = Actor_GetById(id)->y = height;
 }
 
 s32 Func_02003678(void) {
@@ -75,7 +75,7 @@ s32 Func_02003678(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov692Room1) {
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02000800(8, gData_02005074, 768);
     if (!GameFlag_Test(768)) {
       CLOSED_BLEND();
@@ -83,14 +83,14 @@ s32 Func_02003678(void) {
     }
   } else if (scene == (s32)&SceneId_Ov692Room2) {
     Func_02004e60(0);
-    Object_GetById(15)->update = Func_02003630;
+    Actor_GetById(15)->update = Func_02003630;
     for (i = 0; i != 6; i++)
       Lower(i + 9, 0);
     if (GameFlag_Test(2544))
-      Object_GetById(15)->z = 132 << 17;
+      Actor_GetById(15)->z = 132 << 17;
     Func_02004ed8(gData_020054fc);
     Func_02000880(gData_02005500);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Raise(16);
     if (GameFlag_Test(768))
       Func_020034bc();
@@ -99,12 +99,12 @@ s32 Func_02003678(void) {
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     Func_02004e60(0);
     if (GameFlag_Test(2545))
-      Object_GetById(11)->z = 166 << 18;
+      Actor_GetById(11)->z = 166 << 18;
     Func_02004ed8(gData_02005508);
     Func_02004ec0();
     Func_02004ec8(0, 13, 14);
     Func_02000880(gData_02005500);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Raise(9);
     Func_02000800(10, gData_020050d4, 769);
     Func_02000800(12, gData_02005134, 769);
@@ -114,7 +114,7 @@ s32 Func_02003678(void) {
       CLOSED_BLEND();
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     Func_02004e60(0);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02000880(gData_0200550c);
     if (gAdventure.entrance <= 7) {
       Func_02000800(10, gData_0200519c, 769);
@@ -126,22 +126,22 @@ s32 Func_02003678(void) {
         Func_02004cd8(71, 64, 35, 82, 1, 1);
       }
     } else {
-      Object_GetById(23)->priorityFlags |= 32;
-      Object_GetById(24)->priorityFlags |= 32;
-      Object_GetById(25)->priorityFlags |= 32;
-      ObjectMotion_SetActionVariant(23, 3);
-      ObjectMotion_SetActionVariant(24, 3);
-      ObjectMotion_SetActionVariant(25, 3);
+      Actor_GetById(23)->priorityFlags |= 32;
+      Actor_GetById(24)->priorityFlags |= 32;
+      Actor_GetById(25)->priorityFlags |= 32;
+      Actor_SetSpritePriority(23, 3);
+      Actor_SetSpritePriority(24, 3);
+      Actor_SetSpritePriority(25, 3);
       if (GameFlag_Test(2546))
-        Object_GetById(23)->x = 172 << 17;
+        Actor_GetById(23)->x = 172 << 17;
       if (GameFlag_Test(2547))
-        Object_GetById(24)->x = 172 << 17;
+        Actor_GetById(24)->x = 172 << 17;
       if (GameFlag_Test(2548))
-        Object_GetById(25)->x = 172 << 17;
+        Actor_GetById(25)->x = 172 << 17;
       Func_02004ed8(gData_02005520);
       Lower(26, 0);
       for (i = 15; i <= 22; i++)
-        Object_GetById(i)->movementState = 3;
+        Actor_GetById(i)->movementState = 3;
       Func_02000800(15, gData_0200525c, 770);
       Func_02000800(16, gData_0200525c, 770);
       Func_02000800(17, gData_020052bc, 770);
@@ -157,7 +157,7 @@ s32 Func_02003678(void) {
     }
   } else if (scene == (s32)&SceneId_Ov692Room5) {
     Func_02004e60(0);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02004f08(10, 1);
     Func_02004f08(11, 1);
     Raise(8);
@@ -165,16 +165,16 @@ s32 Func_02003678(void) {
     if (GameFlag_Test(770)) {
       Func_02000694(0, 22, 26, 0);
       Func_02000694(0, 25, 26, 0);
-      ObjectMotion_SetActionVariant(64, 3);
+      Actor_SetSpritePriority(64, 3);
     } else {
       CLOSED_BLEND();
     }
   } else if (scene == (s32)&SceneId_Ov692Room6) {
     Func_02004e60(0);
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     if (GameFlag_Test(2549)) {
       Func_02004ce8(46, 74, 1, 1, 46, 73);
-      Object_GetById(9)->x = 190 << 18;
+      Actor_GetById(9)->x = 190 << 18;
     }
     if (GameFlag_Test(2550))
       Func_02004da0(12, 230 << 18, 154 << 18);
@@ -183,9 +183,9 @@ s32 Func_02003678(void) {
     Func_02000800(10, gData_0200543c, 770);
     Func_02000800(11, gData_0200549c, 770);
     if (GameFlag_Test(770)) {
-      Object_SetModeById(9, 4);
+      Actor_SetModeById(9, 4);
       if (GameFlag_Test(2550))
-        Object_SetModeById(12, 4);
+        Actor_SetModeById(12, 4);
       if (GameFlag_Test(2549))
         Func_02000694(2, 46, 8, 0xff00);
       Func_02000694(0, 10, 45, 0);
@@ -196,14 +196,14 @@ s32 Func_02003678(void) {
     }
   } else if (scene == (s32)&SceneId_Ov692Room7) {
     for (i = 0; i != 3; i++) {
-      struct ObjectRuntime *object = Object_GetById(i + 8);
+      struct Actor *object = Actor_GetById(i + 8);
 
       Func_02004c98(object, 4);
       object->motionFlags = 0;
       object->terrainHeight = object->y = -0x200000;
     }
     if (GameFlag_Test(2551)) {
-      Object_SetModeById(23, 4);
+      Actor_SetModeById(23, 4);
       Func_02004da0(23, 174 << 18, 162 << 18);
     }
     Func_02004ed8(gData_0200552e);
@@ -214,16 +214,16 @@ s32 Func_02003678(void) {
       Func_02004da0(22, 0, 0);
     if (GameFlag_Test(771) && GameFlag_Test(772)) {
       Lower(11, -0x200000);
-      Object_SetModeById(11, 4);
+      Actor_SetModeById(11, 4);
     } else {
       Func_02000694(0, 38, 18, 0xff00);
     }
     if (GameFlag_Test(2553))
-      Object_SetModeById(12, 0);
+      Actor_SetModeById(12, 0);
     for (i = 0; i != 4; i++)
-      Object_SetModeById(i + 13, 2);
+      Actor_SetModeById(i + 13, 2);
     for (i = 0; i != 11; i++)
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(i + 12), 0);
+      Actor_SetSingleChildFlags(Actor_GetById(i + 12), 0);
     if (!GameFlag_Test(2552)) {
       for (i = 0; i != 9; i++)
         Func_02004da0(i + 12, 0, 0);
@@ -237,17 +237,17 @@ s32 Func_02003678(void) {
         Func_02000694(0, 16, 24 - i * 2, 0xff00);
       }
     }
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(11), 0);
     if (GameFlag_Test(773)) {
       Lower(9, -0x200000);
-      Object_SetModeById(9, 4);
+      Actor_SetModeById(9, 4);
     } else {
       Func_02000694(0, 7, 21, 0xff00);
       Func_02004da0(11, 0, 0);
     }
     Lower(8, 0x100000);
-    Object_SetActionCallback(Object_GetById(8), 9);
+    Actor_SetActionCallback(Actor_GetById(8), 9);
   }
   return 0;
 }

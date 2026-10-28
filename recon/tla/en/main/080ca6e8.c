@@ -12,7 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
 
@@ -21,7 +21,7 @@
 struct FieldStepWork {
   struct ScenePlacement *tables[4];
   u8 unk10[4];
-  struct ObjectRuntime *actors[66];
+  struct Actor *actors[66];
   u8 unk11c[0x6e];
   s8 mode;
 };
@@ -57,10 +57,10 @@ extern s8 gData_02001000[];
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 GameFlag_Test(s32 flag);
 s32 Party_RemapCharacterIdByFlags(s32 sprite);
-struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_080ca9cc(s32 value, s32 *out);
 s32 Resource_ResetEntry(u32 slot);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 u32 Random16(void);
@@ -80,7 +80,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     }
   }
   for (; entry->sprite != -1 && slot <= 63; entry++) {
-    struct ObjectRuntime *object;
+    struct Actor *object;
     struct SpawnSprite *sprite;
     s32 condition;
     s32 character;
@@ -123,7 +123,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
         object = Func_080200c0(character, entry->x, entry->y, entry->z);
       }
       if (entry->flags & 1) {
-        struct ObjectRuntime *previous = ObjectTable_Get(index - 1);
+        struct Actor *previous = ObjectTable_Get(index - 1);
 
         if (previous->animationKind == 1 && object->animationKind == 1) {
           u8 resource;
@@ -140,11 +140,11 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     } else {
       if (entry->sprite == gAdventure.currentOwner)
         continue;
-      Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
+      Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
     if (object != NULL) {
       sprite = object->animation;
-      Object_SetMode(object, 1);
+      Actor_SetMode(object, 1);
       if (object->animationKind == 1 && sprite != NULL) {
         for (i = 0; i < sprite->partCount; i++) {
           struct SpawnSpritePart *part = sprite->parts[i];
@@ -156,7 +156,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       }
       object->angle = entry->facing;
       object->collisionFlags = 1;
-      Object_SetActionCallback(object, entry->behavior);
+      Actor_SetActionCallback(object, entry->behavior);
       ((struct SpawnActor *)object)->homeX = object->x / 0x10000;
       ((struct SpawnActor *)object)->homeZ = object->z / 0x10000;
       if (object->y != 0) {

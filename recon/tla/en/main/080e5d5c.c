@@ -15,7 +15,7 @@
 // 44 bytes against 48) and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "iwram_call.h"
@@ -35,7 +35,7 @@ struct ShineWork {
   struct ShineParticle particles[32];
   struct EffectSprite sprites[32];
   struct EffectSprite glow;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 state;
   s16 timer;
   s8 sparkles;
@@ -48,8 +48,8 @@ struct FxScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
-  struct ObjectRuntime *child;
+  struct Actor *mainObject;
+  struct Actor *child;
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
@@ -62,7 +62,7 @@ struct FxScene {
 
 struct FxEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
@@ -70,15 +70,15 @@ extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
+s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_InitializeSharedScene(void);
 void Sound_PlayFar(s32 cue);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
-void Object_Destroy(struct ObjectRuntime *object);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetMode(struct Actor *object, s32 mode);
+void Actor_Destroy(struct Actor *object);
 void Func_080dba5c(void);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -89,12 +89,12 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void WaitFrames(s32 frames);
-void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
 void BattleEffect_SinkAndShrinkObject(void);
-struct ObjectRuntime *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
+struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
@@ -105,10 +105,10 @@ void Func_080e5d5c(void) {
   struct ShineWork *work = HeapSlot_Alloc(92, 0x18b4);
   struct FxEvent *event = Ram_HeapSlots->eventWork;
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *child = scene->child;
-  struct ObjectRuntime *caster = scene->mainObject;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *shine;
+  struct Actor *child = scene->child;
+  struct Actor *caster = scene->mainObject;
+  struct Actor *object;
+  struct Actor *shine;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct ShineParticle *particle;
@@ -156,7 +156,7 @@ void Func_080e5d5c(void) {
 
   BattleEffect_InitializeSharedScene();
   Sound_PlayFar(138);
-  shine = Object_Spawn(352, 0, 0, 0);
+  shine = Actor_Spawn(352, 0, 0, 0);
   work->object = shine;
   if (shine == NULL)
     goto end;
@@ -171,7 +171,7 @@ void Func_080e5d5c(void) {
     ((u8 *)shine)[35] = 1;
   }
   shine->angle = caster->angle;
-  Object_SetMode(shine, 2);
+  Actor_SetMode(shine, 2);
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
 
@@ -239,7 +239,7 @@ void Func_080e5d5c(void) {
   }
   WaitFrames(1);
   Func_080dbed0(shine, scene->x, scene->y + lift, scene->z);
-  Object_SetMode(shine, 1);
+  Actor_SetMode(shine, 1);
   WaitFrames(15);
   for (i = 24; i >= 0; i--) {
     shine->y += 0x8000;
@@ -277,7 +277,7 @@ void Func_080e5d5c(void) {
     Sound_PlayFar(114);
     Func_080dbf94(shine, shine->x, shine->y, shine->z);
   }
-  Object_Destroy(shine);
+  Actor_Destroy(shine);
   Resource_ResetEntry(starEntry);
   Resource_ResetEntry(glowEntry);
   BattleEffect_EndCanvasSprite();

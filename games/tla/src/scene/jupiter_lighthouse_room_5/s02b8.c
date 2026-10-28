@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -8,29 +8,29 @@ extern s32 gData_02003278;
 extern const u8 gData_02002f70[];
 extern const u8 gData_02002f94[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void Func_020029a8(s32 value);
 void Func_02002940(s32 id, s32 angle);
 void Func_02002a40(s32 sound);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02001718(const s32 *from, const s32 *to);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Func_02002870(s32 a, s32 b, s32 c);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetSpritePriority(u32 id, s32 variant);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Func_02002980(s32 a, s32 b);
 void Func_02002978(s32 a, s32 b);
 void Func_02002988(s32 frames);
 void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000d80(s32 value);
-void Object_RefreshSelectorById(u32 id);
+void Actor_RefreshSelectorById(u32 id);
 void Func_0200185c(void);
 void Func_02000e04(s32 id);
 void Sound_WaitForJingle(void);
@@ -40,16 +40,16 @@ void Func_02000294(void);
 void Func_020001a4(void);
 
 static __inline__ void Bring(s32 id) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
-  ObjectMotion_SetActionVariant(id, 2);
-  Object_SetPartAttribute(Object_GetById(id), 7);
-  object = Object_GetById(id);
+  Actor_SetSpritePriority(id, 2);
+  Actor_SetPartAttribute(Actor_GetById(id), 7);
+  object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
   object->scaleY = 0xffff0000;
   object->scaleX = 0x1999;
-  ObjectMotion_EnableActionAndSetCallback(id, gData_02002f70);
+  Actor_SetMovementTypeById(id, gData_02002f70);
 }
 
 /// The event when the leader stands on cell (42, 41): sets flag 2560, turns the
@@ -62,12 +62,12 @@ static __inline__ void Bring(s32 id) {
 /// frame for 16 frames, take their next state (Func_02000e04) and sound 80
 /// plays.
 void Func_020002b8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u32 pulseState;
-  struct ObjectRuntime *a = Object_GetById(13);
-  struct ObjectRuntime *b = Object_GetById(14);
-  struct ObjectRuntime *c = Object_GetById(15);
-  struct ObjectRuntime *d = Object_GetById(16);
+  struct Actor *a = Actor_GetById(13);
+  struct Actor *b = Actor_GetById(14);
+  struct Actor *c = Actor_GetById(15);
+  struct Actor *d = Actor_GetById(16);
   s32 from[3];
   s32 to[3];
   s32 i;
@@ -85,7 +85,7 @@ void Func_020002b8(void) {
   leader->update = Func_02000120;
   FieldEvent_WaitFrames(30);
   Func_02002a40(220);
-  ObjectDispatch_SetAnimationSpeed(leader, 64);
+  Actor_SetAnimationSpeed(leader, 64);
   FieldEvent_WaitFrames(50);
   Func_02002a40(178);
   leader->action = 0;
@@ -140,20 +140,20 @@ quicken:
   leader->action = 3;
   WaitFrames(1);
   leader->update = 0;
-  ObjectDispatch_SetAnimationSpeed(leader, 16);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetAnimationSpeed(leader, 16);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
-  ObjectMotion_EnableActionAndSetCallback(23, gData_02002f94);
-  ObjectMotion_EnableActionAndSetCallback(24, gData_02002f94);
+  Actor_SetMovementTypeById(23, gData_02002f94);
+  Actor_SetMovementTypeById(24, gData_02002f94);
   gData_02003274 = 2;
   FieldEvent_WaitFrames(30);
   gData_02003274 = 1;
   FieldEvent_WaitFrames(30);
   gData_02003274 = 0;
-  Object_RefreshSelectorById(23);
-  Object_RefreshSelectorById(24);
-  Object_GetById(23)->scaleX = 0;
-  Object_GetById(24)->scaleX = 0;
+  Actor_RefreshSelectorById(23);
+  Actor_RefreshSelectorById(24);
+  Actor_GetById(23)->scaleX = 0;
+  Actor_GetById(24)->scaleX = 0;
   Call2((void (*)())Func_02002978, 0x10000, 0);
   Func_02002988(30);
   Call3((void (*)())Func_02002870, 0x20000, 0x20000, 0x10000);

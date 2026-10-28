@@ -5,18 +5,18 @@ void Func_020029a0(void);
 void Func_02002a48(s32 a);
 void Func_02002a70(s32 cue);
 void Func_02002a18(s32 a);
-void Func_02001d30(struct ObjectRuntime *object);
+void Func_02001d30(struct Actor *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);
 
 void Func_02001f90(s32 arg0) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 i;
   s32 angle;
 
   Func_02002998();
   Func_02002a48(0);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   object->motionFlags = 0;
   /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
    * without) */
@@ -36,7 +36,7 @@ void Func_02001f90(s32 arg0) {
     angle += 0x1000;
     object->angle = angle;
     if ((i & 7) == 0)
-      Func_02001d30(Object_GetById(15));
+      Func_02001d30(Actor_GetById(15));
     WaitFrames(1);
   }
   Func_020029a0();
@@ -46,7 +46,7 @@ void Func_02001f90(s32 arg0) {
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-s32 Func_02002030(struct ObjectRuntime *object) {
+s32 Func_02002030(struct Actor *object) {
   s32 params[10];
 
   if (gFrameCount & 1) {

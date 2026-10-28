@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_scene.h"
 
@@ -9,16 +9,16 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
@@ -87,12 +87,12 @@ static __inline__ void Flag_Set(s32 flag) {
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitPositionAndActivate(id, x, z);
+  Actor_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, flags);
+  Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Walk(s32 id, s32 a, s32 b) {
@@ -122,7 +122,7 @@ static __inline__ void Emote(s32 id, s32 a, s32 b) {
 
 static __inline__ void Face(s32 id, s32 target, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetAngleToward(id, target, flags);
+  Actor_SetAngleToward(id, target, flags);
 }
 
 static __inline__ void Anim(s32 id, s32 mode) {
@@ -142,12 +142,12 @@ static __inline__ void Place(s32 id, s32 x, s32 y, s32 z) {
 
 static __inline__ void Speed(s32 id, s32 s, s32 a) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, s, a);
+  Actor_SetSpeedParameters(id, s, a);
 }
 
 static __inline__ void SetPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Turn(s32 id, s32 a) {
@@ -195,7 +195,7 @@ void Func_02000894(void) {
     Func_02002be8(8, 0);
   } else {
     if (GameFlag_Test(0x300) == 0)
-      ObjectMotion_SetAngleToward(14, 4, 0);
+      Actor_SetAngleToward(14, 4, 0);
     msg = (s32)&MsgDidYouCome;
     Func_02002bd0(msg);
     FieldMessage_ShowAtActor(8, 0);
@@ -208,7 +208,7 @@ void Func_02000894(void) {
     }
     Func_02002be8(8, 0);
   }
-  ObjectMotion_ArmCallback(14, 0x4000, 0);
+  Actor_ArmCallback(14, 0x4000, 0);
   GameFlag_SetBit(0x300);
   Func_02002b30();
 }
@@ -237,7 +237,7 @@ void Func_02000968(void) {
       /* FAKEMATCH: the native loads both distances before the actor id. */
       __asm__ volatile("" : "+r"(x), "+r"(z));
       Func_02002c08(14, x, z);
-      ObjectMotion_SetAngleToward(14, 4, 0);
+      Actor_SetAngleToward(14, 4, 0);
     }
     msg = (s32)&MsgDidYouCome;
     Func_02002bd0(msg);
@@ -251,7 +251,7 @@ void Func_02000968(void) {
     }
     Func_02002be8(8, 0);
   }
-  ObjectMotion_ArmCallback(14, 0x4000, 0);
+  Actor_ArmCallback(14, 0x4000, 0);
   GameFlag_SetBit(0x300);
   Func_02002b30();
 }
@@ -261,7 +261,7 @@ void Func_02000a48(void) {
 
   Func_02002b28();
   Func_02002c58(0);
-  ObjectMotion_SetAngleToward(11, 4, 0);
+  Actor_SetAngleToward(11, 4, 0);
   Func_02002bd0((s32)&MsgIsThereBy);
   flags = 0;
   /* FAKEMATCH: the native loads the flags before the actor id. */

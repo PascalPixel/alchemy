@@ -12,7 +12,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fixed_math.h"
 #include "effect_sprite.h"
 #include "view_move.h"
@@ -74,7 +74,7 @@ struct ObjectSprite {
 struct EffectScene {
   u8 unk00[0x10];
   void *mainObject;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 };
 
 // The two 8x8 tiles of the shaken sprites (Resource_Data1EE): the row
@@ -100,7 +100,7 @@ void Func_080e8db0(void) {
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *target = scene->target;
+  struct Actor *target = scene->target;
   struct ObjectSprite *targetSprite = target->animation;
   s32 tiles;
   s32 shown;

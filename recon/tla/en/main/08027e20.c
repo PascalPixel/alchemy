@@ -13,7 +13,7 @@
 #include "map.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -28,13 +28,13 @@ extern const s16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802d87c(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values);
+s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 s16 ArcTan2(s32 y, s32 x);
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 s32 GetWorldMapCollision(struct WorldPosition *position);
 s32 Field_CheckConfiguredKeys(void);
@@ -42,7 +42,7 @@ s32 Field_CheckConfiguredKeys(void);
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_08027e20(struct ObjectRuntime *object) {
+s32 Func_08027e20(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
@@ -54,7 +54,7 @@ s32 Func_08027e20(struct ObjectRuntime *object) {
   s32 angleIndex;
   s32 onObject;
   s32 difference;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   struct EventWork *work;
 
   collision = 0;
@@ -109,7 +109,7 @@ s32 Func_08027e20(struct ObjectRuntime *object) {
   Vector_AddPolarOffset(0x130000, (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     onObject = 0;
-    other = (struct ObjectRuntime *)Ram_HeapSlots->scriptObjects;
+    other = (struct Actor *)Ram_HeapSlots->scriptObjects;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
       s32 dy;
 
@@ -225,7 +225,7 @@ push_objects:
   contact.y = object->y;
   contact.z = object->z;
   Vector_AddPolarOffset(0xf0000, (u16)heading, &contact);
-  other = (struct ObjectRuntime *)Ram_HeapSlots->scriptObjects;
+  other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
@@ -295,9 +295,9 @@ counted:
     work->heldKeys = gInput.held;
   }
   if (pushed != 0 || collision != 0)
-    ObjectDispatch_SelectAnimation(object, 1);
+    Actor_SelectAnimation(object, 1);
   else
-    ObjectDispatch_SelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gAdventure.keys230) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
@@ -323,7 +323,7 @@ counted:
   } else {
     s32 speed;
 
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;

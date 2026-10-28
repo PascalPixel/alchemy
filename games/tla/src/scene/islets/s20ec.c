@@ -20,18 +20,18 @@ void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
 /// (7, 28), clears layer 2's collision under object 12, and with them on
 /// (12, 25) and (12, 26), under object 13.
 void Func_02002144(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 *x0;
   s32 *z0;
   s32 x1;
   s32 z1;
 
-  object = Object_GetById(12);
+  object = Actor_GetById(12);
   x0 = &gData_0200519c;
   z0 = &gData_02005194;
   *x0 = object->x;
   *z0 = object->z;
-  object = Object_GetById(13);
+  object = Actor_GetById(13);
   gData_02005198 = x1 = object->x;
   {
     s32 *p = &gData_02005190;

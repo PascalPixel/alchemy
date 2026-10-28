@@ -12,4 +12,4 @@ BattleEffect_HasTriggerFar:
 	.global Func_080c8518
 	.thumb_func
 Func_080c8518:
-	overlay_veneer Object_ReplaceResourceEntry
+	overlay_veneer Sprite_ShareVramCacheEntry

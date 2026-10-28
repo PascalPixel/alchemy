@@ -3,7 +3,7 @@
 #include "adventure.h"
 #include "scene_ids.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s16 gData_02000d80[];
 
@@ -11,7 +11,7 @@ void Func_02000c48();
 void Func_02000d18(void);
 void Func_02000d50(s16 *data);
 void Func_02000d68(s32 a, s32 b);
-void Object_SetWideSprite(s32 actor, s32 flag);
+void Actor_SetWideSprite(s32 actor, s32 flag);
 
 static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameters
@@ -24,11 +24,11 @@ void Func_02000d58(s16 *data);
 
 void Func_02000a9c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 flags;
 
   Func_02000d58(gData_02000d80);
-  object = *(struct ObjectRuntime **)(event + 0xcbc);
+  object = *(struct Actor **)(event + 0xcbc);
   flags = 1;
   flags |= object->priorityFlags;
   flags &= 0xfd;
@@ -44,7 +44,7 @@ s32 Func_02000ac8(void) {
   Import_ActorSetSpritePriority(21, 1);
   if (gAdventure.scene == (s32)&SceneId_Daila2 &&
       Import_GameFlagIsSet(0x300) == 0)
-    Object_SetWideSprite(66, 0);
+    Actor_SetWideSprite(66, 0);
   return 0;
 }
 

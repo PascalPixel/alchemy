@@ -13,7 +13,7 @@
 // the 2 (59).
 #include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
 
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
 
 static inline void LemurianShip_SetWork(s32 a, s32 b, s32 c) {
   Func_02002c48(a, b, c);
@@ -26,7 +26,7 @@ void Func_02000870(void) {
   u8 *state;
 
   if (!GameFlag_Test(0x983)) {
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     Func_02002c68();
     Func_02002da8(0);
     LemurianShip_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
@@ -42,7 +42,7 @@ void Func_02000870(void) {
       LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
       *state = 2;
       FieldEvent_WaitFrames(20);
-      ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+      Actor_Jump(gAdventure.currentOwner, 4, 0);
       LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
       LemurianShip_ObjCommit(gAdventure.currentOwner, 840, 88);
       FieldEvent_WaitFrames(20);
@@ -51,13 +51,13 @@ void Func_02000870(void) {
       FieldEvent_WaitFrames(20);
       *state = 1;
     } else {
-      helper = Object_GetById(9);
-      ObjectMotion_SetActionVariant(9, 2);
+      helper = Actor_GetById(9);
+      Actor_SetSpritePriority(9, 2);
       LemurianShip_ObjSpeed(9, 0x26666, 0x13333);
-      Object_GetById(9)->unk5a[0] &= ~1;
+      Actor_GetById(9)->unk5a[0] &= ~1;
       LemurianShip_ObjWalk(9, 824, 88);
       FieldEvent_WaitFrames(1);
-      Object_GetById(9)->unk5a[0] |= 1;
+      Actor_GetById(9)->unk5a[0] |= 1;
       Func_02002de0(243);
       LemurianShip_ObjEmoteWait(gAdventure.currentOwner, 0x102);
       LemurianShip_SetWork(0, 0x20000, 0x10000);
@@ -67,23 +67,23 @@ void Func_02000870(void) {
       *state = 2;
       FieldEvent_WaitFrames(20);
       LemurianShip_ObjArm(gAdventure.currentOwner, 0x6000, 20);
-      ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+      Actor_Jump(gAdventure.currentOwner, 4, 0);
       LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
       LemurianShip_ObjCommit(gAdventure.currentOwner, 840, 88);
       LemurianShip_ObjTurn(gAdventure.currentOwner, 0x8000);
-      Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 9);
+      Actor_WatchAndSetScript(gAdventure.currentOwner, 9);
       helper->field48 = 0x10000;
       helper->field22 = 2;
-      ObjectMotion_Launch(9, 4, 0);
+      Actor_Jump(9, 4, 0);
       LemurianShip_ObjCommit(9, 832, 74);
-      ObjectMotion_Launch(9, 4, 0);
+      Actor_Jump(9, 4, 0);
       LemurianShip_ObjCommit(9, 856, 88);
       LemurianShip_ObjEmoteWait(gAdventure.currentOwner, 0x102);
       FieldEvent_WaitFrames(20);
       Func_02002de0(232);
       LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
       FieldEvent_WaitFrames(20);
-      ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
+      Actor_Stop(gAdventure.currentOwner);
       *state = 1;
       helper->field22 = 0;
       WaitFrames(1);

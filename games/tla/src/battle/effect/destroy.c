@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-void Object_Destroy(struct ObjectRuntime *object);
+void Actor_Destroy(struct Actor *object);
 
-void Object_DestroyIfPresent(struct ObjectRuntime *object) {
+void Actor_ReleaseIfPresent(struct Actor *object) {
   if (object != 0)
-    Object_Destroy(object);
+    Actor_Destroy(object);
 }
 
 /// Nothing in the image calls it.

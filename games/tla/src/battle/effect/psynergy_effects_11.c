@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "macros.h"
 
@@ -35,14 +35,14 @@ struct EffectParticle {
 
 struct RiseWork {
   u8 unk0000[0x18a8];
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s16 done;
   s16 timer;
 };
 
 struct AnchorWork {
   u8 unk0000[0x1930];
-  struct ObjectRuntime *anchor;
+  struct Actor *anchor;
 };
 
 struct ModeEvent {
@@ -54,7 +54,7 @@ void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
                                s32 flags);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void WaitFrames(s32 frames);
 s32 Trig_Sin(s32 angle);
 

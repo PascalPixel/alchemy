@@ -23,7 +23,7 @@ Func_080dc6d8:
 	adds r0, r6, #0
 	movs r1, #20
 	mov r9, r2
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r3, [r6, #8]
 	movs r2, #0
 	str r3, [r6, #56]
@@ -65,7 +65,7 @@ Func_080dc6d8:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r1, #1
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	mov r0, r9
 	movs r1, #4
 	bl MessageArgument_PushFar
@@ -80,7 +80,7 @@ Func_080dc6d8:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #16
-	bl ObjectGroup_SetActionForOthers
+	bl Actor_SetOthersPaused
 	mov r3, r8
 	strb r3, [r5]
 .L_080dc784:
@@ -100,7 +100,7 @@ Func_080dc6d8:
 .L_080dc7a2:
 	adds r0, r6, #0
 	movs r1, #21
-	bl Object_SetMode
+	bl Actor_SetMode
 	b .L_080dc7b0
 .L_080dc7ac:
 	bl EffectRuntime_StopCurrentObject

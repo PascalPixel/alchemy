@@ -95,7 +95,7 @@ Func_080de21c:
 	ldr r2, [r3, #4]
 	lsls r0, r0, #1
 	ldr r3, [r3, #8]
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080de2f8
@@ -121,7 +121,7 @@ Func_080de21c:
 	strb r2, [r3]
 	adds r0, r6, #0
 	movs r1, #5
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	movs r1, #3
 	bl Animation_ApplyChildValuesFar
@@ -165,7 +165,7 @@ Func_080de21c:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #1
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r5, r0, #0
 	str r0, [r7]
 	subs r7, #4
@@ -187,13 +187,13 @@ Func_080de21c:
 	adds r3, #85
 	strb r2, [r3]
 	movs r1, #5
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r5, #0
 	movs r1, #2
 	bl Animation_ApplyChildValuesFar
 	mov r1, r11
 	ldr r0, [r5, #80]
-	bl Object_ReplaceResourceEntry
+	bl Sprite_ShareVramCacheEntry
 	mov r11, r0
 .L_080de3b8:
 	movs r3, #1
@@ -248,10 +248,10 @@ Func_080de21c:
 	ldr r1, [r0]
 	ldr r3, [r0, #8]
 	adds r0, r6, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	ldr r1, .L_080de548
 	adds r0, r6, #0
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	ldr r1, [sp, #4]
 	movs r2, #2
 	str r1, [sp, #0]
@@ -270,10 +270,10 @@ Func_080de21c:
 	adds r0, r5, #0
 	ldr r2, [r7, #4]
 	ldr r3, [r7, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	adds r0, r5, #0
 	ldr r1, .L_080de54c
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080de45a:
 	movs r0, #1
 	negs r0, r0
@@ -352,7 +352,7 @@ Func_080de21c:
 	ldr r2, [r0, #4]
 	ldr r3, [r0, #8]
 	ldr r0, [sp, #8]
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 .L_080de4fa:
 	movs r0, #4
 	bl Func_080ce31c

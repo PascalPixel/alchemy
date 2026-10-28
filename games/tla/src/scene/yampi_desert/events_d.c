@@ -1,10 +1,10 @@
 #include "scene.h"
 
 void Func_020032c4(void) {
-  s32 variant = Object_GetById(gAdventure.currentOwner)->sprite->priority;
+  s32 variant = Actor_GetById(gAdventure.currentOwner)->sprite->priority;
 
-  ObjectMotion_SetActionVariant(13, variant);
-  ObjectMotion_SetActionVariant(14, variant);
+  Actor_SetSpritePriority(13, variant);
+  Actor_SetSpritePriority(14, variant);
 }
 
 void Func_020032f4(void) {
@@ -18,8 +18,8 @@ void Func_020032f4(void) {
 }
 
 void Func_02003338(s32 id) {
-  Object_GetById(id)->priorityFlags |= 2;
-  ObjectMotion_SetActionVariant(id, 3);
+  Actor_GetById(id)->priorityFlags |= 2;
+  Actor_SetSpritePriority(id, 3);
   Func_020040f8(id);
-  Object_SetModeById(id, 2);
+  Actor_SetModeById(id, 2);
 }

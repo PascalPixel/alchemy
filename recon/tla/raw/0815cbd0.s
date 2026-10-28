@@ -212,7 +212,7 @@ BattleEffect_RunSpiderWeb:
 	cmp r5, r3
 	bne .L_0815cd5a
 .L_0815cd7e:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232

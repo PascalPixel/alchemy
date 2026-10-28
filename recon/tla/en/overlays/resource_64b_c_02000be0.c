@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
 extern char MsgGazedIntoThe[];
@@ -14,11 +14,11 @@ extern char MsgTheBoatS[];
 
 u32 Random16Far(void);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u8 *Unit_Get(s32 owner);
 void FieldMessage_Show(s32 message, s32 mode);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
-struct ObjectRuntime *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
+struct Actor *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
 void Func_02004b78(s32 a, s32 b, s32 c);
 void Func_02004c20(void);
 void Func_02004c28(void);
@@ -36,19 +36,19 @@ void Func_02000be0(void) {
   if (roll == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 slot = 79;
-    struct ObjectRuntime *leader = Object_GetById(Func_02004e10());
+    struct Actor *leader = Actor_GetById(Func_02004e10());
     u8 *unit = Unit_Get(gAdventure.currentOwner);
     s32 amount = (((unit[15] * Random16Far()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
-    struct ObjectRuntime *object;
+    struct Actor *object;
 
     FieldMessage_Show((s32)MsgThereAreSome, 1);
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
     Vector_AddPolarOffsetFar(0x100000, leader->angle, position);
-    object = Object_GetById(79);
+    object = Actor_GetById(79);
     x = position[0];
     if (object == NULL) {
       object = Func_02004b30(0x1e9, x, position[1], position[2]);

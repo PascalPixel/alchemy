@@ -13,7 +13,7 @@ void Func_02004d50(s32 id) {
   if (held == id) {
     work[0x138a] = 0;
     party->held |= 0xffff;
-    Object_GetById(held)->update = NULL;
-    Object_SetPartAttribute(Object_GetById(held), 0);
+    Actor_GetById(held)->update = NULL;
+    Actor_SetPartAttribute(Actor_GetById(held), 0);
   }
 }

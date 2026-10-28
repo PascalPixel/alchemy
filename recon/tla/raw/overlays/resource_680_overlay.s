@@ -49,7 +49,7 @@ Func_02000528:
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
 	lsls r0, r0, #1
-	bl Object_Spawn
+	bl Actor_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_020085d0
@@ -216,7 +216,7 @@ Func_020006ec:
 	strh r2, [r3]
 	sub sp, #8
 	bl Func_02000f0c
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #35
 	ldrb r2, [r0]
 	movs r3, #32
@@ -276,7 +276,7 @@ Func_020006ec:
 	cmp r0, #0
 	beq .L_020087e0
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r3, r5, #0
 	adds r3, #85
@@ -288,7 +288,7 @@ Func_020006ec:
 	lsls r3, r3, #16
 	str r3, [r5, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r3, #27
 	mov r2, r10
 	str r2, [sp, #0]
@@ -300,7 +300,7 @@ Func_020006ec:
 	bl Func_02000e44
 .L_020087e0:
 	movs r0, #19
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r3, r5, #0
 	movs r0, #144
@@ -322,7 +322,7 @@ Func_020006ec:
 	str r3, [r5, #12]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r3, #37
 	movs r2, #102
 	str r3, [sp, #0]
@@ -418,7 +418,7 @@ Func_020006ec:
 	bl Func_02000e44
 	movs r0, #20
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #97
@@ -431,7 +431,7 @@ Func_020006ec:
 	bl Event_WaitTransitionFrames
 	movs r0, #20
 	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r1, #1
 	movs r0, #20
 	bl Func_02000ed4
@@ -444,7 +444,7 @@ Func_020006ec:
 	bl Func_02000eac
 	movs r1, #2
 	movs r0, #20
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #160
@@ -534,7 +534,7 @@ Func_020006ec:
 	cmp r2, r3
 	bne .L_02008a36
 	movs r0, #64
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_02008a04
@@ -551,7 +551,7 @@ Func_020006ec:
 	adds r3, r3, r2
 	str r5, [r3]
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r3, r5, #0
 	adds r3, #85
@@ -614,7 +614,7 @@ Func_02000ab4:
 	ldr r5, [r3, #32]
 	adds r3, r2, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	cmp r3, #0
 	bge .L_02008ae4
@@ -669,7 +669,7 @@ Func_02000b2c:
 	adds r5, r1, #0
 	mov r8, r2
 	adds r6, r3, #0
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #32]
@@ -727,7 +727,7 @@ Func_02000b2c:
 	strb r3, [r1]
 	adds r0, r4, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
@@ -756,7 +756,7 @@ Func_02000bc0:
 	adds r3, r3, r2
 	adds r6, r0, #0
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	ldr r3, [r5, #72]
 	str r3, [sp, #8]
@@ -772,7 +772,7 @@ Func_02000bc0:
 	negs r0, r0
 	bl Camera_MoveWithinMapBounds
 	adds r0, r6, #0
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, [r5, #12]
 	adds r7, r0, #0
 	ldr r1, [r5, #8]
@@ -939,7 +939,7 @@ Func_02000bc0:
 	bl FieldEvent_WaitFrames
 	adds r0, r5, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r1, #1
 	adds r0, r5, #0
 	bl Func_02000e24

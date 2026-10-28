@@ -10,10 +10,10 @@ void Func_0200430c(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->field64 = 0;
     object->priorityFlags &= ~1;
-    Object_SetPartAttribute(object, 7);
+    Actor_SetPartAttribute(object, 7);
     object->sprite->priority = 1;
     object->priorityFlags |= 2;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     object->field68 = 60;

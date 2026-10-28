@@ -32,7 +32,7 @@ struct OrbitEffect {
 u32 Random16Far(void);
 void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
-struct OrbitEffect *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct OrbitEffect *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_02000474(struct OrbitEffect *effect);
 
 s32 Func_02000528(struct OrbitEffect *source) {
@@ -52,7 +52,7 @@ loop:
     position[2] = source->z;
     radius = Random16Far();
     Vector_AddPolarOffsetFar(radius * 5 + 0x30000, Random16Far(), position);
-    effect = Object_Spawn(308, position[0], position[1], position[2]);
+    effect = Actor_Spawn(308, position[0], position[1], position[2]);
     if (effect != NULL) {
       effect->update = Func_02000474;
       effect->timer = timer;

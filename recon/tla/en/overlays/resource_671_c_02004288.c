@@ -5,7 +5,7 @@
 // the origin's addresses from the pool above them (r9, r11). The state pointer
 // that keeps Func_020044d0's offsets inside its loop does not hold them here.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct PuzzleCell {
   u8 kind;
@@ -31,7 +31,7 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_0200566c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Map_Put(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
@@ -52,7 +52,7 @@ void Func_02004288(s32 id, s32 show) {
       struct PuzzleCell *cell = &state->cells[row * 11 + column];
 
       if (cell->occupied != 0) {
-        struct ObjectRuntime *object = Object_GetById(id);
+        struct Actor *object = Actor_GetById(id);
 
         if (show != 0) {
           object->x = ((state->originX + column) << 20) + 0x80000;

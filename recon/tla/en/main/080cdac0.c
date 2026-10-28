@@ -17,7 +17,7 @@
 // as one expression, 30 (the native keeps (u16) on its own statement). A
 // second 6-minute permute found nothing below 4.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 // How far, how high and how wide of the caster's facing an animation reaches
@@ -39,8 +39,8 @@ s32 ArcTan2(s32 y, s32 x);
 // ground, when it lies within the animation's reach in front of selfId;
 // -1 when it does not.
 s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
-  struct ObjectRuntime *self;
-  struct ObjectRuntime *other;
+  struct Actor *self;
+  struct Actor *other;
   struct NearbyRule *rule;
   s32 height;
   s32 range;

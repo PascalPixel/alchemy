@@ -16,7 +16,7 @@ Func_080e28d4:
 	adds r5, r0, #0
 	bl Party_GetLeaderActor
 	mov r9, r0
-	bl Object_GetById
+	bl Actor_GetById
 	mov r10, r0
 	mov r0, r8
 	lsls r0, r0, #16
@@ -33,7 +33,7 @@ Func_080e28d4:
 	b .L_080e2a5a
 .L_080e2912:
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	movs r3, #178
 	lsls r3, r3, #7
 	adds r3, #153
@@ -74,7 +74,7 @@ Func_080e28d4:
 	str r5, [r7, #24]
 	str r5, [r7, #28]
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	mov r1, r10
 	adds r0, r7, #0
 	bl FacingObject_TurnPairToFaceEachOther
@@ -86,7 +86,7 @@ Func_080e28d4:
 	bl Event_WaitFrames
 	mov r0, r9
 	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
+	bl Actor_StartRepeatedMotion
 	movs r1, #129
 	lsls r1, r1, #1
 	mov r0, r9

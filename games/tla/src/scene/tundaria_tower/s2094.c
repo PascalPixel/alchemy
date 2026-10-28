@@ -3,8 +3,8 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Object_GetById();
-void ObjectDispatch_SetSingleChildFlags();
+struct FieldActor *Actor_GetById();
+void Actor_SetSingleChildFlags();
 void Func_02002184();
 
 void Func_02002094(u16 *table) {
@@ -19,12 +19,12 @@ void Func_02002094(u16 *table) {
 loop:
   {
     id = row[0];
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     x = row[1];
     z = row[2];
 
     object->collisionFlags &= 0xfe;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
     row += 3;
   }

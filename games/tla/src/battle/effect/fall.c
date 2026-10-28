@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
 
@@ -28,20 +28,20 @@ struct FallingObject {
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gBattleEffect_SharedParticleScript);
     object->update = 0;
   }
 }
 
-void BattleEffect_UpdateDriftingFallObject(struct ObjectRuntime *object) {
+void BattleEffect_UpdateDriftingFallObject(struct Actor *object) {
   s32 r;
 
   object->y -= 0x4ccc;
   r = Random16();
   object->x += r - Random16();
   if (object->y <= object->terrainHeight) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gBattleEffect_SharedParticleScript);
   }
 }

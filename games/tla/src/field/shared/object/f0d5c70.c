@@ -3,7 +3,7 @@
 #include "event_work.h"
 #include "io_reg.h"
 #include "iowrite.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 

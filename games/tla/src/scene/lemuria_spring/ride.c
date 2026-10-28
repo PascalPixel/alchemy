@@ -26,12 +26,12 @@ extern u8 gData_0200174c[];
 extern u8 gData_02001750[];
 extern u16 gData_02001754[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(s32 id, s32 mode);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetModeById(s32 id, s32 mode);
 void WaitFrames(s32 frames);
 void Func_020008f0(s32 actor, s32 active);
 void Func_02000904(void);
-void Func_020012e8(struct ObjectRuntime *object, s32 mode);
+void Func_020012e8(struct Actor *object, s32 mode);
 void Func_02001408(s32 cue);
 
 /// Places the four actors from their tables, resets the ride and installs
@@ -76,8 +76,8 @@ next:
   ride->velocity.z = 0;
   ride->frames = 0;
 
-  Func_020012e8(Object_GetById(20), 2);
-  Func_020012e8(Object_GetById(21), 2);
+  Func_020012e8(Actor_GetById(20), 2);
+  Func_020012e8(Actor_GetById(21), 2);
 
   Task_Add((TaskFunc)Func_02000904, TASK_PASS_VBLANK + 3);
 }
@@ -106,7 +106,7 @@ start:
   /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
    * meet; plain, PRE copies it onto the cue's path (differ 2). */
   if (*(volatile s32 *)&gData_02001820 == 16) {
-    Object_SetModeById(gAdventure.currentOwner, 39);
+    Actor_SetModeById(gAdventure.currentOwner, 39);
     ride->hold = 0;
     ride->velocity.x = 0x14ccc;
     ride->velocity.y = 0x40000;
@@ -116,14 +116,14 @@ start:
     ride->trail[0].z = 0x980000;
     ride->frames = 300;
     if (gData_020017b0 == 1) {
-      Func_020012e8(Object_GetById(16), 3);
-      Func_020012e8(Object_GetById(17), 0);
+      Func_020012e8(Actor_GetById(16), 3);
+      Func_020012e8(Actor_GetById(17), 0);
       Func_020008f0(15, 1);
       Func_020008f0(14, 1);
       Func_020008f0(13, 1);
     } else {
-      Func_020012e8(Object_GetById(11), 3);
-      Func_020012e8(Object_GetById(12), 0);
+      Func_020012e8(Actor_GetById(11), 3);
+      Func_020012e8(Actor_GetById(12), 0);
       Func_020008f0(10, 1);
       Func_020008f0(9, 1);
       Func_020008f0(8, 1);

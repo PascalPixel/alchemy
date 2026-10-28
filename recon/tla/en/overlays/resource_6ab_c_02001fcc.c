@@ -17,7 +17,7 @@ struct MarsLighthouseEventWork {
 s32 Func_02004464(void);
 void Func_02004454(s32 a, s32 b);
 void Func_020043bc(s32 id, s32 a);
-void *Object_GetById(s32 id);
+void *Actor_GetById(s32 id);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_02001fcc(void) {
@@ -28,7 +28,7 @@ void Func_02001fcc(void) {
   s16 hp[8];
 
   leader = Func_02004464();
-  Object_GetById(leader);
+  Actor_GetById(leader);
   count = Party_CountActiveOwners();
   i = 0;
   if (i < count) {

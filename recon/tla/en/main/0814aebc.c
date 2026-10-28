@@ -70,7 +70,7 @@ void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
+                   s32 timerFrames); // ☀️ Actor_UpdateMembers
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
 void SceneTransform_ApplyPosition(s32 *position);
 void Sound_PlayFar(s32 cue);

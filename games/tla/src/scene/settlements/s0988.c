@@ -9,7 +9,7 @@ extern char SceneId_Ov690Room9;
 
 extern const u8 gData_02002272[];
 
-void Object_SetModeById(u32 id, s32 mode);
+void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000860(void);
 void Func_02000e04(void);
 void Func_0200125c(void);
@@ -33,18 +33,18 @@ s32 Func_02000988(void) {
     Func_02002188(gData_0200226c);
     if (GameFlag_Test(0x206))
       Func_020020c0(10, 0, 0);
-    Object_GetById(10)->priorityFlags |= 2;
-    Object_SetModeById(18, 2);
-    Object_SetModeById(19, 2);
-    Object_SetModeById(21, 2);
+    Actor_GetById(10)->priorityFlags |= 2;
+    Actor_SetModeById(18, 2);
+    Actor_SetModeById(19, 2);
+    Actor_SetModeById(21, 2);
     if (GameFlag_Test(0x205))
-      Object_SetModeById(10, 2);
+      Actor_SetModeById(10, 2);
     Func_02000e04();
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     if (GameFlag_Test(0x204)) {
       Func_020020c0(9, 0, 0);
       Place(21, 0xb80000, 0xb80000);
-      Object_GetById(21)->motionFlags = 0;
+      Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);
     }
 #endif
@@ -52,7 +52,7 @@ s32 Func_02000988(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov690Room4) {
     if (GameFlag_Test(0x230)) {
       CopyCells2(0, 3, 1, 1, 3, 15);
-      Object_SetModeById(9, 4);
+      Actor_SetModeById(9, 4);
     }
     if (GameFlag_Test(0x109) && Flag_Test(0x220)) {
       Flag_Clear(0x220);

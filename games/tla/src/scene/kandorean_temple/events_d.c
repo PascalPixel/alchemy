@@ -1,7 +1,7 @@
 #include "local.h"
 
-void Func_020006b0(struct ObjectRuntime *object) {
-  struct ObjectRuntime *steam =
+void Func_020006b0(struct Actor *object) {
+  struct Actor *steam =
       Func_02005140_(0x10d, object->x, object->y, object->z);
   struct FieldSprite *sprite;
 
@@ -21,13 +21,13 @@ void Func_020006b0(struct ObjectRuntime *object) {
 }
 
 void Func_02000710(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *steam;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
     steam = Func_02005140(14, leader->x, leader->y + 0x60000, leader->z);
     if (steam) {
-      ObjectDispatch_SetSingleChildFlags(steam, 0);
+      Actor_SetSingleChildFlags(steam, 0);
       Func_02005130(steam, 1);
       Func_02005138(steam, gData_020054f0);
     }

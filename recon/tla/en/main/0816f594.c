@@ -76,8 +76,8 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);            // ObjectGroup_UpdateMembers
-void ObjectGroup_CountDownMemberTimers(void);                  // ObjectGroup_CountDownMemberTimers
+                   s32 frames);            // Actor_UpdateMembers
+void BattleEffect_CountDownBattlerTints(void);                  // BattleEffect_CountDownBattlerTints
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
@@ -248,7 +248,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02000148(void) {
-  struct ObjectRuntime *object = Object_GetById(16);
+  struct Actor *object = Actor_GetById(16);
 
   GameFlag_SetBit(0x302);
   object->motionFlags = 0;

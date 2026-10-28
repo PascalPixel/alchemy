@@ -31,10 +31,10 @@ void Func_02003a8c(void) {
   Func_02001c44(17);
   Func_02001c44(19);
   Func_02001c44(20);
-  Object_SetPartAttribute(Object_GetById(14), 1);
-  Object_SetPartAttribute(Object_GetById(15), 2);
-  Object_SetPartAttribute(Object_GetById(8), 0);
-  Object_SetPartAttribute(Object_GetById(9), 3);
+  Actor_SetPartAttribute(Actor_GetById(14), 1);
+  Actor_SetPartAttribute(Actor_GetById(15), 2);
+  Actor_SetPartAttribute(Actor_GetById(8), 0);
+  Actor_SetPartAttribute(Actor_GetById(9), 3);
   if (!Value1((s32 (*)())GameFlag_Test, 0x9e5))
     return;
   GameFlag_ClearBit(0x9e5);

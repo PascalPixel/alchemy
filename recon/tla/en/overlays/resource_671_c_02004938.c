@@ -11,7 +11,7 @@
 // is home (7); a goal piece takes it with sound 204.
 // Left: the switch's tree and case order follow the native's, but its branch offsets differ through the body: the native keeps the ball in r11 and derives the row and heading pointers from the column's (+2, -4), keeps col, row and heading in r10, r8 and r9 and gSceneState in r5, and builds 0x80000 for each product.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 extern u8 gSceneState[];
@@ -19,9 +19,9 @@ extern const u8 gData_02006f38[], gData_02006ec0[];
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 void Func_02005854(s32 sound);
-void Func_02005634(struct ObjectRuntime *object, const u8 *script);
+void Func_02005634(struct Actor *object, const u8 *script);
 
-void Func_02004938(struct ObjectRuntime *ball, s32 step) {
+void Func_02004938(struct Actor *ball, s32 step) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
   s16 *rowp = (s16 *)((u8 *)ball + 102);
   u8 *headingp = (u8 *)ball + 98;

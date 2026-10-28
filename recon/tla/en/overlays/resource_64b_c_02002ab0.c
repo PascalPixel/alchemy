@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern char MsgWeReSaved[];
@@ -13,21 +13,21 @@ extern char MsgWeReSaved[];
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020042e0(s32 mode);
 void Func_02004b40(void);
-void Func_02004b50(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02004b68(s32 a, s32 b, s32 c, s32 d);
 void Func_02004b78(s32 a, s32 b, s32 c);
 void Func_02004c20(void);
@@ -46,7 +46,7 @@ void Func_02004e30(s32 cue);
 #define MAP_HALF(map, offset) (*(u16 *)((map) + (offset)))
 
 void Func_02002ab0(void) {
-  struct ObjectRuntime *boat = Object_GetById(10);
+  struct Actor *boat = Actor_GetById(10);
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 i;
 
@@ -58,11 +58,11 @@ void Func_02002ab0(void) {
   boat->scaleY = 0x13333;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   WaitFrames(1);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-  ObjectMotion_SetSpeedParameters(10, 0x6666, 0x3333);
+  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+  Actor_SetSpeedParameters(10, 0x6666, 0x3333);
   boat->action = 0;
   boat->acceleration = 0x2000;
   boat->speedLimit = 0x2000;
@@ -91,7 +91,7 @@ void Func_02002ab0(void) {
   for (i = 31; i >= 0; i--) {
     MAP_HALF(map, 0x11e) += 0xff80;
     MAP_HALF(map, 0x11c) += 128;
-    Object_GetById(10)->scaleY += -0x300;
+    Actor_GetById(10)->scaleY += -0x300;
     WaitFrames(1);
   }
   Func_02004da8();
@@ -114,8 +114,8 @@ void Func_02002ab0(void) {
   Func_02004c88(4, 0x0e550000, 0x1df00000);
   Func_02004c88(5, 0x0e490000, 0x1dc50000);
   Func_02004c88(6, 0x0e770000, 0x1de30000);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
   WaitFrames(1);
   Func_02004da8();
@@ -124,14 +124,14 @@ void Func_02002ab0(void) {
   Func_02004cf0(5, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
   Func_02004cf0(9, 0);
-  ObjectMotion_Launch(6, 6, 15);
-  ObjectMotion_Launch(6, 6, 23);
-  ObjectMotion_SetAngleToward(6, 4, 0);
+  Actor_Jump(6, 6, 15);
+  Actor_Jump(6, 6, 23);
+  Actor_SetAngleToward(6, 4, 0);
   Func_02004cf0(6, 0);
   Func_02004d10(8, 0x101);
   Func_02004cf0(8, 0);
-  ObjectMotion_SetSpeedParameters(8, 0x10000, 0x8000);
-  ObjectMotion_ResetAndSetPositionInMode2(8, 0xe18, 0x1e0f);
+  Actor_SetSpeedParameters(8, 0x10000, 0x8000);
+  Actor_ResetAndSetPositionInMode2(8, 0xe18, 0x1e0f);
   Func_02004e30(163);
   Func_020042e0(0);
   Func_02004d40(65);

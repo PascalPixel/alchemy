@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern s32 gData_02005af0;
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Func_02000624(struct ObjectRuntime *origin, s32 id);
-void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Func_02000624(struct Actor *origin, s32 id);
+void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity);
 s32 Func_0200584c(void);
-void Func_020056b4(struct ObjectRuntime *object);
+void Func_020056b4(struct Actor *object);
 void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_020057a4(s32 speed, s32 acceleration);
@@ -17,19 +17,19 @@ void Func_02005854(s32 sound);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
 void Camera_FollowActor(s32 actor, s32 value);
 
 void Func_02000c38(void) {
   s32 *speed = &gData_02005af0;
 
   if (*speed != 0) {
-    struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
-    struct ObjectRuntime *found = Func_02000624(actor, 359);
+    struct Actor *actor = Actor_GetById(Func_0200584c());
+    struct Actor *found = Func_02000624(actor, 359);
     s32 dx = *speed << 20;
 
     if (found != NULL) {
@@ -50,8 +50,8 @@ void Func_02000c8c(void) {
   s32 *speed = &gData_02005af0;
 
   if (*speed != 0) {
-    struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
-    struct ObjectRuntime *found = Func_02000624(actor, 360);
+    struct Actor *actor = Actor_GetById(Func_0200584c());
+    struct Actor *found = Func_02000624(actor, 360);
     s32 dz = *speed << 20;
     u16 facing;
 
@@ -71,17 +71,17 @@ void Func_02000c8c(void) {
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(id, angle, frames);
+  Actor_ArmCallback(id, angle, frames);
 }
 
 static __inline__ void Camera_SetSpeed(s32 speed, s32 acceleration) {
@@ -94,7 +94,7 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-void Func_02000cf0(struct ObjectRuntime *object) {
+void Func_02000cf0(struct Actor *object) {
   Func_020056b4(object);
   Func_0200580c(0);
   Camera_SetSpeed(0x10000, 0x2000);
@@ -102,18 +102,18 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   FieldEvent_WaitFrames(30);
   Actor_Turn(gAdventure.currentOwner, 0x2000, 0);
   FieldEvent_WaitFrames(15);
-  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 39);
+  Actor_WatchAndSetScript(gAdventure.currentOwner, 39);
   Func_0200578c(gAdventure.currentOwner, 257, 30);
   Camera_FollowActor(39, 1);
   FieldEvent_WaitFrames(30);
-  Object_GetById(39)->priorityFlags |= 0x20;
-  Object_SetModeById(39, 1);
+  Actor_GetById(39)->priorityFlags |= 0x20;
+  Actor_SetModeById(39, 1);
   Actor_Walk(39, 320, 240);
   Actor_Walk(39, 304, 216);
   Actor_Walk(39, 280, 216);
   Actor_Walk(39, 280, 184);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetAngleToward(39, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(39, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(10);
   Func_02005854(262);
   {
@@ -131,11 +131,11 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   Actor_Turn(39, 0x8000, 0);
   FieldEvent_WaitFrames(15);
   Func_02005854(152);
-  Object_GetById(39)->velocityY = 0x40000;
+  Actor_GetById(39)->velocityY = 0x40000;
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 312, 200);
   Func_02005854(152);
-  Object_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = 0x60000;
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 312, 168);
   Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -143,12 +143,12 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   Camera_SetBounds(-1, -1, -1, 0);
   FieldEvent_WaitFrames(15);
   Func_02005854(152);
-  Object_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = 0x60000;
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 360, 152);
   FieldEvent_WaitFrames(15);
   Func_02005854(152);
-  Object_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = 0x60000;
   Actor_SetSpeed(39, 0x20000, 0x10000);
   Actor_Walk(39, 360, 184);
   Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -157,7 +157,7 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   Actor_Walk(39, 408, 184);
   FieldEvent_WaitFrames(15);
   Func_02005854(152);
-  Object_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = 0x60000;
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 440, 184);
   Func_02005714(39, 0, 0);

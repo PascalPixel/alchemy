@@ -12,7 +12,7 @@ Func_08020240:
 	.global Func_08020248
 	.thumb_func
 Func_08020248:
-	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayers
+	overlay_veneer ActorSystem_ResumeProjectionAndHideLayers
 	.global Animation_SetDisplayFlagFar
 	.thumb_func
 Animation_SetDisplayFlagFar:

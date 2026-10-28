@@ -1,20 +1,20 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
 /// Returns the first of objects 8 to 63 standing in the same 16-pixel cell
 /// as position (x, y and z), or NULL. Callers pass the object asking; the
 /// search does not use it.
 // ☀️'s twin takes the object too.
-struct ObjectRuntime *Object_FindInCell(s32 *position,
-                                        struct ObjectRuntime *self) {
+struct Actor *Actor_FindInCell(s32 *position,
+                                        struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   /* FAKEMATCH: the counter pinned to r4; without the pin global allocation
    * gives r4 to the object pointer first (differ 12). */
   register u32 i asm("r4");
   void **objects;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   i = 8;
   objects = &work->objects[8];

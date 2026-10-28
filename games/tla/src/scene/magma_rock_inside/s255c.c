@@ -28,7 +28,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 /// (73, 72) and stamps the cells kept at (70, 72) in their place, once per
 /// cell; Func_02003d40 of Air's Rock is the same with another source.
 void Func_0200257c(void) {
-  struct ObjectRuntime *object = Object_GetById(Func_02004f00());
+  struct Actor *object = Actor_GetById(Func_02004f00());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;
@@ -52,7 +52,7 @@ void Func_0200257c(void) {
 
 /// As Func_0200257c, stamping the cells kept at (71, 72).
 void Func_02002610(void) {
-  struct ObjectRuntime *object = Object_GetById(Func_02004f00());
+  struct Actor *object = Actor_GetById(Func_02004f00());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;

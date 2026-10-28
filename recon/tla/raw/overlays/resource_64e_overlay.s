@@ -43,7 +43,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	mov r1, r8
-	bl Object_FindInCell
+	bl Actor_FindInCell
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020083e2
@@ -65,7 +65,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	adds r1, r6, #0
-	bl Object_FindInCell
+	bl Actor_FindInCell
 	cmp r0, #0
 	beq .L_02008418
 	adds r3, r0, #0
@@ -87,7 +87,7 @@ Func_0200038c:
 	adds r0, r7, #0
 	ldr r3, [r6, #16]
 	str r3, [r7, #8]
-	bl Object_FindInCell
+	bl Actor_FindInCell
 	cmp r0, #0
 	beq .L_02008444
 	adds r3, r0, #0
@@ -236,43 +236,43 @@ VenusLighthouse_Start:
 	movs r0, #10
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #17
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #18
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #19
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #20
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #21
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #22
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #23
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #24
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #25
 	bl Import_ActorGet
 	movs r1, #6
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_02008b1a:
 	movs r0, #0
 	pop {pc}

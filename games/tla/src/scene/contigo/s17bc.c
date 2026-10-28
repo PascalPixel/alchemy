@@ -1,12 +1,12 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_020017bc(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
-  ObjectMotion_SetActionVariant(id, 3);
+  Actor_SetSpritePriority(id, 3);
   object->collisionFlags = 8;
   /* FAKEMATCH: the loop note ends the scheduling block: the native stores the
    * collision flags before it copies the object for the priority flags (2

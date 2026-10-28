@@ -1,27 +1,27 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+struct Actor *Actor_GetById(s32 id);
+void Actor_TurnToFaceEachOther(s32 a, s32 b, s32 c);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002b28(void);
@@ -30,12 +30,12 @@ void Func_02002b88(s32 id, s32 a, s32 b);
 void Func_02002bd0(const u8 *message);
 void Func_02002be0(s32 id, s32 a, s32 b);
 void Func_02002bf8(s32 id, s32 a);
-struct ObjectRuntime *Func_02002c08(s32 id, s32 emote, s32 frames);
+struct Actor *Func_02002c08(s32 id, s32 emote, s32 frames);
 void Func_02002c10(s32 id, s32 a);
 void Func_02002c28(void);
 void Func_02002c58(s32 a);
 void Func_02002be8(s32 id, s32 a);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
+void Actor_Jump(s32 id, s32 a, s32 b);
 void Func_02002c68(s32 id, s32 a, s32 b, s32 c);
 s32 Func_02002ae8(const void *edit, s32 a, s32 b);
 void Func_02002b90(s32 id, s32 x, s32 z, s32 angle);
@@ -47,7 +47,7 @@ void Func_02002c90(s32 cue);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 
 extern const u8 MsgYouThereHold[];
 extern const u8 MsgHasEscaped2[];
@@ -63,35 +63,35 @@ static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 72 of 475 in Func_02000ac4, 36 of
    * 549 in Func_02000f80, 64 of 490 in Func_020014fc). */
-  ObjectMotion_ArmCallback(id, angle, flags);
+  Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void OffsetPos(u32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 10 of 475 in Func_02000ac4, 12 of
    * 490 in Func_020014fc). */
-  ObjectMotion_OffsetPositionAndReset(id, dx, dz);
+  Actor_OffsetPositionAndReset(id, dx, dz);
 }
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 31 of 475 in Func_02000ac4, 2 of
    * 490 in Func_020014fc). */
-  ObjectMotion_CommitPositionAndActivate(id, x, z);
+  Actor_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 24 of 475 in Func_02000ac4, 30 of
    * 549 in Func_02000f80, 28 of 490 in Func_020014fc). */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void SetPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 51 of 475 in Func_02000ac4, 20 of
    * 549 in Func_02000f80). */
-  ObjectMotion_SetPositionAndReset(id, x, z);
+  Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 d) {
@@ -107,7 +107,7 @@ static __inline__ void ArmCallbackAndRefresh(s32 id, s32 a) {
   Func_02002bf8(id, a);
 }
 
-static __inline__ struct ObjectRuntime *Emote(s32 id, s32 emote, s32 frames) {
+static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 8 of 475 in Func_02000ac4, 25 of
    * 549 in Func_02000f80, 27 of 490 in Func_020014fc). */
@@ -123,7 +123,7 @@ static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
 static __inline__ void SetPosInMode2(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 48 of 549 in Func_02000f80). */
-  ObjectMotion_ResetAndSetPositionInMode2(id, x, z);
+  Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
 static __inline__ void SetHorizontalPos(s32 id, s32 x, s32 z) {
@@ -142,7 +142,7 @@ static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
 /// bit cleared and set, and 32 is placed at the current owner before flag
 /// 0x910 is set. It opens with "You there, hold".
 void Func_02000ac4(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   Func_02002b28();
   Func_02002c58(0);
@@ -151,13 +151,13 @@ void Func_02000ac4(void) {
   CamBounds(238 << 17, -1, 210 << 17, 1);
   OffsetPos(25, 3, 8);
   CommitPos(24, -3, 8);
-  ObjectMotion_CommitCurrentPositionAndActivate(25);
+  Actor_WaitForMoveById(25);
   SetPos(4, 472, 426);
   FieldEvent_WaitFrames(10);
   ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
-  ObjectMotion_CommitCurrentPositionAndActivate(32);
+  Actor_WaitForMoveById(32);
   ArmCallback(4, 0, 0);
   ArmCallback(32, 0x8000, 0);
   FieldEvent_WaitFrames(30);
@@ -174,26 +174,26 @@ void Func_02000ac4(void) {
   FieldEvent_WaitFrames(20);
   Func_02002be0(25, 0, 2);
   FieldEvent_WaitFrames(10);
-  ObjectMotion_SetAngleToward(24, 25, 0);
+  Actor_SetAngleToward(24, 25, 0);
   FieldEvent_WaitFrames(10);
-  ObjectMotion_SetAngleToward(25, 24, 0);
+  Actor_SetAngleToward(25, 24, 0);
   FieldEvent_WaitFrames(10);
   Motion_SetModeAndWaitAnimation(24, 3);
   FieldEvent_WaitFrames(30);
-  ObjectMotion_SetAngleToward(25, 24, 0);
+  Actor_SetAngleToward(25, 24, 0);
   FieldEvent_WaitFrames(10);
-  ObjectMotion_SetAngleToward(25, 32, 0);
+  Actor_SetAngleToward(25, 32, 0);
   Motion_SetModeAndWaitAnimation(25, 3);
   FieldEvent_WaitFrames(30);
   ArmCallback(24, 0x5000, 0);
-  Object_GetById(25)->priorityFlags &= 0xfe;
-  ObjectMotion_SetActionVariant(25, 3);
+  Actor_GetById(25)->priorityFlags &= 0xfe;
+  Actor_SetSpritePriority(25, 3);
   SetPos(25, 457, 402);
   CommitPos(25, 16, 0);
   SetPos(25, 472, 420);
   FieldEvent_WaitFrames(30);
   SetPos(25, 484, 420);
-  Object_GetById(25)->priorityFlags |= 1;
+  Actor_GetById(25)->priorityFlags |= 1;
   ArmCallback(25, 0x4000, 0);
   FieldEvent_WaitFrames(60);
   FieldEvent_WaitFrames(10);
@@ -209,12 +209,12 @@ void Func_02000ac4(void) {
   Motion_SetModeAndWaitAnimation(25, 3);
   FieldEvent_WaitFrames(5);
   Func_02002be0(25, 0, 2);
-  Object_GetById(25)->priorityFlags &= 0xfe;
-  ObjectMotion_SetActionVariant(25, 3);
+  Actor_GetById(25)->priorityFlags &= 0xfe;
+  Actor_SetSpritePriority(25, 3);
   CommitPos(25, 0, -16);
   SetPos(25, 475, 400);
   CommitPos(25, -16, 0);
-  Object_GetById(25)->priorityFlags |= 1;
+  Actor_GetById(25)->priorityFlags |= 1;
   CamBounds(238 << 17, -1, 198 << 17, 1);
   SetPos(25, 459, 416);
   ArmCallback(25, 0x2000, 0);
@@ -233,7 +233,7 @@ void Func_02000ac4(void) {
   ArmCallback(32, 0xb000, 0);
   Func_02002be0(25, 0, 2);
   FieldEvent_WaitFrames(10);
-  Object_TurnToFaceEachOther(4, 32, 0);
+  Actor_TurnToFaceEachOther(4, 32, 0);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(10);
   ArmCallback(4, 0xc000, 0);
@@ -252,21 +252,21 @@ void Func_02000ac4(void) {
   Speed(25, 0x4ccc, 0x2666);
   OffsetPos(24, 3, -8);
   OffsetPos(25, -3, -8);
-  ObjectMotion_CommitCurrentPositionAndActivate(24);
-  ObjectMotion_CommitCurrentPositionAndActivate(25);
+  Actor_WaitForMoveById(24);
+  Actor_WaitForMoveById(25);
   ArmCallback(25, 0x3000, 0);
   ArmCallback(24, 0x5000, 0);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(32, 3);
+  Actor_SetModeById(32, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(32, 2);
-  object = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(32, 2);
+  object = Actor_GetById(gAdventure.currentOwner);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(32);
+  Actor_WaitForMoveById(32);
   Func_02002b88(32, 0, 0);
   GameFlag_SetBit(0x910);
   Func_02002b88(26, 0, 0);
@@ -295,14 +295,14 @@ void Func_02000f80(void) {
   FieldEvent_WaitFrames(20);
   SetPosInMode2(34, 156, 372);
   SetPosInMode2(4, 76, 388);
-  ObjectMotion_CommitCurrentPositionAndActivate(33);
+  Actor_WaitForMoveById(33);
   SetPosInMode2(33, 108, 380);
-  ObjectMotion_CommitCurrentPositionAndActivate(34);
+  Actor_WaitForMoveById(34);
   SetPosInMode2(34, 124, 380);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
+  Actor_WaitForMoveById(4);
   ArmCallback(4, 0x2000, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(33);
-  ObjectMotion_CommitCurrentPositionAndActivate(34);
+  Actor_WaitForMoveById(33);
+  Actor_WaitForMoveById(34);
   ArmCallback(33, 0xc000, 0);
   ArmCallback(34, 0xc000, 0);
   FieldEvent_WaitFrames(20);
@@ -317,9 +317,9 @@ void Func_02000f80(void) {
   SetPosInMode2(33, 102, 340);
   FieldEvent_WaitFrames(20);
   SetPosInMode2(34, 102, 340);
-  ObjectMotion_CommitCurrentPositionAndActivate(33);
+  Actor_WaitForMoveById(33);
   SetHorizontalPos(33, 0x40000, 0x40000);
-  ObjectMotion_CommitCurrentPositionAndActivate(34);
+  Actor_WaitForMoveById(34);
   SetHorizontalPos(34, 0x40000, 0x40000);
   ArmCallback(4, 0xe000, 0);
   FieldEvent_WaitFrames(40);
@@ -331,20 +331,20 @@ void Func_02000f80(void) {
   SetPos(34, 100, 364);
   SetPosInMode2(34, 124, 380);
   SetPos(33, 100, 380);
-  ObjectMotion_CommitCurrentPositionAndActivate(34);
+  Actor_WaitForMoveById(34);
   SetPosInMode2(34, 132, 396);
   SetPos(33, 108, 396);
-  ObjectMotion_CommitCurrentPositionAndActivate(34);
-  ObjectMotion_SetAngleToward(4, 33, 0);
+  Actor_WaitForMoveById(34);
+  Actor_SetAngleToward(4, 33, 0);
   ArmCallback(34, 0xc000, 0);
   ArmCallback(33, 0xc000, 0);
   Emote(33, 258, 30);
   Func_02002be0(33, 0, 10);
-  ObjectMotion_SetAngleToward(34, 33, 0);
+  Actor_SetAngleToward(34, 33, 0);
   Motion_SetModeAndWaitAnimation(34, 3);
   FieldEvent_WaitFrames(20);
   Func_02002be0(34, 0, 10);
-  ObjectMotion_SetAngleToward(33, 34, 0);
+  Actor_SetAngleToward(33, 34, 0);
   FieldEvent_WaitFrames(20);
   Motion_SetVarCbAndRefresh(33, 2);
   FieldEvent_WaitFrames(20);
@@ -370,15 +370,15 @@ void Func_02000f80(void) {
   Func_02002be0(33, 0, 10);
   Func_02002be0(33, 0, 10);
   Motion_SetVarCbAndRefresh(34, 2);
-  ObjectMotion_SetAngleToward(34, 33, 0);
+  Actor_SetAngleToward(34, 33, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be0(34, 0, 10);
-  ObjectMotion_SetAngleToward(33, 34, 0);
+  Actor_SetAngleToward(33, 34, 0);
   FieldEvent_WaitFrames(10);
   Motion_SetModeAndWaitAnimation(33, 4);
   FieldEvent_WaitFrames(20);
   Func_02002be0(33, 0, 10);
-  ObjectMotion_SetAngleToward(33, 4, 0);
+  Actor_SetAngleToward(33, 4, 0);
   FieldEvent_WaitFrames(30);
   Func_02002be0(33, 0, 10);
   Emote(4, 261, 30);
@@ -395,7 +395,7 @@ void Func_02000f80(void) {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Func_02002be0(33, 0, 10);
   }
-  ObjectMotion_SetAngleToward(33, 34, 0);
+  Actor_SetAngleToward(33, 34, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be0(33, 0, 10);
   Motion_SetModeAndWaitAnimation(34, 3);
@@ -412,7 +412,7 @@ void Func_02000f80(void) {
   Motion_SetModeAndWaitAnimation(34, 3);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_CommitPositionAndActivate(34, 6, 0);
+  Actor_CommitPositionAndActivate(34, 6, 0);
   SetPos(34, 164, 316);
   FieldEvent_WaitFrames(10);
   ArmCallbackAndRefresh(33, 0x8000);
@@ -425,7 +425,7 @@ void Func_02000f80(void) {
   Motion_SetModeAndWaitAnimation(33, 3);
   FieldEvent_WaitFrames(20);
   GameFlag_SetBit(0x913);
-  ObjectMotion_CommitPositionAndActivate(33, 30, 0);
+  Actor_CommitPositionAndActivate(33, 30, 0);
   SetPos(33, 164, 316);
   FieldEvent_WaitFrames(20);
   SetHorizontalPos(33, 0, 0);
@@ -438,7 +438,7 @@ void Func_02000f80(void) {
 /// second question is "It was them". Then 32 is placed at the current owner and
 /// flag 0x914 is set.
 void Func_020014fc(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   Func_02002b28();
   Func_02002c58(0);
@@ -451,10 +451,10 @@ void Func_020014fc(void) {
   ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
-  ObjectMotion_CommitCurrentPositionAndActivate(32);
+  Actor_WaitForMoveById(32);
   CommitPos(25, 3, 8);
   ArmCallbackAndRefresh(25, 0);
-  Object_SetModeById(25, 4);
+  Actor_SetModeById(25, 4);
   FieldEvent_WaitFrames(20);
   Func_02002be0(25, 0, 10);
   ArmCallback(4, 0, 0);
@@ -468,11 +468,11 @@ void Func_020014fc(void) {
   Func_02002be0(24, 0, 10);
   ArmCallback(32, 0xd000, 0);
   Emote(32, 0x103, 0);
-  ObjectMotion_Launch(32, 6, 15);
-  ObjectMotion_Launch(32, 6, 23);
+  Actor_Jump(32, 6, 15);
+  Actor_Jump(32, 6, 23);
   Func_02002be8(32, 0);
   Emote(4, 0x100, 30);
-  ObjectMotion_SetAngleToward(4, 24, 0);
+  Actor_SetAngleToward(4, 24, 0);
   FieldEvent_WaitFrames(20);
   Emote(32, 0x100, 30);
   ArmCallbackAndRefresh(32, 0xd000);
@@ -551,24 +551,24 @@ void Func_020014fc(void) {
   Speed(25, 0x4ccc, 0x2666);
   OffsetPos(24, 3, -8);
   OffsetPos(25, -3, -8);
-  ObjectMotion_CommitCurrentPositionAndActivate(24);
-  ObjectMotion_CommitCurrentPositionAndActivate(25);
+  Actor_WaitForMoveById(24);
+  Actor_WaitForMoveById(25);
   ArmCallback(25, 0x3000, 0);
   ArmCallback(24, 0x5000, 0);
   FieldEvent_WaitFrames(20);
   ArmCallback(4, 0, 0);
   ArmCallback(32, 0x8000, 0);
   FieldEvent_WaitFrames(20);
-  Object_SetModeById(32, 3);
+  Actor_SetModeById(32, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_WaitFrames(10);
   GameFlag_SetBit(0x914);
-  Object_SetModeById(32, 2);
-  object = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(32, 2);
+  object = Actor_GetById(gAdventure.currentOwner);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(32);
+  Actor_WaitForMoveById(32);
   SetHorizontalPos(32, 0, 0);
   ArmCallbackAndRefresh(4, 0xc000);
   Func_02002b30();
@@ -589,7 +589,7 @@ extern const struct CellPictureCopyEntry gData_02003308[];
  * tla-en. */
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
-    Object_SetModeById(id, mode);                                              \
+    Actor_SetModeById(id, mode);                                              \
   } while (0)
 
 /// Actor 34 questions 4 and the others; the answers are counted in the event
@@ -597,7 +597,7 @@ extern const struct CellPictureCopyEntry gData_02003308[];
 /// 0x918 is set, otherwise the mayor's two lines are shown. 33 then talks with
 /// the group, and they all gather at 4 before flags 0x980 and 0x98e are set.
 void Func_020019d8(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 x;
   s32 z;
 
@@ -619,7 +619,7 @@ void Func_020019d8(void) {
   LaunchFromFocused(32, 0, 0, 0xc000);
   LaunchFromFocused(6, -8, 16, 0xc000);
   LaunchFromFocused(7, -16, 0, 0xc000);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
+  Actor_WaitForMoveById(4);
   ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(20);
   Func_02002ae8(gData_02003308[6].steps, gData_02003308[6].unk04,
@@ -634,18 +634,18 @@ void Func_020019d8(void) {
     FieldEvent_WaitFrames(20);
   } while (0);
   FieldMessage_ShowAtActor(34, 0);
-  ObjectMotion_SetAngleToward(32, 4, 0);
-  ObjectMotion_SetAngleToward(5, 4, 0);
-  ObjectMotion_SetAngleToward(7, 4, 0);
-  ObjectMotion_SetAngleToward(6, 4, 0);
-  ObjectMotion_ArmCallback(34, 0x4000, 0);
+  Actor_SetAngleToward(32, 4, 0);
+  Actor_SetAngleToward(5, 4, 0);
+  Actor_SetAngleToward(7, 4, 0);
+  Actor_SetAngleToward(6, 4, 0);
+  Actor_ArmCallback(34, 0x4000, 0);
   FieldEvent_WaitFrames(20);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     ArmCallback(32, 0xc000, 0);
     ArmCallback(5, 0xc000, 0);
     ArmCallback(7, 0xc000, 0);
     ArmCallback(6, 0xc000, 0);
-    ObjectMotion_ArmCallback(34, 0x4000, 0);
+    Actor_ArmCallback(34, 0x4000, 0);
     FieldEvent_WaitFrames(20);
     SET_MODE(34, 4);
     FieldEvent_WaitFrames(33);
@@ -657,7 +657,7 @@ void Func_020019d8(void) {
     ArmCallback(5, 0xc000, 0);
     ArmCallback(7, 0xc000, 0);
     ArmCallback(6, 0xc000, 0);
-    ObjectMotion_ArmCallback(34, 0x4000, 0);
+    Actor_ArmCallback(34, 0x4000, 0);
     FieldEvent_WaitFrames(20);
     SET_MODE(34, 4);
     FieldEvent_WaitFrames(33);
@@ -672,10 +672,10 @@ void Func_020019d8(void) {
   FieldEvent_WaitFrames(20);
   Func_02002be0(34, 0, 0);
   Emote(6, 0x102, 30);
-  ObjectMotion_SetAngleToward(6, 5, 0);
+  Actor_SetAngleToward(6, 5, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(6, 0);
-  ObjectMotion_SetAngleToward(5, 6, 0);
+  Actor_SetAngleToward(5, 6, 0);
   FieldEvent_WaitFrames(20);
   SET_MODE(5, 4);
   FieldEvent_WaitFrames(33);
@@ -720,7 +720,7 @@ void Func_020019d8(void) {
   ArmCallback(5, 0xc000, 0);
   ArmCallback(6, 0xc000, 0);
   Func_02002be0(34, 0, 0);
-  Object_SetModeById(32, 3);
+  Actor_SetModeById(32, 3);
   SET_MODE(4, 3);
   SET_MODE(5, 3);
   SET_MODE(6, 3);
@@ -741,11 +741,11 @@ void Func_020019d8(void) {
   Emote(7, 0x101, 0);
   Emote(6, 0x101, 0);
   Emote(32, 0x101, 30);
-  ObjectMotion_SetAngleToward(4, 33, 0);
-  ObjectMotion_SetAngleToward(7, 33, 0);
-  ObjectMotion_SetAngleToward(6, 33, 0);
-  ObjectMotion_SetAngleToward(5, 33, 0);
-  ObjectMotion_SetAngleToward(32, 33, 0);
+  Actor_SetAngleToward(4, 33, 0);
+  Actor_SetAngleToward(7, 33, 0);
+  Actor_SetAngleToward(6, 33, 0);
+  Actor_SetAngleToward(5, 33, 0);
+  Actor_SetAngleToward(32, 33, 0);
   FieldEvent_WaitFrames(20);
   Camera_FollowActor(33, 1);
   FieldEvent_WaitFrames(60);
@@ -753,32 +753,32 @@ void Func_020019d8(void) {
   Emote(33, 0x107, 30);
   Func_02002be8(33, 0);
   ArmCallback(33, 0x8000, 0);
-  Object_TurnToFaceEachOther(6, 5, 0);
-  Object_TurnToFaceEachOther(7, 32, 0);
+  Actor_TurnToFaceEachOther(6, 5, 0);
+  Actor_TurnToFaceEachOther(7, 32, 0);
   FieldEvent_WaitFrames(40);
   Emote(4, 0x102, 30);
   Motion_SetVarCbAndRefresh(33, 2);
   FieldEvent_WaitFrames(20);
   Func_02002be8(33, 0);
-  ObjectMotion_SetAngleToward(4, 33, 0);
-  ObjectMotion_SetAngleToward(7, 33, 0);
-  ObjectMotion_SetAngleToward(6, 33, 0);
-  ObjectMotion_SetAngleToward(5, 33, 0);
-  ObjectMotion_SetAngleToward(32, 33, 0);
+  Actor_SetAngleToward(4, 33, 0);
+  Actor_SetAngleToward(7, 33, 0);
+  Actor_SetAngleToward(6, 33, 0);
+  Actor_SetAngleToward(5, 33, 0);
+  Actor_SetAngleToward(32, 33, 0);
   FieldEvent_WaitFrames(20);
   ArmCallbackAndRefresh(33, 0x8000);
   ArmCallbackAndRefresh(33, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(33, 0);
   Emote(6, 0x102, 30);
-  ObjectMotion_SetAngleToward(6, 5, 0);
+  Actor_SetAngleToward(6, 5, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(6, 0);
   Emote(5, 0x100, 30);
   Func_02002be8(5, 0);
   Emote(33, 0x107, 30);
   Func_02002be8(33, 0);
-  ObjectMotion_SetAngleToward(33, 4, 0);
+  Actor_SetAngleToward(33, 4, 0);
   FieldEvent_WaitFrames(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
@@ -789,12 +789,12 @@ void Func_020019d8(void) {
     FieldEvent_WaitFrames(20);
     FieldEvent_WaitFrames(20);
     Func_02002be8(33, 0);
-    Object_TurnToFaceEachOther(6, 5, 0);
+    Actor_TurnToFaceEachOther(6, 5, 0);
     FieldEvent_WaitFrames(40);
-    ObjectMotion_SetAngleToward(6, 33, 0);
-    ObjectMotion_SetAngleToward(5, 33, 0);
+    Actor_SetAngleToward(6, 33, 0);
+    Actor_SetAngleToward(5, 33, 0);
     FieldEvent_WaitFrames(40);
-    Object_SetModeById(5, 4);
+    Actor_SetModeById(5, 4);
     SET_MODE(6, 4);
     FieldEvent_WaitFrames(33);
     FieldEvent_WaitFrames(20);
@@ -803,12 +803,12 @@ void Func_020019d8(void) {
   } else {
     Func_02002bd0(MsgICanTBelieveIt);
     Func_02002be8(33, 0);
-    Object_TurnToFaceEachOther(6, 5, 0);
+    Actor_TurnToFaceEachOther(6, 5, 0);
     FieldEvent_WaitFrames(40);
-    ObjectMotion_SetAngleToward(6, 33, 0);
-    ObjectMotion_SetAngleToward(5, 33, 0);
+    Actor_SetAngleToward(6, 33, 0);
+    Actor_SetAngleToward(5, 33, 0);
     FieldEvent_WaitFrames(40);
-    Object_SetModeById(5, 4);
+    Actor_SetModeById(5, 4);
     SET_MODE(6, 4);
     FieldEvent_WaitFrames(33);
     FieldEvent_WaitFrames(20);
@@ -942,7 +942,7 @@ void Func_020019d8(void) {
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
   Emote(7, 0x101, 30);
-  ObjectMotion_SetAngleToward(7, 4, 0);
+  Actor_SetAngleToward(7, 4, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be0(7, 0, 0);
   SET_MODE(32, 3);
@@ -952,7 +952,7 @@ void Func_020019d8(void) {
   Motion_SetVarCbAndRefresh(6, 2);
   FieldEvent_WaitFrames(20);
   Func_02002be8(6, 0);
-  ObjectMotion_SetAngleToward(5, 6, 0);
+  Actor_SetAngleToward(5, 6, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
   SET_MODE(32, 3);
@@ -962,49 +962,49 @@ void Func_020019d8(void) {
   FieldEvent_WaitFrames(20);
   Func_02002be8(32, 0);
   Emote(7, 0x101, 20);
-  ObjectMotion_SetAngleToward(7, 32, 0);
-  ObjectMotion_SetAngleToward(4, 32, 0);
-  ObjectMotion_SetAngleToward(6, 32, 0);
-  ObjectMotion_SetAngleToward(5, 32, 0);
+  Actor_SetAngleToward(7, 32, 0);
+  Actor_SetAngleToward(4, 32, 0);
+  Actor_SetAngleToward(6, 32, 0);
+  Actor_SetAngleToward(5, 32, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be0(7, 0, 0);
-  ObjectMotion_SetAngleToward(32, 7, 0);
+  Actor_SetAngleToward(32, 7, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(32, 0);
-  ObjectMotion_SetAngleToward(6, 5, 0);
+  Actor_SetAngleToward(6, 5, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(6, 0);
-  Object_SetPartAttribute(Object_GetById(5), 10);
+  Actor_SetPartAttribute(Actor_GetById(5), 10);
   Func_02002be8(5, 0);
   ArmCallback(5, 0x4000, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
-  Object_TurnToFaceEachOther(4, 7, 0);
+  Actor_TurnToFaceEachOther(4, 7, 0);
   FieldEvent_WaitFrames(40);
   Motion_SetVarCbAndRefresh(32, 2);
   FieldEvent_WaitFrames(20);
   ArmCallbackAndRefresh(32, 0x4000);
   Func_02002be8(32, 0);
-  Object_SetPartAttribute(Object_GetById(5), 0);
+  Actor_SetPartAttribute(Actor_GetById(5), 0);
   FieldEvent_WaitFrames(20);
   Emote(5, 0x100, 30);
-  ObjectMotion_SetAngleToward(5, 32, 0);
+  Actor_SetAngleToward(5, 32, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
   Emote(6, 0x108, 30);
   Func_02002be8(6, 0);
-  Object_SetPartAttribute(Object_GetById(5), 10);
-  ObjectMotion_SetAngleToward(5, 6, 0);
+  Actor_SetPartAttribute(Actor_GetById(5), 10);
+  Actor_SetAngleToward(5, 6, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
   Motion_SetVarCbAndRefresh(32, 2);
   FieldEvent_WaitFrames(20);
   Func_02002be8(32, 0);
-  Object_SetPartAttribute(Object_GetById(5), 0);
-  ObjectMotion_SetAngleToward(4, 32, 0);
-  ObjectMotion_SetAngleToward(5, 32, 0);
-  ObjectMotion_SetAngleToward(6, 32, 0);
-  ObjectMotion_SetAngleToward(7, 32, 0);
+  Actor_SetPartAttribute(Actor_GetById(5), 0);
+  Actor_SetAngleToward(4, 32, 0);
+  Actor_SetAngleToward(5, 32, 0);
+  Actor_SetAngleToward(6, 32, 0);
+  Actor_SetAngleToward(7, 32, 0);
   FieldEvent_WaitFrames(40);
   SET_MODE(32, 3);
   FieldEvent_WaitFrames(20);
@@ -1051,35 +1051,35 @@ void Func_020019d8(void) {
   } while (0);
   Speed(32, 0x00013333, 0x9999);
   SET_MODE(32, 2);
-  object = Object_GetById(4);
+  object = Actor_GetById(4);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(32);
+  Actor_WaitForMoveById(32);
   SetHorizontalPos(32, 0, 0);
   Speed(5, 0x00013333, 0x9999);
   SET_MODE(5, 2);
-  object = Object_GetById(4);
+  object = Actor_GetById(4);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(5);
+  Actor_WaitForMoveById(5);
   SetHorizontalPos(5, 0, 0);
   Speed(6, 0x00013333, 0x9999);
   SET_MODE(6, 2);
-  object = Object_GetById(4);
+  object = Actor_GetById(4);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(6);
+  Actor_WaitForMoveById(6);
   SetHorizontalPos(6, 0, 0);
   Speed(7, 0x00013333, 0x9999);
   SET_MODE(7, 2);
-  object = Object_GetById(4);
+  object = Actor_GetById(4);
   if (object != NULL)
-    ObjectMotion_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
+    Actor_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(7);
+  Actor_WaitForMoveById(7);
   SetHorizontalPos(7, 0, 0);
   GameFlag_SetBit(0x980);
   GameFlag_SetBit(0x98e);

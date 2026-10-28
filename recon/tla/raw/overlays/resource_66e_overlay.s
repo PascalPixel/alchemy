@@ -53,7 +53,7 @@ Func_02000390:
 	ldrh r0, [r5, r3]
 	bl Func_020010b8
 	movs r0, #18
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [sp, #0]
 	lsls r3, r3, #1
 	adds r3, #216
@@ -140,11 +140,11 @@ Func_02000390:
 	bl Func_020011a8
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #10
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	movs r5, #254
@@ -155,14 +155,14 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	adds r3, r5, #0
@@ -172,16 +172,16 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #4
 	movs r2, #90
 	movs r0, #10
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	adds r3, r5, #0
@@ -191,14 +191,14 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0, #0]
 	adds r3, r5, #0
@@ -208,16 +208,16 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #4
 	movs r2, #90
 	movs r0, #10
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0, #0]
 	movs r1, #168
@@ -226,24 +226,24 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #10
 	movs r1, #4
 	movs r2, #30
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r2, #30
 	movs r0, #10
 	movs r1, #4
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #0
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #11
 	bl Func_020011a8
 	movs r0, #128
@@ -262,9 +262,9 @@ Func_02000390:
 	bl Func_020011a8
 	movs r1, #2
 	movs r0, #20
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #20
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r1, #0
 	movs r2, #0
 	movs r0, #20
@@ -279,9 +279,9 @@ Func_02000390:
 	bl Func_02001108
 	movs r1, #4
 	movs r0, #19
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #19
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r0, #15
 	bl FieldEvent_WaitFrames
 	movs r1, #0
@@ -456,7 +456,7 @@ Func_02000390:
 	ldrh r0, [r5, r3]
 	bl Func_020010b8
 	movs r0, #18
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [sp, #0]
 	lsls r3, r3, #1
 	adds r3, #216
@@ -543,11 +543,11 @@ Func_02000390:
 	bl Func_020011a8
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #10
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	movs r5, #254
@@ -558,14 +558,14 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	adds r3, r5, #0
@@ -575,16 +575,16 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #4
 	movs r2, #90
 	movs r0, #10
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	adds r3, r5, #0
@@ -594,14 +594,14 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r1, #5
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r2, [r0]
 	adds r3, r5, #0
@@ -611,16 +611,16 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #4
 	movs r2, #90
 	movs r0, #10
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #90
 	ldrb r3, [r0]
 	movs r1, #168
@@ -629,24 +629,24 @@ Func_02000390:
 	movs r2, #96
 	movs r0, #10
 	lsls r1, r1, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #10
 	movs r1, #4
 	movs r2, #30
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r2, #30
 	movs r0, #10
 	movs r1, #4
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
 	movs r1, #5
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #0
 	movs r0, #10
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #11
 	bl Func_020011a8
 	movs r0, #128
@@ -665,9 +665,9 @@ Func_02000390:
 	bl Func_020011a8
 	movs r1, #2
 	movs r0, #20
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #20
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r1, #0
 	movs r2, #0
 	movs r0, #20
@@ -682,9 +682,9 @@ Func_02000390:
 	bl Func_02001108
 	movs r1, #4
 	movs r0, #19
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #19
-	bl ObjectMotion_WaitForAnimationChange
+	bl Actor_WaitForAnimationChange
 	movs r0, #15
 	bl FieldEvent_WaitFrames
 	movs r1, #0

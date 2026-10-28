@@ -13,7 +13,7 @@
 s32 PartyInventory_FindOwner(s32 item);
 u8 *Unit_Get(s32 owner);
 u8 *Func_02004894(s32 item);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
 
 void Func_0200290c(void) {
   s16 owners[10];
@@ -47,9 +47,9 @@ void Func_0200290c(void) {
     if (remaining == 0) {
       EVENT_WORK->field1c4++;
       ShamanVillage_MessagePut(0x200f, 0);
-      Object_LinkObjectAndSetCallback(16, gAdventure.currentOwner);
-      Object_LinkObjectAndSetCallback(17, gAdventure.currentOwner);
-      Object_LinkObjectAndSetCallback(15, gAdventure.currentOwner);
+      Actor_WatchAndSetScript(16, gAdventure.currentOwner);
+      Actor_WatchAndSetScript(17, gAdventure.currentOwner);
+      Actor_WatchAndSetScript(15, gAdventure.currentOwner);
       GameFlag_SetBit(0x9e0);
       GameFlag_SetBit(0x201);
       return;

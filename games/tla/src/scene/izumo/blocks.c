@@ -2,7 +2,7 @@
 #include "edition.h"
 
 void Func_02000b08(void) {
-  struct FieldActor *object = Object_GetById(gAdventure.currentOwner);
+  struct FieldActor *object = Actor_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
@@ -27,38 +27,38 @@ void Func_02000ba4(void) {
 void Func_02000bdc(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 340);
 
-  ObjectMotion_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(10);
-  BYTE_AT(Object_GetById(4), 90) &= ~1;
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);
+  BYTE_AT(Actor_GetById(4), 90) &= ~1;
+  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_WaitForMoveById(4);
+  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
   Func_02000e08(129);
 #endif
-  ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
-  ObjectMotion_CommitCurrentPositionAndActivate(4);
-  Object_SetModeById(4, 13);
+  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_WaitForMoveById(4);
+  Actor_SetModeById(4, 13);
   FieldEvent_WaitFrames(14);
   Func_02000db0(value);
 }
 
 void Func_02000c58(void) {
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 16, 0);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 16, 0);
   FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }
 
 void Func_02000c7c(void) {
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
-  Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, -16, 0);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
+  Call3((void (*)())Actor_CommitPositionAndActivate, 4, -16, 0);
   FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }
 
 void Func_02000ca4(void) {
-  ObjectMotion_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }

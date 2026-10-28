@@ -6,7 +6,7 @@ void Func_020025a8(s32 id) {
   if (id == 0) {
     work->object = 0;
   } else {
-    work->object = Object_GetById(id);
+    work->object = Actor_GetById(id);
     if (id == 8)
       work->direction = -1;
     else

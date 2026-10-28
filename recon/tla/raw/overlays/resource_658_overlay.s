@@ -15,7 +15,7 @@ Func_0200006c:
 	movs r5, #8
 .L_02008080:
 	adds r0, r5, #0
-	bl Object_GetById
+	bl Actor_GetById
 	cmp r0, #0
 	beq .L_02008092
 	adds r2, r0, #0
@@ -47,18 +47,18 @@ Func_0200006c:
 	lsls r3, r3, #2
 	adds r5, r5, r3
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #0
 	adds r0, #85
 	strb r3, [r0]
 	movs r1, #2
 	ldr r0, [r5]
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r2, #8
 	movs r1, #2
 	negs r2, r2
 	ldr r0, [r5]
-	bl ObjectMotion_CenterOnColumn
+	bl Actor_CenterOnColumn
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r3, #0

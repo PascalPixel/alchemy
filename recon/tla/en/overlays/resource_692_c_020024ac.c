@@ -25,7 +25,7 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 }
 
 void Func_020024ac(void) {
-  struct ObjectRuntime *object = Object_GetById(Func_02004f00());
+  struct Actor *object = Actor_GetById(Func_02004f00());
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   s32 key = (x << 16) + z;

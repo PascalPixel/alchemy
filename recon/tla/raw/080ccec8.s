@@ -36,7 +36,7 @@ Func_080ccec8:
 	ands r2, r3
 	mov r11, r2
 	mov r0, r11
-	bl Object_GetById
+	bl Actor_GetById
 	mov r3, r11
 	movs r5, #0
 	str r0, [sp, #24]
@@ -228,7 +228,7 @@ Func_080ccec8:
 	str r3, [r5, #108]
 	movs r1, #2
 	adds r0, r5, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r0, #246
 	bl Sound_PlayFar
 	movs r0, #30
@@ -369,7 +369,7 @@ Func_080ccec8:
 	bl FieldMessage_ShowFar
 .L_080cd1ca:
 	mov r0, r10
-	bl Object_GetSpriteShape
+	bl Actor_GetSpriteShape
 	cmp r0, #0
 	beq .L_080cd1fe
 	movs r1, #1
@@ -450,13 +450,13 @@ Func_080ccec8:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r3, #0
 	str r3, [r6, #108]
 	b .L_080cd39e
 .L_080cd288:
 	adds r0, r6, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 	b .L_080cd39e
 .L_080cd290:
 	cmp r7, #0
@@ -508,7 +508,7 @@ Func_080ccec8:
 	cmp r3, #131
 	beq .L_080cd300
 	adds r0, r6, #0
-	bl Object_DestroyIfPresent
+	bl Actor_ReleaseIfPresent
 .L_080cd300:
 	mov r1, r8
 	cmp r1, #128
@@ -563,13 +563,13 @@ Func_080ccec8:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #0
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	movs r3, #0
 	str r3, [r6, #108]
 	b .L_080cd382
 .L_080cd37c:
 	adds r0, r6, #0
-	bl Object_Destroy
+	bl Actor_Destroy
 .L_080cd382:
 	mov r1, r8
 	cmp r1, #133
@@ -666,7 +666,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	movs r1, #0
 	ldr r0, [sp, #24]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	ldr r2, [sp, #24]
 	ldr r1, [sp, #32]
 	ldrh r2, [r2, #6]
@@ -687,15 +687,15 @@ Func_080ccec8:
 	lsls r2, r2, #2
 	adds r5, r5, r2
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #16]
 	ldr r1, [r0, #8]
 	ldr r2, [r0, #12]
-	bl Object_SetPositionAndResetMotionFar
+	bl Actor_SetPositionAndResetMotionFar
 	ldr r1, [r5]
 	mov r0, r11
 	movs r2, #0
-	bl Object_TurnToFaceEachOther
+	bl Actor_TurnToFaceEachOther
 .L_080cd482:
 	ldr r3, [r6, #8]
 .L_080cd484:
@@ -759,7 +759,7 @@ Func_080ccec8:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, [sp, #24]
 	movs r3, #1
 	str r0, [r2, #104]
@@ -770,7 +770,7 @@ Func_080ccec8:
 	strb r3, [r1]
 	ldr r0, [sp, #24]
 	ldr r1, .L_080cd57c
-	bl Object_SetActionCallback
+	bl Actor_SetActionCallback
 	b .L_080cd532
 .L_080cd51c:
 	cmp r0, #1
@@ -782,7 +782,7 @@ Func_080ccec8:
 	strh r1, [r3]
 	ldr r0, [sp, #24]
 	ldr r1, .L_080cd580
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 .L_080cd532:
 	ldr r2, [sp, #24]
 	movs r3, #0
@@ -790,7 +790,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	ldr r0, [sp, #24]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_080cd542:
 	movs r2, #0
 	str r2, [sp, #28]

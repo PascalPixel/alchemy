@@ -8,11 +8,11 @@
 struct ScenePlacement;
 struct SceneEvent;
 struct FieldActor;
-struct ObjectRuntime;
+struct Actor;
 
 struct EventWork {
   u8 unk000[0x14];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
   s16 exit;
   u8 unk156[2];
   s16 countdown;
@@ -38,7 +38,7 @@ struct EventWork {
   u16 messageActor;
   s16 choice;
   s16 messageState;
-  struct ObjectRuntime *viewCenter;
+  struct Actor *viewCenter;
   u8 unk1d0[0x10];
   s32 currentOwner;
   s32 objectStatus;

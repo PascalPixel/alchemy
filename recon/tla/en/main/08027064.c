@@ -1,5 +1,5 @@
 // Draft, differ 437 of 1094: script command 0x19 (SC_PLAYER), The Broken
-// Seal's Object_UpdateLeaderControl
+// Seal's Actor_UpdateLeaderControl
 // (games/tbs/src/field/field/player_control.c) with this game's changes: no
 // fast walk; standing on another object a cell below (priorityFlags bit 6) lets
 // the step through when a still object (bit 7) fills the step and both its
@@ -15,7 +15,7 @@
 #include "map.h"
 #include "event_work.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -60,24 +60,24 @@ extern const s32 gData_0802ec7c[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802d87c(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values);
+s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 s16 ArcTan2(s32 y, s32 x);
 struct LeaderUnit *Unit_Get(s32 owner);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
-struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
+struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
-void Func_08026fc8(struct ObjectRuntime *object, s32 kind);
+void Func_08026fc8(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_08027064(struct ObjectRuntime *object) {
+s32 Func_08027064(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
@@ -92,7 +92,7 @@ s32 Func_08027064(struct ObjectRuntime *object) {
   struct EventWork *work;
   struct MapFlagsWork *map;
   u16 angle;
-  struct ObjectRuntime *other;
+  struct Actor *other;
   u8 oldFlags;
 
   sprite = object->animation;
@@ -132,7 +132,7 @@ s32 Func_08027064(struct ObjectRuntime *object) {
     contact.y = position.y;
     contact.z = position.z;
     Vector_AddPolarOffset(0x20000, (u16)angle - 0x4000, &contact);
-    other = (struct ObjectRuntime *)Ram_HeapSlots->scriptObjects;
+    other = (struct Actor *)Ram_HeapSlots->scriptObjects;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
       s32 dy;
 
@@ -253,7 +253,7 @@ push_objects:
   contact.y = object->y;
   contact.z = object->z;
   Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
-  other = (struct ObjectRuntime *)Ram_HeapSlots->scriptObjects;
+  other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
@@ -322,16 +322,16 @@ counted:
     work->heldKeys = gInput.held;
   }
   if (pushed != 0) {
-    ObjectDispatch_SelectAnimation(object, 8);
+    Actor_SelectAnimation(object, 8);
   } else if (collision != 0) {
     s32 action;
 
     action = 9;
     if (Unit_Get(gAdventure.currentOwner)->hp == 0)
       action = 22;
-    ObjectDispatch_SelectAnimation(object, action);
+    Actor_SelectAnimation(object, action);
   } else {
-    ObjectDispatch_SelectAnimation(object, movementAnimation);
+    Actor_SelectAnimation(object, movementAnimation);
   }
 
   if (collision != 0) {
@@ -355,7 +355,7 @@ counted:
   } else {
     s32 speed;
 
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
@@ -400,7 +400,7 @@ counted:
 
   // Footprints on maps that show them, alternating left and right.
   if ((map->groundEffects & 3) && object->action == 0 && collision == 0) {
-    struct ObjectRuntime *effect;
+    struct Actor *effect;
     u16 footprintAngle = angle;
 
     effect = Func_08023220(0x10e, object->x, object->y, object->z);
@@ -409,7 +409,7 @@ counted:
 
       effect->terrainHeight = object->terrainHeight;
       effectSprite = effect->animation;
-      ObjectDispatch_Initialize(effect, gData_0802ec7c);
+      Actor_StartScript(effect, gData_0802ec7c);
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {

@@ -8,6 +8,6 @@ void Func_02001420(struct FieldActor *object, s16 timer, u8 value) {
     object->timer = timer;
     BYTE_AT(object, 98) = value;
     WORD_AT(object, 108) = (s32)Func_02001290;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
   }
 }

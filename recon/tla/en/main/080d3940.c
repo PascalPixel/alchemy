@@ -7,12 +7,12 @@
 // native issues a slot earlier than agscc's ARM9TDMI model. Func_080d3b28,
 // once a third function here, is adopted in field/shared/object/active.c.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "dma.h"
 
-struct ObjectRuntime *Object_GetById(u32);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 value);
 void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -51,11 +51,11 @@ struct ObjectSprite {
 
 void Func_080d3940(u32 id, u32 angle) {
   s32 position[3];
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct ObjectSprite *sprite = object->animation;
 
   if (object != NULL && sprite != NULL) {
-    Object_SetMode(object, 0);
+    Actor_SetMode(object, 0);
     angle = (angle + 0x2000) & 0xc000;
     position[0] = object->x;
     position[2] = object->z;
@@ -87,12 +87,12 @@ void Func_080d3940(u32 id, u32 angle) {
 
 void Func_080d3a10(u32 id, u32 angle, s32 mode) {
   s32 position[3];
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct ObjectSprite *sprite = object->animation;
 
   if (object != NULL && sprite != NULL) {
     if (mode != -1)
-      Object_SetMode(object, mode);
+      Actor_SetMode(object, mode);
     position[0] = object->x;
     angle = (angle + 0x2000) & 0xc000;
     position[2] = object->z;

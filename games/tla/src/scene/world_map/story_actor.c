@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "field_coordinate.h"
 
@@ -77,7 +77,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   }
 }
 
-s32 StoryActor_Initialize(struct ObjectRuntime *actor) {
+s32 StoryActor_Initialize(struct Actor *actor) {
   if (GameFlag_Test(0x37) != 0) {
     return 0;
   }

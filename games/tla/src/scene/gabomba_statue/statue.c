@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GateEventWork {
   u8 unk000[362];
@@ -16,21 +16,21 @@ struct FieldAnimation {
   struct FieldPart *part;
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020043a4(s32 value);
-void Func_020056b4(struct ObjectRuntime *object);
+void Func_020056b4(struct Actor *object);
 void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_02005854(s32 sound);
-void Func_02005624(struct ObjectRuntime *object, s32 mode);
+void Func_02005624(struct Actor *object, s32 mode);
 void FieldEvent_WaitFrames(s32 frames);
 s32 Func_020053a0(void);
 void Func_02005784(s32 id);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Func_0200193c(void);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
+void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
@@ -39,7 +39,7 @@ void Func_02001a6c(s32 value) {
 }
 
 void Func_02001a8c(void) {
-  struct ObjectRuntime *object = Object_GetById(15);
+  struct Actor *object = Actor_GetById(15);
 
   Func_020056b4(object);
   Func_0200580c(0);
@@ -57,9 +57,9 @@ void Func_02001ac0(void) {
 
 void Func_02001adc(s32 id) {
   Func_02005784(id);
-  Object_SetPartAttribute(Object_GetById(id), 15);
-  ObjectMotion_SetActionVariant(id, 1);
-  Object_GetById(id)->priorityFlags |= 2;
+  Actor_SetPartAttribute(Actor_GetById(id), 15);
+  Actor_SetSpritePriority(id, 1);
+  Actor_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02001b0c(void) {
@@ -76,7 +76,7 @@ void Func_02001b38(void) {
 next:
   {
     s32 id = i + 8;
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Func_02001adc(id);
     object->motionFlags = 0;
@@ -94,7 +94,7 @@ void Func_02001b68(void) {
 next:
   {
     s32 id = i + 29;
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Func_02001adc(id);
     object->motionFlags = 0;
@@ -118,7 +118,7 @@ void Func_02001b98(void) {
   i = 8;
 next:
   {
-    struct ObjectRuntime *object = Object_GetById(i);
+    struct Actor *object = Actor_GetById(i);
 
     if (object != NULL && object->animationKind == 1) {
       struct FieldPart *part =
@@ -132,7 +132,7 @@ next:
         case 360:
         case 361:
         case 362:
-          ObjectDispatch_SetAnimationSpeed(object, value);
+          Actor_SetAnimationSpeed(object, value);
           break;
         case 407:
           object->movementState = open;

@@ -11,7 +11,7 @@
 #include "types.h"
 #include "mem.h"
 #include "resource.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "effect_sprite.h"
 #include "battle.h"
@@ -42,9 +42,9 @@ void WaitFrames(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void ObjectGroup_ApplyRandomChildValues(void);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_ApplyRandomChildValues(void);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SparkParticle *particle);
@@ -54,7 +54,7 @@ void Sound_PlayFar(s32 cue);
 void Func_080e74d8(void) {
   struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
-  struct ObjectRuntime *object =
+  struct Actor *object =
       ObjectTable_Get(Party_GetLeaderActor());
   struct SparkParticle *particle;
   struct EffectSprite *sprite;
@@ -85,14 +85,14 @@ void Func_080e74d8(void) {
     particle->age = -1;
   }
   WaitFrames(10);
-  ObjectMotion_ArmCallback(owner, 0x4000, 0);
+  Actor_ArmCallback(owner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(object, 28);
-  object->update = ObjectGroup_ApplyRandomChildValues;
+  Actor_SetMode(object, 28);
+  object->update = Actor_ApplyRandomChildValues;
   Sound_PlayFar(131);
   WaitFrames(30);
   Sound_PlayFar(220);
-  Object_SetMode(object, 3);
+  Actor_SetMode(object, 3);
   for (frame = 49, spin = 0; frame >= 0; frame--, spin += 60) {
     object->angle += spin + 0x1000;
     WaitFrames(1);
@@ -163,7 +163,7 @@ void Func_080e74d8(void) {
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+      Actor_SetSingleChildFlagsFar(object, 0);
       if (frame == 30) {
         state = 2;
         frame = -1;

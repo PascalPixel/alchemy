@@ -54,7 +54,7 @@ void Func_020007d8(void) { Func_020055f0(13); }
 void Func_020007e4(void) { Func_020055f0(14); }
 
 void Func_020007f0(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 13) {
     object->motionFlags = 3;
@@ -78,7 +78,7 @@ void Func_020007f0(s32 unused, s32 id) {
 }
 
 void Func_020008a0(s32 unused, s32 id) {
-  if (Object_GetById(id)->x >> 20 == 7)
+  if (Actor_GetById(id)->x >> 20 == 7)
     Flag_Set(0xa37);
 }
 
@@ -95,7 +95,7 @@ void Func_02000900(void) {
 }
 
 void Func_02000944(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 frame;
   s32 delta;
 
@@ -103,8 +103,8 @@ void Func_02000944(void) {
    * inside the loop; without it GCSE hoists it out (differ 24). */
   (void)&object;
   Func_02005608();
-  ObjectDispatch_SetSingleChildFlags(object, 0);
-  Object_SetModeById(gAdventure.currentOwner, 28);
+  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   frame = 0;
 step:
@@ -124,7 +124,7 @@ step:
   /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots'
    * address; plainly sched2 builds the address first (differ 2). */
   do {
-    Object_GetById(gAdventure.currentOwner)->animationKind = 0;
+    Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   } while (0);
   SCENE_WORK->unk1ac = 521;
   Event_FinishScreenTransition();

@@ -13,7 +13,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 struct IsletCaveEntry {
@@ -23,15 +23,15 @@ struct IsletCaveEntry {
 
 extern const struct IsletCaveEntry gData_020019ec[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02001254(void);
 void Func_0200125c(void);
 void Func_02001324(s32 a);
 void Func_02001344(s32 a);
 void Func_0200122c(s32 value, s32 x, s32 z);
 void Func_020012cc(s32 a);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-s32 ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+s32 Actor_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -48,7 +48,7 @@ void Func_020005fc(void) {
   i = 8;
 loop:
   {
-    struct ObjectRuntime *object = Object_GetById(i);
+    struct Actor *object = Actor_GetById(i);
 
     if (object != 0)
       object->motionFlags = 0;
@@ -61,9 +61,9 @@ loop:
   index >>= 1;
   Call3((void (*)())Func_0200122c, gData_020019ec[index].value,
         gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion,
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Call3((void (*)())Actor_OffsetPositionAndResetMotion,
         gAdventure.currentOwner, 0, -4);
   FieldEvent_WaitFrames(6);
   Func_020012cc(*(s16 *)(work + 0x154));

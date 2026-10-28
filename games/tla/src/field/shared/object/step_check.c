@@ -1,10 +1,10 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 
-s32 Func_080d4ccc(struct ObjectRuntime *object, s32 *position) {
+s32 Func_080d4ccc(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s8 *event = Ram_HeapSlots->eventWork;
 

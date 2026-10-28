@@ -161,13 +161,13 @@ Func_080cf554:
 	adds r3, #85
 	strb r7, [r3]
 	ldr r1, .L_080cf6f8
-	bl ObjectDispatch_InitializeFar
+	bl Actor_StartScriptFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	adds r0, r5, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 	ldr r1, [r5, #80]
 	movs r0, #13
 	ldrb r2, [r1, #9]

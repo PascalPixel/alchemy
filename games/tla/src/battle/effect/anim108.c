@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-s32 Object_IsOutsideAnimation108(struct ObjectRuntime *object) {
+s32 Actor_IsOutsideAnimation108(struct Actor *object) {
   struct ObjectAnimationState *state;
   s32 value;
 

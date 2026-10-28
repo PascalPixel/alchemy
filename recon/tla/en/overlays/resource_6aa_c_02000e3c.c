@@ -17,10 +17,10 @@ s32 Func_02004d00();
 s32 Func_02004d30();
 s32 Func_02004da0();
 s32 Func_02004de0();
-s32 ObjectDispatch_SetAnimationSpeed();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Object_GetById();
-s32 Object_SetModeById();
+s32 Actor_SetAnimationSpeed();
+s32 Actor_SetSingleChildFlags();
+s32 Actor_GetById();
+s32 Actor_SetModeById();
 s32 WaitFrames();
 extern u8 gMapCellBuffer[];
 extern u8 gAdventure[];
@@ -32,17 +32,17 @@ void Func_02000e3c(s32 p0) {
 
   v_r5 = ((s32)gAdventure + 0x214);
   t0 = *(s32 *)v_r5;
-  t1 = Object_GetById(t0);
+  t1 = Actor_GetById(t0);
   Func_02004ca8();
   Func_02004da0(0);
   t4 = *(s32 *)v_r5;
-  t5 = Object_GetById(t4);
-  ObjectDispatch_SetSingleChildFlags(t5, 0);
+  t5 = Actor_GetById(t4);
+  Actor_SetSingleChildFlags(t5, 0);
   FIELD_AT(t1, s32, 108) = 0;
   t7 = *(s32 *)v_r5;
   Func_02004d00(t7, 0x100, 0);
   Func_02004bc0(t1, 27);
-  ObjectDispatch_SetAnimationSpeed(t1, 48);
+  Actor_SetAnimationSpeed(t1, 48);
   WaitFrames(30);
   FIELD_AT(t1, u16, 6) = 0x4000;
   FIELD_AT(t1, u8, 85) = 0;
@@ -71,7 +71,7 @@ L_02008ed4:
   Func_02000df0();
 L_02008f0a:
   t20 = FIELD_AT((s32)gAdventure, s32, 532);
-  Object_SetModeById(t20, 28);
+  Actor_SetModeById(t20, 28);
   FieldEvent_WaitFrames(16);
   v_r5 = 0;
 L_02008f22:
@@ -93,7 +93,7 @@ L_02008f48:
   if (v_r5 <= 39)
     goto L_02008f22;
   t28 = FIELD_AT((s32)gAdventure, s32, 532);
-  t29 = Object_GetById(t28);
+  t29 = Actor_GetById(t28);
   FIELD_AT(t29, u8, 84) = 0;
   t30 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t30, s32, 428) = 0x209;

@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Func_02000598(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Func_02000598(s32 type, s32 x, s32 y, s32 z);
 void Func_020005d8(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
@@ -15,13 +15,13 @@ void Func_020005d8(s32 scene, s32 entrance);
 /// opposite the leader's facing and passes scene and entrance on to
 /// Func_020005d8.
 void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   if (mode == 1) {
-    object = (struct ObjectRuntime *)Value4((s32 (*)())Func_02000598, 354,
+    object = (struct Actor *)Value4((s32 (*)())Func_02000598, 354,
                                             x << 16, 0, z << 16);
     if (object != NULL) {
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
@@ -30,7 +30,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
     if (object != NULL) {
       s32 scale;
 
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->velocityY = 0x60000;
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
@@ -51,7 +51,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       }
       object->scaleX = 0x10000;
       object->scaleY = 0x10000;
-      object->angle = Object_GetById(gAdventure.currentOwner)->angle + 0x8000;
+      object->angle = Actor_GetById(gAdventure.currentOwner)->angle + 0x8000;
       Func_020005d8(scene, entrance);
     }
   }

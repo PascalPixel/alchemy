@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct AlhafranCaveMapCell *cell =
       ((struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork)
           ->layers[layer]

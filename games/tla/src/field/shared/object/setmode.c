@@ -1,8 +1,8 @@
-#include "object_runtime.h"
+#include "actor.h"
 
-void Object_SetModeById(u32 objectId, s32 action) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void Actor_SetModeById(u32 objectId, s32 action) {
+  struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Object_SetMode(object, action);
+    Actor_SetMode(object, action);
 }

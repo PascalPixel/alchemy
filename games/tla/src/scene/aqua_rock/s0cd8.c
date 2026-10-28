@@ -8,7 +8,7 @@ void Func_02000cd8(s32 unused, s32 id) {
     s32 column;
     s32 row;
 
-    struct ObjectRuntime *first = Object_GetById_(24);
+    struct Actor *first = Actor_GetById_(24);
 
     column = first->x >> 20;
     row = first->z >> 20;
@@ -21,7 +21,7 @@ void Func_02000cd8(s32 unused, s32 id) {
     if (column == 15 && row == 35)
       GameFlag_SetBit_(0x321);
   } else if (id == 25) {
-    struct ObjectRuntime *object = Object_GetById(25);
+    struct Actor *object = Actor_GetById(25);
 
     if (object->x >> 20 == 32) {
       WaitFrames(30);

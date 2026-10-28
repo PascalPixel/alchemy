@@ -26,11 +26,11 @@ struct LinkedEffectObject {
 };
 
 struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(struct LinkedEffectObject *object,
+void Actor_StartScriptFar(struct LinkedEffectObject *object,
                                   const void *script);
-void Object_SetMode(struct LinkedEffectObject *object, s32 mode);
-void Object_Destroy(struct LinkedEffectObject *object);
-s32 Object_IsOutsideAnimation108(struct LinkedEffectObject *object);
+void Actor_SetMode(struct LinkedEffectObject *object, s32 mode);
+void Actor_Destroy(struct LinkedEffectObject *object);
+s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object);
 void BattleEffect_CopyWatchedObjectPosition(void);
 extern const u8 gData_080f341c[];
 
@@ -52,14 +52,14 @@ void Func_080d489c(s32 id, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Object_IsOutsideAnimation108(object->resource)) {
+    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
       child = Func_080200c0(264, object->x, object->y, object->z);
     }
   } else {
     child = object->resource;
     if (child == 0)
       return;
-    Object_Destroy(child);
+    Actor_Destroy(child);
     object->resource = NULL;
     return;
   }
@@ -70,13 +70,13 @@ void Func_080d489c(s32 id, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case 1:
-    Object_SetMode(child, 1);
+    Actor_SetMode(child, 1);
     object->resource = child;
     child->counter = 1;
     break;
   case 2:
-    Object_SetMode(child, 2);
-    ObjectDispatch_InitializeFar(child, gData_080f341c);
+    Actor_SetMode(child, 2);
+    Actor_StartScriptFar(child, gData_080f341c);
     child->counter = 1;
     break;
   }

@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02003420(s32 id, s32 kind, s32 height) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct PillarWork *work = &gData_0200536c;
   struct PillarEntry *entry = &work->entries[work->count];
 

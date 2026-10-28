@@ -5,11 +5,11 @@
 	.thumb_func
 Func_080200c0:
 	overlay_veneer Func_08023220
-	.global Object_Destroy
+	.global Actor_Destroy
 	.thumb_func
-Object_Destroy:
-	overlay_veneer ObjectDispatch_Release
-	.global ObjectDispatch_SetChildSignedValueFar
+Actor_Destroy:
+	overlay_veneer Actor_Release
+	.global Actor_SetSpriteRotationFar
 	.thumb_func
-ObjectDispatch_SetChildSignedValueFar:
-	overlay_veneer ObjectDispatch_SetChildSignedValue
+Actor_SetSpriteRotationFar:
+	overlay_veneer Actor_SetSpriteRotation

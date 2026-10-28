@@ -11,39 +11,39 @@
 // work in r8; this draft the shot in r7 and the work in r6), which moves
 // nearly every row; the code is the native's otherwise.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
 
 extern u8 gData_02003de0[], gData_02003dcc[];
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02000348(s32 layer, s32 x, s32 z);
-void Func_02003cd0(struct ObjectRuntime *object, s32 cue);
-void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
+void Func_02003cd0(struct Actor *object, s32 cue);
+void Func_02003b38(struct Actor *object, const u8 *script);
 s32 Func_020018d8(s32 *a, s32 *b);
 s32 Func_020018ac(s32 *a, s32 *b);
 s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-void Func_02001908(struct ObjectRuntime *shot) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_02001908(struct Actor *shot) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime **objects;
-  struct ObjectRuntime *other, *launcher;
+  struct Actor **objects;
+  struct Actor *other, *launcher;
   u8 *hit;
   s32 near, i;
 
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
       gAdventure.renderMode == 5) {
-    ObjectDispatch_SetAnimationSpeed(shot, 0);
+    Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(shot, 16);
+  Actor_SetAnimationSpeed(shot, 16);
   if (Func_02000348(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
   end:
     Func_02003cd0(shot, 539);
@@ -84,7 +84,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
       ((u8 *)shot)[0x63] = 1;
     }
   }
-  objects = (struct ObjectRuntime **)(work + 0x34);
+  objects = (struct Actor **)(work + 0x34);
   i = 8;
 search:
   other = *objects++;

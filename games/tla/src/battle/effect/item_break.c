@@ -30,7 +30,7 @@ void FieldEffect_RunMove(void) {
   object = BattleEffect_StartItemBreak(object);
   BattleEffect_SnapScaleToFull(object);
   if (object != 0) {
-    Object_SetMode(object, 4);
+    Actor_SetMode(object, 4);
     WaitFrames(30);
   }
   BattleEffect_PrepareBufferInterpolation();

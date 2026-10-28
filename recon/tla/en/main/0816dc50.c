@@ -40,10 +40,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -106,7 +106,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "io_write_queue.h"
 #include "irqlock.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct ProjectedPoint {
   s32 x, y, depth;
@@ -358,8 +358,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     }
     if (frame == 56) {
       // The caster closes four fifths of the way.
-      struct ObjectRuntime *caster =
-          *(struct ObjectRuntime **)GetBattleObjectSlotFar(effect->actor);
+      struct Actor *caster =
+          *(struct Actor **)GetBattleObjectSlotFar(effect->actor);
       s32 *to = *GetBattleObjectSlotFar(effect->actors[0]);
       s32 *from = (s32 *)caster;
       s32 x = from[2];
@@ -382,9 +382,9 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       from[18] = 0x13333;
       from[17] = 0;
       ((u8 *)caster)[90] = 1;
-      Object_ResetMotion(caster);
-      Object_SetPosition(caster, x, 0, z);
-      Object_SetMode(caster, 2);
+      Actor_ResetMotion(caster);
+      Actor_SetTargetPosition(caster, x, 0, z);
+      Actor_SetMode(caster, 2);
     }
 
     if (frame > 63) {
@@ -507,7 +507,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     gCameraSceneParameters[3] = savedScrollX;
     gCameraSceneParameters[4] = savedScrollY;
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

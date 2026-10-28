@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_OBJECT_RUNTIME_H
-#define ALCHEMY_OBJECT_RUNTIME_H
+#ifndef ALCHEMY_ACTOR_H
+#define ALCHEMY_ACTOR_H
 
 #include "types.h"
 
-/// A field object's sprite animation, which ObjectRuntime.animation points to
+/// A field object's sprite animation, which Actor.animation points to
 /// when animationKind is 1.
 struct ObjectAnimationState {
   u8 unk00[0x28];
@@ -12,7 +12,7 @@ struct ObjectAnimationState {
 
 /// A field object: its script, position, motion toward a target, sprites and
 /// update hook.
-struct ObjectRuntime {
+struct Actor {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words
   u16 angle;   ///< 1/65536 turns
@@ -24,7 +24,7 @@ struct ObjectRuntime {
   s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
   u16 radius;        ///< collision radius in pixels
   u8 terrainId;      ///< the map layer its ground height is read from
-  /// Bit 0 is cleared when ObjectDispatch_SetSpritePriority fixes its
+  /// Bit 0 is cleared when Actor_SetSpritePriorityDirect fixes its
   /// sprite's priority.
   u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
@@ -66,32 +66,32 @@ struct ObjectRuntime {
   s16 action;
   u16 unk66;
   /// The object its action script follows or faces.
-  struct ObjectRuntime *watchedObject;
+  struct Actor *watchedObject;
   void (*update)(void); ///< the object's per-frame hook
   u8 unk70[0x10];
 };
 
-typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x80 ? 1 : -1];
+typedef char ObjectRuntime_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
 
 typedef char ObjectRuntime_collision_flags_offset
-    [(u32)&((struct ObjectRuntime *)0)->collisionFlags == 0x59 ? 1 : -1];
+    [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
 
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
-void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *object);
-void ObjectMotion_MoveHalfwayTowardTargetCopy(struct ObjectRuntime *object);
+void Actor_MoveHalfwayTowardTarget(struct Actor *object);
+void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
 
-struct ObjectRuntime *ObjectTable_Get(u32 objectId);
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_RefreshSelector(struct ObjectRuntime *);
-void Object_SetActionCallback(struct ObjectRuntime *, s32);
-void ObjectMotion_SetActionVariant(u32, s32);
-void ObjectMotion_WaitForAnimationChange(u32);
-void Object_SetModeById(u32, s32);
-void Object_RefreshSelectorById(u32);
+struct Actor *ObjectTable_Get(u32 objectId);
+void Actor_ResetMotion(struct Actor *);
+void Actor_SetTargetPosition(struct Actor *, s32, s32, s32);
+void Actor_CommitPosition(struct Actor *);
+void Actor_SetMode(struct Actor *, s32);
+void Actor_RefreshSelector(struct Actor *);
+void Actor_SetActionCallback(struct Actor *, s32);
+void Actor_SetSpritePriority(u32, s32);
+void Actor_WaitForAnimationChange(u32);
+void Actor_SetModeById(u32, s32);
+void Actor_RefreshSelectorById(u32);
 void Sound_PlayFar(s32);
 
 extern const u8 gObject_LinkedMotionScript[];

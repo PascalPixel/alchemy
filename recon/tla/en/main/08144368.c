@@ -44,7 +44,7 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // ..ProcessPendingGraphicsTransfer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames); // ObjectGroup_UpdateMembers
+                   s32 frames); // Actor_UpdateMembers
 void BattleEffect_ArmBg2AffineHBlankDma(void);       // BattleEffect_ArmBg2AffineHBlankDma
 
 extern char ResourceId_SpiralSheet;

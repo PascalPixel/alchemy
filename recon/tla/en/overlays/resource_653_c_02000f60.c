@@ -20,8 +20,8 @@ s32 Math_Sine(s32 angle);
 
 void Func_02000f60(void) {
   s32 *timer = &gData_020062a0;
-  struct ObjectRuntime *statue;
-  struct ObjectRuntime *leader;
+  struct Actor *statue;
+  struct Actor *leader;
   u16 *phase;
   s32 limit;
   s32 id;
@@ -39,7 +39,7 @@ void Func_02000f60(void) {
     goto count;
   }
   if (*timer <= 2999) {
-    statue = Object_GetById(9);
+    statue = Actor_GetById(9);
     if (GameFlag_Test(0x301)) {
       t = *timer;
       if (t <= 316) {
@@ -106,12 +106,12 @@ void Func_02000f60(void) {
     *phase += 0x1000;
     goto carry;
   shrink:
-    if (Object_GetById(id)->scaleY <= limit)
+    if (Actor_GetById(id)->scaleY <= limit)
       *timer = 2999;
   carry:
     if (GameFlag_Test(0x208) == 0)
       goto count;
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     leader->y = statue->y + 0x40000;
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
@@ -125,15 +125,15 @@ void Func_02000f60(void) {
     Func_02005230(14, 0, 0);
     Func_02005230(15, 0, 0);
     Func_02005230(16, 0, 0);
-    Object_SetModeById(9, 1);
-    Object_SetPositionAndResetMotion(Object_GetById(9), 0xd80000, 0, 0xd80000);
-    Object_GetById(9)->priorityFlags |= 2;
-    ObjectMotion_SetActionVariant(9, 3);
+    Actor_SetModeById(9, 1);
+    Actor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+    Actor_GetById(9)->priorityFlags |= 2;
+    Actor_SetSpritePriority(9, 3);
     if (GameFlag_Test(0x208)) {
-      leader = Object_GetById(gAdventure.currentOwner);
-      Object_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-      ObjectDispatch_SetSingleChildFlags(
-          Object_GetById(gAdventure.currentOwner), 1);
+      leader = Actor_GetById(gAdventure.currentOwner);
+      Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
+      Actor_SetSingleChildFlags(
+          Actor_GetById(gAdventure.currentOwner), 1);
     }
     goto count;
   }

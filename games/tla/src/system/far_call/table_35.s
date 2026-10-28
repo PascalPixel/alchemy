@@ -79,7 +79,7 @@ Func_080c88b8:
 	ldr r4, [pc, #0]
 	bx r4
 	.4byte Func_080d1e18
-	.global ObjectGroup_ApplyRandomChildValuesFar
+	.global Actor_ApplyRandomChildValuesFar
 	.thumb_func
-ObjectGroup_ApplyRandomChildValuesFar:
-	overlay_veneer ObjectGroup_ApplyRandomChildValues
+Actor_ApplyRandomChildValuesFar:
+	overlay_veneer Actor_ApplyRandomChildValues

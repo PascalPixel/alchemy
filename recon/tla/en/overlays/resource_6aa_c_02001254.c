@@ -38,10 +38,10 @@ void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Task_Add(void (*callback)(void), s32 priority);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);
-void Func_020012e4(struct ObjectRuntime *object);
+void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
@@ -63,7 +63,7 @@ void Func_02001254(void) {
     gData_020068a0 = 0;
 }
 
-void Func_020012e4(struct ObjectRuntime *object) {
+void Func_020012e4(struct Actor *object) {
   s16 *count = &object->action;
   s32 zero;
 

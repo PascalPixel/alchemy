@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWork154 {
@@ -17,13 +17,13 @@ struct LohoPicture {
 extern const struct LohoPicture gData_02001f14;
 
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020012a0(const void *data, s32 a, s32 b);
@@ -54,7 +54,7 @@ static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 void Func_02000eec(void) {
@@ -65,8 +65,8 @@ void Func_02000eec(void) {
    * (one reordered row). */
   do {
   } while (0);
-  Object_SetModeById(party->currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(party->currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Func_02001448(123);
   Offset_(gAdventure.currentOwner, 0, -4);
   Func_020013d0(work->value);

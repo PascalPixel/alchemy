@@ -18,7 +18,7 @@ s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Heap_Release(void *block);
 void Func_02000e58(void);
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 
 static inline void VramLoad(s32 entry, s32 size, void *source) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
@@ -75,7 +75,7 @@ void Func_02001114(void) {
 }
 
 void Func_0200119c(s32 id, s32 value) {
-  struct FieldActor *object = Object_GetById(id);
+  struct FieldActor *object = Actor_GetById(id);
 
   if (object != NULL) {
     s16 *count = &gData_0200275e;

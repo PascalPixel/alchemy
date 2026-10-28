@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 struct RideEntry {
@@ -42,17 +42,17 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void Func_020041ec(void *handle);
 void Func_02002148(void);
 void Func_0200236c(void);
-void Func_02002ad0(struct ObjectRuntime *object);
+void Func_02002ad0(struct Actor *object);
 
-s32 Func_02002ce8(struct ObjectRuntime *object) {
+s32 Func_02002ce8(struct Actor *object) {
   Func_02002ad0(object);
   SET_POSITION(object, 0, 0, 0);
   SET_VELOCITY(object, 0, 0, 0);

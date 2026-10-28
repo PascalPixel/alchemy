@@ -27,7 +27,7 @@ Func_080ea7c0:
 .L_080ea7ea:
 	mov r3, r8
 	ldrh r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r3, r8
 	adds r7, r0, #0
 	movs r2, #2
@@ -59,7 +59,7 @@ Func_080ea7c0:
 	movs r1, #0
 	adds r0, r7, #0
 	lsls r6, r6, #16
-	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl Actor_SetSingleChildFlagsFar
 	lsrs r6, r6, #16
 	movs r3, #255
 	strb r3, [r5, #2]
@@ -69,14 +69,14 @@ Func_080ea7c0:
 	beq .L_080ea856
 	adds r0, r7, #0
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	bl GameFlag_ClearBit
 	b .L_080ea85e
 .L_080ea856:
 	adds r0, r7, #0
 	movs r1, #1
-	bl Object_SetMode
+	bl Actor_SetMode
 .L_080ea85e:
 	movs r3, #4
 	add r8, r3
@@ -92,7 +92,7 @@ Func_080ea7c0:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, r0, #0
 	adds r3, r5, #0
 	adds r3, #34

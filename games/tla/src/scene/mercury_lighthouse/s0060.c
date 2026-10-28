@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 u32 Random16Far(void);
 
-void Func_02000060(struct ObjectRuntime *object) {
+void Func_02000060(struct Actor *object) {
   u8 *timer = (u8 *)object + 98;
   u8 *state;
 

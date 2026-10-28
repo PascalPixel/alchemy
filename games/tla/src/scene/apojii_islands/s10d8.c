@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern const u8 gData_02001ee8[];
 
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgument(struct FieldSprite *sprite, s32 value);
-void Func_02001c74(struct ObjectRuntime *object, const u8 *script);
+void Func_02001c74(struct Actor *object, const u8 *script);
 
-void Func_020010d8(struct ObjectRuntime *object) {
-  struct ObjectRuntime *child;
+void Func_020010d8(struct Actor *object) {
+  struct Actor *child;
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 

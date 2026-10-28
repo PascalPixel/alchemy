@@ -6,17 +6,17 @@ void Func_02001328(void) {
   GameFlag_ClearBit(0x349);
 }
 
-void Func_02001364(struct ObjectRuntime *object) {
-  struct ObjectRuntime *child =
+void Func_02001364(struct Actor *object) {
+  struct Actor *child =
       Import_ActorCreate_(0x2a0, object->x, object->y, object->z);
 
   child->scaleY = 0x6666;
   child->scaleX = 0x6666;
   child->motionFlags = 0;
-  Object_SetPartAttribute(child, 2);
-  Object_SetSpritePriority(child, 1);
+  Actor_SetPartAttribute(child, 2);
+  Scene_SetActorSpritePriority(child, 1);
   Func_02003cc4(child, 1);
-  ObjectDispatch_SetSingleChildFlags(child, 0);
+  Actor_SetSingleChildFlags(child, 0);
   Animation_SetStateFlags(child, 1);
   Func_02003ccc(child, gData_02003fd8);
 }

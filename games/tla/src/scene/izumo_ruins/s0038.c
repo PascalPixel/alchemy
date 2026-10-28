@@ -1,6 +1,6 @@
 #include "iwram_call.h"
 #include "lib/call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -13,8 +13,8 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Object_GetById();
-void ObjectDispatch_SetSingleChildFlags();
+s32 Actor_GetById();
+void Actor_SetSingleChildFlags();
 s32 Func_02000128();
 
 s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
@@ -29,13 +29,13 @@ s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
   r7 = r0;
 L_0200804e:
   r8 = FIELD_AT(r7, u16, 0);
-  v0 = Object_GetById(r8);
+  v0 = Actor_GetById(r8);
   r5 = v0;
   r6 = *(s16 *)(r7 + 2);
   r4 = *(s16 *)(r7 + 4);
   FIELD_AT(r5, u8, 89) = 254 & (FIELD_AT(r5, u8, 89));
   stack[0] = r4;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v0, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, v0, 0);
   r4 = stack[0];
   r6 = r6 << 16;
   r4 = r4 << 16;

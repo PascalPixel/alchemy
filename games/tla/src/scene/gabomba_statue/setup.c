@@ -1,13 +1,13 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02005714(s32 id, s32 a, s32 b);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Actor_Stop(s32 id);
 void Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
 void Func_020011bc(s32 message, s32 value);
 void GameFlag_SetBit(s32 flag);
@@ -24,9 +24,9 @@ void WaitFrames(s32 frames);
 void Func_020057e4(s32 a, s32 b);
 void Func_020057dc(s32 a, s32 b);
 void Func_020057ec(s32 a);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 Func_02004d48(s32 a, s32 b);
 void Func_0200581c(void);
 void Event_FinishScreenTransition(void);
@@ -42,8 +42,8 @@ static __inline__ void Func_020057e4_(s32 a, s32 b) {
 
 void Func_02000f50(s32 id) {
   Func_02005714(id, 0, 0);
-  ObjectMotion_EnableActionAndResetMotion(id);
-  Object_SetModeById(id, 1);
+  Actor_Stop(id);
+  Actor_SetModeById(id, 1);
 }
 
 void Func_02000f6c(void) {
@@ -76,20 +76,20 @@ void Func_02000fc0(void) {
   Func_020057dc(0x7fff, 0);
   Func_020057ec(40);
   WaitFrames(80);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Func_02000f6c();
   WaitFrames(1);
   Func_020057dc(0x10000, 0);
   Func_020057ec(10);
   WaitFrames(20);
   Func_02005854(130);
-  Object_SetPartAttribute(Object_GetById(9), 7);
-  Object_SetPartAttribute(Object_GetById(10), 7);
+  Actor_SetPartAttribute(Actor_GetById(9), 7);
+  Actor_SetPartAttribute(Actor_GetById(10), 7);
   WaitFrames(8);
-  Object_SetPartAttribute(Object_GetById(10), 3);
-  Object_SetPartAttribute(Object_GetById(9), 0);
+  Actor_SetPartAttribute(Actor_GetById(10), 3);
+  Actor_SetPartAttribute(Actor_GetById(9), 0);
   WaitFrames(8);
   Func_02005854(11);
   result = Func_02004d48(11, 1);

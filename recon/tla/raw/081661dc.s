@@ -421,7 +421,7 @@ BattleEffect_RunAnnihilation:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r3, [sp, #40]
 	lsls r0, r0, #7

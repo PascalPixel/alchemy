@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -10,7 +10,7 @@ void Func_02003e64();
 void Func_02003e6c();
 void Func_02003f0c();
 void Func_02003fa4();
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 
 void Func_0200208c(void) {
   ((void (*)())Func_02003e64)();
@@ -21,17 +21,17 @@ void Func_0200208c(void) {
 }
 
 void Func_020020b4(void) {
-  struct ObjectRuntime *object0;
+  struct Actor *object0;
 
-  object0 = Object_GetById(gAdventure.currentOwner);
+  object0 = Actor_GetById(gAdventure.currentOwner);
   object0->terrainId = 2;
   return;
 }
 
 void Func_020020d0(void) {
-  struct ObjectRuntime *object0;
+  struct Actor *object0;
 
-  object0 = Object_GetById(gAdventure.currentOwner);
+  object0 = Actor_GetById(gAdventure.currentOwner);
   object0->terrainId = 0;
   return;
 }

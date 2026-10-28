@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "io_reg.h"
@@ -10,7 +10,7 @@
 extern const u8 gData_02002b60[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000054(void);
 void Func_020007d0(void);
 void Func_02000b28(s32 id);
@@ -34,8 +34,8 @@ s32 Func_02000854(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  ObjectMotion_SetActionVariant(13, 3);
-  ObjectMotion_SetActionVariant(14, 3);
+  Actor_SetSpritePriority(13, 3);
+  Actor_SetSpritePriority(14, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   Func_02002314(0);
@@ -54,7 +54,7 @@ s32 Func_02000854(void) {
   }
   if (gAdventure.entrance == 3 || gAdventure.entrance == 6 ||
       gAdventure.entrance == 7)
-    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
   if (GameFlag_Test(0xa00)) {
     Func_02000b28(8);
     Func_02000b28(9);

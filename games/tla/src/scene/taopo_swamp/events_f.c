@@ -2,16 +2,16 @@
 #include "edition.h"
 
 void Func_02000f9c(s32 a, s32 id) {
-  Object_SetModeById(id, 2);
+  Actor_SetModeById(id, 2);
   GameFlag_SetBit(0x338);
   GameFlag_ClearBit(0x339);
 }
 
 void Func_02000fbc(s32 a, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->z >> 20 == 21) {
-    Object_SetModeById(id, 3);
+    Actor_SetModeById(id, 3);
     object->collisionFlags = 0;
     /* FAKEMATCH: the native stores the collision flags before addressing the
      * priority byte. */
@@ -24,16 +24,16 @@ void Func_02000fbc(s32 a, s32 id) {
 }
 
 void Func_02001018(s32 a, s32 id) {
-  Object_SetModeById(id, 2);
+  Actor_SetModeById(id, 2);
   GameFlag_SetBit(0x33b);
   GameFlag_ClearBit(0x33c);
 }
 
 void Func_02001038(s32 a, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 31) {
-    Object_SetModeById(id, 3);
+    Actor_SetModeById(id, 3);
     object->collisionFlags = 0;
     /* FAKEMATCH: the native stores the collision flags before addressing the
      * priority byte. */
@@ -41,10 +41,10 @@ void Func_02001038(s32 a, s32 id) {
     object->priorityFlags |= 2;
     GameFlag_SetBit(0x33c);
     GameFlag_SetBit(0x33d);
-    ObjectMotion_SetSpeedParameters_(id, 0x8000, 0x4000);
-    ObjectMotion_OffsetPositionAndResetMotion(id, 0, -32);
-    ObjectMotion_CommitCurrentPositionAndActivate(id);
-    Object_SetModeById(id, 3);
+    Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
+    Actor_OffsetPositionAndResetMotion(id, 0, -32);
+    Actor_WaitForMoveById(id);
+    Actor_SetModeById(id, 3);
     Func_02002840(30, 13, 1, 1, 31, 11);
   }
 }
@@ -54,7 +54,7 @@ void Func_020010bc(void) { Func_02002948(); }
 #endif
 
 void Func_020010c4(s32 a, s32 id) {
-  Object_SetModeById(id, 2);
+  Actor_SetModeById(id, 2);
   GameFlag_SetBit(0x340);
   GameFlag_ClearBit(0x341);
   Func_02002840_(7, 39, 1, 1, 7, 38);
@@ -62,7 +62,7 @@ void Func_020010c4(s32 a, s32 id) {
 }
 
 void Func_02001100(s32 a, s32 id) {
-  Object_SetModeById(id, 2);
+  Actor_SetModeById(id, 2);
   GameFlag_SetBit(0x342);
   GameFlag_ClearBit(0x343);
   Func_02002084(1);

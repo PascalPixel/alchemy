@@ -6,7 +6,7 @@
 
 /// Whether object a rests on object b: within 0xc0000 of it in x and 0x80000
 /// in z, and up to 0xfffff above it.
-s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b) {
+s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
     if ((u32)(a->y - b->y - 1) <= 0xffffe) {
       if (DIFF(a->z, b->z) < 0x80000)
@@ -19,9 +19,9 @@ s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b) {
 /// Moves the object by its velocities, slows it in x and z, grows and spins
 /// its sprite, and stops its fall in z when it lands on the leader or on one
 /// of the objects the vent work lists.
-void VENT_BOUNCE(struct ObjectRuntime *object) {
+void VENT_BOUNCE(struct Actor *object) {
   struct VentWork *work = VENT_WORK;
-  struct ObjectRuntime *other = Object_GetById(gAdventure.currentOwner);
+  struct Actor *other = Actor_GetById(gAdventure.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct FieldSprite *sprite;
@@ -54,7 +54,7 @@ void VENT_BOUNCE(struct ObjectRuntime *object) {
 
     if (id == 0)
       break;
-    other = Object_GetById(id);
+    other = Actor_GetById(id);
     if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
       object->z -= object->unk4c;
       object->gravity += object->unk4c >> 2;

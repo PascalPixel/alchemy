@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "effect_slot.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 
@@ -19,8 +19,8 @@ struct FallbackScene {
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_Destroy(struct ObjectRuntime *object);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_Destroy(struct Actor *object);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
 void Camera_WorldToScreen(struct EffectVector *pos);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
@@ -29,8 +29,8 @@ void Func_080e0020(struct FieldParticle *effect);
 
 void Func_080e0134(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *user = scene->mainObject;
-  struct ObjectRuntime *obj;
+  struct Actor *user = scene->mainObject;
+  struct Actor *obj;
   struct FieldParticle *slot;
   struct EffectVector pos;
   struct EffectVector from;
@@ -39,9 +39,9 @@ void Func_080e0134(void) {
   s32 i;
 
   scene->y = user->y;
-  obj = Object_Spawn(309, 0, 0, 0);
+  obj = Actor_Spawn(309, 0, 0, 0);
   step = 0;
-  Object_SetMode(obj, 0);
+  Actor_SetMode(obj, 0);
   if (obj == 0)
     return;
 
@@ -69,7 +69,7 @@ void Func_080e0134(void) {
   }
 
   WaitFrames(5);
-  Object_SetMode(obj, 1);
+  Actor_SetMode(obj, 1);
   Sound_PlayFar(108);
   WaitFrames(10);
   Sound_PlayFar(108);
@@ -95,7 +95,7 @@ void Func_080e0134(void) {
   pos.y = obj->y + (8 << 16);
   pos.z = obj->z;
   WaitFrames(8);
-  Object_Destroy(obj);
+  Actor_Destroy(obj);
   WaitFrames(4);
   WaitFrames(30);
   BattleEffect_PrepareBufferInterpolation();

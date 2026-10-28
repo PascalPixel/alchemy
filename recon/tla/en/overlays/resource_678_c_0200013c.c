@@ -5,19 +5,19 @@
 // objects of type 269 15 frames apart as Func_02002144 does, settles
 // (Func_020028d0) and sets flag 0x8e5. Left: the native keeps the step in r9, the sprite in r10 and the id in r11, takes the splash's priority through a bitfield shift pair and lays the loops out with their tests at the bottom; the second loop matches Func_02002144's form.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern u8 gData_02002ae8[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
 void Func_02002968(s32 mode);
 void Func_020028a0(void);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 u16 Random16Far(void);
-struct ObjectRuntime *Func_02002808(s32 type, s32 x, s32 y, s32 z);
-void Func_02002800(struct ObjectRuntime *object, const u8 *script);
+struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
+void Func_02002800(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void Animation_ApplyChildValuesToRecord(void *sprite, s32 value);
 void Animation_ApplyChildValue(void *sprite, s32 value);
@@ -25,8 +25,8 @@ void Func_020028d0(s32 id, s32 a, s32 b);
 void GameFlag_SetBit(s32 flag);
 
 void Func_0200013c(s32 unused, s32 id) {
-  struct ObjectRuntime *actor = Object_GetById(id);
-  struct ObjectRuntime *splash;
+  struct Actor *actor = Actor_GetById(id);
+  struct Actor *splash;
   struct FieldSprite *sprite, *splashSprite;
   u8 *raw, *kind;
   s32 i, x, z, a, b;

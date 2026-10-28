@@ -1213,7 +1213,7 @@ BattleEffect_RunTrident:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #240
 	ldr r7, [sp, #52]
 	lsls r0, r0, #7

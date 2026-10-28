@@ -1,18 +1,18 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 
 extern const u8 gData_02006bc8[];
 
 u32 Random16Far(void);
-struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
-void Func_02004b18(struct ObjectRuntime *object, s32 mode);
-void Func_02004b20(struct ObjectRuntime *object, const u8 *script);
+struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
+void Func_02004b18(struct Actor *object, s32 mode);
+void Func_02004b20(struct Actor *object, const u8 *script);
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
 void Func_02002594(void) {
-  struct ObjectRuntime *obj;
+  struct Actor *obj;
   struct FieldSprite *sprite;
   s32 x;
   s32 z;

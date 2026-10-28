@@ -166,7 +166,7 @@ void Func_0801521c(s32);
 void Render_TransformVertices(const void *, void *, s32);
 void Render_DrawModelList(s32 *);
 void Heap_Release(void *);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void Task_Remove(void *);
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
@@ -950,7 +950,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     *(s32 *)0x030011f0 = 120 - v;
     if (work->shake > 0)
       work->shake--;
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -1076,7 +1076,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

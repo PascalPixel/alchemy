@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_WaitForMoveById(s32 id);
 void Func_0200406c(void);
 void Func_02004074(void);
 void Func_020040d4(s32 id, s32 x, s32 z);
@@ -19,9 +19,9 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 }
 
 static __inline__ void
-ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_020040d4_(s32 id, s32 x, s32 z) {
@@ -46,7 +46,7 @@ static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 void Func_020012c4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Test_(0xfc7) == 0) {
@@ -55,10 +55,10 @@ void Func_020012c4(void) {
       Func_0200406c();
       Func_02004204_(0);
       Func_0200417c_(gAdventure.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 0,
+      Actor_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      Actor_WaitForMoveById(gAdventure.currentOwner);
       Func_02004074();
     }
   }

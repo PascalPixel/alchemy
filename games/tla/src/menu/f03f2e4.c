@@ -1,6 +1,6 @@
 #include "types.h"
 
-struct Object_0801c0dc {
+struct Actor_0801c0dc {
   u8 filler0[5];
   u8 field50 : 2;
   u8 field52 : 2;
@@ -27,7 +27,7 @@ struct ListNode {
   s16 field22;
   u8 unk24[2];
   s16 field26;
-  struct Object_0801c0dc obj;
+  struct Actor_0801c0dc obj;
 };
 
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
@@ -44,7 +44,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
                               s32 reuse) {
   s32 src;
   s32 tile;
-  struct Object_0801c0dc *obj;
+  struct Actor_0801c0dc *obj;
 
   switch (kind) {
   case 1:

@@ -1,9 +1,9 @@
 #include "local.h"
 
-s32 Func_02001564(struct ObjectRuntime *object) {
+s32 Func_02001564(struct Actor *object) {
   s32 flag;
   s32 count;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   s32 scale;
 
   if (object->y + object->velocityY < object->terrainHeight) {
@@ -18,7 +18,7 @@ s32 Func_02001564(struct ObjectRuntime *object) {
       spark->scaleX = scale;
       spark->scaleY = scale;
       Func_02002800(spark, gData_02002a48);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
+      Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
     Func_020029b0(106);
@@ -32,7 +32,7 @@ s32 Func_02001564(struct ObjectRuntime *object) {
       }
       if (count != 0)
         Func_02000920(0, 10);
-      object = Object_GetById(10);
+      object = Actor_GetById(10);
       object->scaleX = count << 14;
       object->scaleY = count << 14;
     }

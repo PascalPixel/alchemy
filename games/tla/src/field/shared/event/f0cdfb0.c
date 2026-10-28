@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
 // The field's event work as this function reads it: the scene's event list.

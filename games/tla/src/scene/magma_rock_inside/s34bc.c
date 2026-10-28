@@ -8,6 +8,6 @@ void Func_020034bc(void) {
   GameFlag_SetBit(0x300);
   Func_02000694(0, 15, 13, 0);
   for (i = 0; i != 6; i++)
-    Object_SetModeById(i + 9, 2);
-  Object_SetModeById(15, 4);
+    Actor_SetModeById(i + 9, 2);
+  Actor_SetModeById(15, 4);
 }

@@ -11,7 +11,7 @@ Func_080d3940:
 	push {r5, r6, r7}
 	sub sp, #12
 	adds r7, r1, #0
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	ldr r6, [r0, #80]
 	cmp r0, #0
@@ -19,7 +19,7 @@ Func_080d3940:
 	cmp r6, #0
 	beq .L_080d3a04
 	movs r1, #0
-	bl Object_SetMode
+	bl Actor_SetMode
 	movs r2, #128
 	lsls r2, r2, #6
 	adds r7, r7, r2

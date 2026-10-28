@@ -16,8 +16,8 @@
 #include "scene_ids.h"
 #include "edition.h"
 
-#define Object_SetPartAttribute                                                \
-  ((void (*)(struct FieldActor *, s32))Object_SetPartAttribute)
+#define Actor_SetPartAttribute                                                \
+  ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
 
 enum { ENTRANCE_OPENING = 99 };
 
@@ -58,16 +58,16 @@ s32 VenusLighthouse_Start(void) {
     Func_02000d30();
     Import_EventEnd();
   } else {
-    Object_SetPartAttribute(Import_ActorGet(10), 6);
-    Object_SetPartAttribute(Import_ActorGet(17), 6);
-    Object_SetPartAttribute(Import_ActorGet(18), 6);
-    Object_SetPartAttribute(Import_ActorGet(19), 6);
-    Object_SetPartAttribute(Import_ActorGet(20), 6);
-    Object_SetPartAttribute(Import_ActorGet(21), 6);
-    Object_SetPartAttribute(Import_ActorGet(22), 6);
-    Object_SetPartAttribute(Import_ActorGet(23), 6);
-    Object_SetPartAttribute(Import_ActorGet(24), 6);
-    Object_SetPartAttribute(Import_ActorGet(25), 6);
+    Actor_SetPartAttribute(Import_ActorGet(10), 6);
+    Actor_SetPartAttribute(Import_ActorGet(17), 6);
+    Actor_SetPartAttribute(Import_ActorGet(18), 6);
+    Actor_SetPartAttribute(Import_ActorGet(19), 6);
+    Actor_SetPartAttribute(Import_ActorGet(20), 6);
+    Actor_SetPartAttribute(Import_ActorGet(21), 6);
+    Actor_SetPartAttribute(Import_ActorGet(22), 6);
+    Actor_SetPartAttribute(Import_ActorGet(23), 6);
+    Actor_SetPartAttribute(Import_ActorGet(24), 6);
+    Actor_SetPartAttribute(Import_ActorGet(25), 6);
   }
   return 0;
 }

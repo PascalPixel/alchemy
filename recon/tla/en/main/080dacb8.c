@@ -14,7 +14,7 @@
 // kept.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "fixed_math.h"
 
@@ -41,7 +41,7 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Party_GetLeaderActor(void);
 
 #define CHAIN_WORK ((struct ChainWork *)Ram_HeapSlots->unk84[8])
@@ -49,7 +49,7 @@ s32 Party_GetLeaderActor(void);
 void Func_080dacb8(void) {
   struct ChainWork *work = CHAIN_WORK;
   struct ChainSlot *slot;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 x, y, z;
   struct ChainLink *link;
   s32 i;
@@ -61,7 +61,7 @@ void Func_080dacb8(void) {
   s32 angle;
 
   i = 0;
-  leader = Object_GetById(Party_GetLeaderActor());
+  leader = Actor_GetById(Party_GetLeaderActor());
   target = 0x100;
   for (slot = work->slots; i <= 7; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)

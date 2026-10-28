@@ -8,7 +8,7 @@ struct GarohEventWork {
   s8 fadeLock;
 };
 
-void Func_02000e78(s32 id, struct ObjectRuntime *object) {
+void Func_02000e78(s32 id, struct Actor *object) {
   s32 i;
   s32 saved;
 
@@ -29,7 +29,7 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object) {
 }
 
 void Func_02000eb0(void) {
-  struct ObjectRuntime *object = Object_GetById(8);
+  struct Actor *object = Actor_GetById(8);
   s32 x = object->x >> 20;
   s32 raw;
   s32 z;
@@ -50,7 +50,7 @@ void Func_02000eb0(void) {
 }
 
 void Func_02000eec(void) {
-  struct ObjectRuntime *object = Object_GetById(9);
+  struct Actor *object = Actor_GetById(9);
   s32 x = object->x >> 20;
   s32 raw;
   s32 z;
@@ -71,12 +71,12 @@ void Func_02000eec(void) {
 }
 
 void Func_02000f28(void) {
-  Object_GetById(10);
+  Actor_GetById(10);
   Flag_IsSet(0x203);
 }
 
 void Func_02000f3c(void) {
-  struct ObjectRuntime *object = Object_GetById(11);
+  struct Actor *object = Actor_GetById(11);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 

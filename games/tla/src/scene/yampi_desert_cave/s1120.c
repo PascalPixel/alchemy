@@ -1,13 +1,13 @@
 #include "yampi_desert_cave.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 /// Func_02001120's counterpart: the leader's terrain becomes 2, and in rooms 1
 /// and 3 the same calls run with their first and last pairs swapped, each
 /// followed by more.
 void Func_02001040(void) {
-  Object_GetById(gAdventure.currentOwner)->terrainId = 2;
+  Actor_GetById(gAdventure.currentOwner)->terrainId = 2;
   if (gAdventure.scene == (s32)&SceneId_Ov662Room1) {
     YampiDesertCave_Call1848(55, 71, 4, 1, 43, 70);
     YampiDesertCave_Call1848(43, 71, 4, 1, 55, 71);
@@ -26,7 +26,7 @@ void Func_02001040(void) {
 }
 
 void Func_02001120(void) {
-  Object_GetById(gAdventure.currentOwner)->terrainId = 0;
+  Actor_GetById(gAdventure.currentOwner)->terrainId = 0;
   if (gAdventure.scene == (s32)&SceneId_Ov662Room1)
     YampiDesertCave_Call1848(43, 70, 4, 1, 55, 71);
   /* FAKEMATCH: the native reads the scene again here; without the barrier the

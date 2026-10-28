@@ -17,7 +17,7 @@
 // one-pass block there is a trial), the spark call's options and the fade.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "system/dma.h"
@@ -45,16 +45,16 @@ void Func_02003c88(s32 skip);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003af0(void *resource, void *dest);
 void Func_02003cd8(s32 cue);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200092c(void);
 void Func_020008ac(void);
 
 u32 Random16Far(void);
-void Func_02003b28(struct ObjectRuntime *object, s32 mode);
-void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02003b28(struct Actor *object, s32 mode);
+void Func_02003b38(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 s32 Camera_FollowActor(s32 id, s32 a);
@@ -87,7 +87,7 @@ void Func_02003b50(void);
 void Func_02001010(void) {
   u16 *buffer = Heap_Alloc(0x680);
   u16 *cell;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   u32 i;
   s32 x;
 
@@ -99,8 +99,8 @@ void Func_02001010(void) {
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
   Heap_Release(buffer);
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
-  ObjectMotion_SetActionVariant(8, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(8, 1);
   do {
     s32 control = 0x40d;
 
@@ -130,16 +130,16 @@ row:
     goto row;
   Heap_Release(buffer);
   Func_02003cd8(246);
-  ((u8 *)Object_GetById(8))[98] = 9;
-  ((u8 *)Object_GetById(8))[99] = 1;
-  Object_GetById(8)->update = Func_0200092c;
+  ((u8 *)Actor_GetById(8))[98] = 9;
+  ((u8 *)Actor_GetById(8))[99] = 1;
+  Actor_GetById(8)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct ObjectRuntime *)Import_ActorCreate(
-          0x2a0, Object_GetById(8)->x, Object_GetById(8)->y,
-          Object_GetById(8)->z);
+      spark = (struct Actor *)Import_ActorCreate(
+          0x2a0, Actor_GetById(8)->x, Actor_GetById(8)->y,
+          Actor_GetById(8)->z);
       {
-        s32 priority = ((s8 *)Object_GetById(8)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_GetById(8)->animation)[9] & 12;
 
         cell = spark->animation;
         ((struct SpriteParts *)cell)->part = priority >> 2;
@@ -152,8 +152,8 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
-      Object_SetPartAttribute(spark, 2);
+      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
     FieldEvent_WaitFrames(1);
@@ -174,7 +174,7 @@ row:
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
-  ((u8 *)Object_GetById(8))[98] = Random16Far() & 7;
+  ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
   i++;
   FieldEvent_WaitFrames(1);
   if (i != 64)
@@ -203,7 +203,7 @@ burst:
                  &options);
   }
   REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
-  ((u8 *)Object_GetById(8))[98] = Random16Far() & 7;
+  ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
   FieldEvent_WaitFrames(1);
     if (j != 255)
       goto burst;
@@ -217,7 +217,7 @@ burst:
   REG_BLDALPHA = 15;
   Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
   Call1((void (*)())Func_02003cd8, 390);
-  ((u8 *)Object_GetById(8))[98] = 6;
+  ((u8 *)Actor_GetById(8))[98] = 6;
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
@@ -226,10 +226,10 @@ fade:
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);
-  ((u8 *)Object_GetById(8))[99] = 0;
+  ((u8 *)Actor_GetById(8))[99] = 0;
   WaitFrames(30);
-  Object_GetById(8)->update = 0;
-  Object_SetPartAttribute(Object_GetById(8), 6);
+  Actor_GetById(8)->update = 0;
+  Actor_SetPartAttribute(Actor_GetById(8), 6);
   Func_02003ba0();
   FieldEvent_WaitFrames(60);
   REG_BLDCNT = 0;
@@ -238,9 +238,9 @@ fade:
   Func_02003bb8(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
-  Object_GetById(8)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(8)->priorityFlags |= 1;
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();
   GameFlag_SetBit(0x858);

@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "macros.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 void Func_080246b8(void) {
-  struct ObjectRuntime *object = Ram_HeapSlots->scriptObjects;
+  struct Actor *object = Ram_HeapSlots->scriptObjects;
   s32 i;
 
   for (i = 63; i >= 0; i--, object++) {
@@ -16,8 +16,8 @@ void Func_080246b8(void) {
       s32 z = object->z;
 
       if (object->priorityFlags & 64) {
-        struct ObjectRuntime *carrier =
-            (struct ObjectRuntime *)WORD_AT(object, 0x7c);
+        struct Actor *carrier =
+            (struct Actor *)WORD_AT(object, 0x7c);
 
         if (carrier != NULL) {
           if (WORD_AT(carrier, 0x74) != 0) {

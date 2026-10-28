@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern const u8 gData_02003f44[];
@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
@@ -36,7 +36,7 @@ void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
 void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_020015b8(struct ObjectRuntime *object);
+void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
 
@@ -80,7 +80,7 @@ void Func_02002140(void) {
   s32 set = Flag_Test(0x207);
 
   if (set == 0) {
-    Object_GetById(8)->motionFlags = set;
+    Actor_GetById(8)->motionFlags = set;
     Map_CopyAttributes(51, 12, 1, 1, 47, 12);
     Flag_Set(0x202);
   }
@@ -93,10 +93,10 @@ void Func_02002180(void) {
   }
 }
 
-struct ObjectRuntime *Func_02003cf8(void);
+struct Actor *Func_02003cf8(void);
 
 void Func_020021b4(void) {
-  struct ObjectRuntime *object = Func_02003cf8();
+  struct Actor *object = Func_02003cf8();
   u32 i;
 
   object->y += -0x80000;

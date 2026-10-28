@@ -24,8 +24,8 @@ s32 GameFlag_Test(s32 flag);
 void Func_0200097c(void);
 void Func_02000dc4(void);
 void Func_02000ed0(void);
-struct FieldActor *Object_GetById(s32 id);
-void ObjectMotion_SetActionVariant(u32, s32);
+struct FieldActor *Actor_GetById(s32 id);
+void Actor_SetSpritePriority(u32, s32);
 void Func_02000ff0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 u8 *Func_02000064(void) {

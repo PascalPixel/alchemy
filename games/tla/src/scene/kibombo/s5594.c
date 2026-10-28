@@ -51,11 +51,11 @@ void Func_02005594(void) {
     Func_02004a28();
     return;
   }
-  ObjectMotion_SetActionVariant(17, 1);
-  ObjectMotion_SetActionVariant(7, 2);
-  ObjectMotion_SetActionVariant(26, 2);
-  ObjectMotion_SetActionVariant(5, 2);
-  ObjectMotion_SetActionVariant(6, 2);
+  Actor_SetSpritePriority(17, 1);
+  Actor_SetSpritePriority(7, 2);
+  Actor_SetSpritePriority(26, 2);
+  Actor_SetSpritePriority(5, 2);
+  Actor_SetSpritePriority(6, 2);
   if (GameFlag_Test(0x92e))
     Func_02005b0c(7, 0, 0);
   else if (GameFlag_Test(0x92f)) {
@@ -73,7 +73,7 @@ void Func_02005594(void) {
   Event_WaitTransitionFrames();
   Task_Add(Func_02002ccc, 0x480);
   for (i = 0; i <= 7; i++) {
-    u8 *field = &Object_GetById(i + 18)->field5c;
+    u8 *field = &Actor_GetById(i + 18)->field5c;
     /* FAKEMATCH: the pin keeps the 2 in the loop, built after the field's
      * address as the native does; as a constant loop.c hoists it into r6
      * (differ 10). */
@@ -91,19 +91,19 @@ void Func_02005594(void) {
   if (gAdventure.entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (gAdventure.entrance == 98) {
     Func_02003640(1, 1);
     Func_020036e0(1, 0);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (gAdventure.entrance == 97) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
   } else if (gAdventure.entrance == 96) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
-    Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-    Object_SetModeById(14, 5);
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    Actor_SetModeById(14, 5);
   }
 }

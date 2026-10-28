@@ -134,7 +134,7 @@ Func_0811ea0c:
 	bne .L_0811eb28
 	adds r0, r5, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	b .L_0811eb46
 .L_0811eb28:
 	movs r2, #165
@@ -200,14 +200,14 @@ Func_0811ea0c:
 	bl BattleMotion_ApproachTarget
 	ldr r0, [r5]
 	movs r1, #16
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 .L_0811ebb8:
 	mov r1, r8
 	ldr r0, [r1, #8]
 	bl BattleObject_Get
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	mov r2, r8
 	ldrh r3, [r2, #36]
 	cmp r3, #7

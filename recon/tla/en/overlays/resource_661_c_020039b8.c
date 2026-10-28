@@ -6,7 +6,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -25,7 +25,7 @@ struct RideEntry {
   s16 step;
   s16 unk14;
   s16 phase;
-  struct ObjectRuntime *rider;
+  struct Actor *rider;
 };
 
 struct RideWork {
@@ -38,7 +38,7 @@ struct RideWork {
 extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020041f8(s32 cue);
 s32 Math_Sine(s32 angle);
 
@@ -53,14 +53,14 @@ void Func_020039b8(void) {
   s32 i;
 
   for (i = 0; i <= 15; i++, collision++, entry++) {
-    struct ObjectRuntime *object;
-    struct ObjectRuntime *rider;
+    struct Actor *object;
+    struct Actor *rider;
     struct MapCell *cell;
     s32 index;
 
     if (entry->id == 0)
       continue;
-    object = Object_GetById(entry->id);
+    object = Actor_GetById(entry->id);
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {

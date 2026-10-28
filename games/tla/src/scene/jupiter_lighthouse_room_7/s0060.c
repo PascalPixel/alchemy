@@ -19,7 +19,7 @@ void Func_020000b4(void) {
 }
 
 void Func_02000100(void) {
-  struct ObjectRuntime *object = Object_GetById(16);
+  struct Actor *object = Actor_GetById(16);
 
   if (!Value1((s32 (*)())GameFlag_Test, 0xa1b) && object->x >> 20 == 8 &&
       object->z >> 20 == 37) {

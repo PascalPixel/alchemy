@@ -104,7 +104,7 @@ s32 Func_02000f94(void) {
   u16 turn;
   s32 facing;
 
-  turn = Object_GetById(gAdventure.currentOwner)->facing + 0x5fff;
+  turn = Actor_GetById(gAdventure.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;

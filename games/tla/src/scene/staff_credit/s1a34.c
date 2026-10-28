@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 s32 Math_Sine(s32 angle);
-void Func_02001fd4(struct ObjectRuntime *object);
+void Func_02001fd4(struct Actor *object);
 
-void Func_02001a34(struct ObjectRuntime *object) {
-  struct ObjectRuntime *parent = object->watchedObject;
+void Func_02001a34(struct Actor *object) {
+  struct Actor *parent = object->watchedObject;
   s32 step = ++object->action;
   s32 scale;
   s32 rise;
@@ -28,8 +28,8 @@ void Func_02001a34(struct ObjectRuntime *object) {
   object->z = parent->z + (rise - scale) * 5 + 0x80000;
 }
 
-void Func_02001a80(struct ObjectRuntime *object) {
-  struct ObjectRuntime *parent = object->watchedObject;
+void Func_02001a80(struct Actor *object) {
+  struct Actor *parent = object->watchedObject;
   s32 step = ++object->action;
   s32 scale;
   s32 rise;

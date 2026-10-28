@@ -14,20 +14,20 @@ extern const s8 gData_02000eec[];
 
 void Func_02000388(void);
 void Func_020004b4(void);
-void Func_02000c74(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02000c74(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02000c7c(void);
 s32 Func_02000c8c(s32 layer, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 a);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void Actor_ArmCallback(s32 id, s32 angle, s32 a);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u32 Random16Far(void);
 
-static __inline__ void MoveTo(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
+static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h). */
   Func_02000c74(object, x, y, z);
 }
 
 void Func_02000588(void) {
-  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
   s32 shift = 0x1300000;
   s32 i;
 
@@ -38,27 +38,27 @@ void Func_02000588(void) {
     return;
   if (Func_02000c8c(object->terrainId, object->x, object->z) != 77)
     return;
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
                 (object->z & 0xfff00000) + 0x80000);
   {
     s32 id = gAdventure.currentOwner;
 
     if (shift > 0)
-      ObjectMotion_ArmCallback(id, 0xc000, 0);
+      Actor_ArmCallback(id, 0xc000, 0);
     else
-      ObjectMotion_ArmCallback(id, 0x4000, 0);
+      Actor_ArmCallback(id, 0x4000, 0);
   }
   WaitFrames(10);
   i = 0;
 next:
   {
-    object = Object_GetById(gData_02000eec[i]);
+    object = Actor_GetById(gData_02000eec[i]);
     object->motionFlags = 0;
     object->y += 0x8000;
     object->acceleration = 0x1000;
     object->speedLimit = 0x20000;
-    ObjectDispatch_SetSingleChildFlags(object, 1);
+    Actor_SetSingleChildFlags(object, 1);
     Func_02000c74(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
     Func_02000d64(152);
@@ -71,7 +71,7 @@ next:
   i = 9;
 lower:
   {
-    object = Object_GetById(i);
+    object = Actor_GetById(i);
     {
       s32 z = object->z - shift;
 
@@ -80,13 +80,13 @@ lower:
   }
   if (++i <= 14)
     goto lower;
-  Object_GetById(9);
+  Actor_GetById(9);
   Func_02000c7c();
   WaitFrames(40);
   i = 9;
 land:
   {
-    object = Object_GetById(i);
+    object = Actor_GetById(i);
     object->z = (object->z & 0xfff00000) + 0x80000;
     object->motionFlags = 3;
     object->update = 0;

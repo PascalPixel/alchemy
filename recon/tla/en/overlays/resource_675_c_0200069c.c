@@ -8,7 +8,7 @@
 // tests of the scene again before the dimming) and the register holding
 // gAdventure.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -19,13 +19,13 @@ extern u8 gData_02001454[];
 void Func_0200131c(s32 mode);
 void Func_020008c8(void);
 void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b);
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_0200129c(s32 id, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const u8 *script);
+void Actor_SetMovementTypeById(s32 id, const u8 *script);
 void Func_02000580(s32 scale);
 void Func_0200133c(void);
 void Func_020012fc(s32 mode);
@@ -42,7 +42,7 @@ s32 Func_0200069c(void) {
     Func_02000038(gData_0200134c, gData_0200135c, gData_02001388,
                   gData_020013b4);
   } else if (scene == (s32)&SceneId_Ov675Room3) {
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(9), 0);
     if (gAdventure.entrance == 2) {
       Func_0200129c(8, 0, 0);
       GameFlag_SetBit(0x9cf);
@@ -52,7 +52,7 @@ s32 Func_0200069c(void) {
       GameFlag_SetBit(0x230);
     } else if (!GameFlag_Test(0x230)) {
       Func_0200129c(9, 0, 0);
-      ObjectMotion_EnableActionAndSetCallback(8, gData_02001454);
+      Actor_SetMovementTypeById(8, gData_02001454);
     }
   } else {
     goto other;

@@ -9,7 +9,7 @@ void Func_020034f0(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov692Room3) {
     Func_02000694(0, 24, 15, 0);
     Func_02000694(0, 9, 16, 0);
-    Object_SetModeById(11, 4);
+    Actor_SetModeById(11, 4);
   } else {
     Func_02000694(0, 26, 14, 0);
   }

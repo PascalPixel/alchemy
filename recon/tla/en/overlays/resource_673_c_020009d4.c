@@ -9,13 +9,13 @@
 // Left: registers: the native saves only r8 to r10 (the statue in r6, a 0 shared by the glow's stores in r8, then 0x10000 in r6 for the follower's speed limit, &gAdventure.currentOwner in r5), where the draft also saves r11 and r7.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
 extern const u8 MsgByReachingThis[];
 extern const u8 gData_020012a4[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200119c(void);
 void Func_020011a4(void);
 void Func_0200125c(s32 skip);
@@ -28,14 +28,14 @@ void FieldEvent_WaitFrames(s32 frames);
 void Func_020011e4(const u8 *message);
 void Func_0200118c(s32 line, s32 a, s32 b);
 void Func_020011cc(s32 actor, s32 x, s32 z);
-struct ObjectRuntime *Func_0200115c(s32 type, s32 x, s32 y, s32 z);
-void Func_02001154(struct ObjectRuntime *object, const u8 *script);
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+struct Actor *Func_0200115c(s32 type, s32 x, s32 y, s32 z);
+void Func_02001154(struct Actor *object, const u8 *script);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020009bc(void);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 void Func_020011d4(s32 actor, s32 target);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_020011ec(s32 actor, s32 a);
 s32 Func_020011fc(s32 actor, s32 emote, s32 frames);
 void GameFlag_SetBit(s32 flag);
@@ -45,10 +45,10 @@ void Func_02001214(s32 actor, s32 a);
 #define TALK() Call3(Func_0200118c, (s16)(*(u16 *)(work + 0x1c4))++, 0, -3)
 
 void Func_020009d4(void) {
-  struct ObjectRuntime *follower = Object_GetById(9);
-  struct ObjectRuntime *statue = Object_GetById(0x40);
+  struct Actor *follower = Actor_GetById(9);
+  struct Actor *statue = Actor_GetById(0x40);
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *glow, *leader;
+  struct Actor *glow, *leader;
 
   Func_0200119c();
   Func_0200125c(0);
@@ -58,7 +58,7 @@ void Func_020009d4(void) {
   Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x9e0000, 1);
   Func_02001284(26);
   FieldEvent_WaitFrames(60);
-  Object_SetModeById(8, 2);
+  Actor_SetModeById(8, 2);
   Func_02001284(0x240);
   FieldEvent_WaitFrames(60);
   Func_020011e4(MsgByReachingThis);
@@ -82,20 +82,20 @@ void Func_020009d4(void) {
   glow->z = 0;
   glow->update = 0;
   TALK();
-  ObjectMotion_ResetAndSetPosition(gAdventure.currentOwner, 166, 188);
-  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Actor_ResetAndSetPosition(gAdventure.currentOwner, 166, 188);
+  Actor_WaitForMoveById(gAdventure.currentOwner);
   Func_020011d4(9, gAdventure.currentOwner);
   follower->speedLimit = 0x10000;
-  ObjectMotion_ResetAndSetPosition(9, 184, 188);
-  ObjectMotion_CommitCurrentPositionAndActivate(9);
-  Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
+  Actor_ResetAndSetPosition(9, 184, 188);
+  Actor_WaitForMoveById(9);
+  Call3(Actor_ArmCallback, 9, 0x8000, 0);
   Func_020011ec(9, 0);
-  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
-  Object_SetModeById(gAdventure.currentOwner, 3);
-  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   TALK();
   Func_020011fc(9, 258, 0);
-  Call3(ObjectMotion_ArmCallback, 9, 0xb000, 0);
+  Call3(Actor_ArmCallback, 9, 0xb000, 0);
   FieldEvent_WaitFrames(30);
   Func_020011ec(9, 0);
   TALK();
@@ -106,36 +106,36 @@ void Func_020009d4(void) {
   FieldEvent_WaitFrames(30);
   Func_020011ec(9, 0);
   TALK();
-  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
-  Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
+  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, 9, 0x8000, 0);
   FieldEvent_WaitFrames(10);
   Func_020011fc(gAdventure.currentOwner, 257, 0);
   Func_020011fc(9, 257, 0);
   FieldEvent_WaitFrames(60);
   TALK();
-  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
-  Call3(ObjectMotion_ArmCallback, 9, 0xb000, 0);
+  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, 9, 0xb000, 0);
   Func_020011fc(gAdventure.currentOwner, 261, 0);
   Func_020011fc(9, 261, 0);
   FieldEvent_WaitFrames(60);
   TALK();
   FieldEvent_WaitFrames(40);
-  Object_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(gAdventure.currentOwner, 3);
   FieldEvent_WaitFrames(40);
-  Object_SetModeById(9, 3);
+  Actor_SetModeById(9, 3);
   Func_020011ec(9, 0);
-  Object_SetModeById(8, 2);
+  Actor_SetModeById(8, 2);
   TALK();
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(8, 4);
-  Object_SetModeById(9, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(8, 4);
+  Actor_SetModeById(9, 2);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != 0)
-    ObjectMotion_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(9);
+  Actor_WaitForMoveById(9);
   Func_020011cc(9, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(9);
+  Actor_WaitForMoveById(9);
   GameFlag_SetBit(0x9ce);
   Func_02001264();
   Value2(Func_0200123c, 0x10000, 0);

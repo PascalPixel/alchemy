@@ -30,11 +30,11 @@ void Func_02002808(void) {
     Func_020048c4();
     Func_02004a24(0);
     Func_0200498c((s32)MsgShamanFortuneGreeting);
-    Object_SetModeById(17, 5);
+    Actor_SetModeById(17, 5);
     Func_020049a4(17, 0);
     ShamanVillage_ObjArm(gAdventure.currentOwner, 0xc000, 20);
     Func_020011f8();
-    Object_SetModeById(17, 1);
+    Actor_SetModeById(17, 1);
     GameFlag_SetBit(0x203);
     Func_020048cc();
   }

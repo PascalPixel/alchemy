@@ -323,7 +323,7 @@ Func_0813e7e0:
 	adds r1, r2, #0
 	bl Func_08164b2c
 .L_0813ea6a:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232

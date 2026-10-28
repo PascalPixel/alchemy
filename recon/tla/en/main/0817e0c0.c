@@ -120,7 +120,7 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Task_Add(s32 callback, s32 priority);
 s32 Task_Remove(s32 callback);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
+void Actor_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -141,7 +141,7 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -216,7 +216,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  ObjectDispatch_SetAnimationSpeedFar(
+  Actor_SetAnimationSpeedFar(
       GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -371,7 +371,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

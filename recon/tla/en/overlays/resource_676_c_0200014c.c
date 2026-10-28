@@ -6,19 +6,19 @@
 // work (10), an empty asm holding the tiles (37).
 #include "../../../../games/tla/src/scene/yallam/yallam.h"
 
-s32 Func_0200014c(struct ObjectRuntime *object) {
+s32 Func_0200014c(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 force = 0;
-  struct ObjectRuntime *target;
+  struct Actor *target;
   u16 *flags = (u16 *)&object->action;
 
   if (*flags & 1)
-    target = Object_GetById(10);
+    target = Actor_GetById(10);
   else
-    target = Object_GetById(9);
+    target = Actor_GetById(9);
   if (Func_02000088(object, target, 24, 0) == 0) {
-    struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+    struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
 
     if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;

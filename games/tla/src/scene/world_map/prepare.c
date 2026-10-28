@@ -6,7 +6,7 @@
 void FieldEvent_WaitFrames(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
-void ObjectMotion_Launch(s32 actor, s32 height, s32 frames);
+void Actor_Jump(s32 actor, s32 height, s32 frames);
 void Func_02004cd8(s32 message);
 void Func_02004cf0(s32 actor, s32 flags);
 void Func_02004d48(s32 a, s32 b);
@@ -38,7 +38,7 @@ void Func_020011fc(void) {
   Flag_Clear(0x16f);
   Flag_Clear(0x171);
   Func_02004e28();
-  ObjectMotion_Launch(9, 4, 30);
+  Actor_Jump(9, 4, 30);
   {
     s32 flag = Flag_IsSet(0x175);
     s32 base = (s32)MsgNextILl;

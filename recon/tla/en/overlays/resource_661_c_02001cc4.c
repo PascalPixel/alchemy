@@ -8,7 +8,7 @@
 // the native loads gInput's address after the sprite store and before the
 // second test's mask (a one-pass block around the sprite store leaves 2).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -18,12 +18,12 @@ extern u32 gFrameCount;
 extern s32 gInput;
 extern u32 gData_020042f0[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
-void Func_02003fa8(struct ObjectRuntime *object, s32 mode);
-void Func_02003fb8(struct ObjectRuntime *object, const void *script);
+struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
+void Func_02003fa8(struct Actor *object, s32 mode);
+void Func_02003fb8(struct Actor *object, const void *script);
 void Effect_AdvanceMotionAtLeaderPriority(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -36,14 +36,14 @@ struct DustSprite {
   u8 unk09High : 4;
 };
 
-void Func_02001cc4(struct ObjectRuntime *object, s32 dx, s32 dz) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   if (gAdventure.renderMode != 5) {
     u32 odd = gFrameCount & 1;
 
     if (odd == 0) {
-      struct ObjectRuntime *dust = (struct ObjectRuntime *)Value4(
+      struct Actor *dust = (struct Actor *)Value4(
           (s32 (*)())Func_02003fc0, 285, object->x, object->y, object->z);
 
       if (dust != NULL) {
@@ -51,7 +51,7 @@ void Func_02001cc4(struct ObjectRuntime *object, s32 dx, s32 dz) {
 
         dust->motionFlags = odd;
         dust->collisionFlags = odd;
-        ObjectDispatch_SetSingleChildFlags(dust, 0);
+        Actor_SetSingleChildFlags(dust, 0);
         Func_02003fa8(dust, 1);
         Func_02003fb8(dust, gData_020042f0);
         sprite = dust->animation;

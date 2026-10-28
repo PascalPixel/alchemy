@@ -11,8 +11,8 @@
 
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void ObjectMotion_SetAngleToward(s32 id, s32 other, s32 flags);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_SetAngleToward(s32 id, s32 other, s32 flags);
 void Func_02004464(void);
 void Func_0200446c(void);
 void Func_020044d4(s32 id, s32 x, s32 z, s32 y);
@@ -32,8 +32,8 @@ void Func_02001770(void) {
       Func_020044d4(20, 0x1980000, 0x910000, y << 7);
     }
     WaitFrames(1);
-    ObjectMotion_Launch(20, 4, 20);
-    ObjectMotion_SetAngleToward(20, gAdventure.currentOwner, 0);
+    Actor_Jump(20, 4, 20);
+    Actor_SetAngleToward(20, gAdventure.currentOwner, 0);
     FIELD_AT(work, u16, 362) = 200;
     Func_0200446c();
   }

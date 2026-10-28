@@ -2,7 +2,7 @@
 // saves the third argument before it starts the heap slot address, and the
 // argument setup of Func_080da6e0 is ordered as in Func_080da334.
 #include "worka0.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system.h"
 
 extern s32 gData_080f394c;
@@ -11,9 +11,9 @@ void Func_080da6e0(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
                    s32 wave);
 
 void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
-  struct ObjectRuntime **work = (struct ObjectRuntime **)WORK_A0;
-  struct ObjectRuntime *first = ObjectTable_Get(firstId);
-  struct ObjectRuntime *second = ObjectTable_Get(secondId);
+  struct Actor **work = (struct Actor **)WORK_A0;
+  struct Actor *first = ObjectTable_Get(firstId);
+  struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
     work[0] = first;

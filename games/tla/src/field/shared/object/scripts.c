@@ -11,11 +11,11 @@
 // Each callback takes the object and returns nonzero to go on with the
 // script this frame. They take different views of the object, so the
 // declarations leave the parameters unspecified.
-s32 ObjectMotion_StepAngle();
-s32 Object_ClearChildAndCollisionFlags();
-s32 Object_ClearChildFlags();
-s32 Object_SetPriorityBit5();
-s32 ObjectMotion_MoveTowardTarget();
+s32 Actor_StepAngle();
+s32 Actor_ClearChildAndCollisionFlags();
+s32 Actor_ClearChildFlags();
+s32 Actor_SetPriorityBit5();
+s32 Actor_MoveTowardTarget();
 s32 SceneActor_UpdateFacingTowardTarget();
 s32 Func_080d4ab4();
 
@@ -62,11 +62,11 @@ const s32 gObject_OffsetMotionScript[] = {
 };
 
 const s32 gData_080f32e0[] = {
-    SC_SYNC, SC_WAIT(1), SC_ARG(1), SC_CALL(ObjectMotion_StepAngle), SC_END,
+    SC_SYNC, SC_WAIT(1), SC_ARG(1), SC_CALL(Actor_StepAngle), SC_END,
 };
 
 const s32 gObjectMotion_StepAngleScript[] = {
-    SC_CALL(ObjectMotion_StepAngle),
+    SC_CALL(Actor_StepAngle),
     SC_END,
 };
 
@@ -146,17 +146,17 @@ const s32 gData_080f34e4[] = {
 
 /// gObjectMotion_ResetActionScript
 const s32 gData_080f34e8[] = {
-    SC_CALL(Object_ClearChildAndCollisionFlags),
+    SC_CALL(Actor_ClearChildAndCollisionFlags),
     SC_END,
 };
 
 const s32 gData_080f34f4[] = {
-    SC_CALL(Object_ClearChildFlags),
+    SC_CALL(Actor_ClearChildFlags),
     SC_END,
 };
 
 const s32 gData_080f3500[] = {
-    SC_CALL(Object_SetPriorityBit5),
+    SC_CALL(Actor_SetPriorityBit5),
     SC_END,
 };
 
@@ -231,7 +231,7 @@ const s32 gData_080f3614[] = {
 
 /// gObjectMotion_MoveTowardTargetScript
 const s32 gData_080f373c[] = {
-    SC_CALL(ObjectMotion_MoveTowardTarget),
+    SC_CALL(Actor_MoveTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

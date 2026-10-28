@@ -8,7 +8,7 @@ void Func_02001d90(s32 item);
 void Func_02000ef0();
 
 void Func_02000f00(void) {
-  struct GabombaStatueChamberObject *leader = Object_GetById(8);
+  struct GabombaStatueChamberObject *leader = Actor_GetById(8);
   s32 x = leader->x;
   s32 z = leader->z;
   /* FAKEMATCH: one zero for the three byte stores, set before the null test,
@@ -36,7 +36,7 @@ void Func_02000f00(void) {
 }
 
 void Func_02000f88(void) {
-  struct GabombaStatueChamberObject *leader = Object_GetById(8);
+  struct GabombaStatueChamberObject *leader = Actor_GetById(8);
   s32 x = leader->x;
   s32 z = leader->z;
   /* FAKEMATCH: one zero for the three byte stores, set before the null test,

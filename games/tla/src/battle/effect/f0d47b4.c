@@ -29,7 +29,7 @@ struct BattleEffectWatchedObject {
 };
 
 struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct BattleEffectWatchedObject *object, s32 mode);
+void Actor_SetMode(struct BattleEffectWatchedObject *object, s32 mode);
 void Sound_PlayFar(s32 cue);
 void Event_WaitFrames(s32 state);
 void BattleEffect_CopyWatchedObjectPosition(void);
@@ -52,9 +52,9 @@ struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
     object = Func_080200c0(488, resource->x, resource->y, resource->z);
 
     if (object != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct DispatchObject *)object,
                                    (u32)gData_080f3310);
-      Object_SetMode(object, flags & 15);
+      Actor_SetMode(object, flags & 15);
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;

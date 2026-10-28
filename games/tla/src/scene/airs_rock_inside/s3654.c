@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "bg_scroll.h"
 #include "field_sprite.h"
@@ -31,16 +31,16 @@ void Func_02005f2c(s32 skip);
 void *Resource_GetTableEntry(s32 id);
 void Func_02005d24(void *resource, void *dest);
 void Func_02005f94(s32 cue);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002cc0(void);
 void Func_02002c40(void);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
-void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02005d5c(struct Actor *object, s32 mode);
+void Func_02005d6c(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02005f0c(s32 a, s32 b);
@@ -56,7 +56,7 @@ void Func_02002aa8(s32 x, s32 z);
 void Func_02005eec(s32 actor, s32 a);
 void Func_02005e94(s32 actor, s32 a);
 void Func_02002b58(s32 x, s32 z);
-void Func_02001084(struct ObjectRuntime *object, s32 a, s32 b);
+void Func_02001084(struct Actor *object, s32 a, s32 b);
 void Func_02005d34(void);
 void Func_02005d2c(void);
 void Func_02005e04(s32 hue, s32 brightness);
@@ -73,7 +73,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02003654(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   u32 i;
 
   Func_02005e14();
@@ -112,15 +112,15 @@ row:
     goto row;
   Heap_Release(buffer);
   Func_02005f94(246);
-  ((u8 *)Object_GetById(10))[98] = 9;
-  ((u8 *)Object_GetById(10))[99] = 1;
-  Object_GetById(10)->update = Func_02002cc0;
+  ((u8 *)Actor_GetById(10))[98] = 9;
+  ((u8 *)Actor_GetById(10))[99] = 1;
+  Actor_GetById(10)->update = Func_02002cc0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = Import_ActorCreate(0x2a0, Object_GetById(10)->x,
-                                  Object_GetById(10)->y, Object_GetById(10)->z);
+      spark = Import_ActorCreate(0x2a0, Actor_GetById(10)->x,
+                                  Actor_GetById(10)->y, Actor_GetById(10)->z);
       {
-        s32 priority = ((s8 *)Object_GetById(10)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_GetById(10)->animation)[9] & 12;
 
         /* FAKEMATCH(temporary): the sprite held in the row pointer; as
          * spark->animation, 26 of 439 instructions differ in tla-en. */
@@ -137,8 +137,8 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
       Func_02005d6c(spark, gData_02005fd8);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
-      Object_SetPartAttribute(spark, 2);
+      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002c40;
     }
     FieldEvent_WaitFrames(1);
@@ -151,8 +151,8 @@ row:
   Call2((void (*)())Func_02005ed4, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd80000, -1, 0xe00000, 1);
   Func_02005ee4();
-  Object_GetById(10)->update = 0;
-  Object_SetPartAttribute(Object_GetById(10), 6);
+  Actor_GetById(10)->update = 0;
+  Actor_SetPartAttribute(Actor_GetById(10), 6);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = 0xff98;
@@ -189,13 +189,13 @@ fade:
   Func_02005ee4();
   Func_02005f94(146);
   Call2((void (*)())Func_02005e94, 8, 0x100);
-  Func_02002b58(Object_GetById(8)->x, Object_GetById(8)->z + 0x200000);
+  Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
   Func_02005e94(8, 0);
-  Object_SetPartAttribute(Object_GetById(8), 7);
+  Actor_SetPartAttribute(Actor_GetById(8), 7);
   WaitFrames(3);
-  Object_SetPartAttribute(Object_GetById(8), 0);
+  Actor_SetPartAttribute(Actor_GetById(8), 0);
   WaitFrames(40);
-  Func_02001084(Object_GetById(8), 8, 0);
+  Func_02001084(Actor_GetById(8), 8, 0);
   Func_02005d34();
   Func_02005d2c();
   Func_02005e04(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);

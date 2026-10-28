@@ -370,7 +370,7 @@ Func_020015ac:
 	push {r5, r6, r7}
 	movs r0, #17
 	sub sp, #68
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	bl Func_0200406c
 	movs r0, #0
@@ -441,19 +441,19 @@ Func_020015ac:
 	cmp r2, #16
 	bls .L_020095fe
 	movs r0, #17
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #17
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	movs r1, #192
 	movs r2, #192
 	movs r0, #17
 	lsls r1, r1, #10
 	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r3, #192
 	lsls r3, r3, #12
 	movs r2, #170
@@ -461,7 +461,7 @@ Func_020015ac:
 	str r3, [r7, #40]
 	movs r1, #40
 	movs r0, #17
-	bl ObjectMotion_SetPositionAndCommit
+	bl Actor_SetPositionAndCommit
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	ldr r3, .L_02009720
@@ -469,7 +469,7 @@ Func_020015ac:
 	lsls r4, r4, #2
 	adds r5, r3, r4
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, [r7, #8]
 	ldr r3, [r0, #8]
 	asrs r2, r2, #20
@@ -485,17 +485,17 @@ Func_020015ac:
 	ldr r0, [r5]
 	movs r1, #6
 	movs r2, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r2, #128
 	ldr r0, [r5]
 	mov r1, r8
 	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #170
 	ldr r0, [r5]
 	movs r1, #68
 	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndCommit
+	bl Actor_SetPositionAndCommit
 .L_020096e0:
 	movs r0, #0
 	movs r1, #0
@@ -508,7 +508,7 @@ Func_020015ac:
 	ldr r0, [r3]
 	movs r1, #17
 	movs r2, #0
-	bl Object_TurnToFaceEachOther
+	bl Actor_TurnToFaceEachOther
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r0, #144
@@ -553,21 +553,21 @@ Func_02003a8c:
 	movs r0, #20
 	bl Func_02001c44
 	movs r0, #14
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #1
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #15
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #2
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #9
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #3
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229

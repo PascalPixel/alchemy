@@ -15,8 +15,8 @@ void Func_02004bc4(void) {
   Func_02005704(19, 0x5000);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 480, 348);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 480, 348);
   MarsLighthouseAerie_ObjTurn(19, 0xb000);
   Func_02005614();
 }
@@ -27,8 +27,8 @@ void Func_02004c2c(void) {
   Func_02005704(19, 0x3000);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 544, 348);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 544, 348);
   MarsLighthouseAerie_ObjTurn(19, 0xb000);
   Func_02005614();
 }

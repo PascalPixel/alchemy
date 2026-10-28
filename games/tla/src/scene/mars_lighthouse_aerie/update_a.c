@@ -1,6 +1,6 @@
 #include "mars_lighthouse_aerie.h"
 
-void Func_02000038(struct ObjectRuntime *object) {
+void Func_02000038(struct Actor *object) {
   u8 *timer = &object->unk5c[6];
 
   if (*timer != 0) {
@@ -11,16 +11,16 @@ void Func_02000038(struct ObjectRuntime *object) {
   }
 }
 
-void Func_02000068(struct ObjectRuntime *object) {
+void Func_02000068(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
-    Object_SetPartAttribute(object, 15);
+    Actor_SetPartAttribute(object, 15);
   else
-    Object_SetPartAttribute(object, 0);
+    Actor_SetPartAttribute(object, 0);
 }
 
 /// Shrinks the object toward its normal size, and when its timer runs out
 /// restarts it at 40 to 119 frames and swells it again.
-void Func_0200008c(struct ObjectRuntime *object) {
+void Func_0200008c(struct Actor *object) {
   u8 *timer;
   s32 scale = object->scaleX;
 
@@ -56,8 +56,8 @@ void Func_0200008c(struct ObjectRuntime *object) {
 /// 0x800 and places itself at the anchor's x and z plus the cosine and sine
 /// times two radii read from its speed limit and its counter byte.
 // The twin of ☀️'s SceneEffect_UpdateCounterDrivenOrbit.
-void Func_020000e4(struct ObjectRuntime *object) {
-  struct ObjectRuntime *anchor = Object_GetById(8);
+void Func_020000e4(struct Actor *object) {
+  struct Actor *anchor = Actor_GetById(8);
   u16 *pangle = (u16 *)&object->action;
   s32 angle = *pangle;
   s32 cosine;
@@ -72,7 +72,7 @@ void Func_020000e4(struct ObjectRuntime *object) {
     s32 radius = object->speedLimit + *counter;
     /* FAKEMATCH(pin): the anchor copied into r1 for its x; as anchor->x read
      * straight, 2 of 48 instructions differ in tla-en. */
-    register struct ObjectRuntime *a asm("r1");
+    register struct Actor *a asm("r1");
 
     a = anchor;
     /* FAKEMATCH(barrier): an asm reading the copy, so the copy comes before

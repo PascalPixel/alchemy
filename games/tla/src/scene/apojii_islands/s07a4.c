@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "io_write_queue.h"
 #include "system/io_reg.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02001cc4(void);
 void Func_02001dcc(s32 skip);
 void Func_02000780(void);
@@ -44,7 +44,7 @@ static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
 /// markers are rebuilt (Func_020017f8). Flags 0x95f and 0x95e are set and the
 /// camera pans through three points before cue 77.
 void Func_020007a4(s32 unused, s32 id) {
-  struct ObjectRuntime *actor = Object_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 i;
 
   Func_02001cc4();

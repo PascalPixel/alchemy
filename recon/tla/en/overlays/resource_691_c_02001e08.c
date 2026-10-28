@@ -4,30 +4,30 @@
 // r10 from its first store (8 added to sp) and 79 in r6 and 36 in r8, where
 // this form builds the address with add sp and swaps the two constants.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 extern s16 gData_02003de4[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Object_FindInCell(s32 *position);
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_FindInCell(s32 *position);
 void GameFlag_SetBit(s32 flag);
-void Func_0200074c(struct ObjectRuntime *object);
+void Func_0200074c(struct Actor *object);
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 void Func_02003aa4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001e08(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct { s32 x, y, z; } position;
   struct { s32 x, y, z; } *cell = (void *)&position;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   cell->x = leader->x + 0x100000;
   cell->y = leader->y;
   cell->z = leader->z;
-  object = Object_FindInCell((s32 *)cell);
+  object = Actor_FindInCell((s32 *)cell);
   Func_0200074c(object);
   Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,
                 object->terrainHeight >> 19);

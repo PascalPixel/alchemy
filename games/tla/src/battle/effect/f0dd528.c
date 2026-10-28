@@ -1,12 +1,12 @@
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern const s32 gData_080f0e78[];
 
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
 void BattleEffect_UpdateItemBreakFragment(void);
 
@@ -16,9 +16,9 @@ void BattleEffect_UpdateItemBreakFragment(void);
 /// 278 and 673: spawns the breaking item above object and eight fragments
 /// that scatter from it.
 void *BattleEffect_StartItemBreak(void *object) {
-  struct ObjectRuntime *source = object;
-  struct ObjectRuntime *parent;
-  struct ObjectRuntime *child;
+  struct Actor *source = object;
+  struct Actor *parent;
+  struct Actor *child;
   s32 angle;
   s32 radius;
   s32 speed;
@@ -27,7 +27,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->angle + 0x2000) & 0xc000;
-  parent = Object_Spawn(278, source->x, source->y + (16 << 16), source->z);
+  parent = Actor_Spawn(278, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
@@ -36,13 +36,13 @@ void *BattleEffect_StartItemBreak(void *object) {
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
-  Object_SetMode(parent, 3);
+  Actor_SetMode(parent, 3);
   Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Object_Spawn(673, source->x, source->y + (16 << 16), source->z);
+    child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)child,
+      Actor_StartScriptFar((struct DispatchObject *)child,
                                    gData_080f0e78);
       speed = Random16() + 0x10000;
       child->acceleration = 1 << 16;

@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
 
 extern const u8 gData_080f34e4[];
@@ -18,7 +18,7 @@ extern const u8 gData_080f3764[];
 extern const u8 gData_080f3500[];
 extern const u8 gData_080f34f4[];
 
-void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
+void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:
     kind = (s32)gData_080f34e4;
@@ -36,7 +36,7 @@ void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
     kind = (s32)gData_080f373c;
     break;
   case 6:
-    object->watchedObject = Object_GetById(gAdventure.currentOwner);
+    object->watchedObject = Actor_GetById(gAdventure.currentOwner);
     kind = (s32)gData_080f3750;
     break;
   case 7:
@@ -55,5 +55,5 @@ void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
     kind = (s32)gData_080f34f4;
     break;
   }
-  ObjectDispatch_InitializeFar(object, (const void *)kind);
+  Actor_StartScriptFar(object, (const void *)kind);
 }

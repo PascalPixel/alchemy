@@ -1,18 +1,18 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Object_SetModeById();
+void Actor_SetModeById();
 void Func_020007dc(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_02000848(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void Func_020008b4(s32 arg0) {
-  Call2((void (*)())Object_SetModeById, arg0, 1);
-  Call2((void (*)())Object_SetModeById, arg0, 2);
+  Call2((void (*)())Actor_SetModeById, arg0, 1);
+  Call2((void (*)())Actor_SetModeById, arg0, 2);
   return;
 }
 

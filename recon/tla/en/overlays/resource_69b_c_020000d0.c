@@ -10,15 +10,15 @@
 // priority stores of the spawned object are scheduled differently. The last
 // spin is a goto loop (as a for loop loop.c keeps 0x2000 in r8, differ 63).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "adventure.h"
 
 extern s32 gData_02002b88[3];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 id, s32 a);
 void Task_Add(void (*callback)(void), s32 priority);
@@ -26,16 +26,16 @@ void Task_RemoveFar(void (*callback)(void));
 void WaitFrames(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);
-void Func_020021b4(struct ObjectRuntime *object, s32 a);
-void Func_020021d4(struct ObjectRuntime *object);
+void Func_020021b4(struct Actor *object, s32 a);
+void Func_020021d4(struct Actor *object);
 void Func_0200224c(void);
 void Func_02002254(void);
 void Func_020022dc(s32 a);
 
 void Func_020000d0(s32 kind) {
   s32 owner = gAdventure.currentOwner;
-  struct ObjectRuntime *leader = Object_GetById(owner);
-  struct ObjectRuntime *effect;
+  struct Actor *leader = Actor_GetById(owner);
+  struct Actor *effect;
   s32 i;
   s32 *target;
 
@@ -59,7 +59,7 @@ void Func_020000d0(s32 kind) {
   }
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
-  effect = Object_Spawn(280, leader->x, leader->y, leader->z);
+  effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
   Func_020021b4(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
@@ -81,7 +81,7 @@ spin:
   if (i >= 0)
     goto spin;
   Func_020021d4(effect);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(owner), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(owner), 1);
   leader->angle = 0x4000;
   leader->terrainId = 0;
   leader->motionFlags = 3;

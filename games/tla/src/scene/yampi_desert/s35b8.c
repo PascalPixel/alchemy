@@ -1,5 +1,5 @@
 #include "scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "edition.h"
 
 void Func_02002d40(void);
@@ -10,7 +10,7 @@ void Func_02002d40(void);
 void Func_020035b8(void) {
   Func_02004180(0);
   if (GameFlag_Test(0x302) == 0)
-    Object_SetWideSprite(64, 0);
+    Actor_SetWideSprite(64, 0);
 }
 
 static inline void Scene_StoreU16(u16 *field, s32 value) {
@@ -23,7 +23,7 @@ static inline void Scene_StoreU16(u16 *field, s32 value) {
 /// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
 /// sets the adventure's pair at 0x260 to the room whose flag is set.
 void Func_020035d8(void) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Object_GetById(64);
+  struct Actor *object = (struct Actor *)Actor_GetById(64);
   s32 scene;
 
   Func_020041c8(137);
@@ -31,7 +31,7 @@ void Func_020035d8(void) {
   Scene_Call41d8(0, 524, 8, 9);
   if (object != NULL)
     Func_02004090(64, 0, 0);
-  object = (struct ObjectRuntime *)Object_GetById(10);
+  object = (struct Actor *)Actor_GetById(10);
   object->scaleX = 0xb333;
   object->scaleY = 0xb333;
   object->radius = 8;

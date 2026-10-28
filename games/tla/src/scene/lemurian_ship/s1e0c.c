@@ -9,21 +9,21 @@ void Func_02001dc8(s32 id);
 /// Places a platform object at its raised position.
 #define RAISE(id, x, z)                                                        \
   {                                                                            \
-    LemurianShip_ObjSetPos(Object_GetById(id), x, -0x200000, z);               \
-    Object_GetById(id)->height = -0x200000;                                    \
+    LemurianShip_ObjSetPos(Actor_GetById(id), x, -0x200000, z);               \
+    Actor_GetById(id)->height = -0x200000;                                    \
   }
 
 void Func_02001e0c(void) {
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_02003010);
-  Object_GetById(8)->priorityFlags |= 32;
-  ObjectMotion_SetActionVariant(8, 1);
-  Object_GetById(9)->priorityFlags |= 32;
+  Actor_GetById(8)->priorityFlags |= 32;
+  Actor_SetSpritePriority(8, 1);
+  Actor_GetById(9)->priorityFlags |= 32;
   if (GameFlag_Test(0x932)) {
-    struct LemurianShipObject *object = Object_GetById(15);
+    struct LemurianShipObject *object = Actor_GetById(15);
 
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(Object_GetById(15), 206 << 18, -0x200000, 144 << 15);
+    LemurianShip_ObjSetPos(Actor_GetById(15), 206 << 18, -0x200000, 144 << 15);
     object->height = -0x200000;
     if (GameFlag_Test(0x212))
       LemurianShip_BlendStart(110, 1, 3, 1, 110, 4);
@@ -60,7 +60,7 @@ void Func_02001e0c(void) {
     Func_02001dc8(10);
   }
   if (GameFlag_Test(0x934)) {
-    struct LemurianShipObject *block = Object_GetById(8);
+    struct LemurianShipObject *block = Actor_GetById(8);
 
     LemurianShip_BlendStart(42, 0, 1, 1, 47, 9);
     LemurianShip_BlendStart(43, 0, 1, 1, 46, 9);
@@ -76,7 +76,7 @@ void Func_02001e0c(void) {
     Func_02001dc8(11);
   }
   if (GameFlag_Test(0x935)) {
-    struct LemurianShipObject *block = Object_GetById(8);
+    struct LemurianShipObject *block = Actor_GetById(8);
     s32 x = block->x >> 20;
     s32 z = block->z >> 20;
 

@@ -60,7 +60,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPending
 void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
+                   s32 timerFrames); // ☀️ Actor_UpdateMembers
 void Func_080150e4(s32 angle);       // ☀️ SceneTransform_ApplyRoll
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);

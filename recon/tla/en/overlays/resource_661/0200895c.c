@@ -13,7 +13,7 @@ void Func_0200095c(u16 *list) {
    * loop and 0xffff is kept in r8 */
   goto test;
   do {
-    s32 index = Func_020041e0(Object_GetById(list[0]));
+    s32 index = Func_020041e0(Actor_GetById(list[0]));
 
     struct MapCell *cell = map->layers[2].cells + index;
 

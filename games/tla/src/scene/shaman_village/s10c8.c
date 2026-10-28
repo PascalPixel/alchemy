@@ -56,12 +56,12 @@ void Func_020011c0(void) {
 }
 
 void Func_020011f8(void) {
-  ObjectMotion_EnableActionAndResetMotion(17);
+  Actor_Stop(17);
   WaitFrames(1);
-  ObjectMotion_Launch(17, 4, 20);
+  Actor_Jump(17, 4, 20);
   Import_SoundPlay(229);
   WaitFrames(2);
-  Object_SetActionCallbackAndRefreshById(16, gData_020050f8);
+  Actor_SetMovementTypeAndWaitById(16, gData_020050f8);
 }
 
 void Func_0200122c(void) {
@@ -86,18 +86,18 @@ void Func_0200122c(void) {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
       Func_020049a4(17, 0);
       Import_SoundPlay(11);
-      Object_SetModeById(17, 5);
+      Actor_SetModeById(17, 5);
       Func_020049a4(17, 0);
       Func_020011f8();
-      Object_SetModeById(17, 6);
+      Actor_SetModeById(17, 6);
       Func_020049a4(17, 0);
       Func_020011f8();
-      Object_SetModeById(17, 5);
+      Actor_SetModeById(17, 5);
       Func_020049a4(17, 0);
       Func_020011f8();
       FieldEvent_WaitFrames(20);
-      Object_SetModeById(17, 1);
-      Object_SetModeById(17, 3);
+      Actor_SetModeById(17, 1);
+      Actor_SetModeById(17, 3);
       Func_020049a4(17, 0);
       ShamanVillage_ObjEmoteWait(17, 0x102);
       FieldEvent_WaitFrames(40);
@@ -158,7 +158,7 @@ void Func_02001380(void) {
   Motion_SetModeAndWaitAnimation(15, 3);
   ShamanVillage_ObjArm(16, 0x2000, 0);
   ShamanVillage_ObjTurn(17, 0x6000);
-  Object_SetModeById(16, 3);
+  Actor_SetModeById(16, 3);
   Motion_SetModeAndWaitAnimation(17, 3);
   ShamanVillage_ObjSpeed(16, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(17, 0x19999, 0xcccc);
@@ -170,7 +170,7 @@ void Func_02001380(void) {
   ShamanVillage_CamMove(0xe00000, -1, 0xb60000, 1);
   ShamanVillage_ObjWalk2(16, 184, 128);
   ShamanVillage_ObjWalk(17, 264, 128);
-  Object_SetModeById(16, 1);
+  Actor_SetModeById(16, 1);
   WaitFrames(1);
   Func_02004934(16, 0, 0);
   Func_02004934(17, 0, 0);
@@ -189,7 +189,7 @@ void Func_02001644(void) {
   Func_020049f4();
   Func_0200498c((s32)MsgShamanGiveUpTrialPrompt);
   FieldMessage_ShowAtActor(15, 0);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   ShamanVillage_ObjArm(gAdventure.currentOwner, 0xe000, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Func_020049a4(15, 0);

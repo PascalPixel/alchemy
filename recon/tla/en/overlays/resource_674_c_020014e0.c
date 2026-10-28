@@ -15,7 +15,7 @@
 // refusal after the trade.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
@@ -25,11 +25,11 @@ void Func_02003e64(void);
 void Func_02003e6c(void);
 void Func_02003fa4(s32 skip);
 s32 PartyInventory_FindOwner(s32 item);
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Func_02000df8(void);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02003f3c(s32 actor, s32 angle);
 void Func_02003f24(const u8 *message);
 void Func_02003f2c(s32 speaker, s32 flags);
@@ -37,58 +37,58 @@ void Func_02003fc4(void);
 void Func_02003fbc(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void FieldEvent_WaitFrames(s32 frames);
-struct ObjectRuntime *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Func_02003de4(struct ObjectRuntime *object, s32 mode);
-void Func_02003dec(struct ObjectRuntime *object, const u8 *script);
-void Func_0200129c(struct ObjectRuntime *item);
+void Func_02003de4(struct Actor *object, s32 mode);
+void Func_02003dec(struct Actor *object, const u8 *script);
+void Func_0200129c(struct Actor *item);
 s32 Func_02003f54(s32 actor, s32 emote, s32 frames);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
-void Func_02003dfc(struct ObjectRuntime *object);
+void Actor_Jump(s32 actor, s32 speed, s32 frames);
+void Func_02003dfc(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 u8 *HeapSlot_AllocEwram(s32 slot, s32 size);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Func_02001278(void);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Func_020034ec(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02003f7c(s32 a);
 
 #define STEP(actor, x, z)                                                      \
-  (Object_GetById(actor)->actionFlags &= ~1,                                   \
-   Call3(ObjectMotion_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_WaitFrames(1), Object_GetById(actor)->actionFlags |= 1)
+  (Actor_GetById(actor)->actionFlags &= ~1,                                   \
+   Call3(Actor_SetPositionAndReset, actor, x, z),                       \
+   FieldEvent_WaitFrames(1), Actor_GetById(actor)->actionFlags |= 1)
 
 #define SHOW_ITEM()                                                            \
-  (glow = (struct ObjectRuntime *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
+  (glow = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
                                          0x1a80000),                           \
-   item = (struct ObjectRuntime *)Value4(Func_02003df4, 14, 0x1280000, 0,      \
+   item = (struct Actor *)Value4(Func_02003df4, 14, 0x1280000, 0,      \
                                          0x1a80000))
 
 void Func_020014e0(void) {
-  struct ObjectRuntime *leader, *object;
-  struct ObjectRuntime *glow, *item;
+  struct Actor *leader, *object;
+  struct Actor *glow, *item;
   s32 answer;
 
   Func_02003e64();
   Func_02003fa4(0);
   if (PartyInventory_FindOwner(455) != -1) {
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (GameFlag_Test(513)) {
-      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
+      Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 318,
+      Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 318,
             424);
       leader->update = 0;
-      ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+      Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
       Func_02003f3c(9, 0xd000);
       Func_02003f24(MsgOhYouRe);
       Func_02003f2c(9, 0);
@@ -96,24 +96,24 @@ void Func_020014e0(void) {
       answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
       if (answer == 0) {
         Func_02003f3c(gAdventure.currentOwner, 0x8000);
-        Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
+        Call3(Actor_SetSpeedParameters, gAdventure.currentOwner,
               0x19999, 0xcccc);
         leader->update = Func_02000df8;
         STEP(gAdventure.currentOwner, 302, 424);
         SHOW_ITEM();
         if (glow != 0) {
           glow->motionFlags = answer;
-          ObjectDispatch_SetSingleChildFlags(glow, 0);
+          Actor_SetSingleChildFlags(glow, 0);
         }
         if (item != 0) {
           item->scaleY = 0x20000;
-          ObjectDispatch_SetSingleChildFlags(item, 0);
+          Actor_SetSingleChildFlags(item, 0);
           Func_02003de4(item, 1);
           Func_02003dec(item, gData_020044f0);
         }
         STEP(gAdventure.currentOwner, 318, 424);
         leader->update = (void *)answer;
-        ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x6000, 0);
+        Actor_ArmCallback(gAdventure.currentOwner, 0x6000, 0);
       } else {
         Func_02003fbc();
         Func_02003f24(MsgOhYouRe - 1);
@@ -123,36 +123,36 @@ void Func_020014e0(void) {
       Func_02003f24(MsgIMSoVery);
       Func_02003f2c(9, 0);
       Func_02003f54(gAdventure.currentOwner, 262, 20);
-      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
+      Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 318,
+      Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 318,
             424);
       leader->update = 0;
       Func_02003f3c(gAdventure.currentOwner, 0x8000);
-      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
+      Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
             0xcccc);
       leader->update = Func_02000df8;
       STEP(gAdventure.currentOwner, 302, 424);
       SHOW_ITEM();
       if (glow != 0) {
         glow->motionFlags = 0;
-        ObjectDispatch_SetSingleChildFlags(glow, 0);
+        Actor_SetSingleChildFlags(glow, 0);
       }
       if (item != 0) {
         item->scaleY = 0x20000;
-        ObjectDispatch_SetSingleChildFlags(item, 0);
+        Actor_SetSingleChildFlags(item, 0);
         Func_02003de4(item, 1);
         Func_02003dec(item, gData_020044f0);
       }
       STEP(gAdventure.currentOwner, 318, 424);
       leader->update = 0;
-      ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+      Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
       Func_02003f54(9, 0x100, 20);
       Func_02003f3c(9, 0xb000);
-      object = Object_GetById(9);
+      object = Actor_GetById(9);
       object->update = Func_02000df8;
-      ObjectMotion_Launch(9, 4, 20);
+      Actor_Jump(9, 4, 20);
       object->update = 0;
       Func_02003f2c(9, 0);
       Func_02003f3c(9, 0xd000);
@@ -162,10 +162,10 @@ void Func_020014e0(void) {
         Func_02003fbc();
         Func_02003f54(9, 265, 0);
         Func_02003f2c(9, 0);
-        ObjectMotion_ArmCallback(9, 0x5000, 0);
+        Actor_ArmCallback(9, 0x5000, 0);
         Func_02003f3c(gAdventure.currentOwner, 0x8000);
         leader->update = Func_02000df8;
-        Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 302,
+        Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 302,
               424);
         leader->update = 0;
         if (item != 0)
@@ -176,37 +176,37 @@ void Func_020014e0(void) {
     }
     Func_0200129c(item);
   } else if (GameFlag_Test(0xaa5)) {
-    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
     Func_02003f24(MsgWantToGo);
     Func_02003f2c(9, 0);
     Func_02003fc4();
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
-      leader = Object_GetById(gAdventure.currentOwner);
+      leader = Actor_GetById(gAdventure.currentOwner);
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003f2c(9, 0);
       HeapSlot_AllocEwram(88, 664)[661] = 99;
       Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
       Func_02003f3c(9, 0x5000);
-      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
+      Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
             0xcccc);
-      ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
-      ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 296, 452);
+      Actor_Jump(gAdventure.currentOwner, 6, 0);
+      Actor_SetPositionAndCommit(gAdventure.currentOwner, 296, 452);
       leader->update = Func_02001278;
-      Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
-      Object_SetModeById(9, 3);
+      Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+      Actor_SetModeById(9, 3);
       FieldEvent_WaitFrames(20);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
-      Call3(ObjectMotion_SetSpeedParameters, 10, 0xcccc, 0x6666);
-      Object_GetById(9)->update = Func_02000df8;
-      ObjectMotion_ResetAndSetPosition(9, 0x120, 538);
+      Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+      Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
+      Actor_GetById(9)->update = Func_02000df8;
+      Actor_ResetAndSetPosition(9, 0x120, 538);
       FieldEvent_WaitFrames(40);
       Func_02003fc4();
       Func_020034ec();
-      Object_GetById(10)->update = Func_02000df8;
-      ObjectMotion_ResetAndSetPositionInMode2(10, 0x120, 538);
+      Actor_GetById(10)->update = Func_02000df8;
+      Actor_ResetAndSetPositionInMode2(10, 0x120, 538);
       FieldEvent_WaitFrames(20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
       Event_FinishScreenTransition();

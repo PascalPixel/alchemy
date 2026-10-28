@@ -1768,7 +1768,7 @@ BattleEffect_RunEclipse:
 .L_08142330:
 	adds r0, r1, #0
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r0, [sp, #96]
 	lsls r1, r1, #7

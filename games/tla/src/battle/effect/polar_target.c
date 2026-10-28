@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "animspr.h"
 #include "frame.h"
 #include "fx_scene.h"
@@ -48,7 +48,7 @@ void BattleEffect_ClearChildValueOnMismatch(void) {
      * of the load (differ 2) */
     asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
-      ((struct ObjectRuntime *)scene->child)->movementState = 0;
+      ((struct Actor *)scene->child)->movementState = 0;
   }
 }
 
@@ -78,7 +78,7 @@ void FieldEvent_RunTypeHandler(void) {
   }
 }
 
-void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner) {
+void Actor_ApplyRandomChildValues(struct Actor *owner) {
   s32 state;
   struct CompositeAnimation *target;
   s32 initialCount;
@@ -109,13 +109,13 @@ void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner) {
   }
 }
 
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle) {
   s32 values[3];
 
   if (object != 0) {
     SET_VECTOR(values, object->x, object->y, object->z);
     Vector_AddPolarOffset(magnitude, angle, values);
-    Object_SetPosition(object, values[0], values[1], values[2]);
+    Actor_SetTargetPosition(object, values[0], values[1], values[2]);
   }
 }

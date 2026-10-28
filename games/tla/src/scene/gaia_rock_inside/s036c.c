@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct FieldActor;
@@ -16,7 +16,7 @@ static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b) {
 }
 
 void Func_0200036c(void) {
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 3);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1ea0000, 286);
   Func_02004eec_(gAdventure.currentOwner, 6, 0x800);

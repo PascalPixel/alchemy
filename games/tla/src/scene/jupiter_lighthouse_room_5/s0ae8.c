@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "flag_call.h"
 #include "call.h"
 #include "macros.h"
@@ -12,8 +12,8 @@ struct JupiterLighthouseRoom5EventWork1ac {
 
 extern u8 gData_02002fb8[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020029c8(void *data);
@@ -25,7 +25,7 @@ void Func_020001a4(void);
 /// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
 /// 0xa00 two more and the particle callback.
 s32 Func_02000ae8(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 angle;
 
   ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
@@ -36,17 +36,17 @@ s32 Func_02000ae8(void) {
     Call4((void (*)())Func_02002900, 22, 0x400000, 0xe10000, angle);
   }
   Func_020029c8(gData_02002fb8);
-  Object_SetActionCallback(Object_GetById(64), 9);
-  object = Object_GetById(23);
+  Actor_SetActionCallback(Actor_GetById(64), 9);
+  object = Actor_GetById(23);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(23), 0);
-  object = Object_GetById(24);
+  Actor_SetSingleChildFlags(Actor_GetById(23), 0);
+  object = Actor_GetById(24);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(24), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(24), 0);
   if (Flag_IsSet(0xa00)) {
     Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
     Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);

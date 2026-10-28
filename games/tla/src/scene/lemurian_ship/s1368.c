@@ -9,10 +9,10 @@ void Func_02001368(void) {
 }
 
 void Func_02001380(s32 id) {
-  struct LemurianShipObject *object = Object_GetById(id);
+  struct LemurianShipObject *object = Actor_GetById(id);
 
-  Object_GetById(id)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(id, 1);
+  Actor_GetById(id)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 1);
   object->priorityFlags &= ~2;
   object->timer = 1;
 }
@@ -20,19 +20,19 @@ void Func_02001380(s32 id) {
 // Absent from Japanese, where actors 10 and 11 also use action 1.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_020013b8(s32 id) {
-  struct LemurianShipObject *object = Object_GetById(id);
+  struct LemurianShipObject *object = Actor_GetById(id);
 
-  Object_GetById(id)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(id, 2);
+  Actor_GetById(id)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 2);
   object->priorityFlags &= ~2;
   object->timer = 1;
 }
 #endif
 
 void Func_020013f0(void) {
-  Object_GetById(15)->priorityFlags |= 0x20;
-  ObjectMotion_SetActionVariant(15, 3);
-  Object_GetById(15)->priorityFlags &= ~2;
+  Actor_GetById(15)->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(15, 3);
+  Actor_GetById(15)->priorityFlags &= ~2;
   Func_02001380(16);
   Func_02001380(17);
   Func_02001380(18);
@@ -60,7 +60,7 @@ void Func_02001464(void) {
 }
 
 void Func_02001474(void) {
-  struct LemurianShipObject *leader = Object_GetById(gAdventure.currentOwner);
+  struct LemurianShipObject *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 

@@ -1,14 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "magma_rock.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Func_020014bc(s32 mode, s32 cue);
 void Func_02003aec(void);
 void Func_02003af4(void);
@@ -19,7 +19,7 @@ void Func_02003c54(s32 a);
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Object_GetById(17);
+  work->target = Actor_GetById(17);
   Func_020014bc(mode, cue);
   GameFlag_SetBit(0x202);
 }
@@ -27,7 +27,7 @@ void Func_02001a8c(s32 mode, s32 cue) {
 void Func_02001ac0(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Object_GetById(18);
+  work->target = Actor_GetById(18);
   Func_020014bc(mode, cue);
   GameFlag_SetBit(0x203);
 }
@@ -35,7 +35,7 @@ void Func_02001ac0(s32 mode, s32 cue) {
 void Func_02001af4(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Object_GetById(11);
+  work->target = Actor_GetById(11);
   Func_020014bc(mode, cue);
   GameFlag_SetBit(0x204);
 }
@@ -61,8 +61,8 @@ void Func_02001b44(void) {
   if (party->renderMode != 2) {
     Func_02003aec();
     Func_02003bcc(0);
-    Object_GetById(party->currentOwner)->motionFlags = 0;
-    ObjectMotion_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
+    Actor_GetById(party->currentOwner)->motionFlags = 0;
+    Actor_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
     FieldEvent_WaitFrames(5);
     Func_02003c54(123);
     Func_02003b7c(2);

@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct ObjectPart {
   u8 unk00[5];
@@ -27,7 +27,7 @@ struct ObjectPartList {
 
 extern u32 gFrameCount;
 
-void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object) {
+void Actor_ApplyIndexedChildValue(struct Actor *object) {
   struct ObjectPartList *list;
   struct ObjectPart *part;
   s32 attribute;
@@ -49,7 +49,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object) {
   }
 }
 
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute) {
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
   struct ObjectPartList *list;
   struct ObjectPart *part;
   s32 i;
@@ -69,7 +69,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute) {
   }
 }
 
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *callback);
 
 /// Links an object to the object in the low 8 bits of targetId and starts
@@ -77,10 +77,10 @@ void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
 /// distance of 40 pixels (action 40), the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot
 /// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
-void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
+void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *callback) {
-  struct ObjectRuntime *follower = ObjectTable_Get(objectId);
-  struct ObjectRuntime *target = ObjectTable_Get(targetId & 0xff);
+  struct Actor *follower = ObjectTable_Get(objectId);
+  struct Actor *target = ObjectTable_Get(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
     follower->watchedObject = target;
@@ -100,6 +100,6 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = none;
     }
-    ObjectDispatch_InitializeFar(follower, callback);
+    Actor_StartScriptFar(follower, callback);
   }
 }

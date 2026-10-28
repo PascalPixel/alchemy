@@ -2,7 +2,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "display_transition.h"
 
 // The field event work's Reveal state (eventWork + 0xca4).
@@ -39,7 +39,7 @@ void Func_080dd820(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct RevealEvent *event;
   struct ScreenTransitionState *transition;
-  struct ObjectRuntime *caster;
+  struct Actor *caster;
   void *pending;
   s32 frame;
 

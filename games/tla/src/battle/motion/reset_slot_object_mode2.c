@@ -15,10 +15,10 @@
 #include "fixed_math.h"
 #include "battle_session.h"
 
-#define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
-#define Object_SetPosition                                                     \
-  ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
-#define Object_SetMode ((void (*)(struct MotionObject *, s32))Object_SetMode)
+#define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
+#define Actor_SetTargetPosition                                                     \
+  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
+#define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
 
 void BattleMotion_ReservedNoOp83B0();
 
@@ -58,18 +58,18 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;
   object->autoFaceMotion = 1;
-  Object_ResetMotion(object);
+  Actor_ResetMotion(object);
   if (dist != 0)
-    Object_SetPosition(object, x, 0, z);
-  Object_SetMode(object, 2);
+    Actor_SetTargetPosition(object, x, 0, z);
+  Actor_SetMode(object, 2);
 }
 
 void BattleMotion_ResetSlotObjectMode2(s32 id) {
   struct MotionObject *object;
 
   object = BattleObject_Get(id)->object;
-  Object_ResetMotion(object);
-  Object_SetMode(object, 2);
+  Actor_ResetMotion(object);
+  Actor_SetMode(object, 2);
 }
 
 void BattleMotion_NoOp(void *position, s32 speed) {}

@@ -22,7 +22,7 @@
 #include "ram_buffer.h"
 #include "system.h"
 
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void Actor_SetMode(struct MotionObject *object, s32 mode);
 
 s32 Func_0811c710(struct BattleActionRecord *action) {
   u16 visibleUnits[14];
@@ -63,7 +63,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId)
-      Object_SetMode(actorRecord, 3);
+      Actor_SetMode(actorRecord, 3);
   }
 
   WaitFrames(30);

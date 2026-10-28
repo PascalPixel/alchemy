@@ -13,10 +13,10 @@
 #include "battle_obj.h"
 #include "iwram_call.h"
 
-#define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
-#define Object_SetPosition                                                     \
-  ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
-#define Object_SetMode ((void (*)(struct MotionObject *, s32))Object_SetMode)
+#define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
+#define Actor_SetTargetPosition                                                     \
+  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
+#define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
 
 s32 ArcTan2(s32, s32);
 
@@ -28,7 +28,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot) {
   object->verticalMotionStrength = 0xab85;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_SetPosition(object, slot->anchorX, 0, slot->anchorZ);
+  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
 }
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
@@ -44,9 +44,9 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_ResetMotion(object);
+  Actor_ResetMotion(object);
   scaledX = slot->anchorX * 3;
-  Object_SetPosition(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
+  Actor_SetTargetPosition(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
                      slot->anchorZ);
 }
 
@@ -62,15 +62,15 @@ void Func_0811c01c(s32 objectId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_ResetMotion(object);
+  Actor_ResetMotion(object);
   {
     s32 (*mul)(s32 a, s32 b);
     s32 anchor = slot->anchorX;
 
     mul = Iwram_MulQ16;
-    Object_SetPosition(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
+    Actor_SetTargetPosition(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
   }
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
 }
 
 // The Broken Seal's gBattleMotion_Variant* tables, indexed by the variant.
@@ -99,13 +99,13 @@ void Func_0811c074(s32 id, s32 variant) {
     object->speedLimit = Data_0812cbd8[variant];
     if (object->y == 0 || variant > 4)
       object->velocityY = Data_0812cc00[variant];
-    Object_ResetMotion(object);
+    Actor_ResetMotion(object);
     scale = slot->anchorX;
     x = (scale * Data_0812cc28[variant]) / 100;
-    Object_SetPosition(object, x, 0, slot->anchorZ);
+    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_SetMode(object, 5);
+  Actor_SetMode(object, 5);
 }

@@ -6,7 +6,7 @@
 // object, its two sprites pulsing with the sine of its age, the second one a
 // pixel lower and mirrored, drawn just in front of and behind the object.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct SparkleSprite {
   u8 unk00[0x0c];
@@ -24,18 +24,18 @@ struct SparkleWork {
   s16 timers[2];
   s16 vramEntry;
   u16 next;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
-void Animation_ApplyChildValues(struct ObjectRuntime *object, u32 frame);
+void Animation_ApplyChildValues(struct Actor *object, u32 frame);
 void Func_020042b4(s32 sound);
 void Resource_ResetEntry(s32 entry);
 s32 Math_Sine(s32 angle);
 void Func_0200421c(s32 *position);
-s32 Func_0200425c(struct ObjectRuntime *object);
+s32 Func_0200425c(struct Actor *object);
 void Func_0200424c(struct SparkleSprite *sprite);
 
-void Func_02003cd8(struct ObjectRuntime *object) {
+void Func_02003cd8(struct Actor *object) {
   struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
   u8 *count = (u8 *)object + 0x63;
   u8 state;

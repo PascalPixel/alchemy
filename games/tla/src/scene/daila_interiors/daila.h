@@ -9,9 +9,9 @@ void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
 void Import_EventSetMessageId(s32 message);
 void Import_EventShowMessageAndWait(s32 actor, s32 flags);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_Jump(s32 actor, s32 speed, s32 frames);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02000d4c(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
 void Func_02000cac(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
@@ -49,17 +49,17 @@ static inline void Daila_MessagePut(s32 actor, s32 flags) {
 
 static inline void Daila_ObjLaunch(s32 actor, s32 speed, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_Launch(actor, speed, frames);
+  Actor_Jump(actor, speed, frames);
 }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Daila_ObjTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(actor, angle, frames);
+  Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void Daila_ObjPlace(s32 actor, s32 x, s32 z) {

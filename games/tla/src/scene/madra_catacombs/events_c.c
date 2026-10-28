@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct EventWork154 {
@@ -24,7 +24,7 @@ extern const u8 gData_020013c4[];
 extern const u8 gData_020013ca[];
 extern const u8 gData_0200121c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -32,11 +32,11 @@ void WaitFrames(s32 frames);
 void FieldMessage_Show(s32 message, s32 mode);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetMovementTypeById(s32 id, const void *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -44,8 +44,8 @@ void Func_0200110c(void);
 void Func_020011ac(s32 skip);
 void Func_02001114(void);
 void Func_02001214(s32 cue);
-void Func_020010bc(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_020010c4(struct ObjectRuntime *object);
+void Func_020010bc(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_020010c4(struct Actor *object);
 void Func_020010cc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020010dc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001134(s32 id, s32 x, s32 z);
@@ -61,8 +61,8 @@ s32 Func_020011fc(void);
 void Func_02001204(void);
 void Func_02000038(const void *data);
 void Func_0200014c(const void *data);
-void Func_02000270(struct ObjectRuntime *object);
-void Func_020008d0(struct ObjectRuntime *object);
+void Func_02000270(struct Actor *object);
+void Func_020008d0(struct Actor *object);
 void Func_02000958(void);
 void Func_02000a28(void);
 void Func_02000c94(void);
@@ -116,7 +116,7 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 cell;
 
   Func_0200110c();
@@ -127,16 +127,16 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Cue(158);
   Map_CopyCells(a, b, c, d, mode, f);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020010c4(object);
     object->angle = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
+  Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_0200121c);
   Wait(12);
   Cue(123);
@@ -157,9 +157,9 @@ void Func_02000c94(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -171,9 +171,9 @@ void Func_02000cf4(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

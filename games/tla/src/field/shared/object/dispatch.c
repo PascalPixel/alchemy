@@ -2,7 +2,7 @@
 #include "animspr.h"
 
 /// Points an object at its script and clears its script state.
-void ObjectDispatch_Initialize(struct DispatchObject *object,
+void Actor_StartScript(struct DispatchObject *object,
                                const s32 *script) {
   if (object != 0) {
     /* FAKEMATCH(pin): the byte stores' halfword zero held in r3,
@@ -22,7 +22,7 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
+void Actor_SelectAnimation(struct DispatchObject *object,
                                             s32 argument) {
   struct DispatchChild **items;
   struct DispatchChild *item;
@@ -47,7 +47,7 @@ void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object,
+void Actor_SetAnimationSpeed(struct DispatchObject *object,
                                          s32 value) {
   s32 count;
   struct DispatchChild *child;
@@ -72,7 +72,7 @@ void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
+void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
                                         s32 argument, s32 value) {
   struct DispatchChild **items;
   struct DispatchChild *item;
@@ -98,7 +98,7 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object,
+void Actor_SetSpriteRotation(struct DispatchObject *object,
                                         u32 value) {
   if (object != 0 && (object->kind & 0xf) == 1)
     object->target.child->value12 = value;
@@ -117,7 +117,7 @@ void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
+void Actor_RegisterSpriteMetadata(struct DispatchObject *object,
                                           s32 value) {
   if (object != 0 && (object->kind & 0xf) == 1) {
     struct DispatchChild *child = object->target.child;

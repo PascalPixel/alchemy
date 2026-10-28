@@ -8,13 +8,13 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
 void Func_0200029c(void);
 void Func_02000358(void);
@@ -42,7 +42,7 @@ void Func_02000064(s32 mode) {
 
 void Func_02000078(void) {}
 
-void Func_0200007c(void) { Object_SetModeById(9, 3); }
+void Func_0200007c(void) { Actor_SetModeById(9, 3); }
 
 void Func_02000088(s32 mode) {
   if (mode == 1) {
@@ -59,7 +59,7 @@ void Func_020000b8(void) {
 }
 
 void Func_020000d8(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   Func_0200029c();
   Func_020001e0(object->x, object->y, object->z, 20);

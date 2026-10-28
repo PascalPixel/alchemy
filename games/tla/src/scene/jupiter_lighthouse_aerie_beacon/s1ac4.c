@@ -10,23 +10,23 @@
 #include "adventure.h"
 #include "owner_state.h"
 s32 Func_020059c4();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Func_020059dc();
 s32 Func_020059f4();
 s32 FieldEvent_WaitFrames();
 s32 Func_020059d4();
 s32 Func_020059cc();
-s32 Object_SetModeById();
+s32 Actor_SetModeById();
 
 void Func_02001ac4(s32 a0, s32 a1) {
   Func_020059c4();
-  Call2(Func_020059dc, Value1(Object_GetById, a0), 2);
+  Call2(Func_020059dc, Value1(Actor_GetById, a0), 2);
   Call1(Func_020059f4, 0xc9);
   Call1(FieldEvent_WaitFrames, 0x3c);
-  Call2(Func_020059dc, Value1(Object_GetById, a0), 0);
+  Call2(Func_020059dc, Value1(Actor_GetById, a0), 0);
   Func_020059d4();
   Func_020059cc();
-  Call2(Object_SetModeById, a1, 1);
+  Call2(Actor_SetModeById, a1, 1);
 }
 
 /// Restores each active member's HP to its maximum and recomputes both

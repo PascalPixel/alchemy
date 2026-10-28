@@ -807,7 +807,7 @@ BattleEffect_RunVoidBeam:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r3, #240
 	ldr r1, [sp, #72]
 	lsls r3, r3, #7

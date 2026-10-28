@@ -35,7 +35,7 @@ void Func_081195ec(void) {
 
     to->anchorX = from->anchorX;
     to->anchorZ = from->anchorZ;
-    Object_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
+    Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
                                         place->z);
     gAdventure.activeOwners[i] = id;
     work->partyUnits[i] = id;

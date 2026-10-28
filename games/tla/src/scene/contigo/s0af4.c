@@ -21,7 +21,7 @@ void Func_0200427c(struct ContigoObject *object, s32 mode);
 struct ContigoGlow *Func_02003fec(s32 type, s32 x, s32 y, s32 z);
 void Func_02003fdc(struct ContigoGlow *object, s32 mode);
 void Func_02003ff4(struct ContigoGlow *object);
-void ObjectDispatch_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
+void Actor_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
 void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 void Func_02000a80(void);
@@ -50,10 +50,10 @@ void Func_02000af4(void) {
   Func_020041cc(0x204084, 1);
   Func_020041dc(16);
   Func_02004264();
-  Func_0200427c(Object_GetById(17), 2);
+  Func_0200427c(Actor_GetById(17), 2);
   effect = Contigo_Create(280, 0x2c20000, 0, 0x740000);
   if (effect != 0) {
-    ObjectDispatch_SetSingleChildFlags(effect, 0);
+    Actor_SetSingleChildFlags(effect, 0);
     Func_02003fdc(effect, 2);
     effect->motionFlags = 0;
     effect->scaleX = 0x1999;
@@ -94,7 +94,7 @@ void Func_02000af4(void) {
       goto shrink;
     Func_02003ff4(effect);
   }
-  Func_0200427c(Object_GetById(17), 0);
+  Func_0200427c(Actor_GetById(17), 0);
   Func_02004274();
   Func_0200426c();
   Func_020041cc(0x10000, 1);

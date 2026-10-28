@@ -12,22 +12,22 @@
 // bounce come in another order. Measured: the loop as goto or do, a u32
 // count (64), the loop's object in a variable of its own (no change).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
 #include "ram_buffer.h"
 
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
-void Func_02005d7c(struct ObjectRuntime *object);
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
+void Func_02005d7c(struct Actor *object);
 s32 Func_02000cec(s32 *a, s32 *b);
 
-void Func_02001458(struct ObjectRuntime *object) {
+void Func_02001458(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *other;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *other;
   s32 *pos;
   u8 i;
 
@@ -37,10 +37,10 @@ void Func_02001458(struct ObjectRuntime *object) {
     return;
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0) {
-    ObjectDispatch_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(object, 0);
     return;
   }
-  ObjectDispatch_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, 16);
   if (object->action == 0) {
     if (object->x == 0) {
       Func_02005d7c(object);
@@ -64,7 +64,7 @@ void Func_02001458(struct ObjectRuntime *object) {
     object->z = leader->z - 0x80000;
   }
   if (gAdventure.scene == (s32)&SceneId_Ov664Room3) {
-    other = Object_GetById(8);
+    other = Actor_GetById(8);
     if (Func_02000cec(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
@@ -72,7 +72,7 @@ void Func_02001458(struct ObjectRuntime *object) {
     }
   } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
     for (i = 0; i != 3; i++) {
-      other = Object_GetById(i + 12);
+      other = Actor_GetById(i + 12);
       if (Func_02000cec(&other->x, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->unk4c = 0;

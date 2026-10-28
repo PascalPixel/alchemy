@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -18,7 +18,7 @@ extern const u8 gData_02002f78[];
 extern const u8 gData_02003164[];
 extern const u8 gData_0200323c[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
@@ -33,11 +33,11 @@ void Func_02002304(s32 slot, s32 actor);
 void Func_0200230c(s32 actor);
 void Func_02002314(s32 slot, s32 actor);
 void Func_0200061c(s32 mode);
-void ObjectMotion_SetVariantCallback(s32 actor, s32 variant);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void ObjectMotion_OffsetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_StartRepeatedMotion(s32 actor, s32 variant);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_OffsetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 s32 PartyInventory_FindOwner(s32 item);
 void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
@@ -54,7 +54,7 @@ static inline void FlagSet(s32 flag) {
 
 static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(actor, angle, frames);
+  Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
@@ -87,7 +87,7 @@ const u8 *Func_020000f0(void) {
 }
 
 void Func_0200012c(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -111,7 +111,7 @@ void Func_0200012c(s32 actor) {
 }
 
 void Func_020001a8(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -133,7 +133,7 @@ void Func_020001a8(s32 actor) {
 }
 
 void Func_02000220(s32 actor) {
-  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
+  u16 facing = Actor_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -169,13 +169,13 @@ void Func_02000298(void) {
     FieldEvent_WaitFrames(60);
     Func_02002254(8, 0);
     FieldEvent_WaitFrames(30);
-    ObjectMotion_SetVariantCallback(8, 1);
+    Actor_StartRepeatedMotion(8, 1);
     FieldEvent_WaitFrames(60);
     Func_02002254(8, 0);
     FieldEvent_WaitFrames(30);
     FlagSet(0x922);
   }
-  Object_SetModeById(8, 4);
+  Actor_SetModeById(8, 4);
   FieldEvent_WaitFrames(60);
   Func_02002244((s32)MsgIfTheSerpent);
   Func_02002254(8, 0);
@@ -193,7 +193,7 @@ void Func_02000378(void) {
 
   Func_020021c4();
   Func_020022bc(0);
-  ObjectMotion_SetAngleToward(15, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(15, gAdventure.currentOwner, 0);
   if (FlagCheck(0x92c)) {
     Func_02002244((s32)MsgWithThisDancing);
     Func_02002254(15, 0);
@@ -229,7 +229,7 @@ void Func_02000400(void) {
 void Func_02000458(void) {
   Func_020021c4();
   Func_020022bc(0);
-  ObjectMotion_SetAngleToward(15, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(15, gAdventure.currentOwner, 0);
   if (FlagCheck(0x92b)) {
     Func_02002244((s32)MsgTryingAgainWhat);
     Func_02002254(15, 0);
@@ -241,7 +241,7 @@ void Func_02000458(void) {
       Func_0200226c(15, 259, 30);
       Func_02002254(15, 0);
       LeaderAnimate(258, 30);
-      Object_SetModeById(15, 4);
+      Actor_SetModeById(15, 4);
       FieldEvent_WaitFrames(30);
       Func_02002254(15, 0);
     }

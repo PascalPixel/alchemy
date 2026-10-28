@@ -28,7 +28,7 @@ void Func_02003dec(void) {
   Kibombo_CamMove(132 << 17, 0x200000, 160 << 17, 1);
   Func_02005bb4();
   Kibombo_Wait(80);
-  ObjectMotion_Launch(17, 4, 40);
+  Actor_Jump(17, 4, 40);
   Kibombo_MessagePut(17, 0);
   Kibombo_CamSpeed(0x4cccc, 0x9999);
   Kibombo_CamMove(132 << 17, 0x200000, 200 << 17, 1);
@@ -39,21 +39,21 @@ void Func_02003dec(void) {
   Kibombo_SePlay(11);
   GameFlag_SetBit(0x8f2);
   Kibombo_SePlay(148);
-  Object_GetById(18)->velocityY = 0x40000;
+  Actor_GetById(18)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(19)->velocityY = 0x40000;
+  Actor_GetById(19)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(20)->velocityY = 0x40000;
+  Actor_GetById(20)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(21)->velocityY = 0x40000;
+  Actor_GetById(21)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(22)->velocityY = 0x40000;
+  Actor_GetById(22)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(23)->velocityY = 0x40000;
+  Actor_GetById(23)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(24)->velocityY = 0x40000;
+  Actor_GetById(24)->velocityY = 0x40000;
   WaitFrames(5);
-  Object_GetById(25)->velocityY = 0x40000;
+  Actor_GetById(25)->velocityY = 0x40000;
   WaitFrames(20);
   Kibombo_ObjArm(17, 0xd000, 20);
   Func_020032b0();
@@ -69,16 +69,16 @@ void Func_02003dec(void) {
   Kibombo_MessagePut(26, 0);
   Kibombo_ObjArm(gAdventure.currentOwner, 0x8000, 20);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
-  Object_SetModeById(26, 4);
+  Actor_SetModeById(26, 4);
   Kibombo_MessagePut(26, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(26, 3);
-  Object_SetModeById(26, 2);
-  leader = Object_GetById(gAdventure.currentOwner);
+  Actor_SetModeById(26, 2);
+  leader = Actor_GetById(gAdventure.currentOwner);
   if (leader != 0)
-    ObjectMotion_ResetAndSetPosition(26, ((s16 *)&leader->x)[1],
+    Actor_ResetAndSetPosition(26, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
-  ObjectMotion_CommitCurrentPositionAndActivate(26);
+  Actor_WaitForMoveById(26);
   Func_02005b0c(26, 0, 0);
   GameFlag_SetBit(0x8f1);
 }

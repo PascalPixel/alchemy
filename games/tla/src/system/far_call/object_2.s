@@ -29,10 +29,10 @@ Func_080c8670:
 	.thumb_func
 Func_080c8678:
 	overlay_veneer Func_080d20fc
-	.global Object_SetActionCallbackFar
+	.global Actor_SetActionCallbackFar
 	.thumb_func
-Object_SetActionCallbackFar:
-	overlay_veneer Object_SetActionCallback
+Actor_SetActionCallbackFar:
+	overlay_veneer Actor_SetActionCallback
 	.global Func_080c8688
 	.thumb_func
 Func_080c8688:

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "map.h"
@@ -7,8 +7,8 @@
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-s32 Func_08025428(struct ObjectRuntime *cameraObject) {
-  struct ObjectRuntime *leader;
+s32 Func_08025428(struct Actor *cameraObject) {
+  struct Actor *leader;
   struct MapWork *bounds;
   s32 minX;
   s32 minZ;

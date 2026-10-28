@@ -1,11 +1,11 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "frame.h"
 #include "field_effect.h"
 
 extern const s32 gData_0200502c[];
 
-void Func_02004f28(struct ObjectRuntime *object, s32 sound);
+void Func_02004f28(struct Actor *object, s32 sound);
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -15,7 +15,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// its own script at a random point within 4 pixels of the object along z,
 /// moving along z at a random speed; every sixteenth frame it also plays sound
 /// 136 at the object.
-void Func_02000d1c(struct ObjectRuntime *object) {
+void Func_02000d1c(struct Actor *object) {
   struct EffectOptions options;
   u32 frame = gFrameCount;
   s32 dz;

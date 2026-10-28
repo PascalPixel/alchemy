@@ -1,20 +1,20 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "call.h"
 
 extern const u8 gData_02004744[];
 
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_020041cc(struct ObjectRuntime *object, s32 mode);
-void Func_020041dc(struct ObjectRuntime *object, const void *script);
-struct ObjectRuntime *Func_020041e4();
+void Func_020041cc(struct Actor *object, s32 mode);
+void Func_020041dc(struct Actor *object, const void *script);
+struct Actor *Func_020041e4();
 void Func_020015ec(void);
 
-void Func_02001750(struct ObjectRuntime *object) {
+void Func_02001750(struct Actor *object) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   Func_020041dc(object, gData_02004744);
   object->action = 0;
   object->speedLimit = 0;
@@ -22,7 +22,7 @@ void Func_02001750(struct ObjectRuntime *object) {
 }
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
 
   if (object != NULL) {

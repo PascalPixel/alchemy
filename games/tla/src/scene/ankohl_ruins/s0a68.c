@@ -2,7 +2,7 @@
 
 void Func_02000a68(s32 unused, s32 objectId) {
   register s32 id asm("r5") = objectId;
-  register struct ObjectRuntime *object asm("r6") = Object_GetById(id);
+  register struct Actor *object asm("r6") = Actor_GetById(id);
   s16 frames = 60;
 
   if (object->z >> 20 == 31) {

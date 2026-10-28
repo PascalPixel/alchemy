@@ -16,7 +16,7 @@
 // of the spawn's stores.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -30,34 +30,34 @@ void Func_02003bc8(void);
 void Func_02003bd0(void);
 void Func_02003c88(s32 skip);
 void Func_02003cd8(s32 cue);
-void Func_02003b28(struct ObjectRuntime *object, s32 mode);
-void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02003b28(struct Actor *object, s32 mode);
+void Func_02003b38(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Func_02003b58(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003b60(struct ObjectRuntime *object);
+void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02003b60(struct Actor *object);
 void FieldEvent_WaitFrames(s32 frames);
 u32 Random16Far(void);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000840(void);
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 s32 Func_02000348(u32 layer, s32 x, s32 z);
 void Func_02003c20(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Func_02003ba8(struct ObjectRuntime *object);
+s32 Func_02003ba8(struct Actor *object);
 void Func_02003b68(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
 void GameFlag_SetBit(s32 flag);
-void Func_02003b48(struct ObjectRuntime *object);
+void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
 
 void Func_0200095c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *gust, *spark, *target;
+  struct Actor *gust, *spark, *target;
   struct EffectOptions dust, leaves;
   struct Vector3 velocity;
   s32 flag = 0, steps = 0, x, z, dx, dz, hit, angle, i;
@@ -66,14 +66,14 @@ void Func_0200095c(void) {
   Func_02003bc8();
   Func_02003c88(0);
   Func_02003cd8(207);
-  gust = (struct ObjectRuntime *)Import_ActorCreate(280, leader->x, leader->y,
+  gust = (struct Actor *)Import_ActorCreate(280, leader->x, leader->y,
                                                      leader->z);
   Func_02003b28(gust, 2);
-  ObjectDispatch_SetSingleChildFlags(gust, 0);
+  Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   gust->motionFlags = (u8)flag;
-  target = *(struct ObjectRuntime **)(effect + 20);
+  target = *(struct Actor **)(effect + 20);
   ((struct FieldSprite *)gust->animation)->priority =
       ((struct FieldSprite *)target->animation)->priority;
   Func_02003b58(gust, target->x, target->y, target->z + 0xffff0000);
@@ -82,11 +82,11 @@ void Func_0200095c(void) {
     FieldEvent_WaitFrames(1);
   }
   Func_02003b60(gust);
-  gust->z = (*(struct ObjectRuntime **)(effect + 20))->z + 0xffff0000;
+  gust->z = (*(struct Actor **)(effect + 20))->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      target = *(struct ObjectRuntime **)(effect + 20);
-      spark = (struct ObjectRuntime *)Import_ActorCreate(0x2a0, target->x, 0,
+      target = *(struct Actor **)(effect + 20);
+      spark = (struct Actor *)Import_ActorCreate(0x2a0, target->x, 0,
                                                           target->z);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
@@ -96,22 +96,22 @@ void Func_0200095c(void) {
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
-      Object_SetPartAttribute(spark, 2);
+      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02000840;
     }
     if (gFrameCount & 1) {
       gust->scaleX += 455;
       gust->scaleY += 455;
-      Object_SetPartAttribute(*(struct ObjectRuntime **)(effect + 20), 15);
+      Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 15);
     } else {
-      Object_SetPartAttribute(*(struct ObjectRuntime **)(effect + 20), 4);
+      Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 4);
     }
     FieldEvent_WaitFrames(1);
   }
-  Object_SetPartAttribute(*(struct ObjectRuntime **)(effect + 20), 0);
+  Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 0);
   Func_02003cd8(136);
-  target = *(struct ObjectRuntime **)(effect + 20);
+  target = *(struct Actor **)(effect + 20);
   x = target->x >> 20;
   z = target->z >> 20;
   angle = (leader->angle + 0x2000) & 0xc000;
@@ -125,7 +125,7 @@ void Func_0200095c(void) {
   } while (hit == 0);
   flag = (Func_02000348(2, x, z) >> 8) - 1;
   steps -= 2;
-  target = *(struct ObjectRuntime **)(effect + 20);
+  target = *(struct Actor **)(effect + 20);
   x = ((s16 *)&target->x)[1] + ((steps * dx) << 3);
   z = ((s16 *)&target->z)[1] + ((steps * dz) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;

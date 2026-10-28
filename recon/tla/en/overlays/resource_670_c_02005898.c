@@ -46,13 +46,13 @@ void Func_02005898(void) {
   }
 #if !defined(TLA_EDITION_JA)
   if (GameFlag_Test(0x109)) {
-    object = Object_GetById(16);
+    object = Actor_GetById(16);
     object->x -= 0xe0000;
     object->z -= 0x80000;
   }
 #endif
   Func_02005c74(16, 0);
-  object = Object_GetById(16);
+  object = Actor_GetById(16);
   object->sprite->rotation = 0;
   object->scaleX = 0x10000;
   object->scaleY = 0x10000;
@@ -71,7 +71,7 @@ void Func_02005898(void) {
     __asm__("" : "+l"(z) : : "r2");
     object->z = z + 0x80000;
   }
-  Object_SetModeById(16, 6);
+  Actor_SetModeById(16, 6);
   if (gAdventure.entrance == 14)
     GameFlag_SetBit(0x8ee);
 }

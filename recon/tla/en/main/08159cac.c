@@ -109,7 +109,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, s32 shakeRange);
 // Counts down the actors' flash timers.
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
@@ -217,7 +217,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(2, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

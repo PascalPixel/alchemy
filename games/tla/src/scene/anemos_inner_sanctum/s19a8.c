@@ -1,17 +1,17 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "io_reg.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
+struct Actor *Actor_GetById(s32 id);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
-void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
+void Func_02003310(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003398(void);
 void Func_020033a0(void);
-void Func_020032f8(struct ObjectRuntime *object);
+void Func_020032f8(struct Actor *object);
 void Func_020033e0(s32 id, s32 x, s32 z);
 void Func_02003488(s32 a);
 void Func_020034b8(s32 cue);
@@ -27,17 +27,17 @@ struct SpriteView {
 };
 
 void Func_020019a8(void) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *effect;
+  struct Actor *object;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 position[3];
 
   if (gAdventure.entrance == 1)
-    object = Object_GetById(8);
+    object = Actor_GetById(8);
   else if (gAdventure.entrance == 3)
-    object = Object_GetById(9);
+    object = Actor_GetById(9);
   else
-    object = Object_GetById(10);
+    object = Actor_GetById(10);
   position[0] = (object->x & 0xfff00000) + 0x80000;
   position[2] = (object->z & 0xfff00000) + 0x80000;
   object->acceleration = 0x10000;

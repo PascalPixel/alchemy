@@ -11,7 +11,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "map.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 void WaitFrames(s32);
 
@@ -28,7 +28,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   s32 positionZ;
   s32 positionY;
   struct MapWork *map;
-  struct ObjectRuntime *object;
+  struct Actor *object;
 
   positionX = requestedX;
   positionY = requestedY;
@@ -43,7 +43,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
   map->origin = &object->x;
-  Object_ResetMotion(object);
+  Actor_ResetMotion(object);
   if (positionX == -1) {
     positionX = object->x;
   }
@@ -74,6 +74,6 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
       Map_CenterOnFollowedPointFar();
     }
   } else {
-    Object_SetPosition(object, positionX, positionY, positionZ);
+    Actor_SetTargetPosition(object, positionX, positionY, positionZ);
   }
 }

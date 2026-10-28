@@ -11,7 +11,7 @@
 #include "objdisp.h"
 #include "resource.h"
 #include "metadata_lookup.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "object_dispatch.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -24,8 +24,8 @@
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
-void *ObjectDispatch_FindFreeObject(void) {
-  struct ObjectRuntime *obj = Ram_HeapSlots->scriptObjects;
+void *Actor_FindFreeObject(void) {
+  struct Actor *obj = Ram_HeapSlots->scriptObjects;
   void *ret = 0;
   s32 n = 0;
 
@@ -42,7 +42,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 
 /// Releases the object's graphics and zeroes the object to free it.
 /// obj: object.
-void ObjectDispatch_Release(struct DispatchObject *obj) {
+void Actor_Release(struct DispatchObject *obj) {
   volatile u32 zero;
   volatile u32 *src;
   s32 n;
@@ -65,7 +65,7 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
     }
     src = &zero;
     *src = 0;
-    Dma_Set(src, obj, 0x85000000 | (sizeof(struct ObjectRuntime) / 4),
+    Dma_Set(src, obj, 0x85000000 | (sizeof(struct Actor) / 4),
             REG_DMA3);
   }
 }

@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000468(struct ObjectRuntime *object) {
+void Func_02000468(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 angle;
 

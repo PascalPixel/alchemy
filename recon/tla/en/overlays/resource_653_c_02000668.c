@@ -5,7 +5,7 @@
 // counter pointer local, a division and a one-pass block were tried.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
-void Func_02000668(struct ObjectRuntime *object, s32 step) {
+void Func_02000668(struct Actor *object, s32 step) {
   s32 speed = (object->velocityX + object->velocityZ) >> 1;
   s32 *counter = &gData_02006294;
 

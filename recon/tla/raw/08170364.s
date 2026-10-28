@@ -1222,7 +1222,7 @@ BattleEffect_RunMegaera:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r7, #240
 	ldr r6, [sp, #80]
 	lsls r7, r7, #7

@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_020007ac(struct ObjectRuntime *object) {
+void Func_020007ac(struct Actor *object) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   u8 *state = &object->movementState;
 

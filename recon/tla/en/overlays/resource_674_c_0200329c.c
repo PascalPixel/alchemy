@@ -10,7 +10,7 @@
 // and 5, then runs entrance 3's (Func_02002830) or 4's (Func_020029c4)
 // arrival, or a screen transition and Func_020034d8. Left: four rows where the native schedules an argument constant otherwise (the first palette fade builds 3 last, the gAdventure load comes before the 241 offset, two position pairs split their shifts).
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -31,8 +31,8 @@ void Func_02003410(void);
 void PaletteQueue_Add(s32 a, s32 b, s32 c, s32 d);
 void Func_02003edc(s32 id, s32 x, s32 z);
 void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
-struct ObjectRuntime *Object_GetById(u32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_02001c4c(void);
@@ -57,12 +57,12 @@ void Func_0200329c(void) {
   PaletteQueue_Add(4, 12, 5, 4);
   if (GameFlag_Test(0xaa5) && (done = GameFlag_Test(265)) == 0) {
     Func_02003edc(10, 0x1180000, 0x1d40000);
-    Object_GetById(10)->motionFlags = done;
+    Actor_GetById(10)->motionFlags = done;
     Func_02003edc(9, 0x1280000, 0x1c40000);
   }
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Task_Add(Func_02001c4c, 0x480);
   if ((u16)(gAdventure.entrance - 4) <= 1) {
     GameFlag_SetBit(0x217);

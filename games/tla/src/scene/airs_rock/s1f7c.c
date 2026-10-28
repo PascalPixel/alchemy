@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "bg_scroll.h"
 #include "field_sprite.h"
@@ -31,16 +31,16 @@ void Func_02003c88(s32 skip);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003af0(void *resource, void *dest);
 void Func_02003cd8(s32 cue);
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200092c(void);
 void Func_020008ac(void);
-struct ObjectRuntime *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void Func_02003b28(struct ObjectRuntime *object, s32 mode);
-void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Func_02003b28(struct Actor *object, s32 mode);
+void Func_02003b38(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02003c58(s32 a, s32 b);
@@ -68,7 +68,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02001f7c(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
-  struct ObjectRuntime *spark;
+  struct Actor *spark;
   u32 i;
 
   Func_02003bc8();
@@ -107,15 +107,15 @@ row:
     goto row;
   Heap_Release(buffer);
   Func_02003cd8(246);
-  ((u8 *)Object_GetById(14))[98] = 9;
-  ((u8 *)Object_GetById(14))[99] = 1;
-  Object_GetById(14)->update = Func_0200092c;
+  ((u8 *)Actor_GetById(14))[98] = 9;
+  ((u8 *)Actor_GetById(14))[99] = 1;
+  Actor_GetById(14)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = Import_ActorCreate(0x2a0, Object_GetById(14)->x,
-                                  Object_GetById(14)->y, Object_GetById(14)->z);
+      spark = Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
+                                  Actor_GetById(14)->y, Actor_GetById(14)->z);
       {
-        s32 priority = ((s8 *)Object_GetById(14)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_GetById(14)->animation)[9] & 12;
 
         /* FAKEMATCH(temporary): the sprite held in the row pointer; as
          * spark->animation, 20 of 520 instructions differ in tla-en. */
@@ -132,8 +132,8 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
-      ObjectDispatch_SetSingleChildFlags(spark, 0);
-      Object_SetPartAttribute(spark, 2);
+      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
     FieldEvent_WaitFrames(1);
@@ -146,8 +146,8 @@ row:
   Func_02003c20(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(0x2180000, -1, 0xd80000, 1);
   Func_02003c30();
-  Object_GetById(14)->update = 0;
-  Object_SetPartAttribute(Object_GetById(14), 6);
+  Actor_GetById(14)->update = 0;
+  Actor_SetPartAttribute(Actor_GetById(14), 6);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = 0xff88;
@@ -157,7 +157,7 @@ row:
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  Object_GetById(gAdventure.currentOwner)->angle = 0x4000;
+  Actor_GetById(gAdventure.currentOwner)->angle = 0x4000;
   WaitFrames(1);
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);

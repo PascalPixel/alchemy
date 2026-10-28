@@ -80,12 +80,12 @@ void Func_02001234(void) {
 }
 
 void Func_020012a4(s32 x, s32 z, s32 kind) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Func_02003128, 403, x << 16, 0, z << 16);
   struct MarsLighthouseRoomMAnimation *animation;
 
   if (object != 0) {
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02003118(object, 3);
     animation = object->animation;
     if (kind != 0) {

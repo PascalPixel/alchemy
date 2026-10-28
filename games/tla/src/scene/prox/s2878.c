@@ -7,9 +7,9 @@
        ->v)
 
 #include "call.h"
-s32 ObjectMotion_SetActionVariant();
-s32 Object_GetById();
-s32 Object_SetPartAttribute();
+s32 Actor_SetSpritePriority();
+s32 Actor_GetById();
+s32 Actor_SetPartAttribute();
 s32 GameFlag_Test();
 s32 Func_020044cc();
 s32 Func_02004404();
@@ -26,8 +26,8 @@ void Func_02002878(void) {
   s32 t16;
   s32 t20;
 
-  Call2(ObjectMotion_SetActionVariant, 0x13, 1);
-  Call2(Object_SetPartAttribute, Value1(Object_GetById, 0x13), 0xf);
+  Call2(Actor_SetSpritePriority, 0x13, 1);
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, 0x13), 0xf);
   t3 = Value1(GameFlag_Test, 0xa3d);
   if (t3 == 0) {
     t4 = Value1(GameFlag_Test, 0x9c0);
@@ -40,7 +40,7 @@ void Func_02002878(void) {
     }
     t8 = Value1(GameFlag_Test, 0x9c1);
     if (t8 != 0) {
-      t9 = Value1(Object_GetById, 0xa);
+      t9 = Value1(Actor_GetById, 0xa);
       FIELD_AT(t9, u16, 6) = 0xb000;
       Call1(WaitFrames, 1);
     }

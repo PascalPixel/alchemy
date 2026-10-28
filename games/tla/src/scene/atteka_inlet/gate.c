@@ -12,9 +12,9 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct FieldActor *Object_GetById(s32 id);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+struct FieldActor *Actor_GetById(s32 id);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void WaitFrames(s32 frames);
 void Func_0200097c(void);
 void Func_02001010(void);
@@ -34,7 +34,7 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 static inline void Place(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep the native
    * argument order */
-  ObjectMotion_ResetAndSetPosition(id, x, z);
+  Actor_ResetAndSetPosition(id, x, z);
 }
 
 void Func_0200077c(void) {
@@ -48,18 +48,18 @@ void Func_020007ac(void) {
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Test(63)) {
-    object = Object_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gAdventure.currentOwner);
     Func_02001010();
     Func_02001108(0);
     moved = 0;
     if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
-      ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
+      Actor_Jump(gAdventure.currentOwner, 6, 0);
       Place(gAdventure.currentOwner, 104, 376);
       moved = 1;
     }
     Func_02001060(14, 120 << 16, 376 << 16);
     WaitFrames(1);
-    ObjectMotion_Launch(14, 4, 10);
+    Actor_Jump(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)
       Func_020010b8(gAdventure.currentOwner, 0);

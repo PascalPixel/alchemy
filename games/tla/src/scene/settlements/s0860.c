@@ -80,13 +80,13 @@ void Func_02000860(void) {
     Func_020020c0(11, 0, 0);
     return;
   }
-  actor = (struct OrbitObject *)Object_GetById(11);
+  actor = (struct OrbitObject *)Actor_GetById(11);
   sprite = actor->sprite;
   sprite->flags09Mode = 1;
   sprite->flags05Bit5 = 0;
   sprite->flags09High = 0;
   sprite->state = 0;
-  ObjectDispatch_SetSingleChildFlags((struct ObjectRuntime *)actor, 0);
+  Actor_SetSingleChildFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
   if (GameFlag_Test(0x109) == 0)

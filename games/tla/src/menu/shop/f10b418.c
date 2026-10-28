@@ -44,7 +44,7 @@ extern u8 MsgInnWelcome[];
 
 void Func_08108148(void);
 void Func_0810824c(void);
-struct InnObject *Object_GetByIdFar(s32 id);
+struct InnObject *Actor_GetByIdFar(s32 id);
 s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
 s32 Inn_RoomPrice(s32 mode);
 void MessageArgument_PushFar(s32 value, s32 slot);
@@ -65,7 +65,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   state = Ram_HeapSlots->menuRuntime;
   state->active = 1;
 
-  object = Object_GetByIdFar(objectId);
+  object = Actor_GetByIdFar(objectId);
   state->resourceId = *object->component->resourceId;
   win = Func_080380f8(state->resourceId, 0, 0, 0);
 
@@ -88,7 +88,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
     Window_CloseFar(win, 2);
     Inn_PlaySleep(amount);
 
-    object = Object_GetByIdFar(objectId);
+    object = Actor_GetByIdFar(objectId);
     state->resourceId = *object->component->resourceId;
     win = Func_080380f8(state->resourceId, 0, 0, 0);
     Func_081084f4(messageBase + INN_MESSAGE_REST_COMPLETE);

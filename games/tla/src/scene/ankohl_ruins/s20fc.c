@@ -1,7 +1,7 @@
 #include "ankohl_ruins.h"
 
 void Func_020020fc(void) {
-  s32 z = Object_GetById(9)->z >> 20;
+  s32 z = Actor_GetById(9)->z >> 20;
 
   if (AnkohlRuins_FlagCheck(0x9dd) != 0 && z == 24) {
     s32 found = Func_02002dcc(Func_02001f7c);
@@ -28,7 +28,7 @@ void Func_020020fc(void) {
 }
 
 void Func_020021d4(void) {
-  s32 z = Object_GetById(9)->z >> 20;
+  s32 z = Actor_GetById(9)->z >> 20;
 
   if (AnkohlRuins_FlagCheck(0x9dd) != 0 && z == 24) {
     /* FAKEMATCH: the callback pinned to r5 leaves the z cell in r6; plain, the

@@ -29,13 +29,13 @@ void Func_02001d34();
 void GameFlag_SetBit();
 s32 GameFlag_Test();
 void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_Launch();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-s32 Object_GetById();
-void Object_SetModeById();
+void Actor_ArmCallback();
+void Actor_CommitPositionAndActivate();
+void Actor_Jump();
+void Actor_SetPositionAndReset();
+void Actor_SetSpeedParameters();
+s32 Actor_GetById();
+void Actor_SetModeById();
 extern u8 MsgAreYouKids[];
 extern u8 MsgTheDoorDoesn[];
 extern u8 MsgWhatSThe[];
@@ -43,7 +43,7 @@ extern u8 MsgWhatSThe[];
 void Func_0200062c(void) {
   s32 t1, t2, t3, t4, t12, t30, t31, v5;
 
-  t1 = Value1(Object_GetById, gAdventure.currentOwner);
+  t1 = Value1(Actor_GetById, gAdventure.currentOwner);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 2 of 276 instructions differ in
    * tla-en. */
@@ -73,10 +73,10 @@ L_02008694:
   Call1(Func_02001d04, 0);
   Call1(Func_02001c6c, (s32)&MsgAreYouKids);
   Call3(Func_02001c2c, 12, 0x3680000, 0x3700000);
-  t12 = Value1(Object_GetById, 12);
+  t12 = Value1(Actor_GetById, 12);
   Call2(Animation_SetIndexAndInitializeObjects, t12, 43);
-  Call2(Object_SetModeById, 12, 3);
-  Call3(ObjectMotion_ArmCallback, 12, 0x5000, 0);
+  Call2(Actor_SetModeById, 12, 3);
+  Call3(Actor_ArmCallback, 12, 0x5000, 0);
   Call3(Func_02001c7c, 12, 0, 10);
   Call4(Camera_MoveWithinMapBounds, 0x3680000, -1, 0x3080000, 1);
   Func_02001cc4();
@@ -104,7 +104,7 @@ L_02008778:
 L_02008788:
   Call1(Func_02001c6c, (s32)&MsgWhatSThe);
   Call1(FieldEvent_WaitFrames, 20);
-  Call3(ObjectMotion_SetPositionAndReset, 4, 0x358, 0x3b8);
+  Call3(Actor_SetPositionAndReset, 4, 0x358, 0x3b8);
   Call2(Func_02001c94, 4, 0xc000);
   Call1(FieldEvent_WaitFrames, 10);
   Value3((s32 (*)())Func_02001ca4, 4, 0x105, 60);
@@ -114,11 +114,11 @@ L_02008788:
   Value3((s32 (*)())Func_02001ca4, 12, 0x101, 30);
   Call3(Func_02001c7c, 12, 0, 10);
   Call4(Camera_MoveWithinMapBounds, 0x3680000, v5, 0x3580000, 1);
-  Call3(ObjectMotion_Launch, 12, 4, 0);
-  Call3(ObjectMotion_SetPositionAndReset, 12, 0x368, 0x390);
+  Call3(Actor_Jump, 12, 4, 0);
+  Call3(Actor_SetPositionAndReset, 12, 0x368, 0x390);
   Call1(FieldEvent_WaitFrames, 20);
-  Call3(ObjectMotion_SetSpeedParameters, 12, 0x10000, 0x8000);
-  Call3(ObjectMotion_CommitPositionAndActivate, 12, -32, 0);
+  Call3(Actor_SetSpeedParameters, 12, 0x10000, 0x8000);
+  Call3(Actor_CommitPositionAndActivate, 12, -32, 0);
   Call2(Func_02001c94, 12, 0x3000);
   Call4(Camera_MoveWithinMapBounds, 0x3500000, v5, 0x3880000, 1);
   Func_02001cc4();
@@ -130,9 +130,9 @@ L_02008788:
   Call3(Func_02001d34, 1, 28, 27);
   Call1(FieldEvent_WaitFrames, 30);
   Call3(Func_02001c7c, 12, 0, 5);
-  Call3(ObjectMotion_CommitPositionAndActivate, 12, 32, 0);
+  Call3(Actor_CommitPositionAndActivate, 12, 32, 0);
   Call2(Camera_FollowActor, 4, 1);
-  Call3(ObjectMotion_CommitPositionAndActivate, 12, 0, -32);
+  Call3(Actor_CommitPositionAndActivate, 12, 0, -32);
   Call1(GameFlag_SetBit, 0x96f);
 L_020088cc:
   Func_020001bc();

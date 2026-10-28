@@ -14,7 +14,7 @@
 // target and flips to the other group. Not ☀️'s function of that name, which
 // creates two objects.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"
 #include "effect_sprite.h"
@@ -24,12 +24,12 @@ struct ArcWork {
   s16 age[2];
   s16 resource;
   s16 group;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 };
 
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
-void BattleEffect_SpawnScaledArcObjects(struct ObjectRuntime *target) {
+void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   struct ArcWork *work = Ram_HeapSlots->block62;
   s32 tiles = gResourceTableEntries[work->resource].offset >> 5;
   s32 group = work->group;

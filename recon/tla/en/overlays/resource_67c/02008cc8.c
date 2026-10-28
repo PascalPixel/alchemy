@@ -8,13 +8,13 @@
 #include "scene_ids.h"
 
 void Func_02000ca8(s32 id);
-s32 Func_02003d2c(struct ObjectRuntime *object, s32 *position);
+s32 Func_02003d2c(struct Actor *object, s32 *position);
 
 void Func_02000cc8(s32 id) {
   s32 slide = 1;
 
   if (gAdventure.scene == (s32)&SceneId_Ov67cRoom5) {
-    s32 column = Object_GetById(8)->x >> 20;
+    s32 column = Actor_GetById(8)->x >> 20;
 
     if (id == 77 && column == 17)
       slide = 0;
@@ -25,13 +25,13 @@ void Func_02000cc8(s32 id) {
    * read is moved up both paths. */
   __asm__("" : : : "memory");
   if (gAdventure.scene == (s32)&SceneId_Ov67cRoom6) {
-    if (id == 77 && Object_GetById(10)->x >> 20 == 9)
+    if (id == 77 && Actor_GetById(10)->x >> 20 == 9)
       slide = 0;
-    if (id == 78 && Object_GetById(11)->x >> 20 == 13)
+    if (id == 78 && Actor_GetById(11)->x >> 20 == 13)
       slide = 0;
   }
   if (slide) {
-    struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
+    struct Actor *object = Actor_GetById(gAdventure.currentOwner);
     s32 position[3];
     s32 result;
 

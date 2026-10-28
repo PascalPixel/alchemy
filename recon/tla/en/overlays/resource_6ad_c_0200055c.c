@@ -14,7 +14,7 @@ extern const u32 gData_02005bac[];
 s32 Math_Sine(s32 angle);
 
 void Func_0200055c(s32 id) {
-  struct ObjectRuntime *origin = Object_GetById(id);
+  struct Actor *origin = Actor_GetById(id);
   s32 i = 11;
 
 loop:
@@ -23,7 +23,7 @@ loop:
     s32 x = origin->x + (a << 4) - (Random16Far() << 4);
     s32 b = Random16Far();
     s32 c = Random16Far();
-    struct ObjectRuntime *object =
+    struct Actor *object =
         Func_02005498(0x149, x, (b << 3) + origin->y, (c << 4) + origin->z);
 
     if (object != NULL) {
@@ -35,7 +35,7 @@ loop:
         Func_02005490(object, gData_02005b68);
       else
         Func_02005490(object, gData_02005bac);
-      ObjectDispatch_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags(object, 0);
       object->velocityY = (angle << 2) + 0x20000;
       object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
       {

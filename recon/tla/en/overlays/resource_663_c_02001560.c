@@ -9,36 +9,36 @@
 // falls to the ground. Flag 0x250 is set throughout.
 // Left: registers from the start (the native keeps the leader in r7 and the ride in r6, the motion and priority pointers in r11 and r9, the offsets in r8 and r10 and the rider on the stack), and the rising loop builds its priority pointer each pass.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "input.h"
 
 extern s32 gFrameCount;
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02003bc8(void);
 void Func_02003bd0(void);
 void Func_02003c88(s32 skip);
 void Func_02003cd8(s32 cue);
 void Func_02003c30(void);
-struct ObjectRuntime *Func_02003c40(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Func_02003c40(void);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 s32 Func_02000348(u32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02003b28(struct ObjectRuntime *object, s32 mode);
-void Func_02003b58(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003b60(struct ObjectRuntime *object);
-void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
+void Func_02003b28(struct Actor *object, s32 mode);
+void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02003b60(struct Actor *object);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02001560(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *ride = leader->watchedObject;
-  struct ObjectRuntime *rider, *dust;
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *ride = leader->watchedObject;
+  struct Actor *rider, *dust;
   u8 *riding, *motion, *priority;
   s32 rise, dx, dz, moved, i, height;
   u32 angle;
@@ -47,7 +47,7 @@ void Func_02001560(void) {
   Func_02003c88(0);
   motion = &leader->motionFlags;
   *motion = 4;
-  ObjectDispatch_SetSingleChildFlags(leader, 0);
+  Actor_SetSingleChildFlags(leader, 0);
   GameFlag_SetBit(0x250);
   Func_02003cd8(137);
   riding = (u8 *)ride + 99;
@@ -132,13 +132,13 @@ void Func_02001560(void) {
     Func_02003b58(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     Func_02003b60(leader);
-    ObjectDispatch_SetSingleChildFlags(leader, 1);
+    Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
   } else {
     angle = ride->angle >> 13;
     leader->x = (((ride->x >> 19) & ~1) + angle - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
-    ObjectDispatch_SetSingleChildFlags(leader, 1);
+    Actor_SetSingleChildFlags(leader, 1);
     leader->velocityY = 0x60000;
     *priority = 1;
     *motion = 3;
@@ -152,8 +152,8 @@ void Func_02001560(void) {
     OverlayObject_WaitUntilIdle(leader);
     Func_02003b60(dust);
   }
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   GameFlag_ClearBit(0x250);
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();

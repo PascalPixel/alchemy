@@ -107,7 +107,7 @@ Func_080dcb44:
 	lsls r2, r2, #2
 	adds r3, r7, r2
 	ldrh r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #0
 	bl BattleEffect_ApplyFlickerValue
 	movs r0, #203
@@ -127,7 +127,7 @@ Func_080dcb44:
 	lsls r1, r1, #2
 	adds r5, r7, r1
 	ldrh r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #146
@@ -135,7 +135,7 @@ Func_080dcb44:
 	adds r6, r0, #0
 	ldrh r0, [r2]
 	mov r11, r2
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	cmp r6, #0
 	bne .L_080dcc5e
@@ -281,7 +281,7 @@ Func_080dcb44:
 	ldr r3, [r0, #8]
 	ldr r2, [r2, #4]
 	adds r0, r5, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	b .L_080dcd8c
 .L_080dcd7c:
 	.4byte 0x00000000

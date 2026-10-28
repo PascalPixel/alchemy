@@ -22,16 +22,16 @@ void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
 s32 Func_02002950(s32 actor, s32 a, s32 b);
 void Func_02000734(void);
 void Func_02000810(s32 actor, s32 target);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
-void *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(void *object, s32 flags);
-void Object_SetPartAttribute(void *object, s32 value);
+void *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(void *object, s32 flags);
+void Actor_SetPartAttribute(void *object, s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 s32 FieldMessage_ShowAtActor(s32 actor, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void FieldMessage_Show(s32 message, s32 position);
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
@@ -51,8 +51,8 @@ void Func_020008a4(void) {
   Func_020029a8(0);
   Func_02002928(MsgFieldWaitingForCompanion);
   Func_02002938(22, 0, 5);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 68, 280);
-  ObjectMotion_SetPositionAndReset(4, 68, 272);
+  Call3((void (*)())Actor_SetPositionAndReset, 4, 68, 280);
+  Actor_SetPositionAndReset(4, 68, 272);
   Call2((void (*)())Func_02002940, 4, 0x8000);
   FieldEvent_WaitFrames(20);
   Call2((void (*)())Func_02002940, 4, 0xc000);
@@ -61,8 +61,8 @@ void Func_020008a4(void) {
   FieldEvent_WaitFrames(20);
   Call2((void (*)())Func_02002940, 4, 0xc000);
   FieldEvent_WaitFrames(10);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(22), 0);
-  Object_SetPartAttribute(Object_GetById(22), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(22), 0);
+  Actor_SetPartAttribute(Actor_GetById(22), 15);
   angle = 0x4000;
   Func_02002900(22, 0x400000, 0xe10000, angle);
   Func_02000734();
@@ -90,7 +90,7 @@ void Func_020008a4(void) {
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_WaitFrames(30);
   Camera_MoveWithinMapBounds(0x440000, -1, 0x1000000, 1);
-  ObjectMotion_CommitPositionAndActivate(22, 0, 16);
+  Actor_CommitPositionAndActivate(22, 0, 16);
   FieldEvent_WaitFrames(30);
   Func_02000810(22, 4);
   Func_020028a0(1);

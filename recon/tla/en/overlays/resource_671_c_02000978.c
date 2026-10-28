@@ -3,20 +3,20 @@
 // builds its constants in r4, and reloads actor->z after the first clamp, where
 // CSE here carries the stored value into the second test.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s32 gData_02005af0;
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_0200584c(void);
-struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
-void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
+struct Actor *Func_020005b4(struct Actor *origin, s32 id);
+void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity);
 
 void Func_02000978(void) {
   s32 *speed = &gData_02005af0;
 
   if (*speed != 0) {
-    struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
-    struct ObjectRuntime *found = Func_020005b4(actor, 359);
+    struct Actor *actor = Actor_GetById(Func_0200584c());
+    struct Actor *found = Func_020005b4(actor, 359);
     s32 dx = *speed << 15;
 
     if (found != NULL) {

@@ -1,13 +1,13 @@
 // Draft, differ 34 of 107 (ported from The Broken Seal's
 // FieldObject_PlaceSceneActors; ⚓️ places ids 8 to 79 and calls
-// Object_SetMode): the native copies the 0xfff mask into r10 before it ands
+// Actor_SetMode): the native copies the 0xfff mask into r10 before it ands
 // the scene (regmove's subreg form), and loop.c hoists the selected owner's
 // address, derived from the 0x256 offset (subs r2, #66), into r9 just before
 // the loop; here the owner's address is hoisted by hand at the top. With
 // the owner read plainly in the loop it differs 70; a u16 field for the
 // pending event read as (s16) for the flags changes nothing.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct ActorDescriptor {
@@ -21,7 +21,7 @@ struct ActorDescriptor {
 
 s32 GameFlag_Test(s32 flag);
 struct ActorDescriptor *Scene_FindActorPlacement(s32 id);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 
 void Func_080d784c(void) {
@@ -37,7 +37,7 @@ void Func_080d784c(void) {
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
       for (id = 8; id <= 79; id++) {
         struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
-        struct ObjectRuntime *obj;
+        struct Actor *obj;
 
         if (desc == NULL || desc->scene - 48 != scene - 300)
           continue;
@@ -47,14 +47,14 @@ void Func_080d784c(void) {
         if (flags == 0) {
           obj->terrainHeight = flags;
           obj->motionFlags = 3;
-          Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
+          Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {
-          struct ObjectRuntime *selection = ObjectTable_Get(*owner);
+          struct Actor *selection = ObjectTable_Get(*owner);
 
-          Object_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
+          Actor_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
                                               selection->z - (32 << 16));
         }
-        Object_SetMode(obj, 1);
+        Actor_SetMode(obj, 1);
       }
     }
   }

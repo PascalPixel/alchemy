@@ -34,22 +34,22 @@ void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Task_Add(void (*callback)(void), s32 priority);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);
-void Func_020012e4(struct ObjectRuntime *object);
+void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
 void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
-  struct ObjectRuntime *source = Object_GetById(id);
-  struct ObjectRuntime *object = Object_GetById(target);
+  struct Actor *source = Actor_GetById(id);
+  struct Actor *object = Actor_GetById(target);
 
-  Object_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  Actor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
   Func_02004bd0(object, script);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02004bc0(object, 1);
   object->watchedObject = source;

@@ -33,59 +33,59 @@ Import_EventAskYesNoWithActorAnimation:
 	.global Import_ActorGet
 	.thumb_func
 Import_ActorGet:
-	overlay_veneer Object_GetByIdFar
+	overlay_veneer Actor_GetByIdFar
 	.global Import_ActorSetSpeed
 	.thumb_func
 Import_ActorSetSpeed:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_ResetAndSetPosition
+	overlay_veneer Actor_SetSpeedParametersFar
+	.global Actor_ResetAndSetPosition
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
-	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global ObjectMotion_SetPositionAndCommit
+Actor_ResetAndSetPosition:
+	overlay_veneer Actor_ResetAndSetPositionFar
+	.global Actor_SetPositionAndCommit
 	.thumb_func
-ObjectMotion_SetPositionAndCommit:
-	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_SetPositionAndReset
+Actor_SetPositionAndCommit:
+	overlay_veneer Actor_SetPositionAndCommitFar
+	.global Actor_SetPositionAndReset
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
+Actor_SetPositionAndReset:
+	overlay_veneer Actor_SetPositionAndResetFar
 	.global Import_ActorCenterAndWalk
 	.thumb_func
 Import_ActorCenterAndWalk:
-	overlay_veneer ObjectMotion_CenterOnColumnFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	overlay_veneer Actor_CenterOnColumnFar
+	.global Actor_WaitForMoveById
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+Actor_WaitForMoveById:
+	overlay_veneer Actor_WaitForMoveByIdFar
 	.global Func_02000ca8
 	.thumb_func
 Func_02000ca8:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Import_ActorSetAnimation
 	.thumb_func
 Import_ActorSetAnimation:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_Launch
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_Jump
 	.thumb_func
-ObjectMotion_Launch:
-	overlay_veneer ObjectMotion_LaunchFar
-	.global ObjectMotion_SetVariantCallback
+Actor_Jump:
+	overlay_veneer Actor_JumpFar
+	.global Actor_StartRepeatedMotion
 	.thumb_func
-ObjectMotion_SetVariantCallback:
-	overlay_veneer ObjectMotion_SetVariantCallbackFar
+Actor_StartRepeatedMotion:
+	overlay_veneer Actor_StartRepeatedMotionFar
 	.global Motion_SetVarCbAndRefresh
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global ObjectMotion_SetAngleToward
+	.global Actor_SetAngleToward
 	.thumb_func
-ObjectMotion_SetAngleToward:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Object_TurnToFaceEachOther
+Actor_SetAngleToward:
+	overlay_veneer Actor_SetAngleTowardFar
+	.global Actor_TurnToFaceEachOther
 	.thumb_func
-Object_TurnToFaceEachOther:
-	overlay_veneer Object_LinkPairFar
+Actor_TurnToFaceEachOther:
+	overlay_veneer Actor_TurnToFaceEachOtherFar
 	.global Import_EventSetMessageId
 	.thumb_func
 Import_EventSetMessageId:
@@ -98,14 +98,14 @@ Import_FieldMessageShowAtActor:
 	.thumb_func
 Import_EventShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Import_ActorSetSpritePriority
 	.thumb_func
 Import_ActorSetSpritePriority:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_02000d08
 	.thumb_func
 Func_02000d08:
@@ -126,14 +126,14 @@ Import_EventFinishScreenTransition:
 	.thumb_func
 Import_EventWaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Object_SetWideSprite
+	.global Actor_SetWideSprite
 	.thumb_func
-Object_SetWideSprite:
-	overlay_veneer Object_SetWideSpriteFar
+Actor_SetWideSprite:
+	overlay_veneer Actor_SetWideSpriteFar
 	.global Import_ActorReturnHome
 	.thumb_func
 Import_ActorReturnHome:
-	overlay_veneer Object_ReturnHomeFar
+	overlay_veneer Actor_ReturnHomeFar
 	.global Import_EventResolvePendingActions
 	.thumb_func
 Import_EventResolvePendingActions:

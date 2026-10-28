@@ -33,12 +33,12 @@ struct Position {
   s32 z;
 };
 
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_020034d4(s32 actor, s32 x, s32 z);
@@ -89,25 +89,25 @@ static __inline__ void Func_02003434_(s32 a, s32 b, s32 c) {
   Func_02003434(a, b, c);
 }
 
-static __inline__ void ObjectMotion_ResetAndSetPositionInMode2_(s32 actor,
+static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 actor,
                                                                 s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
+  Actor_ResetAndSetPositionInMode2(actor, x, z);
 }
 
-static __inline__ void ObjectMotion_SetPositionAndReset_(s32 actor, s32 x,
+static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x,
                                                          s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
-static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
+static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
@@ -123,13 +123,13 @@ void Func_0200115c(void) {
   const u16 *colour;
   u16 *to;
   struct Adventure *party;
-  struct FieldActor *object = Object_GetById(13);
+  struct FieldActor *object = Actor_GetById(13);
 
   if (Flag_IsSet(0x97e))
     return;
   Func_0200345c();
   Func_020035b4(0);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 584, 248);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 584, 248);
   if (Flag_IsSet(0x974)) {
     Func_02003534_(gAdventure.currentOwner, 0);
     Func_0200350c((s32)MsgBackForMore);
@@ -147,12 +147,12 @@ void Func_0200115c(void) {
     Func_0200350c((s32)MsgHoldItRight);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
-    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
+    Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
     Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
     FieldEvent_WaitFrames(5);
-    ObjectMotion_Launch(11, 6, 15);
-    ObjectMotion_Launch(11, 6, 23);
+    Actor_Jump(11, 6, 15);
+    Actor_Jump(11, 6, 23);
     Func_0200351c_(11, 0, 5);
     Func_02003544_(11, 263, 30);
     Func_0200351c_(11, 0, 5);
@@ -213,24 +213,24 @@ void Func_0200115c(void) {
   Func_0200350c((s32)MsgOhAllRightListen);
   Func_02003534_(8, 0xb000);
   FieldEvent_WaitFrames(20);
-  Object_GetById(8)->facing = 0x5000;
-  Object_SetModeById(8, 5);
+  Actor_GetById(8)->facing = 0x5000;
+  Actor_SetModeById(8, 5);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(8, 6);
+  Actor_SetModeById(8, 6);
   Func_020034d4_(12, 724 << 16, 252 << 16);
-  WORD_AT(Object_GetById(12), 24) = 0x13333;
-  WORD_AT(Object_GetById(12), 28) = 0x13333;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
+  WORD_AT(Actor_GetById(12), 24) = 0x13333;
+  WORD_AT(Actor_GetById(12), 28) = 0x13333;
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020035bc();
     FieldEvent_WaitFrames(15);
     Func_020034d4_(12, 0, 0);
-    Object_SetModeById(8, 1);
-    Object_GetById(8)->facing = 0x8000;
+    Actor_SetModeById(8, 1);
+    Actor_GetById(8)->facing = 0x8000;
     Func_0200351c_(0x2008, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-    ObjectMotion_CommitPositionAndActivate(4, -16, 0);
+    Actor_CommitPositionAndActivate(4, -16, 0);
     FieldEvent_WaitFrames(5);
   } else {
     FieldEvent_WaitFrames(25);
@@ -248,13 +248,13 @@ void Func_0200115c(void) {
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
     object->terrainHeight = 0xfc190000;
-    ((s32 (*)(s32, s32, s32))ObjectMotion_Launch)(12, 10, 0);
+    ((s32 (*)(s32, s32, s32))Actor_Jump)(12, 10, 0);
     /* FAKEMATCH: barrier, see the header. */
     __asm__("");
     Func_0200362c(146);
-    ObjectMotion_SetActionVariant(12, 1);
-    ObjectMotion_SetSpeedParameters_(12, 0x30000, 0x18000);
-    ObjectMotion_ResetAndSetPositionInMode2_(12, 644, 248);
+    Actor_SetSpritePriority(12, 1);
+    Actor_SetSpeedParameters_(12, 0x30000, 0x18000);
+    Actor_ResetAndSetPositionInMode2_(12, 644, 248);
     FieldEvent_WaitFrames(21);
     Func_020034d4_(12, 0, 0);
     FieldEvent_WaitFrames(50);
@@ -295,12 +295,12 @@ void Func_0200115c(void) {
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)Func_02001138;
     WORD_AT(object, 28) = 0x4000;
-    ((s32 (*)(s32, s32, s32))ObjectMotion_Launch)(13, 11, 0);
+    ((s32 (*)(s32, s32, s32))Actor_Jump)(13, 11, 0);
     /* FAKEMATCH: barrier, see the header. */
     __asm__("");
     Func_0200362c(147);
-    ObjectMotion_SetSpeedParameters_(13, 0x33333, 0x19999);
-    ObjectMotion_SetPositionAndReset_(13, 584, 248);
+    Actor_SetSpeedParameters_(13, 0x33333, 0x19999);
+    Actor_SetPositionAndReset_(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
     party = &gAdventure;

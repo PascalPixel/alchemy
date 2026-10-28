@@ -1,7 +1,7 @@
 #include "worka0.h"
 #include "types.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s32 gData_080f3950;
 

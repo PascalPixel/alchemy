@@ -4,7 +4,7 @@
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_effect.h"
 
 struct GustObject {
@@ -32,7 +32,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 struct GustObject *Func_02002178(s32 type, s32 x, s32 y, s32 z);
 void Func_02002160(struct GustObject *object, s32 mode);
-void ObjectDispatch_SetSingleChildFlags(struct GustObject *object, u32 flags);
+void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 void Func_02000628(struct GustObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -49,7 +49,7 @@ struct GustObject *Func_020007e8(struct GustObject *source) {
                                   Math_Sine(source->angle));
   object = Func_02002178(280, position.x, source->y, position.z);
   Func_02002160(object, 2);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->unk64 = 0;

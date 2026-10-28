@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
-void Func_020056b4(struct ObjectRuntime *object);
+void Func_020056b4(struct Actor *object);
 void Func_0200580c(s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02005794(s32 id, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
@@ -18,14 +18,14 @@ static __inline__ void Actor_Cue(s32 id, s32 value) {
   Func_02005794(id, value);
 }
 
-void Func_02000a20(struct ObjectRuntime *object) {
+void Func_02000a20(struct Actor *object) {
   u32 i;
   s32 delta;
   struct Adventure *party;
 
   Func_020056b4(object);
   Func_0200580c(0);
-  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = 0x60000;
   object->z = 0xf741cf;
@@ -36,9 +36,9 @@ void Func_02000a20(struct ObjectRuntime *object) {
    * offset before the angle store (differ 4). */
   asm volatile("" : "+l"(party));
   Actor_Cue(party->currentOwner, 258);
-  Object_SetModeById(party->currentOwner, 27);
+  Actor_SetModeById(party->currentOwner, 27);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(party->currentOwner, 28);
+  Actor_SetModeById(party->currentOwner, 28);
   FieldEvent_WaitFrames(10);
   for (i = 0; i <= 19; i++) {
     /* FAKEMATCH: one variable set twice in the loop keeps both constants inside

@@ -7,10 +7,10 @@ struct SpriteParts {
   u16 unk12;
 };
 
-s32 Func_02001a44(struct ObjectRuntime *a, struct ObjectRuntime *b);
+s32 Func_02001a44(struct Actor *a, struct Actor *b);
 
-void Func_02001a9c(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+void Func_02001a9c(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct SpriteParts *parts;

@@ -6,12 +6,12 @@
 // rotation matrix built from it; Func_020055ec draws it at its depth.
 // Left: a rough reading: the native's loop is entered at its test, keeps the OAM cursor in r8, the scroll in r9 and r10 and the tile in r11, reloads the rotation for each piece, and orders the screen position's arithmetic otherwise; the alignment is poor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "graphics/vram_tab.h"
 
 extern u8 gSceneState[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 s32 AffineMatrix_BuildForEffect(u32 *matrix);
 void Func_020055ec(u32 *oam, s32 depth);
 
@@ -22,7 +22,7 @@ void Func_02004710(void) {
   s32 scrollX = *(s32 *)(map + 0xe4) & 0xffff0000;
   s32 scrollZ = *(s32 *)(map + 0xe8) & 0xffff0000;
   u32 tile = gResourceTableEntries[*(s16 *)(state + 0x168)].offset >> 5;
-  struct ObjectRuntime *piece;
+  struct Actor *piece;
   u32 matrix[2];
   s32 affine = 0, id, x, y, z, depth, cellX, cellZ, kind;
 
@@ -32,7 +32,7 @@ void Func_02004710(void) {
     affine = AffineMatrix_BuildForEffect(matrix);
   }
   for (id = *(s16 *)(state + 0x164); id < *(s16 *)(state + 0x166); id++) {
-    piece = Object_GetById(id);
+    piece = Actor_GetById(id);
     if (piece->x == 0)
       continue;
     x = (piece->x - scrollX) >> 16;

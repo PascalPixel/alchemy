@@ -33,7 +33,7 @@ s32 EventTable_GetRowLimit(void);
 s32 EventTable_GetRowType(s32 row);
 void EventTable_ApplyRowAbilities(s32 row);
 void Func_08108148(void);
-void *Object_GetByIdFar(s32 id);
+void *Actor_GetByIdFar(s32 id);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
@@ -62,7 +62,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = EventTable_GetRowType(stockRow);
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Object_GetByIdFar(keeperId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, 2);

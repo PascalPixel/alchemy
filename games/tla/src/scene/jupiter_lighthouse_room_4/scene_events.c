@@ -19,7 +19,7 @@ void Func_02001eb0();
 void Func_02001f08();
 void GameFlag_SetBit();
 void Func_02000724();
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 void PartyInventory_Remove();
 void FieldMessage_Show();
 u8 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
@@ -64,13 +64,13 @@ void Func_020000c0(void) {
   Func_02001df8(30, 10, 1, 1, 31, 10);
 }
 
-void Func_02000108(s32 unused, s32 id) { ObjectMotion_SetActionVariant(id, 2); }
+void Func_02000108(s32 unused, s32 id) { Actor_SetSpritePriority(id, 2); }
 
 void Func_02000114(s32 unused, s32 id) {
   struct FieldActor *object;
   s32 i;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   if (object->x >> 20 == 10 && object->z >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {

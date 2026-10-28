@@ -1,14 +1,14 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 
 extern s32 gData_02005610[];
 
 s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void Func_02000f00(void);
 void Func_02000fac(void);
@@ -22,7 +22,7 @@ void Func_02004fcc(s32 value);
 /// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
 /// before that it turns to the leader and speaks.
 void Func_020011c8(void) {
-  if (*((u8 *)Object_GetById(10) + 96) > 2)
+  if (*((u8 *)Actor_GetById(10) + 96) > 2)
     return;
   Func_02004e5c();
   Func_02004fcc(0);
@@ -34,11 +34,11 @@ void Func_020011c8(void) {
       Func_02004f0c((s32)MsgGaiaRockInside06);
     Func_02004f14(10, 0);
   } else {
-    if (Object_GetById(9)->script == gData_02005610)
-      Object_RefreshSelectorById(9);
+    if (Actor_GetById(9)->script == gData_02005610)
+      Actor_RefreshSelectorById(9);
     Func_02000f00();
     Func_02004f0c((s32)MsgGaiaRockInside03);
-    ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
     Func_02004f14(10, 0);
     Motion_SetModeAndWaitAnimation(10, 3);

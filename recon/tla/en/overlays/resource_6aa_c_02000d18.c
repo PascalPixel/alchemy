@@ -10,13 +10,13 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "adventure.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "vram_tab.h"
 
 extern u16 gData_020068a2;
 extern u32 Data_020068a4[3];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004b80(u32 *oam, s32 depth);
 
@@ -27,7 +27,7 @@ void Func_02000d18(void) {
   s32 cameraZ = camera[1] & 0xffff0000;
   s32 originY = map->origin[1];
   s32 tile = gResourceTableEntries[gData_020068a2].offset >> 5;
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 y, z, depth, sx, sy;
   u32 *word;
 

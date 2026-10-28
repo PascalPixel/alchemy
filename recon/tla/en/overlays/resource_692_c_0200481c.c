@@ -2,17 +2,17 @@
 // a ring (shared with overlay 697 and the other trap maps), at the leader's
 // sprite priority.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
 extern const s32 gData_02005668[];
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
-void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02004c98(struct FieldEffect *effect, s32 mode);
 void Func_02004ca0(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
@@ -20,7 +20,7 @@ s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_0200481c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;
@@ -36,7 +36,7 @@ void Func_0200481c(void) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      ObjectDispatch_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0(effect, gData_02005668);
       effect->velocity.y = 0;

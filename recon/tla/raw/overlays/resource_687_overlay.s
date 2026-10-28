@@ -30,7 +30,7 @@ Func_0200015c:
 	ldr r0, [r3]
 	mov r10, r1
 	ldr r7, [sp, #48]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #128
 	lsls r3, r3, #13
 	mov r1, r10
@@ -80,7 +80,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
+	bl Actor_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -95,7 +95,7 @@ Func_0200015c:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Object_SetSpritePriority
+	bl Scene_SetActorSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -117,7 +117,7 @@ Func_0200015c:
 	beq .L_0200823c
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Object_SetPartAttribute
+	bl Actor_SetPartAttribute
 .L_0200823c:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -145,7 +145,7 @@ Func_0200015c:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	ldr r1, [r7]
-	bl Object_SetSpritePriority
+	bl Scene_SetActorSpritePriority
 .L_02008274:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -264,7 +264,7 @@ Func_0200043c:
 	push {r7}
 	movs r0, #8
 	sub sp, #16
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #8]
 	movs r2, #128
 	asrs r3, r3, #21
@@ -408,7 +408,7 @@ Func_0200054c:
 	movs r0, #8
 	ldr r5, [r3, #108]
 	sub sp, #88
-	bl Object_GetById
+	bl Actor_GetById
 	movs r1, #170
 	lsls r1, r1, #1
 	adds r5, r5, r1
@@ -774,7 +774,7 @@ Func_02000818:
 	sub sp, #96
 	movs r0, #8
 	str r3, [sp, #36]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	ldr r0, [sp, #36]
 	movs r1, #170
@@ -1083,7 +1083,7 @@ Func_02000a80:
 	movs r0, #8
 	sub sp, #108
 	mov r11, r3
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r1, [r0, #8]
 	ldr r2, [r0, #16]
 	asrs r1, r1, #20
@@ -1633,7 +1633,7 @@ Func_02000ef0:
 	push {r7}
 	movs r0, #8
 	sub sp, #72
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	bl Func_02001fac
 	movs r0, #0
@@ -1829,9 +1829,9 @@ Func_02001108:
 	lsls r1, r1, #9
 	lsls r2, r2, #8
 	movs r0, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	movs r3, #192
 	lsls r3, r3, #8
 	movs r1, #176
@@ -1840,7 +1840,7 @@ Func_02001108:
 	lsls r2, r2, #1
 	movs r0, #8
 	lsls r1, r1, #1
-	bl ObjectMotion_ResetAndSetPositionInMode2
+	bl Actor_ResetAndSetPositionInMode2
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #9
@@ -1856,7 +1856,7 @@ Func_02001108:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02001ffc
 	movs r0, #8
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #78
 	bl Func_02002054
 	movs r0, #139

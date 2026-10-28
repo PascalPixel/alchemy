@@ -38,8 +38,8 @@ void Func_020055c4(s32 a, s32 b) {
   else
     link->height = 0x700000;
   link->unkf0 = 0xf9a00000;
-  Object_GetById(a);
-  Object_GetById(b);
+  Actor_GetById(a);
+  Actor_GetById(b);
   link->unkda = 0;
   link->unke0 = 0;
   Func_02005770(gData_020062d4, buffer);

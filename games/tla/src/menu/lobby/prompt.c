@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 
@@ -18,7 +18,7 @@ void Func_02001a1c(void);
 void Func_02001a64(s32 message);
 s32 Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 s32 Window_Create();
 void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
@@ -32,7 +32,7 @@ s32 Func_02000e4c(s32 id) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
   Func_02001a64((s32)MsgChooseYourParameters);
   Func_02001a74(id, 0);
   window = Window_Create(0, 0, 6, 4, 2);

@@ -1,14 +1,14 @@
 #include "local.h"
 
 void Func_02002674(void) {
-  ((struct ObjectFlags23 *)Object_GetById(gAdventure.currentOwner))->flags |=
+  ((struct ObjectFlags23 *)Actor_GetById(gAdventure.currentOwner))->flags |=
       32;
-  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
 }
 
 void Func_0200269c(void) {
-  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
 }
 
 void Func_020026cc(void) {
@@ -17,20 +17,20 @@ void Func_020026cc(void) {
   Camera_MoveWithinMapBounds(0x1480000, -1, 0xae0000, 1);
   Func_020052e8();
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
-  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 328, 174);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
+  Actor_SetPositionAndReset(gAdventure.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
   Func_020053d8(146);
-  Object_SetModeById(11, 2);
-  Object_GetById(11)->velocityY = 0x40000;
+  Actor_SetModeById(11, 2);
+  Actor_GetById(11)->velocityY = 0x40000;
   FieldEvent_WaitFrames(10);
   Func_020053d8(146);
-  Object_SetModeById(12, 2);
-  Object_SetModeById(13, 2);
-  Object_GetById(12)->velocityY = 0x60000;
-  Object_GetById(13)->velocityY = 0x60000;
-  ObjectMotion_ResetAndSetPosition(12, 300, 164);
-  ObjectMotion_SetPositionAndCommit(13, 356, 164);
+  Actor_SetModeById(12, 2);
+  Actor_SetModeById(13, 2);
+  Actor_GetById(12)->velocityY = 0x60000;
+  Actor_GetById(13)->velocityY = 0x60000;
+  Actor_ResetAndSetPosition(12, 300, 164);
+  Actor_SetPositionAndCommit(13, 356, 164);
   FieldEvent_WaitFrames(40);
   /* FAKEMATCH: the loop note ends the scheduling block before the battle rule
    * is set: without it the native order of the last position call's arguments

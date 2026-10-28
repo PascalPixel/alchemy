@@ -1,26 +1,26 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 void FieldMessage_Show(s32 message, s32 position);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 id);
+void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02004df4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02004dfc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void Func_02004e3c(struct ObjectRuntime *object, s32 value);
+void Func_02004e3c(struct Actor *object, s32 value);
 void Func_02004e5c(void);
 void Func_02004e64(void);
 void Func_02004ebc(s32 id, s32 x, s32 z);
@@ -35,30 +35,30 @@ void Func_02005014(s32 cue);
 /// of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
 /// the way and the partner returns to the leader.
 void Func_0200225c(void) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *partner;
-  struct ObjectRuntime *leader;
+  struct Actor *object;
+  struct Actor *partner;
+  struct Actor *leader;
   s32 i;
 
-  object = Object_GetById(8);
-  partner = Object_GetById(12);
+  object = Actor_GetById(8);
+  partner = Actor_GetById(12);
   Func_02004e5c();
   Func_02004fcc(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gAdventure.currentOwner);
-  Call3(ObjectMotion_ResetAndSetPosition, 12, 528, 372);
+  Call3(Actor_ResetAndSetPosition, 12, 528, 372);
   partner->velocityY = 0x60000;
-  ObjectMotion_CommitCurrentPositionAndActivate(12);
+  Actor_WaitForMoveById(12);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
   Func_02005014(576);
-  Object_SetModeById(8, 5);
+  Actor_SetModeById(8, 5);
   WaitFrames(30);
-  Object_SetModeById(8, 2);
+  Actor_SetModeById(8, 2);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(8, 3);
+  Actor_SetModeById(8, 3);
   FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bd)) {
@@ -66,8 +66,8 @@ void Func_0200225c(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
-    ObjectMotion_OffsetPositionAndResetMotion(8, 24, 0);
+    Call3(Actor_SetSpeedParameters, 8, 0x4000, 0xccc);
+    Actor_OffsetPositionAndResetMotion(8, 24, 0);
     Call6(Func_02004dfc, 27, 23, 1, 1, 28, 22);
     Func_02004dfc(32, 16, 2, 1, 29, 22);
     i = 0;
@@ -85,14 +85,14 @@ void Func_0200225c(void) {
       WaitFrames(1);
     }
     Func_02005014(564);
-    Object_SetModeById(8, 4);
+    Actor_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x308);
@@ -109,44 +109,44 @@ void Func_0200225c(void) {
       WaitFrames(1);
     }
     FieldEvent_WaitFrames(30);
-    Object_SetModeById(8, 4);
+    Actor_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     Func_02004e64();
   }
 }
 
 void Func_020024b8(void) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *partner;
-  struct ObjectRuntime *leader;
+  struct Actor *object;
+  struct Actor *partner;
+  struct Actor *leader;
   s32 i;
 
-  object = Object_GetById(9);
-  partner = Object_GetById(12);
+  object = Actor_GetById(9);
+  partner = Actor_GetById(12);
   Func_02004e5c();
   Func_02004fcc(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gAdventure.currentOwner);
-  Call3(ObjectMotion_ResetAndSetPosition, 12, 672, 372);
+  Call3(Actor_ResetAndSetPosition, 12, 672, 372);
   partner->velocityY = 0x60000;
-  ObjectMotion_CommitCurrentPositionAndActivate(12);
+  Actor_WaitForMoveById(12);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
   Func_02005014(576);
-  Object_SetModeById(9, 5);
+  Actor_SetModeById(9, 5);
   WaitFrames(30);
-  Object_SetModeById(9, 2);
+  Actor_SetModeById(9, 2);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(9, 3);
+  Actor_SetModeById(9, 3);
   FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9be)) {
@@ -154,8 +154,8 @@ void Func_020024b8(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Call3(ObjectMotion_SetSpeedParameters, 9, 0x4000, 0xccc);
-    Call3(ObjectMotion_ResetAndSetPosition, 9, 608, 352);
+    Call3(Actor_SetSpeedParameters, 9, 0x4000, 0xccc);
+    Call3(Actor_ResetAndSetPosition, 9, 608, 352);
     Call6(Func_02004dfc, 35, 23, 1, 1, 36, 22);
     Func_02004dfc(32, 16, 2, 1, 37, 22);
     i = 0;
@@ -173,14 +173,14 @@ void Func_020024b8(void) {
       WaitFrames(1);
     }
     Func_02005014(564);
-    Object_SetModeById(9, 4);
+    Actor_SetModeById(9, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x309);
@@ -197,44 +197,44 @@ void Func_020024b8(void) {
       WaitFrames(1);
     }
     FieldEvent_WaitFrames(30);
-    Object_SetModeById(9, 4);
+    Actor_SetModeById(9, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     Func_02004e64();
   }
 }
 
 void Func_02002718(void) {
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *partner;
-  struct ObjectRuntime *leader;
+  struct Actor *object;
+  struct Actor *partner;
+  struct Actor *leader;
   s32 i;
 
-  object = Object_GetById(8);
-  partner = Object_GetById(14);
+  object = Actor_GetById(8);
+  partner = Actor_GetById(14);
   Func_02004e5c();
   Func_02004fcc(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(14, gAdventure.currentOwner);
-  Call3(ObjectMotion_ResetAndSetPosition, 14, 336, 396);
+  Call3(Actor_ResetAndSetPosition, 14, 336, 396);
   partner->velocityY = 0x60000;
-  ObjectMotion_CommitCurrentPositionAndActivate(14);
+  Actor_WaitForMoveById(14);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
   Func_02005014(576);
-  Object_SetModeById(8, 5);
+  Actor_SetModeById(8, 5);
   WaitFrames(30);
-  Object_SetModeById(8, 2);
+  Actor_SetModeById(8, 2);
   FieldEvent_WaitFrames(30);
-  Object_SetModeById(8, 3);
+  Actor_SetModeById(8, 3);
   FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bc)) {
@@ -242,8 +242,8 @@ void Func_02002718(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
-    Call3(ObjectMotion_OffsetPositionAndResetMotion, 8, -16, 0);
+    Call3(Actor_SetSpeedParameters, 8, 0x4000, 0xccc);
+    Call3(Actor_OffsetPositionAndResetMotion, 8, -16, 0);
     Call6(Func_02004dfc, 27, 15, 2, 1, 23, 23);
     Func_02004dfc(25, 25, 1, 1, 25, 23);
     i = 0;
@@ -261,14 +261,14 @@ void Func_02002718(void) {
       WaitFrames(1);
     }
     Func_02005014(564);
-    Object_SetModeById(8, 4);
+    Actor_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Actor_WaitForMoveById(14);
     Func_02004ebc(14, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x307);
@@ -285,14 +285,14 @@ void Func_02002718(void) {
       WaitFrames(1);
     }
     FieldEvent_WaitFrames(30);
-    Object_SetModeById(8, 4);
+    Actor_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     if (leader != NULL)
-      ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
+      Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
     partner->velocityY = 0x60000;
-    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Actor_WaitForMoveById(14);
     Func_02004ebc(14, 0, 0);
     Func_02004e64();
   }

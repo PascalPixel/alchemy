@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 
 /// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
@@ -21,7 +21,7 @@ void Func_02003a28(s32 *out, s32 zArg) {
     z = top - shifted;
   }
   for (slot = 0; slot <= 63; slot++) {
-    struct ObjectRuntime *object = work->objects[slot];
+    struct Actor *object = work->objects[slot];
 
     if (object != NULL) {
       register s32 column asm("r3") = object->x >> 20;

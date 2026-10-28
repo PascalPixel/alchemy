@@ -15,11 +15,11 @@ void Func_02001c1c(s32 message);
 void Camera_FollowActor(s32 actor, s32 target);
 void Func_02001c4c(void);
 void Import_EventWaitFrames(s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 actor);
 void Func_02001c34(s32 actor, s32 height, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
@@ -27,14 +27,14 @@ void Func_02001c24(s32 actor, s32 value);
 void Import_SoundPlay(s32 cue);
 void Func_02001be4(s32 actor, s32 x, s32 z);
 void Func_02001cd4(s32 actor);
-void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
-void Object_TurnToFaceEachOther(s32 first, s32 second, s32 distance);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
+void Actor_StartRepeatedMotion(s32 actor, s32 value);
+void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 distance);
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_WatchAndSetScript(s32 actor, s32 target);
+void Actor_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
 void Import_ActorSetAnimation(s32 actor, s32 animation);
 struct VenusActor *Import_ActorGet(s32 id);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Func_02001ccc(s32 actor, s32 value);
 void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
@@ -64,12 +64,12 @@ static inline void Venus_Wait(s32 frames) {
 
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetPositionAndReset(actor, x, z);
+  Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ArmCallback(actor, angle, frames);
+  Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void Venus_ObjModeWait(s32 actor, s32 mode) {
@@ -79,12 +79,12 @@ static inline void Venus_ObjModeWait(s32 actor, s32 mode) {
 
 static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
+  Actor_ResetAndSetPositionInMode2(actor, x, z);
 }
 
 static inline void Venus_ObjCommitHere(s32 actor) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitCurrentPositionAndActivate(actor);
+  Actor_WaitForMoveById(actor);
 }
 
 static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
@@ -128,27 +128,27 @@ static inline void Venus_ObjEffect(s32 actor) {
 
 static inline void Venus_ObjVariant(s32 actor, s32 value) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetVariantCallback(actor, value);
+  Actor_StartRepeatedMotion(actor, value);
 }
 
 static inline void Venus_ObjLink(s32 first, s32 second, s32 distance) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_TurnToFaceEachOther(first, second, distance);
+  Actor_TurnToFaceEachOther(first, second, distance);
 }
 
 static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Venus_ObjFollow(s32 actor, s32 target) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_LinkObjectAndSetCallback(actor, target);
+  Actor_WatchAndSetScript(actor, target);
 }
 
 static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_CommitPositionAndActivate(actor, x, z);
+  Actor_CommitPositionAndActivate(actor, x, z);
 }
 
 static inline void Venus_ObjAnim(s32 actor, s32 animation) {
@@ -158,7 +158,7 @@ static inline void Venus_ObjAnim(s32 actor, s32 animation) {
 
 static inline void Venus_ObjPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  ObjectMotion_ResetAndSetPosition(actor, x, z);
+  Actor_ResetAndSetPosition(actor, x, z);
 }
 
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
@@ -625,14 +625,14 @@ void Func_02000d30(void) {
   Venus_ObjAnim(8, 2);
   actor = Import_ActorGet(5);
   if (actor != NULL)
-    ObjectMotion_ResetAndSetPosition(8, actor->xPixel, actor->zPixel);
+    Actor_ResetAndSetPosition(8, actor->xPixel, actor->zPixel);
   Venus_ObjCommitHere(8);
   Venus_ObjSetPos(8, 0, 0);
   Venus_ObjSpeed(9, 0x13333, 0x9999);
   Venus_ObjAnim(9, 2);
   actor = Import_ActorGet(5);
   if (actor != NULL)
-    ObjectMotion_ResetAndSetPosition(9, actor->xPixel, actor->zPixel);
+    Actor_ResetAndSetPosition(9, actor->xPixel, actor->zPixel);
   Venus_ObjCommitHere(9);
   Venus_ObjSetPos(9, 0, 0);
   Venus_Wait(10);

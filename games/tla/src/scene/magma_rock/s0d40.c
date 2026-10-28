@@ -1,6 +1,6 @@
 #include "types.h"
 #include "frame.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MagmaRockEffectConfig {
   s32 kind;
@@ -16,14 +16,14 @@ extern u32 gData_02003d50[];
 
 s32 GameFlag_Test(s32 flag);
 u32 Random16Far(void);
-void Func_02003c4c(struct ObjectRuntime *object, s32 value);
+void Func_02003c4c(struct Actor *object, s32 value);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
 /// and z velocity.
-void Func_02000d40(struct ObjectRuntime *object) {
+void Func_02000d40(struct Actor *object) {
   u32 frame = gFrameCount;
 
   if ((frame & 3) == 0) {

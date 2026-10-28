@@ -46,7 +46,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "motobj.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"

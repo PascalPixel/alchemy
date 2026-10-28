@@ -1,16 +1,16 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
 
 /// SC_APPROACH_WATCHED: follows the watched object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 // As ☀️'s function of the same name.
-s32 Object_ApproachWatchedObject(struct ObjectRuntime *object) {
+s32 Actor_ApproachWatchedActor(struct Actor *object) {
   s32 distancePixels;
   s32 moveZ;
   s32 dx;
@@ -21,7 +21,7 @@ s32 Object_ApproachWatchedObject(struct ObjectRuntime *object) {
   s32 moveX;
   /* FAKEMATCH(pin): the watched object held in the r2 the native keeps it in;
    * as a plain local, 15 of 65 instructions differ in tla-en. */
-  register struct ObjectRuntime *watchedObject asm("r2");
+  register struct Actor *watchedObject asm("r2");
 
   watchedObject = object->watchedObject;
   object->speedLimit = watchedObject->speedLimit;
@@ -47,12 +47,12 @@ s32 Object_ApproachWatchedObject(struct ObjectRuntime *object) {
     remainingDistance = distancePixels - 0x10;
     moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
-    Object_SetMoveTarget(object, object->x + moveX, object->y,
+    Actor_SetMoveTarget(object, object->x + moveX, object->y,
                          object->z + moveZ);
-    ObjectDispatch_SelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
     object->step = (object->step + 1);
     return 1;
   }
-  ObjectDispatch_SelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   return 0;
 }

@@ -18,7 +18,7 @@ void Func_02000918(u16 *list) {
      * the id is read again and the pointer outranks the actor for r5; without
      * it, 19 of 31 instructions differ in tla-en. */
     asm("" : "+l"(list));
-    object = Object_GetById(list[0]);
+    object = Actor_GetById(list[0]);
     if (GameFlag_Test(list[2]))
       *(u8 *)((u32)map->layers[2].cells + (Func_020041e0(object) << 2) + 2) =
           255;
@@ -47,7 +47,7 @@ void Func_0200095c(u16 *list) {
     /* FAKEMATCH(barrier): the id is read again for the call rather than shared
      * with the loop test; without it, 9 of 25 instructions differ in tla-en. */
     asm("" : : : "memory");
-    index = Func_020041e0(Object_GetById(*list));
+    index = Func_020041e0(Actor_GetById(*list));
     list += 3;
     *(u8 *)((u32)map->layers[2].cells + (index << 2) + 2) = 232;
   next:

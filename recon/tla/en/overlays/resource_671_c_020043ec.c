@@ -8,7 +8,7 @@
 // through lr), the zero kept in r8 that also starts the row, and the first
 // column's load, which jump2 merges into the search's here.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct PuzzleCell {
@@ -32,12 +32,12 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_0200566c(s32 a, s32 kind, s32 b, s32 c, s32 x, s32 z);
 
 void Func_020043ec(s32 mode) {
   struct SceneState *state;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct PuzzleCell *cell;
   s32 x, z;
   u32 row, col;
@@ -47,7 +47,7 @@ void Func_020043ec(s32 mode) {
   if (mode != 1)
     return;
   state = &gSceneState;
-  object = Object_GetById(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
+  object = Actor_GetById(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
   x = (object->x >> 20) - state->originX;
   z = (object->z >> 20) - state->originZ;
   {

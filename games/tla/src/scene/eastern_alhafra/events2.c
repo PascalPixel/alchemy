@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 void Camera_MoveWithinMapBounds();
 void Camera_FollowActor();
 void Func_02000190(s32, s32);
@@ -24,12 +24,12 @@ void Func_02000394(s32 unused, s32 id) {
 }
 
 void Func_0200042c(s32 mode, s32 id) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 x;
   s32 z;
   s32 open;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   x = object->x >> 20;
   z = object->z >> 20;
   open = 0;

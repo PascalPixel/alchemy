@@ -13,7 +13,7 @@
 // upside down, behind the target where the first is in front of it.
 #include "types.h"
 #include "fixed_math.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct ArcSprite {
@@ -32,17 +32,17 @@ struct ArcWork {
   s16 age[2];
   s16 resource;
   s16 group;
-  struct ObjectRuntime *target;
+  struct Actor *target;
 };
 
 void Camera_WorldToScreen(s32 *position);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void Func_080eb01c(struct ArcSprite *sprite);
 
 void BattleEffect_UpdateArcEffect(void) {
   s32 group;
   struct ArcWork *work = Ram_HeapSlots->block62;
-  struct ObjectRuntime *target = work->target;
+  struct Actor *target = work->target;
   s32 position[3];
   s32 i;
 

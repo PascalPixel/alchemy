@@ -31,10 +31,10 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -124,8 +124,8 @@ void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
-void Object_SetMode(void *object, s32 mode);
-void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetMode(void *object, s32 mode);
+void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_LoadBasicObjColors(void);
@@ -958,13 +958,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0) {
         void *user = *GetBattleObjectSlotFar(effect->actor);
 
-        Object_SetMode(user, 0);
-        Object_SetMode(user, 2);
-        ObjectDispatch_SetAnimationSpeedFar(user, 0);
+        Actor_SetMode(user, 0);
+        Actor_SetMode(user, 2);
+        Actor_SetAnimationSpeedFar(user, 0);
         Sound_PlayFar(212);
       }
       if (frame == 14)
-        ObjectDispatch_SetAnimationSpeedFar(
+        Actor_SetAnimationSpeedFar(
             *GetBattleObjectSlotFar(effect->actor), 16);
       if (frame == 22)
         Sound_PlayFar(212);
@@ -1307,7 +1307,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Heap_Release(verts);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}
     work->transferPending = 1;

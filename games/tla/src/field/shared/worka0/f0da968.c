@@ -1,13 +1,13 @@
 #include "worka0.h"
 #include "types.h"
 #include "input.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern s32 gData_080f3950;
 
 void Func_080da060(s32 a0, s32 a1, s32 a2, s32 a3);
 
-void Func_080da968(struct ObjectRuntime *object) {
+void Func_080da968(struct Actor *object) {
   u8 *parts = object->animation;
 
   parts[22] = 253;

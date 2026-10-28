@@ -5,25 +5,25 @@
 // modes 2 and 3 both then rise together over 256 frames with sounds 522, 390
 // and 80, and all three take motion flags 4.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
 void Func_02002b68(s32 sound);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void Func_0200105c(struct ObjectRuntime *object);
+void Func_0200105c(struct Actor *object);
 void Sound_WaitForJingle(void);
 
 void Func_02000054(s32 mode) {
-  struct ObjectRuntime *left = Object_GetById(9);
-  struct ObjectRuntime *right = Object_GetById(10);
-  struct ObjectRuntime *rider = Object_GetById(23);
+  struct Actor *left = Actor_GetById(9);
+  struct Actor *right = Actor_GetById(10);
+  struct Actor *rider = Actor_GetById(23);
   u8 *sprite = rider->animation;
   s32 i;
 
-  Object_SetPositionAndResetMotion(rider, rider->x, rider->y, rider->z);
+  Actor_SetPositionAndResetMotion(rider, rider->x, rider->y, rider->z);
   if (mode == 0 || mode == 2) {
     Func_02002b68(556);
     for (i = 0; i <= 63; i++) {
@@ -50,8 +50,8 @@ void Func_02000054(s32 mode) {
   Func_0200105c(right);
   Func_02002b68(522);
   for (i = 255; i >= 0; i--) {
-    Object_GetById(9)->y += 0x1999;
-    Object_GetById(10)->y += 0x1999;
+    Actor_GetById(9)->y += 0x1999;
+    Actor_GetById(10)->y += 0x1999;
     rider->y += 0x1999;
     WaitFrames(1);
   }

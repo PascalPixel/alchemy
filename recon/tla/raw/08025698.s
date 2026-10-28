@@ -186,7 +186,7 @@ Func_08025698:
 	adds r0, r6, #0
 	adds r3, r4, #0
 	ldr r2, [r7, #4]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 	ldrh r3, [r6, #4]
 	movs r0, #1
 	adds r3, #4

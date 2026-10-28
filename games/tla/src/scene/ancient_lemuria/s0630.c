@@ -42,9 +42,9 @@ s32 Func_02000630(void) {
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-u8 *Object_GetById(s32 id);
+u8 *Actor_GetById(s32 id);
 void Task_Add(s32 (*callback)(void), s32 priority);
-void ObjectDispatch_SetSingleChildFlags(u8 *object, s32 flags);
+void Actor_SetSingleChildFlags(u8 *object, s32 flags);
 void Func_0200195c(s32 id, s32 x, s32 z);
 void Func_02000048(void);
 
@@ -77,9 +77,9 @@ s32 Func_020006bc(void) {
     Func_0200195c_(12, 312 << 16, 184 << 16);
   if (gAdventure.entrance == 1 && !GameFlag_Test_(0x96d) &&
       GameFlag_Test(0x96c)) {
-    *(void (**)(void))(Object_GetById(13) + 108) = Func_02000048;
-    *(u16 *)(Object_GetById(13) + 100) = 0;
+    *(void (**)(void))(Actor_GetById(13) + 108) = Func_02000048;
+    *(u16 *)(Actor_GetById(13) + 100) = 0;
   }
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   return 0;
 }

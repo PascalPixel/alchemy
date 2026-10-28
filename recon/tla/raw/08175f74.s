@@ -4989,7 +4989,7 @@ BattleEffect_RunCharon:
 .L_081785f6:
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r7, #240
 	ldr r6, [sp, #92]
 	lsls r7, r7, #7

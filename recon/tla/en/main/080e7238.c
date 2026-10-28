@@ -8,7 +8,7 @@
 #include "types.h"
 #include "mem.h"
 #include "resource.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "effect_sprite.h"
 #include "system.h"
@@ -38,7 +38,7 @@ void WaitFrames(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
@@ -47,7 +47,7 @@ void Func_080dc954(void);
 
 void Func_080e7238(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
-  struct ObjectRuntime *object =
+  struct Actor *object =
       ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -79,7 +79,7 @@ void Func_080e7238(void) {
   WaitFrames(20);
   object->scaleX = 0;
   object->scaleY = 0;
-  ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSingleChildFlagsFar(object, 0);
 
   count = 2;
   next = 0;
@@ -144,7 +144,7 @@ void Func_080e7238(void) {
     case 2:
       if (frame == 0) {
         object->angle = 0x4000;
-        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+        Actor_SetSingleChildFlagsFar(object, 1);
         count = 3;
       }
       if (frame == 10)

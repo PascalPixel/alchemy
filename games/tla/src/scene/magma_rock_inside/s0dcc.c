@@ -12,7 +12,7 @@ struct CellWatch {
   u8 unk08[4];
   s32 z;
   u8 unk10[4];
-  struct ObjectRuntime *object;
+  struct Actor *object;
 };
 
 s32 Func_02000658(u32 layer, s32 x, s32 y);
@@ -31,7 +31,7 @@ test:
     id = *table++;
     if (cell != *table++)
       goto again;
-    watch->object = Object_GetById(id);
+    watch->object = Actor_GetById(id);
     result = *table;
   }
   return result;

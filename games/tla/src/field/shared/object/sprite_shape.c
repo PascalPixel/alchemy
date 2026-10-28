@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "script_object_runtime.h"
 
 struct ObjectSprite {
@@ -20,8 +20,8 @@ struct ObjectSprite {
 
 void GameFlag_SetBit(s32 flag);
 
-s32 Object_GetSpriteShape(u32 objectId) {
-  struct ObjectRuntime *object;
+s32 Actor_GetSpriteShape(u32 objectId) {
+  struct Actor *object;
   struct ObjectSprite *sprite;
   s32 shape = 0;
 
@@ -34,7 +34,7 @@ s32 Object_GetSpriteShape(u32 objectId) {
   return shape;
 }
 
-void Object_ReturnHome(s32 mode, u32 objectId, s32 flag) {
+void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   struct ScriptObjectRuntime *object;
 
   object = (struct ScriptObjectRuntime *)ObjectTable_Get(objectId);
@@ -45,7 +45,7 @@ void Object_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   if (mode == 2) {
     GameFlag_SetBit(flag);
     if (object->x != 0)
-      Object_SetSquareSprite(objectId);
+      Actor_SetSquareSprite(objectId);
     object->x = object->homeX << 16;
     object->z = object->homeZ << 16;
     BattleEffect_DropObjectAtAnchor(objectId);

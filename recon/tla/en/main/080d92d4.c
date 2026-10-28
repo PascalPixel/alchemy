@@ -14,7 +14,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct ChainSlot {
@@ -30,7 +30,7 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
-typedef void (*TargetHook)(struct ObjectRuntime *, s32 *, s32 *);
+typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
 extern s32 gData_080f393c;
 
@@ -42,8 +42,8 @@ void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
 
 void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
   struct ChainWork *work = Ram_HeapSlots->unk84[6];
-  struct ObjectRuntime *from = ObjectTable_Get(fromId);
-  struct ObjectRuntime *to = ObjectTable_Get(toId);
+  struct Actor *from = ObjectTable_Get(fromId);
+  struct Actor *to = ObjectTable_Get(toId);
 
   if (from != NULL && to != NULL) {
     s32 toX = to->x;
@@ -78,8 +78,8 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
                     to->y + 0x80000, to->z, Trig_Sin(gData_080f393c) * 4);
       gData_080f393c += 0x1000;
       WaitFrames(6);
-      Object_SetMode(from, 2);
-      Object_SetMode(to, 2);
+      Actor_SetMode(from, 2);
+      Actor_SetMode(to, 2);
     }
   }
 }

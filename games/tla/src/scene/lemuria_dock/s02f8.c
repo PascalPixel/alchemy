@@ -33,12 +33,12 @@ void Func_020002f8(void) {
 
 s32 Func_02000360(void) {
   SCENE_WORK->unk1ac = 256;
-  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Task_Add(Func_020002f8, 0x480);
   Flag_Clear(0x12f);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
   if (Flag_IsSet(0x90a))
-    ObjectMotion_SetActionVariant(9, 1);
+    Actor_SetSpritePriority(9, 1);
   else
     Func_020004bc(9, 0, 0);
 #endif

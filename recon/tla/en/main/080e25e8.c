@@ -12,7 +12,7 @@
 // throughout. Written over a byte array the draft measured 156; the
 // struct is the native's addressing. A while loop measured the same.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "ram_buffer.h"
 
 struct TouchCell {
@@ -56,7 +56,7 @@ struct TouchCopies {
 extern struct TouchCopies gData_02001000;
 
 s32 Party_GetLeaderActor(void);
-struct ObjectRuntime *Object_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 actor);
 void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
                    s32 fromZ);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
@@ -65,7 +65,7 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
                    s16 originZ, s32 layerIndex) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 ownerHeight =
-      Object_GetById(Party_GetLeaderActor())->terrainHeight >> 20;
+      Actor_GetById(Party_GetLeaderActor())->terrainHeight >> 20;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   struct TouchLayer *layer =
       &((struct TouchMap *)Ram_HeapSlots->mapWork)->layers[layerIndex];

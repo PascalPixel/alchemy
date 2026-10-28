@@ -4,7 +4,7 @@
 extern s16 gData_02005b5c[];
 
 void Func_020001f4(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 50) {
     GameFlag_SetBit(0xa38);
@@ -13,7 +13,7 @@ void Func_020001f4(s32 unused, s32 id) {
 }
 
 void Func_0200021c(void) {
-  struct ObjectRuntime *object = Object_GetById(16);
+  struct Actor *object = Actor_GetById(16);
 
   Func_02005688();
   if (object->x >> 20 == 50) {
@@ -24,14 +24,14 @@ void Func_0200021c(void) {
 
 void Func_02000248(s32 unused, s32 id) {
   if (id == 10)
-    Object_GetById(10)->motionFlags = 0;
+    Actor_GetById(10)->motionFlags = 0;
 }
 
 void Func_0200025c(s32 unused, s32 id) {
   if (id == 16) {
     Func_020001f4(unused, 16);
   } else if (id == 10) {
-    Object_GetById(10)->motionFlags = 3;
+    Actor_GetById(10)->motionFlags = 3;
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
     Func_020002ec();
 #endif
@@ -39,7 +39,7 @@ void Func_0200025c(s32 unused, s32 id) {
 }
 
 void Func_02000280(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 kind;
 
   /* FAKEMATCH: the one-pass block keeps the table's address loaded before the
@@ -52,7 +52,7 @@ void Func_02000280(s32 unused, s32 id) {
 }
 
 void Func_020002b8(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   const s16 *table;
   s32 offset;
   s32 x;
@@ -72,7 +72,7 @@ void Func_020002b8(s32 unused, s32 id) {
 
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
 void Func_020002ec(void) {
-  struct ObjectRuntime *object;
+  struct Actor *object;
   s32 id;
   s32 x;
   s32 z;
@@ -81,20 +81,20 @@ void Func_020002ec(void) {
   Func_020054e8(53, 72, 1, 1, 43, 72);
   Func_020054e8_(53, 8, 1, 1, 47, 8);
   for (id = 10; id <= 12; id++) {
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 38 && z == 8)
       Func_020054e8(54, 72, 1, 1, 38, 72);
   }
   for (id = 10; id <= 12; id++) {
-    object = Object_GetById(id);
+    object = Actor_GetById(id);
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 43 && z == 8)
       Func_020054e8(54, 72, 1, 1, 43, 72);
   }
-  object = Object_GetById(10);
+  object = Actor_GetById(10);
   x = object->x >> 20;
   z = object->z >> 20;
   if (x == 47 && z == 8)

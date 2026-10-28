@@ -14,7 +14,7 @@
 // native forms the first drop after the inner loop's entry tests.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "animspr.h"
 #include "map.h"
 
@@ -54,12 +54,12 @@ struct ChainObject {
   u8 collisionFlags;
 };
 
-struct ChainObject *Object_GetById(s32 id);
+struct ChainObject *Actor_GetById(s32 id);
 void *Func_080da9a8(s32 kind);
 struct ChainSlot *Func_080dae70(s32 id);
 struct ChainSlot *Func_080dae3c(void);
 struct ChainLink *Func_080daea8(void);
-void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 flags);
+void Actor_SetSingleChildFlagsFar(void *object, s32 flags);
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -79,7 +79,7 @@ void Func_080daecc(s32 objectId, s32 grow) {
   s32 frame;
   s32 last;
 
-  object = Object_GetById(objectId);
+  object = Actor_GetById(objectId);
   map = Ram_HeapSlots->mapWork;
   if (Ram_HeapSlots->unk84[8] == 0) {
     s32 kind = 372;
@@ -106,13 +106,13 @@ void Func_080daecc(s32 objectId, s32 grow) {
   x = (object->x & CELL_MASK) + (8 << 16);
   y = object->y & CELL_MASK;
   z = (object->z & CELL_MASK) + (16 << 16);
-  Object_SetMode((struct ObjectRuntime *)object, 0);
+  Actor_SetMode((struct Actor *)object, 0);
   object->motionFlags = 0;
   top = y + (8 << 16);
   object->collisionFlags = 0;
   object->z += 16 << 16;
   object->y -= 64 << 16;
-  ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSingleChildFlagsFar(object, 0);
 
   // Hang the links.
   last = 6;

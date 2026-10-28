@@ -5,7 +5,7 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Object_GetById();
+struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02002b54();
 void Func_02002c44();
@@ -14,7 +14,7 @@ void Func_020012a8(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = Object_GetById(id);
+  object = Actor_GetById(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */

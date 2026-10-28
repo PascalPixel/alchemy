@@ -12,7 +12,7 @@
 // cursor at sp 8 and 4 and the work in r9), which shifts most rows.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 
 struct Mote {
@@ -63,11 +63,11 @@ u32 Random16(void);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Event_WaitFrames(s32 frames);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
 void Task_Add(void (*callback)(void), s32 order);
 void Task_Remove(void (*callback)(void));
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
+void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e9e8c(void);
@@ -76,8 +76,8 @@ void Func_080e9f68(void);
 void Func_080ea14c(s32 targetId) {
   struct MoteWork *work = HeapSlot_Alloc(92, 0x1d60);
   s32 ownerId = Party_GetLeaderActor();
-  struct ObjectRuntime *owner = ObjectTable_Get(ownerId);
-  struct ObjectRuntime *target = ObjectTable_Get(targetId);
+  struct Actor *owner = ObjectTable_Get(ownerId);
+  struct Actor *target = ObjectTable_Get(targetId);
   struct EffectSprite *sprite;
   struct Mote *mote;
   s32 pos[3];
@@ -149,13 +149,13 @@ void Func_080ea14c(s32 targetId) {
   }
   WaitFrames(1);
   Sound_PlayFar(139);
-  Object_SetMode(target, 2);
+  Actor_SetMode(target, 2);
   Event_WaitFrames(60);
   target->action = 0;
   target->update = Func_080e9e8c;
   Sound_PlayFar(142);
   Event_WaitFrames(80);
-  ObjectDispatch_InitializeFar(target, Data_080f1040);
+  Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
   Task_Add(Func_080e9f68, 0x480);
   state = 0;
@@ -172,7 +172,7 @@ void Func_080ea14c(s32 targetId) {
       if (timer == 40) {
         Sound_PlayFar(134);
         sparks = 25;
-        Object_ResetMotion(target);
+        Actor_ResetMotion(target);
         target->scaleX = 0;
       }
       if (timer == 80) {
@@ -207,7 +207,7 @@ void Func_080ea14c(s32 targetId) {
       break;
     case 2:
       if (timer == 0) {
-        ObjectMotion_ArmCallback(ownerId, 0x4000, 0);
+        Actor_ArmCallback(ownerId, 0x4000, 0);
         break;
       }
       if (owner->script[owner->step] == 17) {
@@ -221,7 +221,7 @@ void Func_080ea14c(s32 targetId) {
       break;
     case 3:
       if (timer == 0)
-        Object_SetMode(owner, 28);
+        Actor_SetMode(owner, 28);
       if (timer == 10) {
         state++;
         timer = -1;
@@ -275,7 +275,7 @@ void Func_080ea14c(s32 targetId) {
       break;
     case 7:
       if (timer == 0)
-        ObjectDispatch_InitializeFar(owner, gData_080f3614);
+        Actor_StartScriptFar(owner, gData_080f3614);
       if ((timer & 3) == 0)
         Sound_PlayFar(167);
       work->state = 3;
@@ -302,7 +302,7 @@ void Func_080ea14c(s32 targetId) {
     WaitFrames(1);
     timer++;
   } while (state != 999);
-  Object_ResetMotion(owner);
+  Actor_ResetMotion(owner);
   owner->scaleX = 0x10000;
   owner->scaleY = 0x10000;
   Event_WaitFrames(10);

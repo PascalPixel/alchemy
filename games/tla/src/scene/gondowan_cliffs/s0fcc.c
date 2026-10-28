@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GondowanCliffsWork {
   s16 entry;
@@ -23,7 +23,7 @@ void Task_Add();
 void Func_02000be4(void);
 void Func_02000dac(void);
 s32 Func_02001314(void);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
@@ -41,5 +41,5 @@ void Func_02000fcc(s32 unused, s32 value) {
   work->value = value;
   Value2((s32 (*)())Task_Add, (s32)Func_02000be4, 0x48d);
   Value2((s32 (*)())Task_Add, (s32)Func_02000dac, 0x480);
-  Object_GetById(Func_02001314())->priorityFlags |= 0x40;
+  Actor_GetById(Func_02001314())->priorityFlags |= 0x40;
 }

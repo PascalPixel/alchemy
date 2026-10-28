@@ -162,11 +162,11 @@ Func_080292fc:
 	subs r6, #20
 	movs r3, #0
 	ldrsh r0, [r6, r3]
-	bl Object_GetByIdFar
+	bl Actor_GetByIdFar
 	adds r5, r0, #0
 	movs r1, #2
 	ldrsh r0, [r6, r1]
-	bl Object_GetByIdFar
+	bl Actor_GetByIdFar
 	ldr r2, [r5, #8]
 	ldr r3, [r0, #8]
 	cmp r2, r3
@@ -177,11 +177,11 @@ Func_080292fc:
 .L_0802944e:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
-	bl Object_GetByIdFar
+	bl Actor_GetByIdFar
 	adds r5, r0, #0
 	movs r1, #2
 	ldrsh r0, [r6, r1]
-	bl Object_GetByIdFar
+	bl Actor_GetByIdFar
 	ldr r2, [r5, #12]
 	ldr r3, [r0, #12]
 	cmp r2, r3
@@ -281,10 +281,10 @@ Func_080292fc:
 .L_08029510:
 	mov r0, r10
 	movs r1, #29
-	bl ObjectDispatch_SelectAnimation
+	bl Actor_SelectAnimation
 	mov r0, r10
 	ldr r1, [sp, #4]
-	bl ObjectDispatch_SetAnimationSpeed
+	bl Actor_SetAnimationSpeed
 	ldr r1, [sp, #20]
 	cmp r1, #0
 	beq .L_0802953c
@@ -305,7 +305,7 @@ Func_080292fc:
 	ldr r2, [r3, #4]
 	mov r0, r10
 	ldr r3, [r3, #8]
-	bl Object_SetMoveTarget
+	bl Actor_SetMoveTarget
 .L_0802954a:
 	mov r0, r10
 	ldrh r3, [r0, #4]

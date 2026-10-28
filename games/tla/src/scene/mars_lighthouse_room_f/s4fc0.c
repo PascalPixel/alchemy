@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 extern u16 gData_02005f58[];
 
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
-struct ObjectRuntime *Func_02005680(s32 *position, s32 mode);
-s32 Func_020054f8(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_02005680(s32 *position, s32 mode);
+s32 Func_020054f8(struct Actor *object, s32 *position);
 
-void Func_02004fc0(struct ObjectRuntime *object) {
+void Func_02004fc0(struct Actor *object) {
   s32 position[3];
-  struct ObjectRuntime *hit;
+  struct Actor *hit;
   u32 i;
   s32 angle = object->angle >> 12;
 
@@ -32,11 +32,11 @@ void Func_02004fc0(struct ObjectRuntime *object) {
     i++;
     if (i <= 5)
       goto next;
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   if (Func_020054f8(object, position) > 0)
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

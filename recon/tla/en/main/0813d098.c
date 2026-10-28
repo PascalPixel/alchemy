@@ -157,9 +157,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ObjectGroup_UpdateMembers
+                   s32 timerFrames); // Actor_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
 struct ModelDraw *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *out, s32 count);
 void Render_DrawModelList(struct ModelDraw *draw);
@@ -662,7 +662,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(8, 8);
     else
       Func_08158ce0(2, 4);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

@@ -18,8 +18,8 @@ s32 Math_Sine(s32 angle);
 
 void Func_020012c4(void) {
   s32 *timer = &gData_020062a4;
-  struct ObjectRuntime *statue;
-  struct ObjectRuntime *leader;
+  struct Actor *statue;
+  struct Actor *leader;
   u16 *phase;
   s32 limit;
   s32 id;
@@ -37,7 +37,7 @@ void Func_020012c4(void) {
     goto count;
   }
   if (*timer <= 2999) {
-    statue = Object_GetById(10);
+    statue = Actor_GetById(10);
     if (GameFlag_Test(0x300)) {
       t = *timer;
       if (t <= 316) {
@@ -104,12 +104,12 @@ void Func_020012c4(void) {
     *phase += 0x1000;
     goto carry;
   shrink:
-    if (Object_GetById(id)->scaleY <= limit)
+    if (Actor_GetById(id)->scaleY <= limit)
       *timer = 2999;
   carry:
     if (GameFlag_Test(0x209) == 0)
       goto count;
-    leader = Object_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gAdventure.currentOwner);
     leader->y = statue->y + 0x40000;
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
@@ -123,16 +123,16 @@ void Func_020012c4(void) {
     Func_02005230(18, 0, 0);
     Func_02005230(19, 0, 0);
     Func_02005230(20, 0, 0);
-    Object_SetModeById(10, 1);
-    Object_SetPositionAndResetMotion(Object_GetById(10), 0x1780000, 0,
+    Actor_SetModeById(10, 1);
+    Actor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0,
                                      0xf80000);
-    Object_GetById(10)->priorityFlags |= 2;
-    ObjectMotion_SetActionVariant(10, 3);
+    Actor_GetById(10)->priorityFlags |= 2;
+    Actor_SetSpritePriority(10, 3);
     if (GameFlag_Test(0x209)) {
-      leader = Object_GetById(gAdventure.currentOwner);
-      Object_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-      ObjectDispatch_SetSingleChildFlags(
-          Object_GetById(gAdventure.currentOwner), 1);
+      leader = Actor_GetById(gAdventure.currentOwner);
+      Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
+      Actor_SetSingleChildFlags(
+          Actor_GetById(gAdventure.currentOwner), 1);
     }
     goto count;
   }

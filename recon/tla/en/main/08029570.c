@@ -17,7 +17,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "event_work.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 
 struct FieldPosition {
@@ -61,11 +61,11 @@ extern const u16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 value);
-s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
-static inline void TurnToward(struct ObjectRuntime *object, u16 angle) {
+static inline void TurnToward(struct Actor *object, u16 angle) {
   s16 delta = angle - object->angle;
 
   if (delta > 0x1000)
@@ -75,7 +75,7 @@ static inline void TurnToward(struct ObjectRuntime *object, u16 angle) {
   object->angle += delta;
 }
 
-s32 Func_08029570(struct ObjectRuntime *object) {
+s32 Func_08029570(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteMode *sprite;
@@ -140,7 +140,7 @@ s32 Func_08029570(struct ObjectRuntime *object) {
           pair->speed += 0x8000;
           if (pair->speed > 0x20000)
             pair->speed = 0x20000;
-          object->watchedObject = (struct ObjectRuntime *)best;
+          object->watchedObject = (struct Actor *)best;
         }
         position.y = best->y;
         position.x = best->x;
@@ -158,8 +158,8 @@ s32 Func_08029570(struct ObjectRuntime *object) {
   }
   if (collisionFlags == 0)
     argument = 2;
-  ObjectDispatch_SelectAnimation(object, argument);
-  ObjectDispatch_SetAnimationSpeed(object, 8);
+  Actor_SelectAnimation(object, argument);
+  Actor_SetAnimationSpeed(object, 8);
   sprite->mode = 4;
   if (collisionFlags != 0) {
     object->targetX = 0x80000000;
@@ -173,7 +173,7 @@ s32 Func_08029570(struct ObjectRuntime *object) {
     object->y = position.y;
   } else {
     object->y = position.y;
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     if (object->x == position.x && object->z == position.z)
       TurnToward(object, angle);
   }

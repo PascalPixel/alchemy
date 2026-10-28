@@ -9,17 +9,17 @@
 void Func_02005880(void);
 void Func_02005888(void);
 void Func_020059e8(s32 value);
-void Func_020057f8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02005800(struct ObjectRuntime *object);
+void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02005800(struct Actor *object);
 s32 Func_02000df8(s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_02000d70(void);
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(id);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 fromX = object->x >> 20;
   s32 fromZ = object->z >> 20;
   s32 toX = fromX;
@@ -55,7 +55,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Func_02005880();
   Func_020059e8(0);
-  Object_SetModeById(gAdventure.currentOwner, 8);
+  Actor_SetModeById(gAdventure.currentOwner, 8);
   FieldEvent_WaitFrames(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
@@ -66,12 +66,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   targetZ = (toZ << 20) + 0x80000;
   Func_020057f8(object, (toX << 20) + 0x80000, 0, targetZ);
   FieldEvent_WaitFrames(6);
-  Object_SetModeById(gAdventure.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x3333);
-  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, dx << 3,
+  Actor_SetModeById(gAdventure.currentOwner, 2);
+  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x3333);
+  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, dx << 3,
                                             dz << 3);
   FieldEvent_WaitFrames(24);
-  Object_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gAdventure.currentOwner, 1);
   Func_02005800(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);

@@ -21,7 +21,7 @@ GameFlag_ClearBit:
 	.global Func_02000c9c
 	.thumb_func
 Func_02000c9c:
-	overlay_veneer Object_ResetMotion
+	overlay_veneer Actor_ResetMotion
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
@@ -30,10 +30,10 @@ Func_02000ca4:
 	.thumb_func
 Func_02000cac:
 	overlay_veneer Map_CopyCellsRectFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
@@ -98,30 +98,30 @@ Import_EventEnd:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetPositionAndReset
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
+	.global Actor_SetPositionAndReset
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
+Actor_SetPositionAndReset:
+	overlay_veneer Actor_SetPositionAndResetFar
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
-	.global ObjectMotion_Launch
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
+	.global Actor_Jump
 	.thumb_func
-ObjectMotion_Launch:
-	overlay_veneer ObjectMotion_LaunchFar
-	.global ObjectMotion_SetAngleToward
+Actor_Jump:
+	overlay_veneer Actor_JumpFar
+	.global Actor_SetAngleToward
 	.thumb_func
-ObjectMotion_SetAngleToward:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
+Actor_SetAngleToward:
+	overlay_veneer Actor_SetAngleTowardFar
 	.global Import_EventSetMessageId
 	.thumb_func
 Import_EventSetMessageId:
@@ -134,14 +134,14 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Import_EventShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global ObjectMotion_ArmCallback
+	.global Actor_ArmCallback
 	.thumb_func
-ObjectMotion_ArmCallback:
-	overlay_veneer ObjectMotion_ArmCallbackFar
+Actor_ArmCallback:
+	overlay_veneer Actor_ArmCallbackFar
 	.global Import_ActorSetSpritePriority
 	.thumb_func
 Import_ActorSetSpritePriority:
-	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer Actor_SetSpritePriorityFar
 	.global Func_02000d94
 	.thumb_func
 Func_02000d94:

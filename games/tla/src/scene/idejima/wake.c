@@ -6,16 +6,16 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_MoveWithinMapBounds();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_Launch();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_WaitForAnimationChange();
+void Actor_Jump();
+void Actor_SetSpeedParameters();
+void Actor_SetPositionAndReset();
+void Actor_WaitForAnimationChange();
 s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_WaitFrames();
@@ -60,7 +60,7 @@ void Func_02002c64(void) {
   Task_Wait(1);
   Import_ActorSetAnimation(gAdventure.currentOwner, 41);
   Task_Wait(1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   Task_Wait(1);
   Call3(Func_02003228, gAdventure.currentOwner, 0x1800000, 0x2d80000);
@@ -85,17 +85,17 @@ void Func_02002c64(void) {
   FelixWake_WaitForButton();
   FelixWake_StartStep();
   Import_ActorSetAnimation(gAdventure.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
   Task_Wait(1);
-  ObjectMotion_Launch(gAdventure.currentOwner, 4, 20);
+  Actor_Jump(gAdventure.currentOwner, 4, 20);
   Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);
   Value2(FieldMessage_ShowAtActor, 11, 0);
   Task_Wait(1);
   answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   leader = gAdventure.currentOwner;
   if (answer == 0) {
-    ObjectMotion_WaitForAnimationChange(leader);
+    Actor_WaitForAnimationChange(leader);
     Import_ActorSetAnimation(gAdventure.currentOwner, 45);
     Task_Wait(1);
     FelixWake_EndStep();
@@ -126,10 +126,10 @@ void Func_02002c64(void) {
     Task_Wait(1);
     Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   } else {
-    ObjectMotion_WaitForAnimationChange(leader);
+    Actor_WaitForAnimationChange(leader);
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
-    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x6666, 0x3333);
-    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 384, 746);
+    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x6666, 0x3333);
+    Actor_SetPositionAndReset(gAdventure.currentOwner, 384, 746);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
     FelixWake_StartStep();

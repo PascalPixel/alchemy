@@ -1,33 +1,33 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 #include "edition.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
-#define OBJECT(id) ((struct ObjectRuntime *)Value1(Object_GetById, (id)))
+#define OBJECT(id) ((struct Actor *)Value1(Actor_GetById, (id)))
 
 extern const u8 gData_02004508[];
 extern const u8 gData_02004554[];
 extern const u8 MsgWellHereWe[];
-s32 Object_GetById();
+s32 Actor_GetById();
 void Func_02003eec();
 void Func_02003edc();
 void WaitFrames();
-void Object_SetPartAttribute();
-void Object_SetModeById();
+void Actor_SetPartAttribute();
+void Actor_SetModeById();
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void ObjectMotion_SetSpeedParameters();
+void Actor_SetSpeedParameters();
 void Func_02003dec();
-void ObjectMotion_EnableActionAndSetCallback();
+void Actor_SetMovementTypeById();
 void Func_02003f3c();
 void Func_02003fac();
 void Func_02003f24();
 void Func_02003f2c();
-void ObjectMotion_Launch();
-void ObjectMotion_SetPositionAndCommit();
+void Actor_Jump();
+void Actor_SetPositionAndCommit();
 void Func_02003fb4(void);
 void Func_020034d8(void);
 void Func_02001278(void);
@@ -40,8 +40,8 @@ void Func_02000df8(void);
 /// turned; ends with Func_020034d8. The Japanese edition does not set the
 /// event work's transition word 0x1ac.
 void Func_020029c4(void) {
-  struct ObjectRuntime *leader = OBJECT(gAdventure.currentOwner);
-  struct ObjectRuntime *guide = OBJECT(9);
+  struct Actor *leader = OBJECT(gAdventure.currentOwner);
+  struct Actor *guide = OBJECT(9);
   u8 *done;
 
   Call2(Func_02003eec, 9, gAdventure.currentOwner);
@@ -49,23 +49,23 @@ void Func_020029c4(void) {
   Call1(WaitFrames, 1);
   guide->angle = 0x4000;
   leader->update = Func_02001278;
-  Call2(Object_SetPartAttribute, Value1(Object_GetById, gAdventure.currentOwner),
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gAdventure.currentOwner),
         15);
-  Call2(Object_SetModeById, 9, 3);
+  Call2(Actor_SetModeById, 9, 3);
   Call1(WaitFrames, 1);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
-  Call3(ObjectMotion_SetSpeedParameters, 10, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
   OBJECT(10)->update = Func_02000df8;
   guide->update = Func_02000df8;
   done = (u8 *)guide + 0x63;
   *done = 0;
   Call2(Func_02003dec, (s32)guide, gData_02004508);
-  Call2(ObjectMotion_EnableActionAndSetCallback, 10, gData_02004554);
+  Call2(Actor_SetMovementTypeById, 10, gData_02004554);
   do
     Call1(WaitFrames, 1);
   while (*done == 0);
@@ -76,13 +76,13 @@ void Func_020029c4(void) {
   Call2(Func_02003fac, gAdventure.currentOwner, 9);
   Call1(Func_02003f24, MsgWellHereWe);
   Call2(Func_02003f2c, 9, 0);
-  Call2(Object_SetModeById, 9, 1);
-  Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
+  Call2(Actor_SetModeById, 9, 1);
+  Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
         0xcccc);
-  Call2(Object_SetPartAttribute, Value1(Object_GetById, gAdventure.currentOwner),
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gAdventure.currentOwner),
         0);
-  Call3(ObjectMotion_Launch, gAdventure.currentOwner, 6, 0);
-  Call3(ObjectMotion_SetPositionAndCommit, gAdventure.currentOwner, 152, 742);
+  Call3(Actor_Jump, gAdventure.currentOwner, 6, 0);
+  Call3(Actor_SetPositionAndCommit, gAdventure.currentOwner, 152, 742);
   Call2(Func_02003f3c, gAdventure.currentOwner, 0x4000);
   Call2(Func_02003f2c, 9, 0);
   Func_02003fb4();

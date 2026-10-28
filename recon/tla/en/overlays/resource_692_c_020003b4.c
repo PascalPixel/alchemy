@@ -29,8 +29,8 @@ struct StagedActor {
 
 extern s32 gData_02004fec[];
 
-struct StagedActor *Object_GetById(s32 actor);
-struct StagedActor *Object_FindInCell(s32 *position, struct StagedActor *self);
+struct StagedActor *Actor_GetById(s32 actor);
+struct StagedActor *Actor_FindInCell(s32 *position, struct StagedActor *self);
 void Func_02004c98(struct StagedActor *object, s32 mode);
 void Func_02004cc8(struct StagedActor *object, s32 x, s32 y, s32 z);
 void Func_02004cd0(struct StagedActor *object);
@@ -48,14 +48,14 @@ void Func_020003b4(void) {
   u32 step;
   s32 rate;
 
-  lead = Object_GetById(gAdventure.currentOwner);
+  lead = Actor_GetById(gAdventure.currentOwner);
   dir = lead->facing >> 12;
   step = gData_02004fec[dir];
   dst[0] = lead->x + (step & 0xffff0000);
   dst[1] = lead->y;
   step <<= 16;
   dst[2] = lead->z + step;
-  next = Object_FindInCell(dst, lead);
+  next = Actor_FindInCell(dst, lead);
   if (next == 0)
     return;
 
@@ -64,14 +64,14 @@ void Func_020003b4(void) {
   dst[1] = next->y;
   step <<= 16;
   dst[2] = next->z + step;
-  blocker = Object_FindInCell(dst, next);
+  blocker = Actor_FindInCell(dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst[0] = next->x;
   dst[1] = next->y + 0x100000;
   dst[2] = next->z;
-  blocker = Object_FindInCell(dst, next);
+  blocker = Actor_FindInCell(dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 

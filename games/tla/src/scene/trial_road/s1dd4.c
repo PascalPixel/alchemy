@@ -2,12 +2,12 @@
 
 extern const u8 gData_02005b44[];
 
-void Func_020057f8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMovementTypeById(s32 id, const void *script);
 
 void Func_02001dd4(void) {
-  struct ObjectRuntime *partner = Object_GetById(8);
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *partner = Actor_GetById(8);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 dx;
   s32 dz;
   s32 near;
@@ -34,7 +34,7 @@ void Func_02001dd4(void) {
   partner->terrainHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = 0xa0000;
-  ObjectMotion_EnableActionAndSetCallback(8, gData_02005b44);
+  Actor_SetMovementTypeById(8, gData_02005b44);
   y = partner->y;
   Func_020057f8(partner, 344 << 16, y, 264 << 16);
   GameFlag_SetBit(648);

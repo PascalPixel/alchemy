@@ -3,16 +3,16 @@
 extern const u16 gData_02002478[];
 
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
-struct ObjectRuntime *Func_02002438(s32 *position, s32 mode);
-s32 Func_02002338(struct ObjectRuntime *object, s32 *position);
+struct Actor *Func_02002438(s32 *position, s32 mode);
+s32 Func_02002338(struct Actor *object, s32 *position);
 
-/// Stops the object where it stands (Object_SetPositionAndResetMotion) when
+/// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
 /// the point a cell ahead along its facing holds another object
 /// (Func_02002438) whose sprite shape is not in the footprint table, and again
 /// when its own cell test (Func_02002338) is positive.
-void Func_02001300(struct ObjectRuntime *object) {
+void Func_02001300(struct Actor *object) {
   s32 position[3];
-  struct ObjectRuntime *other;
+  struct Actor *other;
   u32 i;
   s32 angle;
 
@@ -37,11 +37,11 @@ void Func_02001300(struct ObjectRuntime *object) {
     i++;
     if (i < 6)
       goto next;
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   if (Func_02002338(object, position) > 0)
-    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

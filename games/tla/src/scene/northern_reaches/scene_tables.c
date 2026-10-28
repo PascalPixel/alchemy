@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -36,7 +36,7 @@ void Func_02000b30();
 void GameFlag_SetBit();
 void GameFlag_Test();
 void Camera_MoveWithinMapBounds();
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -57,7 +57,7 @@ void Func_02000064(void) {
 
 void Func_020000a8(void) {
   s32 result0;
-  struct ObjectRuntime *object1;
+  struct Actor *object1;
 
   result0 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (result0 != 0)
@@ -66,7 +66,7 @@ void Func_020000a8(void) {
   ((void (*)())Func_02000a68)();
   Call1((void (*)())Func_02000b30, 0);
   Call1((void (*)())Func_02000ac0, (s32)MsgShipIceWallFirstApproach);
-  object1 = Object_GetById(8);
+  object1 = Actor_GetById(8);
   Call1((void (*)())Func_02000a30, (s32)object1);
   Call2((void (*)())Func_02000ad8, 8, 0xc000);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
@@ -79,7 +79,7 @@ L_02008100:
 
 void Func_02000108(void) {
   s32 result0;
-  struct ObjectRuntime *object1;
+  struct Actor *object1;
 
   result0 = Value1((s32 (*)())GameFlag_Test, 0x90c);
   if (result0 != 0)
@@ -88,7 +88,7 @@ void Func_02000108(void) {
   ((void (*)())Func_02000a68)();
   Call1((void (*)())Func_02000b30, 0);
   Call1((void (*)())Func_02000ac0, (s32)MsgShipIceWallCrewReposition);
-  object1 = Object_GetById(8);
+  object1 = Actor_GetById(8);
   Call1((void (*)())Func_02000a30, (s32)object1);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call3((void (*)())Func_02000ad0, 5, 0, 5);

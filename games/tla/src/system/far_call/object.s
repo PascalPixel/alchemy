@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Object_SetPositionAndResetMotionFar
+	.global Actor_SetPositionAndResetMotionFar
 	.thumb_func
-Object_SetPositionAndResetMotionFar:
-	overlay_veneer Object_SetPositionAndResetMotion
+Actor_SetPositionAndResetMotionFar:
+	overlay_veneer Actor_SetPositionAndResetMotion
 	.global Map_RenderAnimatedTilePictureFar
 	.thumb_func
 Map_RenderAnimatedTilePictureFar:

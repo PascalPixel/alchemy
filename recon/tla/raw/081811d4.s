@@ -922,7 +922,7 @@ BattleEffect_RunVengeance:
 	mov lr, r4
 	.2byte 0xf800
 .L_081818a6:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r0, #1
 	movs r1, #4
 	bl Func_08158ce0

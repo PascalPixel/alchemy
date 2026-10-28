@@ -6,8 +6,8 @@
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Func_02002c40(void);
 
-void Func_02002fc4(struct ObjectRuntime *self) {
-  struct ObjectRuntime *object = Object_GetById(((u8 *)self)[0x62]);
+void Func_02002fc4(struct Actor *self) {
+  struct Actor *object = Actor_GetById(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
   struct MarsLighthouseRoomMAnimation *animation = object->animation;
   s32 position[3];
@@ -18,7 +18,7 @@ void Func_02002fc4(struct ObjectRuntime *self) {
   Vector_AddPolarOffsetFar(0x200000, angle, position);
   object->angle = angle;
   object->motionFlags = 0;
-  Object_SetPositionAndResetMotion(object, position[0], position[1],
+  Actor_SetPositionAndResetMotion(object, position[0], position[1],
                                    position[2]);
   object->update = Func_02002c40;
   object->actionFlags = 0;

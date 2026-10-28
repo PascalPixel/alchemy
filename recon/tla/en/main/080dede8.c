@@ -10,7 +10,7 @@
 #include "system.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "event_work.h"
 #include "ram_buffer.h"
 
@@ -34,8 +34,8 @@ struct Effect05State {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *target;
-  struct ObjectRuntime *anchor;
+  struct Actor *target;
+  struct Actor *anchor;
   s16 firstObjectId;
   s16 secondObjectId;
   u8 unk1c[4];
@@ -47,14 +47,14 @@ struct Effect05State {
 };
 
 u32 Random16(void);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
-s32 Func_08020330(struct ObjectRuntime *object);
+s32 Func_08020330(struct Actor *object);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void BattleEffect_LandFallingObject(struct ObjectRuntime *object);
-void BattleEffect_UpdateDriftingFallObject(struct ObjectRuntime *object);
+void BattleEffect_LandFallingObject(struct Actor *object);
+void BattleEffect_UpdateDriftingFallObject(struct Actor *object);
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
@@ -65,10 +65,10 @@ void FieldEffect_RunDouse(void) {
   struct EffectVector start;
   struct EffectVector end;
   struct Effect05State *work = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *anchor = work->anchor;
-  struct ObjectRuntime *target = work->target;
+  struct Actor *anchor = work->anchor;
+  struct Actor *target = work->target;
   s32 count;
-  struct ObjectRuntime *orb;
+  struct Actor *orb;
   s32 raised;
   struct EffectVector *from;
   struct EffectVector *to;
@@ -76,10 +76,10 @@ void FieldEffect_RunDouse(void) {
   s32 steps = 11;
   s32 y;
   s32 n;
-  struct ObjectRuntime *mote;
+  struct Actor *mote;
   struct PendingEvent *ev;
 
-  orb = Object_Spawn(300, i = raised = 0, 0, 0);
+  orb = Actor_Spawn(300, i = raised = 0, 0, 0);
   if (orb == 0)
     return;
   BattleEffect_InitializeSharedScene();
@@ -149,7 +149,7 @@ void FieldEffect_RunDouse(void) {
         pos.y = orb->y;
         pos.z = orb->z;
       }
-      mote = Object_Spawn(301, pos.x, pos.y, pos.z);
+      mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
       if (mote != 0) {
         anchor = work->anchor;
         if (anchor != 0) {
@@ -183,12 +183,12 @@ void FieldEffect_RunDouse(void) {
       pos.y = orb->y;
       pos.z = orb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      mote = Object_Spawn(672, pos.x, pos.y, pos.z);
+      mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
         mote->update = (void (*)(void))BattleEffect_UpdateDriftingFallObject;
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->animation)->mode = 2;
-        Object_SetMode(mote, 8);
+        Actor_SetMode(mote, 8);
         Animation_ApplyChildValuesFar((struct DispatchObject *)mote, 7);
       }
       WaitFrames(6);
@@ -224,6 +224,6 @@ void FieldEffect_RunDouse(void) {
     WaitFrames(1);
     i++;
   } while (i < steps);
-  Object_Destroy((struct DispatchObject *)orb);
+  Actor_Destroy((struct DispatchObject *)orb);
   BattleEffect_PrepareBufferInterpolation();
 }

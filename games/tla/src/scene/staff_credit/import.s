@@ -105,11 +105,11 @@ Animation_ApplyChildArgument:
 	.global Func_02001fbc
 	.thumb_func
 Func_02001fbc:
-	overlay_veneer Object_SetMode
+	overlay_veneer Actor_SetMode
 	.global Func_02001fc4
 	.thumb_func
 Func_02001fc4:
-	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Actor_StartScriptFar
 	.global Func_02001fcc
 	.thumb_func
 Func_02001fcc:
@@ -117,15 +117,15 @@ Func_02001fcc:
 	.global Func_02001fd4
 	.thumb_func
 Func_02001fd4:
-	overlay_veneer Object_Destroy
+	overlay_veneer Actor_Destroy
 	.global Func_02001fdc
 	.thumb_func
 Func_02001fdc:
 	overlay_veneer Map_UpdateCurrentTileBlockFar
-	.global ObjectDispatch_SetSingleChildFlags
+	.global Actor_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+Actor_SetSingleChildFlags:
+	overlay_veneer Actor_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -158,18 +158,18 @@ FieldEvent_WaitFrames:
 	.thumb_func
 Func_02002024:
 	overlay_veneer Event_StartFar
-	.global Object_GetById
+	.global Actor_GetById
 	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
+Actor_GetById:
+	overlay_veneer Actor_GetByIdFar
 	.global Func_02002034
 	.thumb_func
 Func_02002034:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
+	.global Actor_SetModeById
 	.thumb_func
-Object_SetModeById:
-	overlay_veneer Object_SetModeByIdFar
+Actor_SetModeById:
+	overlay_veneer Actor_SetModeByIdFar
 	.global Func_02002044
 	.thumb_func
 Func_02002044:

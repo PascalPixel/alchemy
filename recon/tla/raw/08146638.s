@@ -45,10 +45,10 @@ BattleEffect_RunAstralBlast:
 	bl Resource_LoadAndDecompress
 	adds r0, r6, #0
 	movs r1, #2
-	bl Object_SetMode
+	bl Actor_SetMode
 	adds r0, r6, #0
 	movs r1, #48
-	bl ObjectDispatch_SetAnimationSpeedFar
+	bl Actor_SetAnimationSpeedFar
 	movs r1, #19
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -412,7 +412,7 @@ BattleEffect_RunAstralBlast:
 	adds r2, #90
 	movs r3, #0
 	strb r3, [r2]
-	bl Object_ResetMotion
+	bl Actor_ResetMotion
 	mov r2, r11
 	ldr r1, [r2, #8]
 	cmp r1, #0
@@ -422,7 +422,7 @@ BattleEffect_RunAstralBlast:
 	adds r1, r1, r3
 	ldr r3, [r2, #16]
 	movs r2, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 	b .L_0814699e
 .L_0814698e:
 	movs r4, #160
@@ -431,7 +431,7 @@ BattleEffect_RunAstralBlast:
 	adds r1, r1, r4
 	ldr r3, [r0, #16]
 	movs r2, #0
-	bl Object_SetPosition
+	bl Actor_SetTargetPosition
 .L_0814699e:
 	ldr r1, [sp, #56]
 	cmp r1, #2
@@ -497,7 +497,7 @@ BattleEffect_RunAstralBlast:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #240
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7

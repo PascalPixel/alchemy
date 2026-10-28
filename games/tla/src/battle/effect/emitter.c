@@ -22,7 +22,7 @@ struct ParticleEmitter {
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
-struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
+struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
 
 void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
@@ -40,14 +40,14 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   position.z = emitter->position.z;
   randomAngle = Random16();
   Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
-  object = Object_Spawn(0x2a1, position.x, position.y, position.z);
+  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
 
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct DispatchObject *)object,
                                  (u32)gBattleEffect_ParticleScript);
-    Object_SetMode(object, 0);
+    Actor_SetMode(object, 0);
     mask = 13;
     flags = object->child->flags;
     mask = -mask;

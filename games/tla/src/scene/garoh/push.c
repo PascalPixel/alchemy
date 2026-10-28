@@ -18,7 +18,7 @@ static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
 void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer);
 
 void Func_020013b0(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 x = object->x;
   s32 dx;
   s32 y;

@@ -18,13 +18,13 @@
 // (6, the zero then moves up).
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "task.h"
 
 s32 Party_GetLeaderActor(void);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 void WaitFrames(s32 frames);
 s32 Resource_ResetEntry(u32 entry);
@@ -33,12 +33,12 @@ void Func_080e9940(void);
 
 void Func_080e9db4(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
-  struct ObjectRuntime *object =
-      Object_GetById(Party_GetLeaderActor());
+  struct Actor *object =
+      Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
   Task_Remove(Func_080e9940);
-  Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
+  Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   do {
     gAdventure.renderMode = 0;

@@ -1,14 +1,14 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Import_EventStart(void);
@@ -26,15 +26,15 @@ s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_WaitFrames();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
-void Object_TurnToFaceEachOther();
-void ObjectMotion_Launch();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_WaitForAnimationChange();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_TurnToFaceEachOther();
+void Actor_Jump();
+void Actor_ArmCallback();
+void Actor_WaitForAnimationChange();
+void Actor_SetAngleToward();
+void Actor_ResetAndSetPosition();
+void Actor_WaitForMoveById();
+void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void FieldMessage_ShowAtActor();
 void DriftScene_SpawnObject();
 void Func_02003180();
@@ -46,8 +46,8 @@ void Func_02003310(s32 skip);
 void Func_020032e8(s32 countdown);
 void Import_CameraSetSpeed();
 void Camera_MoveWithinMapBounds();
-void ObjectMotion_EnableActionAndSetCallback();
-void Object_SetActionCallbackAndRefreshById();
+void Actor_SetMovementTypeById();
+void Actor_SetMovementTypeAndWaitById();
 void Task_Wait();
 
 extern const u8 gData_02003534[];
@@ -58,15 +58,15 @@ extern const u8 gData_02003600[];
 void DriftScene_Prepare(void);
 void Func_020032b8();
 void Func_020032e0(void);
-void Object_LinkObjectAndSetCallback();
-void Object_RefreshSelectorById();
-void ObjectMotion_EnableActionAndResetMotion();
-void ObjectMotion_ResetAndSetPositionInMode2();
-void ObjectMotion_SetVariantCallback();
+void Actor_WatchAndSetScript();
+void Actor_RefreshSelectorById();
+void Actor_Stop();
+void Actor_ResetAndSetPositionInMode2();
+void Actor_StartRepeatedMotion();
 void Import_ActorSetAttachedEffect();
 
 void Func_02002304(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 a3000, aD000, a4000, a8000;
 
   Import_EventStart();
@@ -81,12 +81,12 @@ void Func_02002304(void) {
   Call4((void (*)())Func_02003230, 5, 0x1540000, 0xc80000, a4000);
   Call4((void (*)())Func_02003230, 6, 0x1560000, 0xe60000, 0);
   Call2((void (*)())Import_ActorSetAnimation, 6, 19);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(6), 0);
   a8000 = 0x8000;
   Call4((void (*)())Func_02003230, gAdventure.currentOwner, 0x1380000,
         0xe60000, a8000);
   Call2((void (*)())Import_ActorSetAnimation, gAdventure.currentOwner, 41);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
   Call1((void (*)())Task_Wait, 1);
   Event_StartScreenTransition();
@@ -95,15 +95,15 @@ void Func_02002304(void) {
   Call1((void (*)())Import_EventSetMessageId,
         MsgIdejimaThoughtTheyWereInsideLighthouse);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x200a, 0);
   Call2((void (*)())Import_ActorSetAnimation, 5, 4);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 8, 3);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, aD000, 0);
+  Call3((void (*)())Actor_ArmCallback, 10, aD000, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 10, 0x100, 80);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 0);
   Call11((void (*)())Func_020032b8, 8, 9, 1, 7, 6, 10, 12, 16, 18, 11, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 8, 0x101, 40);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
@@ -122,180 +122,180 @@ void Func_02002304(void) {
   Call2((void (*)())Import_ActorSetAnimation, 8, 3);
   Call3((void (*)())Func_02003298, 8, 0, 40);
   Call3((void (*)())Func_02003298, 6, 0, 40);
-  Object_GetById(6)->actionFlags &= 254;
-  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 6, 340, 226);
-  Call3((void (*)())ObjectMotion_Launch, 6, 4, 0);
+  Actor_GetById(6)->actionFlags &= 254;
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 6, 340, 226);
+  Call3((void (*)())Actor_Jump, 6, 4, 0);
   Call2((void (*)())Import_ActorSetAnimation, 6, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(6), 1);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Import_ActorSetAttachedEffect, 5, 0x102);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
-  Object_GetById(6)->actionFlags |= 1;
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Actor_GetById(6)->actionFlags |= 1;
+  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 6);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
-  Call2((void (*)())Object_LinkObjectAndSetCallback, 8, 6);
-  Call2((void (*)())Object_LinkObjectAndSetCallback, 5, 6);
-  Call2((void (*)())Object_LinkObjectAndSetCallback, 10, 6);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 6, 358, 222);
+  Call2((void (*)())Actor_WatchAndSetScript, 8, 6);
+  Call2((void (*)())Actor_WatchAndSetScript, 5, 6);
+  Call2((void (*)())Actor_WatchAndSetScript, 10, 6);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetPositionAndReset, 6, 358, 222);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 80);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 40);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x2000, 80);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xe000, 40);
+  Call3((void (*)())Actor_ArmCallback, 6, a8000, 0);
   Call3((void (*)())Func_02003298, 6, 0, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 40);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xe000, 40);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x2000, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 6, 0x101, 40);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 6, 0);
   Call2((void (*)())Import_ActorSetAnimation, 8, 4);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
-  Call3((void (*)())ObjectMotion_Launch, 5, 4, 0);
+  Call3((void (*)())Actor_Jump, 5, 4, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x1005, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
+  Call3((void (*)())Actor_ArmCallback, 6, a8000, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x19999, 0xcccc);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 6, 348, 222);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetPositionAndReset, 6, 348, 222);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x4006, 0);
-  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 8);
-  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 5);
-  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 10);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x6666, 0x3333);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 8, 320, 200);
+  Call1((void (*)())Actor_Stop, 8);
+  Call1((void (*)())Actor_Stop, 5);
+  Call1((void (*)())Actor_Stop, 10);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetPositionAndReset, 8, 320, 200);
   Call3((void (*)())Func_02003298, 8, 0, 40);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 40);
+  Call3((void (*)())Actor_ArmCallback, 6, a8000, 40);
   Call2((void (*)())Import_EventShowMessageAndWait, 6, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 10, 0x100, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 4);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x4006, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, a8000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 6, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 6);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x2000, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 6);
   Call2((void (*)())Import_ActorSetAnimation, 6, 4);
   Call3((void (*)())Func_02003298, 6, 0, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, gAdventure.currentOwner, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, a4000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, a4000, 0);
   Call3((void (*)())Func_02003298, 0x1005, 0, 20);
   Value3((s32 (*)())Import_ActorShowEmote, gAdventure.currentOwner, 0x105, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 6);
   Call2((void (*)())Import_ActorSetAnimation, 6, 3);
   Call2((void (*)())Import_EventShowMessageAndWait, 6, 0);
   Value3((s32 (*)())Import_ActorShowEmote, gAdventure.currentOwner, 0x105, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, gAdventure.currentOwner, 2);
   Call2((void (*)())Import_ActorSetAttachedEffect, 8, 0x102);
   Call3((void (*)())Func_02003298, 8, 0, 20);
-  Call2((void (*)())ObjectMotion_SetVariantCallback, gAdventure.currentOwner,
+  Call2((void (*)())Actor_StartRepeatedMotion, gAdventure.currentOwner,
         3);
   Value3((s32 (*)())Import_ActorShowEmote, 10, 0x100, 20);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 20);
+  Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 10, 0);
   Call2((void (*)())Import_ActorSetAnimation, gAdventure.currentOwner, 42);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x5000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
+  Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, a8000, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x2008, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 0x109, 40);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
-  Object_GetById(gAdventure.currentOwner)->actionFlags &= 254;
-  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
+  Actor_GetById(gAdventure.currentOwner)->actionFlags &= 254;
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2,
         gAdventure.currentOwner, 314, 226);
-  Call3((void (*)())ObjectMotion_Launch, gAdventure.currentOwner, 4, 0);
+  Call3((void (*)())Actor_Jump, gAdventure.currentOwner, 4, 0);
   Call2((void (*)())Import_ActorSetAnimation, gAdventure.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
   leader->scaleX = 0x10000;
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Import_ActorSetAttachedEffect, 5, 0x102);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
-  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x6000,
+  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x6000,
         40);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x2000,
         40);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000,
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0xa000,
         80);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x2008, 0);
   Value3((s32 (*)())Import_ActorShowEmote, gAdventure.currentOwner, 0x101, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 20);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0, 20);
+  Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 10, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, a3000, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, 0x6000, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call2((void (*)())Import_EventShowMessageAndWait, 10, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 40);
+  Call3((void (*)())Actor_ArmCallback, 8, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, a8000, 40);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 0x109, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 5, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 20);
+  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 20);
   Call2((void (*)())Import_EventShowMessageAndWait, 6, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, a3000, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, a8000, 0);
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, a8000, 20);
+  Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
   Call2((void (*)())Import_ActorSetAnimation, 8, 3);
   Call2((void (*)())Import_ActorSetAnimation, 5, 3);
   Call2((void (*)())Import_ActorSetAnimation, gAdventure.currentOwner, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 368, 256);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetPositionAndReset, 10, 368, 256);
+  Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 6, 0x100, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
-  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call3((void (*)())Actor_ArmCallback, 6, 0x2000, 0);
+  Call1((void (*)())Actor_RefreshSelectorById, 6);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x5006, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x2000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, 8, a3000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, 0x2000, 0);
+  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 400, 264);
-  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Call3((void (*)())Actor_SetPositionAndReset, 10, 400, 264);
+  Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 10, 0x108, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
   Call2((void (*)())Import_CameraSetSpeed, 0x9999, 0x1333);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x18c0000, -1, 0xea0000, 1);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, gAdventure.currentOwner,
         0xcccc, 0x6666);
   leader->action = 0;
-  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_020035bc);
-  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, gData_02003534);
-  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback,
+  Call2((void (*)())Actor_SetMovementTypeById, 8, gData_020035bc);
+  Call2((void (*)())Actor_SetMovementTypeById, 5, gData_02003534);
+  Call2((void (*)())Actor_SetMovementTypeById,
         gAdventure.currentOwner, gData_02003600);
-  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, gData_02003578);
+  Call2((void (*)())Actor_SetMovementTypeById, 6, gData_02003578);
   do
     Task_Wait(1);
   while (leader->action == 0);

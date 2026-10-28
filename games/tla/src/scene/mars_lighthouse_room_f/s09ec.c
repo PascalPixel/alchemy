@@ -11,15 +11,15 @@ void Func_020009ec(void) {
   Func_020027ac(1, 65);
   Func_020027ac(0, 65);
   Flag_Clear(0x350);
-  if (Object_GetById(10)->z >> 20 != 15 && Object_GetById(9)->z >> 20 != 15) {
+  if (Actor_GetById(10)->z >> 20 != 15 && Actor_GetById(9)->z >> 20 != 15) {
     Func_020027ac(1, 33);
     return;
   }
-  if (Object_GetById(9)->z >> 20 != 13) {
+  if (Actor_GetById(9)->z >> 20 != 13) {
     Func_020027ac(0, 17);
     return;
   }
-  if (Object_GetById(8)->x >> 20 != 37) {
+  if (Actor_GetById(8)->x >> 20 != 37) {
     Func_020027ac(2, 49);
     return;
   }
@@ -63,20 +63,20 @@ void Func_02000b40(void) {
     Func_02004d10(box);
     Func_020009ec();
     if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
-      struct ObjectRuntime *object = Object_GetById(12);
+      struct Actor *object = Actor_GetById(12);
 
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
-      Object_SetModeById(12, 6);
+      Actor_SetModeById(12, 6);
       Flag_Clear(0x221);
       Func_02000cb8(12);
     }
     if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {
-      struct ObjectRuntime *object = Object_GetById(11);
+      struct Actor *object = Actor_GetById(11);
 
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
-      Object_SetModeById(11, 6);
+      Actor_SetModeById(11, 6);
       Flag_Clear(0x220);
       Func_02000cb8(11);
     }
@@ -85,7 +85,7 @@ void Func_02000b40(void) {
     const s16 *table;
     u32 *keys;
 
-    Object_GetById(gAdventure.currentOwner);
+    Actor_GetById(gAdventure.currentOwner);
     keys = &gInput.held;
     table = gData_02005f18;
     /* FAKEMATCH: the barrier loads the table's address before the direction
@@ -95,7 +95,7 @@ void Func_02000b40(void) {
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
       struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-      struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+      struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
       s32 position[3];
       s32 x;
       s32 z;

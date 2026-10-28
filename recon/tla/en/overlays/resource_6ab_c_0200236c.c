@@ -16,9 +16,9 @@ s32 Func_0200422c(s32 layer, s32 x, s32 z);
 void Func_02002120(void);
 void Func_020042dc(void);
 void Func_0200444c(s32 value);
-void Func_020041cc(struct ObjectRuntime *object, s32 value);
+void Func_020041cc(struct Actor *object, s32 value);
 extern u8 gData_020023c4[];
-void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 struct RideEvent {
   u8 unk000[0x15a];
@@ -52,13 +52,13 @@ struct RideState {
 };
 
 static __inline__ u8 *Ride_CarSteps(u8 *slot) {
-  return ((struct ObjectRuntime *)*(s32 *)slot)->unk70;
+  return ((struct Actor *)*(s32 *)slot)->unk70;
 }
 
 void Func_0200236c(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
-  struct ObjectRuntime *leader;
+  struct Actor *leader;
   s32 frame[3];
 
   if (event->started == 0) {
@@ -73,7 +73,7 @@ void Func_0200236c(void) {
   event->field164 = 0;
   Func_02001fcc(-10, 0);
   Func_020043c4(0x70000, 0xe000);
-  leader = Object_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gAdventure.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Call1((void (*)())GameFlag_SetBit, 0x106);
   Func_020042dc();

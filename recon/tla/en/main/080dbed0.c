@@ -8,37 +8,37 @@
 // zeroed before z, measured the same; five minutes of permuter found nothing.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct MoveScene {
   u16 mode;
   u8 unk02[14];
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 struct MapCell;
 u8 Func_080dbde8(s32 x, s32 z, s32 layer);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
-void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object,
+void Actor_SetSpritePriorityDirectFar(struct Actor *object,
                                          s32 priority);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+void Actor_StartScriptFar(struct Actor *object,
                                   const s32 *script);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 extern const s32 gData_080f0e78[];
 
-void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
+void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
   struct MoveScene *scene = Ram_HeapSlots->effectWork;
-  struct ObjectRuntime *mainObject = scene->mainObject;
+  struct Actor *mainObject = scene->mainObject;
   s32 start[3];
   s32 i = 0;
   s32 scale;
 
   if (scene->mode != 0xc000)
-    ObjectDispatch_SetSpritePriorityFar(object, 0);
+    Actor_SetSpritePriorityDirectFar(object, 0);
   scale = 0;
   start[0] = mainObject->x;
   start[1] = mainObject->y + 0x100000;

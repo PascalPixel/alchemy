@@ -5,26 +5,26 @@
 // spots a sixth of a turn either side checked for room (Func_02005684)
 // before it moves; it always turns by the same amount. Left: a rough reading: the native keeps the offsets, the turn and both candidate positions on the stack, the table in r9 and the test vector's address in r10, and calls the multiply through a fresh pool load each time; the alignment is poor.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "iwram_call.h"
 #include "system/vector3.h"
 
 extern s32 gData_02005af0;
 s32 Func_0200584c(void);
-struct ObjectRuntime *Object_GetById(u32 id);
-struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *object, s32 kind);
-s32 Func_02005684(struct ObjectRuntime *object, struct Vector3 *position);
+struct Actor *Actor_GetById(u32 id);
+struct Actor *Func_020005b4(struct Actor *object, s32 kind);
+s32 Func_02005684(struct Actor *object, struct Vector3 *position);
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 void Func_02000784(void) {
-  struct ObjectRuntime *actor, *table;
+  struct Actor *actor, *table;
   struct Vector3 test;
   s32 turn, back, dx, dz, s, c, x, z, angle;
 
   if (gData_02005af0 == 0)
     return;
-  actor = Object_GetById(Func_0200584c());
+  actor = Actor_GetById(Func_0200584c());
   table = Func_020005b4(actor, 357);
   turn = gData_02005af0 * -364;
   if (table != 0) {

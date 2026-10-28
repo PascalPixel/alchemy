@@ -1,7 +1,7 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
@@ -11,7 +11,7 @@ void Func_020022c8(s32 cue);
 /// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
 /// and stops (at most 30 frames), then releases it.
 void Func_02000094(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 i;
   s32 y;
   s32 floor;

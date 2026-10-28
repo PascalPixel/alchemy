@@ -12,7 +12,7 @@ s32 Func_02005490();
 s32 Func_02005498();
 s32 Math_Cosine();
 s32 Math_Sine();
-s32 ObjectDispatch_SetSingleChildFlags();
+s32 Actor_SetSingleChildFlags();
 s32 Random16Far();
 s32 ResourceMetadata_ClearRecord();
 s32 Resource_ResetEntry();
@@ -58,7 +58,7 @@ L_0200ad28:
   t12 = Value0((s32 (*)())Random16Far);
   t13 = Value0((s32 (*)())Random16Far);
   Call2((void (*)())Func_02005490, v_r7, (s32)gData_02005dbc);
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v_r7, 0);
+  Call2((void (*)())Actor_SetSingleChildFlags, v_r7, 0);
   FIELD_AT(v_r7, s32, 40) = ((t10 << 2) + 0x20000);
   t16 = Value1((s32 (*)())Math_Cosine, t10);
   v_r6 = (t11 << 3);

@@ -5,7 +5,7 @@
 
 void Func_02000cf8(s32 id, s32 mode) {
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 index;
   u8 *low;
   u8 *high;

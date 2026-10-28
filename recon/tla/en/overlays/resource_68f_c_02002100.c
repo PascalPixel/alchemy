@@ -19,7 +19,7 @@ void Func_02002100(u16 *row, s32 mode, s32 count) {
     s32 actor = work->actor;
 
     if (actor == *row) {
-      struct ObjectRuntime *object = Object_GetById(actor);
+      struct Actor *object = Actor_GetById(actor);
       s32 kind;
       s32 flag;
 

@@ -17,7 +17,7 @@ s32 Func_02003178();
 s32 Func_02003198();
 s32 Func_020032b8();
 s32 GameFlag_Test();
-s32 Object_GetById();
+s32 Actor_GetById();
 s32 Vector_AddPolarOffsetFar();
 extern u8 gData_020023c4[];
 extern u8 gAdventure[];
@@ -163,7 +163,7 @@ L_0200ad1a:
   Call4((void (*)())Func_02003140, v_r5, t49, t50, t51);
   t53 = FIELD_AT(0x3000000, s32, 108);
   t54 = FIELD_AT((s32)gAdventure, s32, 532);
-  t55 = Value1((s32 (*)())Object_GetById, t54);
+  t55 = Value1((s32 (*)())Actor_GetById, t54);
   t56 = FIELD_AT(v_r5, s32, 8);
   t57 = FIELD_AT(t55, s32, 8);
   v_r2 = (t56 - t57);

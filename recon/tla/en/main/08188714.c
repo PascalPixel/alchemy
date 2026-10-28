@@ -31,7 +31,7 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_display.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -127,8 +127,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleObj *first;
   struct BattleObj *second;
-  struct ObjectRuntime *user;
-  struct ObjectRuntime *target;
+  struct Actor *user;
+  struct Actor *target;
   s32 percent;
   s32 x;
   s32 z;
@@ -182,9 +182,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   userHeight = BattleUnit_GetEffectHeightFar(effect->actor);
   targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[0]);
   EffectPosition_ProjectBattler(effect->actors[0], &targetScreen);
-  Object_ResetMotion(user);
-  Object_SetPosition(user, x, 0, z);
-  Object_SetMode(user, 2);
+  Actor_ResetMotion(user);
+  Actor_SetTargetPosition(user, x, 0, z);
+  Actor_SetMode(user, 2);
   user->snapToTarget = 1;
   user->actionFlags = 1;
   user->acceleration = 2 << 16;
@@ -219,8 +219,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->actionFlags = 0;
-      Object_ResetMotion(user);
-      Object_SetPosition(user, 0, 0, user->z);
+      Actor_ResetMotion(user);
+      Actor_SetTargetPosition(user, 0, 0, user->z);
     }
 
     if (effect->variant == 0) {
@@ -321,7 +321,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->scaleY = -user->scaleY;
       user->y -= userHeight;
       target->y -= targetHeight;
-      Object_SetMode(user, 0);
+      Actor_SetMode(user, 0);
     }
     if (frame == 54) {
       if (effect->variant == 0)

@@ -10,7 +10,7 @@
 // pointer and the sprite pointer are one variable, as the native's r7.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 #include "resource.h"
@@ -56,7 +56,7 @@ struct BowScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
@@ -64,8 +64,8 @@ extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
-s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
-s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BowVector *pos);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);

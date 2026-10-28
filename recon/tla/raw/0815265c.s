@@ -2495,7 +2495,7 @@ BattleEffect_RunProjectileVolleyB:
 	mov r1, r11
 	cmp r1, #6
 	beq .L_08153924
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 .L_08153924:
 	ldr r3, [sp, #76]
 	movs r5, #240

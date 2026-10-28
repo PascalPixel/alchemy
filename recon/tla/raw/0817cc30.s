@@ -635,7 +635,7 @@ BattleEffect_RunOceanFist:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0817d11c:
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r4, #240
 	ldr r3, [sp, #24]
 	lsls r4, r4, #7

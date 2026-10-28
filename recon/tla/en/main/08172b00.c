@@ -46,10 +46,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
+void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // ObjectGroup_UpdateMembers
+                   s32 timerFrames);              // Actor_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -110,7 +110,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight); // builds a grid's mesh
 void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
@@ -207,7 +207,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     frames = 50;
   }
   REG_BG2PA = 0x80;
-  ObjectDispatch_SetAnimationSpeedFar(caster, 240);
+  Actor_SetAnimationSpeedFar(caster, 240);
 
   for (frame = 0; frame != frames; frame++) {
     if (frame == 0) {
@@ -472,11 +472,11 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
       Heap_Release(model);
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

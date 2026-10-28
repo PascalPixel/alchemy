@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct GateEventWork {
   u8 unk000[362];
@@ -8,7 +8,7 @@ struct GateEventWork {
 };
 
 extern const u8 gData_02005d7c[];
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020018ec(s32 open);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

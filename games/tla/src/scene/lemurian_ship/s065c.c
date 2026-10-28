@@ -9,9 +9,9 @@ void Func_0200065c(void) {
   if (LemurianShip_FlagCheck(0x983)) {
     if (LemurianShip_FlagCheck(0x207)) {
       LemurianShip_SePlay(232);
-      LemurianShip_ObjSetPos(Object_GetById(15), 0x3380000, 0xffe00000,
+      LemurianShip_ObjSetPos(Actor_GetById(15), 0x3380000, 0xffe00000,
                              0x480000);
-      Object_GetById(15)->height = 0xffe00000;
+      Actor_GetById(15)->height = 0xffe00000;
       LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
       LemurianShip_BlendStart(106, 16, 3, 2, 110, 4);
       LemurianShip_BlendStart(50, 1, 3, 1, 50, 4);

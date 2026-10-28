@@ -29,7 +29,7 @@ Func_0200014c:
 .L_ja_02008176:
 	movs r0, #9
 .L_ja_02008178:
-	bl Object_GetById
+	bl Actor_GetById
 	adds r1, r0, #0
 	adds r0, r5, #0
 	movs r2, #24
@@ -42,7 +42,7 @@ Func_0200014c:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #176
 	lsls r2, r2, #1
 	adds r3, r7, r2
@@ -86,7 +86,7 @@ Func_020006bc:
 	mov r7, r8
 	push {r7}
 	adds r6, r0, #0
-	bl Object_GetById
+	bl Actor_GetById
 	movs r2, #98
 	adds r5, r0, #0
 	adds r2, r2, r5
@@ -482,7 +482,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008c66:
 	movs r1, #162
@@ -490,7 +490,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008c78:
 	movs r1, #160
@@ -498,7 +498,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008c8a:
 	movs r1, #162
@@ -506,7 +506,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008c9c:
 	movs r1, #172
@@ -514,7 +514,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008cae:
 	movs r1, #182
@@ -522,7 +522,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008cc0:
 	movs r1, #184
@@ -530,7 +530,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008cd2:
 	movs r1, #182
@@ -538,7 +538,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008ce4:
 	movs r1, #172
@@ -546,7 +546,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008cf6:
 	movs r1, #162
@@ -554,7 +554,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d08:
 	movs r1, #160
@@ -562,7 +562,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d1a:
 	movs r1, #162
@@ -570,7 +570,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d2c:
 	movs r1, #172
@@ -578,7 +578,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d3e:
 	movs r1, #182
@@ -586,7 +586,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d50:
 	movs r1, #184
@@ -594,7 +594,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d62:
 	movs r1, #182
@@ -602,7 +602,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d74:
 	movs r1, #172
@@ -610,7 +610,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008d86:
 	movs r1, #230
@@ -620,13 +620,13 @@ Func_020006bc:
 	adds r0, r6, #0
 	adds r1, #204
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #182
 	movs r2, #205
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008daa:
 	movs r1, #184
@@ -634,7 +634,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008dbc:
 	movs r1, #196
@@ -642,7 +642,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008dce:
 	movs r1, #196
@@ -650,19 +650,19 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008de0:
 	adds r0, r6, #0
 	ldr r1, .L_0200917c
 	ldr r2, .L_0200917c
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #186
 	movs r2, #185
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008dfc:
 	movs r1, #184
@@ -670,7 +670,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e0e:
 	movs r1, #186
@@ -678,7 +678,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e20:
 	movs r1, #196
@@ -686,7 +686,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e32:
 	movs r1, #206
@@ -694,7 +694,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e44:
 	movs r1, #208
@@ -702,7 +702,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e56:
 	movs r1, #206
@@ -710,7 +710,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e68:
 	movs r1, #196
@@ -718,7 +718,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	bl .L_02009678
 .L_02008e7a:
 	movs r1, #186
@@ -726,7 +726,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008e8a:
 	movs r1, #184
@@ -734,7 +734,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008e9a:
 	movs r1, #186
@@ -742,7 +742,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008eaa:
 	movs r1, #196
@@ -750,7 +750,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008eba:
 	movs r1, #206
@@ -758,7 +758,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008eca:
 	movs r1, #208
@@ -766,7 +766,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008eda:
 	movs r1, #206
@@ -774,7 +774,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008eea:
 	movs r1, #196
@@ -782,7 +782,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008efa:
 	movs r1, #186
@@ -790,7 +790,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f0a:
 	movs r1, #184
@@ -798,7 +798,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f1a:
 	movs r1, #186
@@ -806,7 +806,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f2a:
 	movs r1, #196
@@ -814,7 +814,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f3a:
 	movs r1, #206
@@ -822,7 +822,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f4a:
 	movs r1, #208
@@ -830,7 +830,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f5a:
 	movs r1, #206
@@ -838,7 +838,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f6a:
 	movs r1, #196
@@ -846,7 +846,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f7a:
 	movs r1, #186
@@ -854,7 +854,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f8a:
 	movs r1, #184
@@ -862,7 +862,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008f9a:
 	movs r1, #186
@@ -870,7 +870,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008faa:
 	movs r1, #196
@@ -878,7 +878,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008fba:
 	movs r1, #196
@@ -886,7 +886,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008fca:
 	movs r1, #206
@@ -894,7 +894,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008fda:
 	movs r1, #208
@@ -902,7 +902,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008fea:
 	movs r1, #206
@@ -910,7 +910,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02008ffa:
 	movs r1, #196
@@ -918,7 +918,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200900a:
 	movs r1, #186
@@ -926,7 +926,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200901a:
 	movs r1, #184
@@ -934,7 +934,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200902a:
 	movs r1, #160
@@ -942,7 +942,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200903a:
 	movs r1, #158
@@ -950,7 +950,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200904a:
 	movs r1, #148
@@ -958,7 +958,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200905a:
 	movs r1, #138
@@ -966,7 +966,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200906a:
 	movs r1, #136
@@ -974,7 +974,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200907a:
 	movs r1, #138
@@ -982,7 +982,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200908a:
 	movs r1, #148
@@ -990,7 +990,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200909a:
 	movs r1, #158
@@ -998,7 +998,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090aa:
 	movs r1, #160
@@ -1006,7 +1006,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090ba:
 	movs r1, #158
@@ -1014,7 +1014,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090ca:
 	movs r1, #148
@@ -1022,7 +1022,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090da:
 	movs r1, #138
@@ -1030,7 +1030,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090ea:
 	movs r1, #136
@@ -1038,7 +1038,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020090fa:
 	movs r1, #138
@@ -1046,7 +1046,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200910a:
 	movs r1, #148
@@ -1054,7 +1054,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200911a:
 	movs r1, #158
@@ -1062,7 +1062,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200912a:
 	movs r1, #160
@@ -1070,7 +1070,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200913a:
 	movs r1, #158
@@ -1078,7 +1078,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200914a:
 	movs r1, #148
@@ -1086,7 +1086,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200915a:
 	movs r1, #148
@@ -1094,7 +1094,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200916a:
 	movs r1, #136
@@ -1102,7 +1102,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 	.2byte 0x0000
 .L_0200917c:
@@ -1113,42 +1113,42 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009190:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200919e:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091ac:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091ba:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091c8:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091d6:
 	movs r1, #134
@@ -1156,7 +1156,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091e6:
 	movs r1, #136
@@ -1164,7 +1164,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020091f6:
 	movs r1, #134
@@ -1172,42 +1172,42 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009206:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009214:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009222:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009230:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200923e:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200924c:
 	movs r1, #134
@@ -1215,7 +1215,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200925c:
 	movs r1, #136
@@ -1223,7 +1223,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200926c:
 	movs r1, #134
@@ -1231,42 +1231,42 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200927c:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200928a:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009298:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092a6:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092b4:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092c2:
 	movs r1, #134
@@ -1274,7 +1274,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092d2:
 	movs r1, #136
@@ -1282,7 +1282,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092e2:
 	movs r1, #134
@@ -1290,77 +1290,77 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020092f2:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009300:
 	movs r2, #190
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200930e:
 	movs r2, #191
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200931c:
 	movs r2, #194
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200932a:
 	movs r2, #197
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009338:
 	movs r2, #198
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009346:
 	movs r2, #210
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009354:
 	movs r2, #211
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009362:
 	movs r2, #214
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009370:
 	movs r2, #217
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200937e:
 	movs r1, #134
@@ -1368,7 +1368,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200938e:
 	movs r1, #136
@@ -1376,7 +1376,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200939e:
 	movs r1, #134
@@ -1384,35 +1384,35 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020093ae:
 	movs r2, #210
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020093bc:
 	movs r2, #211
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020093ca:
 	movs r2, #214
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020093d8:
 	movs r2, #217
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020093e6:
 	adds r0, r5, #0
@@ -1427,7 +1427,7 @@ Func_020006bc:
 	lsls r2, r2, #2
 	adds r0, r6, #0
 	movs r1, #248
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	adds r2, r5, #0
 	adds r2, #100
 	ldrh r3, [r2]
@@ -1440,7 +1440,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200941e:
 	movs r1, #136
@@ -1448,7 +1448,7 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200942e:
 	movs r1, #134
@@ -1456,28 +1456,28 @@ Func_020006bc:
 	adds r0, r6, #0
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200943e:
 	movs r2, #210
 	adds r0, r6, #0
 	movs r1, #248
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200944c:
 	movs r2, #211
 	adds r0, r6, #0
 	movs r1, #228
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200945a:
 	movs r2, #214
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009468:
 	movs r1, #230
@@ -1487,254 +1487,254 @@ Func_020006bc:
 	adds r0, r6, #0
 	adds r1, #204
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #214
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009488:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009496:
 	adds r0, r6, #0
 	ldr r1, .L_02009684
 	ldr r2, .L_02009684
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094ae:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #176
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094bc:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094ca:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094d8:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094e6:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020094f4:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009502:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009510:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200951e:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #176
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200952c:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200953a:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009548:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009556:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009564:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009572:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009580:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200958e:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #176
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200959c:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095aa:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095b8:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095c6:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #224
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095d4:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #220
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095e2:
 	movs r2, #186
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095f0:
 	movs r2, #185
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_020095fe:
 	movs r2, #182
 	adds r0, r6, #0
 	movs r1, #176
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200960c:
 	movs r2, #179
 	adds r0, r6, #0
 	movs r1, #180
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200961a:
 	movs r2, #178
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009628:
 	movs r2, #170
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009636:
 	movs r2, #169
 	adds r0, r6, #0
 	movs r1, #212
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009644:
 	movs r2, #166
 	adds r0, r6, #0
 	movs r1, #216
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009652:
 	movs r2, #163
 	adds r0, r6, #0
 	movs r1, #212
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_02009660:
 	movs r2, #162
 	adds r0, r6, #0
 	movs r1, #200
 	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 	b .L_02009678
 .L_0200966e:
 	adds r0, r5, #0
@@ -1757,7 +1757,7 @@ Func_020006bc:
 Func_02001944:
 	push {r5, r6, r7, lr}
 	movs r0, #8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	ldr r0, .L_02009cd8
 	bl Func_02002520
@@ -1765,15 +1765,15 @@ Func_02001944:
 	movs r0, #8
 	bl Func_02002538
 	movs r0, #9
-	bl ObjectMotion_EnableActionAndResetMotion
+	bl Actor_Stop
 	movs r0, #10
-	bl ObjectMotion_EnableActionAndResetMotion
+	bl Actor_Stop
 	movs r0, #9
-	bl Object_GetById
+	bl Actor_GetById
 	movs r5, #0
 	str r5, [r0, #108]
 	movs r0, #10
-	bl Object_GetById
+	bl Actor_GetById
 	str r5, [r0, #108]
 	movs r0, #1
 	bl WaitFrames
@@ -1782,19 +1782,19 @@ Func_02001944:
 	movs r0, #9
 	ldr r1, .L_02009cdc
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #204
 	lsls r2, r2, #8
 	adds r2, #204
 	movs r0, #10
 	ldr r1, .L_02009cdc
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_02009ce0
 	movs r0, #9
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009ce4
 	movs r0, #10
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	bl Func_02002570
 	adds r0, #85
 	strb r5, [r0]
@@ -1823,13 +1823,13 @@ Func_02001944:
 	ldr r0, [r5]
 	adds r1, #204
 	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #148
 	movs r2, #218
 	lsls r2, r2, #2
 	ldr r0, [r5]
 	lsls r1, r1, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #0
 	ldr r0, [r5]
 	bl Func_02002548
@@ -1839,7 +1839,7 @@ Func_02001944:
 	movs r2, #20
 	movs r0, #8
 	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #208
 	movs r0, #8
 	lsls r1, r1, #8
@@ -1847,11 +1847,11 @@ Func_02001944:
 	movs r0, #8
 	movs r1, #2
 	movs r2, #10
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r2, #10
 	movs r0, #8
 	movs r1, #4
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #8
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -1860,25 +1860,25 @@ Func_02001944:
 	movs r0, #8
 	ldr r1, .L_02009cdc
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #204
 	lsls r2, r2, #8
 	adds r2, #204
 	movs r0, #11
 	ldr r1, .L_02009cdc
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r1, .L_02009cf0
 	movs r0, #8
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009cf4
 	movs r0, #9
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009cf8
 	movs r0, #10
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009cfc
 	movs r0, #11
-	bl Object_SetActionCallbackAndRefreshById
+	bl Actor_SetMovementTypeAndWaitById
 	movs r1, #148
 	movs r2, #218
 	lsls r1, r1, #17
@@ -1891,20 +1891,20 @@ Func_02001944:
 	ldr r0, [r5]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r2, #153
 	lsls r2, r2, #8
 	movs r0, #5
 	ldr r1, .L_02009d00
 	adds r2, #153
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r2, #192
 	movs r1, #156
 	lsls r2, r2, #2
 	adds r2, #86
 	movs r0, #5
 	lsls r1, r1, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	movs r0, #5
 	lsls r1, r1, #7
@@ -1917,9 +1917,9 @@ Func_02001944:
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #5
 	movs r1, #2
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	ldr r0, [r5]
-	bl Object_GetById
+	bl Actor_GetById
 	cmp r0, #0
 	beq .L_02009af0
 	movs r3, #10
@@ -1927,10 +1927,10 @@ Func_02001944:
 	movs r3, #18
 	ldrsh r2, [r0, r3]
 	movs r0, #5
-	bl ObjectMotion_ResetAndSetPosition
+	bl Actor_ResetAndSetPosition
 .L_02009af0:
 	movs r0, #5
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
@@ -1940,19 +1940,19 @@ Func_02001944:
 	ldr r0, [r5]
 	ldr r1, .L_02009cdc
 	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	movs r1, #158
 	movs r2, #224
 	ldr r0, [r5]
 	lsls r1, r1, #1
 	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #172
 	movs r2, #228
 	lsls r2, r2, #2
 	ldr r0, [r5]
 	lsls r1, r1, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	ldr r0, [r5]
 	lsls r1, r1, #8
@@ -1971,20 +1971,20 @@ Func_02001944:
 	bl Camera_FollowActor
 	ldr r1, .L_02009d04
 	movs r0, #8
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009d08
 	movs r0, #10
-	bl ObjectMotion_EnableActionAndSetCallback
+	bl Actor_SetMovementTypeById
 	ldr r1, .L_02009d0c
 	movs r0, #9
-	bl Object_SetActionCallbackAndRefreshById
+	bl Actor_SetMovementTypeAndWaitById
 	movs r2, #192
 	movs r1, #172
 	lsls r2, r2, #2
 	adds r2, #122
 	movs r0, #11
 	lsls r1, r1, #1
-	bl ObjectMotion_SetPositionAndReset
+	bl Actor_SetPositionAndReset
 	movs r1, #192
 	lsls r1, r1, #8
 	movs r0, #11
@@ -2062,19 +2062,19 @@ Func_02001944:
 	movs r0, #8
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #10
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #9
 	movs r1, #4
 	movs r2, #0
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	movs r0, #11
 	movs r1, #4
 	movs r2, #40
-	bl ObjectMotion_Launch
+	bl Actor_Jump
 	ldr r5, .L_02009cec
 	movs r3, #133
 	lsls r3, r3, #2
@@ -2083,22 +2083,22 @@ Func_02001944:
 	ldr r0, [r5]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #160
 	movs r0, #8
 	lsls r1, r1, #7
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #160
 	movs r0, #10
 	lsls r1, r1, #7
 	movs r2, #0
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #128
 	movs r2, #0
 	movs r0, #9
 	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
+	bl Actor_ArmCallback
 	movs r1, #128
 	movs r0, #11
 	lsls r1, r1, #8
@@ -2168,7 +2168,7 @@ Func_020022f8:
 	push {r7}
 	movs r0, #9
 	sub sp, #8
-	bl Object_GetById
+	bl Actor_GetById
 	adds r6, r0, #0
 	ldr r2, [r6, #80]
 	movs r0, #192

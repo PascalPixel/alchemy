@@ -597,7 +597,7 @@ BattleEffect_RunIce:
 	adds r5, #28
 	cmp r2, #32
 	bne .L_0813bfc2
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0

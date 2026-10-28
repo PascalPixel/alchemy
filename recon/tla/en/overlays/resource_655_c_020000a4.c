@@ -7,7 +7,7 @@
 // skipping the test's first instruction.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 
 struct EffectWork1a {
   u8 unk00[0x1a];
@@ -15,7 +15,7 @@ struct EffectWork1a {
 };
 
 void GameFlag_SetBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 
 void Func_020000a4(const void *data, s32 mode, s32 timer) {
@@ -27,7 +27,7 @@ void Func_020000a4(const void *data, s32 mode, s32 timer) {
 loop:
   active = work->active;
   if (active == *spec) {
-    struct ObjectRuntime *object = Object_GetById(active);
+    struct Actor *object = Actor_GetById(active);
     s32 kind;
     s32 flag;
 

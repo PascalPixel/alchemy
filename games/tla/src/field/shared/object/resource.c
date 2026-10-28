@@ -27,7 +27,7 @@ s32 ResourceTable_CountFreeBlocks(void) {
   return freeCount;
 }
 
-void *Object_ReplaceResourceEntry(void *src, void *alt) {
+void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   void *ret;
   struct ResourceSprite *obj;
 

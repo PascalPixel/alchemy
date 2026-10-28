@@ -1,6 +1,6 @@
 // Draft, differ 732 of 875 (758 before; the locals declared in the twin's
 // order, x, y, z and ground before the arrival flag, give the native's stack
-// slots for x, y and z). Written from The Broken Seal's Object_UpdateAllThumb
+// slots for x, y and z). Written from The Broken Seal's Actor_UpdateAllThumb
 // (games/tbs/src/field/field/object_motion.c), which runs each object's hook
 // and script and moves it toward its target each frame (Func_080230e0 adds
 // it at 0x48b). This game's changes: a paused object records no motion and
@@ -18,7 +18,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-/// An object as the motion update reads it (struct ObjectRuntime's layout).
+/// An object as the motion update reads it (struct Actor's layout).
 struct MotionObject {
   s32 *script;
   s16 step;

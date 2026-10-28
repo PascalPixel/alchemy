@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_020010f4(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
@@ -10,7 +10,7 @@ void Func_020010f4(s32 unused, s32 id) {
 }
 
 void Func_0200112c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
@@ -19,7 +19,7 @@ void Func_0200112c(s32 unused, s32 id) {
 }
 
 void Func_02001164(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
@@ -28,7 +28,7 @@ void Func_02001164(s32 unused, s32 id) {
 }
 
 void Func_0200119c(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
 
   if (column == 53) {
@@ -40,7 +40,7 @@ void Func_0200119c(s32 unused, s32 id) {
 }
 
 void Func_020011e0(s32 unused, s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
 
   if (column == 53) {

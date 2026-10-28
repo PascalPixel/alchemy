@@ -15,7 +15,7 @@ Func_02000038:
 	lsls r3, r3, #18
 	ldr r7, [r3, #32]
 	sub sp, #8
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r0, #80]
 	ldr r5, .L_02008184
 	ldr r3, [r3, #40]
@@ -396,7 +396,7 @@ Func_0200033c:
 	lsls r0, r0, #2
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Object_GetById
+	bl Actor_GetById
 	adds r7, r0, #0
 	ldrh r3, [r7, #6]
 	ldr r1, [sp, #8]
@@ -550,10 +550,10 @@ Func_02000458:
 	adds r0, r0, r3
 	mov r10, r0
 	ldr r0, [r0]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r8, r0
 	ldr r0, [sp, #112]
-	bl Object_GetById
+	bl Actor_GetById
 	mov r3, r8
 	ldr r3, [r3, #48]
 	mov r4, r8
@@ -639,11 +639,11 @@ Func_02000458:
 	ldr r0, [r4]
 	adds r2, #153
 	lsls r1, r1, #8
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	mov r1, r10
 	ldr r0, [r1]
 	movs r1, #8
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r0, #15
 	bl WaitFrames
 	ldr r2, [sp, #16]
@@ -658,10 +658,10 @@ Func_02000458:
 	mov r3, r10
 	asrs r2, r2, #17
 	ldr r0, [r3]
-	bl ObjectMotion_OffsetPositionAndResetMotion
+	bl Actor_OffsetPositionAndResetMotion
 	mov r4, r10
 	ldr r0, [r4]
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, .L_0200874c
 	str r3, [r0, #108]
 	movs r0, #4
@@ -677,7 +677,7 @@ Func_02000458:
 	ldr r0, [sp, #112]
 	lsls r1, r1, #8
 	adds r2, #153
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	adds r0, r6, #0
 	ldr r1, [sp, #96]
 	ldr r2, [sp, #100]
@@ -688,10 +688,10 @@ Func_02000458:
 	lsls r0, r0, #2
 	adds r5, r3, r0
 	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	ldr r0, [r5]
 	movs r1, #2
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	movs r1, #152
 	movs r2, #200
 	lsls r1, r1, #7
@@ -699,7 +699,7 @@ Func_02000458:
 	ldr r0, [r5]
 	adds r1, #204
 	adds r2, #153
-	bl ObjectMotion_SetSpeedParameters
+	bl Actor_SetSpeedParameters
 	ldr r2, .L_02008750
 	mov r1, r9
 	lsls r3, r1, #2
@@ -708,7 +708,7 @@ Func_02000458:
 	lsls r2, r2, #16
 	asrs r1, r2, #31
 	asrs r2, r2, #17
-	bl ObjectMotion_OffsetPositionAndResetMotion
+	bl Actor_OffsetPositionAndResetMotion
 	ldr r3, [sp, #116]
 	cmp r3, #0
 	beq .L_020085e8
@@ -716,10 +716,10 @@ Func_02000458:
 	.2byte 0xf800
 .L_020085e8:
 	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
+	bl Actor_WaitForMoveById
 	movs r1, #1
 	ldr r0, [r5]
-	bl Object_SetModeById
+	bl Actor_SetModeById
 	mov r2, r8
 	movs r3, #0
 	str r3, [r2, #108]
@@ -739,7 +739,7 @@ Func_02000458:
 	ldr r1, [sp, #96]
 	ldr r3, [sp, #104]
 	adds r0, r6, #0
-	bl Object_SetPositionAndResetMotion
+	bl Actor_SetPositionAndResetMotion
 	adds r0, r6, #0
 	movs r1, #1
 	bl Func_02001828
@@ -1196,7 +1196,7 @@ Func_02000bc0:
 	cmp r7, r3
 	bne .L_02008c28
 	adds r0, r7, #0
-	bl Object_GetById
+	bl Actor_GetById
 	adds r5, #2
 	ldrh r2, [r5]
 	mov r3, r10
@@ -1439,7 +1439,7 @@ Func_02001418:
 	bne .L_ja_020095aa
 	movs r0, #64
 	movs r1, #1
-	bl Object_SetWideSprite
+	bl Actor_SetWideSprite
 .L_ja_020095aa:
 	ldr r1, .L_ja_0200961c
 	movs r2, #240
@@ -1673,9 +1673,9 @@ Func_02001418:
 	bl GameFlag_SetBit
 	movs r0, #16
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	strb r6, [r0]
 .L_ja_020097b0:
@@ -1885,7 +1885,7 @@ Func_02001418:
 	bne .L_020095b2
 	movs r0, #64
 	movs r1, #1
-	bl Object_SetWideSprite
+	bl Actor_SetWideSprite
 .L_020095b2:
 	ldr r1, .L_02009624
 	movs r2, #240
@@ -2018,7 +2018,7 @@ Func_02001418:
 	b .L_020096ea
 .L_020096cc:
 	movs r0, #13
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r2, [r0, #8]
 	ldr r3, [r0, #16]
 	asrs r2, r2, #20
@@ -2123,9 +2123,9 @@ Func_02001418:
 	bl GameFlag_SetBit
 	movs r0, #16
 	movs r1, #3
-	bl ObjectMotion_SetActionVariant
+	bl Actor_SetSpritePriority
 	movs r0, #16
-	bl Object_GetById
+	bl Actor_GetById
 	adds r0, #89
 	strb r6, [r0]
 .L_020097c2:

@@ -19,7 +19,7 @@
 // mode 1 otherwise. Func_080eaa14 then takes the same list, and the
 // controlled owner is set onto the terrain when Func_08020310 asks for it.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 
@@ -39,9 +39,9 @@ struct RestoreMap {
   struct RestoreLayer layers[1];
 };
 
-struct ObjectRuntime *Object_GetById(u32 actor);
-s32 Func_080eab70(struct ObjectRuntime *object);
-void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+struct Actor *Actor_GetById(u32 actor);
+s32 Func_080eab70(struct Actor *object);
+void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -55,7 +55,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
   register struct RestoreMap *map asm("r11") =
       (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct ActorFlag *entry;
-  struct ObjectRuntime *owner;
+  struct Actor *owner;
   s32 x;
   register s32 step asm("r9");
 
@@ -63,14 +63,14 @@ void Func_080ea8d4(struct ActorFlag *list) {
   if (entry->actor != 0xffff) {
     step = 0x100000;
     do {
-      struct ObjectRuntime *object = Object_GetById(entry->actor);
+      struct Actor *object = Actor_GetById(entry->actor);
       u16 flag = entry->flag;
       s32 slot = Func_080eab70(object);
       u8 *cell = map->layers[object->terrainId].cells[slot];
 
       object->motionFlags = 0;
       object->collisionFlags &= ~1;
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+      Actor_SetSingleChildFlagsFar(object, 0);
       x = object->x;
       cell[2] = 0xff;
       Func_080ea8a8(x + step, object->z, object->terrainId,
@@ -82,16 +82,16 @@ void Func_080ea8d4(struct ActorFlag *list) {
       Func_080ea8a8(object->x, object->z - 0x100000, object->terrainId,
                     object->terrainHeight);
       if (GameFlag_Test(flag)) {
-        Object_SetMode(object, 0);
+        Actor_SetMode(object, 0);
         GameFlag_ClearBit(flag);
       } else {
-        Object_SetMode(object, 1);
+        Actor_SetMode(object, 1);
       }
       entry++;
     } while (entry->actor != 0xffff);
   }
   Func_080eaa14(list);
-  owner = Object_GetById(Party_GetLeaderActor());
+  owner = Actor_GetById(Party_GetLeaderActor());
   if (Func_08020310(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
     owner->terrainHeight = owner->y =
         Map_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);

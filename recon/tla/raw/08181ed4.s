@@ -569,7 +569,7 @@ Func_08181ed4:
 	movs r1, #16
 	movs r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_CountDownMemberTimers
+	bl BattleEffect_CountDownBattlerTints
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7

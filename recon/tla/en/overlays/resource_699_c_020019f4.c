@@ -2,7 +2,7 @@
 // resource_698_c_0200180c.c (overlay 698's Func_0200180c, differ 47 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 
 struct Spot {
@@ -24,7 +24,7 @@ struct SpotState {
 
 extern struct SpotState gData_020024f8;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -32,7 +32,7 @@ void Func_02001654(struct SpotState *state, struct Spot *spot);
 void Func_020016c4(struct SpotState *state, struct Spot *spot);
 
 s32 Func_020019f4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_020024f8;

@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
 #include "field_scene.h"
 
 extern s32 gData_02002618;
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
 void Func_02001a28(s32 dx, s32 dz, s32 effect);
 void Func_02000460(s32 mode);
@@ -18,9 +18,9 @@ s32 Func_02000290(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  ObjectMotion_SetActionVariant(64, 3);
+  Actor_SetSpritePriority(64, 3);
   gData_02002618 = 0;
-  Object_GetById(8)->motionFlags = 0;
+  Actor_GetById(8)->motionFlags = 0;
   if ((u16)(gAdventure.entrance - 6) <= 1) {
     Func_0200130c(33, 0x280, 0x380, 48, 1);
     Func_02001a28(0, 0, 0x204);

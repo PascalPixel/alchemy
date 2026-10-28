@@ -28,10 +28,10 @@ void Func_02003c8c(void) {
   Func_020053a8_(0, 527, 8, 9);
   Func_020053a8_(1, 528, 10, 11);
   if (GameFlag_Test_(0x849) == 0) {
-    Object_SetModeById_(13, 5);
-    Object_SetModeById_(15, 5);
+    Actor_SetModeById_(13, 5);
+    Actor_SetModeById_(15, 5);
   }
-  Object_SetModeById_(14, 5);
+  Actor_SetModeById_(14, 5);
   Task_Add(Func_02001c8c, 0x480);
   if ((gAdventure.entrance >= 4 && gAdventure.entrance <= 6) ||
       gAdventure.entrance == 14) {

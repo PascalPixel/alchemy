@@ -39,7 +39,7 @@ struct ItemBreakFragmentObject {
 extern s32 ArcTan2(s32, s32);
 
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
-extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
+extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32);
 
 /// Updates the broken item's main object: with a facing target it turns toward
 /// it by at most 0x1000 (22.5 degrees), then emits one fragment particle
@@ -82,13 +82,13 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
 
-  obj = Object_Spawn(0x2a1, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(0x2a1, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;
-    Object_SetMode(obj, 0);
+    Actor_SetMode(obj, 0);
     obj->field5e = 12;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+    Actor_StartScriptFar((struct DispatchObject *)obj,
                                  gBattleEffect_SharedParticleScript);
   }
 }

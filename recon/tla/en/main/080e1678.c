@@ -13,7 +13,7 @@
 // and the wobble tables sit at sp 28 and 12) and the order this cascades into.
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 
@@ -65,12 +65,12 @@ struct BowScene {
   s32 x;
   s32 y;
   s32 z;
-  struct ObjectRuntime *mainObject;
+  struct Actor *mainObject;
 };
 
 struct BowEvent {
   u8 unk00[20];
-  struct ObjectRuntime *objects[80];
+  struct Actor *objects[80];
 };
 
 extern const s32 Data_080f0f34[8];
@@ -79,7 +79,7 @@ extern const u8 Data_080eda0c[];
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
@@ -97,7 +97,7 @@ void Func_080e1678(void) {
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
   struct BowEvent *event = Ram_HeapSlots->eventWork;
   struct BowSpark *spark;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
   s32 wobble[8];

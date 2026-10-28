@@ -26,7 +26,7 @@ Func_080e2774:
 	asrs r6, r2, #16
 	ldr r7, [r5, #108]
 	bl Party_GetLeaderActor
-	bl Object_GetById
+	bl Actor_GetById
 	ldr r3, [r5, #32]
 	movs r2, #132
 	lsls r2, r2, #1

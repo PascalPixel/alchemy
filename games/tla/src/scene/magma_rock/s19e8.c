@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "scene_ids.h"
 #include "magma_rock.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020014bc(s32 mode, s32 cue);
 
@@ -28,9 +28,9 @@ void Func_020019e8(s32 mode, s32 cue) {
     register s32 savedMode asm("r6") = mode;
 
     if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Object_GetById(15);
+      work->target = Actor_GetById(15);
     else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Object_GetById(14);
+      work->target = Actor_GetById(14);
     Func_020014bc(savedMode, cue);
   }
   GameFlag_SetBit(0x200);
@@ -54,9 +54,9 @@ void Func_02001a38(s32 mode, s32 cue) {
     register s32 savedMode asm("r6") = mode;
 
     if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Object_GetById(16);
+      work->target = Actor_GetById(16);
     else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Object_GetById(10);
+      work->target = Actor_GetById(10);
     Func_020014bc(savedMode, cue);
   }
   GameFlag_SetBit(0x201);

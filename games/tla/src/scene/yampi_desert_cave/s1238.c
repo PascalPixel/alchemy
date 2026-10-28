@@ -1,12 +1,12 @@
 #include "yampi_desert_cave.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "edition.h"
 
 extern const s16 gData_020019cc[];
 
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Func_020011e0(void);
 void Func_020018a8(s32 id, s32 x, s32 z);
 void Task_RemoveFar(void (*callback)(void));
@@ -21,8 +21,8 @@ void Func_02001238(s32 mode) {
   s16 row = gData_020019cc[index + 1];
   s32 pz = row * 8;
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *tracked =
-      *(struct ObjectRuntime **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
+  struct Actor *tracked =
+      *(struct Actor **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
   s32 x = 0, z = 0;
 
   if (tracked != NULL) {
@@ -36,7 +36,7 @@ void Func_02001238(s32 mode) {
     Func_020018a8(16, 0, 0);
   }
   if (mode == 2) {
-    struct ObjectRuntime *chest = Object_GetById(17);
+    struct Actor *chest = Actor_GetById(17);
 
     Func_020018a8(17, column << 19, row << 19);
     chest->y = 0x200000;

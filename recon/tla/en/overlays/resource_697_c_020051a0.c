@@ -38,11 +38,11 @@ s32 VramCache_Load(s32 entry, s32 size, void *data);
 void VramCache_ReleaseVram(s32 entry);
 void Heap_Release(void *block);
 void Func_02005790(u32 *entry, s32 value);
-struct ObjectRuntime *ObjectTable_Get(u32 id);
+struct Actor *ObjectTable_Get(u32 id);
 s32 Func_02002ce8(s32 value);
 
 static __inline__ void Marker(u32 **cursor, struct TrialRoadLinkWork *work,
-                              struct ObjectRuntime *object, s32 which,
+                              struct Actor *object, s32 which,
                               s32 tile) {
   s32 dx = object->x - work->originX;
   s32 dz;
@@ -75,7 +75,7 @@ void Func_020051a0(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   u32 *cursor = work->oam;
-  struct ObjectRuntime *object;
+  struct Actor *object;
   u32 flip;
   s32 x;
   s32 y;

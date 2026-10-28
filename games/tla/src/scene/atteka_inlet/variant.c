@@ -11,17 +11,17 @@
 #include "field_event.h"
 #include "field_sprite.h"
 
-struct FieldActor *Object_GetById(s32 id);
+struct FieldActor *Actor_GetById(s32 id);
 
 void Func_02000bb8(void) {
-  s32 variant = Object_GetById(gAdventure.currentOwner)->sprite->priority;
+  s32 variant = Actor_GetById(gAdventure.currentOwner)->sprite->priority;
 
-  ObjectMotion_SetActionVariant(16, variant);
-  ObjectMotion_SetActionVariant(8, variant);
-  ObjectMotion_SetActionVariant(10, variant);
+  Actor_SetSpritePriority(16, variant);
+  Actor_SetSpritePriority(8, variant);
+  Actor_SetSpritePriority(10, variant);
 }
 
 void Func_02000bf0(void) {
-  ObjectMotion_SetActionVariant(
-      13, Object_GetById(gAdventure.currentOwner)->sprite->priority);
+  Actor_SetSpritePriority(
+      13, Actor_GetById(gAdventure.currentOwner)->sprite->priority);
 }

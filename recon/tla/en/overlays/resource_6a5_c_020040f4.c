@@ -17,8 +17,8 @@ s32 Func_0200592c();
 s32 Func_02005984();
 s32 Func_020059f4();
 s32 Map_GetTerrainHeight();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Object_GetById();
+s32 Actor_SetSingleChildFlags();
+s32 Actor_GetById();
 s32 WaitFrames();
 extern u8 gFrameCount[];
 extern u8 gAdventure[];
@@ -32,14 +32,14 @@ void Func_020040f4(void) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   t1 = *(s32 *)((s32)gAdventure + 0x214);
-  t2 = Object_GetById(t1);
+  t2 = Actor_GetById(t1);
   t3 = FIELD_AT(t2, s32, 104);
   Func_02005814();
   Func_02005984(0);
   *(u16 *)(0xd46 + t0) = 0;
   v_r9 = (85 + t2);
   *(u8 *)v_r9 = 4;
-  ObjectDispatch_SetSingleChildFlags(t2, 0);
+  Actor_SetSingleChildFlags(t2, 0);
   t7 = *(u8 *)(99 + t3);
   v_r8 = (99 + t3);
   v_r5 = 0;
@@ -80,7 +80,7 @@ L_0200c194:
   FIELD_AT(v_r6, s32, 40) = 0x60000;
   *(u8 *)(v_r6 + 35) = 1;
   *(u8 *)v_r9 = 3;
-  ObjectDispatch_SetSingleChildFlags(v_r6, 1);
+  Actor_SetSingleChildFlags(v_r6, 1);
   v_r3 = 0;
   v_r2 = -1;
   v_r1 = -1;
@@ -132,7 +132,7 @@ L_0200c292:
   Func_0200578c(v_r7, v_r1, v_r2);
   v_r5 = ((s32)gAdventure + 0x214);
   t38 = *(s32 *)v_r5;
-  t39 = Object_GetById(t38);
+  t39 = Actor_GetById(t38);
   t40 = *(u8 *)(t39 + 35);
   *(u8 *)(t39 + 35) = (1 | t40);
   t41 = *(s32 *)v_r5;

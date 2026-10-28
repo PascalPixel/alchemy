@@ -26,7 +26,7 @@ s32 Math_Sine(s32 angle);
 void Func_02000e2c(struct OrbitEffect *effect, const u32 *script);
 void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
-struct OrbitEffect *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct OrbitEffect *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 extern u32 gData_020015c0[];
 

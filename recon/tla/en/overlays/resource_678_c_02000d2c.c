@@ -6,12 +6,12 @@
 // Func_02000ca0, Func_02000c24 and Func_02000cec run in turn, and flag
 // 0x330 is set. Left: the native's loops count down in r11 with their tests at the bottom (the clod loop keeps IwramMulQ16 in r10), keeps the rock in r9, and orders the clods' stores otherwise.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
 
 extern u8 gData_02002a04[];
-struct ObjectRuntime *Object_GetById(u32 id);
+struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
 void Func_02002968(s32 mode);
 void Func_020028a0(void);
@@ -25,15 +25,15 @@ void Func_02000c14(void);
 void Func_02000ca0(void);
 void Func_02000c24(void);
 void Func_02000cec(void);
-void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ResetAndSetPosition(u32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(u32 id);
+void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPosition(u32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(u32 id);
 void Func_020028d0(s32 id, s32 x, s32 z);
 void Func_020029b0(s32 cue);
 void Func_02002868(s32 a, s32 b, s32 c);
-struct ObjectRuntime *Func_02002808(s32 type, s32 x, s32 y, s32 z);
-void Func_02002800(struct ObjectRuntime *object, const u8 *script);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
+void Func_02002800(struct Actor *object, const u8 *script);
+void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Task_Add(void (*callback)(void), s32 priority);
 void Func_02002918(s32 a, s32 b);
@@ -43,8 +43,8 @@ void Func_02002838(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000d2c(void) {
-  struct ObjectRuntime *rock = Object_GetById(19);
-  struct ObjectRuntime *clod;
+  struct Actor *rock = Actor_GetById(19);
+  struct Actor *clod;
   s32 i, angle, speed, scale, row;
 
   Func_02002898();
@@ -56,12 +56,12 @@ void Func_02000d2c(void) {
     rock->targetX = 0x80000000;
   }
   rock->update = Func_02000c14;
-  ObjectMotion_SetSpeedParameters(19, 0x20000, 0x10000);
-  ObjectMotion_ResetAndSetPosition(19, 492, 246);
+  Actor_SetSpeedParameters(19, 0x20000, 0x10000);
+  Actor_ResetAndSetPosition(19, 492, 246);
   rock->gravity = 0xcccc;
   rock->motionFlags = 3;
   rock->terrainId = 0;
-  ObjectMotion_CommitCurrentPositionAndActivate(19);
+  Actor_WaitForMoveById(19);
   rock->velocityY = 0;
   rock->y = rock->terrainHeight;
   Func_020028d0(19, 0x1e00000, 0xf80000);
@@ -71,8 +71,8 @@ void Func_02000d2c(void) {
   Func_020029b0(141);
   Func_02002868(-1, -1, 0xe666);
   Func_020028d0(10, 0x1e00000, 0xf80000);
-  ObjectMotion_ResetAndSetPosition(10, 440, 232);
-  Object_GetById(10)->velocityY = 0x50000;
+  Actor_ResetAndSetPosition(10, 440, 232);
+  Actor_GetById(10)->velocityY = 0x50000;
   rock->update = 0;
   for (i = 15; i >= 0; i--) {
     clod = Func_02002808(255, rock->x, rock->y + 0x100000, rock->z);
@@ -82,7 +82,7 @@ void Func_02000d2c(void) {
     speed = Random16Far();
     scale = (Random16Far() >> 2) + 0x1000;
     Func_02002800(clod, gData_02002a04);
-    ObjectDispatch_SetSingleChildFlags(clod, 0);
+    Actor_SetSingleChildFlags(clod, 0);
     clod->velocityY = (angle << 2) + 0x20000;
     speed <<= 3;
     clod->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));

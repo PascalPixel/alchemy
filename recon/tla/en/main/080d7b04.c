@@ -33,7 +33,7 @@ struct Target {
 extern s32 gAdventure[];
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
-struct Target *Object_GetById(s32);
+struct Target *Actor_GetById(s32);
 void Camera_WorldToScreen(struct Vec *);
 void BattleEffect_ClearOwnedSlot(struct Actor *);
 
@@ -41,7 +41,7 @@ void BattleEffect_RunAngledApproachPhases(struct Actor *actor) {
   struct Target *target;
   struct Vec pos;
 
-  target = Object_GetById(gAdventure[133]);
+  target = Actor_GetById(gAdventure[133]);
   if (actor->phase == 0) {
     actor->yaw += 1;
     actor->pitch += 1;

@@ -15,7 +15,7 @@ void Func_020043ec(void);
 void Func_02004700(s32 a0);
 
 void Func_02000c80(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
   s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
@@ -24,11 +24,11 @@ void Func_02000c80(s32 id) {
 
   cell += offset << 2;
   cell[2] = 255;
-  Object_GetById(id)->priorityFlags = 0;
+  Actor_GetById(id)->priorityFlags = 0;
 }
 
 void Func_02000cb8(s32 id) {
-  struct ObjectRuntime *object = Object_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
   s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
@@ -38,7 +38,7 @@ void Func_02000cb8(s32 id) {
   cell += offset << 2;
   cell[2] = 0;
   {
-    u8 *flags = &Object_GetById(id)->priorityFlags;
+    u8 *flags = &Actor_GetById(id)->priorityFlags;
     s32 value = 2;
 
     value |= *flags;
@@ -50,11 +50,11 @@ void Func_02000cf4(s32 unused, s32 id) {
   Func_02000c80(id);
   Flag_Set(0x220);
   if (Func_020027dc(2) != 64) {
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     WORD_AT(object, 108) = 0;
     Animation_ApplyChildValues(object, 0);
-    Object_SetModeById(id, 6);
+    Actor_SetModeById(id, 6);
     Flag_Clear(0x220);
     Func_02000cb8(id);
   }
@@ -64,11 +64,11 @@ void Func_02000d38(s32 unused, s32 id) {
   Func_02000c80(id);
   Flag_Set(0x221);
   if (Func_020027dc(0) != 64) {
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     WORD_AT(object, 108) = 0;
     Animation_ApplyChildValues(object, 0);
-    Object_SetModeById(id, 6);
+    Actor_SetModeById(id, 6);
     Flag_Clear(0x221);
     Func_02000cb8(id);
   }

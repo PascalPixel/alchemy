@@ -53,7 +53,7 @@ void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32 angle);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void ObjectGroup_CountDownMemberTimers(void);
+void BattleEffect_CountDownBattlerTints(void);
 
 // A mote leaves the first target and is drawn as a ring of 24 sparks
 // turning about it while it is pulled back to the user.
@@ -152,7 +152,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
           orb->variant = -1;
       }
     }
-    ObjectGroup_CountDownMemberTimers();
+    BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     WaitFrames(1);
   }

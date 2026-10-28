@@ -1,9 +1,9 @@
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "system.h"
 
-void Object_ShakeAngle(u32 objectId) {
-  struct ObjectRuntime *object;
+void Actor_ShakeAngle(u32 objectId) {
+  struct Actor *object;
   s32 angle;
   s32 i;
 

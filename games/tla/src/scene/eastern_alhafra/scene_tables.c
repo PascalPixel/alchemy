@@ -17,7 +17,7 @@ extern u8 gData_02004fe4[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-struct ObjectRuntime *Object_GetById();
+struct Actor *Actor_GetById();
 void Func_02000fa4(void);
 void Func_02003f48(s32, s32, s32, s32);
 void Func_02004004(void);
@@ -57,14 +57,14 @@ void Func_0200006c(s32 mode, s32 id) {
 }
 
 void Func_020000c8(s32 mode, s32 arg) {
-  struct ObjectRuntime *a;
-  struct ObjectRuntime *b;
+  struct Actor *a;
+  struct Actor *b;
   s32 i;
 
   Func_02004868(gData_02004d0c, mode, arg);
   if (mode == 1) {
-    a = Object_GetById(19);
-    b = Object_GetById(21);
+    a = Actor_GetById(19);
+    b = Actor_GetById(21);
     a->speedLimit = 0x40000;
     a->acceleration = 0x8000;
     b->acceleration = 0x8000;
@@ -72,10 +72,10 @@ void Func_020000c8(s32 mode, s32 arg) {
     /* FAKEMATCH: ⚓️ finishes the second object's speed before it builds the
      * first position. */
     __asm__ volatile("");
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)a, 0x1e80000, a->y,
+    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)a, 0x1e80000, a->y,
           0x1380000);
     Call4((void (*)())Func_02004a34, (s32)a, 0x1b80000, 0, 0x1380000);
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)b, 0x1e80000, b->y,
+    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)b, 0x1e80000, b->y,
           0x1380000);
     Call4((void (*)())Func_02004a34, (s32)b, 0x1b80000, 0, 0x1780000);
     Func_02004c8c(1);
@@ -95,14 +95,14 @@ void Func_020000c8(s32 mode, s32 arg) {
 }
 
 void Func_02000190(s32 unused, s32 id) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *object;
+  struct Actor *leader;
+  struct Actor *object;
   s32 leaderX;
   s32 x;
   s32 z;
 
-  leader = Object_GetById(gAdventure.currentOwner);
-  object = Object_GetById(id);
+  leader = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(id);
   object->motionFlags = 0;
   if (id == 10) {
     leaderX = leader->x >> 20;

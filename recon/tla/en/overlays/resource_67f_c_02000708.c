@@ -8,38 +8,38 @@
 // in r8; pins of those alone make it worse, 69 to 91) and the store-then-load
 // row before the search's 0 argument.
 #include "types.h"
-#include "object_runtime.h"
+#include "actor.h"
 #include "adventure.h"
 #include "call.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 s32 Func_020014d8(void);
-struct ObjectRuntime *Func_02001530(s32 *position, s32 flags);
+struct Actor *Func_02001530(s32 *position, s32 flags);
 void Func_02001488(void);
 s32 Func_02001490(void);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02001538(s32 cue);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void WaitFrames(s32 frames);
-void Func_02001428(struct ObjectRuntime *object, s32 mode);
-void Func_020006ec(struct ObjectRuntime *object, struct ObjectRuntime *target);
+void Func_02001428(struct Actor *object, s32 mode);
+void Func_020006ec(struct Actor *object, struct Actor *target);
 void Func_02000974(s32 mode);
 void Func_02001470(s32 x, s32 y, s32 z);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02000aa8(void);
 
 void Func_02000708(u16 *list) {
-  struct ObjectRuntime *leader;
-  struct ObjectRuntime *helper;
-  struct ObjectRuntime *pillar;
+  struct Actor *leader;
+  struct Actor *helper;
+  struct Actor *pillar;
   s32 position[3];
 
   if (Func_020014d8() != 0)
     return;
-  leader = Object_GetById(gAdventure.currentOwner);
-  helper = Object_GetById(8);
+  leader = Actor_GetById(gAdventure.currentOwner);
+  helper = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -51,7 +51,7 @@ body:
   {
     u32 id = list[0];
 
-    if (Object_GetById(id) != pillar) {
+    if (Actor_GetById(id) != pillar) {
       list += 2;
       goto test;
     }
@@ -64,15 +64,15 @@ body:
         Func_020006ec(helper, pillar);
         WaitFrames(1);
         Func_02001538(125);
-        Object_SetPartAttribute(Object_GetById(8), 7);
+        Actor_SetPartAttribute(Actor_GetById(8), 7);
         WaitFrames(2);
         Func_02001428(helper, 0);
         ObjectVisual_CopyAttributes(id, 9);
-        Object_SetPartAttribute(Object_GetById(8), 0);
+        Actor_SetPartAttribute(Actor_GetById(8), 0);
         WaitFrames(2);
-        Object_SetPartAttribute(Object_GetById(8), 7);
+        Actor_SetPartAttribute(Actor_GetById(8), 7);
         WaitFrames(4);
-        Object_SetPartAttribute(Object_GetById(8), 0);
+        Actor_SetPartAttribute(Actor_GetById(8), 0);
         Func_02000974(0);
         Func_020006ec(pillar, helper);
         WaitFrames(1);
@@ -99,7 +99,7 @@ body:
         WaitFrames(8);
         *flags = 3;
         WaitFrames(5);
-        Object_SetPositionAndResetMotion(helper, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
         WaitFrames(2);
         Func_02001538(188);
         Func_02000aa8();

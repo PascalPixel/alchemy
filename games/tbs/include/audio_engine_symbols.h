@@ -3,7 +3,7 @@
 
 /// @file
 /// The sound driver's command masks, song controls and the routines and globals
-/// it shares with the engine.
+/// it shares with the rest of the game.
 
 #include "types.h"
 

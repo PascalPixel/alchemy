@@ -38,7 +38,7 @@ all twelve requests in the order they are handled.
 
 ![Isaac walks up to a young man in Vault, who says "Welcome to Vault, the town at the heart of Angara.", then walks on](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The field knows nothing about any one scene. It asks the scene's code six
+The main image knows nothing about any one scene. It asks the scene's code six
 questions: what can happen here, where the party arrives, who stands where,
 whether anything needs setting up, whether the leader stands in an exit area,
 and where an exit leads. Each answer comes from a function, so a scene can answer

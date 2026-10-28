@@ -3,11 +3,11 @@
 Everything the player sees moves to one beat: the screen is redrawn about
 sixty times a second, and the game prepares one picture for each. The system
 is the code that keeps that beat and that the field, the battles and the user
-interface are built on; Camelot's credits name it System, one of the four
-parts of the programming, and credit it to Yasuhiro Taguchi. It starts the
-console, lets code wait without the screen freezing, splits the main image
-into [banks](glossary.md#bank), swaps each [scene](glossary.md#scene)'s code
-in and out of memory and plays the music.
+interface are built on; Camelot's credits name it System, the first of the
+groups they list the programmers under, and credit it to Yasuhiro Taguchi.
+It starts the console, lets code wait without the screen freezing, splits the
+main image into [banks](glossary.md#bank), swaps each
+[scene](glossary.md#scene)'s code in and out of memory and plays the music.
 
 The console draws each picture one line at a time, 160 lines from top to
 bottom, then pauses for about as long as 68 more lines, the vertical blank

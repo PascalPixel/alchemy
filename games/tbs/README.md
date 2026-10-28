@@ -638,17 +638,18 @@ to `Battle_Run` in the battle bank.
 
 ## Section pages
 
-Camelot's credits divide the programming four ways, and the first four
+Camelot's credits list the programmers under System, Battle, Field, User
+Interface and Support. The code falls into the first four, and the first four
 section pages follow them.
 
-| Page                                                 | Covers                                                               |
-| ---------------------------------------------------- | -------------------------------------------------------------------- |
-| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs     |
-| [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations   |
+| Page                                                 | Covers                                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------ |
+| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs         |
+| [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations       |
 | [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
-| [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows              |
-| [Places](src/field/scenes.s)                         | every scene in story order, with its actor templates and triggers    |
-| [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                   |
-| [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                         |
-| [Source](src/README.md)                              | every file of the code, with its comments                            |
-| [Glossary](glossary.md)                              | the words every page uses                                            |
+| [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows                  |
+| [Places](src/field/scenes.s)                         | every scene in story order, with its actor templates and triggers        |
+| [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                       |
+| [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                             |
+| [Source](src/README.md)                              | every file of the code, with its comments                                |
+| [Glossary](glossary.md)                              | the words every page uses                                                |

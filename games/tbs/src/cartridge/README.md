@@ -165,7 +165,7 @@ can grow inside its gap without moving any address other code holds.
 
 Overlays depend on the main image through the same tables: an import holds a
 bank table entry's address, which moves only when a table changes, at the
-price of two jumps per call. In the other direction, the system knows an
+price of two jumps per call. In the other direction, the main image knows an
 overlay only through the entry table's six questions. The fixed addresses are
 the cost of code that holds numbers rather than symbols; each is defined once,
 so `make modern` builds from the names while the matching build keeps the

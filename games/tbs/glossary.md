@@ -149,11 +149,11 @@ collects them.
 The code the field, the battles and the user interface are built on: start-up,
 waiting and [tasks](#task), interrupts, the [heap](#heap-and-pools),
 [banks](#bank), [overlays](#overlay), saving and the sound driver.
-It is one of the four divisions of the code, with Battle, Field and User
-Interface, each with its section page ([System](system.md)).
+It is one of the code's divisions, with Battle, Field and User Interface;
+[System](system.md) explains it.
 
-Evidence: Camelot's credits, "Programming", then "System" (Yasuhiro Taguchi),
-"Battle", "Field" and "User Interface" (`gCredits_Lines`).
+Evidence: Camelot's credits, "Programming", then "System", "Battle", "Field",
+"User Interface" and "Support" (`gCredits_Lines`).
 
 ### Frame
 

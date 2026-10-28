@@ -16,15 +16,15 @@ u32 gSceneExits[] = {
     SCENE_EXITS(316), SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
-    {0, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
-    {0, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000068)},
-    {0, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200007c)},
-    {0, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000090)},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000068)},
+    {0, 10, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000090)},
     {TRIGGERS_END},
 };
 

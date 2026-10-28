@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 extern const s32 gData_0802ec88[];
@@ -26,15 +26,15 @@ void Func_08026fc8(struct Actor *object, s32 mode) {
     struct Child *child = created->animation;
 
     created->terrainHeight = object->terrainHeight;
-    Actor_StartScript((struct DispatchObject *)created, gData_0802ec88);
+    Actor_StartScript((struct ActorView *)created, gData_0802ec88);
     created->motionFlags = 0;
     if (child != NULL) {
-      Animation_ApplyChildArgument((struct DispatchChild *)child, 1);
+      Animation_ApplyChildArgument((struct ActorSpriteView *)child, 1);
       child->value1a = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Animation_ApplyChildValuesToRecord((struct DispatchChild *)child, 13);
-        Animation_ApplyChildValue((struct DispatchChild *)child, 8);
+        Animation_ApplyChildValuesToRecord((struct ActorSpriteView *)child, 13);
+        Animation_ApplyChildValue((struct ActorSpriteView *)child, 8);
       }
     }
   }

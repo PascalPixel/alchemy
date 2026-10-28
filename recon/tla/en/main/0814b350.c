@@ -55,12 +55,12 @@ extern u16 Data_0819744c[];  // ☀️ gBattleEffect_PuffCells
 extern u8 Data_0819745e[];   // ☀️ gBattleEffect_PuffSizes
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ Actor_UpdateMembers
+                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void Func_080150e4(s32 angle);       // ☀️ SceneTransform_ApplyRoll
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);

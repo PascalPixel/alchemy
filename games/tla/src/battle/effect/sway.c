@@ -72,7 +72,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
-      Actor_StartScriptFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct ActorView *)object,
                                    gBattleEffect_SharedParticleScript);
     }
   }

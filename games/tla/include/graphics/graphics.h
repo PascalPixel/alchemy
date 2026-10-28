@@ -54,7 +54,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PartyStatus_Draw(s32 flags);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-#ifndef OWN_UiWindow_SetTilemapEntry
+#ifndef OWN_Window_SetTilemapEntry
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
 #endif
@@ -98,7 +98,7 @@ void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void NumberText_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                 s32 arg4);
-#ifndef OWN_UiIcon_BuildAbilityIconTiles
+#ifndef OWN_Icon_BuildAbilityIconTiles
 void Icon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                                 s32 reuse);
 #endif
@@ -107,7 +107,7 @@ void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
 void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
                                 s32 offsetY);
-#ifndef OWN_UiText_DrawStringInWindowFar
+#ifndef OWN_Text_DrawStringInWindowFar
 void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
 void Text_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);

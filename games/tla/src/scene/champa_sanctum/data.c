@@ -15,14 +15,14 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {202, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(147), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {0, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {0x8d15, 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
     {0, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},

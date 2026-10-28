@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "task.h"
 
 void Func_0200316c(void) {
   Func_02003820(gData_02004768);
@@ -43,5 +44,5 @@ void Func_020031b4(void) {
   }
   if (GameFlag_Test(0x88d))
     Func_02001594();
-  Task_Add(Func_02002010, 0x480);
+  Task_Add(Func_02002010, TASK_PASS_VBLANK);
 }

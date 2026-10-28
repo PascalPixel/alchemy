@@ -7,7 +7,7 @@
 struct FieldActor *Actor_GetById(s32 id);
 void Func_02001e70(s32 id, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
-void Animation_ApplyChildValues(struct DispatchObject *, u32);
+void Animation_ApplyChildValues(struct ActorView *, u32);
 
 static inline void Place(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
@@ -43,16 +43,16 @@ void Func_02000cc8(void) {
     door->y += 0x1eb80;
     door->x -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(9), 4);
-    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(11), 4);
+    Animation_ApplyChildValues((struct ActorView *)Actor_GetById(9), 4);
+    Animation_ApplyChildValues((struct ActorView *)Actor_GetById(11), 4);
   }
   if (FlagTest(0xa0b)) {
     right->y += 0x66640;
     door->y += 0x1eb80;
     door->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(10), 4);
-    Animation_ApplyChildValues((struct DispatchObject *)Actor_GetById(12), 4);
+    Animation_ApplyChildValues((struct ActorView *)Actor_GetById(10), 4);
+    Animation_ApplyChildValues((struct ActorView *)Actor_GetById(12), 4);
   }
   if (FlagTest(0xa0a) && FlagTest(0xa0b)) {
     left->y += 0x199900;

@@ -52,7 +52,7 @@ BattleHighlight_SetModesFar:
 	.global Func_081180e8
 	.thumb_func
 Func_081180e8:
-	overlay_veneer BattleEventRuntime_StartPhase
+	overlay_veneer BattlePlayback_Start
 	.global ColorBuffer_ScaleFar
 	.thumb_func
 ColorBuffer_ScaleFar:

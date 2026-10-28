@@ -1,9 +1,9 @@
-#ifndef TLA_OBJECT_DISPATCH_H
-#define TLA_OBJECT_DISPATCH_H
+#ifndef ALCHEMY_ACTOR_VIEW_H
+#define ALCHEMY_ACTOR_VIEW_H
 
 #include "types.h"
 
-struct DispatchChild {
+struct ActorSpriteView {
   u8 unk00[5];
   u8 unk05Low : 2;
   u8 stateFlags : 2;
@@ -19,7 +19,7 @@ struct DispatchChild {
   s16 *animationIndex;
 };
 
-struct DispatchObject {
+struct ActorView {
   u32 value00;
   s16 value04;
   u8 unk06[0x2a];
@@ -27,8 +27,8 @@ struct DispatchObject {
   s32 value34;
   u8 unk38[0x18];
   union {
-    struct DispatchChild *child;
-    struct DispatchChild **children;
+    struct ActorSpriteView *child;
+    struct ActorSpriteView **children;
   } target;
   u8 kind;
   u8 unk55[2];
@@ -44,22 +44,22 @@ struct DispatchObject {
   u8 unk6c[4];
 };
 
-s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
-void Animation_ApplyChildValue(struct DispatchChild *, s32);
-s32 InitializeAnimationObjects(struct DispatchChild *);
-s32 ResourceMetadata_Register(struct DispatchChild *);
-void Actor_StartScript(struct DispatchObject *, u32);
+s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32);
+void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
+s32 InitializeAnimationObjects(struct ActorSpriteView *);
+s32 ResourceMetadata_Register(struct ActorSpriteView *);
+void Actor_StartScript(struct ActorView *, u32);
 s32 WaitFrames(s32);
 
-extern const s32 gObjectDispatch_CameraScript[];
-extern const s32 gObjectDispatch_EndScript[];
+extern const s32 gActor_CameraScript[];
+extern const s32 gActorScript_EndScript[];
 
 #endif
 
-void Actor_SelectAnimation(struct DispatchObject *object,
+void Actor_SelectAnimation(struct ActorView *object,
                                             s32 argument) {
-  struct DispatchChild **items;
-  struct DispatchChild *item;
+  struct ActorSpriteView **items;
+  struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
@@ -81,11 +81,11 @@ void Actor_SelectAnimation(struct DispatchObject *object,
   }
 }
 
-void Actor_SetAnimationSpeed(struct DispatchObject *object,
+void Actor_SetAnimationSpeed(struct ActorView *object,
                                          s32 value) {
   s32 count;
-  struct DispatchChild *child;
-  struct DispatchChild **children;
+  struct ActorSpriteView *child;
+  struct ActorSpriteView **children;
 
   if (object != 0) {
     switch (object->kind & 0xf) {
@@ -106,10 +106,10 @@ void Actor_SetAnimationSpeed(struct DispatchObject *object,
   }
 }
 
-void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
+void Actor_SetAnimationAndSpeed(struct ActorView *object,
                                         s32 argument, s32 value) {
-  struct DispatchChild **items;
-  struct DispatchChild *item;
+  struct ActorSpriteView **items;
+  struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
@@ -132,15 +132,15 @@ void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
   }
 }
 
-void Actor_SetSpriteRotation(struct DispatchObject *object,
+void Actor_SetSpriteRotation(struct ActorView *object,
                                         u32 value) {
   if (object != 0 && (object->kind & 0xf) == 1)
     object->target.child->value12 = value;
 }
 
-void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
+void Animation_SetIndexAndInitializeObjects(struct ActorView *object,
                                       s32 index) {
-  struct DispatchChild *child;
+  struct ActorSpriteView *child;
 
   if (object != NULL && (object->kind & 0xf) == 1) {
     child = object->target.child;
@@ -151,10 +151,10 @@ void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
   }
 }
 
-void Actor_RegisterSpriteMetadata(struct DispatchObject *object,
+void Actor_RegisterSpriteMetadata(struct ActorView *object,
                                           s32 value) {
   if (object != 0 && (object->kind & 0xf) == 1) {
-    struct DispatchChild *child = object->target.child;
+    struct ActorSpriteView *child = object->target.child;
     if (value >= 0)
       ResourceMetadata_Register(child);
   }

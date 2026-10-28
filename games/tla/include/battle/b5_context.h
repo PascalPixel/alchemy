@@ -22,7 +22,7 @@ STATIC_ASSERT(offsetof(struct B5Context, word0c) == 0x0c);
 STATIC_ASSERT(offsetof(struct B5Context, word10) == 0x10);
 STATIC_ASSERT(offsetof(struct B5Context, suppressUpdates) == 0x2a);
 
-void Actor_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
-                         s32 state_slot, s32 state_value);
+void BattleEffect_TintBattler(s32 set_id, s32 object_value, s32 group_value,
+                              s32 state_slot, s32 state_value);
 
 #endif

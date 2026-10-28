@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 
 void Field_StartPaletteTransition(s32 frames);
 

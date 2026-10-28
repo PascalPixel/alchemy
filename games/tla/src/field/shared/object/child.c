@@ -8,15 +8,15 @@
 #include "sound.h"
 #include "system.h"
 #include "object_lookup.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 
 #define Actor_SetPartAttribute                                                \
-  ((void (*)(struct DispatchObject *, s32))Actor_SetPartAttribute)
+  ((void (*)(struct ActorView *, s32))Actor_SetPartAttribute)
 
-void Actor_ApplyIndexedChildValue(struct DispatchObject *);
+void Actor_ApplyIndexedChildValue(struct ActorView *);
 
 void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
-  struct DispatchObject *object;
+  struct ActorView *object;
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {

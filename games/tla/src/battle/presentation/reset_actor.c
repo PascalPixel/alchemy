@@ -76,5 +76,5 @@ void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
   } while (0);
   object->motionFlags = 2;
   actor->visible = 1;
-  Actor_StartScriptFar((struct DispatchObject *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
 }

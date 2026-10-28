@@ -59,7 +59,7 @@ void FieldEffect_RunLiftOnTarget(void) {
 
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
-  Actor_StartScriptFar((struct DispatchObject *)mainObject,
+  Actor_StartScriptFar((struct ActorView *)mainObject,
                                (u32)(gBattleEffect_SharedParticleScript + 12));
 
   x = scene->x;

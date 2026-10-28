@@ -6,4 +6,4 @@ Resource_FarCall00E:
 	.global Func_081b2000
 	.thumb_func
 Func_081b2000:
-	overlay_veneer ReelGame_Start
+	overlay_veneer LuckyWheels_Start

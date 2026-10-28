@@ -51,7 +51,7 @@ void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812756c(void);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
-void BattleEventRuntime_WaitForReady(void);
+void BattlePlayback_WaitForReady(void);
 void BattleEvent_Playback(void);
 void ObjMotRst(s32 slot);
 
@@ -107,7 +107,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);
@@ -154,7 +154,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
       Heap_Release(saved);
     }
     if (((s32 *)plan)[25] == 0)
-      BattleEventRuntime_WaitForReady();
+      BattlePlayback_WaitForReady();
     Actor_SetMode(object, 1);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
       ObjMotRst(work.actors[targetIndex]);

@@ -88,7 +88,7 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
     obj->field48 = 0x1999;
     Actor_SetMode(obj, 0);
     obj->field5e = 12;
-    Actor_StartScriptFar((struct DispatchObject *)obj,
+    Actor_StartScriptFar((struct ActorView *)obj,
                                  gBattleEffect_SharedParticleScript);
   }
 }

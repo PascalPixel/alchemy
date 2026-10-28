@@ -33,10 +33,10 @@ Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Ability_`, `AffineMatrix_`, `Battle_`, `BattleEffect_`, `BattleLayout_`,
 `DisplayBlend_`, `DisplayScroll_`, `Fade_`, `Graphics_`, `GraphicsPalette_`,
-`Icon_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`, `Message_`,
+`Heap_`, `Icon_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`, `Message_`,
 `MessageArgument_`, `ObjectSystem_`, `PaletteFade_`, `PaletteQueue_`,
 `Portrait_`, `Projection_`, `Render_`, `RenderResource_`, `Resource_`,
-`Heap_`, `SceneTransform_`, `ScreenTransition_`, `StatusMenu_`, `Task_`,
-`Text_`, `Tile_`, `Title_`, `Transform_`, `UiGlyph_`, `UiTextResource_`,
+`SceneTransform_`, `ScreenTransition_`, `StatusMenu_`, `Task_`, `Text_`,
+`Tile_`, `Title_`, `Transform_`, `UiGlyph_`, `UiTextResource_`,
 `UiTimedNotice_`, `Window_`, `WindowSprite_` and `WindowSystem_`, with
 `AnimationObject_` here and in `battle/effect`.

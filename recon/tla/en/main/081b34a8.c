@@ -79,7 +79,7 @@ typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
                               s32 width, s32 height);
 
 extern u8 Data_0200024c[];
-extern const u16 gReelGame_SparkCellOffsets[];
+extern const u16 gLuckyWheels_SparkCellOffsets[];
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
@@ -124,7 +124,7 @@ extern char MsgSlotsControls[];
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-void ReelGame_Run(void) {
+void LuckyWheels_Run(void) {
   s32 picks[8];
   s32 litLines[7];
   DrawRectangle draw[2];
@@ -363,7 +363,7 @@ void ReelGame_Run(void) {
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
-                              sheet + gReelGame_SparkCellOffsets[size - 1],
+                              sheet + gLuckyWheels_SparkCellOffsets[size - 1],
                               px - size, py - size, size * 2, size * 2);
                 }
               }

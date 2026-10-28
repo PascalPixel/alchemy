@@ -26,7 +26,7 @@ struct PlacementTable {
 extern char MsgHpRecover;
 extern char MsgHpFull;
 
-u32 BattleEventRuntime_Reset(void);
+u32 BattlePlayback_Reset(void);
 
 s32 sub_08124af8(s32 id) {
   struct BattleUnit *unit = Unit_Get(id);
@@ -38,7 +38,7 @@ s32 sub_08124af8(s32 id) {
     s32 hp;
     s32 gain;
 
-    BattleEventRuntime_Reset();
+    BattlePlayback_Reset();
     hp = unit->hp;
     max = unit->maxHp;
     before = hp;
@@ -156,8 +156,8 @@ extern char MsgDjinnIsSet;
 
 void BattleEvent_Push(u32 opcode, u32 operand);
 u32 BattleParty_IsUnitListed(u32 id);
-s32 BattleEventRuntime_SchedulePhase(s32 frames);
-void BattleEventRuntime_WaitForReady(void);
+s32 BattlePlayback_SchedulePhase(s32 frames);
+void BattlePlayback_WaitForReady(void);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 
 /// Counts down one side's Djinn recovery at the turn's end: an owner must be in the
@@ -206,8 +206,8 @@ s32 Func_08124cc4(s32 side) {
           u8 element;
 
           result = 2;
-          BattleEventRuntime_Reset();
-          BattleEventRuntime_SchedulePhase(30);
+          BattlePlayback_Reset();
+          BattlePlayback_SchedulePhase(30);
           BattleEvent_Push(0, id);
           BattleEvent_Push(3, entry->element * 20 + entry->index + 300);
           BattleEvent_Push(14, 175);
@@ -217,7 +217,7 @@ s32 Func_08124cc4(s32 side) {
           if (BattleParty_IsUnitListed(id)) {
             Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
             Actor_SetAnimationSpeedFar(
-                (struct DispatchObject *)BattleObject_Get(id)->object, 32);
+                (struct ActorView *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
           Djinn_ActivateFar(id, element, entry->index);
@@ -225,7 +225,7 @@ s32 Func_08124cc4(s32 side) {
           Unit_CalculateFar(id);
           if (BattleParty_IsUnitListed(id))
             Func_08127308(id, element, 3, 0);
-          BattleEventRuntime_WaitForReady();
+          BattlePlayback_WaitForReady();
         }
       } else {
         entry++;

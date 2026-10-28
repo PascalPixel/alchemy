@@ -34,14 +34,14 @@ struct ReelEffectWork {
 };
 
 extern char MsgSlotsBet[];
-extern const u8 gReelGame_TitleLetterWidths[];
+extern const u8 gLuckyWheels_TitleLetterWidths[];
 
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-/// The Broken Seal's ReelGame_InitializeTitle on this game's heap slots (the
+/// The Broken Seal's LuckyWheels_InitializeTitle on this game's heap slots (the
 /// reel work at 0xb4, the effect work at 0x5c with its particles first).
 void Func_081b336c(void) {
   struct ReelWork *state;
@@ -64,7 +64,7 @@ void Func_081b336c(void) {
 
   letter = work->particles;
   y = -0x200000;
-  width = gReelGame_TitleLetterWidths;
+  width = gLuckyWheels_TitleLetterWidths;
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
     letter[i].x = (left + REEL_TITLE_LEFT) << 16;
     step = *width;

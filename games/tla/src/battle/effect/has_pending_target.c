@@ -1,5 +1,5 @@
 #include "types.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 
 /// Reports an unfinished target only for effects that stop on arrival.
 /// A plain != adds two bytes to the English function.

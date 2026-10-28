@@ -124,19 +124,19 @@ extern u16 gData_08197410[];   // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 void Sound_PlayFar(s32 cue);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void Func_08163c2c(s32 mode, s32 value);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                   s32 priority); // BattleEffect_SpawnObjects
+                   s32 priority);
 void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
-void BattleEffect_AdvanceBg2OnInterval(void);                 // BattleEffect_AdvanceBg2OnInterval
-void BattleEffect_FlushPendingGraphicsTransfer(void); // BattleEffect_FlushPendingGraphicsTransfer
-void BattleEffect_ArmPaletteHBlankDma(void); // BattleEffect_ArmPaletteHBlankDma
+    struct BattleEffectArgument *effect);
+void BattleEffect_AdvanceBg2OnInterval(void);
+void BattleEffect_FlushPendingGraphicsTransfer(void);
+void BattleEffect_ArmPaletteHBlankDma(void);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);                   // BattleEffect_BuildBlitter
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
@@ -151,12 +151,12 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 
 // Summon 11: the screen goes dark and the ground dissolves away from the top;
 // a sun (or, in mode 1, two great flames the user throws) climbs over a

@@ -92,7 +92,7 @@ extern u8 Data_08198878[];
 extern u8 Data_08198860[];
 extern u8 Data_08198866[];
 // Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
-// gReelGame_SparkCellOffsets).
+// gLuckyWheels_SparkCellOffsets).
 extern u16 Data_08197424[];
 
 void WaitFrames(s32 frames);
@@ -128,7 +128,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleEventRuntime_StartPhase through its far call.
+// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);

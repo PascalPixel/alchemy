@@ -77,7 +77,7 @@ extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
 void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
@@ -87,8 +87,8 @@ u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
-void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
+                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 
 // A pillar of ice rising at the user's feet with flecks spiralling up

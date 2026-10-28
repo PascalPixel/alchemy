@@ -33,7 +33,7 @@ s32 Event_ExecutePackedAction(u32 packed) {
   BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
   Field_RunPsynergyEvent(first, mode, target);
   FieldEvent_RunTypeHandler();
-  EffectRuntime_StopCurrentObject();
+  BattleEffect_StopMainActor();
   Field_RunPsynergyEvent(second, mode, target);
   BattleEffect_CleanupSceneObjects();
   return 0;

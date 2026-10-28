@@ -75,12 +75,12 @@ extern u16 gData_081974bc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);          // Actor_UpdateMembers
-void BattleEffect_CountDownBattlerTints(void);                // BattleEffect_CountDownBattlerTints
+                   s32 frames);          // BattleEffect_TintBattler
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);

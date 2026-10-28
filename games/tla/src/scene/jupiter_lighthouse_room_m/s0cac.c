@@ -66,7 +66,7 @@ static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_020048bc(a, b, c, d, e, f, g, h, i, j, k);
 }
 
-static __inline__ void I_ObjectMotion_ArmCallback(s32 id, s32 angle,
+static __inline__ void I_Actor_ArmCallback(s32 id, s32 angle,
                                                   s32 flags) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 15 sites, 73 of 1568 instructions differ in tla-en. */
@@ -86,7 +86,7 @@ static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
   return Func_020048cc(actor, emote, frames);
 }
 
-static __inline__ void I_ObjectMotion_SetSpeedParameters(s32 actor, s32 speed,
+static __inline__ void I_Actor_SetSpeedParameters(s32 actor, s32 speed,
                                                          s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 14 sites, 78 of 1568 instructions differ in tla-en. */
@@ -118,20 +118,20 @@ static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
 }
 
 static __inline__ void
-I_ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz) {
+I_Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 6 sites, 26 of 1568 instructions differ in tla-en. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
-static __inline__ void I_ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x,
+static __inline__ void I_Actor_ResetAndSetPositionInMode2(s32 id, s32 x,
                                                                  s32 z) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 6 sites, 25 of 1568 instructions differ in tla-en. */
   Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
-static __inline__ void I_ObjectMotion_CommitPositionAndActivate(s32 id, s32 x,
+static __inline__ void I_Actor_CommitPositionAndActivate(s32 id, s32 x,
                                                                 s32 z) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its one site, 7 of 1568 instructions differ in tla-en. */
@@ -169,7 +169,7 @@ void Func_02000cac(s32 arg) {
     I_Func_020048bc(0, 5, 9, 0, 8, 2, 5, 2, 0, 1, 0);
   }
   Actor_Stop(4);
-  I_ObjectMotion_ArmCallback(4, 0x4000, 0);
+  I_Actor_ArmCallback(4, 0x4000, 0);
   I_Func_02004964(7, 16, 0, 0x8000);
   I_Func_02004964(28, -16, 0, 0);
   I_Func_02004964(6, 16, 24, 0x8000);
@@ -178,12 +178,12 @@ void Func_02000cac(s32 arg) {
   Actor_WaitForMoveById(5);
   I_Func_020048cc(28, 0x102, 30);
   Func_0200489c(28, 0, 5);
-  I_ObjectMotion_ArmCallback(5, 0xc000, 0);
-  I_ObjectMotion_ArmCallback(6, 0xb000, 0);
+  I_Actor_ArmCallback(5, 0xc000, 0);
+  I_Actor_ArmCallback(6, 0xb000, 0);
   I_Func_020048cc(7, 0x101, 30);
-  I_ObjectMotion_ArmCallback(5, 0xd000, 0);
+  I_Actor_ArmCallback(5, 0xd000, 0);
   FieldMessage_ShowAtActor(7, 0);
-  I_ObjectMotion_ArmCallback(4, 0, 0);
+  I_Actor_ArmCallback(4, 0, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Actor_SetModeById(28, 3);
     FieldEvent_WaitFrames(20);
@@ -197,30 +197,30 @@ void Func_02000cac(s32 arg) {
     Func_0200489c(28, 0, 5);
   }
   Motion_SetVarCbAndRefresh(5, 2);
-  I_ObjectMotion_ArmCallback(4, 0x4000, 0);
+  I_Actor_ArmCallback(4, 0x4000, 0);
   FieldEvent_WaitFrames(5);
   Func_0200489c(5, 0, 5);
   I_Func_020048cc(6, 0x101, 30);
   Func_0200489c(6, 0, 5);
   I_Func_020048cc(4, 0x102, 30);
-  I_ObjectMotion_SetSpeedParameters(4, 0x00013333, 0x9999);
+  I_Actor_SetSpeedParameters(4, 0x00013333, 0x9999);
   Actor_SetMovementTypeById(4, arg != 0 ? gData_02005748
                                                       : gData_0200578c);
   FieldEvent_WaitFrames(30);
-  I_ObjectMotion_ArmCallback(6, 0x8000, 0);
-  I_ObjectMotion_ArmCallback(5, 0, 0);
-  I_ObjectMotion_ArmCallback(28, 0, 0);
-  I_ObjectMotion_ArmCallback(7, 0x8000, 0);
+  I_Actor_ArmCallback(6, 0x8000, 0);
+  I_Actor_ArmCallback(5, 0, 0);
+  I_Actor_ArmCallback(28, 0, 0);
+  I_Actor_ArmCallback(7, 0x8000, 0);
   FieldEvent_WaitFrames(10);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(28, 3);
   FieldEvent_WaitFrames(30);
-  I_ObjectMotion_SetSpeedParameters(5, 0x10000, 0x8000);
-  I_ObjectMotion_SetSpeedParameters(7, 0x10000, 0x8000);
-  I_ObjectMotion_SetSpeedParameters(6, 0x10000, 0x8000);
-  I_ObjectMotion_SetSpeedParameters(28, 0xcccc, 0x6666);
+  I_Actor_SetSpeedParameters(5, 0x10000, 0x8000);
+  I_Actor_SetSpeedParameters(7, 0x10000, 0x8000);
+  I_Actor_SetSpeedParameters(6, 0x10000, 0x8000);
+  I_Actor_SetSpeedParameters(28, 0xcccc, 0x6666);
   Actor_SetMovementTypeById(28, arg != 0 ? gData_020057d0
                                                        : gData_02005800);
   Actor_SetMovementTypeById(7, arg != 0 ? gData_0200d830
@@ -269,27 +269,27 @@ void Func_02000cac(s32 arg) {
   FieldEvent_WaitFrames(5);
   Func_0200489c(1, 0, 5);
   Actor_GetById(3)->actionFlags &= 0xfe;
-  I_ObjectMotion_SetSpeedParameters(3, 0x1999, 0xccc);
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, 4, 2);
+  I_Actor_SetSpeedParameters(3, 0x1999, 0xccc);
+  I_Actor_OffsetPositionAndResetMotion(3, 4, 2);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 9);
   Motion_SetVarCbAndRefresh(3, 2);
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, -2, 2);
+  I_Actor_OffsetPositionAndResetMotion(3, -2, 2);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 9);
   Motion_SetVarCbAndRefresh(3, 2);
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, 2, 1);
+  I_Actor_OffsetPositionAndResetMotion(3, 2, 1);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 9);
   Motion_SetVarCbAndRefresh(3, 2);
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, -2, -1);
+  I_Actor_OffsetPositionAndResetMotion(3, -2, -1);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 9);
   Motion_SetVarCbAndRefresh(3, 2);
   FieldEvent_WaitFrames(40);
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, 0, -2);
+  I_Actor_OffsetPositionAndResetMotion(3, 0, -2);
   Actor_WaitForMoveById(3);
-  I_ObjectMotion_SetSpeedParameters(3, 0x20000, 0x10000);
+  I_Actor_SetSpeedParameters(3, 0x20000, 0x10000);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 2 of 1568 instructions differ in tla-en. */
   do {
@@ -302,7 +302,7 @@ void Func_02000cac(s32 arg) {
   } while (0);
   Func_0200489c(3, 0, 5);
   Actor_GetById(3)->actionFlags |= 1;
-  I_ObjectMotion_OffsetPositionAndResetMotion(3, -2, -8);
+  I_Actor_OffsetPositionAndResetMotion(3, -2, -8);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 1);
   I_Func_020048b4(3, 0xa000);
@@ -328,14 +328,14 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
   I_Func_020048cc(2, 0x100, 30);
-  I_ObjectMotion_ArmCallback(0, 0xa000, 0);
+  I_Actor_ArmCallback(0, 0xa000, 0);
   I_Func_020048b4(2, 0xa000);
   FieldEvent_WaitFrames(10);
   I_Motion_CamBounds(0x2d00000, 0, 0xd20000, 1);
-  I_ObjectMotion_SetSpeedParameters(26, 0x4000, angle);
-  I_ObjectMotion_SetSpeedParameters(27, 0x4000, angle);
-  I_ObjectMotion_ResetAndSetPositionInMode2(26, 714, 193);
-  I_ObjectMotion_ResetAndSetPositionInMode2(27, 698, 209);
+  I_Actor_SetSpeedParameters(26, 0x4000, angle);
+  I_Actor_SetSpeedParameters(27, 0x4000, angle);
+  I_Actor_ResetAndSetPositionInMode2(26, 714, 193);
+  I_Actor_ResetAndSetPositionInMode2(27, 698, 209);
   Actor_SetMovementTypeById(26, gData_020049cc);
   Actor_SetMovementTypeById(27, gData_020049dc);
   FieldEvent_WaitFrames(20);
@@ -366,7 +366,7 @@ void Func_02000cac(s32 arg) {
   Actor_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048cc(0, 0x106, 30);
-  I_ObjectMotion_ArmCallback(2, 0xa000, 0);
+  I_Actor_ArmCallback(2, 0xa000, 0);
   I_Func_020048b4(0, 0xa000);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
@@ -452,7 +452,7 @@ void Func_02000cac(s32 arg) {
     /* FAKEMATCH(barrier): r1 and r2 are set before r0, as the native sets
      * them; without it, 18 of 1568 instructions differ in tla-en. */
     __asm__("" : : "r"(a1), "r"(flags));
-    I_ObjectMotion_ArmCallback(26, a1, flags);
+    I_Actor_ArmCallback(26, a1, flags);
   }
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
@@ -498,8 +498,8 @@ void Func_02000cac(s32 arg) {
   I_Func_020048b4(27, 0xa000);
   FieldEvent_WaitFrames(20);
   I_Func_020048cc(27, 0x101, 30);
-  I_ObjectMotion_SetSpeedParameters(27, 0x20000, 0x10000);
-  I_ObjectMotion_CommitPositionAndActivate(27, -24, -24);
+  I_Actor_SetSpeedParameters(27, 0x20000, 0x10000);
+  I_Actor_CommitPositionAndActivate(27, -24, -24);
   FieldEvent_WaitFrames(5);
   I_Func_020048b4(27, 0x8000);
   FieldEvent_WaitFrames(10);
@@ -521,8 +521,8 @@ void Func_02000cac(s32 arg) {
   Actor_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048bc(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
-  I_ObjectMotion_ArmCallback(0, 0xa000, 0);
-  I_ObjectMotion_ArmCallback(2, 0xa000, 0);
+  I_Actor_ArmCallback(0, 0xa000, 0);
+  I_Actor_ArmCallback(2, 0xa000, 0);
   I_Func_020048cc(27, 0x103, 30);
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(26, 0x107, 30);
@@ -545,17 +545,17 @@ void Func_02000cac(s32 arg) {
   } while (0);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(30);
-  I_ObjectMotion_SetSpeedParameters(26, 0x30000, 0x18000);
-  I_ObjectMotion_SetSpeedParameters(27, 0x30000, 0x18000);
-  I_ObjectMotion_SetSpeedParameters(0, 0x30000, 0x18000);
-  I_ObjectMotion_SetSpeedParameters(2, 0x30000, 0x18000);
-  I_ObjectMotion_ResetAndSetPositionInMode2(26, 737, 202);
-  I_ObjectMotion_ResetAndSetPositionInMode2(27, 731, 213);
+  I_Actor_SetSpeedParameters(26, 0x30000, 0x18000);
+  I_Actor_SetSpeedParameters(27, 0x30000, 0x18000);
+  I_Actor_SetSpeedParameters(0, 0x30000, 0x18000);
+  I_Actor_SetSpeedParameters(2, 0x30000, 0x18000);
+  I_Actor_ResetAndSetPositionInMode2(26, 737, 202);
+  I_Actor_ResetAndSetPositionInMode2(27, 731, 213);
   Actor_SetMovementTypeById(27, gData_020049fc);
   Actor_SetMovementTypeById(26, gData_02004a18);
   FieldEvent_WaitFrames(5);
-  I_ObjectMotion_ResetAndSetPositionInMode2(0, 776, 202);
-  I_ObjectMotion_ResetAndSetPositionInMode2(2, 731, 232);
+  I_Actor_ResetAndSetPositionInMode2(0, 776, 202);
+  I_Actor_ResetAndSetPositionInMode2(2, 731, 232);
   Actor_SetMovementTypeById(0, gData_02004a34);
   Actor_SetMovementTypeById(2, gData_02004a50);
   Actor_RefreshSelectorById(0);

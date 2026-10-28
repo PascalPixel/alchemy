@@ -46,7 +46,7 @@
 #define SUMMON_CHANNEL_MARKER '1'
 #endif
 
-// The letters of the reel game's title, as in The Broken Seal.
+// The letters of Lucky Wheels' title, as in The Broken Seal.
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_TITLE_LETTERS 9
 #else

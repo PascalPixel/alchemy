@@ -54,7 +54,7 @@ void Func_0811e7dc(void *saved);
 void Func_0811e830(void *saved);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
-void BattleEventRuntime_WaitForReady(void);
+void BattlePlayback_WaitForReady(void);
 void BattleEvent_Playback(void);
 void ObjMotRst(s32 slot);
 
@@ -132,10 +132,10 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
         plan->actorId2, work.actors[0], frames,
         BattleClass_GetAttackHop(Unit_Get(plan->actorId2)->enemyId) << 16);
     Actor_SetAnimationSpeedFar(
-        (struct DispatchObject *)partner->object, 16);
+        (struct ActorView *)partner->object, 16);
   }
   Actor_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObject_Get(work.actor)->object, 16);
+      (struct ActorView *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= 7)
     work.side = 1;
@@ -205,7 +205,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
       Func_0811e830(saved);
       Heap_Release(saved);
     }
-    BattleEventRuntime_WaitForReady();
+    BattlePlayback_WaitForReady();
     if (critical != 0) {
       view->active = 0;
       BattleParty_ListAllUnitsAndSubmit();

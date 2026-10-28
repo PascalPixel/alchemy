@@ -270,9 +270,9 @@ Func_0812561c:
 	subs r5, r2, r3
 	cmp r5, #0
 	ble .L_0812587a
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	movs r0, #25
-	bl BattleEventRuntime_SchedulePhase
+	bl BattlePlayback_SchedulePhase
 	movs r0, #0
 	mov r1, r8
 	bl BattleEvent_Push
@@ -307,7 +307,7 @@ Func_0812561c:
 	movs r2, #2
 	negs r3, r3
 	bl Func_08127308
-	bl BattleEventRuntime_WaitForReady
+	bl BattlePlayback_WaitForReady
 .L_0812587a:
 	adds r6, #1
 	adds r7, #4
@@ -327,7 +327,7 @@ Func_0812561c:
 	bne .L_0812589e
 	b .L_08125a64
 .L_0812589e:
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	ldr r2, [sp, #12]
 	ldr r3, [r2, #96]
 	cmp r3, #0
@@ -387,7 +387,7 @@ Func_0812561c:
 	bl BattleEvent_Push
 .L_08125924:
 	bl BattleEvent_DispatchQueued
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	ldr r2, [sp, #8]
 	movs r3, #50
 	adds r3, #255
@@ -475,7 +475,7 @@ Func_0812561c:
 	bl BattleEvent_Push
 .L_081259e4:
 	bl BattleEvent_DispatchQueued
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	ldr r2, [sp, #8]
 	movs r3, #66
 	adds r3, #255

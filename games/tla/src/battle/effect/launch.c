@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 
 #define SLOT_MAX 24
 

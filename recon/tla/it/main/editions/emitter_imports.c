@@ -53,7 +53,7 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
     s32 mask;
     u8 flags;
 
-    Actor_StartScriptFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct ActorView *)object,
                                  (u32)gBattleEffect_ParticleScript);
     Actor_SetMode(object, 0);
     mask = 13;

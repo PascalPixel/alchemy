@@ -50,9 +50,9 @@ extern u8 MsgReaperCalls[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
 void Djinn_DeactivateFar(s32 unitId, s32 element, s32 index);
-u32 BattleEventRuntime_Reset(void);
-void BattleEventRuntime_SchedulePhase(s32 phase);
-void BattleEventRuntime_WaitForReady(void);
+u32 BattlePlayback_Reset(void);
+void BattlePlayback_SchedulePhase(s32 phase);
+void BattlePlayback_WaitForReady(void);
 void Sound_PlayFar(s32 cue);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 kind, s32 level);
@@ -148,8 +148,8 @@ void Func_0812561c(struct BattlePlan *plan) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {
-        BattleEventRuntime_Reset();
-        BattleEventRuntime_SchedulePhase(25);
+        BattlePlayback_Reset();
+        BattlePlayback_SchedulePhase(25);
         BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
         BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
         BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
@@ -158,9 +158,9 @@ void Func_0812561c(struct BattlePlan *plan) {
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
+            (struct ActorView *)BattleObject_Get(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
-        BattleEventRuntime_WaitForReady();
+        BattlePlayback_WaitForReady();
       }
     }
     Heap_Release(before);
@@ -169,7 +169,7 @@ void Func_0812561c(struct BattlePlan *plan) {
     s8 *poison;
     u8 *reaper;
 
-    BattleEventRuntime_Reset();
+    BattlePlayback_Reset();
     if (plan->hauntDamage != 0) {
       BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
@@ -189,7 +189,7 @@ void Func_0812561c(struct BattlePlan *plan) {
       }
     }
     BattleEvent_DispatchQueued();
-    BattleEventRuntime_Reset();
+    BattlePlayback_Reset();
     poison = &unit->poison;
     if (*poison != 0) {
       s32 damage = unit->maxHp * *poison / 10;
@@ -218,7 +218,7 @@ void Func_0812561c(struct BattlePlan *plan) {
       }
     }
     BattleEvent_DispatchQueued();
-    BattleEventRuntime_Reset();
+    BattlePlayback_Reset();
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {

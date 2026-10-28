@@ -4,16 +4,18 @@
 #include "system.h"
 
 void Sound_PlayFar(s32 cue);
-void ReelGame_Run(void);
+void LuckyWheels_Run(void);
 
 /// Blanks the display but for 1D objects, seeds the random state from the
-/// play time, plays cue 709 and runs the reel game.
+/// play time, plays sound 709 and runs Lucky Wheels.
 // As The Broken Seal's.
-s32 ReelGame_Start(void) {
+// XXX: sound 709's name; The Lost Age has no sounds.h yet, and The Broken
+// Seal plays MUS_DJINN_LESSON here.
+s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomState = gAdventure.playTime;
   Sound_PlayFar(709);
-  ReelGame_Run();
+  LuckyWheels_Run();
   return 0;
 }
 

@@ -1,4 +1,4 @@
-#define OWN_UiText_DrawCharacterAtOffsetFar
+#define OWN_Text_DrawCharacterAtOffsetFar
 //--------------------------------------------------------------------------
 // draw_message.c
 // Shop: replace a window's message.

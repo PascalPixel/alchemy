@@ -38,7 +38,7 @@ enum {
   // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4's listing
   // (recon/tla/raw/081b83c4) and a scene that leaves for it would settle it.
   SEQUENCE_UNK_1FB = 0x1fb,
-  SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (ReelGame_Run)
+  SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (LuckyWheels_Run)
   SEQUENCE_DICE = 0x1fd,  ///< the dice sequence (LuckyDice_Run)
   SEQUENCE_BATTLE = 0x1fe ///< a battle; the entrance is the formation
 };

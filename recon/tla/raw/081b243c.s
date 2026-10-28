@@ -1112,7 +1112,7 @@ Func_081b243c:
 .L_081b2cb0:
 	.4byte 0x00000d6d
 .L_081b2cb4:
-	.4byte gReelGame_SymbolPrizes
+	.4byte gLuckyWheels_SymbolPrizes
 .L_081b2cb8:
 	.4byte Data_0200024c
 .L_081b2cbc:
@@ -1617,11 +1617,11 @@ Func_081b243c:
 .L_081b305c:
 	.4byte 0x80002000
 .L_081b3060:
-	.4byte gReelGame_TitleLetterTiles
+	.4byte gLuckyWheels_TitleLetterTiles
 .L_081b3064:
-	.4byte gReelGame_MachineSpriteY
+	.4byte gLuckyWheels_MachineSpriteY
 .L_081b3068:
-	.4byte gReelGame_MachineSpriteX
+	.4byte gLuckyWheels_MachineSpriteX
 .L_081b306c:
 	.4byte 0x8000207c
 .L_081b3070:

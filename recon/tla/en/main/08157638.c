@@ -72,7 +72,7 @@ void BattleEffect_CountDownBattlerTints(void);
 // Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 width, s32 height);
-// BattleEventRuntime_StartPhase through its far call.
+// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);

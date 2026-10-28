@@ -44,7 +44,7 @@ void UpdateRisingParticleBurst(void *object) {
        * UpdateRisingParticleBurst. */
       s32 unit = 0x10000;
 
-      Actor_StartScriptFar((struct DispatchObject *)child,
+      Actor_StartScriptFar((struct ActorView *)child,
                                    gData_080f0e78);
       speed = Random16();
       child->acceleration = unit;

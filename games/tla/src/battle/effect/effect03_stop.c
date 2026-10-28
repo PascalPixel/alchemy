@@ -11,7 +11,7 @@ struct ResourceEntry {
 };
 
 void FieldEffect_RunPly(void);
-void EffectRuntime_StopCurrentObject();
+void BattleEffect_StopMainActor();
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -28,7 +28,7 @@ void Func_080de8d0(struct Actor *object);
 /// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
 void FieldEffect_RunPlyOnTarget(void) {
   FieldEffect_RunPly();
-  EffectRuntime_StopCurrentObject();
+  BattleEffect_StopMainActor();
 }
 
 /// Eight particles spiral in on the main object, one a frame; then a centre

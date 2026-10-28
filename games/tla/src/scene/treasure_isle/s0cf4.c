@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "adventure.h"
 #include "flag_call.h"
+#include "task.h"
 
 struct TreasureIsleEventWork {
   u8 unk000[0x1ac];
@@ -55,7 +56,7 @@ s32 Func_02000cf4(void) {
    * the next; without this one, 27 of 241 instructions differ in tla-en. */
   __asm__("" : : : "memory");
   if (gAdventure.scene == (s32)&SceneId_Ov6afRoom2) {
-    Task_Add(Func_02000ba0, 0x480);
+    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
       PlaceObject(10, 0x1080000, 0xb80000);
@@ -74,7 +75,7 @@ s32 Func_02000cf4(void) {
    * tla-en. */
   __asm__("" : : : "memory");
   if (gAdventure.scene == (s32)&SceneId_Ov6afRoom3) {
-    Task_Add(Func_02000ba0, 0x480);
+    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
       PlaceObject(10, 0x2980000, 0xf80000);

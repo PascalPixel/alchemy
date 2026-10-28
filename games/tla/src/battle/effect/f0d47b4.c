@@ -52,7 +52,7 @@ struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
     object = Func_080200c0(488, resource->x, resource->y, resource->z);
 
     if (object != 0) {
-      Actor_StartScriptFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct ActorView *)object,
                                    (u32)gData_080f3310);
       Actor_SetMode(object, flags & 15);
       object->value55 = 0;

@@ -28,7 +28,7 @@ struct FallingObject {
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
-    Actor_StartScriptFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct ActorView *)object,
                                  (u32)gBattleEffect_SharedParticleScript);
     object->update = 0;
   }
@@ -41,7 +41,7 @@ void BattleEffect_UpdateDriftingFallObject(struct Actor *object) {
   r = Random16();
   object->x += r - Random16();
   if (object->y <= object->terrainHeight) {
-    Actor_StartScriptFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct ActorView *)object,
                                  (u32)gBattleEffect_SharedParticleScript);
   }
 }

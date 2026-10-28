@@ -281,7 +281,7 @@ Func_02003d58:
 	.global Func_02003d60
 	.thumb_func
 Func_02003d60:
-	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	overlay_veneer BattleEffect_StopMainActorFar
 	.global Func_02003d68
 	.thumb_func
 Func_02003d68:

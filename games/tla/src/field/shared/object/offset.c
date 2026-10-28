@@ -56,8 +56,8 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_StartScriptFar((struct DispatchObject *)object,
-                                 (u32)gObject_OffsetMotionScript);
+    Actor_StartScriptFar((struct ActorView *)object,
+                                 (u32)gActor_OffsetScript);
     Actor_SetMode(object, 2);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
                        object->z + (zOffset << 16));
@@ -93,7 +93,7 @@ void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
     object->movementState = 0;
     Actor_SetMode(object, 2);
     Actor_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
-    Actor_StartScriptFar((struct DispatchObject *)object,
+    Actor_StartScriptFar((struct ActorView *)object,
                                  gData_080f32e0);
     object->action = action;
   }

@@ -5,7 +5,7 @@
 #include "actor.h"
 #include "objdisp.h"
 #include "adventure.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "ram_buffer.h"
 
 struct EffectVector {

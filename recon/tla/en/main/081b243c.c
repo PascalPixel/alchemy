@@ -73,10 +73,10 @@ struct ReelSave {
 };
 
 extern u8 Data_0200024c[];
-extern const u8 gReelGame_SymbolPrizes[];
-extern const u8 gReelGame_TitleLetterTiles[];
-extern const u8 gReelGame_MachineSpriteX[];
-extern const u8 gReelGame_MachineSpriteY[];
+extern const u8 gLuckyWheels_SymbolPrizes[];
+extern const u8 gLuckyWheels_TitleLetterTiles[];
+extern const u8 gLuckyWheels_MachineSpriteX[];
+extern const u8 gLuckyWheels_MachineSpriteY[];
 
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -366,7 +366,7 @@ void Func_081b243c(void) {
             }
             if (mixed == 0) {
               work->winningLines[col] = 1;
-              save->wonPrizes[hits] = gReelGame_SymbolPrizes[found];
+              save->wonPrizes[hits] = gLuckyWheels_SymbolPrizes[found];
               hits++;
             }
           }
@@ -472,7 +472,7 @@ void Func_081b243c(void) {
           (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
           ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
       work->obj[work->spriteCount].attr2 =
-          ((gReelGame_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
+          ((gLuckyWheels_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
       p->y += p->velocityY;
       p->velocityY += 0x4000;
       if (work->timer % 256 == i * 4 + 200) {
@@ -491,8 +491,8 @@ void Func_081b243c(void) {
 
   for (k = 0; k != 14; k++) {
     work->obj[work->spriteCount].attr01 =
-        (gReelGame_MachineSpriteX[k] << 16) | objMode |
-        gReelGame_MachineSpriteY[k] | 0x80006000;
+        (gLuckyWheels_MachineSpriteX[k] << 16) | objMode |
+        gLuckyWheels_MachineSpriteY[k] | 0x80006000;
     if (k <= 3)
       work->obj[work->spriteCount].attr2 = 0x4e0;
     else

@@ -4,7 +4,7 @@
 // machine's sprite table, right-aligned to end at x: each of digits places
 // takes value's digit there, leading zeros skipped but the last digit always
 // drawn, tiles 816 + 4 * digit in the given palette. Returns the next free
-// sprite. The sprite words are volatile, as ☀️'s ReelGame_RunFrame has its
+// sprite. The sprite words are volatile, as ☀️'s LuckyWheels_Update has its
 // OAM shadow (FAKEMATCH(volatile) when adopted): loop.c then keeps the two
 // offset givs (sprite * 8 + 196 in r7, + 200 in r10) and the work pointer
 // and sprite count in stack slots, as the native does; as plain u32 words,

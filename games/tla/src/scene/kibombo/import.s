@@ -329,7 +329,7 @@ Func_02005c1c:
 	.global Func_02005c24
 	.thumb_func
 Func_02005c24:
-	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	overlay_veneer BattleEffect_StopMainActorFar
 	.global Func_02005c2c
 	.thumb_func
 Func_02005c2c:

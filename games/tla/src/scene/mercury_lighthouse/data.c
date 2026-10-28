@@ -45,7 +45,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(9, 309, 2), SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {191, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(696), 0x5000, 2, 0},
     {186, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(696), 0x3000, 2, 0},
     {190, CONDITION_ALWAYS, 1, 0, 0, 0, 0xb000, 2, 0},

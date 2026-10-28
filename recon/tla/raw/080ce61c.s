@@ -527,7 +527,7 @@ Func_080ce61c:
 .L_080cea74:
 	bl BattleEffect_Run
 .L_080cea78:
-	bl EffectRuntime_StopCurrentObject
+	bl BattleEffect_StopMainActor
 	ldr r1, [sp, #12]
 	movs r2, #211
 	lsls r2, r2, #4

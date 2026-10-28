@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "adventure.h"
 
 void WaitFrames(s32 frames);
@@ -19,14 +19,14 @@ extern const s32 gData_0802f1a0[];
 extern const s32 gData_0802f1b8[];
 extern const s32 gData_0802f1e8[];
 
-void Func_08023510(struct DispatchObject *object, s32 argument) {
+void Func_08023510(struct ActorView *object, s32 argument) {
   Actor_StartScript(object, gData_0802f1e8);
   object->argument = argument;
 }
 
 /// Starts the dispatch script for the adventure's render mode, waiting a
 /// frame first in mode 9.
-void Func_08023524(struct DispatchObject *object) {
+void Func_08023524(struct ActorView *object) {
   const s32 *script;
   struct Adventure *party = &gAdventure;
 
@@ -73,7 +73,7 @@ void Func_08023524(struct DispatchObject *object) {
     script = gData_0802f128;
     break;
   case 12:
-    script = gObjectDispatch_EndScript;
+    script = gActorScript_EndScript;
     break;
   default:
     script = gData_0802f098;

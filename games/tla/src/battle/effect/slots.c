@@ -2,7 +2,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "task.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "ram_buffer.h"
 #include "motobj.h"
 #include "system.h"

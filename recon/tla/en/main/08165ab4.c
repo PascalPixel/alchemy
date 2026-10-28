@@ -95,12 +95,12 @@ extern u16 gData_08197410[];          // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
+    struct BattleEffectArgument *effect);
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                   s32 priority); // BattleEffect_SpawnObjects
+                   s32 priority);
 void *ResourceObject_CreateFar(s32 resource);
 void ResourceObject_ReleaseFar(void *object);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
@@ -115,12 +115,12 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // Actor_UpdateMembers
+                   s32 frames);   // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
-void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
+void BattleEffect_CountDownBattlerTints(void);
+void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 
 // Summon 1: the battlefield turns to desert; an orb circles over a standing
 // formation and slams down three times, raising dust, while six rocks rain

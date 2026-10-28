@@ -36,7 +36,7 @@ void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay6(u32 address, u32 value);
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
-/// The Broken Seal's BattleStaging_WaitForPromptAt: shows the cursor
+/// The Broken Seal's BattleMessage_WaitForAdvanceAt: shows the cursor
 /// bobbing at (x, y) and waits for A, B, L or R; returns 1.
 s32 Func_08120060(s32 x, s32 y) {
   struct MenuPoint position;

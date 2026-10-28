@@ -1,5 +1,5 @@
-#ifndef TLA_OBJECT_DISPATCH_H
-#define TLA_OBJECT_DISPATCH_H
+#ifndef ALCHEMY_ACTOR_VIEW_H
+#define ALCHEMY_ACTOR_VIEW_H
 
 #include "types.h"
 #include "system.h"
@@ -7,9 +7,9 @@
 struct AnimationObject;
 struct AnimationEntry;
 
-/// A field object's sprite as the dispatcher's setters write it: the same
+/// An actor's sprite as the actor setters write it: the same
 /// bytes as FieldSprite.
-struct DispatchChild {
+struct ActorSpriteView {
   u8 unk00[5];
   u8 unk05Low : 2;
   u8 stateFlags : 2; ///< the image's OAM object mode (FieldSprite.blendMode)
@@ -29,8 +29,8 @@ struct DispatchChild {
 
 struct FieldSprite;
 
-/// A field object as the object dispatcher's far calls take it.
-struct DispatchObject {
+/// An actor as the far calls that start its script and set its sprite take it.
+struct ActorView {
   u32 value00;      ///< the object script's address
   s16 value04;      ///< the script cursor, in words
   u8 unk06[0x1d];   ///< facing, position, scales and radius; not named here
@@ -40,8 +40,8 @@ struct DispatchObject {
   s32 value34;      ///< acceleration, 16.16 fixed point
   u8 unk38[0x18];   ///< the target, bounce, gravity and a spare word
   union {
-    struct DispatchChild *child;     ///< kind 1
-    struct DispatchChild **children; ///< kind 2
+    struct ActorSpriteView *child;     ///< kind 1
+    struct ActorSpriteView **children; ///< kind 2
     struct FieldSprite *sprite;      ///< kind 1
     struct AnimationObject *animation;
   } target;
@@ -56,22 +56,22 @@ struct DispatchObject {
   s16 value64; ///< the action script's parameter; the camera clears it
   u8 unk66[2];
   s32 argument; ///< the watched object a script approaches or follows
-  void (*update)(struct DispatchObject *object); ///< per-frame hook
+  void (*update)(struct ActorView *object); ///< per-frame hook
 };
 
-s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
-void Animation_ApplyChildValue(struct DispatchChild *, s32);
-s32 InitializeAnimationObjects(struct DispatchChild *);
-s32 ResourceMetadata_Register(struct DispatchChild *, s32);
-void Actor_StartScript(struct DispatchObject *, const s32 *);
-void Actor_SetSingleChildFlagsFar(struct DispatchObject *, u32);
-void Animation_ApplyChildValuesToRecord(struct DispatchChild *, u32);
-void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *, u32);
-void Animation_ApplyChildValues(struct DispatchObject *, u32);
-void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
-void Actor_SetSpritePriorityDirect(struct DispatchObject *, s32);
+s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32);
+void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
+s32 InitializeAnimationObjects(struct ActorSpriteView *);
+s32 ResourceMetadata_Register(struct ActorSpriteView *, s32);
+void Actor_StartScript(struct ActorView *, const s32 *);
+void Actor_SetSingleChildFlagsFar(struct ActorView *, u32);
+void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
+void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
+void Animation_ApplyChildValues(struct ActorView *, u32);
+void Animation_ApplyChildValuesFar(struct ActorView *, u32);
+void Actor_SetSpritePriorityDirect(struct ActorView *, s32);
 
-extern const s32 gObjectDispatch_CameraScript[];
-extern const s32 gObjectDispatch_EndScript[];
+extern const s32 gActor_CameraScript[];
+extern const s32 gActorScript_EndScript[];
 
 #endif

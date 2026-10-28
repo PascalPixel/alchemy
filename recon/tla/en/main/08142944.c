@@ -97,10 +97,10 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_EffectPalette03;
 
 void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
-void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
+void Palette_StepFadeTransfer(void);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
 void HeapSlot_Release(s32 slot);
@@ -111,9 +111,9 @@ void EffectPosition_ProjectBattler(s32 actor,
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
+                   s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);

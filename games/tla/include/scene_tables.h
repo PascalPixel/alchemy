@@ -70,20 +70,20 @@ struct ActorPlacement {
 
 #define PIXELS(value) ((value) << 16)
 
-/// Events.
+/// A row of a scene's trigger table.
 struct Trigger {
-  /// The kind and its detail; TRIGGERS_END ends the table. Item events
+  /// The kind and its detail; TRIGGERS_END ends the table. Item triggers
   /// read it as bits: 15..8 item | 4 on an actor | 3..0 kind (4)
   u32 control;
-  /// What the event answers: an actor id or a tile code. Item events read it
+  /// What the trigger answers: an actor id or a tile code. Item triggers read it
   /// as bits: 15..12 facing | 11 needs facing | 7..0 target
-  s16 trigger;
+  s16 subject;
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
-  u32 value;     ///< a message (FIND_MESSAGE) or an event script (EVENT_SCRIPT)
+  u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
 };
 
 #define FIND_MESSAGE(message) (0x00400000 | (message))
-#define EVENT_SCRIPT(script) ((u32)(script))
+#define EVENT(event) ((u32)(event))
 #define TRIGGERS_END 0xffffffff
 
 struct SceneRegion;
@@ -100,8 +100,8 @@ struct SceneEntries {
   const u32 *(*exits)(void);
   u32 placementsVeneer;
   const struct ActorPlacement *(*placements)(void);
-  u32 eventsVeneer;
-  const struct Trigger *(*events)(void);
+  u32 triggersVeneer;
+  const struct Trigger *(*triggers)(void);
   u32 regionsVeneer;
   const struct SceneRegion *(*regions)(void);
 };

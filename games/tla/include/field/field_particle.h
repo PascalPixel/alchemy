@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_EFFECT_SLOT_H
-#define ALCHEMY_EFFECT_SLOT_H
+#ifndef ALCHEMY_FIELD_PARTICLE_H
+#define ALCHEMY_FIELD_PARTICLE_H
 
 #include "edition.h"
 #include "types.h"

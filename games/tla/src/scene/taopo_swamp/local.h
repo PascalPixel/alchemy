@@ -11,7 +11,7 @@
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gScenePlacements[];
+extern const struct ActorPlacement gActorPlacements[];
 
 extern char SceneId_Ov678Room1;
 extern char SceneId_Ov678Room2;

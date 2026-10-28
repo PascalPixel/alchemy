@@ -116,26 +116,26 @@ extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
+    void);
+void Func_08163c2c(s32 mode, s32 value);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)
 void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
+    struct BattleEffectArgument *effect);
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
                    s32 width); // BattleEffect_DrawClippedCanvasLine
 void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);          // Actor_UpdateMembers
+                   s32 frames);          // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);        // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
-void BattleEffect_EndCanvasLayer(void);  // BattleEffect_EndCanvasLayer
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_EndCanvasLayer(void);
 void Palette_LoadBasicObjColors(void);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);

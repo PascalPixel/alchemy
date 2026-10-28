@@ -148,7 +148,7 @@ s32 gData_02002180[] = {
     17,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {336, CONDITION_ALWAYS, (s32)gData_0200215c, PIXELS(664), 0, PIXELS(792),
@@ -181,7 +181,7 @@ struct ActorPlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gScenePlacementsEntrance99[] = {
+s32 gActorPlacementsEntrance99[] = {
     (s32)0xffff0004,
     1,
     0x80000,
@@ -245,17 +245,17 @@ struct Trigger gSceneEvents[] = {
     {33, 30, CONDITION_ALWAYS, 30},
     {33, 31, CONDITION_ALWAYS, 31},
     {33, 32, CONDITION_ALWAYS, 32},
-    {2, 45, 0x200, EVENT_SCRIPT(Func_020006ac)},
-    {2, 46, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200078c)},
-    {3, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
-    {3, 36, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
-    {3, 37, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
-    {3, 38, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
-    {3, 39, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
-    {3, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadTrueHeart)},
+    {2, 45, 0x200, EVENT(Func_020006ac)},
+    {2, 46, CONDITION_ALWAYS, EVENT(Func_0200078c)},
+    {3, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {3, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {3, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {3, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {3, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {3, 40, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
     {0x50009085, 0, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ApplySixRectsAfterFlag161)},
+     EVENT(SceneState_ApplySixRectsAfterFlag161)},
     {0x40009085, 0, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ApplySixRectsAfter161)},
+     EVENT(SceneState_ApplySixRectsAfter161)},
     {TRIGGERS_END},
 };

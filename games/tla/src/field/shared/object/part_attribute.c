@@ -35,7 +35,7 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
 
   if ((object->animationKind & 0xf) == 1) {
     list = object->animation;
-    attribute = gObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
+    attribute = gActor_BlinkChildValues[(gFrameCount >> 1) & 3];
     for (i = 0; i < list->count; i++) {
       part = list->parts[i];
       if (part != 0 && part->graphics != 0) {

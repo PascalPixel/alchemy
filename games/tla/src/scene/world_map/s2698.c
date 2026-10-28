@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "text/msg_ids.h"
+#include "task.h"
 
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
@@ -61,7 +62,7 @@ void Func_02002698(void) {
   Func_02004d80_(0x7fff, 0);
   Func_02004d78_(0x10000, 0);
   Func_02004d88(60);
-  Task_Add(Func_02002594, 0x480);
+  Task_Add(Func_02002594, TASK_PASS_VBLANK);
   Func_02004b78_(0x50000, 0x50000, 0x10000);
   FieldEvent_WaitFrames(30);
   Func_02004b78_(0x70000, 0x60000, 0x10000);

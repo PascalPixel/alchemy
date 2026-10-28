@@ -1,5 +1,6 @@
 #include "local.h"
 #include "edition.h"
+#include "task.h"
 
 void Func_02003c54(void) {
   if (GameFlag_Test_(0x210) == 0) {
@@ -32,7 +33,7 @@ void Func_02003c8c(void) {
     Actor_SetModeById_(15, 5);
   }
   Actor_SetModeById_(14, 5);
-  Task_Add(Func_02001c8c, 0x480);
+  Task_Add(Func_02001c8c, TASK_PASS_VBLANK);
   if ((gAdventure.entrance >= 4 && gAdventure.entrance <= 6) ||
       gAdventure.entrance == 14) {
     if (GameFlag_Test_(0x84a)) {

@@ -18,7 +18,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  return gScenePlacements;
+  return gActorPlacements;
 }
 
 extern s32 gData_02002618;

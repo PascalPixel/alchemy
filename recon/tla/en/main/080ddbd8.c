@@ -101,7 +101,7 @@ void Func_080ddbd8(void) {
       obj->motionFlags = 0;
       Animation_ApplyChildValuesFar(obj, 11);
       Actor_SetMode(obj, 7);
-      Actor_StartScriptFar((struct DispatchObject *)obj,
+      Actor_StartScriptFar((struct ActorView *)obj,
                                    gBattleEffect_SharedParticleScript + 1);
 
       pos[0] = work->x;

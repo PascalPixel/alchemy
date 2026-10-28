@@ -41,7 +41,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
                    struct BattlePresentationWork *work);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
-void BattleEventRuntime_WaitForReady(void);
+void BattlePlayback_WaitForReady(void);
 void BattleEvent_Playback(void);
 void ObjMotRst(s32 slot);
 void WaitFrames(s32 frames);
@@ -82,7 +82,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SetMode(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else
@@ -128,7 +128,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   } else {
     WaitFrames(60);
   }
-  BattleEventRuntime_WaitForReady();
+  BattlePlayback_WaitForReady();
   Actor_SetMode(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)

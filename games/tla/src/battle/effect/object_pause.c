@@ -9,7 +9,7 @@
 #include "system.h"
 #include "fixed_math.h"
 #include "object_lookup.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "types.h"
 #include "system.h"
 #include "adventure.h"
@@ -18,14 +18,14 @@
 #define Actor_SetAnimationSpeedFar                                 \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
-void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object) {
+void BattleEffect_SetRandomTableValueOnObject(struct ActorView *object) {
   s8 *table = gBattleEffect_RandomChildValues;
   s32 index = Random16();
   Animation_ApplyChildValuesFar(object, table[(u32)(index * 8) >> 16]);
 }
 
 void BattleEffect_PauseObject(s32 id) {
-  struct DispatchObject *object;
+  struct ActorView *object;
   struct AnimationEntry *entry;
 
   object = ObjectTable_Get(id);
@@ -45,7 +45,7 @@ void BattleEffect_PauseObject(s32 id) {
 }
 
 void BattleEffect_ResumeObject(s32 id) {
-  struct DispatchObject *object = ObjectTable_Get(id);
+  struct ActorView *object = ObjectTable_Get(id);
 
   if (object != NULL) {
     if (object->update == BattleEffect_SetRandomTableValueOnObject) {

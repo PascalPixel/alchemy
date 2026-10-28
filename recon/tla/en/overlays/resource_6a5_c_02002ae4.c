@@ -66,10 +66,10 @@ static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
 static __inline__ void W_Func_02005914(s32 a0, s32 a1) {
   Func_02005914(a0, a1);
 }
-static __inline__ void W_ObjectMotion_ArmCallback(s32 a0, s32 a1, s32 a2) {
+static __inline__ void W_Actor_ArmCallback(s32 a0, s32 a1, s32 a2) {
   Actor_ArmCallback(a0, a1, a2);
 }
-static __inline__ void W_ObjectMotion_EnableActionAndSetCallback(s32 a0,
+static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0,
                                                                  s32 a1) {
   Actor_SetMovementTypeById(a0, a1);
 }
@@ -174,7 +174,7 @@ void Func_02002ae4(void) {
   Call3(Actor_ArmCallback, 4, 0, 0);
   Call2(Func_020058ec, 5, 0x8000);
   Call1(FieldEvent_WaitFrames, 0x28);
-  W_ObjectMotion_ArmCallback(4, fast, 0);
+  W_Actor_ArmCallback(4, fast, 0);
   Call2(Func_020058ec, 5, fast);
   Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Actor_SetModeById, 5, 4);
@@ -455,7 +455,7 @@ void Func_02002ae4(void) {
           FIELD_AT(t298, s16, 18));
   }
   Call2(Actor_SetMovementTypeById, 2, (s32)gData_02005ff0);
-  W_ObjectMotion_EnableActionAndSetCallback(3, (s32)gData_02005ff0);
+  W_Actor_EnableActionAndSetCallback(3, (s32)gData_02005ff0);
   Call2(Actor_SetMovementTypeById, 1, (s32)gData_02005ff0);
   Call1(Actor_RefreshSelectorById, 2);
   Call1(Actor_RefreshSelectorById, 3);

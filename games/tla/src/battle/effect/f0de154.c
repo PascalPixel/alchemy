@@ -35,14 +35,14 @@ s32 Func_080de154(struct Actor *src) {
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
-    Actor_StartScriptFar((struct DispatchObject *)obj,
+    Actor_StartScriptFar((struct ActorView *)obj,
                                  gBattleEffect_SharedParticleScript);
   }
 
   for (i = 0; i < 12; i++) {
     frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
-      Actor_StartScriptFar((struct DispatchObject *)frag,
+      Actor_StartScriptFar((struct ActorView *)frag,
                                    gData_080f0e78);
       frag->speedLimit = Random16() + (1 << 16);
       frag->acceleration = 1 << 16;

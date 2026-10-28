@@ -1,18 +1,18 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 
 s32 __divsi3(s32, s32);
 
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
+  Actor_SetSingleChildFlagsFar((struct ActorView *)obj, 0);
   obj->collisionFlags = 0;
   return 0;
 }
 
 s32 Actor_ClearChildFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
+  Actor_SetSingleChildFlagsFar((struct ActorView *)obj, 0);
   return 0;
 }
 

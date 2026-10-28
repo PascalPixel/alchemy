@@ -5,25 +5,25 @@
 #include "edition.h"
 #include "actor.h"
 
-struct DispatchObject;
+struct ActorView;
 struct EffectPosition;
 
 extern const s32 gCamera_FixedViewMatrix[];
 extern s32 gIwram_Data1;
 extern s32 gIwram_Data2;
 extern u8 gMap_TileDissolveOrder[];
-extern const s32 gObjectDispatch_DefaultScript[];
+extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
 extern u8 Render_DecodePictureCodeSize[];
-extern u8 gRuntime_ByteRemapTable[];
+extern u8 gSpriteColorRemapTables[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Event_ValidatePackedId(u32 packed_id);
 void Map_RenderAnimatedTilePicture(u8 *object, u32 position);
 void Camera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
-#ifndef OWN_ObjectDispatch_SetSingleChildFlags
-void Actor_SetSingleChildFlags(struct DispatchObject *object, u32 value);
+#ifndef OWN_Actor_SetSingleChildFlags
+void Actor_SetSingleChildFlags(struct ActorView *object, u32 value);
 #endif
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
@@ -57,15 +57,15 @@ extern const struct ActorPlacement gIdejimaPlacements[];
 extern const struct SceneEntrance gSceneEntrances[];
 extern const struct Trigger gSceneEvents[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gScenePlacements[];
-extern const struct ActorPlacement gScenePlacementsEntrance99[];
+extern const struct ActorPlacement gActorPlacements[];
+extern const struct ActorPlacement gActorPlacementsEntrance99[];
 extern const struct SceneRegion gSceneRegions[];
 extern struct Actor gSnapshotObjects[];
 extern const u8 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];
 extern const s32 gLinkLobby_SlotValues[];
-extern const u8 gObjectGroup_BlinkChildValues[4];
-extern const u8 gObjectMotion_StepAngleScript[];
+extern const u8 gActor_BlinkChildValues[4];
+extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
 void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
@@ -80,7 +80,7 @@ void BattleEffect_SetupObjectPair(s32 actor, s32 target);
 s32 BattleEffect_StartBufferInterpolationFar(s32);
 void BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 void BattleEffect_RunBurstScene(struct EffectStep *, s32);
-void EffectRuntime_StopCurrentObject(void);
+void BattleEffect_StopMainActor(void);
 s32 Event_SpawnObjectTable(s32 event_id, s32 state);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
                                           struct FacingObject *second);
@@ -113,7 +113,7 @@ void Map_CenterOnFollowedPointFar(void);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32 Actor_IsTargetUnset(void *arg0);
-#ifndef OWN_Object_SetPartAttribute
+#ifndef OWN_Actor_SetPartAttribute
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 #endif
 void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);

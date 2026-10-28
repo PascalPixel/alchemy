@@ -31,8 +31,8 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 
   if (object != NULL) {
     object->action = angle;
-    Actor_StartScriptFar((struct DispatchObject *)object,
-                                 (u32)gObjectMotion_StepAngleScript);
+    Actor_StartScriptFar((struct ActorView *)object,
+                                 (u32)gActor_StepAngleScript);
     Event_WaitFrames(wait);
   }
 }
@@ -42,8 +42,8 @@ void Actor_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
 
   if (object != NULL) {
     object->action = angle;
-    Actor_StartScriptFar((struct DispatchObject *)object,
-                                 (u32)gObjectMotion_StepAngleScript);
+    Actor_StartScriptFar((struct ActorView *)object,
+                                 (u32)gActor_StepAngleScript);
     Actor_RefreshSelectorById(objectId);
   }
 }
@@ -81,7 +81,7 @@ void Func_080d390c(u32 id) {
 
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  Actor_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+  Actor_SetSingleChildFlagsFar((struct ActorView *)object, 0);
 }
 
 void Func_080d3928(u32 id, s32 rotation) {

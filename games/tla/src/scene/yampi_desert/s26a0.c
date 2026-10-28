@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "actor.h"
+#include "task.h"
 
 void Func_02001c5c(void);
 void Func_020023cc(void);
@@ -36,5 +37,5 @@ void Func_020026a0(void) {
     leader->update = Func_020023cc;
   }
   Func_020021d4();
-  Task_Add(Func_02001c5c, 0x480);
+  Task_Add(Func_02001c5c, TASK_PASS_VBLANK);
 }

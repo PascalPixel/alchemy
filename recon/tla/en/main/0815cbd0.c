@@ -87,7 +87,7 @@ void BattleEffect_CountDownBattlerTints(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleEventRuntime_StartPhase through its far call.
+// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,

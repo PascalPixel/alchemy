@@ -6,7 +6,7 @@
 // slot machine's sprite table, as Func_081b8180 does: digits places from x,
 // 22 pixels apart, leading zeros skipped, tiles 640 + 16 * digit in the given
 // palette. Returns the next free sprite. The sprite words are volatile, as
-// ☀️'s ReelGame_RunFrame has its OAM shadow (FAKEMATCH(volatile) when
+// ☀️'s LuckyWheels_Update has its OAM shadow (FAKEMATCH(volatile) when
 // adopted), which gives the native's two offset givs, the per-pass muls and
 // the stack slots; as plain u32 words, 114 of 105 instructions differ in
 // tla-en. Left: instruction order only, five single moves, each a stack

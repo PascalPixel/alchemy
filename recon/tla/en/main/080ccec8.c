@@ -44,7 +44,7 @@ struct TalkEvent {
 };
 
 void Marker_MoveLeaderAwayFromEmitter(void);
-extern const u8 gObjectMotion_StepAngleScript[];
+extern const u8 gActor_StepAngleScript[];
 
 struct ActorPlacement *Scene_FindActorPlacement(s32 id);
 struct Actor *Actor_GetById(s32 id);
@@ -372,10 +372,10 @@ s32 Func_080ccec8(s32 id) {
       if (placement->kind == 3) {
         object->watchedObject = Actor_GetById(gAdventure.currentOwner);
         object->actionFlags |= 1;
-        Actor_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
+        Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
       } else if (placement->kind == 1) {
         object->action = savedAngle;
-        Actor_StartScriptFar(object, gObjectMotion_StepAngleScript);
+        Actor_StartScriptFar(object, gActor_StepAngleScript);
       }
     }
     ((u8 *)object)[91] = 0;

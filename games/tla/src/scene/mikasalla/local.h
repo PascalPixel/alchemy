@@ -9,7 +9,7 @@
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gScenePlacements[];
+extern const struct ActorPlacement gActorPlacements[];
 extern const struct Trigger gSceneEvents[];
 
 s32 GameFlag_Test(s32 flag);

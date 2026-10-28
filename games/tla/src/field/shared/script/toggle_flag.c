@@ -17,13 +17,13 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-struct DispatchObject;
-void Actor_SelectAnimation(struct DispatchObject *object,
+struct ActorView;
+void Actor_SelectAnimation(struct ActorView *object,
                                             s32 argument);
 
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   Actor_SelectAnimation(
-      (struct DispatchObject *)interpreter,
+      (struct ActorView *)interpreter,
       interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;

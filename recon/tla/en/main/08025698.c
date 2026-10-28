@@ -13,7 +13,7 @@
 #include "field.h"
 #include "system.h"
 #include "actor.h"
-#include "script_object_runtime.h"
+#include "actor_script_view.h"
 #include "iwram_call.h"
 
 struct ScriptObjectEntry;
@@ -29,7 +29,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
-s32 Actor_Wander(struct ScriptObjectRuntime *object) {
+s32 Actor_Wander(struct ActorScriptView *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
   s32 base;

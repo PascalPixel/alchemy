@@ -98,7 +98,7 @@ s32 Task_Add(s32 (*callback)(void), s32 order);
 s32 Task_Remove(s32 (*callback)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-// BattleEventRuntime_StartPhase through its far call.
+// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

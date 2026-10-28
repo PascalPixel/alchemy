@@ -824,6 +824,6 @@ Func_080ccec8:
 .L_080cd578:
 	.4byte gAdventure
 .L_080cd57c:
-	.4byte gObject_LinkedMotionScript
+	.4byte gActor_FaceWatchedScript
 .L_080cd580:
-	.4byte gObjectMotion_StepAngleScript
+	.4byte gActor_StepAngleScript

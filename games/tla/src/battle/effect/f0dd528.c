@@ -42,7 +42,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
     child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
-      Actor_StartScriptFar((struct DispatchObject *)child,
+      Actor_StartScriptFar((struct ActorView *)child,
                                    gData_080f0e78);
       speed = Random16() + 0x10000;
       child->acceleration = 1 << 16;

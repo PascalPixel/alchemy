@@ -4,10 +4,10 @@
 #include "types.h"
 #include "edition.h"
 
-struct DispatchObject;
+struct ActorView;
 
 void *Actor_FindFreeObject(void);
-void Actor_Release(struct DispatchObject *object);
-void Actor_StartScriptFar(struct DispatchObject *object, const s32 *script);
+void Actor_Release(struct ActorView *object);
+void Actor_StartScriptFar(struct ActorView *object, const s32 *script);
 
 #endif

@@ -75,7 +75,7 @@ extern s32 gData_08198aa4[]; // the dust's four gravities
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
@@ -83,16 +83,16 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildB
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Func_0815b634(void);
 void Sound_PlayFar(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
 // spouting under it, and drives into the ground in a burst of flashes and

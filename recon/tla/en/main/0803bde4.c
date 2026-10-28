@@ -7,7 +7,7 @@
 // window argument after the stores of y and next (the lane's load-earlier
 // near misses). The RAM routine's size is a linker constant in the listing
 // (0x31c): Text_DrawGlyphCodeSize stands for it.
-// ☀️'s Text_DrawGlyph (the international form) on this game's
+// ☀️'s Glyph_Draw (the international form) on this game's
 // WindowWork: a text canvas window draws the glyph with the routine copied
 // to RAM, other windows show it as a sprite.
 #include "types.h"

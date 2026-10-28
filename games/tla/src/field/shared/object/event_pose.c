@@ -10,12 +10,12 @@
 #include "types.h"
 #include "actor.h"
 #include "system.h"
-#include "script_object_runtime.h"
+#include "actor_script_view.h"
 #include "edition.h"
 
-struct DispatchObject;
+struct ActorView;
 
-void Actor_SetSingleChildFlagsFar(struct DispatchObject *, u32);
+void Actor_SetSingleChildFlagsFar(struct ActorView *, u32);
 
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 5);
@@ -32,7 +32,7 @@ void ObjectEvent_Spring(u32 objectId) {
   Sound_PlayFar(146);
   if (object != 0) {
     object->velocityY = 0x80000;
-    Actor_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
+    Actor_SetSingleChildFlagsFar((struct ActorView *)object, 1);
   }
 }
 
@@ -59,9 +59,9 @@ struct Actor *ObjectEvent_GetObject(u32 objectId) {
 void ObjectEvent_Remove(u32 objectId) { Func_080caa2c(objectId); }
 
 void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
-  struct ScriptObjectRuntime *object;
+  struct ActorScriptView *object;
 
-  object = (struct ScriptObjectRuntime *)ObjectTable_Get(objectId);
+  object = (struct ActorScriptView *)ObjectTable_Get(objectId);
   if (object == 0)
     return;
   if (x == -1)

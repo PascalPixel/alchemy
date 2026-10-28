@@ -63,14 +63,14 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void);                     // ☀️ ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ Actor_UpdateMembers
+                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
 void SceneTransform_ApplyPosition(s32 *position);
 void Sound_PlayFar(s32 cue);

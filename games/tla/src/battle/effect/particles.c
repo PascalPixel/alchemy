@@ -42,7 +42,7 @@ void BattleEffect_SpawnFallingParticles(void) {
     obj->gravity = 0x1999;
     Actor_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
-    Actor_StartScriptFar((struct DispatchObject *)obj,
+    Actor_StartScriptFar((struct ActorView *)obj,
                                  gBattleEffect_SharedParticleScript);
   }
 }

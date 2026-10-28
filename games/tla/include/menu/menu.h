@@ -50,7 +50,7 @@ s32 Menu_RunResourceSelectionLoop(s32);
 void Party_AdjustCoinsFar(s32);
 s32 Party_ListActiveOwnersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
-#ifndef OWN_RenderOutput_CreateFromResourceFar
+#ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *
 WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
                                    s32 arg3, s32 arg4);

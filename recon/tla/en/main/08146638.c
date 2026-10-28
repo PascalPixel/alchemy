@@ -50,14 +50,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
@@ -122,7 +122,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Actor_SetMode(caster, 2);
-  Actor_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
+  Actor_SetAnimationSpeedFar((struct ActorView *)caster, 48);
   BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;

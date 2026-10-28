@@ -52,19 +52,19 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void Palette_StepFadeTransfer(void);
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *pair);
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
+                   s32 timerFrames); // BattleEffect_TintBattler
+void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleEffect_RunDjinniEntrance

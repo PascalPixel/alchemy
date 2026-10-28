@@ -71,9 +71,9 @@ struct Actor {
   u8 unk70[0x10];
 };
 
-typedef char ObjectRuntime_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
+typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
 
-typedef char ObjectRuntime_collision_flags_offset
+typedef char Actor_collision_flags_offset
     [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
 
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
@@ -94,8 +94,8 @@ void Actor_SetModeById(u32, s32);
 void Actor_RefreshSelectorById(u32);
 void Sound_PlayFar(s32);
 
-extern const u8 gObject_LinkedMotionScript[];
-extern const u8 gObject_OffsetMotionScript[];
-extern const u8 gObject_VariantMotionScripts[];
+extern const u8 gActor_FaceWatchedScript[];
+extern const u8 gActor_OffsetScript[];
+extern const u8 gActor_VariantScripts[];
 
 #endif

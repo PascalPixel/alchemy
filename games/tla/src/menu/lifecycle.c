@@ -1,4 +1,4 @@
-#define OWN_UiWindow_CreateFar
+#define OWN_Window_CreateFar
 //--------------------------------------------------------------------------
 // lifecycle.c
 // Windows: open and close windows held by handles.

@@ -52,13 +52,13 @@ struct BattleObjectPosition {
 };
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // BattleEffect_ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
+    void);
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // Actor_UpdateMembers
+                   s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,

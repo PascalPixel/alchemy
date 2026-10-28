@@ -439,7 +439,7 @@ Func_080dd054:
 	ldrsh r2, [r3, r4]
 	bl Field_RunPsynergyEvent
 .L_080dd3ec:
-	bl EffectRuntime_StopCurrentObject
+	bl BattleEffect_StopMainActor
 	ldr r0, [sp, #24]
 	cmp r0, #1
 	bne .L_080dd40a

@@ -11,7 +11,7 @@
 #include "item_ids.h"
 #include "sounds.h"
 
-// Lunpa's and the gates' entrances and exits are in scene_links.h.
+// Lunpa's and the gates' entrances and exits are in scene_exits.h.
 
 /// The exit the gates' third road
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD) requests, which gGateExits

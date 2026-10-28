@@ -54,18 +54,18 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
-void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames);       // Actor_UpdateMembers
+                   s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
-void Func_08163c2c(s32 layer, s32 value);  // Func_08163c2c
+void Func_08163c2c(s32 layer, s32 value);
 void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void Palette_LoadBasicObjColors(void);

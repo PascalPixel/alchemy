@@ -50,14 +50,14 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void);                   // BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
-void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase);              // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // Actor_UpdateMembers
+                   s32 frames);                    // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_SelectLivingTargets(

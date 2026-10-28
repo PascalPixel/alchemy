@@ -63,9 +63,9 @@ extern char MsgReflectEnd;
 struct BattleUnit *Unit_Get(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
-u32 BattleEventRuntime_Reset(void);
-s32 BattleEventRuntime_SchedulePhase(s32 frames);
-void BattleEventRuntime_WaitForReady(void);
+u32 BattlePlayback_Reset(void);
+s32 BattlePlayback_SchedulePhase(s32 frames);
+void BattlePlayback_WaitForReady(void);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812628c(s32 mode, s32 background, s32 value);
@@ -126,8 +126,8 @@ void Func_08124e20(void) {
           u8 element;
 
           if (BattleObject_Get(unitId) != 0) {
-            BattleEventRuntime_Reset();
-            BattleEventRuntime_SchedulePhase(30);
+            BattlePlayback_Reset();
+            BattlePlayback_SchedulePhase(30);
             BattleEvent_Push(0, unitId);
             BattleEvent_Push(3, expiredEntry->element * 20 + expiredEntry->index +
                                 300);
@@ -139,7 +139,7 @@ void Func_08124e20(void) {
             if (BattleParty_IsUnitListed(unitId)) {
               Actor_SetMode(BattleObject_Get(unitId)->object, 3);
               Actor_SetAnimationSpeedFar(
-                  (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
+                  (struct ActorView *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
@@ -148,7 +148,7 @@ void Func_08124e20(void) {
             Unit_CalculateFar(unitId);
             if (BattleParty_IsUnitListed(unitId))
               Func_08127308(unitId, element, 3, 0);
-            BattleEventRuntime_WaitForReady();
+            BattlePlayback_WaitForReady();
           }
         } else {
           expiredEntry++;

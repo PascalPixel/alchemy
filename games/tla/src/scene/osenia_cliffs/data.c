@@ -20,7 +20,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {192, 0x8ff, 1, PIXELS(200), 0, PIXELS(226), FACING_EAST, 1, 0},
     {187, 0x8ff, 1, PIXELS(259), 0, PIXELS(312), FACING_NORTH, 1, 0},
     {190, 0x8ff, 1, PIXELS(242), 0, PIXELS(313), FACING_NORTH, 1, 0},
@@ -40,6 +40,6 @@ struct Trigger gSceneEvents[] = {
     {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
     {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
     {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {0x8515, 13, 0x203, EVENT_SCRIPT(Func_02000054)},
+    {0x8515, 13, 0x203, EVENT(Func_02000054)},
     {TRIGGERS_END},
 };

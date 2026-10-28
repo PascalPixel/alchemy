@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "animspr.h"
 #include "io_write_queue.h"
+#include "task.h"
 
 extern u8 gData_02006c08[];
 
@@ -27,5 +28,5 @@ static inline void ClearWords(void *destination, s32 size) {
 
 void Func_02003960(void) {
   ClearWords(gData_02006c08, 0x200);
-  Task_Add(Func_020036a8, 0x480);
+  Task_Add(Func_020036a8, TASK_PASS_VBLANK);
 }

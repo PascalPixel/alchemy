@@ -11,9 +11,9 @@
 #include "system.h"
 #include "task.h"
 
-u32 BattleEventRuntime_Reset(void);
+u32 BattlePlayback_Reset(void);
 
-u32 BattleEventRuntime_Reset(void) {
+u32 BattlePlayback_Reset(void) {
   struct BattleEventState *events;
   struct BattleWork *work;
 
@@ -33,7 +33,7 @@ u32 BattleEventRuntime_Reset(void) {
   events->flags = 0;
 }
 
-s32 BattleEventRuntime_WaitForReady(void) {
+s32 BattlePlayback_WaitForReady(void) {
   s32 state;
   struct BattleEventState *events;
 
@@ -49,5 +49,5 @@ s32 BattleEventRuntime_WaitForReady(void) {
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
   Task_Remove((u32)BattleEvent_Playback);
-  return BattleEventRuntime_Reset();
+  return BattlePlayback_Reset();
 }

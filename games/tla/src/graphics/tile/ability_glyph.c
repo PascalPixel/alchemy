@@ -1,4 +1,4 @@
-#define OWN_UiIcon_BuildAbilityIconTiles
+#define OWN_Icon_BuildAbilityIconTiles
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

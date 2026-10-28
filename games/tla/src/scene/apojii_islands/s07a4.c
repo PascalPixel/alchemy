@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "io_write_queue.h"
 #include "system/io_reg.h"
+#include "task.h"
 
 struct Actor *Actor_GetById(u32 id);
 void Func_02001cc4(void);
@@ -77,7 +78,7 @@ flash:
   IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
   WaitFrames(1);
   Task_RemoveFar(Func_02000540);
-  Task_Add(Func_020006bc, 0x480);
+  Task_Add(Func_020006bc, TASK_PASS_VBLANK);
   Func_020017bc();
   Func_020017f8(33, 0, 0);
   i = 1;

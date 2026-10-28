@@ -42,6 +42,6 @@ u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};
 u8 gCharacterMenu_CursorWidths[5] = {9, 4, 6, 5, 7};
 #endif
 
-s32 gFourObjectMotion_ResourceIds[4] = {0xf3, 0xf4, 0xf5, 0xf6};
+s32 gMenuIcon_ResourceIds[4] = {0xf3, 0xf4, 0xf5, 0xf6};
 
 u16 gData_08105a50[5] = {16, 1, 2, 15, 7};

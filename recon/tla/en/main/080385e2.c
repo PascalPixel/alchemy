@@ -1,5 +1,5 @@
 // Draft, ARM C (game ARM route, GCC 2.95.2), behind the Thumb veneer
-// Func_080385e0 (bx pc): matches. ☀️'s Text_DrawGlyphArm
+// Func_080385e0 (bx pc): matches. ☀️'s Glyph_DrawArm
 // (games/tbs/src/window/glyph_arm.c) as ⚓️ English has it: the kana-mark
 // test of ☀️'s Japanese and English editions, without English's bound on
 // codes above 143, and no FAKEMATCH device. The listing is mixed-mode,

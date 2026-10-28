@@ -16,7 +16,7 @@
 // pointer (65), nine minutes of permute, five on the loop alone (no gain).
 #include "types.h"
 #include "animspr.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "battle.h"
 #include "battle_display.h"
 #include "battle_party.h"
@@ -63,7 +63,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode(object, 3);
-  Actor_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);
@@ -74,7 +74,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     work.count = 1;
   }
   for (i = 0; i != work.count; i++) {
-    struct DispatchChild *animation =
+    struct ActorSpriteView *animation =
         BattleObject_Get(work.actors[i])->object->records;
     s32 j;
 

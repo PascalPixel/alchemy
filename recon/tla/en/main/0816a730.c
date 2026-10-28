@@ -71,24 +71,24 @@ extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
 extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode); // BattleEffect_BuildBlitter
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *draw);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.

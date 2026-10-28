@@ -1,12 +1,12 @@
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "field_sprite.h"
 
-void Animation_ApplyChildValues(struct DispatchObject *object, u32 value) {
+void Animation_ApplyChildValues(struct ActorView *object, u32 value) {
   if (object != NULL && object->kind == 1)
     Animation_ApplyChildValuesToRecord(object->target.child, value);
 }
 
-void Actor_SetSpritePriorityDirect(struct DispatchObject *object,
+void Actor_SetSpritePriorityDirect(struct ActorView *object,
                                       s32 priority) {
   struct FieldSprite *sprite;
 

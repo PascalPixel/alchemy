@@ -4,10 +4,10 @@
 #include "actor.h"
 #include "event_work.h"
 
-// The field's event work as this function reads it: the scene's event list.
+// The field's event work as this function reads it: the scene's trigger table.
 struct FieldStepWork {
   u8 unk00[0x10];
-  const struct Trigger *events;
+  const struct Trigger *triggers;
 };
 
 s32 Field_FindNearbyTalkTarget(s32 owner);
@@ -15,16 +15,16 @@ s32 Func_080cb09c(void);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Item_MatchesFilter(s32 item, s32 filter);
 
-/// Finds the scene's first kind-4 event whose condition holds, whose facing
+/// Finds the scene's first kind-4 trigger whose condition holds, whose facing
 /// range (when it has one) takes the controlled actor's angle, whose item
 /// filter takes source (when given), and whose target is the actor the leader
 /// can talk to (flag 0x10) or the object it is touching; 0 when none does.
 /// Rewritten from The Broken Seal's form: The Lost Age asks
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
-/// the event's item.
+/// the trigger's item.
 s32 Event_FindFacingTrigger(s32 source) {
-  struct FieldStepWork *runtime = Ram_HeapSlots->eventWork;
-  const struct Trigger *trigger = runtime->events;
+  struct FieldStepWork *work = Ram_HeapSlots->eventWork;
+  const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
@@ -36,9 +36,9 @@ s32 Event_FindFacingTrigger(s32 source) {
   collision = Func_080cb09c();
 
   while (trigger->control != -1) {
-    s32 highValue = (s16)(u16)trigger->trigger & 0xf000;
-    s16 hasFacing = (u16)trigger->trigger & 0x0800;
-    s32 lowValue = (u16)trigger->trigger & 0xff;
+    s32 highValue = (s16)(u16)trigger->subject & 0xf000;
+    s16 hasFacing = (u16)trigger->subject & 0x0800;
+    s32 lowValue = (u16)trigger->subject & 0xff;
 
     if ((trigger->control & 0x0f) == 4 &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&

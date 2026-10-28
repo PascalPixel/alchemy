@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
@@ -57,7 +57,7 @@ void Func_080ddea8(void) {
     pos.z = work->z;
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-      Actor_StartScriptFar((struct DispatchObject *)obj,
+      Actor_StartScriptFar((struct ActorView *)obj,
                                    gData_080f0e78);
       obj->speedLimit = Random16() + 0x20000;
       obj->acceleration = 0x20000;

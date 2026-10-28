@@ -14,7 +14,7 @@
 #include "types.h"
 #include "system.h"
 #include "actor.h"
-#include "script_object_runtime.h"
+#include "actor_script_view.h"
 #include "iwram_call.h"
 
 struct ScriptObjectEntry;
@@ -32,7 +32,7 @@ s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 
-s32 Func_08025830(struct ScriptObjectRuntime *object) {
+s32 Func_08025830(struct ActorScriptView *object) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;

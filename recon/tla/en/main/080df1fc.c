@@ -4,7 +4,7 @@
 // a store the native issues another instruction before the next load, in the
 // position setups and the steering loop.
 #include "types.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "input.h"
 #include "objdisp.h"
 #include "ram_buffer.h"
@@ -114,7 +114,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     return;
   BattleEffect_InitializeSharedScene();
   source->linked = target;
-  Actor_StartScriptFar((struct DispatchObject *)source,
+  Actor_StartScriptFar((struct ActorView *)source,
                                (u32)gData_080f0e60);
   /* FAKEMATCH: the position is reached through this pointer everywhere but
      in the steering loop's first part, which names the position itself;
@@ -147,7 +147,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Task_Add((s32)BattleEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
-  Actor_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
+  Actor_SetSingleChildFlagsFar((struct ActorView *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y - target->ground <= 0x180000) {
       object->y += 0x6000;
@@ -256,7 +256,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        Actor_StartScriptFar((struct DispatchObject *)object,
+        Actor_StartScriptFar((struct ActorView *)object,
                                      (u32)gData_080f0e78);
         object->speed = Random16() + 0x20000;
         object->lift = 0x20000;
@@ -270,8 +270,8 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Sound_PlayFar(131);
   Actor_Destroy(anchors[0]);
   Actor_Destroy(anchors[1]);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)target, work->palette);
-  Actor_StartScriptFar((struct DispatchObject *)target,
+  Animation_ApplyChildValuesFar((struct ActorView *)target, work->palette);
+  Actor_StartScriptFar((struct ActorView *)target,
                                (u32)(work->script));
   {
     /* FAKEMATCH: one zero, set before these stores, clears the mode
@@ -285,7 +285,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     target->mode = zero;
     source->callback = (void *)zero;
   }
-  Animation_ApplyChildValuesFar((struct DispatchObject *)source, 0);
+  Animation_ApplyChildValuesFar((struct ActorView *)source, 0);
   if ((s8)work->falls != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       WaitFrames(1);

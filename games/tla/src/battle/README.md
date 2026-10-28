@@ -37,7 +37,7 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `BattleCamera_`, `BattleClass_`, `BattleEffect_`, `BattleEnemy_`,
 `BattleEscape_`, `BattleEvent_`, `BattleFormation_`, `BattleHighlight_`,
 `BattleMessage_`, `BattleMotion_`, `BattleObject_`, `BattleParty_`,
-`BattlePlacement_`, `BattleQueue_`, `BattleStaging_`, `BattleStatusIcon_`,
+`BattlePlacement_`, `BattlePlayback_`, `BattleQueue_`, `BattleStaging_`, `BattleStatusIcon_`,
 `BattleTransition_`, `BattleUnit_`, `Camera_`, `ColorBuffer_`, `Display_`,
 `Djinn_`, `DjinnRecovery_`, `Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
 `Field_`, `FieldEffect_`, `FieldEvent_`, `FieldParticle_`, `Graphics_`,
@@ -49,9 +49,8 @@ Those only The Lost Age's code has so far:
 | Prefix | What it acts on |
 | --- | --- |
 | `BattleActor_` | taking a unit out of the formations and the planned actions |
-| `BattleEventRuntime_` | starting and scheduling a battle phase |
 | `BattlePalette_` | stopping a palette blend and freeing its buffer |
-| `EffectRuntime_`, `EffectSprite_` | an object's rise and descent, and a sprite drawn at a world position |
+| `EffectSprite_` | a sprite drawn at a world position |
 | `SummonEffect_` | the summons' canvas modes |
 | `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |
 | `Tutorial_` | the message a Djinni's gift shows |

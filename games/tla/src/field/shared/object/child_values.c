@@ -1,15 +1,15 @@
 #include "types.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "animspr.h"
 
-void Animation_ApplyChildValueToFirst(struct DispatchChild *record, u32 value) {
+void Animation_ApplyChildValueToFirst(struct ActorSpriteView *record, u32 value) {
   if (record != NULL) {
     record->entries[0]->param = value;
     record->dirty = 1;
   }
 }
 
-void Animation_ApplyChildValuesToRecord(struct DispatchChild *record,
+void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
                                         u32 value) {
   s32 i;
 

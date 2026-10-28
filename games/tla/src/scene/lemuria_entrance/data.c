@@ -46,7 +46,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {8, CONDITION_ALWAYS, (s32)gData_02000728, PIXELS(14), 0, PIXELS(4),
      FACING_NORTH, 2, 0},
     {342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
@@ -67,8 +67,8 @@ struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {1, 2, CONDITION_ALWAYS, 2},
     {1, 4, CONDITION_ALWAYS, 4},
-    {2, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000060)},
-    {2, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000b0)},
-    {0x9815, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000100)},
+    {2, 3, CONDITION_ALWAYS, EVENT(Func_02000060)},
+    {2, 5, CONDITION_ALWAYS, EVENT(Func_020000b0)},
+    {0x9815, 19, CONDITION_ALWAYS, EVENT(Func_02000100)},
     {TRIGGERS_END},
 };

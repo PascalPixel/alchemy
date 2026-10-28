@@ -37,7 +37,7 @@ void WaitFrames(s32 frames);
 
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
-// The Broken Seal's Message_ShowResolvedAndWait.
+// The Broken Seal's Sanctum_ShowKeeperMessage.
 void Func_0810a9ac(s32 value) {
   u8 *shop;
   s32 portrait;
@@ -67,7 +67,7 @@ struct ShopRuntime {
 
 /// As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
 /// message shows and restored after.
-// The Broken Seal's Message_ShowResolvedAndRestoreState.
+// The Broken Seal's Sanctum_ShowKeeperMessageHidingCursor.
 void Func_0810a9fc(s32 message) {
   struct ShopRuntime *shop;
   u8 **anchor;

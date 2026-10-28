@@ -52,7 +52,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The battle background's id.
 #define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
 
-void BattleEffect_ClearActorTimers(void); // BattleEffect_ClearActorTimers
+void BattleEffect_ClearActorTimers(void);
 void Func_08191530(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Task_Add(void *callback, s32 order);
@@ -64,8 +64,8 @@ void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
-void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
+                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken

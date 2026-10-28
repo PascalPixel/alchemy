@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 struct EventWork {
   u8 unk000[0x1ac];
@@ -56,7 +57,7 @@ void Func_020029a4(void) {
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
   actor->action = 0;
   Actor_SetMovementTypeById(8, gData_02004eb8);
-  Task_Add(Func_020028cc, 0x480);
+  Task_Add(Func_020028cc, TASK_PASS_VBLANK);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x100;
   Func_02004d78(0x10003, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 32;

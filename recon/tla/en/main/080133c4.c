@@ -24,7 +24,7 @@ void System_InstallIwramAndIrqs(void) {
   Dma_Set(IwramRuntime_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400,
           REG_DMA3);
   gIrqVector = IwramIrqMain;
-  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers,
+  Dma_Set(gDefaultIrqHandlers, gIrqHandlers,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0xe, REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
   Io_Write16(0xc3ff, &REG_KEYCNT);

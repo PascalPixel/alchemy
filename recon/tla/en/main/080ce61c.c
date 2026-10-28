@@ -63,7 +63,7 @@ void BattleEffect_SetupObjectPair(s32 caster, s32 target);
 void Func_080dc6d8(void);
 void BattleEffect_DispatchRequestKind(void);
 void BattleEffect_Run(void);
-void EffectRuntime_StopCurrentObject(void);
+void BattleEffect_StopMainActor(void);
 void BattleEffect_ClearChildValueOnMismatch(void);
 void BattleEffect_CleanupSceneObjects(void);
 
@@ -217,7 +217,7 @@ s32 Func_080ce61c(u32 code) {
     else
       BattleEffect_Run();
   }
-  EffectRuntime_StopCurrentObject();
+  BattleEffect_StopMainActor();
   hit = ((s8 *)event)[0xd30];
   if (hit != -1) {
     pending = Func_080ce458(0x20000005, group, hit | 0x100);

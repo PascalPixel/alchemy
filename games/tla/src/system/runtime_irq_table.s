@@ -6,12 +6,12 @@ gIrqHandlers:
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 	.4byte	0, 0, 0, 0, 0x00000000, 0x00000000
 
-@ The handlers the runtime copies into gIrqHandlers: only the keypad
+@ The handlers start-up copies into gIrqHandlers: only the keypad
 @ interrupt has one of its own.
 	.section .rodata.irq_handlers,"a",%progbits
 	.balign 4
-	.global gRuntime_IrqHandlers
-gRuntime_IrqHandlers:
+	.global gDefaultIrqHandlers
+gDefaultIrqHandlers:
 	.4byte Irq_Ignore	@ VBlank
 	.4byte Irq_Ignore	@ HBlank
 	.4byte Irq_Ignore	@ VCount

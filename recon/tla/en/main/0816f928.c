@@ -55,15 +55,15 @@ extern char ResourceId_SmokeSheet;
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void Palette_StepFadeTransfer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);            // Actor_UpdateMembers
-void BattleEffect_CountDownBattlerTints(void);                  // BattleEffect_CountDownBattlerTints
+                   s32 frames);            // BattleEffect_TintBattler
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ProjectBattler(

@@ -79,15 +79,15 @@ static __inline__ s32 Sqrt_(s32 value) { return Iwram_Sqrt(value); }
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void); // BattleEffect_CountDownBattlerTints
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *pair);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
-void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
+                   s32 timerFrames); // BattleEffect_TintBattler
+void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleEffect_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource

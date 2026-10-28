@@ -10,5 +10,5 @@
 #include "scene_tables.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  return gScenePlacements;
+  return gActorPlacements;
 }

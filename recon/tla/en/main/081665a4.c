@@ -65,26 +65,26 @@ extern u8 gData_08198a98[];  // ☀️ gPlasma_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *draw);
 void Actor_SetMode(void *object, s32 mode);
 void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);      // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase);      // BattlePlayback_StartFar
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Sound_PlayFar(s32 cue);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // A blade of fire swings down over the targets and strikes twice, each
 // strike a flash and a fountain of sparks that bounce on the ground.

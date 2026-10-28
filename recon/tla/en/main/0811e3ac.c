@@ -189,7 +189,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->actorId)->object;
   Actor_SetMode(actor, 3);
-  Actor_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
+  Actor_SetAnimationSpeedFar((struct ActorView *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   WaitFrames(10);

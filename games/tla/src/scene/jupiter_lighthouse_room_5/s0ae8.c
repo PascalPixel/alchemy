@@ -4,6 +4,7 @@
 #include "flag_call.h"
 #include "call.h"
 #include "macros.h"
+#include "task.h"
 
 struct JupiterLighthouseRoom5EventWork1ac {
   u8 unk000[0x1ac];
@@ -50,7 +51,7 @@ s32 Func_02000ae8(void) {
   if (Flag_IsSet(0xa00)) {
     Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
     Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);
-    Task_Add(Func_020001a4, 0x480);
+    Task_Add(Func_020001a4, TASK_PASS_VBLANK);
   }
   return 0;
 }

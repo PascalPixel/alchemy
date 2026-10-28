@@ -12,7 +12,7 @@
 #include "resource.h"
 #include "metadata_lookup.h"
 #include "actor.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "ramcode.h"
@@ -42,7 +42,7 @@ void *Actor_FindFreeObject(void) {
 
 /// Releases the object's graphics and zeroes the object to free it.
 /// obj: object.
-void Actor_Release(struct DispatchObject *obj) {
+void Actor_Release(struct ActorView *obj) {
   volatile u32 zero;
   volatile u32 *src;
   s32 n;

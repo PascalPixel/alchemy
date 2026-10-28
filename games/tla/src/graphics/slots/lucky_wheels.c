@@ -1,5 +1,5 @@
 /// @file
-/// The reel game.
+/// Lucky Wheels.
 // Most of its code is not C yet; its tables, which end the bank, are The
 // Broken Seal's.
 
@@ -30,7 +30,7 @@ struct ReelEffectWork {
 /// The slot machine's per-frame tail: while a win shows (state 3) it bounces
 /// the eight title letters, then restarts the HBlank DMA of the scanline
 /// offsets into BLDY and copies the frame's sprites to OAM.
-// Split out of what is ☀️'s ReelGame_RunFrame.
+// Split out of what is ☀️'s LuckyWheels_Update.
 void Func_081b3294(void) {
   struct ReelWork *work;
   struct ReelEffectWork *fx;

@@ -1,5 +1,5 @@
 // Near miss, differ 10 of 75 (16 before the cell was written as byte
-// offsets from u8 tables, as Actor_GetTriggerTileAheadOfCurrent's draft
+// offsets from u8 tables, as Actor_GetTriggerCellAheadOfCurrent's draft
 // 080cc54c is): the native starts the 0x100000 radius (movs r0, #128)
 // before it copies y, and outside the world map builds the cell table's
 // offset (movs #156) in r0 where agscc takes r1; reading x before the cell

@@ -73,14 +73,14 @@ struct EffectCamera {
 };
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void BattleEffect_CallDoNothing(s32 frames);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -88,10 +88,10 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // Actor_UpdateMembers
+                   s32 frames);   // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);         // BattleEffect_CountDownBattlerTints
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_EndCanvasLayer(void);
 
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.

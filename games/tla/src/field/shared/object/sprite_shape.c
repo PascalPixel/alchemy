@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "actor.h"
-#include "script_object_runtime.h"
+#include "actor_script_view.h"
 
 struct ObjectSprite {
   u8 unk00[5];
@@ -35,9 +35,9 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 }
 
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
-  struct ScriptObjectRuntime *object;
+  struct ActorScriptView *object;
 
-  object = (struct ScriptObjectRuntime *)ObjectTable_Get(objectId);
+  object = (struct ActorScriptView *)ObjectTable_Get(objectId);
   if (object == 0)
     return;
   if (mode == 1)

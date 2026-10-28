@@ -46,7 +46,7 @@ void Func_080cf350(struct Actor *object) {
   owner->angle = 0x4000;
 }
 
-void EffectRuntime_RunObjectRiseAndDescent(struct Actor *object, s32 flags) {
+void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
   if (object != 0) {

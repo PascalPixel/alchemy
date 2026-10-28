@@ -11,7 +11,7 @@
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gScenePlacements[];
+extern const struct ActorPlacement gActorPlacements[];
 extern const struct Trigger gSceneEvents[];
 
 struct PushedBlock {

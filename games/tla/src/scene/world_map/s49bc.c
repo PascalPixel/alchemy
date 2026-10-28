@@ -1,5 +1,6 @@
 #include "types.h"
 #include "resource.h"
+#include "task.h"
 
 extern const u8 gWorldMapPackedTilesC[];
 extern s16 gData_02006e0c;
@@ -18,5 +19,5 @@ void Func_020049bc(void) {
   VramCache_Load(gData_02006e0e, 0x100, 0);
   gData_02006e0c = -1;
   gData_02006e10 = 10;
-  Task_Add(Func_020048f4, 0x476);
+  Task_Add(Func_020048f4, TASK_PASS_VBLANK - 10);
 }

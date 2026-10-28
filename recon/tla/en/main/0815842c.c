@@ -87,7 +87,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
-// BattleEventRuntime_StartPhase through its far call.
+// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);

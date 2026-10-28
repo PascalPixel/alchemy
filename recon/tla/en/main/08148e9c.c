@@ -63,15 +63,15 @@ extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void);                  // ☀️ BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ Actor_UpdateMembers
+                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void Sound_PlayFar(s32 cue);
 
 // One to four funnels of wind sway across the targets for 80 frames, each

@@ -37,6 +37,6 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gAdventure.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
-    return gScenePlacementsEntrance99;
-  return gScenePlacements;
+    return gActorPlacementsEntrance99;
+  return gActorPlacements;
 }

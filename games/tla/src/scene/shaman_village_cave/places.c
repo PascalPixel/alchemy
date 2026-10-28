@@ -18,7 +18,7 @@
 void GameFlag_SetBit();
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  return gScenePlacements;
+  return gActorPlacements;
 }
 
 void Func_02000358(void) {

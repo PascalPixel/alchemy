@@ -21,7 +21,7 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   if (tx == 0x80000000) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
-      Actor_StartScriptFar((struct DispatchObject *)target,
+      Actor_StartScriptFar((struct ActorView *)target,
                                    (u32)gBattleEffect_UntargetedObjectScript);
     }
   }

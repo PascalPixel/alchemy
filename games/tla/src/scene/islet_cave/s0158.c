@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 extern u16 gData_02001a14;
 extern u16 gData_02001a1c;
@@ -19,7 +20,7 @@ void Func_020000f4(void) {
   gData_02001a20 = 15;
   gData_02001a1c = 16;
   gData_02001a14 = 1;
-  Task_Add(Func_020001f8, 0x480);
+  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
 
 void Func_02000158(void) {
@@ -33,5 +34,5 @@ void Func_02000178(void) {
   gData_02001a20 = 2;
   gData_02001a1c = 2;
   gData_02001a14 = 1;
-  Task_Add(Func_020001f8, 0x480);
+  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }

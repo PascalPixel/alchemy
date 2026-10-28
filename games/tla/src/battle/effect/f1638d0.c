@@ -33,7 +33,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake

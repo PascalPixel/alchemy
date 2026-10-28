@@ -1,6 +1,7 @@
 #include "local.h"
 #include "io_reg.h"
 #include "edition.h"
+#include "task.h"
 
 s32 Task_Add(void (*callback)(void), s32 priority);
 void Func_02005398(void);
@@ -43,7 +44,7 @@ void Func_0200290c(void) {
   }
   REG_BLDCNT = 0x3f10;
   Func_02005388(245);
-  Task_Add(Func_02000c74, 0x480);
+  Task_Add(Func_02000c74, TASK_PASS_VBLANK);
   Func_02005230(13, 0, 0);
   Func_02005230(14, 0, 0);
   Func_02005230(15, 0, 0);
@@ -63,10 +64,10 @@ void Func_0200290c(void) {
       Func_020037e0();
   }
   if (GameFlag_Test(0x301))
-    Task_Add(Func_02001634, 0x480);
+    Task_Add(Func_02001634, TASK_PASS_VBLANK);
   else if (GameFlag_Test(0x300))
-    Task_Add(Func_02001804, 0x480);
-  Task_Add(Func_02001b50, 0x480);
+    Task_Add(Func_02001804, TASK_PASS_VBLANK);
+  Task_Add(Func_02001b50, TASK_PASS_VBLANK);
   Func_02005338(0);
 }
 

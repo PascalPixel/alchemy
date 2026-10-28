@@ -1,8 +1,8 @@
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "animspr.h"
 
 /// Points an object at its script and clears its script state.
-void Actor_StartScript(struct DispatchObject *object,
+void Actor_StartScript(struct ActorView *object,
                                const s32 *script) {
   if (object != 0) {
     /* FAKEMATCH(pin): the byte stores' halfword zero held in r3,
@@ -22,10 +22,10 @@ void Actor_StartScript(struct DispatchObject *object,
   }
 }
 
-void Actor_SelectAnimation(struct DispatchObject *object,
+void Actor_SelectAnimation(struct ActorView *object,
                                             s32 argument) {
-  struct DispatchChild **items;
-  struct DispatchChild *item;
+  struct ActorSpriteView **items;
+  struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
@@ -47,11 +47,11 @@ void Actor_SelectAnimation(struct DispatchObject *object,
   }
 }
 
-void Actor_SetAnimationSpeed(struct DispatchObject *object,
+void Actor_SetAnimationSpeed(struct ActorView *object,
                                          s32 value) {
   s32 count;
-  struct DispatchChild *child;
-  struct DispatchChild **children;
+  struct ActorSpriteView *child;
+  struct ActorSpriteView **children;
 
   if (object != 0) {
     switch (object->kind & 0xf) {
@@ -72,10 +72,10 @@ void Actor_SetAnimationSpeed(struct DispatchObject *object,
   }
 }
 
-void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
+void Actor_SetAnimationAndSpeed(struct ActorView *object,
                                         s32 argument, s32 value) {
-  struct DispatchChild **items;
-  struct DispatchChild *item;
+  struct ActorSpriteView **items;
+  struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
@@ -98,15 +98,15 @@ void Actor_SetAnimationAndSpeed(struct DispatchObject *object,
   }
 }
 
-void Actor_SetSpriteRotation(struct DispatchObject *object,
+void Actor_SetSpriteRotation(struct ActorView *object,
                                         u32 value) {
   if (object != 0 && (object->kind & 0xf) == 1)
     object->target.child->value12 = value;
 }
 
-void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
+void Animation_SetIndexAndInitializeObjects(struct ActorView *object,
                                       s32 index) {
-  struct DispatchChild *child;
+  struct ActorSpriteView *child;
 
   if (object != NULL && (object->kind & 0xf) == 1) {
     child = object->target.child;
@@ -117,10 +117,10 @@ void Animation_SetIndexAndInitializeObjects(struct DispatchObject *object,
   }
 }
 
-void Actor_RegisterSpriteMetadata(struct DispatchObject *object,
+void Actor_RegisterSpriteMetadata(struct ActorView *object,
                                           s32 value) {
   if (object != 0 && (object->kind & 0xf) == 1) {
-    struct DispatchChild *child = object->target.child;
+    struct ActorSpriteView *child = object->target.child;
     if (value >= 0)
       ResourceMetadata_Register(child, value);
   }

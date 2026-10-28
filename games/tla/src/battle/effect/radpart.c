@@ -1,5 +1,5 @@
 #include "types.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "motobj.h"
 #include "adventure.h"
 #include "ram_buffer.h"

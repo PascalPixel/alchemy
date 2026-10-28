@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 
 struct AnimationObject;
 union FieldObject;

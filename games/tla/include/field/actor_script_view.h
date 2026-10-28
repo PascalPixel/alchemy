@@ -1,12 +1,12 @@
-#ifndef ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
-#define ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
+#ifndef ALCHEMY_ACTOR_SCRIPT_VIEW_H
+#define ALCHEMY_ACTOR_SCRIPT_VIEW_H
 
 #include "types.h"
 #include "static_assert.h"
 
-/// A field object as its object script commands see it: the script and its
+/// An actor as its actor script commands see it: the script and its
 /// place, position, motion toward a target, and the home it wanders around.
-struct ScriptObjectRuntime {
+struct ActorScriptView {
   const s32 *script; ///< null when the object is free
   u16 scriptCursor;  ///< in words
   /// The object's facing, 1/65536 turns: the heading the wander commands
@@ -52,16 +52,16 @@ struct ScriptObjectRuntime {
   s16 homeZ;
   ///@}
   /// The object SC_FACE_WATCHED and SC_MOVE_TO_WATCHED aim at.
-  struct ScriptObjectRuntime *watchedObject;
+  struct ActorScriptView *watchedObject;
   u8 unk6c[0x04]; ///< the update hook (Actor.update); not named here
 };
 
-STATIC_ASSERT(sizeof(struct ScriptObjectRuntime) == 0x70);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, script) == 0x00);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptCursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptValue) == 0x06);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, x) == 0x08);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, speedLimit) == 0x30);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, watchedObject) == 0x68);
+STATIC_ASSERT(sizeof(struct ActorScriptView) == 0x70);
+STATIC_ASSERT(offsetof(struct ActorScriptView, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ActorScriptView, scriptCursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ActorScriptView, scriptValue) == 0x06);
+STATIC_ASSERT(offsetof(struct ActorScriptView, x) == 0x08);
+STATIC_ASSERT(offsetof(struct ActorScriptView, speedLimit) == 0x30);
+STATIC_ASSERT(offsetof(struct ActorScriptView, watchedObject) == 0x68);
 
 #endif

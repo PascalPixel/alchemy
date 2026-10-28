@@ -28,7 +28,7 @@ BattleEffect_PlayCueAndStartEmitterOnTargetFar:
 	.global Func_080c83d8
 	.thumb_func
 Func_080c83d8:
-	overlay_veneer EffectRuntime_RunObjectRiseAndDescent
+	overlay_veneer BattleEffect_RunActorRiseAndDescent
 	.global Func_080c83e0
 	.thumb_func
 Func_080c83e0:
@@ -133,10 +133,10 @@ BattleEffect_LoadActionEffectResourcesFar:
 	.thumb_func
 BattleEffect_SetupObjectPairFar:
 	overlay_veneer BattleEffect_SetupObjectPair
-	.global EffectRuntime_StopCurrentObjectFar
+	.global BattleEffect_StopMainActorFar
 	.thumb_func
-EffectRuntime_StopCurrentObjectFar:
-	overlay_veneer EffectRuntime_StopCurrentObject
+BattleEffect_StopMainActorFar:
+	overlay_veneer BattleEffect_StopMainActor
 	.global BattleEffect_CleanupSceneObjectsFar
 	.thumb_func
 BattleEffect_CleanupSceneObjectsFar:

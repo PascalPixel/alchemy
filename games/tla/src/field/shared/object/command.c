@@ -1,6 +1,6 @@
-#include "object_dispatch.h"
+#include "actor_view.h"
 
-void Actor_WaitForCommandEnd(struct DispatchObject *object) {
+void Actor_WaitForCommandEnd(struct ActorView *object) {
   s32 cnt = 0;
 
   if (object->value00 != 0 &&
@@ -15,7 +15,7 @@ void Actor_WaitForCommandEnd(struct DispatchObject *object) {
   }
 }
 
-void Actor_SetChildByteValue(struct DispatchObject *object,
+void Actor_SetChildByteValue(struct ActorView *object,
                                       u32 value) {
   if (object != NULL && (object->kind & 0xf) == 1)
     object->target.child->value1a = value;

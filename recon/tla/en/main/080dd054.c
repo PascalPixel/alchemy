@@ -47,7 +47,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
                                  s32 target);
-void EffectRuntime_StopCurrentObject(void);
+void BattleEffect_StopMainActor(void);
 void UpdateRisingParticleBurst(void *object);
 void Actor_ApplyRandomChildValues(void);
 void WaitFrames(s32 frames);
@@ -228,7 +228,7 @@ void Func_080dd054(void) {
     Field_RunPsynergyEvent(event, scene->firstObjectId,
                                  scene->secondObjectId);
   }
-  EffectRuntime_StopCurrentObject();
+  BattleEffect_StopMainActor();
   if (moved == 1)
     Actor_GetById(scene->firstObjectId)->actionFlags |= 1;
   BattleEffect_PrepareBufferInterpolation();

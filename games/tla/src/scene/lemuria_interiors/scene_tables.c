@@ -36,7 +36,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return gSceneRegions; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  return gScenePlacements;
+  return gActorPlacements;
 }
 
 void Func_02000058(s32 arg0) {

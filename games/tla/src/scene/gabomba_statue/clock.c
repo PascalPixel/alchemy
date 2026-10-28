@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "task.h"
 
 struct ClockWork {
   u8 *tiles;
@@ -47,9 +48,9 @@ void Func_020052a4(s32 mode) {
   VramCache_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)
-    Task_Add(Func_02005210, 1152);
+    Task_Add(Func_02005210, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0200525c, 1152);
+    Task_Add(Func_0200525c, TASK_PASS_VBLANK);
 }
 
 void Func_0200533c(void) {
@@ -65,9 +66,9 @@ void Func_02005364(void) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
   if (clock->mode)
-    Task_Add(Func_02005210, 1152);
+    Task_Add(Func_02005210, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0200525c, 1152);
+    Task_Add(Func_0200525c, TASK_PASS_VBLANK);
   clock->timer = 3600;
 }
 

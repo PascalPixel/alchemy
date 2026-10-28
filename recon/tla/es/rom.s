@@ -2892,10 +2892,10 @@ LuckyDice_Run:
 	.balign 4
 	.incbin "baserom.gba", 0x001b243c, 0x00000e98
 	.section .rom.001b34e8, "ax"
-	.global ReelGame_Run
-	.type ReelGame_Run, %function
+	.global LuckyWheels_Run
+	.type LuckyWheels_Run, %function
 	.thumb_func
-ReelGame_Run:
+LuckyWheels_Run:
 	.incbin "baserom.gba", 0x001b34e8, 0x0000098c
 	.section .rom.001b3f18, "ax"
 	.incbin "baserom.gba", 0x001b3f18, 0x000009b0

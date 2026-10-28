@@ -14,7 +14,7 @@ struct EffectTarget {
   s32 z;
 };
 
-struct EffectRuntime {
+struct EffectWork {
   u16 angle;
   u8 unk02[14];
   struct EffectTarget *target;
@@ -47,7 +47,7 @@ s32 FieldParticle_HasPendingTarget(struct RadialBurstEffect *effect);
 void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
 void Func_080de060(struct RadialBurstEffect *effect) {
-  struct EffectRuntime *runtime = Ram_HeapSlots->effectWork;
+  struct EffectWork *work = Ram_HeapSlots->effectWork;
   struct EffectPosition value;
   s32 state;
 
@@ -75,12 +75,12 @@ again:
   }
 
   if (state == 2) {
-    struct EffectTarget *target = runtime->target;
+    struct EffectTarget *target = work->target;
 
     value.x = target->x;
     value.y = target->y + 0x100000;
     value.z = target->z;
-    Vector_AddPolarOffset(0x80000, runtime->angle, &value);
+    Vector_AddPolarOffset(0x80000, work->angle, &value);
     Camera_WorldToScreen(&value);
     Vector_AddPolarOffset(0x40000, Random16(), &value);
     effect->x = value.x;

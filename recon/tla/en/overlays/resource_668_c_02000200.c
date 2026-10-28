@@ -10,7 +10,7 @@
 // site adds sp + 24 and only r8 is saved. Its wait loop needs the while form
 // below.
 
-#define OWN_ObjectDispatch_SetSingleChildFlags
+#define OWN_Actor_SetSingleChildFlags
 #include "battle.h"
 #include "field.h"
 #include "game.h"

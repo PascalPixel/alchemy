@@ -8,7 +8,7 @@
 
 /// AnimationEntry.param: how Render_DecodePicture colours a layer's pixels.
 /// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
-/// gResourceSlot_ConversionTables, then the four gRuntime_ByteRemapTable
+/// gResourceSlot_ConversionTables, then the four gSpriteColorRemapTables
 /// ones); the solid modes paint every drawn pixel one colour of the basic
 /// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
 enum SpriteColorMode {

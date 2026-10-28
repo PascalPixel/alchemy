@@ -13,7 +13,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 
 struct PendingEvent;
 

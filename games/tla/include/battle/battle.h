@@ -12,7 +12,7 @@ struct BattleActionRecord;
 struct BattleEffectArgument;
 struct BattlePlan;
 struct BattleUnit;
-struct DispatchObject;
+struct ActorView;
 struct FieldParticle;
 struct Actor;
 struct SceneAreaNameRule;
@@ -25,7 +25,7 @@ extern u8 gPlayerObjectId[];
 extern u16 gResource_SlotAssignments[];
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
-#ifndef OWN_BattlePresentation_SpawnActorObject
+#ifndef OWN_BattleObject_Make
 void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
@@ -50,10 +50,10 @@ s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 objectId);
-#ifndef OWN_BattlePres_BuildOpponentEntries
+#ifndef OWN_Battle_BuildOpponentActions
 s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries);
 #endif
-#ifndef OWN_BattlePres_BuildUnitEntries
+#ifndef OWN_Battle_BuildUnitActions
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries);
 #endif
 s32 LinkBattle_WaitSync(void);
@@ -67,7 +67,7 @@ void BattleHighlight_SetModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
-void Actor_SetAnimationSpeedFar(struct DispatchObject *object, s32 value);
+void Actor_SetAnimationSpeedFar(struct ActorView *object, s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
 void Window_CloseSharedFar(void);
@@ -77,7 +77,7 @@ struct AnimationObject;
 struct BattleActionRecord;
 struct BattleEffectBuffers;
 struct BattleObj;
-struct DispatchObject;
+struct ActorView;
 struct ParticleChild;
 struct PendingEvent;
 struct PlacementTable;
@@ -146,12 +146,12 @@ void Func_0818f620(void *effect, s32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32 Map_RenderAnimatedTilePicturesForObjectFar(void *object);
-#ifndef OWN_Object_Destroy
-void Actor_Destroy(struct DispatchObject *work);
+#ifndef OWN_Actor_Destroy
+void Actor_Destroy(struct ActorView *work);
 #endif
 void Actor_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
-#ifndef OWN_Owner_RecalculateStatsFar
+#ifndef OWN_Unit_CalculateFar
 void Unit_CalculateFar(s32);
 #endif
 s32 Party_CountActiveOwnersFar(void);

@@ -423,7 +423,7 @@ Func_0811df70:
 	mov r0, r8
 	bl Func_08138018
 .L_0811e296:
-	bl BattleEventRuntime_WaitForReady
+	bl BattlePlayback_WaitForReady
 .L_0811e29a:
 	bl BattleObject_Put
 	movs r0, #3

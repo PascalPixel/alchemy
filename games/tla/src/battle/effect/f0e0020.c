@@ -1,6 +1,6 @@
 #include "types.h"
 #include "system.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
 

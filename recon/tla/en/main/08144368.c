@@ -40,12 +40,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // ..ProcessPendingGraphicsTransfer
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
-void BattleEffect_ArmBg2AffineHBlankDma(void);       // BattleEffect_ArmBg2AffineHBlankDma
+                   s32 frames); // BattleEffect_TintBattler
+void BattleEffect_ArmBg2AffineHBlankDma(void);
 
 extern char ResourceId_SpiralSheet;
 

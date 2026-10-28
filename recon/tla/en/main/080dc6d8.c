@@ -40,7 +40,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
 void MessageArgument_PushFar(s32, s32);
 void FieldMessage_ShowFar(s32 message, s32 flags);
-void EffectRuntime_StopCurrentObject(void);
+void BattleEffect_StopMainActor(void);
 
 void Func_080dc6d8(void) {
   struct FinishWork *work = Ram_HeapSlots->effectWork;
@@ -75,7 +75,7 @@ void Func_080dc6d8(void) {
       BattleEffect_SetObjectUpdateMode(object, 2);
     Actor_SetMode(object, 21);
   } else {
-    EffectRuntime_StopCurrentObject();
+    BattleEffect_StopMainActor();
   }
   event[0xcb7] = 1;
 }

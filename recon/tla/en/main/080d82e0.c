@@ -14,7 +14,7 @@
 #include "actor.h"
 #include "objdisp.h"
 #include "adventure.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "ram_buffer.h"
 
 struct EffectVector {
@@ -257,7 +257,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
-    Actor_StartScriptFar((struct DispatchObject *)djinni,
+    Actor_StartScriptFar((struct ActorView *)djinni,
                                  gBattleEffect_SharedParticleScript);
   }
 

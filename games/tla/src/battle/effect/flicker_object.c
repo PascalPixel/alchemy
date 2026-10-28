@@ -1,6 +1,6 @@
 #include "types.h"
 #include "frame.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "ram_buffer.h"
 #include "arc_effect.h"
 
@@ -18,9 +18,9 @@ void BattleEffect_WaitForArcGroups(void) {
 
 void BattleEffect_FlickerObjectAndSpawnArcs(s32 arg0) {
   if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 7);
+    Animation_ApplyChildValuesFar((struct ActorView *)arg0, 7);
   } else {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 0);
+    Animation_ApplyChildValuesFar((struct ActorView *)arg0, 0);
   }
   if ((gFrameCount & 15) == 0) {
     BattleEffect_SpawnScaledArcObjects(arg0);
@@ -29,21 +29,21 @@ void BattleEffect_FlickerObjectAndSpawnArcs(s32 arg0) {
 
 void BattleEffect_CycleObjectAndSpawnArcs(s32 arg0) {
   if (gFrameCount & 1)
-    Animation_ApplyChildValuesFar((struct DispatchObject *)arg0,
+    Animation_ApplyChildValuesFar((struct ActorView *)arg0,
                                   (gFrameCount >> 1) % 6);
   if ((gFrameCount & 15) == 0)
     BattleEffect_SpawnScaledArcObjects(arg0);
 }
 
-void BattleEffect_SetObjectUpdateMode(struct DispatchObject *object, s32 mode) {
+void BattleEffect_SetObjectUpdateMode(struct ActorView *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Animation_ApplyChildValuesFar(object, 0);
   } else if (mode == 1) {
     object->update =
-        (void (*)(struct DispatchObject *))BattleEffect_FlickerObjectAndSpawnArcs;
+        (void (*)(struct ActorView *))BattleEffect_FlickerObjectAndSpawnArcs;
   } else {
     object->update =
-        (void (*)(struct DispatchObject *))BattleEffect_CycleObjectAndSpawnArcs;
+        (void (*)(struct ActorView *))BattleEffect_CycleObjectAndSpawnArcs;
   }
 }

@@ -1,4 +1,5 @@
 #include "contigo.h"
+#include "task.h"
 
 extern u16 gData_02006000;
 extern u16 gData_02006008;
@@ -18,7 +19,7 @@ void Func_020000f4(void) {
   gData_0200600c = 15;
   gData_02006008 = 16;
   gData_02006000 = 1;
-  Task_Add(Func_020001f8, 0x480);
+  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
 
 void Func_02000158(void) {
@@ -34,5 +35,5 @@ void Func_02000178(void) {
   gData_0200600c = 2;
   gData_02006008 = 2;
   gData_02006000 = 1;
-  Task_Add(Func_020001f8, 0x480);
+  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }

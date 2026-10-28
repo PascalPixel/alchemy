@@ -67,7 +67,7 @@ void Func_080de8d0(struct SparkObject *obj) {
       spark->anchorX = spark->x;
       Animation_ApplyChildValuesFar(spark, 9);
       spark->unk5e = 72;
-      Actor_StartScriptFar((struct DispatchObject *)spark,
+      Actor_StartScriptFar((struct ActorView *)spark,
                                    gBattleEffect_SharedParticleScript);
     }
   }

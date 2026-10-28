@@ -1,4 +1,5 @@
 #include "room.h"
+#include "task.h"
 
 extern u16 gData_020068a2;
 void *Heap_Alloc(s32 size);
@@ -29,5 +30,5 @@ fill:
   __asm__("");
   VramCache_Load(gData_020068a2, 0x100, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02000d18, 0x480);
+  Task_Add(Func_02000d18, TASK_PASS_VBLANK);
 }

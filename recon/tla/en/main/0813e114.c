@@ -48,7 +48,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 extern char ResourceId_CrossedDaggersSheet;
 
 void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Task_Add(void *callback, s32 order);
@@ -57,9 +57,9 @@ void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
+                   s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
+void BattleEffect_CountDownBattlerTints(void);
 void WaitFrames(s32 frames);
 
 // A rain of daggers on the first target (unused).

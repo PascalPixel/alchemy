@@ -3,6 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "resource.h"
+#include "task.h"
 
 struct DustParticle {
   u32 link;
@@ -70,5 +71,5 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Task_Add(Func_020025d4, 0x480);
+  Task_Add(Func_020025d4, TASK_PASS_VBLANK);
 }

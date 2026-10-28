@@ -74,23 +74,23 @@ extern const u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
+    DrawRectangle *draw);
 void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
+    struct BattleEffectArgument *effect);
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                   s32 priority); // BattleEffect_SpawnObjects
-void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
+                   s32 priority);
+void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // Actor_UpdateMembers
+                   s32 frames); // BattleEffect_TintBattler
 void Func_0816442c(s32 formation, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x,
                    s32 y); // BattleEffect_RunImpactBurst
-void BattleEffect_EndCanvasLayer(void);  // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 
 struct Point2D {
   s32 x;

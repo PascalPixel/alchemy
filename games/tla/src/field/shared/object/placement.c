@@ -3,7 +3,7 @@
 #include "types.h"
 
 /// The script of an object that does nothing.
-const s32 gObject_IdleScript[] = {
+const s32 gActor_IdleScript[] = {
     SC_END,
 };
 
@@ -11,7 +11,7 @@ const s32 gObject_IdleScript[] = {
 /// (300, 0, 300) and the end mark.
 // The Broken Seal's gField_DefaultPlacements.
 const struct ActorPlacement gData_080f21d4[] = {
-    {0, CONDITION_ALWAYS, (s32)gObject_IdleScript, PIXELS(300), 0, PIXELS(300),
+    {0, CONDITION_ALWAYS, (s32)gActor_IdleScript, PIXELS(300), 0, PIXELS(300),
      0x5bb0, 0, 0},
     {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };

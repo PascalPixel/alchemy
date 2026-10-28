@@ -14,7 +14,7 @@
 #include "fixed_math.h"
 #include "system.h"
 #include "frame.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
@@ -26,9 +26,9 @@ s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 2);
+    Animation_ApplyChildValuesFar((struct ActorView *)particle, 2);
   } else if (phase == 2) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 0);
+    Animation_ApplyChildValuesFar((struct ActorView *)particle, 0);
   }
   return 0;
 }
@@ -41,7 +41,7 @@ void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
     object->scaleY -= 0x1000;
     object->scaleX = scale;
     if (scale <= 0x1000)
-      Actor_StartScriptFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct ActorView *)object,
                                    (u32)gBattleEffect_SharedParticleScript);
   }
 }
@@ -155,7 +155,7 @@ void FieldEffect_RunFrost(void) {
       particle->angle = Random16();
       particle->action = 60;
       particle->unk66 = Random16();
-      Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
+      Animation_ApplyChildValuesFar((struct ActorView *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + (2 << 16);
@@ -178,9 +178,9 @@ void FieldEffect_RunFrost(void) {
 
     cnt = 7;
     do {
-      Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
+      Animation_ApplyChildValuesFar((struct ActorView *)target, 7);
       WaitFrames(1);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)target, 0);
+      Animation_ApplyChildValuesFar((struct ActorView *)target, 0);
       WaitFrames(4);
       cnt--;
     } while (cnt >= 0);

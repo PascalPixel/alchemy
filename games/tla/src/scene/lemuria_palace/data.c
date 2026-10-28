@@ -34,7 +34,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gScenePlacements[] = {
+struct ActorPlacement gActorPlacements[] = {
     {157, CONDITION_ALWAYS, 1, PIXELS(912), 0, PIXELS(624), 0x5000, 1, 0},
     {156, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(520), 0x3000, 1, 0},
     {160, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(456), FACING_EAST, 3, 0},
@@ -73,8 +73,8 @@ s32 gData_02002378[] = {
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {1, 4, CONDITION_ALWAYS, 4},
     {1, 5, CONDITION_ALWAYS, 5},
     {1, 6, CONDITION_ALWAYS, 6},
@@ -87,9 +87,9 @@ struct Trigger gSceneEvents[] = {
     {1, 13, CONDITION_ALWAYS, 13},
     {1, 14, CONDITION_ALWAYS, 14},
     {1, 15, CONDITION_ALWAYS, 15},
-    {0xc602, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
+    {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {1, 17, CONDITION_ALWAYS, 17},
-    {2, 20, 0x96a, EVENT_SCRIPT(Func_0200058c)},
+    {2, 20, 0x96a, EVENT(Func_0200058c)},
     {0, 8, 0x196a, MSGNO(MsgLemuriaPalace12)},
     {0, 9, 0x196a, MSGNO(MsgLemuriaPalace13)},
     {0, 10, 0x196a, MSGNO(MsgLemuriaPalace14)},

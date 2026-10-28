@@ -22,7 +22,7 @@ struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleUnit_BuildStatusFlags(u32 unitId, struct BattleObj *slot);
 s32 BattleObject_UpdatePose(s32 id);
 s32 BattleActor_RemoveFromLists(s32 unitId);
-u32 BattleEventRuntime_Reset(void);
+u32 BattlePlayback_Reset(void);
 
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattleEvent_DispatchQueued(void) {
@@ -32,7 +32,7 @@ u32 BattleEvent_DispatchQueued(void) {
   s32 i;
 
   /* FAKEMATCH: the one-pass block loads the battle work before the events
-   * offset is built (differ 2 without it), as in BattleEventRuntime_Reset. */
+   * offset is built (differ 2 without it), as in BattlePlayback_Reset. */
   do {
     work = Ram_HeapSlots->battleWork;
   } while (0);
@@ -101,7 +101,7 @@ u32 BattleEvent_DispatchQueued(void) {
         break;
       }
   }
-  return BattleEventRuntime_Reset();
+  return BattlePlayback_Reset();
 }
 
 void BattleEvent_Push(u32 opcode, u32 operand) {

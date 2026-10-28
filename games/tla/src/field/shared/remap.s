@@ -1,7 +1,7 @@
 	.section .rodata
-@ 256-entry byte remap tables; the first four match TBS's gRuntime_ByteRemapTable.
-	.global gRuntime_ByteRemapTable
-gRuntime_ByteRemapTable:
+@ 256-entry byte remap tables; the first four match The Broken Seal's gSpriteColorRemapTables.
+	.global gSpriteColorRemapTables
+gSpriteColorRemapTables:
 	.incbin "games/tla/src/field/shared/remap0.table"
 	.global Data_080209a8
 Data_080209a8:

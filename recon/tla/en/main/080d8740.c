@@ -6,7 +6,7 @@
 // instruction before the next load (the afterimage setup, the position copy).
 #include "resource.h"
 #include "types.h"
-#include "object_dispatch.h"
+#include "actor_view.h"
 #include "ram_buffer.h"
 #include "adventure.h"
 
@@ -126,9 +126,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
       copy->collisionFlags |= 1;
       copy->callback = (void *)BattleEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
+      Animation_ApplyChildValuesFar((struct ActorView *)copy, 9);
       Actor_SetMode(copy, 0);
-      Actor_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
+      Actor_SetSingleChildFlagsFar((struct ActorView *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;
@@ -165,7 +165,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     FieldParticle_Initialize(slot, 301, position.x, position.z);
     FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
+    Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;
     WaitFrames(1);
     slot += 72;

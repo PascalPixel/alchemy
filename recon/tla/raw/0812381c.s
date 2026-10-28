@@ -40,7 +40,7 @@ Func_0812381c:
 	bl Battle_GetTaggedSlotValue
 	add r5, sp, #32
 	str r0, [r5]
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	mov r2, r11
 	mov r4, r10
 	ldr r3, [r2]
@@ -1023,9 +1023,9 @@ Func_0812381c:
 	movs r4, #0
 	ldrsh r0, [r3, r4]
 	bl Unit_CalculateFar
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	movs r0, #30
-	bl BattleEventRuntime_SchedulePhase
+	bl BattlePlayback_SchedulePhase
 	mov r0, r10
 	ldr r3, [r0]
 	movs r0, #0
@@ -1093,7 +1093,7 @@ Func_0812381c:
 	asrs r1, r1, #24
 	ands r1, r6
 	bl Func_08127308
-	bl BattleEventRuntime_WaitForReady
+	bl BattlePlayback_WaitForReady
 .L_0812417c:
 	movs r0, #2
 	negs r0, r0

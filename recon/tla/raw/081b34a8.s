@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global ReelGame_Run
+	.global LuckyWheels_Run
 	.thumb_func
-ReelGame_Run:
+LuckyWheels_Run:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -1021,7 +1021,7 @@ ReelGame_Run:
 .L_081b3c98:
 	.4byte 0x007fffff
 .L_081b3c9c:
-	.4byte gReelGame_SparkCellOffsets
+	.4byte gLuckyWheels_SparkCellOffsets
 .L_081b3ca0:
 	mov r3, r11
 	mov r0, r8

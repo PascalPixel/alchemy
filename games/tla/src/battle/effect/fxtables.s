@@ -101,7 +101,7 @@ gData_080f0fe0:
 
 @ Read by Func_080ea14c: an object script that sets the scale to 1 and
 @ then squashes and stretches it for ever, as the variant motion scripts
-@ (gObject_VariantMotionScripts) do; work 9 is the x scale, 10 the y
+@ (gActor_VariantScripts) do; work 9 is the x scale, 10 the y
 	.global Data_080f1040
 Data_080f1040:
 	.4byte 0x16, 9, 0x10000		@ set

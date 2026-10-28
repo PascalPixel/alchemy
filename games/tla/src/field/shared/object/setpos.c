@@ -5,7 +5,7 @@ void Actor_WatchAndSetScript(u32 objectId, u32 linkedObjectId) {
 
   if (object != NULL) {
     object->watchedObject = Actor_GetById(linkedObjectId);
-    Actor_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
+    Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
   }
 }
 

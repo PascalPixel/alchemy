@@ -91,7 +91,7 @@ s32 gData_02000318[] = {
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
-    {2, 10, 0x98f, EVENT_SCRIPT(Func_02000074)},
+    {2, 10, 0x98f, EVENT(Func_02000074)},
     {0, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
     {0, 11, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsBlameContinentsCollision)},

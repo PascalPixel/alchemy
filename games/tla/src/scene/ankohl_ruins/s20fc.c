@@ -1,4 +1,5 @@
 #include "ankohl_ruins.h"
+#include "task.h"
 
 void Func_020020fc(void) {
   s32 z = Actor_GetById(9)->z >> 20;
@@ -14,7 +15,7 @@ void Func_020020fc(void) {
       FieldEvent_WaitFrames(10);
       Camera_MoveWithinMapBounds(0xe80000, -1, 0x1880000, 1);
       Func_02002eb4();
-      Task_Add(Func_02001f7c, 0x480);
+      Task_Add(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_WaitFrames(40);
       Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02002eb4();
@@ -37,7 +38,7 @@ void Func_020021d4(void) {
 
     if (Func_02002dcc(callback) == -1) {
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-      Task_Add(callback, 0x480);
+      Task_Add(callback, TASK_PASS_VBLANK);
       AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       AnkohlRuins_FlagSet(381);

@@ -55,12 +55,12 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
-    DrawRectangle *pair);                // BattleEffect_FetchRectangleBlitters
-void Func_081180e8(s32 phase);           // BattleEventRuntime_StartPhaseFar
+    DrawRectangle *pair);
+void Func_081180e8(s32 phase);           // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 

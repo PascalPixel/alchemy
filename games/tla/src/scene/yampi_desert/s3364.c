@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "task.h"
 
 void Func_02003364(void) {
   Func_02004180(0);
@@ -18,7 +19,7 @@ void Func_02003364(void) {
   Func_02003338(14);
   Func_02003338(15);
   if (gAdventure.entrance == 1 || gAdventure.entrance == 2)
-    Task_Add(Func_020020a8, 0x480);
+    Task_Add(Func_020020a8, TASK_PASS_VBLANK);
 }
 
 void Func_020026a0(void);

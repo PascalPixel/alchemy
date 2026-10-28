@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "call.h"
+#include "task.h"
 
 extern u32 gData_020007e4;
 extern u8 MsgImilVoicesDisbeliefReply[];
@@ -40,7 +41,7 @@ void Func_020001b0(void) {
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   WaitFrames(1);
   gData_020007e4 = 0;
-  Task_Add(Func_020000f4, 0x480);
+  Task_Add(Func_020000f4, TASK_PASS_VBLANK);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpritePriority(9, 2);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;

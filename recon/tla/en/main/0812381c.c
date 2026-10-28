@@ -111,9 +111,9 @@ extern char MsgActorAttacks;
 
 struct BattleUnit *Unit_Get(s32 unitId);
 s32 Battle_GetTaggedSlotValue(s32 tag);
-void BattleEventRuntime_Reset(void);
-void BattleEventRuntime_SchedulePhase(s32 phase);
-void BattleEventRuntime_WaitForReady(void);
+void BattlePlayback_Reset(void);
+void BattlePlayback_SchedulePhase(s32 phase);
+void BattlePlayback_WaitForReady(void);
 s32 Unit_AddHpFar(s32 owner, s32 delta);
 s32 GameFlag_Test(s32 flag);
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
@@ -238,7 +238,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   }
 
   selectedTargetId = Battle_GetTaggedSlotValue(request->target);
-  BattleEventRuntime_Reset();
+  BattlePlayback_Reset();
   ((s32 *)plan)[25] = 0;
   plan->hauntDamage = 0;
   plan->targetCount = 0;
@@ -525,8 +525,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         DjinnRecovery_RemoveFar(request->unitId, (request->parameter >> 8) & 15,
                                 request->parameter & 255);
         Unit_CalculateFar(request->unitId);
-        BattleEventRuntime_Reset();
-        BattleEventRuntime_SchedulePhase(30);
+        BattlePlayback_Reset();
+        BattlePlayback_SchedulePhase(30);
         BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
         BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
                          ((request->parameter >> 8) & 15) * 20 +
@@ -538,10 +538,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObject_Get(request->unitId)->object,
+            (struct ActorView *)BattleObject_Get(request->unitId)->object,
             32);
         Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);
-        BattleEventRuntime_WaitForReady();
+        BattlePlayback_WaitForReady();
         return -2;
       }
       MessageArgument_PushFar(request->unitId, 1);

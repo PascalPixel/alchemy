@@ -3,7 +3,7 @@
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
 // Draft, differ 12 of 119: draws one text glyph as a 16x16 sprite carried by
-// the window, as the sprite branch of ☀️ Text_DrawGlyph
+// the window, as the sprite branch of ☀️ Glyph_Draw
 // (games/tbs/src/window/window.c) with no text style animation and sentinel
 // 253. Left: instruction order only, in three places: the y argument's spill
 // against the frame's first stores, the line spacing's constant built before

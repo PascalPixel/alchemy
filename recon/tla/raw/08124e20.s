@@ -92,9 +92,9 @@ Func_08124e20:
 	bl BattleObject_Get
 	cmp r0, #0
 	beq .L_08124f84
-	bl BattleEventRuntime_Reset
+	bl BattlePlayback_Reset
 	movs r0, #30
-	bl BattleEventRuntime_SchedulePhase
+	bl BattlePlayback_SchedulePhase
 	movs r0, #0
 	adds r1, r5, #0
 	bl BattleEvent_Push
@@ -159,7 +159,7 @@ Func_08124e20:
 	movs r3, #0
 	bl Func_08127308
 .L_08124f78:
-	bl BattleEventRuntime_WaitForReady
+	bl BattlePlayback_WaitForReady
 	b .L_08124f84
 .L_08124f7e:
 	movs r3, #1

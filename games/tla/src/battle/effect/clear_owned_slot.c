@@ -1,5 +1,5 @@
 #include "types.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "resource.h"
 #include "dma.h"
 #include "io_reg.h"

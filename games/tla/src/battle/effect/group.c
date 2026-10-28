@@ -32,7 +32,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   object = Func_080200c0(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
-      Actor_Destroy((struct DispatchObject *)object);
+      Actor_Destroy((struct ActorView *)object);
       return NULL;
     }
     object->terrainHeight = scene->mainObject->terrainHeight;

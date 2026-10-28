@@ -14,7 +14,7 @@ void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
   u8 *table;
 
   p = buf;
-  table = gRuntime_ByteRemapTable;
+  table = gSpriteColorRemapTables;
   n = cnt - 1;
   if (n != -1) {
     do {

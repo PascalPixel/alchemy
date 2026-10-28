@@ -56,7 +56,7 @@ void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812756c(void);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
-void BattleEventRuntime_WaitForReady(void);
+void BattlePlayback_WaitForReady(void);
 void BattleEvent_Playback(void);
 
 s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
@@ -173,7 +173,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       Func_08138008(&work);
     else
       Func_08138018(&work);
-    BattleEventRuntime_WaitForReady();
+    BattlePlayback_WaitForReady();
   }
 
   BattleObject_Put();

@@ -1,4 +1,5 @@
 #include "room.h"
+#include "task.h"
 
 extern u16 gData_0200687c;
 extern u16 gData_02006884;
@@ -17,5 +18,5 @@ void Func_02004738(void) {
   gData_0200e888 = 2;
   gData_02006884 = 2;
   gData_0200687c = 1;
-  Task_Add(Func_020047b8, 0x480);
+  Task_Add(Func_020047b8, TASK_PASS_VBLANK);
 }

@@ -3338,7 +3338,7 @@ main	rom_main_08	recon/tla/raw/08122cd0	.text	en
 main	rom_main_08	recon/tla/raw/08122d10	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00122ccc	ja
 main	rom_main_08	recon/tla/ja/rom	.rom.00122d0c	ja
-main	rom_main_08	games/tla/src/battle/event_runtime	.text
+main	rom_main_08	games/tla/src/battle/playback	.text
 main	rom_main_08	games/tla/src/battle/is_unit_listed	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0012358c	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0012358c	fr
@@ -4362,7 +4362,7 @@ main	rom_main_13	recon/tla/es/rom	.rom.001b243c	es
 main	rom_main_13	recon/tla/fr/rom	.rom.001b243c	fr
 main	rom_main_13	recon/tla/it/rom	.rom.001b243c	it
 main	rom_main_13	recon/tla/raw/081b243c	.text	en
-main	rom_main_13	games/tla/src/graphics/slots/reel_game	.text
+main	rom_main_13	games/tla/src/graphics/slots/lucky_wheels	.text
 main	rom_main_13	games/tla/src/graphics/slots/f1b336c	.text
 main	rom_main_13	recon/tla/it/rom	.rom.001b34a8	it
 main	rom_main_13	recon/tla/fr/rom	.rom.001b34a8	fr
@@ -4380,7 +4380,7 @@ main	rom_main_13	recon/tla/raw/081b3ed8	.text	en
 main	rom_main_13	recon/tla/raw/081b3fb0	.text	en
 main	rom_main_13	recon/tla/raw/081b3ff4	.text	en
 main	rom_main_13	recon/tla/ja/rom	.rom.001b3d90	ja
-main	rom_main_13	games/tla/src/graphics/slots/reel_game	.rodata
+main	rom_main_13	games/tla/src/graphics/slots/lucky_wheels	.rodata
 main	rom_main_14	games/tla/src/system/far_call/resource_f	.text
 main	rom_main_14	games/tla/src/field/shared/camera/camera	.text
 main	rom_main_14	games/tla/src/graphics/palette/scale_rgb555_buffer_b	.text

@@ -74,20 +74,20 @@ extern char ResourceId_EarthWallSheet;
 extern char ResourceId_GreenPalette;
 
 void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
+void Palette_StepFadeTransfer(void);
 s32 Task_Add(void *callback, s32 order);
 s32 Task_Remove(void *callback);
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // Actor_UpdateMembers
-void BattleEffect_CountDownBattlerTints(void);            // BattleEffect_CountDownBattlerTints
+                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_CountDownBattlerTints(void);
 void SummonEffect_RunCanvasMode1(void *effect);
 void WaitFrames(s32 frames);
 

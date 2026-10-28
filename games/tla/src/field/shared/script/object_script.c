@@ -222,7 +222,7 @@ const s32 gData_0802f1b8[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_CameraScript[] = {
+const s32 gActor_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -234,7 +234,7 @@ const s32 gData_0802f1e8[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_EndScript[] = {
+const s32 gActorScript_EndScript[] = {
     SC_END,
 };
 

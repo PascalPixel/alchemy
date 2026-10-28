@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "effect_slot.h"
+#include "field_particle.h"
 #include "iwram_call.h"
 #include "macros.h"
 

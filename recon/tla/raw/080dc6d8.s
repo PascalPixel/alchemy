@@ -103,7 +103,7 @@ Func_080dc6d8:
 	bl Actor_SetMode
 	b .L_080dc7b0
 .L_080dc7ac:
-	bl EffectRuntime_StopCurrentObject
+	bl BattleEffect_StopMainActor
 .L_080dc7b0:
 	movs r2, #192
 	lsls r2, r2, #4

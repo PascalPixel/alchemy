@@ -1,6 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
+#include "task.h"
 
 struct SceneState {
   u8 unk000[0x160];
@@ -34,7 +35,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     Func_020038ac();
     Func_02003974();
     count = state->count;
-    Task_Add(Func_02004710, 1152);
+    Task_Add(Func_02004710, TASK_PASS_VBLANK);
   } else {
     Iwram_ClearWords(state, sizeof(struct SceneState));
     state->originX = x;
@@ -42,7 +43,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     Func_020038ac();
     count = Func_02003a64(value);
     Func_02004288(id, 0);
-    Task_Add(Func_02004710, 1152);
+    Task_Add(Func_02004710, TASK_PASS_VBLANK);
   }
   Actor_GetById(id)->unk5c[0] = 2;
   return count;

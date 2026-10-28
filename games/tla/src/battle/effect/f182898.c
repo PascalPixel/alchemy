@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
 
 // The blitter heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104 // unk64[1]
@@ -69,14 +70,14 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   {
     /* FAKEMATCH(pin): the callback pinned to r0 behind an empty asm that
      * holds r1, with work loaded after it, so the pool load comes before
-     * work's; as Task_Add(BattleEffect_..., 0xc80) with work
+     * work's; as Task_Add(BattleEffect_..., TASK_PASS_FRAME) with work
      * set at its declaration, 2 of 225 instructions differ in tla-en. */
     register void (*callback)(void) __asm__("r0") =
         BattleEffect_ProcessPendingGraphicsTransfer;
 
     __asm__("" : "+l"(callback) : : "r1");
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    Task_Add(callback, 0xc80);
+    Task_Add(callback, TASK_PASS_FRAME);
   }
   work->transferMode = 2;
   work->transferValue = 50;

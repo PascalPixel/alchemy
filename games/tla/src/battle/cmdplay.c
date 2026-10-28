@@ -14,7 +14,7 @@ void Func_08122c18(void) {
   Dma_Set(0, 0, 0x84000000, (volatile u32 *)0x040000d4);
 }
 
-void BattleEventRuntime_StartPhase(s32 cue) {
+void BattlePlayback_Start(s32 cue) {
   struct BattleEventState *ev;
 
   ev = &Ram_HeapSlots->battleWork->events;
@@ -27,12 +27,12 @@ void BattleEventRuntime_StartPhase(s32 cue) {
   }
 }
 
-s32 BattleEventRuntime_SchedulePhase(s32 frames) {
+s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattleWork *work;
   struct BattleEventState *ev;
 
   /* FAKEMATCH: the one-pass block loads the battle work before the events
-   * offset is built (differ 2 without it), as in BattleEventRuntime_Reset. */
+   * offset is built (differ 2 without it), as in BattlePlayback_Reset. */
   do {
     work = Ram_HeapSlots->battleWork;
   } while (0);

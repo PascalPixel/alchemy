@@ -1,4 +1,5 @@
 #include "yampi_desert_cave.h"
+#include "task.h"
 
 void Task_RemoveFar(void (*callback)(void));
 
@@ -8,7 +9,7 @@ void Func_02000898(void) {
   gData_02001fd4 = 15;
   gData_02001fd0 = 16;
   gData_02001fc8 = 1;
-  Task_Add(Func_0200099c, 0x480);
+  Task_Add(Func_0200099c, TASK_PASS_VBLANK);
 }
 
 void Func_020008fc(void) {
@@ -22,5 +23,5 @@ void Func_0200091c(void) {
   gData_02001fd4 = 2;
   gData_02001fd0 = 2;
   gData_02001fc8 = 1;
-  Task_Add(Func_0200099c, 0x480);
+  Task_Add(Func_0200099c, TASK_PASS_VBLANK);
 }

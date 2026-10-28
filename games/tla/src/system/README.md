@@ -11,7 +11,7 @@ linked as it is and how a frame runs; this page says only what differs here.
 ## What differs from ☀️
 
 - **Grouping.** ⚓️ has no runtime folder: power-up (`system.c`), interrupt
-  handlers (`setirq.c`), the task table, the link cable and the save records
+  handlers (`setirq.c`), the task table, the link cable and the save files
   are here, beside the resident code they call.
 - **Far-call tables.** ⚓️'s are 105 files under `far_call/`, named by the
   family of their exports (`audio_engine.s`, `object_dispatch_3.s`), where ☀️
@@ -40,11 +40,11 @@ editions whose bytes differ stay on their scaffolds under `recon/tla/<lang>`.
 
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `AffineMatrix_`, `Animation_`, `Bios_`, `Camera_`, `Code_`, `DebugText_`,
-`Flash_`, `Graphics_`, `Input_`, `IoWriteQueue_`, `ItemIcon_`, `NumberText_`,
-`Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`, `ResourceMetadata_`,
-`ResourceObject_`, `ResourceSlot_`, `Heap_`, `Irq_`, `Save_`, `SceneState_`,
-`Serial_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Window_` and
-`VramCache_`. Those only The Lost Age's code has so far:
+`Flash_`, `Graphics_`, `Heap_`, `Input_`, `IoWriteQueue_`, `Irq_`, `ItemIcon_`,
+`NumberText_`, `Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`,
+`ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_`, `Save_`, `SceneState_`,
+`Serial_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `VramCache_` and
+`Window_`. Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |
 | --- | --- |

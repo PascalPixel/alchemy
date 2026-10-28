@@ -407,7 +407,7 @@ Func_0811ea0c:
 	ldr r0, [sp, #4]
 	bl Heap_Release
 .L_0811ed5e:
-	bl BattleEventRuntime_WaitForReady
+	bl BattlePlayback_WaitForReady
 	ldr r2, [sp, #12]
 	cmp r2, #0
 	beq .L_0811ed7e

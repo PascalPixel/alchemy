@@ -36,7 +36,7 @@ typedef void (*InterruptHandler)(void);
 extern InterruptHandler gIrqHandlers[IRQ_COUNT];
 
 /// The handlers installed at power-on, copied into gIrqHandlers.
-extern const u32 gRuntime_IrqHandlers[IRQ_COUNT];
+extern const u32 gDefaultIrqHandlers[IRQ_COUNT];
 
 extern u8 IwramIrqMain[];
 extern const u32 IwramIrqModeWord;

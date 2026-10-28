@@ -74,8 +74,8 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant) {
     if (variant > 3)
       variant = 3;
     Actor_StartScriptFar(
-        (struct DispatchObject *)object,
-        (u32)(gObject_VariantMotionScripts + ((3 - variant) << 7)));
+        (struct ActorView *)object,
+        (u32)(gActor_VariantScripts + ((3 - variant) << 7)));
   }
 }
 

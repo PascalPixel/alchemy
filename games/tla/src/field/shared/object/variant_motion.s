@@ -7,8 +7,8 @@
 gData_080f0308:
 	.incbin "games/tla/src/field/shared/object/variant_motion.table"
 @ Three 128-byte actions for Actor_StartRepeatedMotion, plus a final word.
-	.global gObject_VariantMotionScripts
-gObject_VariantMotionScripts:
+	.global gActor_VariantScripts
+gActor_VariantScripts:
 	.4byte 23, 9, -16384, 23
 	.4byte 10, 8192, 0, 2
 	.4byte 23, 9, 8192, 23
@@ -40,6 +40,6 @@ Data_080f085c:
 	.global Data_080f0874
 Data_080f0874:
 	.4byte 0, 1, 13, 18, 0, 38
-	.global gObjectGroup_BlinkChildValues
-gObjectGroup_BlinkChildValues:
+	.global gActor_BlinkChildValues
+gActor_BlinkChildValues:
 	.byte 7, 0, 0, 0

@@ -43,12 +43,12 @@ void Func_080d3378(struct Actor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       Actor_SetMode(object, 2);
-      Actor_StartScriptFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct ActorView *)object,
                                    Data_080f085c);
       break;
     default:
       Actor_SetMode(object, 1);
-      Actor_StartScriptFar((struct DispatchObject *)object,
+      Actor_StartScriptFar((struct ActorView *)object,
                                    Data_080f0874);
       break;
     }

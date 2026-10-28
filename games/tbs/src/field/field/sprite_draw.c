@@ -110,14 +110,14 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->kind = arg;
         break;
       case ANIMCMD_BLANK:
-        layer->pictureBase = 255;
-        picture = 255;
+        layer->pictureBase = SPRITE_PICTURE_NONE;
+        picture = SPRITE_PICTURE_NONE;
         layer->timer += arg << 4;
         goto select_direction;
       case ANIMCMD_END:
-        layer->pictureBase = 255;
+        layer->pictureBase = SPRITE_PICTURE_NONE;
         layer->script = 0;
-        picture = 255;
+        picture = SPRITE_PICTURE_NONE;
         // Ending any sprite animation lowers the sprite's animation count, as
         // if the last had ended. Only sprite 283, the impact of Lift, has
         // animations that end, and it is a sprite of one sprite animation, so
@@ -440,7 +440,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     shadowHalfHeight = 8;
   }
   // Draw slot by screen row, one slot per two rows from slot 10.
-  if (height <= -0x640000) {
+  if (height <= -(100 << 16)) {
     slot = 1;
     depth = 0;
   } else {
@@ -568,7 +568,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       // The slot falls as the projected depth screen[2] rises, and stays at
       // 1 or above: slot 0 is the shadows'.
       if (depth == 0) {
-        slot = (0x200 - screen[2]) / 2 + 128;
+        slot = (512 - screen[2]) / 2 + 128;
         if (slot <= 0)
           slot = 1;
         Oam_AddSpriteAtDepth(sprite, slot);

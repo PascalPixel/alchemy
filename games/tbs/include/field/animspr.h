@@ -37,6 +37,16 @@ enum SpriteColorMode {
 /// until it is given a mode again.
 #define SPRITE_COLOR_BLINK 0x100
 
+/// A sprite animation's picture or pictureBase when it shows none:
+/// Sprite_ComposePicture skips it until an animation is selected.
+#define SPRITE_PICTURE_NONE 0xff
+
+/// An animation number's bit 7, as SpriteAnimation_Start and
+/// Sprite_StartAnimation take it: keep the place and timer of the script
+/// already running. The bits below it are the animation.
+#define SPRITE_ANIMATION_KEEP_PLACE 0x80
+#define SPRITE_ANIMATION_INDEX_MASK 0x7f
+
 /// One of a sprite's four sprite animations: its animation id, pictures,
 /// running script and timer.
 struct SpriteAnimation {
@@ -115,7 +125,7 @@ struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
-  s32 scale; ///< 16.16 fixed point, 0x10000 full size
+  s32 scale; ///< 16.16 fixed point, Q16_ONE full size
   u8 slot;   ///< VRAM cache entry holding its tiles
   /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;

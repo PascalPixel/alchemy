@@ -102,7 +102,7 @@ void SpriteViewer_Run(void) {
   // Only BG0 and the sprites are shown.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   // A green backdrop (BGR555 green 15).
-  PLTT_BACKDROP = 0x01E0;
+  PLTT_BACKDROP = RGB(0, 15, 0);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   ScreenFade_FromBlack(1);
 
@@ -164,7 +164,7 @@ restart:
   // positions.
 
   SpriteViewer_BuildProbeRing(x, y, ring);
-  // Order 3200 (0xc80), where the field camera runs.
+  // Order TASK_PASS_FRAME, where the field camera runs.
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
@@ -444,7 +444,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
   // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
-  // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
+  // a quarter of a turn. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
   case ANIM_FACING_THREE_PICTURES:
@@ -454,7 +454,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle,
+      Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x2aaa);
@@ -472,7 +472,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle,
+      Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x2000);
@@ -489,7 +489,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle,
+      Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x1999);
@@ -508,14 +508,14 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       pairedPositions[facingIndex * 2].y = centerY << 16;
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      Vector_AddPolarOffset(0x280000, angle,
+      Vector_AddPolarOffset(40 << 16, angle,
                             SpritePlacement_Values(&positions[0]));
       pairedPositions[facingIndex * 2 + 1].x = centerX << 16;
       {
         s32 *point = SpritePlacement_Values(&positions[1]);
         pairedPositions[facingIndex * 2 + 1].height = 0;
         pairedPositions[facingIndex * 2 + 1].y = centerY << 16;
-        Vector_AddPolarOffset(0x280000, (u16)angle, point);
+        Vector_AddPolarOffset(40 << 16, (u16)angle, point);
       }
       angle = ((u32)angle + 0x8000) << 16;
       facingIndex++;
@@ -532,7 +532,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->x = centerX << 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle,
+      Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x4000);
@@ -592,7 +592,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
         entry->scriptOffset = initialFrame;
         entry->pictureBase = initialFrame;
-        entry->picture = 0xff;
+        entry->picture = SPRITE_PICTURE_NONE;
       }
       spriteGroup->offsetY = metadata->adjustY;
       spriteGroup->rotation = initialFrame;

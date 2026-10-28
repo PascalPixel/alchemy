@@ -96,7 +96,7 @@ the field answers what the player asks for, the battle runs turns.
 
 ## From a conversation to a battle and back
 
-![In the loft of Vault's inn, Isaac frees a villager tied up on the floor; three thieves appear, talk with the party and attack](https://alchemy.pascalpixel.com/places/vault-interiors/events/Event_FreeRooferAndConfrontThieves.gif)
+![In the loft of Vault's inn, the three thieves attack once Isaac has freed the villager; the battle opens, and at its end the party falls; back in the loft, the thieves take the party hostage](https://alchemy.pascalpixel.com/guides/front/vault-thieves.gif)
 
 In Vault, the party pushes a crate aside with Move and climbs to the inn's
 loft, where a villager lies tied up. All of it happens in one scene,

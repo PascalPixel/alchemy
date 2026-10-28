@@ -11,6 +11,7 @@
 #include "module/overworld/zonedata.h"
 #include "vram_cache.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/system/system.h"
 #include "types.h"

@@ -1,13 +1,14 @@
 /// @file
-/// The field object: the main routine and scene changes, random encounters,
-/// a field scene's actors, the leader's walking and the requests they raise,
-/// the scene's triggers, using items and Psynergy on the field, the map's
-/// treasure spots, and the screen transitions and palette fade that the field
-/// and battles share. overworld_internal.h holds the includes and the few
-/// macros and types more than one part uses; the code is in the files under
-/// overworld/, included here in ROM order, each opening with what it holds
-/// (head -2 overworld/*.c). The ROM shows one object; the parts are ours, cut
-/// where one family ends and the next begins.
+/// The field object: random encounters, a field scene's actors, the leader's
+/// walking and the requests they raise, the scene's triggers, using items and
+/// Psynergy on the field, the map's treasure spots, and the screen transitions
+/// and palette fade that the field and battles share. overworld_internal.h
+/// holds the includes and the few macros and types more than one part uses; the
+/// code is in the files under overworld/, included here in ROM order, each
+/// opening with what it holds (head -2 overworld/*.c). The ROM shows one
+/// object; the parts are ours, cut where one family ends and the next begins.
+/// The main routine, the first code of the same bank, is its own object linked
+/// just before this one (../system/main_routine.c).
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// share.
@@ -15,7 +16,6 @@
 #include "overworld_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "overworld/main_routine.c"
 #include "overworld/encounter.c"
 #include "overworld/actors.c"
 #include "overworld/walking.c"

@@ -64,6 +64,7 @@
 #include "module/scene/shared/effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/game/game.h"
 #include "module/system/system.h"

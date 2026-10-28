@@ -58,6 +58,7 @@
 #include "module/import.h"
 #include "module/scene/altmiller_cave.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/shop/shop.h"

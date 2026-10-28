@@ -38,6 +38,7 @@
 #include "module/import.h"
 #include "module/scene/timber_rooms_a.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

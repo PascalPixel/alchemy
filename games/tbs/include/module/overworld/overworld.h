@@ -36,13 +36,6 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// MainRoutine_Run's mode: where the game starts.
-enum GameStart {
-  GAME_START_TITLE = 0,            ///< the Title, with the work cleared
-  GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
-  GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
-};
-
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {
@@ -102,13 +95,6 @@ enum EncounterZoneId {
   ENCOUNTER_ZONE_JUPITER_DJINN = 103
 };
 
-void Scene_TakeExit(s32 exitId);
-void Scene_ReturnFromSequence(s32 result);
-s32 Scene_GetArea(s32 sceneId);
-void MainRoutine_Run(s32 mode);
-void Scene_LoadOverlay(s32 unused);
-void Scene_Arrive(s32 unused, s32 keep);
-void Scene_PlayMusic(void);
 void Encounter_SelectMapZones(s32 useRules);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos);
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps);

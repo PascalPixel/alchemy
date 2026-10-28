@@ -101,6 +101,7 @@
 #include "module/import.h"
 #include "module/scene/ship_rooms.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/game/game.h"
 #include "module/window/window.h"

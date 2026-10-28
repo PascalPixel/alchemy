@@ -8,7 +8,7 @@
 /// runtime README's "The heap" gives the allocators and
 /// the lifetime rule. Every scene change resets both pools and clears every
 /// slot (Heap_Initialize, from the main routine in
-/// overworld/main_routine.c), so no block outlives the scene, battle or
+/// system/main_routine.c), so no block outlives the scene, battle or
 /// minigame that took it.
 
 #include "types.h"

@@ -63,7 +63,7 @@ at 1 HP and goes to the defeat destination, otherwise to the restart point,
 which is usually the last Sanctum. The result stays in
 `gMainRoutineWork.sequenceResult` for the scene that comes back. The main
 routine is `MainRoutine_Run` in
-[main_routine.c](src/overworld/overworld/main_routine.c).
+[main_routine.c](src/system/main_routine.c).
 
 ## Waiting and tasks
 

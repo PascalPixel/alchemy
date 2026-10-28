@@ -35,6 +35,7 @@
 #include "module/scene/kolima_forest_entrance.h"
 #include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"

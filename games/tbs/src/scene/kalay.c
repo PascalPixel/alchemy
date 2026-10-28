@@ -95,6 +95,7 @@
 #include "module/scene/kalay.h"
 #include "module/scene/shared/actor_orbit.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"

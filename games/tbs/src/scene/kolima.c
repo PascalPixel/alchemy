@@ -60,6 +60,7 @@
 #include "module/scene/kolima.h"
 #include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"

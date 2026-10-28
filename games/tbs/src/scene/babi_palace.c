@@ -55,6 +55,7 @@
 #include "module/import.h"
 #include "module/scene/babi_palace.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"

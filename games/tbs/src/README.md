@@ -43,7 +43,7 @@ them.
   and the event commands. `MainRoutine_Run`,
   [the main routine](../glossary.md#main-routine), which runs one
   [sequence](../glossary.md#sequence) after another, is there too, in
-  [main_routine.c](overworld/overworld/main_routine.c).
+  [main_routine.c](system/main_routine.c).
 - [The field bank](field/README.md) is the code under every town, dungeon and
   the world map: the [actors](../glossary.md#actor), walking, and loading,
   scrolling and drawing the map.
@@ -222,7 +222,7 @@ place data, not code: an image built from the PNG beside it, a table from its
 `System_Initialize`, in [system/system/start_up.c](system/system/start_up.c),
 is the first C to run; it ends by calling `MainRoutine_Run` through its
 far-call stub. The main routine, in
-[overworld/overworld/main_routine.c](overworld/overworld/main_routine.c), is
+[system/main_routine.c](system/main_routine.c), is
 short enough to read whole. [Runtime](runtime/README.md#start-up) follows
 power-on step by step.
 

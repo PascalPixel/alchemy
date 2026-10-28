@@ -61,6 +61,7 @@
 #include "module/scene/shared/colosso_setup.h"
 #include "module/scene/shared/colosso_occupant.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"

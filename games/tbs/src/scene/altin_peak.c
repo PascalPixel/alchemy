@@ -76,6 +76,7 @@
 #include "module/import.h"
 #include "module/scene/altin_peak.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"

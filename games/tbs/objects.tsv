@@ -92,6 +92,7 @@ main	rom_main_03	games/tbs/src/game/classes
 main	rom_main_03	games/tbs/src/game/element_table
 main	rom_main_03	games/tbs/src/game/djinn_table
 main	rom_main_04	games/tbs/src/gamepak/far_call/FIELD_SEQUENCE
+main	rom_main_04	games/tbs/src/system/main_routine	.text
 main	rom_main_04	games/tbs/src/overworld/overworld
 main	rom_main_04	games/tbs/src/overworld/event_commands
 main	rom_main_04	games/tbs/src/overworld/arcspark

@@ -70,6 +70,7 @@
 #include "module/import.h"
 #include "module/scene/vale_kradens_cottage.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/system/system.h"
 #include "battle.h"

@@ -25,7 +25,7 @@
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_DJINN_LESSON and plays until the player quits. Returns 0. Reached
 /// through LuckyDice_StartFar from MainRoutine_RunDice
-/// (overworld/overworld/main_routine.c), which saves background palettes 14
+/// (system/main_routine.c), which saves background palettes 14
 /// and 15 around it and passes an entrance this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;

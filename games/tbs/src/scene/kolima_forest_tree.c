@@ -43,6 +43,7 @@
 #include "module/scene/kolima_forest_tree.h"
 #include "module/scene/shared/kolima_palette.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/game/game.h"
 #include "module/system/system.h"

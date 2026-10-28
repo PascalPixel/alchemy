@@ -80,6 +80,7 @@
 #include "module/scene/shared/effect_psynergy.h"
 #include "module/scene/shared/world_map_attached_effects.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/window/window.h"

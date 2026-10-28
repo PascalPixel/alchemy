@@ -70,6 +70,7 @@
 #include "log_rooms_a.h"
 #include "module/scene/shared/vault_itemobj.h"
 #include "module/overworld/overworld.h"
+#include "module/system/main_routine.h"
 #include "module/overworld/event_commands.h"
 #include "module/battle/battle.h"
 #include "module/game/game.h"

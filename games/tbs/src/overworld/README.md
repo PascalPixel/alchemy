@@ -33,7 +33,7 @@ event raises waits until the event has finished, so a battle an event
 asks for starts after its last line.
 
 Leaving comes first, and a battle counts as leaving: the game remembers where
-everyone stood, loads the battle as the next scene, and then loads the scene again
+everyone stood, runs the battle as the next sequence, and then loads the scene again
 with everyone put back, as in the recording. Before the loop starts, the scene
 is set up: its [map](../../glossary.md#map) is loaded, its random
 battles chosen ([below](#random-battles)), the party placed at its

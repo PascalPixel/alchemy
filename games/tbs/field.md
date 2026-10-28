@@ -27,7 +27,7 @@ comes first, so an event that ends by taking an [exit](glossary.md#exit),
 like this door, simply ends the scene.
 
 A random battle is a way out of the scene too: the game remembers where
-everyone stood, loads the battle as if it were the next scene, and afterwards
+everyone stood, runs the battle as the next sequence, and afterwards
 loads the scene again with everyone put back where they were.
 
 `SceneSequence_Run` runs one scene and `struct FieldWork` holds the

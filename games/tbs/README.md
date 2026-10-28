@@ -128,10 +128,13 @@ flowchart TD
   class dice,wheels step
 ```
 
-Each pass runs one sequence to its end. The sequence then names the next one,
-and in the transition the parent sequence clears everything the last one left
-behind (its tasks, its interrupt handlers, the memory it borrowed) before
-starting it.
+Each pass reads one id from the adventure and runs one thing to its end: a
+scene, any row of the scene table, the Title and the File Screen included,
+which `SceneSequence_Run` runs until the party takes an exit; or the battle,
+dice or slots sequence. The sequence then names the next one, and in the
+transition the parent sequence clears everything the last one left behind (its
+tasks, its interrupt handlers, the heap) before starting it. Going from one
+scene to the next is such a transition, just as going into a battle is.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%

@@ -195,12 +195,19 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 ### Parent sequence
 
 The loop that runs one [sequence](#sequence) after another for as long as the
-console is on, `ParentSequence_Run`: in each transition it tears down what the
-last sequence set up (its tasks, its interrupt handlers, its heap blocks) and
-starts the next ([The front page](README.md#the-parent-sequence)).
+console is on, `ParentSequence_Run`. Each pass reads one id from the
+[adventure](#adventure) and runs one thing: a [scene](#scene), any row of the
+scene table, the Title and the File Screen included, which the
+[scene sequence](#scene-sequence) runs until the party takes an exit; or the
+battle, dice or slots sequence. In each transition it tears down what the last
+sequence set up (its tasks, its interrupt handlers, the heap) and starts the
+next, so going from one scene to the next is a transition just as going into a
+battle is ([The front page](README.md#the-parent-sequence)).
 
-Evidence: Sega: 平山尚's `Sequence::Parent` (ゲームプログラマになる前に覚えておきたい技術,
-2008).
+Evidence: Sega: a coinage from its lineage. "Sequence" for the game's flow is
+Sega's (its standards for Saturn licensees, 1995 to 1997; 平山尚,
+ゲームプログラマになる前に覚えておきたい技術, 2008), and "parent" only 平山尚's
+`Sequence::Parent`; no source names Camelot's routine.
 
 ### Sequence
 
@@ -283,11 +290,14 @@ Evidence: tradition: タスク and its 実行関数 (田村祐樹, DCAJ 2008).
 
 ### Work
 
-A block of memory one system or task owns, held in a [heap slot](#heap-slot)
-and named `g<Slot>Work`: the field's is `gFieldWork`, the menus' `gMenuWork`.
+The working memory a piece of code keeps its state in, held in a
+[heap slot](#heap-slot) and named `g<Slot>Work`: the field's is `gFieldWork`,
+the menus' `gMenuWork`.
 
-Evidence: tradition: ワーク, one task's memory (田村祐樹, DCAJ 2008), here
-extended to a system's block.
+Evidence: tradition: ワーク, the Japanese programmer's ordinary word for working
+memory: the console's own Work RAM (GBATEK's On-board and On-chip Work RAM),
+Sega's SGL works (`slGetWork`) and the Saturn's WORK RAM, a monitor program's
+システムワーク領域 (DCAJ 2009) and a task's 汎用ワーク (田村祐樹, DCAJ 2008).
 
 ### IWRAM and EWRAM
 
@@ -473,7 +483,8 @@ Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugCategoryName`).
 ### Scene sequence
 
 The sequence that runs one scene, `SceneSequence_Run`: a frame of its tasks,
-then the field requests, until the party leaves
+then the field requests, until the party takes an exit. The next scene is the
+parent sequence's to start
 ([The front page](README.md#the-scene-sequence)).
 
 Evidence: Sega: 平山尚's sequence (2008), named for what it runs.

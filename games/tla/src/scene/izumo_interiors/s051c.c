@@ -111,7 +111,7 @@ void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Func_020022cc(s32 a, s32 b);
-void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait);
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames);
 void Func_02001d8c(void);
 void Func_02002214(s32 actor, s32 x, s32 z);
 void Camera_FollowActor(s32 id, s32 flag);

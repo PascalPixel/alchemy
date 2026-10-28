@@ -112,12 +112,12 @@ void Actor_RunRepeatedMotionFar(u32 actorId, s32 variant);
 /// pixels south, playing the queued sound as it lands. The field runs it for
 /// the leader at a ledge, and seven scenes import it.
 void Actor_JumpDownLedgeFar(s32 actorId, s32 pose, s32 param);
-/// Turns the first actor at once to face the second, then waits wait
-/// frames.
-void Actor_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
-/// Turns two actors toward each other, then waits wait frames; talking
-/// to someone turns the leader and them this way.
-void Actor_TurnToFaceEachOtherFar(s32 firstId, s32 secondId, s32 wait);
+/// Turns the first actor at once to face the second, then waits the given
+/// number of frames.
+void Actor_SetAngleTowardFar(s32 firstId, s32 second_id, s32 frames);
+/// Turns two actors toward each other, then waits the given number of frames;
+/// talking to someone turns the leader and them this way.
+void Actor_TurnToFaceEachOtherFar(s32 firstId, s32 secondId, s32 frames);
 /// Gives every sprite part of an actor a param, or with bit 8 set makes
 /// the actor blink until another param is given.
 void Actor_ConfigureSpriteColorFar(s32 actorId, s32 value);
@@ -143,9 +143,9 @@ void Event_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 /// Asks a question at an actor and shows the reply for yes or for no;
 /// the event carries on past both replies. Returns 0 for yes, 1 for no.
 s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 flags);
-/// Turns an actor toward an angle, 65536 to a full turn, then waits wait
-/// frames.
-void Actor_ArmCallbackFar(s32 actorId, s32 angle, s32 wait);
+/// Turns an actor toward an angle, 65536 to a full turn, then waits the given
+/// number of frames.
+void Actor_ArmCallbackFar(s32 actorId, s32 angle, s32 frames);
 /// Two actors speak at once, each message and portrait at its own tile
 /// position; waits for A, B, L or R, then closes both.
 void Event_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
@@ -158,9 +158,9 @@ void Message_SetVoiceFromActorFar(s32 actorId);
 /// Fixes the priority of an actor's sprite so it no longer follows its
 /// depth.
 void Actor_SetSpritePriorityFar(s32 actorId, s32 priority);
-/// Shows an emote bubble over an actor, then waits wait frames; the
-/// bubble rides the actor and pops after 46 frames whatever the wait.
-void FieldEffect_SpawnAttachedFar(s32 id, s32 mode, s32 wait);
+/// Shows an emote bubble over an actor, then waits the given number of frames;
+/// the bubble rides the actor and pops after 46 frames however long it waits.
+void FieldEffect_SpawnAttachedFar(s32 id, s32 mode, s32 frames);
 /// Attaches, removes or briefly shows an attached effect on an actor, by
 /// enum AttachedEffectFlag; the leader's walking update uses it on hazard
 /// ground.

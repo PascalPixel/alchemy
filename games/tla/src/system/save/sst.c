@@ -7,13 +7,14 @@ s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));
 
 extern FlashWaitProc gFlash_Handler3;
 
-u16 _call_via_r3(s32 mode, u8 *address, u8 expected, FlashWaitProc wait);
+u16 _call_via_r3(s32 mode, u8 *address, u8 expected,
+                 FlashWaitProc waitForWrite);
 
 /// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  FlashWaitProc *wait;
+  FlashWaitProc *waitForWrite;
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
@@ -26,8 +27,8 @@ u16 EraseFlashChip(void) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  wait = &gFlash_Handler3;
-  result = _call_via_r3(3, (u8 *)0x0E000000, 255, *wait);
+  waitForWrite = &gFlash_Handler3;
+  result = _call_via_r3(3, (u8 *)0x0E000000, 255, *waitForWrite);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
@@ -40,7 +41,7 @@ u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
   u16 setting;
-  FlashWaitProc *wait;
+  FlashWaitProc *waitForWrite;
   const struct FlashType *chip;
   volatile u16 *waitcnt;
   volatile u8 *command;
@@ -69,8 +70,8 @@ u16 EraseFlashSector(u16 sector) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  wait = &gFlash_Handler3;
-  result = _call_via_r3(2, (u8 *)target, 255, *wait);
+  waitForWrite = &gFlash_Handler3;
+  result = _call_via_r3(2, (u8 *)target, 255, *waitForWrite);
 
   *waitcnt = (*waitcnt & 0xFFFC) | 3;
 
@@ -79,14 +80,14 @@ u16 EraseFlashSector(u16 sector) {
 
 /// Issues a byte-program command and waits for its destination to match.
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
-  FlashWaitProc *wait;
+  FlashWaitProc *waitForWrite;
 
   *(volatile u8 *)0x0e005555 = 0xaa;
   *(volatile u8 *)0x0e002aaa = 0x55;
   *(volatile u8 *)0x0e005555 = 0xa0;
   *destination = *source;
-  wait = &gFlash_Handler3;
-  return (*wait)(1, destination, *source);
+  waitForWrite = &gFlash_Handler3;
+  return (*waitForWrite)(1, destination, *source);
 }
 
 extern u16 gFlashNumRemainingBytes;

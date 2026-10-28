@@ -204,10 +204,11 @@ sequence set up (its tasks, its interrupt handlers, the heap) and starts the
 next, so going from one scene to the next is a transition just as going into a
 battle is ([The front page](README.md#the-parent-sequence)).
 
-Evidence: Sega: a coinage from its lineage. "Sequence" for the game's flow is
-Sega's (its standards for Saturn licensees, 1995 to 1997; 平山尚,
-ゲームプログラマになる前に覚えておきたい技術, 2008), and "parent" only 平山尚's
-`Sequence::Parent`; no source names Camelot's routine.
+Evidence: Sega: a coinage from its lineage. "Sequence" for one flow of the
+game is Namco's (黒須一雄; 遠藤雅伸's ゲームシーケンス) and Sega's through
+平山尚 (ゲームプログラマになる前に覚えておきたい技術, 2008, from Sega's course
+for new programmers), and "parent" only 平山尚's `Sequence::Parent`; no source
+names Camelot's routine.
 
 ### Sequence
 
@@ -294,10 +295,12 @@ The working memory a piece of code keeps its state in, held in a
 [heap slot](#heap-slot) and named `g<Slot>Work`: the field's is `gFieldWork`,
 the menus' `gMenuWork`.
 
-Evidence: tradition: ワーク, the Japanese programmer's ordinary word for working
-memory: the console's own Work RAM (GBATEK's On-board and On-chip Work RAM),
-Sega's SGL works (`slGetWork`) and the Saturn's WORK RAM, a monitor program's
-システムワーク領域 (DCAJ 2009) and a task's 汎用ワーク (田村祐樹, DCAJ 2008).
+Evidence: tradition, extended: ワーク names working memory in general in the
+console's own Work RAM (GBATEK's On-board and On-chip Work RAM), 山口's
+ワークエリア for the RAM a program can use (DCAJ 2009) and the システムワーク領域
+of BASIC or a monitor program, a system's own work area (DCAJ 2009); 田村祐樹
+uses it for one task's memory, its 汎用ワーク (DCAJ 2008). A block kept by a
+whole system, as `gFieldWork` is, extends that word; no source uses it so.
 
 ### IWRAM and EWRAM
 

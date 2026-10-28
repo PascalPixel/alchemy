@@ -143,13 +143,13 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
 }
 
 /// The event command "actor show emote": shows an emote bubble (sprite
-/// 21) over an actor, then waits wait frames. The low 4 bits of emote
-/// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
-/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
+/// 21) over an actor, then waits the given number of frames. The low 4 bits of
+/// emote pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME);
+/// with EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
 /// actor's. The bubble rides the actor and releases itself after 46 frames
 /// (gFieldEffect_WatchedActorScript: 16 frames of squash and stretch, then 30),
-/// whatever wait is.
-void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
+/// however long the event waits.
+void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 frames) {
   struct Actor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
@@ -203,7 +203,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
         SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 

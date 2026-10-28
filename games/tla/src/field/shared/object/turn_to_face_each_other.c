@@ -14,13 +14,13 @@
 
 s32 ArcTan2(s32 y, s32 x);
 
-void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *first = ObjectTable_Get(firstId);
   void *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
     FacingObject_TurnPairToFaceEachOther(first, second);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 

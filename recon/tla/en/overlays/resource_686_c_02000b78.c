@@ -20,7 +20,7 @@ void FieldEvent_Wait(s32 frames);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);
 
-void Func_02000b78(s32 rows, s32 wait, s32 x, s32 y, s32 z, s32 count) {
+void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 z, s32 count) {
   struct AnkohlRuinsEffectParams params;
   s32 row;
   s32 left;
@@ -39,7 +39,7 @@ void Func_02000b78(s32 rows, s32 wait, s32 x, s32 y, s32 z, s32 count) {
       Func_0200015c(((x + left * 16) << 16) + ((dx - 8) << 16), (y + dy) << 16, z << 16, 0, 0,
                     0x100, 0x80001, &params);
     }
-    FieldEvent_Wait(wait);
+    FieldEvent_Wait(frames);
     row++;
     z += 2;
     if (row < rows)

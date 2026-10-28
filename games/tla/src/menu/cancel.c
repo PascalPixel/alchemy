@@ -40,7 +40,7 @@ s32 Sound_PlayReturnOne(s32 cue) {
 
 void Menu_UpdateCancelSound(void) {
   u32 frame;
-  u32 *wait;
+  u32 *node;
   struct InputState *input;
   u32 mask;
 
@@ -58,8 +58,8 @@ void Menu_UpdateCancelSound(void) {
     GameFlag_SetBit(0x150);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
-  wait = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
-  while ((wait = (u32 *)*wait) != 0)
+  node = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
+  while ((node = (u32 *)*node) != 0)
     ;
 }
 

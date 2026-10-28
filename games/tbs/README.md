@@ -40,7 +40,7 @@ flowchart TB
     c1["One sequence at a time, for as long as the console is on"]
     subgraph scene ["Scene sequence"]
       direction TB
-      c2["Loads one scene: its code, its map, its people"]
+      c2["Loads one scene's map and its people"]
       subgraph mgr ["The scene sequence's loop"]
         direction TB
         c3["Runs the scene a frame at a time until the party leaves"]
@@ -184,7 +184,7 @@ shares:
 | -------------------------- | -------------------------------------------------------------------------------------------- |
 | a scene starts             | the return point (this scene and entrance), and empty after-battle and defeat destinations   |
 | an event prepares a battle | the after-battle or defeat destination, where the story should continue                      |
-| a random battle starts     | the battle as the next sequence, its formation as the entrance, every actor's position     |
+| a random battle starts     | the battle as the next sequence, its formation as the entrance, every actor's position       |
 | the battle ends            | its result: won, fled or lost                                                                |
 
 `Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
@@ -265,9 +265,9 @@ tempo. This is the game's slowdown. The VBlanks a frame took are counted in
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
+  parent(["Parent sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
   arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
-  code --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
+  code --> pick(["Scene sequence"]) --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
   own --> fade["Fade in"] --> run(["The scene sequence's loop"])
   classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -276,6 +276,7 @@ flowchart TD
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class parent parentSequence
   class pick sceneSequence
   class run sceneLoop
   class arrive,music,code,map,place,actors,own,fade step
@@ -284,15 +285,19 @@ flowchart TD
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph seq ["Scene sequence"]
+  subgraph ps ["Parent sequence"]
     direction TB
     pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
     arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
-    code --> map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
+  end
+  subgraph seq ["Scene sequence"]
+    direction TB
+    map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
     place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
     actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
     own --> fade["Fade in, Xian's name at the top"]
   end
+  code --> map
   fade --> mgr
   subgraph mgr ["The scene sequence's loop"]
     run(["Xian"])
@@ -306,6 +311,7 @@ flowchart TD
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class pick,run place
   class arrive,music,code,map,place,actors,own,fade step
+  style ps fill:#EBEFF5,stroke:#8FA0B8,color:#2E3C50,rx:16,ry:16
   style seq fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
   style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
 ```

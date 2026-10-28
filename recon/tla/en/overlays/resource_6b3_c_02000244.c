@@ -24,7 +24,7 @@ extern s32 gData_02000a28;
 void Text_GetMessageSize();
 void Func_02000158();
 
-void Func_02000244(s32 message, s32 position, s32 wait) {
+void Func_02000244(s32 message, s32 position, s32 frames) {
   s32 x;
   s32 y;
   s32 width;
@@ -67,5 +67,5 @@ void Func_02000244(s32 message, s32 position, s32 wait) {
     }
   }
   __asm__("" : : : "memory");
-  Func_02000158(message, x, y, left, line, wait, mode);
+  Func_02000158(message, x, y, left, line, frames, mode);
 }

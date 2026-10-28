@@ -1019,14 +1019,14 @@ static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
 }
 
 /// The balance platforms move to the heights their weights give them (their
-/// timers index gTunnelRuins_BalanceHeights), with sounds when wait is not 0;
+/// timers index gTunnelRuins_BalanceHeights), with sounds unless frames is 0;
 /// whatever then stands less than 30 pixels down can be walked on.
-static void TunnelRuins_SettleBalance(s32 wait) {
+static void TunnelRuins_SettleBalance(s32 frames) {
   u32 i;
 
   Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
-  if (wait != 0) {
+  if (frames != 0) {
     Sound_Play(SE_SETTLE);
   }
   FieldActor_SetMoveTarget(
@@ -1045,7 +1045,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_WEST)->timer];
   Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed =
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_EAST)->timer];
-  if (wait != 0) {
+  if (frames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
   for (i = 0; i < 5; i++) {
@@ -1056,7 +1056,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
           Actor_GetById(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
     }
   }
-  Event_Wait(wait);
+  Event_Wait(frames);
 }
 
 /// A carried stone drops onto the highest platform or carved stone in its cell

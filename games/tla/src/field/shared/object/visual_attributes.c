@@ -26,14 +26,14 @@ void Actor_ResetTargetAndSetMode1(u32 objectId) {
   }
 }
 
-void Actor_ArmCallback(s32 objectId, s32 angle, s32 wait) {
+void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->action = angle;
     Actor_StartScriptFar((struct ActorView *)object,
                                  (u32)gActor_StepAngleScript);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 

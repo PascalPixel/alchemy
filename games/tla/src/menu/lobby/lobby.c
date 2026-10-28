@@ -44,7 +44,7 @@ s32 Func_02000134(void) {
   s32 i;
   s32 set;
   s32 z;
-  s32 *wait;
+  s32 *waitCounter;
 
   work = Ram_HeapSlots->eventWork;
   result = 1;
@@ -61,9 +61,9 @@ s32 Func_02000134(void) {
      * the native loads it for both branches; written in each branch it is
      * loaded in each (differ 11). */
     set = Flag_IsSet(0x303);
-    wait = &gData_020022b8;
+    waitCounter = &gData_020022b8;
     if (!set) {
-      if (++*wait > 25) {
+      if (++*waitCounter > 25) {
         s32 offset = 0;
 
         /* FAKEMATCH: a goto loop counting down with the stride stepped by hand;
@@ -80,7 +80,7 @@ s32 Func_02000134(void) {
         LinkLobby_WriteSlotValue(4);
       }
     } else {
-      *wait = 0;
+      *waitCounter = 0;
     }
     if (gData_020022b8 == 0) {
       if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {

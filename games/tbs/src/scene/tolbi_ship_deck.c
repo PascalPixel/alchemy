@@ -856,7 +856,7 @@ const struct Trigger *TolbiShipDeck_GetTriggers(void) {
 static void TolbiShipDeck_TalkToCrewMember(void) {
   struct Actor *crewMember;
   s32 random;
-  s32 wait;
+  s32 frames;
 
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -869,8 +869,8 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
       Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
       crewMember = Actor_GetById(ACTOR_KALAY_CREW_MEMBER);
       random = Random_Next();
-      wait = ((u32)(90 * random) >> 16) + 60;
-      crewMember->timer = wait;
+      frames = ((u32)(90 * random) >> 16) + 60;
+      crewMember->timer = frames;
       Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                       gTolbiShipDeck_SquashAndStretchActions);
     } else {
@@ -890,7 +890,7 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct Actor *guide;
   s32 random;
-  s32 wait;
+  s32 frames;
 
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -903,8 +903,8 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
       Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
       guide = Actor_GetById(ACTOR_KALAY_TOUR_GUIDE);
       random = Random_Next();
-      wait = ((u32)(90 * random) >> 16) + 60;
-      guide->timer = wait;
+      frames = ((u32)(90 * random) >> 16) + 60;
+      guide->timer = frames;
       Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                       gTolbiShipDeck_SquashAndStretchActions);
     } else {

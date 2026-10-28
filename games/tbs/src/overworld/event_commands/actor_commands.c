@@ -618,10 +618,10 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 }
 
 /// The event command "actor face actor": turns the first
-/// actor at once to face the second, then waits wait frames. Writes the first
-/// actor's angle. Events reach it (Actor_FaceActor); the Battle Arena calls it
-/// too.
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
+/// actor at once to face the second, then waits the given number of frames.
+/// Writes the first actor's angle. Events reach it (Actor_FaceActor); the
+/// Battle Arena calls it too.
+void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
   struct Actor *first;
   struct Actor *second;
 
@@ -630,21 +630,21 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   if (first != 0 && second != 0) {
     first->facing = ArcTan2(second->z.fixed - first->z.fixed,
                             second->x.fixed - first->x.fixed);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 
 /// The event command "actors face each other": turns two actors
-/// toward each other, then waits wait frames. Events reach it
+/// toward each other, then waits the given number of frames. Events reach it
 /// (Actor_FaceEachOther); Scene_TalkToActor turns the leader and
 /// the actor spoken to with it.
-void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *first = Actor_Lookup(firstId);
   void *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
     Actor_TurnPairToFaceEachOther(first, second);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 
@@ -858,17 +858,16 @@ void Actor_ResetTargetAndSetMode1(u32 actorId) {
 
 /// The event command "actor face direction": the actor turns
 /// toward angle (0x10000 a full turn; Actor_StepAngle), then the event
-/// waits wait frames. Writes the angle to the actor's timer. Events
-/// reach it (ACTOR_DIR,
-/// Actor_FaceDirection); the Djinni, Retreat and climbing events and
-/// Actor_JumpDownLedge call it too.
-void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait) {
+/// waits the given number of frames. Writes the angle to the actor's timer.
+/// Events reach it (ACTOR_DIR, Actor_FaceDirection); the Djinni, Retreat and
+/// climbing events and Actor_JumpDownLedge call it too.
+void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->timer = angle;
     Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }
 

@@ -82,7 +82,7 @@ struct ObjectPairPosition {
 
 s32 ArcTan2(s32, s32);
 
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
+void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
   struct ObjectPairPosition *first;
   struct ObjectPairPosition *second;
 
@@ -90,6 +90,6 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   second = ObjectTable_Get(secondId);
   if (first != 0 && second != 0) {
     first->angle = ArcTan2(second->z - first->z, second->x - first->x);
-    Event_Wait(wait);
+    Event_Wait(frames);
   }
 }

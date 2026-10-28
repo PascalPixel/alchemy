@@ -126,8 +126,8 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor);
 void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param);
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param);
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
-void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait);
+void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames);
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
 void Actor_ReleaseById(s32 index);
 void Actor_ReleaseNoOp(void);
@@ -137,7 +137,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param);
 void Actor_SetTargetAndCallback(u32 actorId, s32 targetId, const void *script);
 s32 Actor_StepAngle(struct Actor *actor);
 void Actor_ResetTargetAndSetMode1(u32 actorId);
-void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait);
+void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
 void Actor_SetSpritePriority(s32 actorId, s32 priority);
 void Actor_CopyGraphics(u32 targetId, u32 sourceId);
 void Actor_ReservedNoOp(void);
@@ -149,7 +149,7 @@ s32 Actor_ReadActiveValue(s32 actorId);
 s32 Actor_FindActiveByValue(s32 sprite);
 struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused);
 void Event_ShowMessageAndWait(s32 actorId, s32 flags);
-void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait);
+void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames);
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags);
 void Event_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
@@ -183,7 +183,7 @@ void FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 #else
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 #endif
-void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait);
+void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 frames);
 /// FieldEffect_SpawnAttached's emote flag: the bubble takes sprite priority 1
 /// instead of its actor's. The low four bits pick the bubble (enum
 /// Emote).

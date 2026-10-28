@@ -292,11 +292,11 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   wait(1);
 }
 
-/// The event command "show message and wait": shows the message, then waits
-/// wait frames.
-void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
+/// The event command "show message and wait": shows the message, then waits the
+/// given number of frames.
+void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames) {
   Event_ShowMessageAndWait(actorId, flags);
-  Event_Wait(wait);
+  Event_Wait(frames);
 }
 
 /// The event command "ask yes or no": opens the question at actorId, lets

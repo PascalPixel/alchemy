@@ -100,8 +100,8 @@ flowchart TD
 
 Power-on runs once. It clears the fast memory, installs the code that stays
 resident and the interrupt handlers, loads the window graphics, starts the
-sound and empties the task table. Then it hands control to the sequence
-parent, which never returns.
+sound and empties the task table. Then it hands control to the main routine,
+which never returns.
 
 **Reference:** `System_Initialize` · [System: Start-up](system.md#start-up)
 
@@ -655,7 +655,7 @@ section pages follow them.
 | ---------------------------------------------------- | ------------------------------------------------------------------------ |
 | [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, saving, sound |
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its battle effects   |
-| [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
+| [Field](field.md)                                    | actors and movement, maps, the requests, field Psynergy, debug scenes    |
 | [User Interface](user_interface.md)                  | windows and messages, the field menu, the Pause menu, shops and inns     |
 | [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers       |
 | [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                       |

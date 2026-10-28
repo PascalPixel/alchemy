@@ -59,7 +59,7 @@
 /// trigger 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be
 /// taken home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them. Only
-/// the debug menus' scene selector, which exits to any scene and entrance
+/// the debug scene selector, which exits to any scene and entrance
 /// by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
@@ -683,7 +683,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 }
 
 /// An entrance no exit, table or code leads to, whose arrival sets
-/// FLAG_COLOSSO_OVER; the debug menus' scene selector reaches it.
+/// FLAG_COLOSSO_OVER; the debug scene selector reaches it.
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered. Arriving by

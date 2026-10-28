@@ -137,7 +137,8 @@ s32 Party_CountMembers(void) {
 /// Adds character `unitId` to the end of the party: sets its game flag and
 /// appends it to gMainRoutineWork.party unless it is already listed.
 /// Returns the party size. Called by the events where a character joins, by
-/// the party member chooser and the File Screen, and by the debug presets.
+/// the party member chooser and the File Screen, and by the debug parameter
+/// sets.
 s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
@@ -156,7 +157,7 @@ s32 Party_AddMember(s32 unitId) {
 /// Takes character `unitId` out of the party: clears its game flag and closes
 /// the gap it leaves in gMainRoutineWork.party. Returns the party size.
 /// Called by the events where a character leaves, by the party member chooser
-/// and the File Screen, and by the debug presets.
+/// and the File Screen, and by the debug parameter sets.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;

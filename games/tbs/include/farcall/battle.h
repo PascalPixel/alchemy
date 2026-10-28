@@ -83,9 +83,9 @@ s32 BattleObject_GetPaletteFar(s32 id);
 /// Sets every recovering Djinni of a party member with HP at once, as the
 /// Battle Arena and Vault's scenes do; returns 0.
 s32 DjinnRecovery_CountDownTwentyFar(void);
-/// Debug: replaces the party with one of the preset parties, levels, Djinn,
+/// Debug: replaces the party with one of the parameter sets, levels, Djinn,
 /// abilities and items included; returns 1 past the table's end.
-s32 DebugParty_LoadPresetFar(s32 preset);
+s32 DebugParameterSet_LoadFar(s32 set);
 /// Readies the sprite of every unit in the battle and sets its display mode and
 /// motion afresh (BattleObject_Put), as after a call for help.
 void BattleObject_PutFar(void);

@@ -9,8 +9,8 @@
 /// (<MAP>_<ROOM>_TO_<ROOM>).
 
 /// The entrance a scene's table lists first: Scene_TakeExit sends the
-/// party there when an exit has no row of its own, and the debug menu's map
-/// select starts there. A scene that gives it a place of its own names it
+/// party there when an exit has no row of its own, and the debug scene
+/// selector starts there. A scene that gives it a place of its own names it
 /// below.
 enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 

@@ -9,8 +9,8 @@ map's own data, in `src/map`, says what the ground is like. And each
 [scene](glossary.md#scene)'s own code, its [overlay](glossary.md#overlay) in `src/scene`, says
 who is there and what happens; only that part knows anything about one scene.
 The first two folders take the names of the [banks](glossary.md#bank) they
-fill, not of what they do. The debug rooms are scenes too, reached only in
-debug mode. How scenes and overlays fit into the whole game is on
+fill, not of what they do. The debug scenes are scenes too, reached only
+in debug mode. How scenes and overlays fit into the whole game is on
 [the front page](README.md).
 
 ## The field sequence and its requests
@@ -220,19 +220,19 @@ ground under it solid.
 it. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-target)
 covers every moment a scene can answer and each Psynergy's cast.
 
-## Debug rooms
+## Debug scenes
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and on to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and on to Menu test, and An exits there, and the scene's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
-The cartridge keeps three test rooms no player can walk into: one that hands
-out [Djinn](glossary.md#djinn), one for raising levels and browsing items,
-and one of shop and message tests. Only the debug scene selector reaches them,
-and only in debug mode, which the released game never turns on. The selector
-exits to any scene by number; the field opens it when Start is pressed with B
-held. Each room is an ordinary scene overlay, so the rooms are the smallest
-complete examples of a scene.
-[Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes through
-them.
+The cartridge keeps ten debug scenes no player can walk into: eight test scenes
+that hand out [Djinn](glossary.md#djinn), one for raising levels and browsing
+items, and one of shop and message tests. Only the debug scene selector reaches
+them, and only in debug mode, which the released game never turns on. The
+selector exits to any scene by number; the field opens it when Start is pressed
+with B held. They come from three ordinary scene overlays, so they are the
+smallest complete examples of a scene.
+[Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached) goes
+through them.
 
 ## Limits
 

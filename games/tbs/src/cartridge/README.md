@@ -178,7 +178,7 @@ power-on and lends memory from the two heaps laid out here. The field loads
 each scene's overlay by the number the scene table gives
 ([Running a scene](../overworld/README.md)), and every overlay in
 [Scenes](../scene/README.md), [Menus](../menu/README.md) and
-[Debug rooms](../debug/README.md) is built from the entry and import tables
+[Debug scenes](../debug/README.md) is built from the entry and import tables
 described here. Code everywhere loads its pictures and maps through the
 resource directory, and [saving](../runtime/README.md#saving) writes through
 the flash library in `save/`.

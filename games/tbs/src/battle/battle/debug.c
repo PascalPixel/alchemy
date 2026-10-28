@@ -24,23 +24,23 @@
 #endif
 
 // Declared here without const, as Camelot's code read it: with const,
-// alchemy-gcc compiles DebugParty_LoadPreset differently. debug_presets.c
-// defines it, const, in ROM.
-extern struct DebugPartyEntry gDebug_ParameterSets[];
+// alchemy-gcc compiles DebugParameterSet_Load differently.
+// debug_parameter_sets.c defines it, const, in ROM.
+extern struct DebugParameterSetRow gDebug_ParameterSets[];
 
-/// The last row of gDebug_ParameterSets; the scan reports a missing preset past
-/// it.
-#define DEBUG_PRESET_LAST_ROW 332
+/// The last row of gDebug_ParameterSets; the scan reports a missing parameter
+/// set past it.
+#define DEBUG_PARAMETER_SET_LAST_ROW 332
 
-/// Debug: replaces the party with the party members of preset number preset.
-/// Each party member is raised to the row's level, given the row's Djinn (Set,
-/// in order of their numbers across the party), the row's abilities, and an
-/// emptied inventory holding the row's items, each equipped. Called by
+/// Debug: replaces the party with the party members of parameter set number
+/// set. Each party member is raised to the row's level, given the row's Djinn
+/// (Set, in order of their numbers across the party), the row's abilities,
+/// and an emptied inventory holding the row's items, each equipped. Called by
 /// DebugBattle_RunMenu and, through its far stub, by the Battle Arena's
-/// BattleArena_ChooseDebugPartyPreset. Changes the active party and each
+/// BattleArena_ChooseDebugParameterSet. Changes the active party and each
 /// party member's level, Djinn, abilities and inventory.
-/// Returns 1 when the table ends before that preset, 0 otherwise.
-s32 DebugParty_LoadPreset(s32 preset) {
+/// Returns 1 when the table ends before that parameter set, 0 otherwise.
+s32 DebugParameterSet_Load(s32 set) {
   // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];
   struct Unit *member;
@@ -48,36 +48,37 @@ s32 DebugParty_LoadPreset(s32 preset) {
   s32 notFound;
   s32 row;
   s32 djinnIndex;
-  s32 currentPreset;
+  s32 currentSet;
   s32 i;
 
   notFound = 0;
-  // Empty the active party; the preset's rows add its party members back.
+  // Empty the active party; the parameter set's rows add its party
+  // members back.
   Party_RemoveMemberFar(ISAAC);
   Party_RemoveMemberFar(GARET);
   Party_RemoveMemberFar(IVAN);
   Party_RemoveMemberFar(MIA);
   Party_RemoveMemberFar(JENNA);
 
-  currentPreset = 0;
+  currentSet = 0;
   for (i = 0; i < ELEMENT_COUNT; i++)
     nextDjinn[i] = 0;
 
-  // Presets are runs of rows each ended by a DEBUG_PRESET_END row; skip
-  // to the run numbered preset and apply its rows.
+  // Parameter sets are runs of rows each ended by a DEBUG_PARAMETER_SET_END
+  // row; skip to the run numbered set and apply its rows.
   for (row = 0;; row++) {
     unitId = gDebug_ParameterSets[row].unitId;
-    if (row < 0 || row > DEBUG_PRESET_LAST_ROW) {
+    if (row < 0 || row > DEBUG_PARAMETER_SET_LAST_ROW) {
       notFound = 1;
       break;
     }
-    if (unitId == DEBUG_PRESET_END) {
-      if (currentPreset == preset)
+    if (unitId == DEBUG_PARAMETER_SET_END) {
+      if (currentSet == set)
         break;
-      currentPreset++;
+      currentSet++;
       continue;
     }
-    if (currentPreset != preset)
+    if (currentSet != set)
       continue;
 
     Party_AddMemberFar(unitId);
@@ -249,8 +250,8 @@ void DebugBattle_ViewMessages(void) {
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 encounter;
-  s32 preset;
-  s32 loadedPreset;
+  s32 set;
+  s32 loadedSet;
 
   MainRoutineWork_InitializeDefaultsFar();
 restart:
@@ -262,9 +263,9 @@ restart:
   GameFlag_SetFar(FLAG_AUTO_BATTLE);
   encounter = DEBUG_FIRST_ENCOUNTER;
   if (gKeysHeld & KEY_DOWN) {
-    loadedPreset = -1;
+    loadedSet = -1;
     GameFlag_ClearFar(FLAG_AUTO_BATTLE);
-    preset = 0;
+    set = 0;
     for (;;) {
       GameFlag_ClearFar(FLAG_CHILDHOOD);
       wait(1);
@@ -278,9 +279,9 @@ restart:
         if (gKeysRepeat & KEY_DOWN)
           encounter += 10;
         if (gKeysRepeat & KEY_R)
-          preset++;
+          set++;
         if (gKeysRepeat & KEY_L)
-          preset--;
+          set--;
         if (gKeysRepeat & KEY_A)
           break;
         if (gKeysRepeat & KEY_START)
@@ -291,10 +292,10 @@ restart:
           startModeSet = 1;
           Battle_SetType(BATTLE_TYPE_DEBUG);
         }
-        if (preset != loadedPreset) {
+        if (set != loadedSet) {
           MainRoutineWork_InitializeDefaultsFar();
-          DebugParty_LoadPreset(preset);
-          loadedPreset = preset;
+          DebugParameterSet_Load(set);
+          loadedSet = set;
         }
         wait(1);
       }

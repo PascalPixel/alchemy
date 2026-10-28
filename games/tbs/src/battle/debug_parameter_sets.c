@@ -1,14 +1,14 @@
 /// @file
 /// The debug parameter sets: runs of party members, each run ended by
-/// DEBUG_PRESET_END, that DebugParty_LoadPreset gives the party.
+/// DEBUG_PARAMETER_SET_END, that DebugParameterSet_Load gives the party.
 
-#include "debug_party.h"
+#include "debug_parameter_set.h"
 #include "character_ids.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 
 // clang-format off
-const struct DebugPartyEntry gDebug_ParameterSets[] = {
+const struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = ISAAC,
         .level = 35,
@@ -37,7 +37,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {60, ITEM_COCKTAIL_DRESS, ITEM_SPIRIT_ARMLET, ITEM_GLITTERING_TIARA},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -53,7 +53,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MOVE},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -77,7 +77,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -107,7 +107,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {58, 92, 137, 157},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -137,7 +137,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {59, 107, 129, 167},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -167,7 +167,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {60, 94, 138, 168},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -197,7 +197,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {60, 94, 138, 168},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -227,7 +227,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {ITEM_ANGELIC_ANKH, ITEM_ORACLES_ROBE, ITEM_SPIRIT_ARMLET, ITEM_GLITTERING_TIARA},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -257,7 +257,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {ITEM_ANGELIC_ANKH, ITEM_ORACLES_ROBE, ITEM_SPIRIT_ARMLET, ITEM_GLITTERING_TIARA},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -287,7 +287,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {60, ITEM_COCKTAIL_DRESS, ITEM_SPIRIT_ARMLET, ITEM_GLITTERING_TIARA},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -308,7 +308,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -329,7 +329,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -344,7 +344,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MOVE},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -365,7 +365,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -387,7 +387,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -413,7 +413,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -439,7 +439,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = GARET,
@@ -469,7 +469,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -495,7 +495,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -521,7 +521,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -545,7 +545,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -569,7 +569,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -593,7 +593,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -617,7 +617,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -641,7 +641,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -671,7 +671,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -701,7 +701,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -731,7 +731,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -761,7 +761,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -787,7 +787,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -817,7 +817,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -847,7 +847,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -877,7 +877,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -907,7 +907,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -937,7 +937,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -963,7 +963,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -993,7 +993,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1023,7 +1023,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1053,7 +1053,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1083,7 +1083,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1113,7 +1113,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1143,7 +1143,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1173,7 +1173,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1203,7 +1203,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1233,7 +1233,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1259,7 +1259,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1285,7 +1285,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1311,7 +1311,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1337,7 +1337,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1363,7 +1363,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1393,7 +1393,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1423,7 +1423,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1433,7 +1433,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MOVE},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1443,7 +1443,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MOVE},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1453,7 +1453,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MOVE},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1479,7 +1479,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1505,7 +1505,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1531,7 +1531,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1557,7 +1557,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1583,7 +1583,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .items = {55, 104, ITEM_PADDED_GLOVES, 156},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1613,7 +1613,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1643,7 +1643,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1673,7 +1673,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1703,7 +1703,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1733,7 +1733,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1763,7 +1763,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1793,7 +1793,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1823,7 +1823,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1853,7 +1853,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1883,7 +1883,7 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
         .unitId = ISAAC,
@@ -1913,10 +1913,10 @@ const struct DebugPartyEntry gDebug_ParameterSets[] = {
         .abilities = {ABILITY_MIND_READ},
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
     {
-        .unitId = DEBUG_PRESET_END,
+        .unitId = DEBUG_PARAMETER_SET_END,
     },
 };
 // clang-format on

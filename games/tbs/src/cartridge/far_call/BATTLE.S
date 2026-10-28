@@ -36,7 +36,7 @@ FarCall_BattleTable:
 	export DjinnRecovery_CountDownFar, DjinnRecovery_CountDown
 	export BattleObject_GetPaletteFar, BattleObject_GetPalette
 	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
-	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
+	export DebugParameterSet_LoadFar, DebugParameterSet_Load
 	export BattleObject_PutFar, BattleObject_Put
 	overlay_veneer ReleaseBattleObjectRecords
 	export BattleMessage_WaitForAdvanceAtFar, BattleMessage_WaitForAdvanceAt

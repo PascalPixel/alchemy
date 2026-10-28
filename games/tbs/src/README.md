@@ -21,8 +21,8 @@ loading, scrolling and drawing the map grid. [Running a scene](overworld/README.
 the `overworld` folder, runs one scene on that code, from its set-up to the
 [exit](../glossary.md#exit) the party leaves by, with random encounters, field
 [Psynergy](../glossary.md#psynergy-and-pp) and the commands events use;
-`MainRoutine_Run`, the loop that runs one sequence after another, is there
-too.
+`MainRoutine_Run`, the main routine, which runs one sequence after another,
+is there too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
 placements, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
@@ -53,8 +53,8 @@ directory, the numbered list through which every picture, table and overlay
 is found. [Graphics](graphics/README.md) holds most of the pictures, the
 title intro, the credits and the handwritten decoders. [Sound](sound/README.md)
 holds the sound layer and Nintendo's MusicPlayer2000 driver; the sounds and
-samples are in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md)
-holds the three test scenes the ROM keeps.
+samples are in [`games/tbs/sound`](../sound). [Debug scenes](debug/README.md)
+holds the ten debug scenes the ROM keeps.
 
 ## Banks and folders
 
@@ -152,7 +152,7 @@ describes the tables and how an overlay is packed.
 | --- | --- |
 | `map/` | 90 |
 | `menu/` | 3: the Title, the File Screen and the Battle Arena |
-| `debug/` | 3: the test rooms |
+| `debug/` | 3: the test scenes, Increase item and level and Menu test |
 
 ## Headers
 

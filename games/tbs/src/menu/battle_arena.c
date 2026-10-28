@@ -165,7 +165,7 @@ enum BattleArenaActorId {
   /// ★ Named from the game: "Is this the Battle Arena the old man spoke of?"
   /// (MsgLobbyBattleArenaOld)
   ACTOR_OLD_MANS_ARENA_VISITOR,
-  /// Loads a debug party (BattleArena_ChooseDebugPartyPreset).
+  /// Loads a debug parameter set (BattleArena_ChooseDebugParameterSet).
   /// ★ Named from the game: "Choose your parameters here."
   /// (MsgLobbyChooseParameters)
   ACTOR_DEBUG_HELPER,
@@ -1220,14 +1220,15 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
   return 0;
 #endif
 }
-/// Talking to ACTOR_DEBUG_HELPER: Left and Right choose a preset number from
-/// 0 up, A loads it (DebugParty_LoadPreset) and B cancels.
-/// ACTOR_LINKED_WINS_TELLER replies: one line for a cancel, one for a preset
-/// past the table's end (the loader's nonzero result), one for a loaded party.
-static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
+/// Talking to ACTOR_DEBUG_HELPER: Left and Right choose a parameter set number
+/// from 0 up, A loads it (DebugParameterSet_Load) and B cancels.
+/// ACTOR_LINKED_WINS_TELLER replies: one line for a cancel, one for a
+/// parameter set past the table's end (the loader's nonzero result), one for
+/// a loaded party.
+static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   struct Window *window;
-  s32 presetIndex;
-  s32 displayedPreset;
+  s32 setIndex;
+  s32 displayedSet;
   s32 loadResult;
 
   Event_Start();
@@ -1235,37 +1236,37 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
   Event_SetMessageId(MsgLobbyChooseParameters);
   Event_ShowMessageAndWait(actorId, 0);
   window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
-  presetIndex = 0;
-  displayedPreset = -1;
+  setIndex = 0;
+  displayedSet = -1;
   for (;;) {
-    if (presetIndex != displayedPreset) {
+    if (setIndex != displayedSet) {
       WindowSprite_PrepareForRedraw(window);
-      Text_DrawNumber(presetIndex, 3, window, 0, 0);
-      displayedPreset = presetIndex;
+      Text_DrawNumber(setIndex, 3, window, 0, 0);
+      displayedSet = setIndex;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      presetIndex--;
+      setIndex--;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      presetIndex++;
+      setIndex++;
     }
-    if (presetIndex < 0) {
-      presetIndex = 0;
+    if (setIndex < 0) {
+      setIndex = 0;
     }
     if (gKeysPressed & KEY_A) {
       break;
     }
     if (gKeysPressed & KEY_B) {
-      presetIndex = -1;
+      setIndex = -1;
       break;
     }
     wait(1);
   }
   Window_Close(window, 1);
-  if (presetIndex >= 0) {
-    loadResult = DebugParty_LoadPreset(presetIndex);
+  if (setIndex >= 0) {
+    loadResult = DebugParameterSet_Load(setIndex);
   }
-  if (presetIndex < 0) {
+  if (setIndex < 0) {
     Event_SetMessageId(MsgLobbyTease);
     Event_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
@@ -1879,7 +1880,7 @@ struct Trigger gBattleArenaTriggers[] = {
     {TRIGGER_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
      EVENT(BattleArena_TalkToVisitor)},
     {TRIGGER_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
-     EVENT(BattleArena_ChooseDebugPartyPreset)},
+     EVENT(BattleArena_ChooseDebugParameterSet)},
     {TRIGGER_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
      EVENT(BattleArena_ExplainPartyOrder)},
     {TRIGGER_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,

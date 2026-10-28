@@ -58,6 +58,6 @@
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1
 	.set import.DjinnRecovery_CountDownTwenty, 1
-	.set import.DebugParty_LoadPreset, 1
+	.set import.DebugParameterSet_Load, 1
 	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

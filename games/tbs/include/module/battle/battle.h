@@ -14,7 +14,7 @@ struct BattleActionRun;
 struct FixedPointPosition;
 struct Actor;
 
-s32 DebugParty_LoadPreset(s32 preset);
+s32 DebugParameterSet_Load(s32 set);
 void DebugBattle_ViewMessages(void);
 void DebugBattle_RunMenu(void);
 void BattleCamera_Update(void);

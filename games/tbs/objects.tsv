@@ -119,7 +119,7 @@ main	rom_main_07	games/tbs/src/battle/battle
 main	rom_main_07	games/tbs/src/battle/battle_data
 main	rom_main_07	games/tbs/src/battle/ability_staging
 main	rom_main_07	games/tbs/src/battle/battle_data_tail
-main	rom_main_07	games/tbs/src/battle/debug_presets
+main	rom_main_07	games/tbs/src/battle/debug_parameter_sets
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_07	games/tbs/src/battle/formations
 main	rom_main_07	games/tbs/src/battle/battle_sprites
@@ -996,9 +996,9 @@ main	rom_tail_02	games/tbs/src/cartridge/overlay/overlays
 3cb	text	games/tbs/src/menu/import/battle_arena
 3cb	text	libgcc.a:_call_via_rX
 3cb	bss	games/tbs/src/menu/battle_arena	.bss
-3cc	text	games/tbs/src/debug/entry/rooms
-3cc	text	games/tbs/src/debug/rooms
-3cc	text	games/tbs/src/debug/import/rooms
+3cc	text	games/tbs/src/debug/entry/test_scenes
+3cc	text	games/tbs/src/debug/test_scenes
+3cc	text	games/tbs/src/debug/import/test_scenes
 3cd	text	games/tbs/src/debug/entry/level
 3cd	text	games/tbs/src/debug/level
 3cd	text	games/tbs/src/debug/import/level

@@ -139,15 +139,15 @@ the players,
 Every sequence starts cold. In each transition `MainRoutine_Run` empties
 the task table (`Task_ResetAll`), drops the HBlank and VCount handlers and
 empties the heap (`Heap_Initialize`), and the next sequence builds what it
-needs from the [main routine's work](glossary.md#main-routines-work) alone: a scene from the
-destination and entrance in `gMainRoutineWork`, a battle from the formation named
-there. Nothing a scene or a battle set up outlives it, so any scene or battle
-can follow any other.
+needs from the [main routine's work](glossary.md#main-routines-work) alone: a
+scene from the destination and entrance in `gMainRoutineWork`, a battle from
+the formation named there. Nothing a scene or a battle set up outlives it, so
+any scene or battle can follow any other.
 
 The debug menus rely on this. The debug scene selector exits to any scene by
-number, and the debug battle menu, `DebugBattle_RunMenu`, gives the sequence
-parent's work a new game's defaults and empties the task table and the heap itself before each battle,
-as the main routine would.
+number, and the debug battle menu, `DebugBattle_RunMenu`, gives the main
+routine's work a new game's defaults and empties the task table and the heap
+itself before each battle, as the main routine would.
 
 Memory is never freed at random. The tasks, the heap slots and the actors are
 fixed tables of 20, 62 and 64; heap blocks go back in the reverse of the order

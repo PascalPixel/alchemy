@@ -360,7 +360,7 @@
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
 	import DjinnRecovery_CountDownTwenty, DjinnRecovery_CountDownTwentyFar
-	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
+	import DebugParameterSet_Load, DebugParameterSet_LoadFar
 @ Credits bank (far_call/CREDITS.S)
 	import Import_CreditsRun, Credits_RunFar
 @ Title bank (far_call/TITLE.S)

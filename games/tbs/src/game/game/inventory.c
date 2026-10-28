@@ -140,7 +140,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 /// taking the first free slot. A full matching stack fails immediately, even
 /// if another slot is free. Writes the inventory slot; returns it, or -1 when
 /// there was no room. Called by the shops, the new game set-up, the debug
-/// presets and PartyInventory_Add.
+/// parameter sets and PartyInventory_Add.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -254,7 +254,7 @@ s32 PartyInventory_FindMember(s32 itemId) {
 /// same type it replaces. Psynergy items may coexist. Recomputes the unit's
 /// Psynergy and stats. Returns 0, -1 when the unit cannot equip it, or -2
 /// when the item it would replace is cursed on. Called by the item menu, the
-/// shop's equip prompt, the new game set-up and the debug presets.
+/// shop's equip prompt, the new game set-up and the debug parameter sets.
 s32 Inventory_Equip(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];

@@ -133,7 +133,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 /// Nothing happens when Djinn_GiveToParty refuses the Djinni: -1
 /// when it was found before, -2 when no party member has room; its actor then
 /// stays. Called by Djinn_ResolvePending after a won Djinni battle, by
-/// 13 scenes directly and by the debug rooms.
+/// 13 scenes directly and by the test scenes.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;

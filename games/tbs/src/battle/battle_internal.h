@@ -91,7 +91,7 @@
 #include "module/overworld/event_commands.h"
 #include "macros.h"
 #include "enemy_ids.h"
-#include "debug_party.h"
+#include "debug_parameter_set.h"
 
 /// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 /// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and

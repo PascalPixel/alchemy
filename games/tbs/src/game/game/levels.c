@@ -185,8 +185,8 @@ struct LevelUpWork {
 /// Teaches a character action `value` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full. Called by the
-/// events that teach Psynergy, the prologue's end, the debug presets and the
-/// debug shortcut menu.
+/// events that teach Psynergy, the prologue's end, the debug parameter sets and
+/// the debug shortcut menu.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct Unit *state = Unit_Get(stateIndex);
   s32 key = value & PSYNERGY_ABILITY_MASK;
@@ -432,7 +432,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 
 /// Levels character `unitId` up one level at a time until `targetLevel`, then
 /// recomputes its stats. Called by Party_InitializeCharacters for the starting
-/// levels, and by the debug menus and presets.
+/// levels, and by the debug menus and parameter sets.
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;

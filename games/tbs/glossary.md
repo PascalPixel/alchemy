@@ -195,8 +195,8 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 ### Main routine
 
 The routine that runs everything outside the interrupts, `MainRoutine_Run`:
-called once at power-on (and afresh only by the debug Restart quest), it
-never returns, and each pass of its loop runs one
+called once at power-on (and again by `Game_RestartQuest`), it never
+returns, and each pass of its loop runs one
 [sequence](#sequence). Each pass reads one id from the
 [main routine's work](#main-routines-work) and runs one
 thing: a [scene](#scene), any row of the scene table, the Title and the File
@@ -741,7 +741,7 @@ and area name, and the test scenes it reaches (`SceneId_Test0` to
 `SceneId_Test7`); in debug mode, the Pause menu's Rough menu, Recovery test
 and Restart quest; the parameter sets the Battle Arena's debug helper loads
 (`gDebug_ParameterSets`); and the sound test (`SoundTest_Run`)
-([Debug rooms](src/debug/README.md#how-the-rooms-are-reached)).
+([Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached)).
 
 Evidence: Camelot: the menus' own labels, "Rough menu"
 (`MsgWorkspaceRoughMenu`) and "Recovery test"; the scene codes TEST0 to TEST7

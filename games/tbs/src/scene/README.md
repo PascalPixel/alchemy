@@ -340,8 +340,8 @@ of an actor, update routines returning `s32`) are in
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
 page](../../README.md#the-scene-table-and-areas). The maps the scenes are
-drawn on are in [Maps](../map/README.md), and the debug rooms, built the
-same way, in [Debug rooms](../debug/README.md).
+drawn on are in [Maps](../map/README.md), and the debug scenes, built the
+same way, in [Debug scenes](../debug/README.md).
 
 To find the code for a scene, find its row in `field/scenes.s`: the
 overlay's resource number begins the rows of `objects.tsv` that name its

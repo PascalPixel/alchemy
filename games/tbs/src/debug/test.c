@@ -102,7 +102,7 @@ static __inline__ void MenuTest_RecalculateParty(void) {
 
 u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
-/// The room has no exit regions: its regions entry returns none.
+/// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
@@ -258,7 +258,7 @@ s32 MenuTest_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 /// Levels the four heroes to the current debug target, then raises it by ten.
 /// Talking to Garet: `You went up a level!`, then Isaac, Garet, Mia and Ivan
 /// are levelled up to 10 the first time, 20 the next, and so on.
-/// Unit_LevelUpTo only raises a level, and entering the room has already set
+/// Unit_LevelUpTo only raises a level, and entering the scene has already set
 /// them to 30 (Isaac to 50 outside Japanese), so the first talks change
 /// nothing.
 static void MenuTest_RaisePartyLevels(void) {
@@ -640,7 +640,8 @@ static void MenuTest_GiveEquipmentTestStock(void) {
 
 /// Browses item definitions and gives the selected item while party bags allow
 /// it. Talking to ACTOR_SECOND_FELIX in Japanese (MenuTest_OpenItemBrowser).
-/// Unlike the level room's browser it stops on every number, iconless ones too.
+/// Unlike the Increase item and level scene's browser it stops on every number,
+/// iconless ones too.
 static void MenuTest_SelectItem(void) {
   struct Window *window;
   struct Window *details;
@@ -657,7 +658,7 @@ static void MenuTest_SelectItem(void) {
   redraw = 1;
   // Reuse the item palette for both debug windows: sprite palette 0 into BG
   // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
-  // TEXT_BACKGROUND_COLOR, as the level room's browser does.
+  // TEXT_BACKGROUND_COLOR, as the Increase item and level scene's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -791,7 +792,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Sets the debug party, stock counters and levels; returns zero. The room's
+/// Sets the debug party, stock counters and levels; returns zero. The scene's
 /// initialize entry, which FieldSequence_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
@@ -856,7 +857,7 @@ static s32 MenuTest_ConfirmShopAction(s32 unitId) {
 #endif
 
 /// Eight rows of seven words that nothing reads by name, the same 56 words as
-/// the Djinn room's gTestRoom_EntrancesHead (rooms.c), which says why their
+/// the test scenes' gTest_EntrancesHead (test_scenes.c), which says why their
 /// meaning is unknown.
 u32 gDebugItemPromptHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,

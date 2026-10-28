@@ -143,7 +143,7 @@ proof, written as comment lines (`@` starts a comment in assembly) that begin
 several; assembly counts as rebuilt source only with such a proof. In a
 handwritten file the proof names the instruction, stack frame or pattern
 alchemy-gcc can't emit. The [far-call](../glossary.md#far-call) tables,
-such as the `entry/` and `import/` files of the debug rooms, the menus and
+such as the `entry/` and `import/` files of the debug scenes, the menus and
 the [scenes](../glossary.md#scene), are proven once, where their entries
 are made: each is a [veneer](../glossary.md#veneer), a tiny piece of code
 that only jumps on: 8 bytes holding an `ldr r4` (load the target's

@@ -50,7 +50,7 @@
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
-/// The room's actors, numbering the rows of
+/// The scene's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorPlacements; the game names none of them, so
 /// each is named for what talking to it opens (gIncreaseItemAndLevel_Triggers),
 /// as a render of each talk shows it.
@@ -92,7 +92,7 @@ u8 *IncreaseItemAndLevel_GetEntrances(void) {
   return (u8 *)gIncreaseItemAndLevel_Entrances;
 }
 
-/// The room has no exit regions: its regions entry returns none.
+/// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *IncreaseItemAndLevel_GetExits(void) {
@@ -352,7 +352,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 /// Browses ability names and descriptions, skipping unavailable entries. B
 /// closes the sole window created by this browser. Talking to
 /// ACTOR_ABILITY_BROWSER in English and German; in French, Spanish and
-/// Italian the room keeps the function and the actor but no event, and
+/// Italian the scene keeps the function and the actor but no event, and
 /// moves the actor to x 80.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
@@ -480,7 +480,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 
 /// Starts the window transition and edition-specific actor
 /// scale/animation setup. Returns zero through the exported scene entry. The
-/// room's initialize entry, which FieldSequence_Run runs on entry and whose
+/// scene's initialize entry, which FieldSequence_Run runs on entry and whose
 /// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
@@ -592,7 +592,7 @@ u32 gIncreaseItemAndLevel_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// The room's actors, in the order of enum IncreaseItemAndLevelActorId:
+/// The scene's actors, in the order of enum IncreaseItemAndLevelActorId:
 /// the item, icon and portrait browsers and the level editor; outside Japanese
 /// also the ability browser (reachable in English and German only) and the two
 /// emote testers.

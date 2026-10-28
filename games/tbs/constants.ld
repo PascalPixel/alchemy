@@ -8,4 +8,4 @@ Actor_UpdateAllCodeSize = Decompress_Lz - Actor_UpdateAll;
 Tile_BuildCellPicturesCodeSize = Tile_Decompress4bpp - Tile_BuildCellPictures;
 Transform_UpdateVerticesSize = Tile_ConvertMapGrid - Transform_UpdateVertices;
 Glyph_DrawCodeSize = Tile_BuildCellPictures - Glyph_DrawArm;
-BitDecoder_Size = DebugParty_LoadPreset - BitDecoder_DecodeImage;
+BitDecoder_Size = DebugParameterSet_Load - BitDecoder_DecodeImage;

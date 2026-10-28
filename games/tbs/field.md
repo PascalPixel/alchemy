@@ -1,14 +1,15 @@
 # Field
 
 The field is everywhere the [party](glossary.md#the-party) walks: a town, a
-[room](glossary.md#room), a dungeon or the World Map. Four folders run it, and
-the first two are named for the [banks](glossary.md#bank) of the main image
-they fill: [`overworld`](src/overworld/README.md) runs the field sequence and
-the main routine, and [`field`](src/field/README.md) moves the actors and
-draws the [map](glossary.md#map). [Maps](src/map/README.md) says what the
-ground is like, and [Scenes](src/scene/README.md) holds each
-[scene](glossary.md#scene)'s own code: its people, triggers, events and exits.
-The [main image](glossary.md#main-image) keeps only a few rule tables keyed by
+[room](glossary.md#room), a dungeon or the World Map. Three folders run it.
+[`field`](src/field/README.md) holds the Field's code in four of the
+[banks](glossary.md#bank) of the main image: it runs the field sequence,
+moves the actors and draws the [map](glossary.md#map); the main routine that
+starts each scene is the System's ([System](system.md#the-main-routine)).
+[Maps](src/map/README.md) says what the ground is like, and
+[Scenes](src/scene/README.md) holds each [scene](glossary.md#scene)'s own code:
+its people, triggers, events and exits. The
+[main image](glossary.md#main-image) keeps only a few rule tables keyed by
 scene (music, area names, random battles).
 
 ## The field sequence and its requests
@@ -36,8 +37,8 @@ battle runs as the next [sequence](glossary.md#sequence), and then the scene
 loads again with its actors put back.
 
 `Scene_Arrive` clears the last scene's flags, `FieldSequence_Run` runs the
-scene and `struct FieldWork` holds the requests, which [Running a
-scene](src/overworld/README.md#the-field-sequence-serves-requests) lists in
+scene and `struct FieldWork` holds the requests, which
+[Field code](src/field/README.md#the-field-sequence-serves-requests) lists in
 order.
 
 ## Scenes and areas
@@ -192,8 +193,8 @@ and where it walks decides how often and against whom: in a scene each kind of
 ground has a zone, and on the World Map the zone comes from the region
 underfoot. A party stronger than a zone meets fewer of its battles.
 `Encounter_CountStepsAndSelectFormation` counts and picks the enemies from a
-row of `gEncounterZones`; [Running a
-scene](src/overworld/README.md#random-battles) has the roll step by step.
+row of `gEncounterZones`;
+[Field code](src/field/README.md#random-battles) has the roll step by step.
 
 ## Field Psynergy
 
@@ -209,8 +210,9 @@ cast, where the event does what the Psynergy does there; and while Force,
 Frost or Reveal acts on its target, which those three run themselves. In
 Vale, the event after Move notes where the pillar now stands and makes the
 ground under it solid. `Field_UsePsynergy` runs a cast and `FieldPsynergy_Run`
-plays it; [Running a
-scene](src/overworld/README.md#how-field-psynergy-reaches-its-target) covers
+plays it;
+[Field code](src/field/README.md#how-field-psynergy-reaches-its-target)
+covers
 each moment and each cast.
 
 ## Debug scenes

@@ -4,9 +4,9 @@ Each [scene](../../glossary.md#scene)'s own code says who stands where, what
 each person says, what happens when the [party](../../glossary.md#the-party)
 steps on a doorstep, searches a jar or uses an item or
 [Psynergy](../../glossary.md#psynergy-and-pp), and the events it plays. It is
-an [overlay](../../glossary.md#overlay): [running a
-scene](../overworld/README.md) asks it questions through its entry table, and
-it calls the main image through its
+an [overlay](../../glossary.md#overlay): the
+[field sequence](../field/README.md#the-field-sequence-serves-requests) asks
+it questions through its entry table, and it calls the main image through its
 [import table](../../glossary.md#entry-table-and-import-table). Every scene
 has a generated page under [Places](../field/scenes.s), in
 [story order](../../glossary.md#the-places-in-story-order), with its
@@ -143,8 +143,7 @@ A Psynergy row also says when it runs around the Psynergy: before it plays,
 after it, or from inside it, as Force strikes, Frost freezes or Reveal shows
 what is hidden. Reveal's scenes pair that row with one that hides everything
 again as the colours come back, and a row can run when Psynergy that runs
-out by itself, such as Cloak, has ended. [Running a
-scene](../overworld/README.md#how-field-psynergy-reaches-its-target) follows a
+out by itself, such as Cloak, has ended. [Field code](../field/README.md#how-field-psynergy-reaches-its-target) follows a
 cast through these.
 
 What runs is a message, an event, or for a search what is found there: an

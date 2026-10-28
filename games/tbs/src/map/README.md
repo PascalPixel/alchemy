@@ -193,7 +193,7 @@ folder `map_002`.
 
 `MapGrid_LoadMap` unpacks each stream, and `TileMap_ConvertBuffer` puts the
 three planes together into the cell words in `gMapGridCellBuffer`.
-[Cartridge and memory](../cartridge/README.md) has the memory's map.
+[System code](../system/README.md#memory-map) has the memory's map.
 
 | Plane, in stored order | Size | Values |
 | --- | --- | --- |
@@ -356,7 +356,7 @@ names through `MapGrid_LoadMap`, then places the treasure spots
 reads each cell's behavior and height as actors move. A battle reuses the
 cells' memory, so when the party comes back the scene starts again and its map
 is loaded again. Where the cells, shapes and cell pictures sit in memory is in
-[Cartridge and memory](../cartridge/README.md).
+[System code](../system/README.md#memory-map).
 
 ## Limits
 

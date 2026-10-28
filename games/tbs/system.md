@@ -22,7 +22,7 @@ starts again from the first instruction, so start-up runs again in full. The
 cartridge's first instruction leads to `System_Entry` and
 `System_Initialize`, which ends by calling `MainRoutine_RunFar`.
 [The title intro](src/menu/README.md#the-title-intro) describes the logos, and
-[Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
+[System code](src/system/README.md#start-up) goes through start-up step by step.
 
 ## The main routine
 
@@ -106,10 +106,10 @@ counted in frames, so they all slow down together, while the music, mixed
 each VBlank, keeps its tempo: the game's [slowdown](glossary.md#slowdown).
 `gFrameVBlanks` counts the VBlanks since the frame began, and
 `gLastFrameVBlanks` keeps the last frame's count, by which the text's typing
-paces itself. [Runtime](src/runtime/README.md#the-frame-loop) has the
+paces itself. [System code](src/system/README.md#the-frame-loop) has the
 frame's order, [the stack
-switch](src/runtime/README.md#the-stack-switch-in-wait) and [the task
-runner](src/runtime/README.md#the-task-runner).
+switch](src/system/README.md#the-stack-switch-in-wait) and [the task
+runner](src/system/README.md#the-task-runner).
 
 ## The heap and work
 
@@ -122,7 +122,7 @@ keeps while it runs, is such a slot under its own name, as `gFieldWork` and
 `gBattleWork` are. `Heap_Initialize` empties the heap at every transition,
 so nothing a sequence took survives it. The main routine's work is the one
 fixed exception, since it must outlive every transition.
-[Runtime](src/runtime/README.md#the-heap) explains the heap's two pools, in
+[System code](src/system/README.md#the-heap) explains the heap's two pools, in
 IWRAM and EWRAM.
 
 ## Banks and far calls
@@ -134,11 +134,11 @@ of [veneers](glossary.md#veneer), tiny pieces of code that only jump on, one
 for each function other banks call, and a [far call](glossary.md#far-call)
 goes through the veneer, so one bank's code can change size without moving
 anything another relies on. Distance isn't the reason: a call can reach every
-bank from every other. Other banks call the runtime's functions directly;
+bank from every other. Other banks call the System's bank 00 directly;
 only the overlays go through its table. A veneer has the function's name with
 `Far` added: the main routine starts a scene's
 music with `Sound_PlayFar`, which leads to `Sound_Play`.
-[Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks)
+[The Game Pak](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)
 says more.
 
 ## Overlays
@@ -162,7 +162,7 @@ calls. A direct call cannot reach the cartridge from the overlay area, so the
 scene calls through its entry, which leads to the function's veneer in its
 bank's table. An overlay therefore depends only on each bank's table, which
 keeps its order, and not on where the function itself lies.
-[Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+[System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 
 ## Saving
@@ -174,7 +174,7 @@ numbered one higher than the old, is written into an empty sector of the
 flash chip before the old copy is marked free. A whole copy of each part
 always survives, and the game reads the one with the higher number. The Save
 command is `Save_ToChosenFile`, and `Save_WritePart` writes a part.
-[Runtime](src/runtime/README.md#saving) has the sectors and how a free one is
+[System code](src/system/README.md#saving) has the sectors and how a free one is
 chosen.
 
 ## Sound

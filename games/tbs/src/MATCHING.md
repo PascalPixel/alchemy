@@ -312,7 +312,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 ### Heap slots
 
 The system keeps each piece of code's [work](../glossary.md#work) in a block
-of [the heap](runtime/README.md#the-heap) whose pointer sits in a numbered
+of [the heap](system/README.md#the-heap) whose pointer sits in a numbered
 [heap slot](../glossary.md#heap-slot) of `gHeapSlots`, and many of those
 slots also have a name of their own (`gFieldWork`, `gPaletteFadeWork` and so
 on), so the same block can be reached several ways: `HEAP_SLOT_BLOCK(n)`,

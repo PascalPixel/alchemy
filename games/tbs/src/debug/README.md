@@ -150,9 +150,9 @@ from a door.
 
 Their events call the same main-image code the real scenes call, through the
 same import tables
-([Cartridge and memory](../cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+([System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector opens from [the Pause menu](../window/README.md#the-pause-menu),
-inside [the field sequence](../overworld/README.md#the-field-sequence-serves-requests).
+inside [the field sequence](../field/README.md#the-field-sequence-serves-requests).
 The palette editor, which opens with L on the Pause menu in debug mode, is in
 the main image rather than a scene
 ([palette_editor.c](../field/field_sequence/palette_editor.c)).

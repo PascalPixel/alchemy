@@ -3,7 +3,7 @@
 Every page links here the first time it uses one of these words, which come in
 the order a newcomer meets them: the game's own words, then the project's,
 then those of the code's four divisions, the system, the field, the battle and
-the user interface. Each entry ends with where its word comes from: Camelot
+the user interface, and last the names of the source's folders. Each entry ends with where its word comes from: Camelot
 where Camelot has a word for the thing, else the tradition of the time, else
 plain English.
 
@@ -176,15 +176,36 @@ the same path as its C file under `src/`.
 
 Evidence: plain English; the project's own word.
 
+### Object
+
+One compiled unit of the build, a row of `objects.tsv`, in the linker's sense
+of an object file, unrelated to a scene's actors. A large
+one is written as parts in a folder of its own name beside it
+(`system/system/` for `system.c`), which only it includes
+([Source](src/README.md#objects-and-parts)). A part of an object is unrelated
+to a part of a save file ([File and part](#file-and-part)).
+
+Evidence: plain English; the GNU tools' "object file".
+
+### Shared
+
+Used by several scenes or tools, as the headers in `src/scene/shared/` are,
+each scene that includes one compiling its own copy; never a synonym for
+common ([Scenes](src/scene/README.md#code-shared-between-overlays)).
+
+Evidence: plain English.
+
 ## The system
 
 ### System
 
 The code the field, the battles and the user interface are built on: start-up,
 the main routine, waiting and [tasks](#task), interrupts, the
-[heap](#heap-and-pools), [banks](#bank), [overlays](#overlay), saving and the
-sound driver. It is one of the code's four divisions, with Field, Battle and
-User Interface; [System](system.md) explains it.
+[heap](#heap-and-pools), the [overlays](#overlay), saving and the sprite
+bank's metadata reader. It is one of the code's four divisions, with Field,
+Battle and User Interface; [System](system.md) explains it. Its code is in
+`src/system/` ([System code](src/system/README.md)); the
+[Game Pak](#game-pak)'s is beside it in `src/gamepak/`.
 
 Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 "Field", "User Interface" and "Support" (`gCredits_Lines`).
@@ -200,7 +221,8 @@ reads one id from the [main routine's work](#main-routines-work) and runs one
 sequence: the [field sequence](#field-sequence) for a [scene](#scene), any row
 of the scene table, the Title and the File Screen included; or the battle,
 dice or slots sequence. A change of scene is a transition too, as going into a
-battle is ([System](system.md#the-main-routine)).
+battle is ([System](system.md#the-main-routine)). Its object is
+`src/system/main_routine.c`, the first code of bank 04.
 
 Evidence: tradition: メインルーチン, the period's word for the code that runs
 outside the interrupts.
@@ -221,7 +243,9 @@ The sequence that runs one [scene](#scene), `FieldSequence_Run`: it allocates
 overlay's initialize entry, then waits a frame at a time, answering the
 [field requests](#field-request), until one ends the scene. The next scene is
 the main routine's to start
-([Field](field.md#the-field-sequence-and-its-requests)).
+([Field](field.md#the-field-sequence-and-its-requests)). Its object is
+`src/field/field_sequence.c`, `FieldSequence_Run` its part `run.c`
+([Field code](src/field/README.md#the-field-sequence-serves-requests)).
 
 Evidence: Camelot: the credits' "Field" (`gCredits_Lines`); tradition: sequence.
 
@@ -272,7 +296,7 @@ picks its pass, the frame pass (`TASK_PASS_FRAME`, which `wait()` runs) or
 the VBlank pass (`TASK_PASS_VBLANK`, which the VBlank interrupt runs), and its
 order within it. A task has no state of its own: it keeps what it works on in
 a [work](#work), a block in a heap slot
-([Runtime](src/runtime/README.md#the-task-runner)).
+([System code](src/system/README.md#the-task-runner)).
 
 Evidence: tradition: タスク and its 実行関数.
 
@@ -309,7 +333,7 @@ used here for a system's block.
 
 The heap lends blocks of memory from two pools, one in IWRAM and one in EWRAM;
 the last block taken is the first given back, and the whole heap is emptied
-before each sequence ([Runtime](src/runtime/README.md#the-heap)).
+before each sequence ([System code](src/system/README.md#the-heap)).
 
 Evidence: plain English.
 
@@ -324,7 +348,7 @@ Evidence: plain English; the project's own word.
 
 The console's two areas of RAM: IWRAM, 32 KB inside the processor and the
 fastest it has, and EWRAM, 256 KB beside it and slower
-([Cartridge and memory](src/cartridge/README.md#memory-map)).
+([System code](src/system/README.md#memory-map)).
 
 Evidence: tradition: the hardware's own names.
 
@@ -336,23 +360,67 @@ and the fast routines in IWRAM.
 
 Evidence: plain English; the project's own word.
 
+### Game Pak
+
+The cartridge as hardware: its ROM, cut into [banks](#bank) with their
+far-call tables, the [resource directory](#resource-directory), and the
+[flash chip](#flash-chip) that holds the saves
+([The Game Pak](src/gamepak/README.md)). Folder, file and symbol names say
+Game Pak (`src/gamepak/`); prose may say cartridge for the physical thing.
+
+Evidence: Nintendo: "Game Pak", the instruction booklets' word for the
+cartridge; tradition: GBATEK's "GamePak ROM", "GamePak SRAM" and "GamePak
+Waitstates".
+
+### Flash chip
+
+The 64 KB chip on the cartridge the three save [files](#file-and-part) are
+written to, 16 sectors of 4 KB, driven by the library in
+`src/gamepak/flash/` for whichever maker's chip the cartridge holds
+([The Game Pak](src/gamepak/README.md#the-flash-chip)).
+
+Evidence: the hardware's word, GBATEK's "GamePak Flash ROM"; the library's
+file names are the project's, from the chip makers' names as GBATEK lists them
+(Atmel, SST, Macronix).
+
 ### Bank
 
 One of the fourteen stretches the main image is cut into, each starting at a
 fixed address, with space after its code, and opening with a
 [far-call](#far-call) table, so
 one bank can grow without moving anything another depends on
-([Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks)).
+([The Game Pak](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)).
 Every bank is always in place; none is switched in or out.
 
 Evidence: plain English; the project's own word.
+
+### Bank folder
+
+A folder of `src/` that holds one or more banks' code, grouped by the
+credits' four programming divisions: the System's `system/` (bank 00, the
+RAM side and the main routine) beside `gamepak/` (the Game Pak, not a
+division); the Field's `field/` (banks 01, 04, 11 and 12); the Battle's
+`battle/` (bank 07) and `battle_effect/` (bank 08); and the User
+Interface's `window/` (bank 02), `menu/` (bank 05, with the credits, bank
+09, and the Title's intro, bank 10) and `shop/` (bank 06). `game/` (bank 03,
+[Game rules](#game-rules)) and `sound/` (bank 13, [Sound](#sound)) belong to
+no programming division. Within a bank folder, an object written as parts
+keeps them in a folder of its own name ([Object](#object)), and a header
+for one bank folder sits in `include/<folder>/`
+([Source](src/README.md#banks-and-folders)).
+
+Evidence: Camelot: the credits' four Programming divisions, "System",
+"Battle", "Field" and "User Interface" (`gCredits_Lines`); `window`,
+`menu` and `shop` from their own entries; plain English for the grouping.
 
 ### Far call
 
 A call from one bank into another through the callee bank's far-call table,
 an 8-byte jump named after the function with `Far` added (`Battle_RunFar`
-leads to `Battle_Run`); only the runtime bank is called directly
-([System](system.md#banks-and-far-calls)).
+leads to `Battle_Run`); only the System's bank 00 is called directly
+([System](system.md#banks-and-far-calls)). The tables are in
+`src/gamepak/far_call/`, one per bank, and their C names in
+`include/gamepak/far_call/`.
 
 Evidence: tradition: ジャンプテーブル for the table; "far call" is plain English.
 
@@ -369,9 +437,12 @@ Evidence: plain English; the project's own word.
 A packed piece of code unpacked into one 32 KB area of EWRAM, `gOverlayArea`,
 when it is needed: each holds the code of one scene or of a few neighbouring
 scenes, 96 in all for 201 scenes, and only one is loaded at a time
-([System](system.md#overlays)).
+([System](system.md#overlays)). Its packed streams and link script are in
+`src/system/overlay/`, its code in `src/scene/` or `src/debug/`, and an
+overlay's globals still written in assembly in `src/scene/bss/`.
 
-Evidence: tradition: the GNU linker's word.
+Evidence: tradition: the GNU linker's word; the linker's `.bss` for the
+globals' folder.
 
 ### Entry table and import table
 
@@ -379,7 +450,7 @@ The two tables an overlay meets the main image through: the entry table opens
 it with six veneers the field calls to ask the scene its questions
 (`struct SceneEntryPoints`), and the import table ends it with one veneer for
 each main-image function it calls
-([Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+([System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
 Evidence: plain English.
 
@@ -387,7 +458,7 @@ Evidence: plain English.
 
 The one table of every packed thing on the cartridge, an overlay, a map or an
 image, found by its row
-([Cartridge and memory](src/cartridge/README.md#the-resource-directory-and-table-order)).
+([The Game Pak](src/gamepak/README.md#the-resource-directory-and-table-order)).
 
 Evidence: plain English.
 
@@ -395,7 +466,7 @@ Evidence: plain English.
 
 A file is one of the three saves on the cartridge. Each is kept as two parts,
 and each copy of a part sits in one 4 KB sector of the flash chip
-([Runtime](src/runtime/README.md#saving)).
+([System code](src/system/README.md#saving)).
 
 Evidence: Camelot: "Please choose a file." (きろくばしょを えらんでください).
 
@@ -411,7 +482,7 @@ Evidence: tradition: the hardware's BG.
 
 A sprite is a small image the hardware draws over or between the background
 layers; OAM, the object attribute memory, is the hardware's list of them,
-rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
+rebuilt every frame ([System code](src/system/README.md#the-frame-loop)).
 
 Evidence: tradition: スプライト and the hardware's OAM.
 
@@ -464,7 +535,8 @@ Evidence: tradition: ラインスクロール.
 Every sound the game plays, music, a jingle or a sound effect (SE), is asked
 for by a sound number: below 80 music, from 80 the jingles, and from 100 the
 sound effects ([Sound](src/sound/README.md#what-a-sound-number-means)). The
-sound driver plays them.
+sound driver plays them; its code, with the mixer copied into IWRAM, is in
+`src/sound/`, and the music and samples in `games/tbs/sound/`.
 
 Evidence: Camelot: the credits' "Music" and "Sound Effects", and The Lost
 Age's sound test's "Music", "Jingle" and "SE".
@@ -474,7 +546,8 @@ Age's sound test's "Music", "Jingle" and "SE".
 ### Field
 
 Everywhere the party walks, a town, a dungeon or the World Map, and the code
-that runs it ([Field](field.md)).
+that runs it ([Field](field.md)). Its code is in `src/field/`
+([Field code](src/field/README.md)).
 
 Evidence: Camelot: the credits' "Field", and せんとう&フィールド
 (`MsgUsableAnywhere`).
@@ -486,7 +559,8 @@ dungeon floor, the World Map, or a screen (the Title, the File Screen), 201
 in all, each running an overlay's code and drawn on a map. Each
 row carries Camelot's scene code (PLOGV00 for Vale on the stormy night of the
 prologue, TITLE, WORLD; `MsgDebugSceneCode`) and its area name (`MsgDebugAreaName`), which the debug scene selector shows
-([Field](field.md#scenes-and-areas)).
+([Field](field.md#scenes-and-areas)). Each scene's overlay is in `src/scene/`,
+with its entry and import tables in `scene/entry/` and `scene/import/`.
 
 Evidence: Camelot: The Lost Age's developer test message 05746 heads a location name シーン.
 
@@ -510,6 +584,8 @@ Evidence: Camelot: the area names.
 
 What a scene shows and stands on: three background layers and a grid of cells
 under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md)).
+Each map is a folder of `src/map/` named by its row of `gMaps`
+(`map_151/`), or for its place where one is known (`colosso/`).
 
 Evidence: Camelot: the credits' "Maps".
 
@@ -526,7 +602,7 @@ The World Map's tilted view drawn once into an ordinary background layer,
 freeing the tilt's layer for a menu's or an event's windows
 (`WorldMap_StartStillPicture`) ([Field](field.md#the-world-map)). The map R
 shows of the whole world is the world picture, a screen of its own
-([Running a scene](src/overworld/README.md#the-world-picture)).
+([Field code](src/field/README.md#the-world-picture)).
 
 Evidence: plain English for what the player sees, the view standing still.
 
@@ -561,6 +637,15 @@ scene's own trigger table says
 ([Field](field.md#cells-and-cell-behaviors)).
 
 Evidence: plain English; Camelot's 属性 (attribute) means an element.
+
+### Terrain
+
+The heights of the ground within a cell, worked out from its shape by the
+`Terrain_` family's curves (`field/terrain_tables.c`; The Lost Age's
+`field/terrain/`, which still says `Curve_`)
+([Field code](src/field/README.md#how-high-a-step-can-go)).
+
+Evidence: plain English.
 
 ### Actor
 
@@ -685,7 +770,8 @@ Sun's field programmers.
 A routine an event calls: `Event_` for speech, waits and destinations,
 `Actor_` for actors and `FieldCamera_` for the camera. An event calls most of
 them through one inline each in `event_inline.h`, beside `event.h`
-([Scenes](src/scene/README.md#events)).
+([Scenes](src/scene/README.md#events)). They are the parts of
+`src/field/event_commands.c`, under `field/event_commands/`.
 
 Evidence: plain English.
 
@@ -718,7 +804,8 @@ and area name, and the test scenes it reaches (`SceneId_Test0` to
 `SceneId_Test7`); in debug mode, the Pause menu's Rough menu, Recovery test
 and Restart quest; the parameter sets the Battle Arena's debug helper loads
 (`gDebug_ParameterSets`); and the sound test (`SoundTest_Run`)
-([Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached)).
+([Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached)). The
+debug menus' three overlays are in `src/debug/`.
 
 Evidence: Camelot: the menus' labels ("Rough menu", "Recovery test",
 パラメータセット), the scene codes TEST0 to TEST7 and The Lost Age's サウンドテスト.
@@ -728,7 +815,8 @@ Evidence: Camelot: the menus' labels ("Rough menu", "Recovery test",
 ### Battle
 
 The fight between the party and a formation of enemies, a sequence of its own
-([Battle](battle.md)).
+([Battle](battle.md)). Its code is in `src/battle/`, and the opening
+transition's curtain pictures in `battle/transition/`.
 
 Evidence: Camelot: the credits' "Battle".
 
@@ -776,24 +864,36 @@ Evidence: plain English.
 
 What an ability plays over a battle, drawn by code: Quake's shaking
 ground, a summon's arrival. It decides when a hit shows, never what it does
-([Battle effects](src/battle_effect/README.md)).
+([Battle effects](src/battle_effect/README.md)). Its code is in
+`src/battle_effect/`, and its sheets in `src/graphics/battle_effects/`.
 
 Evidence: Camelot: the credits' "Battle Effects", beside "Battle Characters"
-and "Battle Backgrounds".
+and "Battle Backgrounds", a Graphic Arts heading; the code is the Battle
+division's.
+
+### Battle background
+
+The picture behind a battle, chosen by the place it is fought in: the
+grassland, Goma Cave, a ship's deck (`src/graphics/battle_backgrounds/`).
+
+Evidence: Camelot: the credits' "Battle Backgrounds".
 
 ## The user interface
 
 ### User Interface
 
 The windows, the messages typed into them, the menus and the counters of the
-shops, sanctums and inns ([User Interface](user_interface.md)).
+shops, sanctums and inns ([User Interface](user_interface.md)). Its code is in
+`src/window/`, `src/menu/` and `src/shop/`, and its pictures in
+`src/graphics/ui/`.
 
 Evidence: Camelot: the credits' "User Interface".
 
 ### Window
 
 A bordered box the game opens for text or choices, growing out of its centre
-(`struct Window`) ([Windows](src/window/README.md#windows)).
+(`struct Window`) ([Windows](src/window/README.md#windows)). The window bank's
+code is in `src/window/`.
 
 Evidence: Camelot: ウインドウ, as in "Window color" (`MsgWindowColorLabel`).
 
@@ -823,3 +923,153 @@ the world picture ([User Interface](user_interface.md)).
 
 Evidence: Camelot: "To the File Screen", "The Pause menu is not..."
 (`MsgFieldPauseUnavailable`), the scene label TITLE; the rest plain English.
+
+### Menu
+
+The field menu and its Psynergy, Djinn, Item and Status screens, kept in
+their own bank (`src/menu/`), with the staff credits and the Title's intro,
+which the Title calls ([Menus](src/menu/README.md)).
+
+Evidence: Camelot: "Rough menu" (`MsgWorkspaceRoughMenu`), "Menu test" and
+the debug row MENU.
+
+### Shop
+
+The counters of the shops, sanctums and inns, one bank (`src/shop/`)
+([Shops](src/shop/README.md)).
+
+Evidence: the game: "weapon shop", "Thank you for shopping".
+
+## The folders
+
+Each folder of `src/` is a [bank folder](#bank-folder), a place where one
+kind of thing gathers, or one of the folders below.
+
+### Game rules
+
+The game bank's code and tables: what a unit, an item or a Djinni is and does,
+which the field, the battles and the menus all ask (`src/game/`,
+[Game rules](src/game/README.md)); no programming division is credited with
+it.
+
+Evidence: Camelot: the credits' "Game Design" and "Game Planning"; plain
+English "game rules", said so.
+
+### Graphics
+
+The pictures in editable form, each folder named for the credits' heading, the
+game's word or the place it belongs to, with the `.s` files that only place
+them; a picture only a mixed data file reads sits beside that file
+(`src/graphics/`, [Graphics](src/graphics/README.md)). The display headers
+several divisions read are in `include/graphics/`.
+
+Evidence: Camelot: the credits' "Graphic Arts"; plain English.
+
+### Graphics folders
+
+- `battle_backgrounds`: the [battle backgrounds](#battle-background).
+  Evidence: Camelot: the credits' "Battle Backgrounds".
+- `battle_effects`: the [battle effects](#battle-effect)' sheets and
+  palettes. Evidence: Camelot: the credits' "Battle Effects".
+- `field_effects`: the sparks field Psynergy draws. Evidence: the
+  [field effect](#field-effect)'s word.
+- `font`: the text font, its widths and character maps. Evidence: plain
+  English.
+- `monster`: the enemies' battle pictures. Evidence: Camelot: the credits'
+  "Monster Design"; the game: "Monsters won't attack".
+- `palettes`: the window palette and the basic sprite palettes. Evidence:
+  plain English.
+- `palette_editor`: the debug palette editor's swatch, which the debug menus
+  reach. Evidence: plain English.
+- `sprite`: every sprite sheet and its animations. Evidence: the hardware's
+  word ([Sprite and OAM](#sprite-and-oam)); Camelot: the credits' "Map
+  Characters" and "Battle Characters" for the work.
+- `tileset`, with `set_NN/` and `palettes/`: the tiles and palettes a
+  map's [cell pictures](#cell-picture) are drawn from. Evidence: tradition:
+  the tile set; Camelot: the credits' "Maps" for the work.
+- `ui`, with `icons/`, `marks/`, `menu_icons/`, `menu_titles/`,
+  `menu_cursor/`, `menu_sprites/` and `sprite_cursors/`: every
+  [User Interface](#user-interface) picture. Evidence: Camelot: the credits'
+  "User Interface", whose banks place them; plain English for the subfolders.
+- The Lost Age's `ending/`, `lettering/`, `summon/`, `field/` and
+  `ui/headings/`. Evidence: plain English for what they hold, kept until
+  The Lost Age's own pass reads them.
+
+### Places and minigames
+
+The folders named for a place or game thing, each with its evidence in H3's
+form:
+
+- `colosso`, the Colosso's lettering, counters and gauge: ★ Named from the
+  game: "Colosso".
+- `lamakan_desert`, the desert's heat gauge: ★ Named from its area name:
+  Lamakan Desert.
+- `sol_sanctum_statue`, the statue room's scrolling rows: ★ Named from its
+  area name: Sol Sanctum.
+- `lucky_dice` and `lucky_wheels`, the two minigames' pictures and tables:
+  ★ Named from the game: "Lucky Dice", "Lucky Wheels".
+- `world_map`, the World Map's tiles and the lighthouse transition: ★ Named
+  from the game: "World Map".
+- `title`, the Title's pictures and its prompt: Camelot: the scene label
+  TITLE.
+- `credits`, the staff roll's font: Camelot: the credits themselves ("GOLDEN
+  SUN STAFF CREDITS").
+
+### Tileset
+
+The tiles and palette a map's cell pictures are drawn from, one sheet per
+layer (`src/graphics/tileset/`).
+
+Evidence: tradition: the tile set; plain English.
+
+### Monster
+
+An enemy as drawn, its battle picture (`src/graphics/monster/`); in the code
+an enemy is a [unit](#unit).
+
+Evidence: Camelot: the credits' "Monster Design"; the game: "Monsters won't
+attack".
+
+### The Lost Age's folders
+
+The Lost Age takes the same top folders, and inside them keeps family folders
+of its own until its own pass:
+
+- `field/camera`, `event`, `map`, `script` and `field_effect`: the same as
+  the [Field](#field)'s camera, [events](#event), [maps](#map),
+  [actor scripts](#actor-script) and [field effects](#field-effect).
+- `field/object`: The Lost Age's word for an [actor](#actor) until its pass.
+- `field/field_sequence`, `event_commands`, `lucky_dice`, `lucky_wheels`
+  and `terrain`: the objects of the banks that in The Broken Seal are
+  `field_sequence.c`, `event_commands.c`, `lucky_dice.c`,
+  `lucky_wheels.c` and the [terrain](#terrain) tables.
+- `battle/motion`, `party` and `summon`: plain English for the battle's
+  motion, its party and the [summons](#summons).
+- `menu/ability`, `item`, `credits` and `title_intro`: the field menu's
+  screens, and the banks of the staff credits and the Title's intro.
+- `game/character`, `djinn`, `inventory`, `item` and `party`: the
+  same as the [Game rules](#game-rules)' characters, [Djinn](#djinn),
+  inventory, items and [party](#the-party).
+- `system/flags`, `save`, `serial`, `task`, `resource` and
+  `overlay`: the [game flags](#game-flag), saving, the link cable, the
+  [tasks](#task), the [resource directory](#resource-directory)'s loader and
+  the [overlays](#overlay).
+- `sound/driver`: the m4a driver's assembly.
+- `scene/clear`, the scene after the Title with its password grid, and
+  `scene/lobby`, where a link battle is arranged: named from
+  `gScene_AreaNameRules` at that pass. `debug/level`, `psynergy_test`,
+  `psynergy_test_2`, `rooms` and `shop_test`: the
+  [debug menus](#debug-menus)' overlays.
+
+Evidence: the same as the entries they share, or plain English, said so.
+
+### Placeholders
+
+`field/work9c/` and `field/worka0/` are named for heap slot offsets `0x9c`
+and `0xa0` (their headers: "Heap-slot 0x9c workspace: eight slots and 128
+nodes"), and `battle/presentation/` for a guess. Each is a placeholder until
+The Lost Age's own pass, which names it from its slot's readers
+(`HEAP_SLOT_` and its family) and, for `presentation/`, from its 47 files'
+families.
+
+Evidence: placeholder: no evidence yet, said so.

@@ -14,58 +14,43 @@ every name here is ours.
 
 ## What each folder holds
 
-The folders are grouped by the four divisions the game's credits give its
-programming, as [the front page](../README.md#the-four-divisions) describes
-them.
+The code folders are grouped by the four divisions the game's credits give
+its programming, as [the front page](../README.md#the-four-divisions) describes
+them; each holds the code of one or more [banks](../glossary.md#bank)
+([below](#banks-and-folders)), and the other folders hold one kind of thing
+from wherever the linker places it. Each folder name's source is in the
+[glossary](../glossary.md#bank-folder).
 
 [System](../system.md), the base code every other part runs on:
 
-- [Runtime](runtime/README.md) starts the console and lets time pass through
-  [`wait()`](../glossary.md#wait), one [frame](../glossary.md#frame) at a time,
-  with the [tasks](../glossary.md#task), the
-  [heap](../glossary.md#heap-and-pools), the buttons, saving and the link
-  cable.
-- [Cartridge and memory](cartridge/README.md) holds the memory map, the
-  [far-call](../glossary.md#far-call) tables, the overlay stubs, the flash
-  save library and the [resource directory](../glossary.md#resource-directory),
-  the numbered list through which every image, table and overlay is found.
-- [Graphics](graphics/README.md) holds the pictures, each with the assembly
-  that only places it.
-- [Sound](sound/README.md) holds the sound layer and Nintendo's
-  MusicPlayer2000 driver; the music and samples themselves are in
-  [`games/tbs/sound`](../sound).
+- [System code](system/README.md) starts the console and lets time pass
+  through [`wait()`](../glossary.md#wait), one [frame](../glossary.md#frame)
+  at a time, with the [main routine](../glossary.md#main-routine), the
+  [tasks](../glossary.md#task), the [heap](../glossary.md#heap-and-pools), the
+  buttons, saving, the link cable, the memory map and the
+  [overlays](../glossary.md#overlay).
+- [The Game Pak](gamepak/README.md) holds what belongs to the cartridge
+  itself: the ROM header, the [far-call](../glossary.md#far-call) tables, the
+  [resource directory](../glossary.md#resource-directory), the numbered list
+  through which every image, table and overlay is found, and the flash chip
+  the saves are written to.
 
 [Field](../field.md), everything outside a battle:
 
-- [Running a scene](overworld/README.md), `field_sequence.c` and
-  `event_commands.c` in `field`, runs one scene from its set-up to the
+- [Field code](field/README.md) is the code under every town, dungeon and the
+  world map: the [actors](../glossary.md#actor), walking, loading, scrolling
+  and drawing the map, and the [field sequence](../glossary.md#field-sequence)
+  in `field_sequence.c`, which runs one scene from its set-up to the
   [exit](../glossary.md#exit) the party leaves by, with random encounters,
-  field [Psynergy](../glossary.md#psynergy-and-pp) and the event commands.
-  `MainRoutine_Run`, [the main routine](../glossary.md#main-routine), which
-  runs one [sequence](../glossary.md#sequence) after another, is in the same
-  bank, in [main_routine.c](system/main_routine.c).
-- [The field bank](field/README.md) is the code under every town, dungeon and
-  the world map: the [actors](../glossary.md#actor), walking, and loading,
-  scrolling and drawing the map.
-- [Scenes](scene/README.md) holds the scenes' overlays: who stands where, the
-  [triggers](../glossary.md#trigger) and the [events](../glossary.md#event),
-  and the three scenes that are screens: the Title, the File Screen and the
-  Battle Arena.
-- [Maps](map/README.md) holds the [maps](../glossary.md#map) as data.
-- [Debug scenes](debug/README.md) holds the ten debug scenes the cartridge
-  keeps.
+  field [Psynergy](../glossary.md#psynergy-and-pp) and the event commands
+  (`event_commands.c`), and Lucky Dice and Lucky Wheels.
 
-[Battle](../battle.md), a fight and the rules it asks about:
+[Battle](../battle.md), a fight:
 
 - [Battles](battle/README.md) runs a fight: the order of actions, the enemies'
   choices, what each ability does to its targets and the spoils.
 - [Battle effects](battle_effect/README.md) draws what each ability shows on
   screen, one function for each battle effect.
-- [Game rules](game/README.md) holds the party's state and the rules other
-  code asks about: [units](../glossary.md#unit) and their stats, items,
-  levels, classes, [Djinn](../glossary.md#djinn) and the
-  [game flags](../glossary.md#game-flag), with the C tables that define every
-  item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
 
 [User Interface](../user_interface.md), the windows, menus and shops:
 
@@ -78,12 +63,33 @@ them.
 - [Shops](shop/README.md) holds every counter that buys, sells, repairs or
   heals, and the inn.
 
+Beside the four divisions:
+
+- [Game rules](game/README.md) holds the party's state and the rules every
+  division asks about: [units](../glossary.md#unit) and their stats, items,
+  levels, classes, [Djinn](../glossary.md#djinn) and the
+  [game flags](../glossary.md#game-flag), with the C tables that define every
+  item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
+  No programming division is credited with it.
+- [Sound](sound/README.md) holds the sound layer, Nintendo's MusicPlayer2000
+  driver and the mixer copied into IWRAM; the music and samples themselves are
+  in [`games/tbs/sound`](../sound).
+- [Scenes](scene/README.md) holds the scenes' overlays: who stands where, the
+  [triggers](../glossary.md#trigger) and the [events](../glossary.md#event),
+  and the three scenes that are screens: the Title, the File Screen and the
+  Battle Arena.
+- [Debug scenes](debug/README.md) holds the three debug overlays and the ten
+  debug scenes the cartridge keeps.
+- [Maps](map/README.md) holds the [maps](../glossary.md#map) as data.
+- [Graphics](graphics/README.md) holds the pictures, each with the assembly
+  that only places it.
+
 ## Banks and folders
 
 [`main.ld`](../main.ld) lays the main image out in fourteen banks, each after
 the first starting at an address fixed per
 [edition](../glossary.md#editions); other banks call a bank's functions
-through its far-call table, except the runtime bank's, which they call
+through its far-call table, except the System's bank 00, which they call
 directly; its table, at the start of the cartridge, serves only the scenes
 ([System](../system.md#banks-and-far-calls)). Each large bank is one folder,
 and each small bank's code sits in the folder it belongs with. The object
@@ -93,11 +99,11 @@ far-call tables.
 
 | Place | Far-call table | Folder |
 | --- | --- | --- |
-| `rom_main_00` | `SYSTEM.S` | `runtime`, with the decoders and the flash library from `cartridge` |
+| `rom_main_00` | `SYSTEM.S` | `system`, with the flash library in `gamepak/flash` |
 | `rom_main_01` | `FIELD.S` | `field` |
 | `rom_main_02` | `WINDOW.S` | `window` |
 | `rom_main_03` | `GAME.S` | `game` |
-| `rom_main_04` | `FIELD_SEQUENCE.S` | `field` (`field_sequence.c`, `event_commands.c`) |
+| `rom_main_04` | `FIELD_SEQUENCE.S` | `system/main_routine.c`, then `field` (`field_sequence.c`, `event_commands.c`) |
 | `rom_main_05` | `MENU.S` | `menu` |
 | `rom_main_06` | `SHOP.S` | `shop` |
 | `rom_main_07` | `BATTLE.S` | `battle` |
@@ -110,9 +116,10 @@ far-call tables.
 
 After the banks come the sound driver with the music and samples, then the
 data the resource directory finds, with `SPRITE.S`, a fifteenth far-call
-table whose one entry is the resource metadata lookup. `graphics`, `map`, `sound` and `cartridge`
-also gather one kind of thing (images, maps, sound, the memory map) from
-wherever the linker places it.
+table whose one entry is the sprite metadata lookup in
+`system/sprite_metadata.c`. The far-call tables are all in
+`gamepak/far_call/`, and `graphics`, `map` and `sound` also gather one kind
+of thing (images, maps, sound) from wherever the linker places it.
 
 ## Objects and parts
 
@@ -158,7 +165,7 @@ holds them.
 
 Code several scenes use is in headers under `scene/shared/`, and each scene
 that includes one compiles its own copy.
-[Cartridge and memory](cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+[System code](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes how an overlay is packed and loaded.
 
 | Folder | Overlays |
@@ -170,8 +177,8 @@ describes how an overlay is packed and loaded.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types,
 structures, flags, sounds and the event calls. The `Makefile` puts `include`
-and its folders `battle`, `field`, `game`, `graphics`, `lib`, `menu`, `sound`
-and `system` on the include path, so code includes those headers by name
+and its folders `battle`, `field`, `game`, `gamepak`, `graphics`, `menu`,
+`shop`, `sound`, `system` and `window` on the include path, so code includes those headers by name
 alone. Each compiled C file, a module, has a
 [module header](../glossary.md#module-header) at the same path under
 [`include/module`](../include/module) (`module/battle/battle.h` for
@@ -184,7 +191,7 @@ beside it.
 | `include/sounds.h` | the music, jingles and sound effects |
 | `include/field/event.h` | the calls events are written in |
 | `include/module/<path>.h` | what the C file at `<path>.c` defines |
-| `include/farcall/` | each far-call table's `Far` names |
+| `include/gamepak/far_call/` | each far-call table's `Far` names |
 
 ## C and assembly
 
@@ -244,7 +251,7 @@ place data, not code: an image built from the PNG beside it, a table from its
 is the first C to run; it ends by calling `MainRoutine_Run` through its
 far-call stub. The main routine, in
 [system/main_routine.c](system/main_routine.c), is
-short enough to read whole. [Runtime](runtime/README.md#start-up) follows
+short enough to read whole. [System code](system/README.md#start-up) follows
 power-on step by step.
 
 To find the code behind something in the game, search for its English name.

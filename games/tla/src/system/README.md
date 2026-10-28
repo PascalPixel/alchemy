@@ -6,9 +6,10 @@ resident IWRAM code, the interrupt table, the heap, the
 (`resource/`), the save format (`save/`), the link cable (`serial/`), the game
 flags (`flags/`), the maths, the [overlay](../../../tbs/glossary.md#overlay)
 streams (`overlay/`) and the [main routine](../../../tbs/glossary.md#main-routine).
-[Cartridge and memory](../../../tbs/src/cartridge/README.md) and
-[Runtime](../../../tbs/src/runtime/README.md) explain, for The Broken Seal,
-why the image is linked as it is and how a [frame](../../../tbs/glossary.md#frame) runs.
+[System code](../../../tbs/src/system/README.md) and
+[The Game Pak](../../../tbs/src/gamepak/README.md) explain, for The Broken
+Seal, how a [frame](../../../tbs/glossary.md#frame) runs and why the image is
+linked as it is.
 The ROM header, the far-call tables, the resource directory and the flash chip
 are in [The Lost Age: Game Pak](../gamepak/README.md).
 

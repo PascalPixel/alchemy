@@ -38,7 +38,7 @@ code uses, most of it after the code, at the end of the cartridge. The placing i
 `battle_backgrounds/battle_backgrounds.s` places `Battle_GrasslandBackdrop` from
 `grassland.gbapal` and the packed `grassland.bitmap.d7`. An image the game asks
 for by number is also a row of the
-[resource directory](../cartridge/README.md#the-resource-directory-and-table-order):
+[resource directory](../gamepak/README.md#the-resource-directory-and-table-order):
 the grassland is asked for that way both by a battle on open ground and by the
 credits. Some packed images are followed by a few bytes
 [Camelot](../../glossary.md#camelot)'s packing tool left behind, kept beside

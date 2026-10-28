@@ -115,10 +115,10 @@ ROM's tail; `driver.c`, `audio.c` and `tables.c` are compiled with
 
 Every part of the game plays sound through `Sound_PlayFar`: scenes name their
 music on entry, menus click, battle effects play their impacts. The VBlank
-handler in [Runtime](../runtime/README.md#the-frame-loop) steps the music's
+handler in [System code](../system/README.md#the-frame-loop) steps the music's
 volume and enters the mixer every VBlank, and the mixer's resident code is
 part of what start-up copies into IWRAM
-([Cartridge and memory](../cartridge/README.md#memory-map)). The sounds and
+([System code](../system/README.md#memory-map)). The sounds and
 samples themselves are data in `games/tbs/sound`.
 
 ## Limits

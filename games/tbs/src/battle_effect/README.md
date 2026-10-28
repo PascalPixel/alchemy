@@ -333,7 +333,7 @@ starts: [Battles](../battle/README.md) works out the action, its targets and its
 damage, and [Battle](../../battle.md#battle-effects) stages the effect. The
 effect only draws, and tells the battle when to show the damage. While it
 draws it borrows from the rest of the game: the heap from
-[Runtime](../runtime/README.md), the map grid's buffer
+[System code](../system/README.md), the map grid's buffer
 ([Maps](../map/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 blitter builder also serves the battle's star field and the Lucky Wheels.

@@ -3,7 +3,7 @@
 The Lost Age's Game Pak: the ROM header (`rom_header.s`), the
 [far-call](../../../tbs/glossary.md#far-call) tables (`far_call/`), the
 resource directory (`resource_directory.s`) and the flash chip that holds the
-saves (`flash/`). [Cartridge and memory](../../../tbs/src/cartridge/README.md)
+saves (`flash/`). [The Game Pak](../../../tbs/src/gamepak/README.md)
 explains them for The Broken Seal.
 
 ## What differs from The Broken Seal

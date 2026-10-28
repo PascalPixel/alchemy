@@ -214,7 +214,7 @@ element) and where the scene's people stand. `Save_ToChosenFile`
 ([save.c](screens/save.c)) does all of it; its file list,
 `FileList_SelectFile`, is the same one the File Screen's Continue, Copy and
 Erase use. How a file is written to the flash so that a save is never
-lost is in [Runtime](../runtime/README.md#saving).
+lost is in [System code](../system/README.md#saving).
 
 | Name | Value | Meaning |
 | --- | --- | --- |

@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "field_event.h"
 #include "adventure.h"
 
@@ -35,7 +35,7 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
   return 0;
 }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gAdventure.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
     return gScenePlacementsEntrance99;
   return gScenePlacements;

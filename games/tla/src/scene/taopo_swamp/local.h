@@ -5,13 +5,13 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ScenePlacement gScenePlacements[];
+extern const struct ActorPlacement gScenePlacements[];
 
 extern char SceneId_Ov678Room1;
 extern char SceneId_Ov678Room2;

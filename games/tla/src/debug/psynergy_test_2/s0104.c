@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "adventure.h"
 #include "event_work.h"

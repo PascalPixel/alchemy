@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 extern u32 gData_0200159c[];
 extern u32 gData_020015d8[];
@@ -41,7 +41,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {57, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(344), FACING_NORTHWEST, 0,
      0},
     {311, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(24), FACING_SOUTHEAST, 0,
@@ -49,6 +49,6 @@ struct ScenePlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
-    {SCENE_EVENTS_END},
+struct Trigger gSceneEvents[] = {
+    {TRIGGERS_END},
 };

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "resource.h"
 #include "dma.h"
 #include "mem.h"

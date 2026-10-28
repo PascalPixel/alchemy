@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -30,24 +30,24 @@ void Func_0200014c(void);
 void Func_02000178(s32 a, s32 b);
 void Func_02000180(s32 a, s32 b);
 
-const struct ScenePlacement *Func_0200004c(void) {
+const struct ActorPlacement *Func_0200004c(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov683 &&
       (u16)(gAdventure.entrance - 8) <= 1)
-    return (const struct ScenePlacement *)gData_020003a8;
-  return (const struct ScenePlacement *)gData_02000228;
+    return (const struct ActorPlacement *)gData_020003a8;
+  return (const struct ActorPlacement *)gData_02000228;
 }
 
 void Func_0200008c(s32 value) { Func_02000178(25, value); }
 
 void Func_02000098(s32 value) { Func_02000180(10, value); }
 
-const struct SceneEvent *Func_020000a4(void) {
+const struct Trigger *Func_020000a4(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov683 &&
       (u16)(gAdventure.entrance - 8) <= 1)
-    return (const struct SceneEvent *)gData_02000780;
+    return (const struct Trigger *)gData_02000780;
   if (GameFlag_Test(0x97f))
-    return (const struct SceneEvent *)gData_020005ac;
-  return (const struct SceneEvent *)gData_020003d8;
+    return (const struct Trigger *)gData_020005ac;
+  return (const struct Trigger *)gData_020003d8;
 }
 
 s32 Func_020000fc(void) {

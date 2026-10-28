@@ -13,7 +13,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "input.h"
 #include "text/msg_ids.h"
 
@@ -31,7 +31,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   return gScenePlacements;
 }
 

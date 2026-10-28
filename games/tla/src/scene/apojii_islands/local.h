@@ -5,15 +5,15 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "field_sprite.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
+extern const struct ActorPlacement gScenePlacements[];
+extern const struct Trigger gSceneEvents[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

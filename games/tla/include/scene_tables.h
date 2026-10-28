@@ -1,10 +1,14 @@
-#ifndef TLA_FIELD_SCENE_H
-#define TLA_FIELD_SCENE_H
+#ifndef ALCHEMY_SCENE_TABLES_H
+#define ALCHEMY_SCENE_TABLES_H
+
+/// @file
+/// The scene table formats: the scene table, entrances, exits, actor
+/// placements and triggers, as The Broken Seal's scene_tables.h has them.
 
 #include "types.h"
 #include "adventure.h"
 
-struct SceneRecord {
+struct Scene {
   s16 resourceId;
   s8 group;
   s8 variant;
@@ -12,7 +16,7 @@ struct SceneRecord {
   s16 attributes;
 };
 
-extern const struct SceneRecord gField_SceneTable[];
+extern const struct Scene gScenes[];
 
 enum Facing {
   FACING_EAST = 0x0000,
@@ -52,7 +56,7 @@ struct SceneEntrance {
 #define SCENE_EXITS_END 0x1ff
 
 /// Actor placements.
-struct ScenePlacement {
+struct ActorPlacement {
   s16 sprite; ///< the actor's sprite; -1 ends the table
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
   s32 behavior;
@@ -67,8 +71,8 @@ struct ScenePlacement {
 #define PIXELS(value) ((value) << 16)
 
 /// Events.
-struct SceneEvent {
-  /// The kind and its detail; SCENE_EVENTS_END ends the table. Item events
+struct Trigger {
+  /// The kind and its detail; TRIGGERS_END ends the table. Item events
   /// read it as bits: 15..8 item | 4 on an actor | 3..0 kind (4)
   u32 control;
   /// What the event answers: an actor id or a tile code. Item events read it
@@ -80,7 +84,7 @@ struct SceneEvent {
 
 #define FIND_MESSAGE(message) (0x00400000 | (message))
 #define EVENT_SCRIPT(script) ((u32)(script))
-#define SCENE_EVENTS_END 0xffffffff
+#define TRIGGERS_END 0xffffffff
 
 struct SceneRegion;
 
@@ -95,9 +99,9 @@ struct SceneEntries {
   u32 exitsVeneer;
   const u32 *(*exits)(void);
   u32 placementsVeneer;
-  const struct ScenePlacement *(*placements)(void);
+  const struct ActorPlacement *(*placements)(void);
   u32 eventsVeneer;
-  const struct SceneEvent *(*events)(void);
+  const struct Trigger *(*events)(void);
   u32 regionsVeneer;
   const struct SceneRegion *(*regions)(void);
 };

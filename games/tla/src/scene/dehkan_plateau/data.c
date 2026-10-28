@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void Func_0200118c(void);
 void Func_020012c8(void);

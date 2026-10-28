@@ -4,7 +4,7 @@
 #include "actor.h"
 #include "edition.h"
 
-struct SceneEvent;
+struct Trigger;
 
 void Func_02000bc0(s32 id, s32 flag);
 struct Actor *Actor_GetById(s32 id);
@@ -16,14 +16,14 @@ extern const u8 gData_02001044[];
 extern const u8 gData_02001194[];
 extern const u8 gData_020012cc[];
 
-const struct SceneEvent *Func_02000080(void) {
+const struct Trigger *Func_02000080(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov680Room1)
-    return (const struct SceneEvent *)gData_02001044;
+    return (const struct Trigger *)gData_02001044;
   if (gAdventure.scene == (s32)&SceneId_Ov680Room2)
-    return (const struct SceneEvent *)gData_02001194;
+    return (const struct Trigger *)gData_02001194;
   if (gAdventure.scene == (s32)&SceneId_Ov680Room3)
-    return (const struct SceneEvent *)gData_020012cc;
-  return (const struct SceneEvent *)gData_0200102c;
+    return (const struct Trigger *)gData_020012cc;
+  return (const struct Trigger *)gData_0200102c;
 }
 
 void Func_020000d0(void) { Func_02000bc0(17, 0x300); }

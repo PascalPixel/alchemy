@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "mem.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 
 extern u8 gDebugMode;
@@ -64,11 +64,11 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
 /// game's four debug starts, gRenderOamEnabled set after stopping DMA 0, and
 /// three sequences that keep BG palettes 14 and 15.
 void ParentSequence_Run(s32 mode) {
-  const struct SceneRecord *table;
-  const struct SceneRecord *record;
+  const struct Scene *table;
+  const struct Scene *record;
   s32 entrance;
 
-  table = gField_SceneTable;
+  table = gScenes;
   if (gDebugMode && mode == 1) {
     gAdventure.scene = (s32)&SceneId_VenusLighthouseEntrance;
     gAdventure.entrance = 10;

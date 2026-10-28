@@ -18,24 +18,24 @@ extern const u8 gData_02002e64[];
 extern const u8 gData_02002f9c[];
 extern const u8 gData_02002fe4[];
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov678Room2)
-    return (const struct ScenePlacement *)gData_02002c6c;
+    return (const struct ActorPlacement *)gData_02002c6c;
   if (scene == (s32)&SceneId_Ov678Room4)
-    return (const struct ScenePlacement *)gData_02002d2c;
+    return (const struct ActorPlacement *)gData_02002d2c;
   if (scene == (s32)&SceneId_Ov678Room5)
-    return (const struct ScenePlacement *)gData_02002d5c;
+    return (const struct ActorPlacement *)gData_02002d5c;
   if (scene == (s32)&SceneId_Ov678Room7)
-    return (const struct ScenePlacement *)gData_02002dbc;
+    return (const struct ActorPlacement *)gData_02002dbc;
   if (scene == (s32)&SceneId_Ov678Room8)
-    return (const struct ScenePlacement *)gData_02002e04;
+    return (const struct ActorPlacement *)gData_02002e04;
   if (scene == (s32)&SceneId_Ov678Room9)
-    return (const struct ScenePlacement *)gData_02002f9c;
+    return (const struct ActorPlacement *)gData_02002f9c;
   if (scene == (s32)&SceneId_Ov678Room10)
-    return (const struct ScenePlacement *)gData_02002e64;
+    return (const struct ActorPlacement *)gData_02002e64;
   if (scene == (s32)&SceneId_Ov678Room11)
-    return (const struct ScenePlacement *)gData_02002fe4;
-  return (const struct ScenePlacement *)gData_02002c54;
+    return (const struct ActorPlacement *)gData_02002fe4;
+  return (const struct ActorPlacement *)gData_02002c54;
 }

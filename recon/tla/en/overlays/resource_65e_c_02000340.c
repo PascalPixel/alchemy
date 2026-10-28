@@ -3,7 +3,7 @@
 // work; the native issues it after them. Adopted in 573088529f, when it
 // matched without the option; back on the listing since.
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"

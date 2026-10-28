@@ -11,7 +11,7 @@
 // it twice. The table search above then branches the long way.
 #include "types.h"
 #include "ram_buffer.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
@@ -19,7 +19,7 @@
 // The field's event work (heap slot 0x6c): the placement tables spawned so
 // far, the actors by index and the field mode.
 struct FieldStepWork {
-  struct ScenePlacement *tables[4];
+  struct ActorPlacement *tables[4];
   u8 unk10[4];
   struct Actor *actors[66];
   u8 unk11c[0x6e];
@@ -65,7 +65,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 u32 Random16(void);
 
-void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
+void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   s32 index = 0;
   s32 i;

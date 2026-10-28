@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "edition.h"
 
 void Func_02000038(void);
@@ -660,7 +660,7 @@ u32 gData_02005b0c[] = {
 };
 // clang-format on
 
-struct ScenePlacement gData_02005b54[] = {
+struct ActorPlacement gData_02005b54[] = {
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, 0, 0, 0, FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, PIXELS(136), 0, PIXELS(424),
      FACING_SOUTH, 2, 0},

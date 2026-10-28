@@ -1,11 +1,11 @@
 #include "mars_lighthouse_aerie.h"
 
-const struct SceneEvent *Func_02000164(void) {
+const struct Trigger *Func_02000164(void) {
   if (gAdventure.entrance == 2)
-    return (const struct SceneEvent *)gData_0200644c;
+    return (const struct Trigger *)gData_0200644c;
   if ((u16)(gAdventure.entrance - 3) <= 2)
-    return (const struct SceneEvent *)gData_020066bc;
-  return (const struct SceneEvent *)gData_0200626c;
+    return (const struct Trigger *)gData_020066bc;
+  return (const struct Trigger *)gData_0200626c;
 }
 
 void Func_020001a0(void) {

@@ -1,4 +1,4 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 s32 Scene_PrepareMap(void) { return 0; }

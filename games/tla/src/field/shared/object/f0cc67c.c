@@ -2,7 +2,7 @@
 #include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 struct OverlayHeader {
   void *unk00[3];

@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);

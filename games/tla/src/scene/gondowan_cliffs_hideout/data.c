@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_02000074(void);
@@ -89,7 +89,7 @@ s32 gData_02000318[] = {
     0,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {2, 10, 0x98f, EVENT_SCRIPT(Func_02000074)},
     {0, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
@@ -102,5 +102,5 @@ struct SceneEvent gSceneEvents[] = {
     {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
     {0x8d15, 13, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };

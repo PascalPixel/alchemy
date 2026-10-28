@@ -1,13 +1,13 @@
 #include "types.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_RefreshLureCapFar(void);
 void Func_080c9de0(s32 id, s32 variant);
 
-#define SCENE_RECORD(id) (&gField_SceneTable[id])
+#define SCENE_RECORD(id) (&gScenes[id])
 
 /// The Broken Seal's Scene_ResetFlagsOnEnter with this game's flags, and
 /// Func_080c9de0 in place of the group's visited flag.

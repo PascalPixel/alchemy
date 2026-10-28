@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -27,12 +27,12 @@ extern const u8 gData_02001204[];
 extern const u8 gData_020013fc[];
 extern const u8 gData_020014a4[];
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gAdventure.scene == (s32)&SceneId_DailaInteriors2)
-    return (const struct ScenePlacement *)gData_020013fc;
+    return (const struct ActorPlacement *)gData_020013fc;
   if (GameFlag_Test(0x873))
-    return (const struct ScenePlacement *)gData_020014a4;
-  return (const struct ScenePlacement *)gData_02001204;
+    return (const struct ActorPlacement *)gData_020014a4;
+  return (const struct ActorPlacement *)gData_02001204;
 }
 
 void DailaInteriors_EmptyHook(void) {}

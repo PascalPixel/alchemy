@@ -3,7 +3,7 @@
 #include "actor.h"
 #include "adventure.h"
 #include "event_work.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 extern s32 gData_02002618;
 

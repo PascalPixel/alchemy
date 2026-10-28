@@ -7,8 +7,8 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   return gScenePlacements;
 }

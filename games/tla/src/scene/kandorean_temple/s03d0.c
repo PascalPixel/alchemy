@@ -5,8 +5,8 @@ extern u32 gData_020057c0[];
 extern u32 gData_020058b0[];
 extern u32 gData_02005958[];
 extern u32 gData_02005aa8[];
-extern struct ScenePlacement gData_02005b20[];
-extern struct ScenePlacement gData_02005be0[];
+extern struct ActorPlacement gData_02005b20[];
+extern struct ActorPlacement gData_02005be0[];
 
 void *Func_020003d0(void) {
   s32 scene = gAdventure.scene;

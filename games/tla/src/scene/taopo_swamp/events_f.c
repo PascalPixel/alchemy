@@ -85,30 +85,30 @@ extern const u8 gData_02003464[];
 extern const u8 gData_020034e8[];
 extern const u8 gData_02003560[];
 
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov678Room1)
-    return (const struct SceneEvent *)gData_02003038;
+    return (const struct Trigger *)gData_02003038;
   if (scene == (s32)&SceneId_Ov678Room2)
-    return (const struct SceneEvent *)gData_02003068;
+    return (const struct Trigger *)gData_02003068;
   if (scene == (s32)&SceneId_Ov678Room3)
-    return (const struct SceneEvent *)gData_02003128;
+    return (const struct Trigger *)gData_02003128;
   if (scene == (s32)&SceneId_Ov678Room4)
-    return (const struct SceneEvent *)gData_02003194;
+    return (const struct Trigger *)gData_02003194;
   if (scene == (s32)&SceneId_Ov678Room5)
-    return (const struct SceneEvent *)gData_020031e8;
+    return (const struct Trigger *)gData_020031e8;
   if (scene == (s32)&SceneId_Ov678Room6)
-    return (const struct SceneEvent *)gData_02003314;
+    return (const struct Trigger *)gData_02003314;
   if (scene == (s32)&SceneId_Ov678Room7)
-    return (const struct SceneEvent *)gData_02003338;
+    return (const struct Trigger *)gData_02003338;
   if (scene == (s32)&SceneId_Ov678Room8)
-    return (const struct SceneEvent *)gData_020033e0;
+    return (const struct Trigger *)gData_020033e0;
   if (scene == (s32)&SceneId_Ov678Room9)
-    return (const struct SceneEvent *)gData_020034e8;
+    return (const struct Trigger *)gData_020034e8;
   if (scene == (s32)&SceneId_Ov678Room10)
-    return (const struct SceneEvent *)gData_02003464;
+    return (const struct Trigger *)gData_02003464;
   if (scene == (s32)&SceneId_Ov678Room11)
-    return (const struct SceneEvent *)gData_02003560;
-  return (const struct SceneEvent *)gData_0200302c;
+    return (const struct Trigger *)gData_02003560;
+  return (const struct Trigger *)gData_0200302c;
 }

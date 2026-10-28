@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "event_work.h"
 
 // The field's event work as this function reads it: the scene's event list.
 struct FieldStepWork {
   u8 unk00[0x10];
-  const struct SceneEvent *events;
+  const struct Trigger *events;
 };
 
 s32 Field_FindNearbyTalkTarget(s32 owner);
@@ -24,7 +24,7 @@ s32 Item_MatchesFilter(s32 item, s32 filter);
 /// the event's item.
 s32 Event_FindFacingTrigger(s32 source) {
   struct FieldStepWork *runtime = Ram_HeapSlots->eventWork;
-  const struct SceneEvent *trigger = runtime->events;
+  const struct Trigger *trigger = runtime->events;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;

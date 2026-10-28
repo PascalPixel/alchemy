@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
 
@@ -20,11 +20,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gIdejimaExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   return gIdejimaPlacements;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   switch (gAdventure.entrance) {
   case 1:
   case 3:

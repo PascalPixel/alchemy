@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void Func_02000038(void);
 void Func_020000b0(void);
@@ -32,7 +32,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {289, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {157, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(504), 0x3000, 0, 0},
     {157, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(504), 0x5000, 0, 0},
@@ -43,7 +43,7 @@ struct ScenePlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {2, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000534)},
     {33, 3, CONDITION_ALWAYS, 3},
@@ -62,7 +62,7 @@ struct SceneEvent gSceneEvents[] = {
     {0x50008905, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200043c)},
     {0x10008715, 13, 0x196e, EVENT_SCRIPT(Func_0200045c)},
     {0x8715, 13, 0x196e, EVENT_SCRIPT(Func_02000468)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 // clang-format off

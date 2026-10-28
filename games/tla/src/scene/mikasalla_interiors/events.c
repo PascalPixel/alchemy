@@ -34,8 +34,8 @@ s32 Func_020000a0(void) {
 extern const u8 gData_02000a20[];
 extern const u8 gData_02000bac[];
 
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov65ERoom2)
-    return (const struct SceneEvent *)gData_02000bac;
-  return (const struct SceneEvent *)gData_02000a20;
+    return (const struct Trigger *)gData_02000bac;
+  return (const struct Trigger *)gData_02000a20;
 }

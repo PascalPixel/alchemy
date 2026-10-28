@@ -3,11 +3,11 @@
 #include "actor.h"
 #include "adventure.h"
 #include "iwram_call.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ScenePlacement gScenePlacements[];
+extern const struct ActorPlacement gScenePlacements[];
 
 struct WarpTarget {
   s32 scene;
@@ -245,7 +245,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   return gScenePlacements;
 }
 

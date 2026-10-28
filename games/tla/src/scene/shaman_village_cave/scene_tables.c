@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "adventure.h"
 #include "ram_buffer.h"

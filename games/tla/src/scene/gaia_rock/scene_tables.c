@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -16,10 +16,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern const u8 gData_02000f5c[];
 extern const u8 gData_02000f8c[];
 
-const struct ScenePlacement *Func_02000040(void) {
+const struct ActorPlacement *Func_02000040(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov680Room1)
-    return (const struct ScenePlacement *)gData_02000f5c;
+    return (const struct ActorPlacement *)gData_02000f5c;
   if (gAdventure.scene == (s32)&SceneId_Ov680Room2)
-    return (const struct ScenePlacement *)gData_02000f8c;
+    return (const struct ActorPlacement *)gData_02000f8c;
   return 0;
 }

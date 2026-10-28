@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "adventure.h"
 
 extern u8 gData_020017b0[];
@@ -83,4 +83,4 @@ void Func_02000748(s32 actor) {
   Func_02000d4c(Actor_GetById(gAdventure.currentOwner));
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

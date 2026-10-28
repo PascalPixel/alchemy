@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "edition.h"
 
@@ -131,7 +131,7 @@ s16 gData_02001300[] = {
 };
 // clang-format on
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {0, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
     {0, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
     {0, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000748)},
@@ -193,5 +193,5 @@ struct SceneEvent gSceneEvents[] = {
     {0x8715, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000740)},
     {0x9815, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000744)},
     {0x9815, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000744)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };

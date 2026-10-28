@@ -13,7 +13,7 @@
 #include "call.h"
 #include "field_effect.h"
 
-struct SceneEvent;
+struct Trigger;
 
 struct TundariaTowerEffectParams {
   u8 unk00[0x18];

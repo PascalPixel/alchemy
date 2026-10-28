@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "field_event.h"
 #include "ram_buffer.h"
 #include "adventure.h"
@@ -21,7 +21,7 @@
 
 enum { ENTRANCE_OPENING = 99 };
 
-const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 VenusLighthouse_Idle(void) { return 0; }
 

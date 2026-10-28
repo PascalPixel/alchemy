@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_020000c8(void);
@@ -28,7 +28,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {92, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(176), FACING_EAST, 2, 0},
@@ -57,7 +57,7 @@ struct ScenePlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {1, 2, CONDITION_ALWAYS, 2},
     {2, 9, 0x892, EVENT_SCRIPT(Func_02000440)},
@@ -67,7 +67,7 @@ struct SceneEvent gSceneEvents[] = {
     {0, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
     {0, 14, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouseEntrance_RunActorSparkBurst)},
     {0, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 // clang-format off

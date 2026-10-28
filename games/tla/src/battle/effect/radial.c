@@ -4,7 +4,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "motobj.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 
 extern const u8 gBattleEffect_SharedParticleScript[];

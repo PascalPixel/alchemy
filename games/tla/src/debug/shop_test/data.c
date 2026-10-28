@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void Func_0200012c(void);
 void Func_02000144(void);
@@ -62,7 +62,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {209, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(280), FACING_SOUTH, 0, 0},
     {202, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(280), FACING_SOUTH, 0, 0},
     {205, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(280), FACING_SOUTH, 0, 0},
@@ -92,7 +92,7 @@ struct ScenePlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {0, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000190)},
     {0, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200019c)},
     {0, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020001a8)},
@@ -119,5 +119,5 @@ struct SceneEvent gSceneEvents[] = {
     {0, 31, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {0, 32, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {0, 33, CONDITION_ALWAYS, (u32)(Func_02000664)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };

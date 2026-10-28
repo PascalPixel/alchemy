@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void Func_020006ac(void);
 void Func_0200078c(void);
@@ -148,7 +148,7 @@ s32 gData_02002180[] = {
     17,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
     {336, CONDITION_ALWAYS, (s32)gData_0200215c, PIXELS(664), 0, PIXELS(792),
@@ -220,7 +220,7 @@ s32 gScenePlacementsEntrance99[] = {
     0,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {1, 2, CONDITION_ALWAYS, 2},
     {1, 3, CONDITION_ALWAYS, 3},
@@ -257,5 +257,5 @@ struct SceneEvent gSceneEvents[] = {
      EVENT_SCRIPT(SceneState_ApplySixRectsAfterFlag161)},
     {0x40009085, 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(SceneState_ApplySixRectsAfter161)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };

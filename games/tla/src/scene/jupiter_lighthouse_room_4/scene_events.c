@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "text/msg_ids.h"
@@ -115,4 +115,4 @@ void Func_0200021c(void) {
   FieldMessage_Show(MsgFieldDoorLocked, 1);
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

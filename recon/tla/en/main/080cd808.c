@@ -18,7 +18,7 @@
 #include "types.h"
 #include "adventure.h"
 
-struct SceneEvent {
+struct Trigger {
   s32 flags;
   u8 target;
   u8 unk05;
@@ -32,14 +32,14 @@ extern char MsgSearchEmpty[];
 extern char MsgButFoundNothing[];
 void Leader_StopMoving(void);
 void FieldMessage_ShowFar(s32 message, s32 flags);
-struct SceneEvent *Func_080ccd78(s32 kind, s32 target);
+struct Trigger *Func_080ccd78(s32 kind, s32 target);
 s32 GameFlag_IsConditionActive(s32 condition);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 
 s32 Func_080cd808(s32 id) {
-  struct SceneEvent *event;
+  struct Trigger *event;
   s32 index;
   s32 kind;
   s32 condition;

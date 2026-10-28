@@ -8,7 +8,7 @@
 #include "adventure.h"
 #include "call.h"
 
-struct SceneEvent;
+struct Trigger;
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_ClearBit(s32 flag);

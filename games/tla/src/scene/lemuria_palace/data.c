@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_020000c8(void);
@@ -34,7 +34,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {157, CONDITION_ALWAYS, 1, PIXELS(912), 0, PIXELS(624), 0x5000, 1, 0},
     {156, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(520), 0x3000, 1, 0},
     {160, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(456), FACING_EAST, 3, 0},
@@ -71,7 +71,7 @@ s32 gData_02002378[] = {
     0x40038,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
@@ -125,7 +125,7 @@ struct SceneEvent gSceneEvents[] = {
     {243, 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors33))},
     {243, 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors34))},
     {451, 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors35))},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 u32 gData_02002608[] = {

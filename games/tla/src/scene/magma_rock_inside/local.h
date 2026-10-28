@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
 #include "frame.h"

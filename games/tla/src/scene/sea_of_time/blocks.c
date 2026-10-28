@@ -1,6 +1,6 @@
 #include "sea_of_time.h"
 #include "adventure.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 
 extern const u8 gData_020022d0[];
@@ -102,10 +102,10 @@ void Func_020015ec(void) {
   Func_02001fb4();
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov687Room1)
-    return (const struct SceneEvent *)gData_020022d0;
+    return (const struct Trigger *)gData_020022d0;
   if (gAdventure.entrance <= 4)
-    return (const struct SceneEvent *)gData_0200242c;
-  return (const struct SceneEvent *)gData_0200251c;
+    return (const struct Trigger *)gData_0200242c;
+  return (const struct Trigger *)gData_0200251c;
 }

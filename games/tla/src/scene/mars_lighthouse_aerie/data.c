@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "edition.h"
 
@@ -367,7 +367,7 @@ s16 gData_020066bc[] = {
     0, 0, 0, 0,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {0x9c05, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020001a0)},
     {2, 10, 0xa3d, EVENT_SCRIPT(Func_0200065c)},
     {0, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
@@ -394,7 +394,7 @@ struct SceneEvent gSceneEvents[] = {
     {2, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004c2c)},
     {2, 22, 0x202, EVENT_SCRIPT(Func_02004c94)},
     {2, 23, 0x1202, EVENT_SCRIPT(Func_02004d14)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 u32 gData_02006ad0[] = {

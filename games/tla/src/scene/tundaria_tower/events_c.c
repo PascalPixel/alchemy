@@ -18,20 +18,20 @@ void Func_02000fb8(s32 mode, s32 cue) {
     Func_02002ebc();
 }
 
-const struct SceneEvent *Func_02001044(void) {
+const struct Trigger *Func_02001044(void) {
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom1)
-    return (const struct SceneEvent *)gData_020037f8;
+    return (const struct Trigger *)gData_020037f8;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom2)
-    return (const struct SceneEvent *)gData_0200381c;
+    return (const struct Trigger *)gData_0200381c;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom3)
-    return (const struct SceneEvent *)gData_0200393c;
+    return (const struct Trigger *)gData_0200393c;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom4)
-    return (const struct SceneEvent *)gData_020039e4;
+    return (const struct Trigger *)gData_020039e4;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom5)
-    return (const struct SceneEvent *)gData_02003a5c;
+    return (const struct Trigger *)gData_02003a5c;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom6)
-    return (const struct SceneEvent *)gData_02003b28;
+    return (const struct Trigger *)gData_02003b28;
   if (gAdventure.scene == (s32)&SceneId_Ov68fRoom7)
-    return (const struct SceneEvent *)gData_02003c90;
-  return (const struct SceneEvent *)gData_0200381c;
+    return (const struct Trigger *)gData_02003c90;
+  return (const struct Trigger *)gData_0200381c;
 }

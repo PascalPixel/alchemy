@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_02000054(void);
@@ -29,7 +29,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {115, CONDITION_ALWAYS, 2, PIXELS(120), 0, PIXELS(104), FACING_SOUTHWEST, 1,
      0},
     {116, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(360), FACING_SOUTHEAST, 1,

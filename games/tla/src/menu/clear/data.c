@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "edition.h"
 
 u32 gData_02002410[] = {
@@ -54,12 +54,12 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
-    {SCENE_EVENTS_END},
+struct Trigger gSceneEvents[] = {
+    {TRIGGERS_END},
 };
 
 u16 gData_020024f4[] = {

@@ -5,24 +5,24 @@
 // (all differ 19), three minutes of permute (16, by wrapping the reread in a
 // dead condition).
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "adventure.h"
 #include "scene_ids.h"
 
 s32 GameFlag_Test(s32 flag);
 
-extern struct ScenePlacement gData_02004b14[];
-extern struct ScenePlacement gData_02004b2c[];
-extern struct ScenePlacement gData_02004c4c[];
-extern struct ScenePlacement gData_02004d9c[];
-extern struct ScenePlacement gData_02004f04[];
-extern struct ScenePlacement gData_0200506c[];
-extern struct ScenePlacement gData_0200521c[];
-extern struct ScenePlacement gData_02005444[];
-extern struct ScenePlacement gData_020054a4[];
-extern struct ScenePlacement gData_0200551c[];
+extern struct ActorPlacement gData_02004b14[];
+extern struct ActorPlacement gData_02004b2c[];
+extern struct ActorPlacement gData_02004c4c[];
+extern struct ActorPlacement gData_02004d9c[];
+extern struct ActorPlacement gData_02004f04[];
+extern struct ActorPlacement gData_0200506c[];
+extern struct ActorPlacement gData_0200521c[];
+extern struct ActorPlacement gData_02005444[];
+extern struct ActorPlacement gData_020054a4[];
+extern struct ActorPlacement gData_0200551c[];
 
-const struct ScenePlacement *Func_0200048c(void) {
+const struct ActorPlacement *Func_0200048c(void) {
   s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1 && GameFlag_Test(0x9c5) &&

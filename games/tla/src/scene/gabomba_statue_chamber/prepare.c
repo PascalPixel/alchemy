@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "gabomba_statue_chamber.h"
 
 s32 Func_02001f00(void);

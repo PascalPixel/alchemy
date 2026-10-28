@@ -23,18 +23,18 @@
 #include "adventure.h"
 #include "event_work.h"
 #include "actor.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "map.h"
 
 // The event work as this function reads it: the four event tables it clears
 // and the leader's two-row placement table at 0x1ec.
 struct EventWorkPlacements {
-  const struct ScenePlacement *tables[4];
+  const struct ActorPlacement *tables[4];
   u8 unk010[0x1dc];
-  struct ScenePlacement leader[2];
+  struct ActorPlacement leader[2];
 };
 
-extern const struct ScenePlacement gData_080f21d4[];
+extern const struct ActorPlacement gData_080f21d4[];
 
 void ObjectTable_Clear(void);
 void Event_SpawnObjectTable(s32 table, s32 first);
@@ -48,7 +48,7 @@ u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 void Func_080caa4c(s32 table) {
   struct EventWork *work;
   struct EventWorkPlacements *placements;
-  struct ScenePlacement *entry;
+  struct ActorPlacement *entry;
   struct Actor *object;
   struct Actor *camera;
   struct MapCell *cell;

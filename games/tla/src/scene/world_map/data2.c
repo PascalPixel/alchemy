@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 
 void Func_02000038(void);
 void Func_0200009c(void);
@@ -523,7 +523,7 @@ s32 gData_02006790[] = {
     0,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {6, 251, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000574)},
     {6, 252, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020006d0)},
     {6, 253, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000458)},
@@ -609,7 +609,7 @@ struct SceneEvent gSceneEvents[] = {
     {1, 85, CONDITION_ALWAYS, 85},
     {1, 86, CONDITION_ALWAYS, 86},
     {0, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000d1c)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 u32 gData_02006bc8[] = {

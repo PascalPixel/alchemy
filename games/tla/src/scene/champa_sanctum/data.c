@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_02000054(void);
@@ -15,17 +15,17 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {202, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(147), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {0xc400, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
     {0, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {0x8d15, 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
     {0, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
     {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };

@@ -4,7 +4,7 @@
 // Func_02000340. Adopted in 3c40e77e72, when it matched without the option;
 // back on the listing since.
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "adventure.h"

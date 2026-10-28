@@ -5,8 +5,8 @@
 #include "edition.h"
 #include "static_assert.h"
 
-struct ScenePlacement;
-struct SceneEvent;
+struct ActorPlacement;
+struct Trigger;
 struct FieldActor;
 struct Actor;
 

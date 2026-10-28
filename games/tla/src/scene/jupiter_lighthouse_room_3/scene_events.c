@@ -38,7 +38,7 @@ void Func_02000134(s32 unused, s32 id) {
 
 void Func_020001c0(void) { Func_020023f8(12); }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Func_020001d4(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;

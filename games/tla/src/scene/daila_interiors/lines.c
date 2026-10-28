@@ -4,7 +4,7 @@
 #include "scene_call.h"
 #include "text/msg_ids.h"
 #include "daila.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 
 void Func_020000ac(s32 unused, s32 actor) {
@@ -69,17 +69,17 @@ extern const u8 gData_02001924[];
 extern const u8 gData_02001990[];
 extern const u8 gData_02001c18[];
 
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 flag = GameFlag_Test(0x873);
   struct Adventure *party = &gAdventure;
   s32 id = (s32)&SceneId_DailaInteriors2;
 
   if (flag) {
     if (party->scene == id)
-      return (const struct SceneEvent *)gData_02001c18;
-    return (const struct SceneEvent *)gData_02001990;
+      return (const struct Trigger *)gData_02001c18;
+    return (const struct Trigger *)gData_02001990;
   }
   if (party->scene == id)
-    return (const struct SceneEvent *)gData_02001924;
-  return (const struct SceneEvent *)gData_020016e4;
+    return (const struct Trigger *)gData_02001924;
+  return (const struct Trigger *)gData_020016e4;
 }

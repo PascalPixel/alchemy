@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_scene.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Func_02000054(void);
@@ -16,7 +16,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gScenePlacements[] = {
+struct ActorPlacement gScenePlacements[] = {
     {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
     {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
     {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
@@ -47,7 +47,7 @@ u32 gData_02001678[] = {
     0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01,
 };
 
-struct SceneEvent gSceneEvents[] = {
+struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {0, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
     {0, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
@@ -57,7 +57,7 @@ struct SceneEvent gSceneEvents[] = {
     {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
     {3, 25, 0x200, EVENT_SCRIPT(Func_02000054)},
     {3, 80, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000d0)},
-    {SCENE_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 u32 gData_02001700[] = {

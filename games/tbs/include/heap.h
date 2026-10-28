@@ -112,8 +112,8 @@ enum HeapSlot {
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
   /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.h).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
-  /// The scanline effect's work (struct ScanlineEffectWork).
-  HEAP_SLOT_SCANLINE_EFFECT = 34,
+  /// The line scroll's work (struct LineScrollWork).
+  HEAP_SLOT_LINE_SCROLL = 34,
   /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
   /// carry the leader over its pools (struct MercuryLighthouseLights).
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,

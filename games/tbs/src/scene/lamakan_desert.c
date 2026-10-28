@@ -370,8 +370,7 @@ static s32 Reveal_HideSecrets(void) {
     markerId = markerId + 1;
   } while (markerId <= 107);
   if (gAdventure.sceneId != (s32)&SceneId_LamakanDesertCave) {
-    ScanlineEffect_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
-                             0x4000);
+    LineScroll_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
   }
 }
 
@@ -445,7 +444,7 @@ static s32 Reveal_ShowSecrets(void) {
   }
   TreasureSpot_MoveLeaderAway();
   if (gAdventure.sceneId != (s32)&SceneId_LamakanDesertCave) {
-    ScanlineEffect_Stop();
+    LineScroll_Stop();
   }
 }
 

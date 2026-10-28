@@ -49,8 +49,8 @@
 	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetAfterBattleDestination, 1
-	.set import.ScanlineEffect_InitWave, 1
-	.set import.ScanlineEffect_Stop, 1
+	.set import.LineScroll_InitWave, 1
+	.set import.LineScroll_Stop, 1
 	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1

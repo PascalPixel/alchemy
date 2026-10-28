@@ -18,11 +18,11 @@ static __inline__ void WaitDma(volatile u32 *channel) {
 /// the wave's frequency, its step each frame and its amplitude; two
 /// tasks build each frame's table of line offsets and sends it by DMA in
 /// the horizontal blank.
-void ScanlineEffect_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX,
-                             s32 freqY, s32 stepY, s32 ampY) {
-  struct ScanlineEffectWork *work;
+void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
+                         s32 stepY, s32 ampY) {
+  struct LineScrollWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_SCANLINE_EFFECT, 0xf20);
+  work = AllocHeapSlotEwram(HEAP_SLOT_LINE_SCROLL, 0xf20);
   Dma_Fill32(0, work, 0xf20);
   WaitDma(REG_DMA3);
   work->mode = mode;
@@ -32,6 +32,6 @@ void ScanlineEffect_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX,
   work->ampY = ampY;
   work->stepX = stepX;
   work->stepY = stepY;
-  Task_AddFrame(ScanlineEffect_BuildPage, TASK_PASS_FRAME);
-  Task_AddFrame(ScanlineEffect_ArmDma, TASK_PASS_VBLANK);
+  Task_AddFrame(LineScroll_BuildPage, TASK_PASS_FRAME);
+  Task_AddFrame(LineScroll_ArmDma, TASK_PASS_VBLANK);
 }

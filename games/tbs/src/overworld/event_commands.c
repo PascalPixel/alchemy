@@ -2,7 +2,7 @@
 /// The field Psynergy and event command object: the commands events run (waits,
 /// items, questions, destinations, actors, messages and the camera),
 /// moving on the field (views, jumps and climbing), the field's weather and
-/// scanline effects, Djinn joining the party, each field Psynergy, the
+/// line scrolls, Djinn joining the party, each field Psynergy, the
 /// field effect sprites its particles use, and the World Map screen.
 /// event_commands_internal.h holds the includes and the macros, types and
 /// inline helpers more than one part uses; the code is in the files under

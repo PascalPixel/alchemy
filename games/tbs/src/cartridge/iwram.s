@@ -243,8 +243,8 @@ gScreenTransitionWork:
 	.global gPaletteFadeWork
 gPaletteFadeWork:
 	.space 0x00000008
-	.global gScanlineEffect
-gScanlineEffect:
+	.global gLineScroll
+gLineScroll:
 	.space 0x00000008
 	.global gFadeOverlayWork
 gFadeOverlayWork:

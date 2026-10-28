@@ -297,8 +297,8 @@
 	import Event_StartScreenTransition, Event_StartScreenTransitionFar
 	import Event_FinishScreenTransition, Event_FinishScreenTransitionFar
 	import Event_WaitTransitionFrames, Event_WaitTransitionFramesFar
-	import ScanlineEffect_InitWave, ScanlineEffect_InitWaveFar
-	import ScanlineEffect_Stop, ScanlineEffect_StopFar
+	import LineScroll_InitWave, LineScroll_InitWaveFar
+	import LineScroll_Stop, LineScroll_StopFar
 	import FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
 	import ItemDisplay_ShowItem, ItemDisplay_ShowItemFar

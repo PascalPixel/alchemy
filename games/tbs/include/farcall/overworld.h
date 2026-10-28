@@ -263,10 +263,10 @@ void Event_WaitTransitionFramesFar(void);
 /// Starts a wave in each axis of the background's scroll, changed line by
 /// line in the horizontal blank; Lamakan Desert starts it everywhere but its
 /// cave.
-void ScanlineEffect_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX,
-                                s32 freqY, s32 stepY, s32 ampY);
-/// Stops the scanline effect: removes its two tasks and stops DMA 0.
-void ScanlineEffect_StopFar(void);
+void LineScroll_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
+                            s32 stepY, s32 ampY);
+/// Stops the line scroll: removes its two tasks and stops DMA 0.
+void LineScroll_StopFar(void);
 /// Has the target actor present an item: SE_CHEST_OPEN, animation 4,
 /// then the item's picture with sparkles. Returns the picture, or 0 when either
 /// is missing.

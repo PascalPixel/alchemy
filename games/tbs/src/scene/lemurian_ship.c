@@ -6,7 +6,7 @@
 ///
 /// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
-/// water's ripple (Ripple_Start), a scanline effect: an HBlank DMA of
+/// water's ripple (Ripple_Start), a line scroll: an HBlank DMA of
 /// per-line scroll offsets for BG3 that Reveal stops while it shows the map.
 /// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene
 /// selector reaches, first gives the leader the Black Orb.
@@ -139,7 +139,7 @@ static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
 /// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
-  ScanlineEffect_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
+  LineScroll_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
@@ -573,10 +573,10 @@ static void LemurianShip_SetSail(void) {
   Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this scene's view of the scanline effect's work
-/// (gScanlineEffect, struct ScanlineEffectWork): two pages of per-line
+/// The water's ripple, this scene's view of the line scroll's work
+/// (gLineScroll, struct LineScrollWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
-/// is one word, BG3's x and y, where ScanlineEffectWork has three.
+/// is one word, BG3's x and y, where LineScrollWork has three.
 struct RippleScrollWork {
   u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
   u8 page;             ///< the page the HBlank DMA shows; the other is built
@@ -773,15 +773,15 @@ s32 LemurianShip_SetupMap(void) {
 
 /// Arms DMA 0 to copy the shown ripple page, a line each HBlank, into
 /// background 3's scroll registers, writing the first line itself.
-/// Runs each VBlank, in the VBlank pass; ScanlineEffect_InitWave adds it and
+/// Runs each VBlank, in the VBlank pass; LineScroll_InitWave adds it and
 /// Ripple_Stop removes it.
-void ScanlineEffect_ArmDma(void) {
+void LineScroll_ArmDma(void) {
   struct RippleScrollWork *work;
   u32 *source;
   volatile u16 *dma0;
   volatile u32 *destination;
 
-  work = (struct RippleScrollWork *)gScanlineEffect;
+  work = (struct RippleScrollWork *)gLineScroll;
   source = (u32 *)work->pages[work->page];
 
   dma0 = REG_DMA0;
@@ -796,9 +796,9 @@ void ScanlineEffect_ArmDma(void) {
 }
 
 /// Builds the other ripple page and swaps it in.
-/// Runs each VBlank, in the VBlank pass; ScanlineEffect_InitWave adds it and
+/// Runs each VBlank, in the VBlank pass; LineScroll_InitWave adds it and
 /// Ripple_Stop removes it.
-void ScanlineEffect_BuildPage(void) {
+void LineScroll_BuildPage(void) {
   struct RippleScrollWork *work;
   u16 *line;
   s32 angle;
@@ -808,7 +808,7 @@ void ScanlineEffect_BuildPage(void) {
   u16 y;
   s32 i;
 
-  work = (struct RippleScrollWork *)gScanlineEffect;
+  work = (struct RippleScrollWork *)gLineScroll;
   y = gBgScroll[3].y;
   line = work->pages[work->page ^ 1];
   step = work->step[0];
@@ -840,8 +840,8 @@ void ScanlineEffect_BuildPage(void) {
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
-  Task_Remove(ScanlineEffect_ArmDma);
-  Task_Remove(ScanlineEffect_BuildPage);
+  Task_Remove(LineScroll_ArmDma);
+  Task_Remove(LineScroll_BuildPage);
   reg = REG_DMA0;
   reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
   reg[5] = ~DMA_ENABLE & reg[5];

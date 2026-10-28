@@ -60,7 +60,7 @@
 #include "macros.h"
 #include "sprite_ids.h"
 
-// Display, palette and scanline effects.
+// Display, palette and per-line work.
 //
 // Animations change the screen around their drawing in three ways:
 //

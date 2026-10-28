@@ -360,7 +360,7 @@ const s32 gActor_VariantScripts[97] = {
 const u8 gActor_BlinkSpriteColors[4] = {7, 0, 0, 0};
 
 /// Sine times 4096, 256 steps to a turn.
-const s16 gScanlineEffect_WaveSine[256] = {
+const s16 gLineScroll_WaveSine[256] = {
     0, 100, 200, 301, 401, 501, 601, 700,
     799, 897, 995, 1092, 1189, 1284, 1379, 1474,
     1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,

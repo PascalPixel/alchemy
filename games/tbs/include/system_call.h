@@ -93,10 +93,10 @@ static inline s32 FieldDecompress_TaggedLz(const void *source,
   return Decompress_TaggedLz(source, destination);
 }
 
-static inline void ScanlineEffect_StartWave(s32 mode, s32 freqX, s32 stepX,
-                                            s32 ampX, s32 freqY, s32 stepY,
-                                            s32 ampY) {
-  ScanlineEffect_InitWave(mode, freqX, stepX, ampX, freqY, stepY, ampY);
+static inline void LineScroll_StartWave(s32 mode, s32 freqX, s32 stepX,
+                                        s32 ampX, s32 freqY, s32 stepY,
+                                        s32 ampY) {
+  LineScroll_InitWave(mode, freqX, stepX, ampX, freqY, stepY, ampY);
 }
 
 #endif

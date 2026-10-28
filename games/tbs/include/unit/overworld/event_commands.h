@@ -238,9 +238,9 @@ void Exit_StartStairsDown(void);
 void Entrance_EndArrivalAnimation(s32 animation);
 s32 Entrance_PlayArrival(void);
 
-void ScanlineEffect_ArmDma(void);
-void ScanlineEffect_BuildPage(void);
-void ScanlineEffect_Stop(void);
+void LineScroll_ArmDma(void);
+void LineScroll_BuildPage(void);
+void LineScroll_Stop(void);
 void Weather_UpdateRain(void);
 void Weather_UpdateLightning(void);
 void Weather_StartRain(void);

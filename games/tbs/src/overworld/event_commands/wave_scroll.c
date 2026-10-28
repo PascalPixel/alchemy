@@ -1,22 +1,22 @@
 /// @file
-/// The scanline effect: scanline scroll offsets fed by HBlank DMA.
+/// The line scroll: per-line scroll offsets fed by HBlank DMA.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-/// VBlank-pass task for the scanline effect: restarts DMA 0 each VBlank to
+/// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to
 /// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
 /// one scanline at a time. The first line is written directly; the DMA writes
 /// three words at each HBlank from then on.
-void ScanlineEffect_ArmDma(void) {
+void LineScroll_ArmDma(void) {
   volatile u16 *dma;
-  struct ScanlineEffectWork *state;
+  struct LineScrollWork *state;
   u32 *source;
   u16 status;
   u32 control;
   volatile u32 *destination;
 
-  state = gScanlineEffect;
+  state = gLineScroll;
   source = (u32 *)state->rows[state->page];
 
   dma = REG_DMA0;
@@ -38,13 +38,13 @@ void ScanlineEffect_ArmDma(void) {
   Dma_Set(source, (void *)destination, control, (volatile u32 *)dma);
 }
 
-/// Task for the scanline effect: fills the hidden page with each
+/// Task for the line scroll: fills the hidden page with each
 /// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
 /// for y (an axis with no step stays flat), then shows that page. All three
-/// layers take the same wave; ScanlineEffect_ArmDma feeds the shown page
+/// layers take the same wave; LineScroll_ArmDma feeds the shown page
 /// to the scroll registers from the next frame.
-void ScanlineEffect_BuildPage(void) {
-  struct ScanlineEffectWork *work = gScanlineEffect;
+void LineScroll_BuildPage(void) {
+  struct LineScrollWork *work = gLineScroll;
   s32 x3 = (s16)gBgScroll[3].x;
   s32 y3 = (s16)gBgScroll[3].y;
   s32 x2 = (s16)gBgScroll[2].x;
@@ -76,9 +76,9 @@ void ScanlineEffect_BuildPage(void) {
     // 4096 * ampX / 0x10000 / 256 pixels: 16 for an ampX of 0x10000.
     amplitude = work->ampX;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-      wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
-                          amplitude) /
-             256;
+      wave =
+          Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+          256;
       *row = a + wave;
       row += 2;
       *row = b + wave;
@@ -104,9 +104,9 @@ void ScanlineEffect_BuildPage(void) {
 
     amplitude = work->ampY;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-      wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
-                          amplitude) /
-             256;
+      wave =
+          Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+          256;
       *row = a + wave;
       row += 2;
       *row = b + wave;
@@ -120,15 +120,15 @@ void ScanlineEffect_BuildPage(void) {
   work->page ^= 1;
 }
 
-// The shared source that starts the scanline effect, at its place in the ROM.
+// The shared source that starts the line scroll, at its place in the ROM.
 #include "../../scene/shared/scroll_initialize_hblank_dma.h"
 
-/// Stops the scanline effect: removes its two tasks and stops DMA 0.
-void ScanlineEffect_Stop(void) {
+/// Stops the line scroll: removes its two tasks and stops DMA 0.
+void LineScroll_Stop(void) {
   volatile u16 *dma0;
 
-  Task_Remove(ScanlineEffect_ArmDma);
-  Task_Remove(ScanlineEffect_BuildPage);
+  Task_Remove(LineScroll_ArmDma);
+  Task_Remove(LineScroll_BuildPage);
   dma0 = REG_DMA0;
   dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];

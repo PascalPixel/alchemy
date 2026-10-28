@@ -170,7 +170,7 @@ enum DisplayControl {
 /// one halfword a line into it.
 #define REG_BG0HOFS ((void *)0x04000010)
 
-/// DMA channel 0's registers as halfwords, for the scanline effects that set
+/// DMA channel 0's registers as halfwords, for the line scrolls that set
 /// the whole channel up.
 #define REG_DMA0 ((volatile u16 *)0x040000b0)
 

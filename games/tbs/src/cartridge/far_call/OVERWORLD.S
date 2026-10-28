@@ -113,8 +113,8 @@ FarCall_OverworldTable:
 	export Event_StartScreenTransitionFar, Event_StartScreenTransition
 	export Event_FinishScreenTransitionFar, Event_FinishScreenTransition
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
-	export ScanlineEffect_InitWaveFar, ScanlineEffect_InitWave
-	export ScanlineEffect_StopFar, ScanlineEffect_Stop
+	export LineScroll_InitWaveFar, LineScroll_InitWave
+	export LineScroll_StopFar, LineScroll_Stop
 	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem

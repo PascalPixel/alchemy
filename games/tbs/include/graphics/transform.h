@@ -20,7 +20,7 @@ extern u8 *gTransformStackTop;
 
 void Transform_RewindStack(void);
 
-/// Sets a twelve-word matrix to identity: 0x10000 (1.0) on the rotation's
+/// Sets a twelve-word matrix to identity: Q16_ONE (1.0) on the rotation's
 /// diagonal, the rest 0.
 static __inline__ void Transform_SetIdentity(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")

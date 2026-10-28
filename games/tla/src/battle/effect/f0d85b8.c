@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "field_particle.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 struct EffectVector {
   s32 x;
@@ -163,8 +164,8 @@ void Func_080d85b8(struct FieldParticle *effect) {
       effect->acceleration = accel;
     }
     effect->maxSpeed = Random16() * 3 + 0x30000;
-    effect->scaleX = 0x10000;
-    effect->scaleY = 0x10000;
+    effect->scaleX = Q16_ONE;
+    effect->scaleY = Q16_ONE;
     effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
@@ -176,7 +177,7 @@ void Func_080d85b8(struct FieldParticle *effect) {
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;
-      effect->speed = 0x10000;
+      effect->speed = Q16_ONE;
       effect->acceleration = 0;
       effect->maxSpeed = Random16() + 0x23333;
       effect->scaleX = 0x8000;

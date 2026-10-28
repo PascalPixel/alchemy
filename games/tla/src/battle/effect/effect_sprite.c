@@ -1,6 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "effect_sprite.h"
+#include "fixed_math.h"
 
 /// The width and height of each OAM shape and size, in pixels.
 extern const u8 gData_080f3bc4[][2];
@@ -16,8 +17,8 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   if (sprite == NULL)
     return;
   Iwram_FillWords(sprite, sizeof(*sprite), 0);
-  sprite->scaleX = 0x10000;
-  sprite->scaleY = 0x10000;
+  sprite->scaleX = Q16_ONE;
+  sprite->scaleY = Q16_ONE;
   sprite->depth = 255;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;

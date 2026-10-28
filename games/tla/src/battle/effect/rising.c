@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "mem.h"
+#include "fixed_math.h"
 
 s32 Party_GetLeaderActor(void);
 void wait(s32);
@@ -29,7 +30,7 @@ void Func_080cf350(struct Actor *object) {
      * instructions differ in tla-en. */
     register struct Actor *found asm("r0") =
         ObjectTable_Get(Party_GetLeaderActor());
-    object->acceleration = 0x10000;
+    object->acceleration = Q16_ONE;
     object->speedLimit = 0x20000;
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): the owner's copy out of r0 held after the stores,

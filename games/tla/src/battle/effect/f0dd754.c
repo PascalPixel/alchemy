@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "fixed_math.h"
 
 /// The Broken Seal's FieldEffect_WatchLeaderDistance with this game's
 /// offsets: counts the timer down and, once the leader is 60 pixels from the
@@ -24,8 +25,8 @@ void Func_080dd754(void) {
       (*timer)--;
   }
 
-  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / 0x10000, 0xd105);
-  dz = *(s16 *)(work + 0xcaa) - (actor->z - actor->y) / 0x10000;
+  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / Q16_ONE, 0xd105);
+  dz = *(s16 *)(work + 0xcaa) - (actor->z - actor->y) / Q16_ONE;
   if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xca6) == 0) {
     u16 *slot = (u16 *)(work + 358);
     u32 request = 0x2090;

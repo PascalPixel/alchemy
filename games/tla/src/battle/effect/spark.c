@@ -1,4 +1,5 @@
 #include "actor.h"
+#include "fixed_math.h"
 
 void Actor_StartScriptFar(struct Actor *object,
                                   const s32 *script);
@@ -16,8 +17,8 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
 
   if (object != NULL) {
     Actor_StartScriptFar(object, gData_080f0e78);
-    object->speedLimit = Random16() + 0x10000;
-    object->acceleration = 0x10000;
+    object->speedLimit = Random16() + Q16_ONE;
+    object->acceleration = Q16_ONE;
     object->motionFlags = 2;
     object->gravity = 0xa3d;
     magnitude = Random16();

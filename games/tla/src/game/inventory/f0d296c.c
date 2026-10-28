@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 extern char MsgFoundItem;
 
@@ -26,7 +27,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
-    Actor_GetById(actor)->scaleX = 0x10000;
+    Actor_GetById(actor)->scaleX = Q16_ONE;
     Actor_SetAngleToward(gMainRoutineWork.currentOwner, actor, 0);
     Event_Wait(20);
     return -1;

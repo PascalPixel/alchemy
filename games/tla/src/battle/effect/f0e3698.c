@@ -33,7 +33,7 @@ void Func_080e3698(s32 actor) {
   ring = Actor_Spawn(280, object->x, object->y, object->z);
   Actor_SetMode(ring, 2);
   ring->scaleX = 0x18000;
-  ring->scaleY = 0x10000;
+  ring->scaleY = Q16_ONE;
   x = object->x;
   y = object->y;
   z = object->z;

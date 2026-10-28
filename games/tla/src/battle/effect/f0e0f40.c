@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "fixed_math.h"
 
 void Actor_Destroy(struct Actor *object);
 
@@ -25,8 +26,8 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(
   }
 
   scale = particle->scaleX + 0xC00;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x = source->x;

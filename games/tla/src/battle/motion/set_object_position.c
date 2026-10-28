@@ -38,7 +38,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = 0x10000;
+  object->acceleration = Q16_ONE;
   object->speedLimit = 0x40000;
   object->velocityY = 0x30000;
   object->verticalMotionStrength = 0x9999;
@@ -56,7 +56,7 @@ void Func_0811c01c(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = 0x10000;
+  object->acceleration = Q16_ONE;
   object->speedLimit = 0x40000;
   object->velocityY = 0x40000;
   object->verticalMotionStrength = 0x9999;

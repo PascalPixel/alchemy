@@ -5,6 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"
+#include "fixed_math.h"
 
 struct ShopRuntime {
   u8 unk000[0xf8];
@@ -57,7 +58,7 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
           Animation_ApplyChildArgumentFar(shop->partyMemberIcons[i], 30);
         else
           Animation_ApplyChildArgumentFar(shop->partyMemberIcons[i], 1);
-        shop->partyMemberScale[i] = 0x10000;
+        shop->partyMemberScale[i] = Q16_ONE;
         if (!Shop_CanServe(unitId, serviceKind))
           shop->partyMemberScale[i] = 0xb333;
       }

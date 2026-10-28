@@ -14,6 +14,7 @@
 #include "task.h"
 #include "game_flags.h"
 #include "system.h"
+#include "fixed_math.h"
 
 void Event_Wait(s32 frames) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
@@ -24,7 +25,7 @@ void Event_Wait(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *object =
       ObjectTable_Get(Party_GetLeaderActor());
-  object->speedLimit = 0x10000;
+  object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;

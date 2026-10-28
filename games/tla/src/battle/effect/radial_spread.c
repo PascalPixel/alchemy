@@ -2,6 +2,7 @@
 #include "field_particle.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "fixed_math.h"
 
 struct EffectVector {
   s32 x;
@@ -64,7 +65,7 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x10000;
+    effect->acceleration = Q16_ONE;
     effect->maxSpeed = 0x50000;
     effect->limitTurnStep = state;
     effect->state++;

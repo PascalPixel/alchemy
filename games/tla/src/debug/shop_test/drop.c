@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "call.h"
+#include "fixed_math.h"
 
 void Func_02000df8();
 struct Actor *Actor_GetById();
@@ -20,7 +21,7 @@ void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
     /* FAKEMATCH: ⚓️ loads the scale before it builds the bound; without the
      * barrier the bound's first byte comes first. */
     __asm__ volatile("" : "+l"(object));
-    while (object->scaleX < 0x10000) {
+    while (object->scaleX < Q16_ONE) {
       wait(1);
       scale = object->scaleX;
       /* FAKEMATCH: and loads it again before it builds the step. */
@@ -29,8 +30,8 @@ void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
       object->scaleX = scale;
       object->scaleY = scale;
     }
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
   }
 }
 

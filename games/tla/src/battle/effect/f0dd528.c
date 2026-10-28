@@ -2,6 +2,7 @@
 #include "system.h"
 #include "objdisp.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 extern const s32 gData_080f0e78[];
 
@@ -44,7 +45,7 @@ void *BattleEffect_StartItemBreak(void *object) {
     if (child != 0) {
       Actor_StartScriptFar((struct ActorView *)child,
                                    gData_080f0e78);
-      speed = Random16() + 0x10000;
+      speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
       child->motionFlags = 2;

@@ -6,7 +6,7 @@ void Func_020020ac(s32 a);
 void Func_02001f34(s32 a);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_020001cc(void);
 
@@ -16,10 +16,10 @@ void Func_02000210(void) {
   Event_StartScreenTransition();
   Task_Add(Func_020001cc, 0x480);
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Func_02001f34(13);
-  FieldEvent_WaitFrames(60);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
+  FieldEvent_Wait(60);
   Func_02001f34(14);
   Func_02001f64();
 }

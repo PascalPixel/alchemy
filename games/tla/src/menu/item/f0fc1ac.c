@@ -75,7 +75,7 @@ s32 Func_080fc1ac(s32 item) {
       changed = 1;
       Sound_PlayFar(111);
     }
-    WaitFrames(1);
+    wait(1);
   }
   if (GameFlag_Test(336)) {
     selection = 1;

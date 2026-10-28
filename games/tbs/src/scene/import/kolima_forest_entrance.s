@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.WaitFrames, 1
+	.set import.wait, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
@@ -15,7 +15,7 @@
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_Wait, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1

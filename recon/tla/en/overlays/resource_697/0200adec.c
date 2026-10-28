@@ -9,7 +9,7 @@
 #include "../../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Task_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -158,7 +158,7 @@ void Func_02002dec(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Actor_SetSpeedParameters_(4, 0x20000, 0x10000);
   Actor_SetSpeedParameters_(5, 0x1e666, 0xf333);
   Actor_SetSpeedParameters_(6, 0x1b333, 0xd999);
@@ -177,5 +177,5 @@ void Func_02002dec(void) {
   Task_Wait(1);
   Actor_OffsetPositionAndReset(6, Func_02002d38(3), 0);
   Task_Wait(1);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
 }

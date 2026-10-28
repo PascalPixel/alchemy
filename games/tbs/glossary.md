@@ -235,7 +235,7 @@ Evidence: Camelot: ぼうけんを きろくしますか?, "Save your adventure?
 
 One step of the game: every [task](#task) in the frame pass runs once and one
 picture is prepared, then the game halts until the next [VBlank](#vblank)
-shows it. Code lets time pass with `WaitFrames(n)`, and every wait, walk and
+shows it. Code lets time pass with `wait(n)`, and every wait, walk and
 animation is counted in frames
 ([The front page](README.md#waiting-in-place)).
 
@@ -262,11 +262,11 @@ Evidence: tradition: 処理落ち (山口, DCAJ 2009).
 
 ### Wait
 
-Letting frames pass where the code stands: `WaitFrames(n)` returns to the
+Letting frames pass where the code stands: `wait(n)` returns to the
 next line once n frames have run
 ([System](system.md#waiting-and-tasks)).
 
-Evidence: tradition: 黒須's WAIT (DCAJ 2008).
+Evidence: tradition: 黒須's WAIT and 田村祐樹's `wait()` (DCAJ 2008).
 
 ### Task
 
@@ -274,7 +274,7 @@ A short routine run once every [frame](#frame), or once every
 [VBlank](#vblank), until it is removed: the windows' typing, the map's
 scrolling, the lightning over Vale on the stormy night. The task table,
 `gTasks`, holds up to 20, each with its function (`func`) and a priority that
-picks its pass, the frame pass (`TASK_PASS_FRAME`, which `WaitFrames` runs) or
+picks its pass, the frame pass (`TASK_PASS_FRAME`, which `wait()` runs) or
 the VBlank pass (`TASK_PASS_VBLANK`, which the VBlank interrupt runs), and its
 order within it. A task carries no memory of its own: what it works on is a
 [work](#work) ([Runtime](src/runtime/README.md#the-task-runner)).

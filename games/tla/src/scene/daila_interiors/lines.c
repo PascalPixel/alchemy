@@ -30,14 +30,14 @@ void Func_020000ac(s32 unused, s32 actor) {
 
 void Func_02000150(s32 unused, s32 actor) {
   Actor_SetAngleToward(actor, 4, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000d94(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Import_EventSetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
   Import_EventShowMessageAndWait(actor, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
 }
 
 s32 DailaInteriors_TalkScamps(void) {

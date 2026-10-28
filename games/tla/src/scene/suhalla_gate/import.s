@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -22,10 +22,10 @@ Func_02000970:
 	.thumb_func
 Func_02000978:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000988
 	.thumb_func
 Func_02000988:

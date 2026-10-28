@@ -32,8 +32,8 @@ struct ClimbSprite {
 struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
-void Event_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
+void wait(s32 frames);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_08020258(s32 *position);
 s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
@@ -88,20 +88,20 @@ s32 Func_080d53b8(void) {
     leader->actionFlags = result;
     Actor_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
     Actor_SetMode(leader, 6);
-    WaitFrames(4);
+    wait(4);
     Actor_SetMode(leader, 7);
     leader->velocityY = 0x40000;
-    WaitFrames(4);
+    wait(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
     leader->speedLimit = 0x10000;
     leader->velocityY = result;
     Actor_SetMode(leader, 12);
-    WaitFrames(4);
+    wait(4);
     gAdventure.renderMode = 2;
     leader->actionFlags = 1;
-    WaitFrames(8);
+    wait(8);
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
     struct Actor *entry;
@@ -131,7 +131,7 @@ s32 Func_080d53b8(void) {
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
-    Event_WaitFrames(4);
+    Event_Wait(4);
     gAdventure.renderMode = 0;
     leader->actionFlags = 1;
     leader->action = 0;

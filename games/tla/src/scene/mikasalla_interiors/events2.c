@@ -6,7 +6,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_020005c4();
 void Func_020005cc();
 void Func_02000604();
@@ -48,7 +48,7 @@ void Func_020004dc(void) {
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, gAdventure.currentOwner, 0x100, 60);
   Call2((void (*)())Actor_SetModeById, 18, 4);
-  Call1((void (*)())FieldEvent_WaitFrames, 15);
+  Call1((void (*)())FieldEvent_Wait, 15);
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 18, 0);

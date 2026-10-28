@@ -35,7 +35,7 @@
 	import Math_RemainderUnsigned, IwramUnsignedRemainder
 	import __umodsi3, IwramUnsignedRemainder
 @ Runtime bank (far_call/RUNTIME.S)
-	import WaitFrames, WaitFramesFar
+	import wait, waitFar
 	import Task_Add, Task_AddFar
 	import Task_Remove, Task_RemoveFar
 	import Import_RandomNext, Random16Far
@@ -213,7 +213,7 @@
 	import InventorySnapshot_Save, InventorySnapshot_SaveFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 @ Overworld bank (far_call/OVERWORLD.S)
-	import Event_WaitFrames, Event_WaitFramesFar
+	import Event_Wait, Event_WaitFar
 	import Event_Start, Event_StartFar
 	import Event_End, Event_EndFar
 	import Event_CallWithLastActiveActorId, Event_CallWithLastActiveActorIdFar

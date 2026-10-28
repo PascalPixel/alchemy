@@ -28,7 +28,7 @@ void Func_02000dac(void) {
     party[0x2c2] = 2;
   }
   Func_020018d8((s32)&SceneId_Ov662Room1, 10);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_020008fc();
 }
 
@@ -45,7 +45,7 @@ void Func_02000de0(void) {
     party[0x2c2] = 2;
   }
   Func_020018d8((s32)&SceneId_Ov662Room1, 9);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_020008fc();
 }
 

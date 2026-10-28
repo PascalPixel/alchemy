@@ -19,19 +19,19 @@ void Func_02003170(void) {
   width = 1;
   height = 2;
   Func_02005d9c(65, 76, 19, 92, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02005d9c(66, 76, 19, 92, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02005d9c(67, 76, 19, 92, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02005d9c(62, 76, 19, 92, width, height);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   Actor_GetById(gAdventure.currentOwner)->speed =
       Actor_GetById(gAdventure.currentOwner)->acceleration = 0x8000;
   Func_02005f94(123);
   Actor_ResetAndSetPositionInMode2(gAdventure.currentOwner, 312, 792);
-  FieldEvent_WaitFrames(5);
+  FieldEvent_Wait(5);
   Func_02005efc(15);
   Func_02005e1c();
 }

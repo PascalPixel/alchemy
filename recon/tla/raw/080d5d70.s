@@ -49,7 +49,7 @@ Func_080d5d70:
 	adds r1, r6, #0
 	bl Actor_SetMode
 	movs r0, #18
-	bl WaitFrames
+	bl wait
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, pc}

@@ -84,7 +84,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -396,7 +396,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     Func_08158ce0(2, 2);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);

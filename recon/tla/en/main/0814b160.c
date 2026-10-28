@@ -126,7 +126,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
       } while (i != effect->count);
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     frame += 1;
   }
 

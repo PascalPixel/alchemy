@@ -28,7 +28,7 @@ void Actor_StartScriptFar(struct Actor *object,
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 extern const s32 gData_080f0e78[];
 
@@ -52,7 +52,7 @@ void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z) {
     object->y = y + (start[1] - y) * i / 10;
     object->z = z + (start[2] - z) * i / 10;
     object->scaleY = object->scaleX = scale / 10 + 0x10000;
-    WaitFrames(1);
+    wait(1);
     i++;
     scale -= 0xc000;
   } while (i <= 10);

@@ -100,7 +100,7 @@ s32 Func_02000864(void) {
     if (!Func_0200006c(2))
       window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
     while (!Func_0200006c(2)) {
-      WaitFrames(1);
+      wait(1);
       stop = 0;
       if (!Flag_IsSet(0x201))
         stop = 1;
@@ -125,19 +125,19 @@ s32 Func_02000864(void) {
     }
     if (window)
       Window_Close(window, 1);
-    WaitFrames(5);
+    wait(5);
   }
   if (!failed) {
     buf = HeapSlot_AllocEwram(216, 0x7c8);
     Task_RemoveFar(Func_02000134);
     Func_0200198c(5);
-    WaitFrames(8);
+    wait(8);
     Func_02001994(5);
     if (Flag_IsSet(0x173)) {
       Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgGoodLuck2);
       FieldMessage_ShowAtActor(8, 0);
-      WaitFrames(45);
+      wait(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
       Actor_ResetAndSetPositionInMode2(4, 216, 184);
       Actor_WaitForMoveById(4);
@@ -153,7 +153,7 @@ s32 Func_02000864(void) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
         Actor_ResetAndSetPositionInMode2(4, 216, 200);
         Func_0200198c(5);
-        WaitFrames(8);
+        wait(8);
         Func_02001994(5);
         Actor_WaitForMoveById(4);
         HeapSlot_Release(216);

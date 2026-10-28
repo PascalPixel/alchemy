@@ -112,7 +112,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(NEPTUNE_OBJECTS, SPRITE_NEPTUNE, 1);
   gProjection.centerY = 240;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,

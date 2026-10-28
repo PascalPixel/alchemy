@@ -180,7 +180,7 @@ BattleEffect_RunDeathPlunge:
 	lsls r3, r3, #12
 	movs r0, #20
 	str r3, [r4, #48]
-	bl WaitFrames
+	bl wait
 	movs r0, #56
 	movs r1, #92
 	movs r5, #0
@@ -659,7 +659,7 @@ BattleEffect_RunDeathPlunge:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl wait
 	ldr r5, [sp, #12]
 	ldr r0, [sp, #8]
 	ldr r1, [sp, #44]

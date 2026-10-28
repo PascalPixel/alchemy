@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -166,10 +166,10 @@ Func_02003d64:
 	.thumb_func
 PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02003d7c
 	.thumb_func
 Func_02003d7c:

@@ -15,7 +15,7 @@ void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_Stop(s32 id);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);

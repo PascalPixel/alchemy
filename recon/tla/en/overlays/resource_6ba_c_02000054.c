@@ -54,7 +54,7 @@ void Func_02000054(s32 message, s32 count) {
       goto shown;
   wait:
     frames++;
-    WaitFrames(1);
+    wait(1);
     if (frames > 59)
       goto shown;
     if (!(INPUT_HELD & 3))
@@ -64,7 +64,7 @@ void Func_02000054(s32 message, s32 count) {
     gInput.held = 1;
     gInput.pressed = 1;
     gInput.repeat = 1;
-    WaitFrames(1);
+    wait(1);
   shown:
     if (Message_AllTyped() == 0)
       goto skip;
@@ -72,7 +72,7 @@ void Func_02000054(s32 message, s32 count) {
     goto check;
   hold:
     frames++;
-    WaitFrames(1);
+    wait(1);
     if (frames > 9)
       goto next;
   check:

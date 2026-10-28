@@ -124,12 +124,12 @@ void Func_02000428(void) {
     FlagSet(0x211);
     Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
     Actor_CommitPositionAndActivate(14, -12, 0);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Motion_SetVarCbAndRefresh(14, 2);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02001e30(14, 0);
     Func_02001e48(14, 265, 30);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Actor_CommitPositionAndActivate(14, 12, 0);
     Actor_SetAngleToward(14, 4, 0);
     Func_02001e30(14, 0);

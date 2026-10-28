@@ -181,9 +181,9 @@ void FieldPsynergy_Douse(void) {
     scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
-    WaitFrames(1);
+    wait(1);
   }
-  WaitFrames(10);
+  wait(10);
 
   if ((s8)work->alternate == 0) {
     // Drop a particle every 6 frames from 3 to 8 pixels round the orb (the
@@ -197,7 +197,7 @@ void FieldPsynergy_Douse(void) {
       pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       if (step == count - 1) {
-        WaitFrames(25);
+        wait(25);
         pos.x = lightOrb->x;
         pos.y = lightOrb->y;
         pos.z = lightOrb->z;
@@ -210,9 +210,9 @@ void FieldPsynergy_Douse(void) {
         particle->flag = 2;
       }
       Sound_PlayFar(SE_WATER);
-      WaitFrames(6);
+      wait(6);
     }
-    WaitFrames(10);
+    wait(10);
   } else {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
     // orb.
@@ -235,9 +235,9 @@ void FieldPsynergy_Douse(void) {
         Actor_SetSpriteColorModeFar((struct Actor *)particle,
                                     SPRITE_COLOR_WHITE);
       }
-      WaitFrames(6);
+      wait(6);
     }
-    WaitFrames(70);
+    wait(70);
   }
 
   // Shrink back to a quarter on the way back over the target.
@@ -266,7 +266,7 @@ void FieldPsynergy_Douse(void) {
     scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
-    WaitFrames(1);
+    wait(1);
     step++;
   } while (step < steps);
   Actor_ReleaseFar((struct Actor *)lightOrb);

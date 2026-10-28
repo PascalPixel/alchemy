@@ -30,7 +30,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// task is suspended, so no pass matches it.
 ///
 /// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// WaitFrames runs TASK_PASS_FRAME's once a frame, the field's and every
+/// wait() runs TASK_PASS_FRAME's once a frame, the field's and every
 /// scene's own per-frame tasks among them.
 #define TASK_PASS_VBLANK 0x480
 #define TASK_PASS_FRAME 0xc80
@@ -42,7 +42,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
-/// 1 while WaitFrames runs the frame pass's tasks (TASK_PASS_FRAME).
+/// 1 while wait() runs the frame pass's tasks (TASK_PASS_FRAME).
 /* FAKEMATCH(volatile): the read Task_Add discards stays a
  * load; as plain u8, 8 of 61 instructions differ in tbs-en. */
 extern volatile u8 gTasksRunning;

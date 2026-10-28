@@ -239,11 +239,11 @@ Func_0816a2d8:
 	cmp r1, #4
 	bne .L_0816a4b4
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	b .L_0816a4ba
 .L_0816a4b4:
 	movs r0, #16
-	bl WaitFrames
+	bl wait
 .L_0816a4ba:
 	ldr r2, [sp, #16]
 	ldr r3, [r2, #4]
@@ -480,7 +480,7 @@ Func_0816a2d8:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #1
 	add r10, r2
 	mov r3, r10

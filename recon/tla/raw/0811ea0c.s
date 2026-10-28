@@ -56,13 +56,13 @@ Func_0811ea0c:
 	bne .L_0811ea7e
 	str r2, [r4]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_0811ea88
 .L_0811ea7e:
 	ldr r1, [sp, #8]
 	movs r0, #1
 	str r2, [r1]
-	bl WaitFrames
+	bl wait
 .L_0811ea88:
 	movs r0, #0
 	movs r1, #0
@@ -266,17 +266,17 @@ Func_0811ea0c:
 	cmp r1, #0
 	beq .L_0811ec78
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	mov r3, r8
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	bl BattleMotion_ResetObjectAtScaledAnchor
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #16]
 	movs r0, #0
 	ldrb r1, [r4, #3]
@@ -363,7 +363,7 @@ Func_0811ea0c:
 	bl BattleCamera_SetViewAtPairMidpoint
 .L_0811ed00:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r4, #1
 	movs r3, #30
 	add r9, r4

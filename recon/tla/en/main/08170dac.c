@@ -80,7 +80,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -364,7 +364,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   HeapSlot_Release(188);
   HeapSlot_Release(104);

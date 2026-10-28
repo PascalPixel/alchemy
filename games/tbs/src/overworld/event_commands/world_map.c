@@ -469,7 +469,7 @@ void WorldPicture_Show(s32 picture) {
     layer++;
   }
   menu->suspended = 1;
-  WaitFrames(1);
+  wait(1);
   blend = REG_BLDALPHA;
   // The picture's 224 BG colours (448 bytes), then its 240 by 160 pixels of
   // 256 colours, a byte each, decoded into the borrowed buffer and copied
@@ -492,7 +492,7 @@ void WorldPicture_Show(s32 picture) {
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
     FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
   do {
-    WaitFrames(1);
+    wait(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
   Task_Remove(WorldPicture_UpdateMarkers);
   FieldEffect_CleanupResourcesAndWindow();
@@ -567,7 +567,7 @@ void FieldEffect_RunVisibilityTransition(void) {
     FieldEffect_ScheduleRatioTransition(0x9d89, 6);
     if (gKeysHeld & KEY_L) {
       do {
-        WaitFrames(1);
+        wait(1);
       } while (gKeysHeld & KEY_L);
     }
     FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);

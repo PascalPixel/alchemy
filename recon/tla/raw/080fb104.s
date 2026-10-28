@@ -237,7 +237,7 @@ Func_080fb104:
 	adds r1, #30
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r5, .L_080fb408
 	movs r3, #1
 	ldr r2, [r5, #4]

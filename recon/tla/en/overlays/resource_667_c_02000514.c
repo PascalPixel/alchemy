@@ -16,8 +16,8 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -41,7 +41,7 @@ s32 Func_02000514(void) {
     Actor_ArmCallback(14, 0x5000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001538((s32)&MsgAlhafraManor10);
     Func_02001550(14, 0);
     GameFlag_ClearBit(0x12f);
@@ -59,11 +59,11 @@ s32 Func_02000514(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
     Camera_MoveWithinMapBounds(144 << 16, -1, 160 << 17, 1);
     while (gInput.held == 0)
-      WaitFrames(1);
+      wait(1);
     Func_02001588((s32)&SceneId_Ov667, 80);
   }
   return 0;

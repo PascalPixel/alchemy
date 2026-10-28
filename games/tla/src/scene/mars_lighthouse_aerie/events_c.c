@@ -25,7 +25,7 @@ void Actor_SetModeById();
 void Actor_SetPositionAndResetMotion();
 void Party_RemoveOwnerRestored();
 void FieldMessage_ShowAtActor(s32 actor, s32 flags);
-void WaitFrames();
+void wait();
 extern u8 gData_02006b70[];
 extern u8 gData_02006c20[];
 
@@ -55,19 +55,19 @@ void Func_020029ac(void) {
   ((void (*)())Func_0200560c)();
   Call1((void (*)())Func_02005784, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call3((void (*)())Func_0200567c, gAdventure.currentOwner, 0x1fa0000,
         0x1180000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   ((void (*)())Event_StartScreenTransition)();
   ((void (*)())Event_WaitTransitionFrames)();
   Call2((void (*)())Actor_SetSpritePriority, 3, 1);
   Call2((void (*)())Func_020053e4, (s32)Actor_GetById(7), (s32)gData_02006c20);
   Call2((void (*)())Func_020053e4, (s32)Actor_GetById(3), (s32)gData_02006b70);
-  Call1((void (*)())FieldEvent_WaitFrames, 0x78);
+  Call1((void (*)())FieldEvent_Wait, 0x78);
   Call1((void (*)())Func_020054e4, (s32)Actor_GetById(7));
   Call1((void (*)())Func_020054e4, (s32)Actor_GetById(3));
-  Call1((void (*)())FieldEvent_WaitFrames, 0x28);
+  Call1((void (*)())FieldEvent_Wait, 0x28);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
   Call2((void (*)())Func_02005704, 6, 0xc000);
   Call1((void (*)())Func_020056dc, (s32)MsgWhatSTheMatter);
@@ -124,7 +124,7 @@ void Func_020029ac(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x13, 4);
   Call3((void (*)())Func_020056ec, 0x2013, 0, 0x14);
   Call2((void (*)())Actor_SetModeById, 5, 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 0x14);
+  Call1((void (*)())FieldEvent_Wait, 0x14);
   Call2((void (*)())Func_02005704, 5, 0x2000);
   Call2((void (*)())Func_020056f4, 5, 0);
   Call3((void (*)())Func_020056ec, 0x2013, 0, 0x14);
@@ -138,7 +138,7 @@ void Func_020029ac(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 1, 0xcccc, 0x6666);
   Actor_GetById(1)->actionFlags &= 0xfe;
   Call3((void (*)())Actor_SetPositionAndReset, 1, 0x21e, 0x148);
-  Call1((void (*)())FieldEvent_WaitFrames, 1);
+  Call1((void (*)())FieldEvent_Wait, 1);
   Actor_GetById(1)->actionFlags |= 1;
   Call2((void (*)())Func_02005724, 0xcccc, 0x1999);
   Func_0200573c()->motionFlags = 0;
@@ -275,7 +275,7 @@ void Func_020029ac(void) {
   Actor_GetById(0x1e)->motionFlags = 0;
   Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(0x1e),
         0x21c0000, 0x600000, 0x12c0000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call1((void (*)())GameFlag_SetBit, 0x17c);
   Call1((void (*)())GameFlag_SetBit, 0x144);
   ((void (*)())Func_02005614)();

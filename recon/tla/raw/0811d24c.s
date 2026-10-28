@@ -26,7 +26,7 @@ Func_0811d24c:
 .L_0811d276:
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	blt .L_0811d2da
 	ldr r3, .L_0811d2f4
@@ -61,7 +61,7 @@ Func_0811d24c:
 .L_0811d2bc:
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	blt .L_0811d2da
 	ldr r3, .L_0811d2f4

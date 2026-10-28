@@ -95,7 +95,7 @@ extern u8 Data_08198866[];
 // gLuckyWheels_SparkCellOffsets).
 extern u16 Data_08197424[];
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -161,11 +161,11 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   unit = Unit_Get(effect->actor);
 
   // Setup: the display, the tile map on BG1, the blitters for the side.
-  WaitFrames(1);
+  wait(1);
   Func_0813ba50();
   Func_08143d80();
   REG_BG1CNT = 0x1f80;
-  WaitFrames(1);
+  wait(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
       BattleEffect_LoadBlitter(HEAP_BLITTER,
@@ -199,7 +199,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  WaitFrames(1);
+  wait(1);
 
   // The beam's sheet for the kind.
   if (kind == 4) {
@@ -228,7 +228,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
                                      ? (s32)&ResourceId_MarsDjinnSmallSheet
                                      : (s32)&ResourceId_StarCrescentSheet),
           (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  WaitFrames(1);
+  wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
                              1, 0);
@@ -251,7 +251,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   anchor.x += shake;
   gBgScroll[1].x = shake;
   gBgScroll[1].y = 80;
-  WaitFrames(1);
+  wait(1);
 
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
@@ -363,7 +363,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Teardown.

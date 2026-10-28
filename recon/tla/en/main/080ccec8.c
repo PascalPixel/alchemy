@@ -70,7 +70,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void PartyStatus_CreateWindowFar(s32 layout);
 s32 Party_CountActiveOwnersFar(void);
 void PartyStatus_CloseFar(void);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Event_ResolvePendingActions(s32 skip);
 void Func_080ea14c(s32 targetId);
 void Func_08038340(s32 value);
@@ -80,7 +80,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 group);
 s32 Actor_GetSpriteShape(s32 id);
 s32 Party_FindOwnerWithActionFar(s32 action);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Party_AdjustCoinsFar(s32 amount);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
@@ -200,7 +200,7 @@ s32 Func_080ccec8(s32 id) {
         shown->update = NULL;
         Actor_SetMode(shown, 2);
         Sound_PlayFar(246);
-        Event_WaitFrames(30);
+        Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
@@ -249,7 +249,7 @@ s32 Func_080ccec8(s32 id) {
           shown->update = Marker_MoveLeaderAwayFromEmitter;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
-          WaitFrames(30);
+          wait(30);
           if (type == 128)
             ObjectEvent_SetMode2(index);
         }
@@ -279,7 +279,7 @@ s32 Func_080ccec8(s32 id) {
         shown->update = Marker_MoveLeaderAwayFromEmitter;
       } else {
         shown = BattleEffect_StartRandomParticleEmitter(index, contents);
-        WaitFrames(30);
+        wait(30);
       }
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {

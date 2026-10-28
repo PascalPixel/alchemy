@@ -147,7 +147,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 void Link_DrawShiftedTilePair(u32 address);
 void Func_080451bc(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void UpdateLinkSessionCountdown(void);
@@ -315,7 +315,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
             break;
           }
         }
-        WaitFrames(1);
+        wait(1);
       }
     }
   }
@@ -397,7 +397,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       count = BattleParty_ListActorIdsFar(side, block);
       if (side == 1)
         count += BattleParty_PrepareReserveOwnersFar(block + count);
-      WaitFrames(1);
+      wait(1);
       Func_08046b08(block, count, block[0]);
       Heap_Release(block);
       continue;
@@ -459,15 +459,15 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       signatureHeader[1] = 255;
       BattleHighlight_SetModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels(signatureHeader);
-      WaitFrames(1);
+      wait(1);
       mode = Func_080457d0(1, 0);
-      WaitFrames(1);
+      wait(1);
       if (mode == -2) {
         u16 *block = Heap_Alloc(12);
         s32 count = BattleParty_ListActorIdsFar(1, block);
 
         state->iconShown[2] = 0;
-        WaitFrames(1);
+        wait(1);
         Func_08046b08(block, count, actorId);
         state->iconShown[2] = 1;
         Heap_Release(block);
@@ -618,7 +618,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           goto mark_visible;
         commandKind = 6;
         parameter = mode;
-        WaitFrames(1);
+        wait(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
         ability = BattleAction_Get(summon->abilityId);
@@ -707,7 +707,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           Text_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
                                        commandWindow, 16, 0);
           command->range = cost;
-          WaitFrames(1);
+          wait(1);
           Sound_PlayFar(112);
           mode = Func_0804a85c(actorId, ability->targetMode, cost,
                                Battle_ClassifyEntryKind(ability));
@@ -716,7 +716,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                 Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
 
             while (Message_AllTyped() == 0)
-              WaitFrames(1);
+              wait(1);
             Window_Close(hint, 1);
             state->tutorialStep++;
             state->tutorialDelay = 45;
@@ -735,7 +735,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                                      commandWindow, 16, 0);
         Func_08041f70(15);
         command->range = 1;
-        WaitFrames(1);
+        wait(1);
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 4, 0, 7);
         Window_Close(commandWindow, 1);
@@ -908,7 +908,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
               peerSignature[6] == 'S' && peerSignature[7] == 'T'))
           mode = 1;
       }
-      WaitFrames(1);
+      wait(1);
     }
     if (state->timerWindow != NULL)
       Window_Close(state->timerWindow, 1);

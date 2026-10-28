@@ -10,7 +10,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetMovementTypeById(s32 id, const u8 *callback);
 void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 value);
@@ -35,7 +35,7 @@ void Func_02000ffc(void) {
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   Actor_CommitPositionAndActivate(id, x, -back);
   Actor_CommitPositionAndActivate(4, 16, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000f38();
 }
 
@@ -53,7 +53,7 @@ void Func_0200102c(void) {
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   Actor_CommitPositionAndActivate(id, x, -back);
   Actor_CommitPositionAndActivate(4, -16, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000f38();
 }
 
@@ -61,7 +61,7 @@ void Func_0200105c(void) {
   Func_020012e0();
   Func_020013f8(0);
   Actor_ArmCallback(4, 0xc000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000f38();
 }
 

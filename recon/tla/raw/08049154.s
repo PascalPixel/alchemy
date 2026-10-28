@@ -1061,11 +1061,11 @@ Func_08049154:
 	str r1, [sp, #16]
 .L_08049952:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08049302
 .L_0804995a:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r4, #3
 	add r5, sp, #96
 .L_08049964:
@@ -1089,7 +1089,7 @@ Func_08049154:
 	ldr r0, [sp, #76]
 	bl Window_Close
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	add sp, #372
 	pop {r3, r5, r6, r7}

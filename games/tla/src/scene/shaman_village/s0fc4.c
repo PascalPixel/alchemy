@@ -22,7 +22,7 @@ void Func_02000fc4(void) {
       u32 price = Func_02004a8c(11);
 
       Actor_SetModeById(13, 5);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_Wait(30);
       Func_0200498c((s32)MsgShamanInnPaymentPrompt);
       Func_0200487c(price, 5);
       Func_0200487c(price, 5);
@@ -30,9 +30,9 @@ void Func_02000fc4(void) {
       if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
         if ((u32)gAdventure.coins < price) {
           Actor_SetModeById(13, 6);
-          FieldEvent_WaitFrames(20);
+          FieldEvent_Wait(20);
           Actor_SetModeById(13, 5);
-          FieldEvent_WaitFrames(30);
+          FieldEvent_Wait(30);
           Func_0200498c((s32)MsgShamanInnPaymentPrompt + 3);
           Func_020049a4(12, 0);
         } else {

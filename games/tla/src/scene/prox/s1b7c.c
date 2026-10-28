@@ -9,7 +9,7 @@ struct EventWork154 {
 };
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -41,7 +41,7 @@ void Func_02001b7c(void) {
     Actor_SetModeById(id, 25);
   else
     Actor_SetModeById(id, 26);
-  WaitFrames(4);
+  wait(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200458c(entrance);

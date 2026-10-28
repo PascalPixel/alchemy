@@ -28,7 +28,7 @@ extern u32 gFrameCount;
 
 s32 WindowSprite_GetPointerTilesFar(s32 index);
 s32 Message_AllTypedFar(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 slot, s32 source);
 s32 Resource_ResetEntry(u32 slot);
@@ -49,7 +49,7 @@ s32 Func_08120060(s32 x, s32 y) {
   position.x = x;
   position.y = y;
   while (!Message_AllTypedFar())
-    WaitFrames(1);
+    wait(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
@@ -64,9 +64,9 @@ s32 Func_08120060(s32 x, s32 y) {
     Oam_AddSpriteAtDepth(prompt, 240);
     if (gInput.pressed & 0x303)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Resource_ResetEntry(tileSlot);
-  WaitFrames(1);
+  wait(1);
   return 1;
 }

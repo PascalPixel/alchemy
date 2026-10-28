@@ -81,10 +81,10 @@ void Func_02000390(s32 actor) {
       Import_EventSetMessageId(msg);
       FieldMessage_ShowAtActor(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-        FieldEvent_WaitFrames(10);
+        FieldEvent_Wait(10);
         Import_EventSetMessageId(msg + 1);
       } else {
-        FieldEvent_WaitFrames(20);
+        FieldEvent_Wait(20);
         Import_EventSetMessageId(msg + 2);
       }
       Import_EventShowMessageAndWait(actor, 0);
@@ -100,10 +100,10 @@ void Func_02000390(s32 actor) {
     Import_EventSetMessageId(msg);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-      FieldEvent_WaitFrames(10);
+      FieldEvent_Wait(10);
       Import_EventSetMessageId(msg + 1);
     } else {
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       Import_EventSetMessageId(msg + 2);
     }
     Import_EventShowMessageAndWait(actor, 0);
@@ -189,10 +189,10 @@ void Func_02000614(void) {
   Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Import_EventSetMessageId(msg + 2);
   }
   Import_EventShowMessageAndWait(12, 0);
@@ -208,10 +208,10 @@ void Func_0200066c(void) {
   Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Import_EventSetMessageId(msg + 2);
   }
   Import_EventShowMessageAndWait(14, 0);
@@ -223,9 +223,9 @@ void Func_020006c4(void) {
   Import_EventResolvePendingActions(0);
   Import_EventSetMessageId((s32)MsgDailaInteriorsWatchingPractice);
   Import_EventShowMessageAndWait(26, 0);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Actor_SetModeById(26, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Import_EventShowMessageAndWait(26, 0);
   Import_EventEnd();
 }

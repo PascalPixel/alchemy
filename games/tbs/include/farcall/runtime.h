@@ -4,7 +4,7 @@
 
 /// Runs the game's frame loop for `frames` frames: the tasks, the OAM
 /// list, the idle sleep and the debug pause, then VBlank and the keys.
-void WaitFramesFar(s32 frames);
+void waitFar(s32 frames);
 /// Adds a task running `func` at priority `order`, or gives the task
 /// already running it the new priority. Returns the task's index, or -1 when
 /// all 20 slots are taken.

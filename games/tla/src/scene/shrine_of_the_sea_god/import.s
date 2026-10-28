@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -94,10 +94,10 @@ Func_020039c0:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_020039d8
 	.thumb_func
 Func_020039d8:

@@ -5,7 +5,7 @@ void Func_02003b24(void) {
   Import_SoundPlay(131);
   Func_02004a54();
   Func_02004a6c(Actor_GetById(6), 2);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02004a6c(Actor_GetById(6), 0);
   Func_02004a64();
   Func_02004a5c();
@@ -25,7 +25,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   else
     ShamanVillage_SePlay(158);
   ShamanVillage_MapCopy(a, b, c, d, mode, f);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
     object = Actor_GetById(gAdventure.currentOwner);
@@ -37,7 +37,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   }
   Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02004c08);
-  ShamanVillage_WaitFrames(12);
+  wait_(12);
   ShamanVillage_SePlay(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

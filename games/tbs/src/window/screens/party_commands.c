@@ -159,7 +159,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           break;
         }
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   Task_Add(UpdateLinkSessionCountdown, TASK_PASS_FRAME);
@@ -193,7 +193,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         selection = BATTLE_SIDE_MASK_PARTY;
       }
       handle = BattleUnit_ListIdsFar(selection, block);
-      WaitFrames(1);
+      wait(1);
       BattleStatusScreen_Run(block, handle, *(u16 *)block);
       Heap_Release(block);
       continue;
@@ -285,9 +285,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signatureHeader[1] = 255;
       BattleHighlight_SetModesFar(signatureHeader, 1);
       PartyStatus_HighlightMembers(signatureHeader);
-      WaitFrames(1);
+      wait(1);
       mode = BattleCommandRow_Run(COMMAND_ROW_MEMBER);
-      WaitFrames(1);
+      wait(1);
       if (mode == -2) {
         void *block;
         s32 handle;
@@ -295,7 +295,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         block = Heap_Alloc(12);
         handle = BattleUnit_ListIdsFar(1, block);
         state->iconShown[2] = 0;
-        WaitFrames(1);
+        wait(1);
         BattleStatusScreen_Run(block, handle, unitId);
         state->iconShown[2] = 1;
         Heap_Release(block);
@@ -479,7 +479,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         commandKind = COMMAND_SUMMON;
         parameter = mode;
-        WaitFrames(1);
+        wait(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->abilityId);
@@ -586,7 +586,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
                                   commandWindow, 16, 0);
           command->range = cost;
-          WaitFrames(1);
+          wait(1);
           Sound_PlayFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(
               unitId, ability->targetMode, cost,
@@ -595,7 +595,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           if (state->tutorialStep != 0) {
             hint = Message_ShowAndWait(MsgDjinnUnleashHint, 15, 8);
             while (Message_AllTyped() == 0) {
-              WaitFrames(1);
+              wait(1);
             }
             Window_Close(hint, 1);
             state->tutorialStep++;
@@ -617,7 +617,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 commandWindow, 16, 0);
         Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
-        WaitFrames(1);
+        wait(1);
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(unitId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
@@ -833,7 +833,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           mode = 1;
         }
       }
-      WaitFrames(1);
+      wait(1);
     }
     if (state->timerWindow != 0) {
       Window_Close((struct Window *)state->timerWindow, 1);

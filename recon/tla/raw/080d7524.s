@@ -31,7 +31,7 @@ Func_080d7524:
 	str r1, [sp, #8]
 	bl Event_Start
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r0, #173
 	bl Sound_PlayFar
 	movs r1, #1
@@ -43,7 +43,7 @@ Func_080d7524:
 	mov r0, r9
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #8]
 	movs r3, #128
 	lsls r3, r3, #8
@@ -53,7 +53,7 @@ Func_080d7524:
 	mov r0, r9
 	bl Actor_ArmCallback
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r1, #4
 	adds r1, #255
 	movs r2, #50
@@ -83,7 +83,7 @@ Func_080d7524:
 	lsls r3, r3, #11
 	str r3, [r7, #40]
 	movs r0, #33
-	bl WaitFrames
+	bl wait
 	ldr r1, [r7, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -95,13 +95,13 @@ Func_080d7524:
 	ldr r3, .L_080d7778
 	movs r0, #35
 	str r3, [r7, #40]
-	bl WaitFrames
+	bl wait
 	movs r0, #152
 	bl Sound_PlayFar
 	ldr r3, .L_080d777c
 	movs r0, #38
 	str r3, [r7, #40]
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7, #80]
 	movs r6, #0
 	ldr r3, [r3, #40]
@@ -216,12 +216,12 @@ Func_080d7524:
 	movs r2, #5
 	bl Actor_Jump
 	movs r0, #24
-	bl WaitFrames
+	bl wait
 	movs r6, #0
 	b .L_080d770a
 .L_080d7702:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r6, #1
 .L_080d770a:
 	cmp r6, #119

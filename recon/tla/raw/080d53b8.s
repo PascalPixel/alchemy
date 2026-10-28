@@ -159,7 +159,7 @@ Func_080d53b8:
 	adds r0, r7, #0
 	bl Actor_SetMode
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	movs r1, #7
 	adds r0, r7, #0
 	bl Actor_SetMode
@@ -167,7 +167,7 @@ Func_080d53b8:
 	lsls r3, r3, #11
 	str r3, [r7, #40]
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	adds r3, r7, #0
 	adds r3, #85
 	strb r5, [r3]
@@ -186,14 +186,14 @@ Func_080d53b8:
 	str r5, [r7, #40]
 	bl Actor_SetMode
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_080d5558
 	movs r3, #2
 	strb r3, [r1]
 	movs r3, #1
 	strb r3, [r6]
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7, #16]
 	ldr r2, .L_080d5560
 	ands r3, r2
@@ -302,7 +302,7 @@ Func_080d53b8:
 	str r2, [sp, #4]
 	bl Actor_SetSingleChildFlagsFar
 	movs r0, #4
-	bl Event_WaitFrames
+	bl Event_Wait
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #18

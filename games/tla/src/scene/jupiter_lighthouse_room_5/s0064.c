@@ -4,7 +4,7 @@
 struct FieldActor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02000e04(s32 id);
 void Func_020029d8(void);
 
@@ -19,7 +19,7 @@ void Func_02000064(s32 unused, s32 id) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
       object->y += 0x20000;
-      WaitFrames(1);
+      wait(1);
     }
     Func_02000e04(id);
     GameFlag_SetBit(0xa09);

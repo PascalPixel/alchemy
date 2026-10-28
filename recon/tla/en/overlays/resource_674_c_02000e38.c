@@ -31,9 +31,9 @@ void Func_02003f3c(s32 actor, s32 angle);
 struct Actor *Func_02000da0(struct Actor *holder, s32 item);
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_Stop(s32 actor);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02003fc4(void);
 void Func_02003fbc(void);
 void FieldMessage_Show(const u8 *message, s32 a);
@@ -45,7 +45,7 @@ void GameFlag_SetBit(s32 flag);
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1,                                   \
-   Actor_SetPositionAndReset(actor, x, z), FieldEvent_WaitFrames(1),    \
+   Actor_SetPositionAndReset(actor, x, z), FieldEvent_Wait(1),    \
    Actor_GetById(actor)->actionFlags |= 1)
 
 void Func_02000e38(void) {
@@ -100,7 +100,7 @@ void Func_02000e38(void) {
         STEP(gAdventure.currentOwner, 296, 840);
         leader->update = 0;
         Actor_Stop(gAdventure.currentOwner);
-        WaitFrames(1);
+        wait(1);
         trader->update = Func_02000df8;
         STEP(11, 292, 844);
       } else {
@@ -114,7 +114,7 @@ void Func_02000e38(void) {
         STEP(gAdventure.currentOwner, 264, 840);
         leader->update = 0;
         Actor_Stop(gAdventure.currentOwner);
-        WaitFrames(1);
+        wait(1);
         trader->update = Func_02000df8;
         STEP(11, 268, 844);
       }

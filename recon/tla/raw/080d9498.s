@@ -263,7 +263,7 @@ Func_080d9498:
 	b .L_080d9572
 .L_080d96a0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #16]
 	ldr r1, [sp, #56]
 	ldr r2, [sp, #12]

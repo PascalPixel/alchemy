@@ -16,7 +16,7 @@ struct LohoPicture {
 
 extern const struct LohoPicture gData_02001f14;
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

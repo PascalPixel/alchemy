@@ -89,7 +89,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  WaitFrames(15);
+  wait(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   Actor_SetMoveTargetFar(actor, p->x + (16 << 16), p->y, p->z);
@@ -113,7 +113,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       actor->y.fixed += 0x6000;
       right->y.fixed += 0x6000;
       target->y.fixed += 0x6000;
-      WaitFrames(1);
+      wait(1);
     }
   }
   hands[0]->speedLimit = 4 << 16;
@@ -131,7 +131,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // Move with the d-pad.
   //------------------------------------------------------------------
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     if ((gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
 
@@ -186,7 +186,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       z = p->z;
       Actor_SelectAnimationFar(hands[0], 4);
       Actor_SelectAnimationFar(hands[1], 4);
-      WaitFrames(15);
+      wait(15);
       // i is the overlap test's 0 here: unpause the target and, once it is
       // on the cell, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
@@ -205,7 +205,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       target->z.fixed = z;
       target->velocityX = i;
       target->velocityZ = i;
-      WaitFrames(10);
+      wait(10);
       break;
     }
   }
@@ -218,9 +218,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SelectAnimationFar(hands[1], 4);
   Task_Remove(FieldEffect_SpawnFallingParticles);
   Sound_PlayFar(SE_CLICK);
-  WaitFrames(15);
+  wait(15);
   Sound_PlayFar(SE_CLICK);
-  WaitFrames(15);
+  wait(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   {
@@ -259,13 +259,13 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   if (effectWork->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
-      WaitFrames(1);
-    WaitFrames(1);
+      wait(1);
+    wait(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
-      WaitFrames(1);
+      wait(1);
     FieldEffect_SpawnRadialParticleRing(target);
     FieldPsynergy_FadeFromCastColor();
-    WaitFrames(30);
+    wait(30);
   } else {
     FieldPsynergy_FadeFromCastColor();
   }
@@ -303,7 +303,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
         fragment->scaleY = scale;
         fragment->scaleX = scale;
         fragment->facing += 0x2000;
-        WaitFrames(1);
+        wait(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }

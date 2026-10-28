@@ -299,7 +299,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
       SpriteAnimation_StartFar(effect, 1);
       effect->priority = 3;
     }
-    WaitFrames(0xA);
+    wait(0xA);
   }
 }
 

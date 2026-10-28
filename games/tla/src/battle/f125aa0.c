@@ -35,11 +35,11 @@ s32 Func_08125aa0(void) {
     Random16();
     Random16();
     *(volatile u16 *)0x0400004c = (i << 8) | i;
-    WaitFrames(1);
+    wait(1);
   }
 
   *(volatile u16 *)0x04000000 = 1;
-  WaitFrames(4);
+  wait(4);
   saved = bg0cnt;
   reg = (volatile u16 *)0x04000008;
   *reg++ = saved;

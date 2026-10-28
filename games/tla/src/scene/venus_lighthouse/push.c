@@ -12,7 +12,7 @@ void SceneState_RunActor13AtColumn42Setup(void) {
   Import_EventStart();
   Import_EventResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
-    Import_EventWaitFrames(30);
+    Import_EventWait(30);
     Import_SoundPlay(188);
     obj->motionFlags = 0;
     val = 0xfffe0000;

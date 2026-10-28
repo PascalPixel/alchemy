@@ -14,7 +14,7 @@
 #include "call.h"
 #include "flag_call.h"
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 Func_02003d20(void);
@@ -56,12 +56,12 @@ next:
     if (GameFlag_Test(flag) == 0) {
       Func_02003df8(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
-      WaitFrames(2);
+      wait(2);
       Func_02003ba0(target, 0);
       Actor_SetPartAttribute(Actor_GetById(id), 0);
-      WaitFrames(2);
+      wait(2);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
-      WaitFrames(4);
+      wait(4);
       Actor_SetPartAttribute(Actor_GetById(id), 0);
       Func_02000974(0);
       GameFlag_SetBit(flag);
@@ -74,22 +74,22 @@ next:
         Func_02003df8(185);
         Call3((void (*)())Func_02003c00, 0x10000, 0x40000, 0x10000);
         Func_02000974(0);
-        WaitFrames(8);
+        wait(8);
         Func_02003ba0(target, 2);
         Func_02000c4c(-2, target->terrainId);
         Func_02000974(1);
-        WaitFrames(16);
+        wait(16);
         Func_02000c4c(-2, target->terrainId);
-        WaitFrames(4);
+        wait(4);
         Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
-        WaitFrames(8);
+        wait(8);
         leader->motionFlags = 3;
-        WaitFrames(5);
+        wait(5);
         Actor_SetPositionAndResetMotion(target, 0, 0, 0);
-        WaitFrames(2);
+        wait(2);
         Func_02003df8(188);
         Func_02000aa8();
-        WaitFrames(20);
+        wait(20);
         GameFlag_SetBit(done);
       }
     }

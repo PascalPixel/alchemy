@@ -166,7 +166,7 @@ s32 Message_ShowLocalizedAndWait(void) {
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset(buffer, window, 0, 4);
     do {
-      WaitFrames(1);
+      wait(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
              gBattleMenuWork->timer != 0);
     Window_Close(window, 1);

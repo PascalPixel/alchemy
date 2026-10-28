@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -74,10 +74,10 @@ Import_FieldMessageShow:
 	.thumb_func
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Import_EventWaitFrames
+	.global Import_EventWait
 	.thumb_func
-Import_EventWaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+Import_EventWait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Import_EventStart
 	.thumb_func
 Import_EventStart:

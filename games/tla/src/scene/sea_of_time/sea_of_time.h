@@ -77,7 +77,7 @@ u32 Random16Far(void);
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001f8c(s32 a, s32 b, s32 c);

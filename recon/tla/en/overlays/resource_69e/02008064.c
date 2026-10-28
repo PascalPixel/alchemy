@@ -24,7 +24,7 @@ void Func_020029d8();
 struct FieldActor *Actor_GetById();
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-void WaitFrames();
+void wait();
 void Func_02000e04();
 u32 __umodsi3();
 void Animation_ApplyChildValues();

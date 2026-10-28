@@ -371,7 +371,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 
   Message_OpenWindow(MsgOverwriteConfirm, 8, 12, 2);
   while (Message_AllTyped() == 0) {
-    WaitFrames(1);
+    wait(1);
   }
   if (YesNoMenu_Run(1, 0, 0, 1)) {
     Message_CloseFinishedWindows();
@@ -460,7 +460,7 @@ s32 Save_EraseSelectedFile(void) {
     } else {
       Message_OpenWindow(MsgEraseConfirm, 8, 1, 2);
       while (Message_AllTyped() == 0) {
-        WaitFrames(1);
+        wait(1);
       }
       if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
         Message_CloseFinishedWindows();
@@ -1083,13 +1083,13 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
         FileList_DrawSummary(summaryWindow, &save->summary[selectedFile]);
-        WaitFrames(1);
+        wait(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
         FileList_HidePartySprites();
         FileList_ShowPartySprites(partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
-        WaitFrames(1);
+        wait(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
                 (s8)save->summary[selectedFile].djinn[1] +
                 (s8)save->summary[selectedFile].djinn[2] +
@@ -1131,7 +1131,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     MenuCursor_AdvanceFar(&fileCursor);
 #endif
     MenuTitle_Bob(modePicture);
-    WaitFrames(1);
+    wait(1);
     // Up and down move to the previous or next file the mode allows; saving
     // allows every file, an empty one too.
     if (gKeysRepeat & KEY_UP) {
@@ -1186,7 +1186,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
   HeapSlot_Release(HEAP_SLOT_MENU);
   WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
-  WaitFrames(1);
+  wait(1);
 done:
   return result;
 }
@@ -1219,7 +1219,7 @@ s32 Save_ToChosenFile(void) {
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
         while (Message_AllTyped() == 0) {
-          WaitFrames(1);
+          wait(1);
         }
         if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
           Message_CloseFinishedWindows();
@@ -1233,7 +1233,7 @@ s32 Save_ToChosenFile(void) {
                                        FIELD_MESSAGE_KEEP_OPEN |
                                        FIELD_MESSAGE_LOWER);
       while (Message_AllTyped() == 0) {
-        WaitFrames(1);
+        wait(1);
       }
       Save_BuildFileSummary();
       Save_CaptureActorsFar();

@@ -60,12 +60,12 @@ void BattleEffect_RunKillSting(void *object) { Func_0813d098(object, 19); }
 void BattleEffect_RunTargetStrikeMode20(void *object) { Func_0813d098(object, 20); }
 
 void BattleEffect_SetApproachMotion(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Abilities: Mad Zephyr (kind 117).
 void BattleEffect_RunMadZephyr(u8 *object) {
   BattleEffect_SetApproachMotion(*(s32 *)(object + 8), *(s16 *)(object + 36), 4, 20);
-  WaitFrames(2);
+  wait(2);
   if (*(s32 *)(object + 24) == 0)
     Func_0813d098(object, 12);
   else

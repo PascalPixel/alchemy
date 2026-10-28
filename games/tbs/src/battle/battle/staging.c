@@ -53,7 +53,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
-    WaitFrames(delay);
+    wait(delay);
   }
   // Build the action, with the acting unit highlighted, and stage it by its
   // outcome. An action that failed has shown its message; ACTION_REPORTED
@@ -98,7 +98,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   } else {
     if (result == ACTION_REPORTED) {
       BattleMessage_WaitForAdvance();
-      WaitFrames(3);
+      wait(3);
     }
     BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   }
@@ -219,11 +219,11 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 
         if (unit->stun == 0 && unit->sleep == 0) {
           BattleMotion_SetupEscapeObject(unitIds[index]);
-          WaitFrames(8);
+          wait(8);
         }
         index--;
       }
-      WaitFrames(22);
+      wait(22);
       completed.value = 1;
     }
   } else if (((Random16() * 10) >> 16) <= 6) {
@@ -233,7 +233,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
     event[0] = plan->unitId;
     event[1] = BATTLE_UNIT_LIST_END;
     BattleMotion_SetupEscapeObject(event[0]);
-    WaitFrames(8);
+    wait(8);
     BattleObject_RemoveFromLists(plan->unitId);
     BattleObject_MarkForRelease(plan->unitId);
   } else {
@@ -331,7 +331,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = BLEND_ALPHA(16 - i, 16);
-    WaitFrames(1);
+    wait(1);
   }
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
   if (plan->failure != ACTION_FAILURE_NONE) {
@@ -419,12 +419,12 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = BLEND_ALPHA(i, 16);
-    WaitFrames(1);
+    wait(1);
   }
   for (i = 0; i != count; i++)
     BattleHighlight_SetSpriteMode(units[i], SPRITE_OPAQUE);
   BattleCamera_SetView(0, 0, 0, 100);
-  WaitFrames(1);
+  wait(1);
   return 0;
 }
 
@@ -449,7 +449,7 @@ s32 BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
       BattlePlayback_RunAll();
     }
   }
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Plays an attack: the camera turns halfway to the attacker's view, the
@@ -507,10 +507,10 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
-    WaitFrames(5);
+    wait(5);
   } else {
     view->targetYaw = facingAngle;
-    WaitFrames(10);
+    wait(10);
   }
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -550,11 +550,11 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   // A miss: after 10 frames the target hops back; 16 frames later the dodge
   // is shown at once.
   if (missed != 0) {
-    WaitFrames(10);
+    wait(10);
     BattleMotion_HopBack(work.effect.targets[0]);
-    WaitFrames(2);
-    WaitFrames(4);
-    WaitFrames(10);
+    wait(2);
+    wait(4);
+    wait(10);
     BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->targetIds[0]);
     BattlePlayback_Push(PLAYBACK_MESSAGE, MsgNimblyDodgesBlow);
     BattlePlayback_RunAll();
@@ -594,7 +594,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
           BattleCamera_SetViewAtPairMidpoint(first, second,
                                              index * 30 / frames + 100);
         }
-        WaitFrames(1);
+        wait(1);
       }
     }
 
@@ -653,10 +653,10 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
 
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
-    WaitFrames(5);
+    wait(5);
   } else {
     view->targetYaw = facingAngle;
-    WaitFrames(20);
+    wait(20);
   }
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -678,11 +678,11 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   else
     work.effect.side = EFFECT_SIDE_ENEMIES;
   if (missed != 0) {
-    WaitFrames(10);
+    wait(10);
     BattleMotion_HopBack(savedInput->targetIds[0]);
-    WaitFrames(2);
-    WaitFrames(4);
-    WaitFrames(10);
+    wait(2);
+    wait(4);
+    wait(10);
     BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   } else {
     BattleEffect_RunByIdRangeFar(&work.effect);
@@ -769,7 +769,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
         Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
                                     128);
       }
-      WaitFrames(1);
+      wait(1);
       targetOrFadeIndex++;
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
@@ -778,7 +778,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
     else
       BattleEffect_RunFromTableFar(&work.effect);
   } else {
-    WaitFrames(60);
+    wait(60);
   }
   BattlePlayback_WaitForReady();
   Actor_SelectAnimationFar(actor, POSE_STANDING);
@@ -1002,13 +1002,13 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
     PartyStatus_HighlightMembersFar(selected);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               SPRITE_COLOR_WHITE);
-    WaitFrames(2);
+    wait(2);
 
     selected[0] = unitId;
     PartyStatus_HighlightMembersFar(selected);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               BattleObject_GetPalette(unitId));
-    WaitFrames(2);
+    wait(2);
     flashesRemaining--;
   } while (flashesRemaining >= 0);
 
@@ -1106,7 +1106,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
       entry->picture = 0xff;
       recordCount++;
     }
-    WaitFrames(4);
+    wait(4);
     BattleObject_RemoveFromLists(unitId);
     // The whole dissolve, over 32 frames.
     SpriteDissolve_RunManyFar((u8 **)records, recordCount);

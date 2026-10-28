@@ -34,7 +34,7 @@ Func_0815e9f4:
 	ldr r1, [r1, #12]
 	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	bl Func_08143d80
 	ldr r3, .L_0815ea60
 	movs r2, #128
@@ -79,7 +79,7 @@ Func_0815e9f4:
 	movs r2, #130
 	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #56]
 	movs r2, #224
 	lsls r2, r2, #3
@@ -94,7 +94,7 @@ Func_0815e9f4:
 	movs r2, #130
 	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_0815ed68
 	ldr r1, .L_0815ed6c
 	movs r2, #1
@@ -124,7 +124,7 @@ Func_0815e9f4:
 	movs r2, #130
 	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #0
 	ldr r1, [sp, #44]
 	ldr r0, .L_0815ed74
@@ -136,7 +136,7 @@ Func_0815e9f4:
 	ldr r1, [r1, #12]
 	bl BattleCamera_SetViewAtPairMidpointFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #56]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -348,7 +348,7 @@ Func_0815e9f4:
 	str r3, [r2]
 	movs r0, #1
 	add r9, r5
-	bl WaitFrames
+	bl wait
 	mov r1, r9
 	cmp r1, #32
 	bne .L_0815ec16
@@ -694,7 +694,7 @@ Func_0815e9f4:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
@@ -726,7 +726,7 @@ Func_0815e9f4:
 	ldrh r0, [r5]
 	bl BattleBackground_SetPaletteLevelFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	add r9, r1
 	mov r2, r9

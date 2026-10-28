@@ -383,7 +383,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   s32 *brightness;
   struct ScreenPoint *projectedPosition;
 
-  WaitFrames(1);
+  wait(1);
   BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
@@ -394,7 +394,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
                                              BGCNT_SCREEN_BASE(7));
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
-  WaitFrames(1);
+  wait(1);
   Io_Write16(WIN_RANGE(0, DISPLAY_WIDTH), &REG_WIN0H);
   Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
@@ -420,7 +420,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
                               DMA_COPY_WORDS(2));
       work->canvasOrigin.queued = 1;
-      WaitFrames(1);
+      wait(1);
     }
     ElementGlow_ReleaseVramAndHeapBlocks(element);
   } else if (mode == GLOW_STREAKS) {
@@ -439,7 +439,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
                           (u32)&effectWork->trackedCanvas.origin.x,
                           DMA_COPY_WORDS(2));
       effectWork->trackedCanvas.origin.queued = 1;
-      WaitFrames(1);
+      wait(1);
     }
     BattleEffect_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {

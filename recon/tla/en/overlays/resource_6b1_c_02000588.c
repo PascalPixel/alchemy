@@ -49,7 +49,7 @@ void Func_02000588(void) {
     else
       Actor_ArmCallback(id, 0x4000, 0);
   }
-  WaitFrames(10);
+  wait(10);
   i = 0;
 next:
   {
@@ -62,11 +62,11 @@ next:
     Func_02000c74(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
     Func_02000d64(152);
-    WaitFrames((Random16Far() * 4 >> 16) + 3);
+    wait((Random16Far() * 4 >> 16) + 3);
   }
   if (++i <= 6)
     goto next;
-  WaitFrames(40);
+  wait(40);
   Func_02000d64(198);
   i = 9;
 lower:
@@ -82,7 +82,7 @@ lower:
     goto lower;
   Actor_GetById(9);
   Func_02000c7c();
-  WaitFrames(40);
+  wait(40);
   i = 9;
 land:
   {
@@ -93,9 +93,9 @@ land:
   }
   if (++i <= 14)
     goto land;
-  WaitFrames(3);
+  wait(3);
   Func_02000d64(188);
-  WaitFrames(10);
+  wait(10);
   if (!GameFlag_Test(0xa9f) && shift > 0)
     Func_02000388();
 }

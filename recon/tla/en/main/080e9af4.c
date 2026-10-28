@@ -58,7 +58,7 @@ struct GlowEvent {
 
 extern char ResourceId_RingOrb;
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
@@ -99,7 +99,7 @@ void Func_080e9af4(void) {
   BattleEffect_SetObjectUpdateMode(player, 0);
   Actor_SetMode(player, 5);
   Sound_PlayFar(130);
-  WaitFrames(1);
+  wait(1);
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
@@ -126,20 +126,20 @@ void Func_080e9af4(void) {
   }
 
   if (found) {
-    WaitFrames(5);
+    wait(5);
     Sound_PlayFar(246);
     for (i = 0; i < 32; i++) {
       work->scale = i << 11;
-      WaitFrames(1);
+      wait(1);
     }
-    WaitFrames(10);
+    wait(10);
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->unk18, scene->unk1a);
     for (i = 31; i != 0; i--) {
       work->scale = i << 11;
-      WaitFrames(1);
+      wait(1);
     }
-    WaitFrames(5);
+    wait(5);
     Task_Remove(Func_080e9940);
     Resource_ResetEntry(work->resource);
     HeapSlot_Release(92);
@@ -157,7 +157,7 @@ void Func_080e9af4(void) {
         Sound_PlayFar(246);
       player->y += 0x10000;
       work->scale = i << 11;
-      WaitFrames(1);
+      wait(1);
     }
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;

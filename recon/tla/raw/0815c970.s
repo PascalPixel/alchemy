@@ -264,7 +264,7 @@ Func_0815c970:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #8]
 	adds r5, #1
 	cmp r5, r2

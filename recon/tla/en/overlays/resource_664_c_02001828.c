@@ -42,8 +42,8 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005d94(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 u32 Random16Far(void);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
@@ -114,7 +114,7 @@ void Func_02001828(void) {
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Func_02005d94(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
@@ -142,7 +142,7 @@ void Func_02001828(void) {
     } else {
       Actor_SetPartAttribute(TARGET(effect), 4);
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Actor_SetPartAttribute(TARGET(effect), 0);
   Func_02005f94(136);
@@ -207,7 +207,7 @@ void Func_02001828(void) {
                     EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &leaves);
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   if (carried != 0) {
     object = gust->watchedObject;
@@ -226,7 +226,7 @@ void Func_02001828(void) {
     } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
       Call6(Func_02005dac, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
-      WaitFrames(1);
+      wait(1);
       OverlayObject_WaitUntilIdle(object);
       object->motionFlags = 0;
       object->terrainHeight = 0;
@@ -234,7 +234,7 @@ void Func_02001828(void) {
       Func_02005df4(0x1400000, 0x3400000, 0, 4);
     } else if (gAdventure.scene == (s32)&SceneId_Ov664Room9) {
       OverlayObject_WaitUntilIdle(object);
-      WaitFrames(1);
+      wait(1);
       OverlayObject_WaitUntilIdle(object);
       Actor_SetSingleChildFlags(object, 0);
       object->motionFlags = 0;
@@ -305,7 +305,7 @@ void Func_02001828(void) {
         }
         Func_02005d84();
       }
-      FieldEvent_WaitFrames(1);
+      FieldEvent_Wait(1);
     }
     Func_02005f94(298);
   }
@@ -319,14 +319,14 @@ shrink:
     gust->scaleX -= 0x2666;
     gust->scaleY -= 0x4000;
     gust->y += 0x38000;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Func_02005d7c(gust);
   if (gAdventure.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();
       Call6(Func_02005d9c, 79, 0x40, 29, 85, 5, 7);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_Wait(30);
       SHAKE();
       Call6(Func_02005d9c, 69, 0x40, 29, 85, 5, 7);
       Call6(Func_02005dac, 46, 20, 5, 5, 29, 21);
@@ -336,7 +336,7 @@ shrink:
     } else if (hit == 6) {
       SHAKE();
       Call6(Func_02005d9c, 74, 0x40, 29, 85, 5, 7);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_Wait(30);
       SHAKE();
       Call6(Func_02005d9c, 0x40, 0x40, 29, 85, 5, 7);
       Call6(Func_02005dac, 52, 20, 5, 5, 29, 21);
@@ -359,12 +359,12 @@ shrink:
                         velocity.y + ((Random16Far() & 31) << 16), velocity.z,
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
-        WaitFrames(30);
+        wait(30);
         SHAKE();
         Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
         Actor_GetById(8)->priorityFlags |= 1;
       } else {
-        FieldEvent_WaitFrames(30);
+        FieldEvent_Wait(30);
         SHAKE();
         Call6(Func_02005d9c, 69, 0x40, 0x20, 79, 5, 7);
         Call6(Func_02005dac, 49, 15, 5, 5, 0x20, 15);
@@ -384,11 +384,11 @@ shrink:
                         velocity.y + ((Random16Far() & 31) << 16), velocity.z,
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
-        WaitFrames(20);
+        wait(20);
       } else {
         Call6(Func_02005d9c, 79, 0x40, 0x20, 79, 5, 7);
         Func_02005f94(157);
-        FieldEvent_WaitFrames(30);
+        FieldEvent_Wait(30);
         SHAKE();
         Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
         Call6(Func_02005dac, 49, 21, 5, 5, 0x20, 15);
@@ -398,7 +398,7 @@ shrink:
       }
     }
   }
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02005eec(gAdventure.currentOwner, 1);
   Func_02005ee4();
   Func_02005e1c();

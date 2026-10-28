@@ -12,8 +12,8 @@ void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
@@ -71,7 +71,7 @@ void Func_02000468(void) {
     if (p->scaleX <= 0xffff)
       p->scaleX += 0xa00;
     p->scaleY = p->scaleX;
-    WaitFrames(1);
+    wait(1);
   }
   p->angle = 0x3000;
   p->scaleY = 0x10000;

@@ -44,7 +44,7 @@ struct FieldActor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void FieldMessage_Show(const u8 *message, s32 mode);
 void Func_02005d5c(struct FieldActor *object, s32 value);
 void Func_02005d6c(struct FieldActor *object, const u8 *data);

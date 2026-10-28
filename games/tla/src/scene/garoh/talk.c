@@ -12,10 +12,10 @@ void Func_02000580(s32 actor) {
   Func_0200524c(msg);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_0200524c(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200524c(msg + 2);
   }
   Func_02005264(actor, 0);
@@ -27,10 +27,10 @@ void Func_020005cc(s32 actor) {
   Func_0200524c(msg);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_0200524c(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200524c(msg + 2);
   }
   Func_02005264(actor, 0);
@@ -42,10 +42,10 @@ void Func_02000618(s32 actor) {
   Func_0200524c(msg);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_0200524c(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200524c(msg + 2);
   }
   Func_02005264(actor, 0);

@@ -48,7 +48,7 @@ s32 Inventory_CountFar(s32 unitId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_0810bca0(void *window, s32 unitId, s32 slot);
 void Shop_DrawMsg(void *window, s32 message);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -88,9 +88,9 @@ s32 Func_0810b9c0(s32 unitId) {
       Func_0810bca0(priceWindow, unitId, slot);
       Shop_DrawMsg(nameWindow, itemId + MSGNO(MsgItemPlainName));
     }
-    WaitFrames(1);
+    wait(1);
     if (gInput.pressed & 1) {
-      WaitFrames(1);
+      wait(1);
       if (shop->dropMode == 0)
         flags = Func_080ad268(unitId, slot);
       else
@@ -106,7 +106,7 @@ s32 Func_0810b9c0(s32 unitId) {
         Message_OpenWindowFar((s32)Msg04675, 8, 1, 0);
       Sound_PlayFar(113);
       while (Message_AllTypedFar() == 0)
-        WaitFrames(1);
+        wait(1);
       Message_CloseFinishedWindowsFar();
       continue;
     }
@@ -123,11 +123,11 @@ s32 Func_0810b9c0(s32 unitId) {
       ItemMenu_DrawItemDetailsFar(window, item);
       shop->detailsHidden = 0;
       while (gInput.held & 4)
-        WaitFrames(1);
+        wait(1);
       shop->detailsHidden = 1;
       Window_CloseFar(window, 2);
       WindowSprite_PrepareForRedrawFar(shop->listWindow);
-      WaitFrames(1);
+      wait(1);
       redraw = 1;
       continue;
     }
@@ -164,6 +164,6 @@ s32 Func_0810b9c0(s32 unitId) {
   }
   Window_CloseFar(nameWindow, 2);
   Window_CloseFar(priceWindow, 2);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

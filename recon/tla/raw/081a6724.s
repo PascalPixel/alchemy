@@ -166,7 +166,7 @@ Func_081a6724:
 	strh r3, [r2]
 	bl PaletteFade_Start
 	movs r0, #60
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	movs r7, #128
@@ -186,14 +186,14 @@ Func_081a6724:
 	orrs r3, r6
 	strh r3, [r7]
 	movs r0, #3
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	adds r5, #1
 	cmp r5, #16
 	ble .L_081a6874
 	movs r0, #150
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	movs r0, #2
@@ -202,7 +202,7 @@ Func_081a6724:
 	movs r0, #40
 	bl PaletteFade_Start
 	movs r0, #60
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	beq .L_081a68b0
 .L_081a68ac:

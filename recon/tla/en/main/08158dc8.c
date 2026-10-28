@@ -72,7 +72,7 @@ s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -388,7 +388,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       HeapSlot_Release(188);
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // The lightning part.
@@ -623,7 +623,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
     }
 
     HeapSlot_Release(104);

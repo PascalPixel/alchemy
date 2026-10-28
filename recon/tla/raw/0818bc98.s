@@ -1384,7 +1384,7 @@ Func_0818bc98:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r6, [sp, #52]
 	ldr r3, .L_0818c78c
 	adds r6, #1

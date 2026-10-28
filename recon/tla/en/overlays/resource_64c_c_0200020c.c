@@ -31,7 +31,7 @@ extern u8 gData_0200215c[];
 extern u8 Data_0200217c[];
 extern u8 Data_02002469[];
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct Actor *Actor_GetById(s32 id);
@@ -71,7 +71,7 @@ void Func_0200020c(s32 stage) {
 
   Func_02002034(8, 0, 0);
   gData_02003dbe = 0;
-  WaitFrames(1);
+  wait(1);
   GameFlag_ClearBit(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
@@ -88,7 +88,7 @@ void Func_0200020c(s32 stage) {
   MAP_WORD(map, 0x11e) = 0x1000;
   MAP_WORD(map, 0x11c) = 0xd000;
   Iwram_ClearWords((void *)0x050001c0, 32);
-  WaitFrames(1);
+  wait(1);
   Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
   Event_StartScreenTransition();
@@ -102,7 +102,7 @@ void Func_0200020c(s32 stage) {
       Func_0200208c(gData_02003d70[stage], 60);
     if (frame >= gData_02003d84[stage] - 64)
       MAP_WORD(map, 0x11c) += gData_02003d88[stage + 1];
-    WaitFrames(1);
+    wait(1);
   }
   Func_02002074();
   if (stage == 4) {
@@ -112,7 +112,7 @@ void Func_0200020c(s32 stage) {
     Func_02001f54(Data_0200217c, frames);
     IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000800);
     IO_WRITE_QUEUE_PUSH(0x06002000, (u32)frames, 0x84000140);
-    WaitFrames(1);
+    wait(1);
   } else {
     u16 *tiles = (u16 *)buffer;
     s32 x, y;
@@ -120,7 +120,7 @@ void Func_0200020c(s32 stage) {
     IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
                         0x80000010);
     Iwram_ClearWords((void *)0x06001000, 0x2000);
-    WaitFrames(1);
+    wait(1);
     for (y = 0; y != 8; y++) {
       for (x = 0; x != 16; x++) {
         s32 tile = y * 16 + x + 128;
@@ -136,7 +136,7 @@ void Func_0200020c(s32 stage) {
         tiles[y * 32 + x + 0x200] = 0xe080;
     }
     IO_WRITE_QUEUE_PUSH(0x06002000, (u32)buffer, 0x80000400);
-    WaitFrames(1);
+    wait(1);
   }
   Func_02002024();
   Func_02002084(0);
@@ -265,7 +265,7 @@ void Func_0200020c(s32 stage) {
       if (late <= 95)
         gBgScroll[0].y++;
     }
-    WaitFrames(1);
+    wait(1);
   }
   Task_RemoveFar(Func_0200005c);
   if (stage != 4) {
@@ -280,7 +280,7 @@ void Func_0200020c(s32 stage) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
         Event_FinishScreenTransition();
       }
-      WaitFrames(1);
+      wait(1);
     }
     Event_WaitTransitionFrames();
   } else {

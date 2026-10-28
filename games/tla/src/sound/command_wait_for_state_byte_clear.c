@@ -13,6 +13,6 @@
 
 void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
-    WaitFrames(1);
+    wait(1);
   }
 }

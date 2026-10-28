@@ -39,7 +39,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   Task_ResetAll();
   Fade_ToBlack(1);
   Func_08014b70();
-  WaitFrames(1);
+  wait(1);
   {
     /* FAKEMATCH(pin): the native loads the control word from the pool before
      * it starts the register address; as REG_BG2CNT = 0x681, 2 of 192
@@ -122,7 +122,7 @@ col:
         result = -1;
         break;
       }
-      WaitFrames(1);
+      wait(1);
     }
     return result;
   }
@@ -131,7 +131,7 @@ col:
       result = -1;
       break;
     }
-    WaitFrames(1);
+    wait(1);
   }
   if (result != 0)
     Fade_FromBlack(8);
@@ -144,7 +144,7 @@ col:
         result = -1;
         break;
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   if (result != 0)

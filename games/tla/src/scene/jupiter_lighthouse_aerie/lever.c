@@ -11,7 +11,7 @@ struct JupiterLighthouseAerieObject {
 struct JupiterLighthouseAerieObject *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetModeById(s32 actor, s32 mode);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Camera_FollowActor(s32 actor, s32 target);
@@ -31,15 +31,15 @@ void Func_020001b4(void) {
   Actor_SetModeById(gAdventure.currentOwner, 1);
   Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
   Func_020017a8(11, 9, 0);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0b) == 0) {
     Func_02000054(0);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
   } else {
     Func_02000054(2);
   }
   Camera_FollowActor(gAdventure.currentOwner, 1);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02001070(Actor_GetById(9));
   Func_02001070(Actor_GetById(10));
   Func_02001070(Actor_GetById(11));
@@ -55,15 +55,15 @@ void Func_02000264(void) {
   Actor_SetModeById(gAdventure.currentOwner, 1);
   Actor_ArmCallback(gAdventure.currentOwner, 0x8000, 0);
   Func_020017a8(12, 10, 1);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0a) == 0) {
     Func_02000054(1);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
   } else {
     Func_02000054(3);
   }
   Camera_FollowActor(gAdventure.currentOwner, 1);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02001070(Actor_GetById(9));
   Func_02001070(Actor_GetById(10));
   Func_02001070(Actor_GetById(11));

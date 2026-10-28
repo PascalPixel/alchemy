@@ -15,10 +15,10 @@ void GameFlag_Test();
 void Actor_Stop();
 void Actor_SetAngleToward();
 void Actor_WatchAndSetScript();
-void WaitFrames();
+void wait();
 struct Actor *Actor_GetById();
 void Func_02003ff4();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02003f3c();
 void Func_02003f5c();
 void GameFlag_SetBit();
@@ -58,7 +58,7 @@ L_02008256:
   goto L_02008294;
 L_02008260:
   Call1((void (*)())Actor_Stop, 9);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call3((void (*)())Actor_SetAngleToward, 9, gAdventure.currentOwner,
         0);
   Call1((void (*)())Func_02003f24, (s32)MsgPenPen3);
@@ -197,7 +197,7 @@ void Func_02000440(void) {
   Call3((void (*)())Actor_Jump, 9, 4, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Call2((void (*)())Func_02003f5c, 9, 0x102);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())GameFlag_SetBit, 0x214);
 L_020084b6:
   Call3((void (*)())Actor_SetAngleToward, 8, gAdventure.currentOwner,
@@ -264,10 +264,10 @@ void Func_02000568(void) {
     Call2((void (*)())Actor_SetModeById, 10, 4);
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object,
           (leader->x + object->x) / 2, leader->y, (leader->z + object->z) / 2);
-    Call1((void (*)())WaitFrames, 20);
+    Call1((void (*)())wait, 20);
     Actor_SetPositionAndResetMotion(object, 0x780000, 0x800000, 0x1380000);
     Call2((void (*)())Actor_SetModeById, 10, 5);
-    Call1((void (*)())WaitFrames, 10);
+    Call1((void (*)())wait, 10);
     Call2((void (*)())Func_02003f3c, gAdventure.currentOwner, 0x4000);
     spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 0x1e9,
                                              leader->x, 0x980000, leader->z);
@@ -277,7 +277,7 @@ void Func_02000568(void) {
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
-    Call1((void (*)())FieldEvent_WaitFrames, 10);
+    Call1((void (*)())FieldEvent_Wait, 10);
     ((void (*)())Func_02003fc4)();
     Call2((void (*)())FieldMessage_Show, (s32)MsgOhMyThat + 1,
           1);

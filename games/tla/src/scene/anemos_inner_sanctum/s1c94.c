@@ -18,7 +18,7 @@ struct AnemosInnerSanctumPicture {
 extern const s16 gData_020043e4[];
 extern const struct AnemosInnerSanctumPicture gData_02004410[];
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -69,7 +69,7 @@ loop:
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -4);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
   Func_02003450(work->value);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -185,7 +185,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     }
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);

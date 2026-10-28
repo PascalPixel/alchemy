@@ -24,7 +24,7 @@ void Func_080f8ab4(s32 x, s32 y);
 s32 Func_080feb58(void);
 s32 Func_080fe894(void);
 void Icon_PrepareActor(struct OwnerCursor *cursor);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 Func_080fe580(s32 slot) {
@@ -53,6 +53,6 @@ s32 Func_080fe580(s32 slot) {
     result = Func_080fe894();
   cursor = menu->ownerCursors[slot];
   Icon_PrepareActor(cursor);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

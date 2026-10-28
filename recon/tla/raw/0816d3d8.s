@@ -385,7 +385,7 @@ BattleEffect_RunStoneJustice:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #1
 	add r9, r2
 	mov r3, r9

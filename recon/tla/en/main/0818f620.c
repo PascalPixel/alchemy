@@ -50,7 +50,7 @@ s32 Task_Remove(void (*func)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -339,7 +339,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -364,9 +364,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Task_Remove(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
-    WaitFrames(1);
+    wait(1);
     BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
-    WaitFrames(1);
+    wait(1);
   }
 }

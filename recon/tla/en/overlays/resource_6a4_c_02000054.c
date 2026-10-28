@@ -11,8 +11,8 @@ struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
 void Func_02002b68(s32 sound);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_0200105c(struct Actor *object);
 void Sound_WaitForJingle(void);
 
@@ -31,7 +31,7 @@ void Func_02000054(s32 mode) {
       rider->y += 0x7ae;
       rider->x += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
-      WaitFrames(1);
+      wait(1);
     }
   } else {
     Func_02002b68(556);
@@ -40,12 +40,12 @@ void Func_02000054(s32 mode) {
       rider->y += 0x7ae;
       rider->x += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
-      WaitFrames(1);
+      wait(1);
     }
   }
   if ((u32)(mode - 2) > 1)
     return;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_0200105c(left);
   Func_0200105c(right);
   Func_02002b68(522);
@@ -53,12 +53,12 @@ void Func_02000054(s32 mode) {
     Actor_GetById(9)->y += 0x1999;
     Actor_GetById(10)->y += 0x1999;
     rider->y += 0x1999;
-    WaitFrames(1);
+    wait(1);
   }
   Func_02002b68(390);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02002b68(80);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Sound_WaitForJingle();
   left->motionFlags = 4;
   right->motionFlags = 4;

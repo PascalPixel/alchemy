@@ -117,7 +117,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDALPHA = 0x1000;
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(141);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
@@ -191,7 +191,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
                   gData_081979ae[effect->variant * 3 + 2] * 2);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down.

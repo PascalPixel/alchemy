@@ -45,7 +45,7 @@ void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void Unit_CalculateFar(s32 unit);
 void Unit_RefreshPsynergyFar(s32 unit);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // FAKEMATCH(wrapper): the slot read through a helper at both uses; as
 // menu->selectedSlots[1] in place, 55 of 179 instructions differ in tla-en.
@@ -104,7 +104,7 @@ s32 Func_080fc2e0(s32 unused) {
         changed = 1;
         Sound_PlayFar(111);
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   if (GameFlag_Test(336))

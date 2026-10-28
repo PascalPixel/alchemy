@@ -27,7 +27,7 @@ s32 Map_GetTerrainHeight();
 void Func_02002fb0();
 s32 Func_02002f80();
 void Actor_SetAnimationSpeed();
-void WaitFrames();
+void wait();
 s32 Func_02003018();
 s32 Func_02003028();
 void Func_02002fb8();
@@ -125,7 +125,7 @@ L_02009cea:
     goto L_02009cf6;
   goto L_02009e26;
 L_02009cf6:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   r5 = r5 + 1;
 L_02009cfe:
   if (r5 <= 179) {
@@ -172,7 +172,7 @@ L_02009d74:
                 FIELD_AT(r6, s32, 8));
   goto L_02009db2;
 L_02009daa:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   r5 = r5 + 1;
 L_02009db2:
   if (r5 > 179)
@@ -201,11 +201,11 @@ L_02009dfa:
   FIELD_AT(r7, s32, 52) = 0x10000;
   Func_02002fb0(r7, stack[5], FIELD_AT(r7, s32, 12), stack[4]);
   Func_02002fb8(r7);
-  Call1((void (*)())WaitFrames, 2);
+  Call1((void (*)())wait, 2);
   r0 = v12;
   goto L_02009b6e;
 L_02009e20:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
 L_02009e26:
   FIELD_AT(r7, s32, 108) = 0;
   FIELD_AT(r7, u8, 90) = 1 | (FIELD_AT(r7, u8, 90));

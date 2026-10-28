@@ -2,7 +2,7 @@
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_02002124(s32 cue);
 void Func_02001fa4(struct Actor *object, s32 x, s32 y, s32 z);
@@ -15,7 +15,7 @@ void Func_020001d8(void) {
   struct Actor *second;
 
   Actor_SetModeById(13, 5);
-  FieldEvent_WaitFrames(28);
+  FieldEvent_Wait(28);
   Func_02002124(112);
   first =
       Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
@@ -33,5 +33,5 @@ void Func_020001d8(void) {
   Func_02001f9c(first);
   Func_02001fac(second);
   Func_02001f9c(second);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
 }

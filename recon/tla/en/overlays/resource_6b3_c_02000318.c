@@ -8,7 +8,7 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_02000098();
 s32 Func_02000244();
 s32 Func_020007c4();
@@ -23,7 +23,7 @@ s32 Func_0200086c();
 s32 GameFlag_ClearBit();
 s32 Actor_GetById();
 s32 WindowSystem_InitField();
-s32 WaitFrames();
+s32 wait();
 extern u8 MsgFinallyWeVe[];
 extern u8 gBgScroll[];
 extern u8 gData_02000a28[];
@@ -48,7 +48,7 @@ s32 Func_02000318(void) {
   *(u8 *)(t5 + 0x138c) = 1;
   *(s32 *)(s32)gData_02000a28 = (s32)MsgFinallyWeVe;
   Func_02000098();
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Func_02000244, 5, 0, 40);
   Call3((void (*)())Func_02000244, 1, 1, 40);
   Call3((void (*)())Func_02000244, 6, 0, 40);
@@ -69,7 +69,7 @@ s32 Func_02000318(void) {
   FIELD_AT((s32)gBgScroll, u16, 14) = 16;
   FIELD_AT((s32)gBgScroll, u16, 10) = 16;
   Call3((void (*)())Func_0200084c, 121, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 100);
+  Call1((void (*)())FieldEvent_Wait, 100);
   Call3((void (*)())Func_02000244, 60, 2, 30);
   Call3((void (*)())Func_02000244, 61, 2, 40);
   Call3((void (*)())Func_02000244, 0, 2, 30);
@@ -77,11 +77,11 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 1, 2, 40);
   Call3((void (*)())Func_02000244, 5, 2, 40);
   Call1((void (*)())Func_02000854, 120);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Func_0200085c();
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Func_0200084c, 122, (s32)gMapCellBuffer, 120);
-  Call1((void (*)())FieldEvent_WaitFrames, 120);
+  Call1((void (*)())FieldEvent_Wait, 120);
   Call3((void (*)())Func_02000244, 5, 2, 30);
   Call3((void (*)())Func_02000244, 7, 2, 30);
   Call3((void (*)())Func_02000244, 56, 2, 40);
@@ -106,9 +106,9 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 0x8045, 2, 30);
   Call3((void (*)())Func_02000244, 1, 2, 30);
   Call3((void (*)())Func_0200084c, 123, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_Wait, 60);
   Call1((void (*)())Func_0200086c, 73);
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Func_02000244, 64, 2, 30);
   Call3((void (*)())Func_02000244, 65, 2, 30);
   Call3((void (*)())Func_02000244, 67, 2, 30);
@@ -119,48 +119,48 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 1, 2, 40);
   Call3((void (*)())Func_02000244, 56, 2, 40);
   Call1((void (*)())Func_02000854, 200);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Func_0200085c();
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Func_02000244, 62, 2, 20);
   Call3((void (*)())Func_02000244, 0, 2, 40);
   Call3((void (*)())Func_02000244, 66, 2, 20);
   Call3((void (*)())Func_02000244, 62, 2, 30);
   Call3((void (*)())Func_02000244, 66, 2, 40);
   Call3((void (*)())Func_0200084c, 0, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_Wait, 60);
   FIELD_AT((s32)gBgScroll, u16, 14) = 0;
   FIELD_AT((s32)gBgScroll, u16, 10) = 0;
   Call1((void (*)())Func_02000864, 0);
   Call3((void (*)())Func_0200084c, 125, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_Wait, 60);
   v_r7 = t1;
   goto L_02008692;
 L_0200868c:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
 L_02008692:
   t90 = FIELD_AT((s32)gInput, s32, 4);
   if (t90 == 0)
     goto L_0200868c;
   Call3((void (*)())Func_0200084c, 126, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 120);
+  Call1((void (*)())FieldEvent_Wait, 120);
   Call1((void (*)())Func_02000854, 120);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Func_0200085c();
-  Call1((void (*)())FieldEvent_WaitFrames, 180);
+  Call1((void (*)())FieldEvent_Wait, 180);
   Call3((void (*)())Func_0200084c, 127, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 0x12c);
+  Call1((void (*)())FieldEvent_Wait, 0x12c);
   Call3((void (*)())Func_0200084c, 128, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 180);
+  Call1((void (*)())FieldEvent_Wait, 180);
   Call1((void (*)())Func_0200086c, 78);
   *(u8 *)((s32)gAdventure + 0x22c) = v_r7;
-  Call1((void (*)())FieldEvent_WaitFrames, 0x12c);
+  Call1((void (*)())FieldEvent_Wait, 0x12c);
   t103 = FIELD_AT((s32)gInput, s32, 4);
   v_r5 = 0;
   if (t103 != v_r5)
     goto L_0200871e;
 L_02008704:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   v_r5 = (v_r5 + 1);
   if (v_r5 > 0x2a2f)
     goto L_0200871e;
@@ -169,7 +169,7 @@ L_02008704:
     goto L_02008704;
 L_0200871e:
   Call3((void (*)())Func_0200084c, 0, (s32)gMapCellBuffer, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_Wait, 60);
   *(u16 *)0x4000050 = 0;
   *(u16 *)0x4000000 = 0x1040;
   Func_020007cc();

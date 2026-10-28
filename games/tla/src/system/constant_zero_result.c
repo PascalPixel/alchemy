@@ -3,14 +3,14 @@
 #include "input.h"
 #include "edition.h"
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 void System_Halt(void) {
   volatile struct InputState *input = &gInput;
 
   for (;;) {
     input->pressed;
-    WaitFrames(1);
+    wait(1);
   }
 }
 

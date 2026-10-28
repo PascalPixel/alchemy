@@ -377,7 +377,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterOnColumn(ACTOR_PARTY_LEADER, 3, -8);
-  Event_WaitFrames(10);
+  Event_Wait(10);
 
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();

@@ -578,7 +578,7 @@ Func_08181ed4:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl wait
 	movs r0, #1
 	add r10, r0
 	mov r1, r10

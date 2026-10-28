@@ -154,7 +154,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);

@@ -63,7 +63,7 @@ void Func_02001938(s32 spoken) {
   Func_02004144(18, 0);
   GameFlag_SetBit(265);
   GameFlag_SetBit(0x9e5);
-  WaitFrames(1);
+  wait(1);
   Field_SetDestination(508, 0);
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 20);
 }

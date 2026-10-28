@@ -41,7 +41,7 @@ loop:
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   CenterOn(gAdventure.currentOwner, 2, -4);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
   Func_02002110(2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

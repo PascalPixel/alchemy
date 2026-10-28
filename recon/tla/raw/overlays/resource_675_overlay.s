@@ -320,7 +320,7 @@ Func_020005fc:
 	ldr r0, [r5]
 	bl Actor_OffsetPositionAndResetMotion
 	movs r0, #6
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_020012cc

@@ -22,7 +22,7 @@ extern const u8 gData_02004800[];
 extern s32 gData_02004808;
 
 struct FieldActor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -81,7 +81,7 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void PartyInventory_GiveItem(s32 item, s32 flags);
 struct FieldActor *Func_02001b70(void);
 void Func_02003fc8(struct FieldActor *object);

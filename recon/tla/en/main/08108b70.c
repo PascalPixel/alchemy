@@ -91,7 +91,7 @@ void Func_0810857c(s32 message);
 s32 Func_08108630(s32 mode);
 void Menu_ReleaseEntryObjectsFar(void);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_08108b70(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -164,7 +164,7 @@ next_page:
       window = Window_CreateFar(13, 3, 17, 10, 2);
       Func_080f8040(window, itemId, held);
       while (gInput.held & 4)
-        WaitFrames(1);
+        wait(1);
       Window_CloseFar(window, 2);
       Func_08109068(stockWindow, selectionIndex);
       Func_08109188();
@@ -173,12 +173,12 @@ next_page:
     } else {
       redraw = Func_08108690(&selectionIndex, stockCount, 7);
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Window_CloseFar(messageWindow, 2);
   Window_CloseFar(stockWindow, 2);
-  WaitFrames(1);
+  wait(1);
   if (selectionResult != 0)
     goto close;
 
@@ -208,7 +208,7 @@ next_page:
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(selectionIndex / 4 * 4);
-        WaitFrames(1);
+        wait(1);
       }
       Func_0810928c(partyWindow, selectionIndex, shop->selectedItem);
       if (Item_GetEquipmentGroupFar(shop->selectedItem) == 0)
@@ -246,7 +246,7 @@ next_page:
         }
       }
       Sound_PlayFar(112);
-      WaitFrames(1);
+      wait(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
       if (quantity == -1)
@@ -262,14 +262,14 @@ next_page:
       break;
     }
     redraw = Func_08108690(&selectionIndex, shop->partyMemberCount, 4);
-    WaitFrames(1);
+    wait(1);
   }
 
   Func_0810bea8(0);
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
-  WaitFrames(1);
+  wait(1);
   if (selectionResult == 0 && shop->partyAction == 2) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
@@ -284,6 +284,6 @@ next_page:
 close:
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(shop->moneyWindow, 2);
-  WaitFrames(1);
+  wait(1);
   return 0;
 }

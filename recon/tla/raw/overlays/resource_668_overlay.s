@@ -103,7 +103,7 @@ Func_02000200:
 	movs r1, #1
 	bl Actor_SetSingleChildFlags
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7, #12]
 	movs r6, #0
 	cmp r3, #0
@@ -111,7 +111,7 @@ Func_02000200:
 .L_020082da:
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #59
 	bgt .L_020082ec
 	ldr r3, [r7, #12]
@@ -122,7 +122,7 @@ Func_02000200:
 	lsls r0, r0, #1
 	bl Func_02004c9c
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #240
 	bl Func_02004c9c
 	adds r2, r7, #0
@@ -164,7 +164,7 @@ Func_02000200:
 	bl Func_02004c9c
 	adds r6, #1
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 	cmp r6, #2
 	ble .L_0200831e
 	bl Func_02000fa4
@@ -175,7 +175,7 @@ Func_02000200:
 	ldr r0, [r3]
 	bl Actor_Stop
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	mov r5, r8
 	movs r6, #2
 .L_0200837a:
@@ -342,7 +342,7 @@ Func_02000514:
 	movs r1, #0
 	bl Actor_OffsetPositionAndResetMotion
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #192
 	lsls r3, r3, #4
 	adds r3, #204
@@ -358,7 +358,7 @@ Func_02000514:
 .L_02008674:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #59
 	bgt .L_02008686
 	ldr r3, [r7, #12]
@@ -372,7 +372,7 @@ Func_02000514:
 	movs r0, #15
 	bl Actor_SetModeById
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, .L_020086e0
 	movs r0, #133
 	lsls r0, r0, #2
@@ -1179,7 +1179,7 @@ Func_020044c4:
 	movs r1, #8
 	bl Actor_SetModeById
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #12]
 	ldr r1, [sp, #88]
 	ldr r3, [r4]
@@ -1198,7 +1198,7 @@ Func_020044c4:
 	ldr r3, .L_0200c76c
 	str r3, [r0, #108]
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	movs r1, #2
 	adds r0, r6, #0
 	bl Func_02004a0c

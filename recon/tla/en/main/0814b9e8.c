@@ -282,7 +282,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 120;
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down.

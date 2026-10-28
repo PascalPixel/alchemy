@@ -23,7 +23,7 @@ struct AnkohlRuinsEventWork {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 s32 Random16Far(void);
@@ -35,7 +35,7 @@ extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
 s32 Task_Add(void (*func)(void), s32 priority);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);

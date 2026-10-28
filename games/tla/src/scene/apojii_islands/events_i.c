@@ -41,7 +41,7 @@ void Func_02001338(s32 entrance) {
     leader->angle = angle + 0x1000;
     if ((i & 7) == 0)
       Func_020010d8(Actor_GetById(15));
-    WaitFrames(1);
+    wait(1);
   }
   Func_02001ccc();
   Func_02001d94(entrance);

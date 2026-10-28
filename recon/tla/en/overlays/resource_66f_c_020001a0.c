@@ -19,7 +19,7 @@
 extern const u8 gData_02001404[];
 
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Actor_ResetTargetsAndVelocity(s32 actor);
 void Actor_Jump(s32 actor, s32 height, s32 frames);
@@ -89,12 +89,12 @@ void Func_020001a0(s32 unused, s32 id) {
         Iwram_CopyWords(&saved, other, 128);
         Actor_ResetTargetsAndVelocity(9);
         Actor_Jump(9, 4, 0);
-        FieldEvent_WaitFrames(30);
+        FieldEvent_Wait(30);
         Value3((s32 (*)())Func_0200111c, 9, 257, 0);
         Actor_SetAngleToward(9, 15, 0);
-        FieldEvent_WaitFrames(60);
+        FieldEvent_Wait(60);
         Motion_SetModeAndWaitAnimation(9, 4);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_Wait(20);
         Iwram_CopyWords(other, &saved, 128);
         Call6((void (*)())Func_0200106c, 53, 35, 1, 1, 53, 36);
         Flag_Set(0x224);

@@ -178,7 +178,7 @@ Func_0200045c:
 	movs r0, #1
 	eors r3, r2
 	strb r3, [r1]
-	bl WaitFrames
+	bl wait
 	mov r2, r8
 	ldrb r3, [r2]
 	cmp r3, #0
@@ -281,7 +281,7 @@ Func_0200045c:
 .L_020085c0:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #59
 	bgt .L_020085da
 	ldr r3, [r6, #20]
@@ -301,7 +301,7 @@ Func_0200045c:
 .L_020085e8:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #59
 	bgt .L_020085fa
 	ldr r3, [r6, #40]
@@ -1439,7 +1439,7 @@ Func_0200156c:
 	str r5, [sp, #4]
 	bl Func_02001adc
 	movs r0, #12
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #128
 	ldr r2, .L_02009614
 	lsls r3, r3, #7
@@ -1483,7 +1483,7 @@ Func_0200156c:
 	movs r1, #28
 	bl Actor_SetModeById
 	movs r0, #16
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_02009634:
 	cmp r7, #5
 	bne .L_0200963e
@@ -1504,7 +1504,7 @@ Func_0200156c:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #39
 	ble .L_02009634
 	ldr r3, .L_020096a8
@@ -1571,7 +1571,7 @@ Func_02001704:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02001abc
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #130
 	lsls r3, r3, #16
 	str r3, [r7, #12]
@@ -1599,7 +1599,7 @@ Func_02001704:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	add r2, sp, #28
 	movs r3, #7
 	str r3, [r2, #4]
@@ -1706,7 +1706,7 @@ Func_02001704:
 	lsls r3, r3, #7
 	str r3, [r7, #68]
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, [r5]
 	movs r1, #1
 	bl Actor_SetModeById

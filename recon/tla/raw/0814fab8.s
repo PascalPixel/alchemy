@@ -1262,7 +1262,7 @@ Func_0814fab8:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #76]
 	movs r2, #1
 	ldr r3, [r4, #20]

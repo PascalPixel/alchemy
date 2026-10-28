@@ -251,7 +251,7 @@ static void CottageRoomsC_TalkToArmorMerchant(void) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Event_SetMessageId(MsgBilibinHaveEverHeardOcean);
       Actor_FaceActor(ACTOR_BILIBIN_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
-      Event_WaitFrames(10);
+      Event_Wait(10);
       Event_AskYesNo(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
       Actor_FaceDirection(ACTOR_BILIBIN_ARMOR_MERCHANT,
                           FACING_SOUTHEAST + FACING_STEP, 10);
@@ -281,7 +281,7 @@ static void CottageRoomsC_TalkToHungryDiner(void) {
   Event_SetMessageId(MsgBilibinGrrr);
   FieldEvent_ShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
   Actor_FaceActor(ACTOR_BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_OpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
@@ -298,7 +298,7 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
   Actor_FaceActor(ACTOR_BILIBIN_DINER, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_OpenMessage(ACTOR_BILIBIN_DINER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
@@ -366,9 +366,9 @@ static void CottageRoomsC_TalkToBusyChef(void) {
     Actor_StartRepeatedMotion(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
     Actor_SetAttachedEffect(ACTOR_BILIBIN_KITCHEN_WORKER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     GameFlag_Set(FLAG_BILIBIN_CHEF_CALLED_ORDERS);
   }
   // Then, as every later time, he sends the party to the waitress.

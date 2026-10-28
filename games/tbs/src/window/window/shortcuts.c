@@ -189,7 +189,7 @@ void Debug_SelectAbilityPair(void) {
         Text_DrawNumberAtOffset(cost, 2, info, 64, 16);
         Text_DrawMessageAsTiles(ability + MsgAbilityDescription, info, 0, 0);
       }
-      WaitFrames(1);
+      wait(1);
       if (gKeysRepeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
@@ -239,7 +239,7 @@ void Debug_SelectAbilityPair(void) {
     Window_Close(win, 1);
     Window_Close(title, 1);
     Window_Close(info, 1);
-    WaitFrames(1);
+    wait(1);
   }
   Heap_Release(list);
 }
@@ -348,7 +348,7 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;
   Window_Close(state->window, 0);
   while (Window_IsClosed(state->window) == 0) {
-    WaitFrames(1);
+    wait(1);
   }
   if (state->firstActive != 0) {
     VramCache_FreeEntry(state->firstResource);

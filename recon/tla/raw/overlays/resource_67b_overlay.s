@@ -804,7 +804,7 @@ Func_02000d80:
 	bl Func_02002938
 .L_02008e38:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #20]
 	cmp r2, r3
@@ -815,7 +815,7 @@ Func_02000d80:
 	movs r1, #6
 	bl Func_02002910
 	movs r0, #3
-	bl WaitFrames
+	bl wait
 	b .L_02008f5e
 .L_02008e5c:
 	ldr r3, [r6, #8]
@@ -856,7 +856,7 @@ Func_02000d80:
 	adds r0, r6, #0
 	bl Func_02001d30
 	movs r0, #5
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r5, #59
 .L_02008eb8:
 	ldr r3, [r6, #12]
@@ -880,7 +880,7 @@ Func_02000d80:
 .L_02008ee0:
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	bge .L_02008eb8
 	ldr r3, .L_02008f6c
@@ -1044,7 +1044,7 @@ Func_02001e00:
 	bl Func_02002938
 .L_02009ea2:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	cmp r2, r3
@@ -1055,7 +1055,7 @@ Func_02001e00:
 	movs r1, #49
 	bl Func_02002910
 	movs r0, #3
-	bl WaitFrames
+	bl wait
 	b .L_02009f40
 .L_02009ec6:
 	ldr r3, [r5, #8]

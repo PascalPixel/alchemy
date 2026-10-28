@@ -53,6 +53,6 @@ next2:
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Actor_CenterOnColumn(gAdventure.currentOwner, 2, -4);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_02002d70(work->exit);
 }

@@ -73,7 +73,7 @@ void Resource_ResetOwnerEntries(void) {
 
   Resource_ScheduleOwnerReset();
   Window_Close(state->window, 2);
-  WaitFrames(1);
+  wait(1);
   node = state->head;
   while (node != 0) {
     if (node->kind != 0) {

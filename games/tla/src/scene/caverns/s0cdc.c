@@ -12,7 +12,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     Func_020010dc();
     Func_0200113c(0);
     Func_02001074(object, 6);
-    WaitFrames(6);
+    wait(6);
     Func_02001164(152);
     Func_02001074(object, 7);
     object->speed = 0x30000;

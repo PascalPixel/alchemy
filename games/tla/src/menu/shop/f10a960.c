@@ -33,7 +33,7 @@ s32 BattleEffect_GetResourceIdFar(u16 id);
 void Message_CloseFinishedWindowsFar(void);
 void Message_OpenWindowFar(s32 message, s32 a, s32 b, s32 c);
 s32 Message_AllTypedFar(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
@@ -54,8 +54,8 @@ void Func_0810a9ac(s32 value) {
   message = Shop_MsgByMode(message);
   Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
 }
 
 struct ShopRuntime {
@@ -83,7 +83,7 @@ void Func_0810a9fc(s32 message) {
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
   shop->cursorAnchor[5] = saved;
 }

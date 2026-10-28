@@ -33,8 +33,8 @@ s32 Func_02002e44();
 s32 Func_02002edc();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
-void FieldEvent_WaitFrames();
-void WaitFrames();
+void FieldEvent_Wait();
+void wait();
 void GameFlag_SetBit();
 s32 Func_02002ebc();
 s32 Task_Add();
@@ -367,7 +367,7 @@ L_0200aa16:
   Call3((void (*)())Func_02002e6c, FIELD_AT(r5, s32, 532), 0, 0);
   Call3((void (*)())Func_02002e6c, 10, 0, 0);
   Event_StartScreenTransition();
-  Call1((void (*)())FieldEvent_WaitFrames, 15);
+  Call1((void (*)())FieldEvent_Wait, 15);
   v50 = Actor_GetById(10);
   r5 = v50;
   Call3((void (*)())Func_02002e6c, 10, 0x1480000, 0x2f80000);
@@ -383,14 +383,14 @@ L_0200aa92:
 L_0200aa94:
   if (r6 == 0)
     goto L_0200aaa8;
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   r2 = -1;
   r3 = FIELD_AT(r5, s32, 40);
   if ((FIELD_AT(r5, s32, 40)) <= -1)
     goto L_0200aa92;
 L_0200aaa8:
   Call1((void (*)())Func_02002eec, 188);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_Wait, 60);
   Call1((void (*)())GameFlag_SetBit, 0x109);
   Call1((void (*)())Func_02002ebc, 20);
 L_0200aac2:
@@ -493,7 +493,7 @@ L_0200ace4:
   r5 = v57;
   FIELD_AT(r5, s32, 20) = r8;
   FIELD_AT(r5, s32, 12) = r8;
-  Call1((void (*)())FieldEvent_WaitFrames, 1);
+  Call1((void (*)())FieldEvent_Wait, 1);
   Func_02002dec();
   goto L_0200ad2a;
 L_0200ad04:

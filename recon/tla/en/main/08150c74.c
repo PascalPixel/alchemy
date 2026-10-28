@@ -218,7 +218,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                   Data_081982f7[effect->variant][TIMING_SHAKE]);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

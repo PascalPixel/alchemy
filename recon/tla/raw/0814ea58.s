@@ -501,7 +501,7 @@ Func_0814ea58:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #44]
 	mov r3, r10
 	adds r2, #1

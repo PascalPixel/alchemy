@@ -56,8 +56,8 @@ void Func_081084f4(s32 first) {
     message += MsgItemShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(message, 5, 0, (value << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
 }
 
 void Func_0810857c(s32 messageId) {
@@ -88,8 +88,8 @@ void Func_0810857c(s32 messageId) {
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
   while (Message_AllTypedFar() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
   state->anchor->active = saved;
 }
 

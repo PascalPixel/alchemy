@@ -32,7 +32,7 @@ void Event_FinishScreenTransition(void) {
 void Event_WaitTransitionFrames(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  WaitFrames(event->delay);
+  wait(event->delay);
 }
 
 void Event_SetDestination(s32 scene, s32 entrance) {

@@ -450,7 +450,7 @@ Func_080e5d5c:
 	adds r7, #40
 	cmp r2, #31
 	ble .L_080e602e
-	bl WaitFrames
+	bl wait
 	mov r3, r9
 	ldr r4, [sp, #4]
 	ldr r2, [r3, #8]
@@ -463,7 +463,7 @@ Func_080e5d5c:
 	movs r1, #1
 	bl Actor_SetMode
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	movs r5, #24
 .L_080e6120:
 	mov r0, r11
@@ -474,11 +474,11 @@ Func_080e5d5c:
 	str r3, [r0, #12]
 	subs r5, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	bge .L_080e6120
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	movs r3, #192
 	ldr r2, [sp, #28]
 	lsls r3, r3, #5
@@ -533,7 +533,7 @@ Func_080e5d5c:
 	.4byte BattleEffect_SinkAndShrinkObject
 .L_080e61a8:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #0
 	ldrsh r3, [r5, r2]
 	cmp r3, r8
@@ -558,7 +558,7 @@ Func_080e5d5c:
 	movs r0, #114
 	bl Sound_PlayFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_080e62bc
 .L_080e61e6:
 	mov r3, r9
@@ -594,7 +594,7 @@ Func_080e5d5c:
 	mov r10, r2
 .L_080e622a:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #224
 	movs r2, #0
 	ldrsb r2, [r7, r2]
@@ -651,7 +651,7 @@ Func_080e5d5c:
 	ldr r0, .L_080e62f0
 	bl Task_Remove
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r0, #114
 	bl Sound_PlayFar
 	mov r2, r11

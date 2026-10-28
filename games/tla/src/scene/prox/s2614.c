@@ -11,7 +11,7 @@ struct EventWork1ac {
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_020018e0(void);
@@ -97,7 +97,7 @@ s32 Func_02002614(void) {
     if (Flag_Test(0x201)) {
       Func_0200459c(0x10004, 1);
       Func_020045a4(16);
-      WaitFrames(16);
+      wait(16);
     }
   }
   return 0;

@@ -89,7 +89,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void SummonEffect_RunCanvasMode1(void *effect);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken Seal's
 // iwram_call.h layer calls them: called directly, CSE shares the size
@@ -261,7 +261,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

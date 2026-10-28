@@ -16,7 +16,7 @@
 
 s32 ArcTan2(s32 y, s32 x);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 struct ChainNode {
   struct ChainNode *next;
@@ -105,7 +105,7 @@ s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         }
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
   slot = &work->slots[index];
   slot->unk18 = 1;

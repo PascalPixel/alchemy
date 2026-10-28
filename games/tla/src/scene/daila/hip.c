@@ -12,10 +12,10 @@ void Daila_TalkHip(void) {
   Import_EventSetMessageId(msg);
   Import_FieldMessageShowAtActor(12, 0);
   if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
-    Import_EventWaitFrames(10);
+    Import_EventWait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
-    Import_EventWaitFrames(20);
+    Import_EventWait(20);
     Import_EventSetMessageId(msg + 2);
   }
   Import_EventShowMessageAndWait(12, 0);

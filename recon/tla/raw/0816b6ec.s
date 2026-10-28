@@ -664,7 +664,7 @@ Func_0816b6ec:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #8]
 	movs r3, #128
 	ldr r0, [sp, #24]

@@ -8,7 +8,7 @@ struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 struct Actor *Func_080eaf28(s32 *position, s32 mode);
 s32 Func_08020210(struct Actor *object, s32 *position);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Event_NoOp(void);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
@@ -39,19 +39,19 @@ void Func_080cdd80(void) {
   target->terrainId = terrain;
   if (result <= 0) {
     Actor_SetMode(owner, 8);
-    WaitFrames(15);
+    wait(15);
     Sound_PlayFar(185);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Actor_SetTargetPosition(target, position[0], position[1], position[2]);
-    WaitFrames(2);
+    wait(2);
     acceleration = owner->acceleration;
     owner->acceleration = 0x3333;
     speed = owner->speedLimit;
     owner->speedLimit = 0x3333;
     Actor_SetTargetPosition(owner, position[0], position[1], position[2]);
     Actor_CommitPosition(target);
-    WaitFrames(1);
+    wait(1);
     Event_NoOp();
     Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
                                         position[2]);

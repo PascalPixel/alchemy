@@ -36,7 +36,7 @@ static __inline__ void Bios_Stop(void) {
   __asm__ volatile("swi 3");
 }
 
-void WaitFrames(s32 frames) {
+void wait(s32 frames) {
   u32 i;
   u32 line;
   s32 j;

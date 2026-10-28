@@ -24,7 +24,7 @@ void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 void Window_Close(void *window, s32 release);
 void WindowSprite_PrepareForRedraw(void *window);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Serial_StartReceive(void *destination);
 void Unit_Calculate(s32 id);
 void Func_02002220(void);
@@ -52,7 +52,7 @@ s32 Func_02000b24(void) {
   Text_DrawMessage(message + 1, window, 0, 16);
   Text_DrawMessage(message + 3, window, 0, 36);
   Func_02002220();
-  WaitFrames(10);
+  wait(10);
 wait:
   while (!(gInput[1] & 2)) {
     if ((gLinkStatus & 3) == 3) {
@@ -67,14 +67,14 @@ wait:
         goto receive;
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
   Func_02002408(113);
   goto close;
 receive:
-  WaitFrames(10);
+  wait(10);
   Serial_StartReceive(Data_02012f94 + 0x6c);
-  WaitFrames(10);
+  wait(10);
   ok = 1;
   shown = 0;
   idle = 0;
@@ -91,9 +91,9 @@ receive:
       gData_02003a74[2] = 0;
       gData_02003a74[3] = 0;
       Func_02002228();
-      WaitFrames(10);
+      wait(10);
       Func_02002220();
-      WaitFrames(10);
+      wait(10);
       goto wait;
     }
     idle++;
@@ -105,22 +105,22 @@ receive:
     }
     if (gSerialReceiveDest == 0)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   if (!ok) {
     WindowSprite_PrepareForRedraw(window);
     Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0,
                         4);
     do
-      WaitFrames(1);
+      wait(1);
     while (!(gInput[1] & 1));
   close:
     Window_Close(window, 2);
     return -1;
   }
-  WaitFrames(10);
+  wait(10);
   Func_02002228();
-  WaitFrames(10);
+  wait(10);
   Window_Close(window, 2);
   Iwram_CopyWords(gGameFlagBytes, Data_02012f94 + 0xac, 0x214);
   Iwram_CopyWords(gGameFlagBytes + 0x220, Data_02012f94 + 0x2ac, 0xd20);

@@ -26,8 +26,8 @@ void Func_02001b38(void);
 void Func_020022c8(s32 sound);
 void Func_020021a8(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
                    s32 dstZ);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Actor_SetModeById(u32 id, s32 mode);
 void Event_FinishScreenTransition(void);
@@ -42,7 +42,7 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_02001b38();
   Func_020022c8(229);
   Func_020021a8(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
@@ -52,7 +52,7 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
   x = 0;
   table->shown = 1;
   Actor_SetModeById(gAdventure.currentOwner, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   do {
     if (x == 5)
       Func_020022c8(204);
@@ -60,7 +60,7 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
     leader->scaleY += -0x300;
     leader->y += -0x9999;
     x++;
-    WaitFrames(1);
+    wait(1);
   } while (x <= 39);
   Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
   table->shown = 0;

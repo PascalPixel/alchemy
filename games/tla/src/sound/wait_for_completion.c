@@ -8,7 +8,7 @@ void Sound_WaitForBgmRestore(void) {
   do {
     if (gMusicRestoreDelay == 0)
       break;
-    WaitFrames(1);
+    wait(1);
     wait_count++;
   } while (wait_count <= 299);
 }

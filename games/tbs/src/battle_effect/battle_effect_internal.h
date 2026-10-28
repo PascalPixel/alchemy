@@ -187,7 +187,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Presents the canvas: marks it ready for the transfer task, then waits for
 /// the next frame. Nearly every effect loop ends so.
-#define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, WaitFrames(1))
+#define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
 
 /// The usual end of an effect's frame: counts down the targets' flash timers
 /// (BattleEffect_CountDownBattlerTints), then presents the canvas.

@@ -803,7 +803,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
                                          destinationY, (u16)width, (u16)height);
       copyCommand++;
-      WaitFrames((u16)delay);
+      wait((u16)delay);
       sourceX = copyCommand->source;
       {
         u32 nextSourceCopy = sourceX;

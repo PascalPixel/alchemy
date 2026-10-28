@@ -8,6 +8,6 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
   result = Message_OpenWindow(message, x, y, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   return result;
 }

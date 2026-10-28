@@ -21,7 +21,7 @@ __umodsi3:
 	.global Task_Wait
 	.thumb_func
 Task_Wait:
-	overlay_veneer WaitFramesFar
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -186,10 +186,10 @@ Func_02005868:
 	.thumb_func
 Func_02005870:
 	overlay_veneer Func_080ad308
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02005880
 	.thumb_func
 Func_02005880:

@@ -65,7 +65,7 @@ void Func_0200380c(void) {
 
   layer->x += 0x800000;
   Func_02003988();
-  WaitFrames(1);
+  wait(1);
   if (object != NULL) {
     object->motionFlags = 0;
     object->y = 0x420000;

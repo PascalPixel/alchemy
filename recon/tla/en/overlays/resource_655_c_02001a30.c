@@ -18,7 +18,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -88,7 +88,7 @@ extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
 extern s32 gData_0200567c;
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -138,7 +138,7 @@ void Func_02001a30(void) {
   Actor_SetPositionAndCommit(gAdventure.currentOwner, cellX << 3,
                                     cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_02003cf8()->y += -0x80000;
   if (GameFlag_Test(flag)) {
     s32 x, y, index, toX, toZ;
@@ -176,7 +176,7 @@ void Func_02001a30(void) {
         Func_02003be0(gData_02004052[index * 2], gData_02004052[index * 2 + 1],
                       toX, toZ, 1, 2);
     }
-    FieldEvent_WaitFrames(12);
+    FieldEvent_Wait(12);
     leader->angle = 0x4000;
     leader->motionFlags = 0;
     Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
@@ -192,14 +192,14 @@ void Func_02001a30(void) {
       Actor_SetSpritePriority(gAdventure.currentOwner, 3);
     }
     Actor_SetModeById(gAdventure.currentOwner, 28);
-    FieldEvent_WaitFrames(16);
+    FieldEvent_Wait(16);
     for (i = 0; i <= 39; i++) {
       if (i == 5)
         Func_02003df8(204);
       leader->scaleX += -0x400;
       leader->scaleY += -0x300;
       leader->y += -0x9999;
-      WaitFrames(1);
+      wait(1);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Event_FinishScreenTransition();
@@ -221,7 +221,7 @@ void Func_02001a30(void) {
       Func_02003be0(gData_02003fe2[0], gData_02003fe2[1], x, y, 1, 1);
     else if (scene == SCENE(Ov655Room5))
       Func_02003be0(gData_02003fea[0], gData_02003fea[1], x, y, 1, 1);
-    FieldEvent_WaitFrames(12);
+    FieldEvent_Wait(12);
     GameFlag_SetBit(flag);
     GameFlag_SetBit(0x201);
     scene = gAdventure.scene;

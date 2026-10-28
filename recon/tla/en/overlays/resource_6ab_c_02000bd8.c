@@ -92,22 +92,22 @@ void Func_02000bd8(void) {
     Actor_SetModeById(gAdventure.currentOwner, 1);
     GameFlag_SetBit(0xa3a);
     Actor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
-    WaitFrames(1);
+    wait(1);
     Func_020041ec(Data_02004cec);
-    WaitFrames(1);
+    wait(1);
     Func_020043c4(0x4cccc, 0x9999);
     Camera_MoveWithinMapBounds(170 << 18, -1, 146 << 16, 1);
     Func_020043d4();
     Func_0200440c_(0x10000, 0);
     Func_02004404_(0x10003, 0);
     Func_02004414(20);
-    WaitFrames(20);
+    wait(20);
     *(volatile u16 *)0x0500021e = 0x7fff;
-    WaitFrames(1);
+    wait(1);
     Func_020042a4((s32)&MsgMarsStar06, 0, 0);
     Func_02004404_(0x10000, 0);
     Func_02004414(20);
-    WaitFrames(20);
+    wait(20);
   }
   Func_020042e4();
 }

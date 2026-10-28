@@ -18,8 +18,8 @@ extern const struct Trigger gSceneEvents[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 u32 Random16Far(void);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
@@ -170,14 +170,14 @@ static __inline__ void GameFlag_ClearBit_(s32 flag) {
   GameFlag_ClearBit(flag);
 }
 
-static __inline__ void WaitFrames_(s32 frames) {
+static __inline__ void wait_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitFrames(frames);
+  wait(frames);
 }
 
-static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
+static __inline__ void FieldEvent_Wait_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitFrames(frames);
+  FieldEvent_Wait(frames);
 }
 
 static __inline__ u32 Random16Far_(void) {

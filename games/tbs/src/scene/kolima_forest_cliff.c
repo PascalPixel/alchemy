@@ -89,7 +89,7 @@ static void KolimaForestCliff_PushLog(void) {
       struct Actor *actor;
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       Sound_Play(SE_LOG_FALL);
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

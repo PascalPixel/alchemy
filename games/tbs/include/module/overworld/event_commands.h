@@ -52,7 +52,7 @@ struct SparklePicture {
 extern const struct SparklePicture gFieldEffect_SparklePictures[32];
 
 void Event_UpdateDebugSkip(void);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Leader_StopMoving(void);
 void Event_Start(void);
 void Event_End(void);

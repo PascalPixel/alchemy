@@ -111,7 +111,7 @@ void Func_08118128(s32 x, s32 y);
 void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Resource_ResetEntry(s32 resource);
 void Heap_Release(void *block);
 
@@ -385,7 +385,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     }
     QueueIoWriteDelay2(0x04000000, 0x1741);
     work->holdTilemapUpload = 0;
-    WaitFrames(1);
+    wait(1);
   }
   if (mode != 0)
     NAVIGATION->commandSelection[1] = selectionUi->selectedIndex;
@@ -409,12 +409,12 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     }
   }
   work->dirty = 1;
-  WaitFrames(1);
+  wait(1);
   Task_Remove(Graphics_SetBg1Priority3);
   Irq_SetHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
-  WaitFrames(1);
+  wait(1);
   return command;
 }

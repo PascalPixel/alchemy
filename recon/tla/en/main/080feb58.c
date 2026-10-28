@@ -51,7 +51,7 @@ void Func_08104ef8(s32 first);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 
 s32 Func_080feb58(void) {
@@ -84,12 +84,12 @@ s32 Func_080feb58(void) {
       Func_080facd8(menu->psynergies);
       if (pending == 2) {
         Func_08104ef8(selection / 4 * 4);
-        WaitFrames(1);
+        wait(1);
       }
       Menu_HighlightPageEntry(menu->ownerWindow, selection, count);
     }
     Func_080f8a44((selection % 4) * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (((volatile struct InputState *)&gInput)->pressed & 1) {
       Sound_PlayFar(112);
       result = 1;

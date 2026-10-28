@@ -291,7 +291,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_RefreshOwner(menu->itemOwner, 0);
         menu->selectedItemIcon->state = 13;
         menu->list.icon->state = 13;
-        WaitFrames(1);
+        wait(1);
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)&Msg04270, 15, 13);
         menu->completionFlag = 1;
@@ -377,7 +377,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       ItemMenu_RefreshOwner(menu->targetOwner, 1);
       menu->list.icon->state = 13;
-      WaitFrames(1);
+      wait(1);
       if (aborted == 1) {
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)&Msg04278, 15, 14);
@@ -468,7 +468,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedSlot = result;
         movedTarget--;
       }
-      WaitFrames(1);
+      wait(1);
       if (aborted == 1) {
         Iwram_CopyWords(source, sourceCopy, 0x14c);
         Iwram_CopyWords(target, targetCopy, 0x14c);
@@ -528,7 +528,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->itemCount =
           ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
-      WaitFrames(1);
+      wait(1);
       ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
                                 menu->itemOwner);
       WindowSprite_ClearListFar(menu->infoWindow);
@@ -550,7 +550,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->itemCount =
           ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
-      WaitFrames(1);
+      wait(1);
       menu->equipPreview = 1;
       ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
                                 menu->itemOwner);

@@ -34,7 +34,7 @@ void Func_02003a8c();
 void Func_02003a6c();
 s32 Random16Far();
 void Func_0200015c();
-void WaitFrames();
+void wait();
 void Camera_FollowActor();
 void Func_02003b6c();
 s32 Func_02003af4();
@@ -143,15 +143,15 @@ L_0200931a:
     Func_0200015c(r4, FIELD_AT(r7, s32, 4), FIELD_AT(r7, s32, 8), r5,
                   ((v6 & r6) - 16) << 13, r10, 0x1320000, r8);
   }
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   r9 = r9 + 1;
   if (r9 != 16)
     goto L_0200931a;
-  Call1((void (*)())WaitFrames, 24);
+  Call1((void (*)())wait, 24);
   Call2((void (*)())Camera_FollowActor,
         FIELD_AT((s32)(s32)&gAdventure, s32, 532), 1);
   Func_02003b6c();
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
   v9 = Func_02003af4();
   r0 = v9;
   goto L_02009424;
@@ -175,7 +175,7 @@ L_020093ae:
   Call2((void (*)())Camera_FollowActor,
         FIELD_AT((s32)(s32)&gAdventure, s32, 532), 1);
   Func_02003b6c();
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
   v12 = Func_02003af4();
   r0 = v12;
 L_02009424:

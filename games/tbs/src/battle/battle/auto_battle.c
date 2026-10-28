@@ -119,11 +119,11 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
       return 1;
     break;
   case COMMAND_DEFEND:
-    WaitFrames(45);
+    wait(45);
     AutoBattle_ShowDefend(action);
     break;
   case COMMAND_ITEM:
-    WaitFrames(45);
+    wait(45);
     AutoBattle_RunAttackOrItem(action);
     break;
   case COMMAND_ATTACK:
@@ -174,11 +174,11 @@ s32 BattleFlee_PlayRun(struct BattleAction *action) {
       do {
         BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
         animated++;
-        WaitFrames(8);
+        wait(8);
         memberSlot++;
       } while (animated != partySize);
     }
-    WaitFrames(22);
+    wait(22);
     return 1;
   }
   BattleMessage_ShowAndWaitFar(MsgCannotEscape);
@@ -244,7 +244,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
         action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     view->frames = 60;
   }
-  WaitFrames(10);
+  wait(10);
   // A roll nothing uses, which still advances the random number generator.
   Random16();
   actorRecord = BattleObject_Get(unitId)->actor;
@@ -268,14 +268,14 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   // Fade the caster's side out: its sprites SPRITE_SEMI_TRANSPARENT,
   // their blend weight falling from 16 to 1 over 16 frames. Then the party
   // status window is erased (PARTY_STATUS_CLOSED).
-  WaitFrames(30);
+  wait(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
-    WaitFrames(1);
+    wait(1);
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
@@ -315,7 +315,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   BattleEffect_RunSummonFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
-  WaitFrames(10);
+  wait(10);
   BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
@@ -323,13 +323,13 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(index, 16);
-    WaitFrames(1);
+    wait(1);
   }
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
   }
   BattleCamera_SetView(0, 0, 0, 0x64);
-  WaitFrames(3);
+  wait(3);
   return 0;
 }
 
@@ -342,10 +342,10 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   // A short wait when the camera already faces the party's side.
   if (gBattleBackgroundWork->targetYaw == YAW_PARTY_ACTION) {
     gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
-    WaitFrames(10);
+    wait(10);
   } else {
     gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
-    WaitFrames(30);
+    wait(30);
   }
 
   work.effect.user = input->unitId;
@@ -374,7 +374,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
     work.effect.side = EFFECT_SIDE_ENEMIES;
   work.effect.prelude = 0;
 
-  WaitFrames(4);
+  wait(4);
   BattleEffect_RunByIdRangeFar(&work.effect);
   BattleMotion_ReturnToSpot(work.effect.targets[0]);
   BattleMotion_ReturnToSpot(work.effect.user);
@@ -400,11 +400,11 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     targetYaw = YAW_PARTY_ACTION;
   if (view->targetYaw == targetYaw) {
     view->frames = 40;
-    WaitFrames(40);
+    wait(40);
   } else {
     view->targetYaw = targetYaw;
     view->frames = 40;
-    WaitFrames(40);
+    wait(40);
   }
   work.effect.kind = action->parameter;
   work.effect.range = action->range;
@@ -542,7 +542,7 @@ void BattleMotion_PlayFall(s32 unitId) {
     actorData = animation->entries[0];
     actorData->colorMode = SPRITE_COLOR_GREY;
     actorData->picture = 0xFF;
-    WaitFrames(4);
+    wait(4);
     SpriteDissolve_RunFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);
   }

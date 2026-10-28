@@ -13,7 +13,7 @@ static void Vault_ShowThought(s32 actorId) {
   *paused = 1;
   Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
-  Event_WaitFrames(2);
+  Event_Wait(2);
   Event_ShowMessageAndWait(actorId, 0);
   Event_End();
   *paused = zero;

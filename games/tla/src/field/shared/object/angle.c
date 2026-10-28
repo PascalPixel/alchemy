@@ -5,7 +5,7 @@
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 count);
+void wait(s32 count);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
 void Sound_PlayFar(s32 cue);
@@ -20,7 +20,7 @@ void Event_NoOp(void);
 /// waiting up to 180 frames for it unless `particle` has flag 0x1000. The
 /// Broken Seal's twin is Actor_JumpDownLedge.
 // The landing wait matches only as a guarded do-while: as
-// while (y > ground) { WaitFrames(1); if (++i >= 180) break; } agscc keeps
+// while (y > ground) { wait(1); if (++i >= 180) break; } agscc keeps
 // the test at the top and jumps back to it (differ 18), where the native has
 // the test copied below the body as loop rotation would place it.
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
@@ -34,20 +34,20 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
     return;
   frame = ((struct FieldSprite *)object->animation)->nextFrame;
   Actor_SetMode(object, mode);
-  WaitFrames(10);
+  wait(10);
   Actor_SetMode(object, 1);
   Actor_SetSingleChildFlagsFar(object, 0);
   object->motionFlags |= 2;
   object->velocityY = 0x40000;
   Actor_SetTargetPosition(object, x, object->y, z + 0xc0000);
-  WaitFrames(6);
+  wait(6);
   Sound_PlayFar(217);
   Actor_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     object->y -= 0x20000;
     object->targetY = object->y;
-    WaitFrames(1);
+    wait(1);
     if (particle != -1 && (i & 1))
       Func_080d3378(object, particle);
   }
@@ -56,19 +56,19 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_SetTargetPosition(object, x, object->y, z + 0x100000);
   Actor_CommitPosition(object);
   if (particle & 0x1000) {
-    WaitFrames(4);
+    wait(4);
     return;
   }
   i = 0;
   if (object->y > object->terrainHeight) {
     do {
-      WaitFrames(1);
+      wait(1);
       if (++i >= 180)
         break;
     } while (object->y > object->terrainHeight);
   }
   Actor_SetSingleChildFlagsFar(object, frame);
-  WaitFrames(2);
+  wait(2);
   Event_NoOp();
 }
 
@@ -90,6 +90,6 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   second = ObjectTable_Get(secondId);
   if (first != 0 && second != 0) {
     first->angle = ArcTan2(second->z - first->z, second->x - first->x);
-    Event_WaitFrames(wait);
+    Event_Wait(wait);
   }
 }

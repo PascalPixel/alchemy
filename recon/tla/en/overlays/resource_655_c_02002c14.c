@@ -14,7 +14,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -66,7 +66,7 @@ struct EffectView {
 
 extern struct Actor *gData_02004420;
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -97,7 +97,7 @@ void Func_02002c14(void) {
   Func_02003d78(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02003bc8();
-  WaitFrames(1);
+  wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -107,12 +107,12 @@ void Func_02002c14(void) {
   Event_WaitTransitionFrames();
   Func_02003df8(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_Wait(24);
   Func_02003df8(176);
   Func_020021b4();
   if (gData_02004420 != NULL) {
     Actor_SetPositionAndResetMotion(gData_02004420, 0xf80000, 0, 0x780000);
-    WaitFrames(1);
+    wait(1);
     gData_02004420->speedLimit = 0x19999;
     gData_02004420->acceleration = 0x19999;
     gData_02004420->velocityY = 0x80000;
@@ -126,18 +126,18 @@ void Func_02002c14(void) {
   if (gData_02004420 != NULL)
     Func_02003bd0(gData_02004420, 0xf80000, 0, 0x580000);
   Func_02003bd8(leader);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02003cc8(9, 0x103, 0);
   Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 60);
   Call3((void (*)())Actor_SetPositionAndReset, 9, 296, 104);
   Call3((void (*)())Actor_SetPositionAndReset, 9, 296, 80);
   Func_02003c68(9, 0, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   if (gData_02004420 != NULL) {
     gData_02004420->motionFlags = 0;
     Call6((void (*)())Func_02003bf0, 0, 0, 1, 1, 15, 5);
-    WaitFrames(1);
+    wait(1);
   }
   GameFlag_SetBit(0x871);
   Func_02003c30();

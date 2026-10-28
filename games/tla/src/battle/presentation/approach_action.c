@@ -19,10 +19,10 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 
   if (Ram_HeapSlots->transitionWork->targetYaw == 0x2000) {
     Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
-    WaitFrames(10);
+    wait(10);
   } else {
     Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
-    WaitFrames(30);
+    wait(30);
   }
 
   work.actor = input->unitId;
@@ -50,7 +50,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
     work.side = 0;
   work.flags = 0;
 
-  WaitFrames(4);
+  wait(4);
   Func_08138008(&work);
   ObjMotRst(work.actors[0]);
   ObjMotRst(work.actor);

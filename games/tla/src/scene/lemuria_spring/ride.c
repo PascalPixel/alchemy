@@ -28,7 +28,7 @@ extern u16 gData_02001754[];
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(s32 id, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_020008f0(s32 actor, s32 active);
 void Func_02000904(void);
 void Func_020012e8(struct Actor *object, s32 mode);
@@ -129,7 +129,7 @@ start:
       Func_020008f0(8, 1);
     }
   }
-  WaitFrames(1);
+  wait(1);
   if (gData_02001824 != 1)
     goto next;
   return gData_02001828;

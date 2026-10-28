@@ -54,7 +54,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   menu = (struct PsynergyListWork *)Ram_HeapSlots->menuRuntime;
   state->selectedIndex = state->page * 5 + state->row;
   WindowSprite_RedrawSavedRectFar((s32)menu->infoWindow);
-  WaitFrames(1);
+  wait(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
     Text_DrawCharacterAtOffsetFar(
         (menu->psynergies[state->selectedIndex] & ACTION_ID_MASK) +
@@ -103,6 +103,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       }
     }
   }
-  WaitFrames(1);
+  wait(1);
   return 1;
 }

@@ -160,7 +160,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   BattleEffect_SelectLivingTargets(work->effect);
   REG_WININ = 0x2737;
   REG_WIN0H = 0xca;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
   Func_08163c2c(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -334,7 +334,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = 32;
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Act two: the charge.
@@ -494,7 +494,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       Func_08158ce0(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
       frame++;
     } while (frame != 96);
   }

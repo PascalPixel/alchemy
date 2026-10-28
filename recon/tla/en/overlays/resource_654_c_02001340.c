@@ -22,21 +22,21 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
     other->y -= 0x10000;
     for (i = 0; i <= 3; i++) {
       sprite->rotation += 128;
-      WaitFrames(1);
+      wait(1);
     }
     other->y += 0x10000;
     for (i = 0; i <= 7; i++) {
       sprite->rotation -= 128;
-      WaitFrames(1);
+      wait(1);
     }
     other->y -= 0x10000;
     for (i = 0; i <= 3; i++) {
       sprite->rotation += 128;
-      WaitFrames(1);
+      wait(1);
     }
   }
   other->y += 0x10000;
-  WaitFrames(20);
+  wait(20);
   gData_02004a18[0] = other->x - object->x;
   gData_02004a18[1] = other->y - object->y;
   gData_02004a18[2] = other->z - object->z;

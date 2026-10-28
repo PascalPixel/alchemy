@@ -11,7 +11,7 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_02004040();
 s32 Func_02004048();
 s32 Func_02004090();
@@ -34,7 +34,7 @@ s32 Actor_SetSpeedParameters();
 s32 Actor_WatchAndSetScript();
 s32 Actor_SetMovementTypeAndWaitById();
 s32 Actor_SetModeById();
-s32 WaitFrames();
+s32 wait();
 extern u8 gData_0200468c[];
 extern u8 gData_020046dc[];
 extern u8 gData_02004718[];
@@ -50,7 +50,7 @@ void Func_02001690(void) {
   Call1(Func_020041b8, 0);
   Call1(Func_020040c8, ((s32)MsgHeyLookUp));
   Call1(Actor_Stop, 9);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   {
     s32 a1 = 0x100;
     s32 a2 = 0;
@@ -62,7 +62,7 @@ void Func_02001690(void) {
   Call3(Actor_ArmCallback, 9, 0, 20);
   Call2(Func_020040d0, 9, 0);
   Call1(Actor_Stop, 8);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call3(Actor_ArmCallback, 8, 0, 0);
   Call3(Actor_ArmCallback, 10, 0, 0);
   Call3(Actor_ArmCallback, 11, 0xd000, 0);
@@ -106,7 +106,7 @@ void Func_02001690(void) {
   Call2(Func_02004118, 0x26666, 0x4ccc);
   Call4(Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
   Func_02004128();
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call3(Actor_ArmCallback, 8, 0xd000, 0);
   Call3(Actor_ArmCallback, 9, 0x5000, 20);
   Call2(Func_020040d0, 9, 0);
@@ -148,19 +148,19 @@ void Func_02001690(void) {
   Call2(Actor_WatchAndSetScript, *(s32 *)(v6), 13);
   v5 = ((s32)gData_020046dc);
   Call2(Actor_SetMovementTypeById, 13, v5);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_Wait, 10);
   Call2(Actor_SetMovementTypeById, 12, v5);
   Call2(Func_02004118, 0x6666, 0xccc);
   Call4(Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000, 1);
   Call2(Actor_SetMovementTypeById, 8, v5);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_Wait, 10);
   Call2(Actor_SetMovementTypeById, 9, v5);
   v5 = ((s32)gData_02004718);
   Call2(Actor_SetMovementTypeById, 10, v5);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call2(Actor_SetMovementTypeAndWaitById, 11, v5);
   Call1(Actor_Stop, *(s32 *)(v6));
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call3(Func_02004090, 8, 0, 0);
   Call3(Func_02004090, 9, 0, 0);
   Call3(Func_02004090, 10, 0, 0);

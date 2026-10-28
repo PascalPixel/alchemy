@@ -68,7 +68,7 @@ struct BgAffine {
   s32 y;
 };
 
-extern const struct RuntimeMathTable WaitFramesFar;
+extern const struct RuntimeMathTable waitFar;
 extern s32 gCameraSceneParameters;
 extern s32 Data_030011ec;
 extern s32 Data_030011f0;
@@ -150,14 +150,14 @@ void Func_0802146c(struct Position *eye, struct Position *target,
 
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
-    angle = (u16)WaitFramesFar.atan2.target(targetDeltaX >> 4, depth >> 4);
+    angle = (u16)waitFar.atan2.target(targetDeltaX >> 4, depth >> 4);
   }
   originX = MulQ16(target->x, 0x8000);
   originZ = MulQ16(target->z, 0x8000);
   if (angle != Data_03001244) {
     Data_03001244 = angle;
-    sinYaw = WaitFramesFar.sin.target(angle);
-    cosYaw = WaitFramesFar.cos.target(angle);
+    sinYaw = waitFar.sin.target(angle);
+    cosYaw = waitFar.cos.target(angle);
     negativeSinYaw = -sinYaw;
     for (scanline = 159; scanline >= 0; scanline--) {
       s32 widthScale = line->x;

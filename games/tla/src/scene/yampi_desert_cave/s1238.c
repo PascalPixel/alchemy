@@ -10,7 +10,7 @@ struct Actor *Actor_GetById(s32 id);
 void Func_020011e0(void);
 void Func_020018a8(s32 id, s32 x, s32 z);
 void Task_RemoveFar(void (*func)(void));
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// The chest that follows the step count: when the tracked object stands on
 /// its cell, mode 1 stops the follower and mode 2 drops the chest.
@@ -42,7 +42,7 @@ void Func_02001238(s32 mode) {
     chest->y = 0x200000;
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
-    WaitFrames(50);
+    wait(50);
     // Through an s32 and a pointer the 17 is built with a move; as a halfword
     // constant it comes from the pool.
     {

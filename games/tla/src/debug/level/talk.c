@@ -18,7 +18,7 @@ void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
                                s32 y);
 void Window_Close(void *window, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_0200017c(s32 delta);
 void Func_0200073c(s32 cue);
 
@@ -78,7 +78,7 @@ void Func_020001a8(void) {
     if ((KEYS_PRESSED & 2) != 0) {
       Func_0200073c(113);
       WindowSprite_RedrawSavedRect(win);
-      WaitFrames(1);
+      wait(1);
       Window_Close(win, 1);
 
       Unit_Calculate(0);
@@ -88,6 +88,6 @@ void Func_020001a8(void) {
       return;
     }
 
-    WaitFrames(1);
+    wait(1);
   }
 }

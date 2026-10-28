@@ -26,7 +26,7 @@ void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void BattleEffect_AdvanceSpinAngle();
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
@@ -62,12 +62,12 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Motion_SetVarCbAndRefresh(id, 1);
   Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(id, 1);
-  WaitFrames(20);
+  wait(20);
 
   // Spin, then leap high.
   Sound_PlayFar(140);
   object->update = BattleEffect_AdvanceSpinAngle;
-  WaitFrames(40);
+  wait(40);
   Sound_PlayFar(153);
   Actor_Jump(id, 12, 22);
 
@@ -89,18 +89,18 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     slot->scaleY = scale;
     slot->scaleX = scale;
     count--;
-    WaitFrames(1);
+    wait(1);
     slot++;
   } while (count >= 0);
 
   // The current owner turns to 0x4000 and takes mode 28.
-  WaitFrames(60);
+  wait(60);
   Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
-  WaitFrames(20);
+  wait(20);
   Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
-  WaitFrames(40);
+  wait(40);
   Sound_PlayFar(164);
-  WaitFrames(100);
+  wait(100);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

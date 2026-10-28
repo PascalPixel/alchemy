@@ -194,7 +194,7 @@ Func_0804b8b8:
 	bl BattleLayout_HighlightPartyPanels
 .L_0804ba40:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0804ba46:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #0]
@@ -238,7 +238,7 @@ Func_0804b8b8:
 	bl PartyStatus_Draw
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #12]
 .L_0804baa6:
 	add sp, #48

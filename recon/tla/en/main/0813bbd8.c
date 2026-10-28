@@ -74,7 +74,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
 
@@ -262,7 +262,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     Func_08158ce0(4, 4);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

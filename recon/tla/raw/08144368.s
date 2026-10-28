@@ -293,7 +293,7 @@ BattleEffect_RunOrbitingSpirals:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r1, r9
 	ldr r3, [r1, #20]
 	movs r2, #1

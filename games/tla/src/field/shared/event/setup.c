@@ -15,10 +15,10 @@
 #include "game_flags.h"
 #include "system.h"
 
-void Event_WaitFrames(s32 frames) {
+void Event_Wait(s32 frames) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
   if (state->waitMode == 0 && frames != 0)
-    WaitFrames(frames);
+    wait(frames);
 }
 
 void Leader_StopMoving(void) {

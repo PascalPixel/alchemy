@@ -60,7 +60,7 @@ Func_0200006c:
 	ldr r0, [r5]
 	bl Actor_CenterOnColumn
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_02002c30

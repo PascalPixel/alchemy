@@ -42,11 +42,11 @@ void Func_081a6030(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | (DATA018_TILE_BYTES / 4), REG_DMA3);
 }
 
-s32 Title_WaitFramesOrPress(u32 frames) {
+s32 Title_WaitOrPress(u32 frames) {
   u32 i;
 
   for (i = 0; i < frames; i++) {
-    WaitFrames(1);
+    wait(1);
     Random16();
     if (gInput.pressed != 0)
       return 1;
@@ -72,7 +72,7 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
       gBgScroll[2].y += step->speed[2];
     if (step->mask[3] == 0 || (gFrameCount & step->mask[3]) == 0)
       gBgScroll[2].x += step->speed[3];
-    if (Title_WaitFramesOrPress(1))
+    if (Title_WaitOrPress(1))
       return 0;
   }
   return 1;

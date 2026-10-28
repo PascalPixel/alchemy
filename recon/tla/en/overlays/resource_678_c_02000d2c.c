@@ -16,8 +16,8 @@ void Func_02002898(void);
 void Func_02002968(s32 mode);
 void Func_020028a0(void);
 void Func_02002870(void);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u16 Random16Far(void);
@@ -50,7 +50,7 @@ void Func_02000d2c(void) {
   Func_02002898();
   Func_02002968(0);
   for (i = 9; i >= 0; i--) {
-    WaitFrames(1);
+    wait(1);
     ((struct FieldSprite *)rock->animation)->rotation += -256;
     rock->x -= Math_Cosine(((struct FieldSprite *)rock->animation)->rotation) / 2;
     rock->targetX = 0x80000000;
@@ -95,20 +95,20 @@ void Func_02000d2c(void) {
   }
   Func_02002870();
   Task_Add(Func_02000ca0, 0x480);
-  WaitFrames(40);
+  wait(40);
   Func_02002918(0xe666, 0x1ccc);
   Camera_MoveWithinMapBounds(0x1500000, -1, 0x1180000, 1);
   row = 114;
   for (i = 11; i > 0; i--) {
     Func_02002838(50, row, 13, 5, 18, 15);
-    WaitFrames(8);
+    wait(8);
     row -= 5;
   }
   Task_Add(Func_02000c24, 0x480);
-  WaitFrames(60);
+  wait(60);
   Task_Add(Func_02000cec, 0x480);
-  WaitFrames(24);
-  FieldEvent_WaitFrames(120);
+  wait(24);
+  FieldEvent_Wait(120);
   Func_020028a0();
   GameFlag_SetBit(0x330);
 }

@@ -193,7 +193,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down.

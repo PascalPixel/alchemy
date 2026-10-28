@@ -286,7 +286,7 @@ Func_080da3bc:
 	b .L_080da4ba
 .L_080da5f8:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #8]
 	ldr r3, [sp, #56]
 	ldr r1, [sp, #4]

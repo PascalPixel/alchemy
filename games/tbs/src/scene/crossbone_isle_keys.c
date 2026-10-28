@@ -305,7 +305,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
     Event_PlaySound(SE_JUMP);
     djinni = Actor_GetById(ACTOR_BANE);
@@ -338,7 +338,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_SetAttachedEffect(ACTOR_BANE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_RunRepeatedMotion(ACTOR_BANE, 2);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
       Event_PlaySound(SE_JUMP);
       jumpingDjinni = Actor_GetById(ACTOR_BANE);
@@ -347,19 +347,19 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_WaitFrames(30);
+      Event_Wait(30);
 
       // Dash across the platforms, then shake the room on landing.
       Actor_SetSpeed(ACTOR_BANE, PIXELS(8), PIXELS(1) / 4);
       Actor_WalkToAndWait(ACTOR_BANE, 664, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 744, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 824, 664);
-      Event_WaitFrames(10);
+      Event_Wait(10);
       Event_PlaySound(SE_BANE_ESCAPE);
       MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Event_WaitFrames(30);
+      Event_Wait(30);
 
       // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
@@ -395,13 +395,13 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
     Event_PlaySound(SE_JUMP);
     djinni = Actor_GetById(ACTOR_BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 680);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetSpeed(ACTOR_BANE, PIXELS(2), PIXELS(1));
@@ -415,7 +415,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_WalkToAndWait(ACTOR_BANE, 878, 752);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 760);
     Actor_SetPosition(ACTOR_BANE, PIXELS(856), PIXELS(824));
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Actor_FaceDirection(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -508,7 +508,7 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(79, 29, 1, 3, cellColumn, 40);
-    WaitFrames(40);
+    wait(40);
   }
   MapGrid_CopyCells(80, 29, 1, 3, cellColumn, 40);
   MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 41);
@@ -522,7 +522,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
-    WaitFrames(60);
+    wait(60);
   }
   MapGrid_CopyCells(85, 29, 1, 3, 70, 49);
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 50);
@@ -625,7 +625,7 @@ static void CrossboneIsleKeys_ShowRedKey(void) {
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
     Import_ActorSetPosition(keyActorId, x, z);
-  Event_WaitFrames(1);
+  Event_Wait(1);
 }
 
 /// Reveal wears off in CrossboneIsleKeys: the Red Key's cell is
@@ -707,7 +707,7 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   }
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-  Event_WaitFrames(4);
+  Event_Wait(4);
   Event_PlaySound(SE_THUMP);
   Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, CROSSBONE_PURSUER_STEP_Z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -750,7 +750,7 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   Event_PlaySound(SE_THUMP);
-  Event_WaitFrames(4);
+  Event_Wait(4);
   Actor_SetDestinationOffset(ACTOR_SECOND_STATUE, 0, 16);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetDestination(ACTOR_SECOND_STATUE, 168, 264);
@@ -818,13 +818,13 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     }
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-    Event_WaitFrames(4);
+    Event_Wait(4);
     Event_PlaySound(SE_THUMP);
     Actor_SetDestinationOffset(ACTOR_THIRD_STATUE, 0, 16);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_SetDestination(ACTOR_THIRD_STATUE, 264, 360);
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_End();
   }
 }
@@ -860,13 +860,13 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0,
                                        CROSSBONE_LEADER_STEP_Z);
-    Event_WaitFrames(4);
+    Event_Wait(4);
     Sound_Play(SE_THUMP);
     Actor_OffsetPositionAndResetMotion(ACTOR_FOURTH_STATUE, 0, 16);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_ResetAndSetPosition(ACTOR_FOURTH_STATUE, 344, 360);
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_End();
   }
 }
@@ -1345,7 +1345,7 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
 
 /// Restores collected keys and already opened passages.
 static void CrossboneIsleKeys_InitializeKeys(void) {
-  WaitFrames(1);
+  wait(1);
   Colosso_ShowItemIcon(ACTOR_RED_KEY, ITEM_RED_KEY);
   Colosso_ShowItemIcon(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY);

@@ -13,7 +13,7 @@ extern const u8 gData_020013c4[];
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void FieldMessage_Show(s32 message, s32 mode);
 void Func_0200110c(void);
 void Func_020011ac(s32 skip);
@@ -39,10 +39,10 @@ void Func_020004a4(struct Actor *object) {
 
   *flags = 3;
   do {
-    WaitFrames(1);
+    wait(1);
   } while (object->velocityY != 0);
   Func_02001214(188);
-  WaitFrames(10);
+  wait(10);
   *flags = 0;
 }
 
@@ -80,8 +80,8 @@ extern const u8 gData_020012f4[];
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void PartyInventory_Remove(s32 item);
@@ -127,7 +127,7 @@ void Func_02000568(void) {
      * the left door's int store, so the load need not wait for that store; as
      * int, 2 of 175 instructions differ in tla-en. */
     *(long *)&right->x += 0x1999;
-    WaitFrames(1);
+    wait(1);
   }
   Speed_Set(0x33333, 0x6666);
   Camera_SetBounds(160 << 16, -1, 240 << 16, 1);
@@ -139,19 +139,19 @@ void Func_02000568(void) {
   Actor_Place(19, 184 << 16, 258 << 16);
   Actor_SetMovementTypeById(14, gData_02001264);
   Actor_SetMovementTypeById(19, gData_02001264);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02001214(168);
   Actor_Place(13, 120 << 16, 226 << 16);
   Actor_Place(18, 200 << 16, 226 << 16);
   Actor_SetMovementTypeById(13, gData_02001264);
   Actor_SetMovementTypeById(18, gData_02001264);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02001214(168);
   Actor_Place(12, 120 << 16, 194 << 16);
   Actor_Place(17, 200 << 16, 194 << 16);
   Actor_SetMovementTypeById(12, gData_02001264);
   Actor_SetMovementTypeById(17, gData_02001264);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Func_02001214(229);
   Actor_Place(11, 136 << 16, 162 << 16);
   Actor_Place(16, 184 << 16, 162 << 16);
@@ -161,7 +161,7 @@ void Func_02000568(void) {
   Actor_SetMovementTypeById(16, gData_020012f4);
   Actor_SetMovementTypeById(10, gData_020012f4);
   Actor_SetMovementTypeById(15, gData_020012f4);
-  FieldEvent_WaitFrames(80);
+  FieldEvent_Wait(80);
   Func_02000958();
   PartyInventory_Remove(459);
   GameFlag_SetBit(0x8c9);

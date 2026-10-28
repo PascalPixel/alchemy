@@ -214,7 +214,7 @@ BattleEffect_RunMegaera:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #0
 	str r1, [sp, #76]
 .L_0817052e:
@@ -1231,7 +1231,7 @@ BattleEffect_RunMegaera:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #76]
 	adds r0, #1
 	str r0, [sp, #76]

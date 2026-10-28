@@ -25,8 +25,8 @@ extern char MsgSoWeGo[];
 extern char MsgHmmmmDoYou[];
 extern char MsgWellThatS[];
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -105,11 +105,11 @@ void Func_02001e34(void) {
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
     Actor_SetAngleToward(owner, 9, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02004d08(owner, 0x101, 60);
     djinni->unk66 = 1;
     Actor_SetAngleToward(9, owner, 0);
-    WaitFrames(16);
+    wait(16);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgHey2));
     Func_02004cf0(9, 0);
     Func_02004db0();
@@ -126,11 +126,11 @@ void Func_02001e34(void) {
     for (i = 15; i >= 0; i--) {
       djinni->scaleX += 0x800;
       djinni->scaleY += 0x800;
-      WaitFrames(1);
+      wait(1);
     }
     Actor_SetAngleToward(9, owner, 0);
     Actor_SetAngleToward(owner, 9, 0);
-    WaitFrames(16);
+    wait(16);
     djinni->update = 0;
     Animation_ApplyChildValues(djinni, 0);
     djinni->gravity = 0x10000;
@@ -166,7 +166,7 @@ void Func_02001e34(void) {
     Func_02004b50(djinni, x, 0x100000, z);
     for (i = 15; i >= 0; i--) {
       djinni->angle += 0x1000;
-      WaitFrames(1);
+      wait(1);
     }
     Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
@@ -175,7 +175,7 @@ void Func_02001e34(void) {
     djinni->terrainHeight = 0;
     for (i = 7; i >= 0; i--) {
       djinni->angle += 0x1000;
-      WaitFrames(1);
+      wait(1);
     }
     Actor_SetModeById(owner, 22);
     Func_02004cf0(9, 0);
@@ -234,7 +234,7 @@ void Func_02001e34(void) {
   Func_02004c98(9, owner);
   djinni->velocityY = 0xa0000;
   Func_02004b50(djinni, x, 0, z);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004da8();
   Actor_SetAngleToward(9, owner, 0);
   Actor_SetAngleToward(owner, 9, 0);
@@ -252,7 +252,7 @@ void Func_02001e34(void) {
   Func_02004e28();
   Func_02004cd8(TUTORIAL_MESSAGE(MsgSoWeGo));
   Func_02004b50(djinni, 0x27880000, 0, 0x20a40000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004cf0(9, 0);
   Actor_SetAngleToward(9, owner, 0);
   Func_02004cf0(9, 0);

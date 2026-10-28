@@ -1579,7 +1579,7 @@ BattleEffect_RunProcne:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r6, [sp, #84]
 	movs r7, #200
 	adds r6, #1

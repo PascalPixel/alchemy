@@ -42,7 +42,7 @@ extern char MsgAbilityDescription[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-s32 WaitFrames(s32 frames);
+s32 wait(s32 frames);
 void WindowSprite_RedrawSavedRectFar(s32 window);
 s32 Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
@@ -62,7 +62,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 
   if (GameFlag_Test(0x151) == 0) {
     WindowSprite_RedrawSavedRectFar(menu->infoWindow);
-    WaitFrames(1);
+    wait(1);
 
     combined = state->selectedIndex;
     if (menu->psynergies[combined] != 0) {
@@ -85,6 +85,6 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
     row++;
   } while (row <= 4);
 
-  WaitFrames(1);
+  wait(1);
   return 1;
 }

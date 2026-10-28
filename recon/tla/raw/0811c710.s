@@ -53,7 +53,7 @@ Func_0811c710:
 	str r1, [r2]
 	str r3, [r2, #4]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Random16
 	ldr r0, [sp, #8]
 	bl BattleObject_Get
@@ -98,7 +98,7 @@ Func_0811c710:
 	bne .L_0811c7b4
 .L_0811c7cc:
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r2, #128
 	ldr r3, .L_0811c804
 	lsls r2, r2, #19
@@ -138,7 +138,7 @@ Func_0811c710:
 	strh r3, [r1]
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #16
 	bne .L_0811c810
 	movs r0, #9
@@ -251,7 +251,7 @@ Func_0811c710:
 	str r3, [r0, #4]
 	bl BattleEffect_RunSceneEffectFar
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl BattleObject_Put
 	ldr r3, .L_0811c930
 	movs r2, #128
@@ -287,7 +287,7 @@ Func_0811c710:
 	strh r3, [r7]
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #16
 	bne .L_0811c938
 	mov r2, r11
@@ -309,7 +309,7 @@ Func_0811c710:
 	movs r3, #100
 	bl BattleCamera_SetView
 	movs r0, #3
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 .L_0811c976:
 	add sp, #132

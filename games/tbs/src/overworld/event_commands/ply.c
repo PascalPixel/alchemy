@@ -134,7 +134,7 @@ void FieldPsynergy_Ply(void) {
       actor->motionFlags = ACTOR_FLOATS;
       last = Sprite_ShareVramCacheEntry(actor->sprite, last);
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   // The particles share one sprite cache; keep its slot to free at the end.
@@ -145,7 +145,7 @@ void FieldPsynergy_Ply(void) {
   Sound_PlayFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
   // until the spiral is nearly closed.
-  WaitFrames(110);
+  wait(110);
 
   // The one in the centre.
   target = Actor_Spawn(233, 0, 0, 0);
@@ -161,7 +161,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
-  WaitFrames(12);
+  wait(12);
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
@@ -173,7 +173,7 @@ void FieldPsynergy_Ply(void) {
         Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BLUE_TINT);
       else
         Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_RED_TINT);
-      WaitFrames(2);
+      wait(2);
     }
   }
 
@@ -186,9 +186,9 @@ void FieldPsynergy_Ply(void) {
     // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.
     if (effectWork->enabled != 0)
-      WaitFrames(128);
+      wait(128);
     else
-      WaitFrames(192);
+      wait(192);
   }
 
   // Fly away: 192 pixels at angle 0xe800, and release it once it arrives.

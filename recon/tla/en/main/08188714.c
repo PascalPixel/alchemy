@@ -105,7 +105,7 @@ void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -189,7 +189,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   user->actionFlags = 1;
   user->acceleration = 2 << 16;
   user->speedLimit = 8 << 16;
-  WaitFrames(20);
+  wait(20);
 
   for (frame = 0; frame != 96; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -338,7 +338,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       work->shakeFrames = 6;
     Func_08158ce0(16, 16);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

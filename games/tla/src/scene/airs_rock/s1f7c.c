@@ -41,8 +41,8 @@ void Func_02003b38(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 void Func_02003c58(s32 a, s32 b);
 s32 Func_02003c50(s32 a, s32 b);
 s32 Func_02003c60(s32 frames);
@@ -136,7 +136,7 @@ row:
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Call2((void (*)())Func_02003c58, 0x10000, 0);
   Call2((void (*)())Func_02003c50, 0x10003, 0);
@@ -152,13 +152,13 @@ row:
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
-  WaitFrames(30);
+  wait(30);
   Func_02003cd8(138);
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
   Actor_GetById(gAdventure.currentOwner)->angle = 0x4000;
-  WaitFrames(1);
+  wait(1);
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);
   Func_02003c60(8);
@@ -169,18 +169,18 @@ row:
   i = 0;
 fade1:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i != 32)
     goto fade1;
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
-  WaitFrames(1);
+  wait(1);
   Func_02003cd8(138);
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  WaitFrames(1);
+  wait(1);
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);
   Func_02003c60(8);
@@ -191,7 +191,7 @@ fade1:
   i = 0;
 fade2:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i != 32)
     goto fade2;
@@ -200,7 +200,7 @@ fade2:
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
   REG_DISPCNT &= ~0x100;
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02001dc4(0x2000000, 0xc60000);
   Func_02001dc4(0x2320000, 0xf20000);
   Func_02001dc4(0x2090000, 0xdf0000);
@@ -210,11 +210,11 @@ fade2:
   Func_02003c58(0x7fff, 0);
   Call2((void (*)())Func_02003c50, 0x10003, 0);
   Func_02003c60(60);
-  WaitFrames(60);
+  wait(60);
   Func_02003c58(0x10003, 0);
   Func_02003c50(0x10000, 0);
   Func_02003c60(60);
-  WaitFrames(70);
+  wait(70);
   Func_02003b00();
   Func_02003af8();
   Func_02003bb8(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);

@@ -79,7 +79,7 @@ Func_08044b98:
 	adds r0, r7, #0
 	bl Oam_AddSpriteAtDepth
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	bl Sound_GetBgmRestoreDelayFar
 	cmp r0, #0
 	beq .L_08044c56
@@ -92,7 +92,7 @@ Func_08044b98:
 	movs r1, #2
 	bl Window_Close
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #12]
 	bl Resource_ResetEntry
 .L_08044c6a:

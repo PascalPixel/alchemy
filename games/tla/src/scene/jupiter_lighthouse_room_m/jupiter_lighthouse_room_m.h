@@ -11,8 +11,8 @@ void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_020040b4(void);
 struct Actor *Func_020048fc(void);
 

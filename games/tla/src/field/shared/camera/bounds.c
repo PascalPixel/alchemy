@@ -10,7 +10,7 @@
 #include "task.h"
 #include "macros.h"
 
-void WaitFrames(s32);
+void wait(s32);
 void Camera_MoveWithinMapBounds(s32 requested_x, s32 requested_y,
                                 s32 requested_z, s32 use_setter);
 s32 __divsi3(s32, s32);
@@ -33,7 +33,7 @@ void Func_080d452c(s32 id, s32 use_setter) {
 void Func_080d4548(void) {
   Actor_CommitPosition(
       ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
-  Event_WaitFrames(2);
+  Event_Wait(2);
 }
 
 struct Actor *Func_080d4568(void) {
@@ -115,7 +115,7 @@ void Func_080d4714(void) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {
-        WaitFrames(1);
+        wait(1);
         frames++;
       } while (frames <= 0x12b && map->zoomFrames != 0);
     }

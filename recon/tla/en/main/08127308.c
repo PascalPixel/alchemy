@@ -52,7 +52,7 @@ struct ElementSession {
   u16 background;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_0812628c(s32 mode, s32 value, s32 fade);
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 s32 Func_08127068(s32 mode);
@@ -81,13 +81,13 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
   s32 *brightness;
   struct EffectPosition *pos;
 
-  WaitFrames(1);
+  wait(1);
   Func_0812628c(1, session->background, 0);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
   QueueIoWriteDelay2(0x04000000, 0x3741);
   QueueIoWriteDelay2(0x0400000c, 0x784);
   QueueIoWriteDelay2(0x04000050, 0x3f44);
-  WaitFrames(1);
+  wait(1);
   Io_Write16(240, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
   Io_Write16(63, &REG_WININ);
@@ -107,7 +107,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       work->originY = (64 - pos->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
       work->originPending = 1;
-      WaitFrames(1);
+      wait(1);
     }
     Func_081272b0(kind);
   } else if (mode == 1) {
@@ -117,7 +117,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       origin[0] = (64 - position2.x) << 8;
       origin[1] = (64 - position2.y) << 8;
       IO_WRITE_QUEUE_PUSH(0x04000028, (u32)origin, 0x84000002);
-      WaitFrames(1);
+      wait(1);
     }
     Func_08138040();
   } else if (mode == 2) {

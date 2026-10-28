@@ -27,7 +27,7 @@ struct DjinniSprite {
 struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
@@ -58,15 +58,15 @@ void Func_080d7524(s32 djinniId) {
   leader = Actor_GetById(gAdventure.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
   Event_Start();
-  WaitFrames(10);
+  wait(10);
   Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  WaitFrames(10);
+  wait(10);
   back = dir + 0x8000;
   Actor_ArmCallback(djinniId, back, 0);
-  WaitFrames(10);
+  wait(10);
   djinni->angle = back;
   Func_080d47b4(djinniId, 0x103, 50);
   Actor_GetById(djinniId)->actionFlags &= ~1;
@@ -75,14 +75,14 @@ void Func_080d7524(s32 djinniId) {
   Sound_PlayFar(152);
   djinni->gravity = 0x4000;
   djinni->velocityY = 0x48000;
-  WaitFrames(33);
+  wait(33);
   ((struct DjinniSprite *)djinni->animation)->priority = 0;
   Sound_PlayFar(152);
   djinni->velocityY = 0x4cccc;
-  WaitFrames(35);
+  wait(35);
   Sound_PlayFar(152);
   djinni->velocityY = 0x4e666;
-  WaitFrames(38);
+  wait(38);
 
   sprite = *((struct DjinniSprite *)djinni->animation)->entries[0];
   djinni->update = NULL;
@@ -122,11 +122,11 @@ void Func_080d7524(s32 djinniId) {
   Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
   Sound_PlayFar(153);
   Actor_Jump(djinniId, 6, 5);
-  WaitFrames(24);
+  wait(24);
   for (i = 0; i < 120; i++) {
     if (ABS(djinni->y - leader->y) < 0x140000)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   djinni->motionFlags = 0;
   djinni->velocityX = 0;

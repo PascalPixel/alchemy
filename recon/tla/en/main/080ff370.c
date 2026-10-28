@@ -40,7 +40,7 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
 void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void Func_081054e0(s32 window, s32 x, s32 y, u8 *ailments);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Text_SetColorFar(s32 color);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
                                  s32 palette);
@@ -79,7 +79,7 @@ void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
   if (menu->page == 3)
     return;
   if (keepDrawn == 0) {
-    WaitFrames(1);
+    wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
   Text_SetColorFar(15);

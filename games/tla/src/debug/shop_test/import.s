@@ -6,10 +6,10 @@
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -192,10 +192,10 @@ Func_02000dc8:
 	.thumb_func
 Func_02000dd0:
 	overlay_veneer Func_080ad2f8
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:

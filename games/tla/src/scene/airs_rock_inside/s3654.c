@@ -41,8 +41,8 @@ void Func_02005d6c(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 void Func_02005f0c(s32 a, s32 b);
 s32 Func_02005f04(s32 a, s32 b);
 s32 Func_02005f14(s32 frames);
@@ -141,7 +141,7 @@ row:
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002c40;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Call2((void (*)())Func_02005f0c, 0x10000, 0);
   Call2((void (*)())Func_02005f04, 0x10003, 0);
@@ -157,12 +157,12 @@ row:
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = 0xff98;
   gBgScroll[0].y = 42;
-  WaitFrames(30);
+  wait(30);
   Func_02005f94(138);
   Call2((void (*)())Func_02005f0c, 0x10003, 0);
   Call2((void (*)())Func_02005f04, 0x7fff, 0);
   Func_02005f14(1);
-  WaitFrames(1);
+  wait(1);
   Func_02005f0c(0x7fff, 0);
   Func_02005f04(0x10003, 0);
   Func_02005f14(8);
@@ -173,14 +173,14 @@ row:
   i = 0;
 fade:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i != 32)
     goto fade;
   Func_02005f0c(0x10003, 0);
   Func_02005f04(0x10000, 0);
   Func_02005f14(60);
-  WaitFrames(30);
+  wait(30);
   Func_02005f94(148);
   Func_02002aa8(0xd80000, 0x12d0000);
   Call6((void (*)())Func_02005d9c, 68, 84, 12, 77, 3, 6);
@@ -192,9 +192,9 @@ fade:
   Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
   Func_02005e94(8, 0);
   Actor_SetPartAttribute(Actor_GetById(8), 7);
-  WaitFrames(3);
+  wait(3);
   Actor_SetPartAttribute(Actor_GetById(8), 0);
-  WaitFrames(40);
+  wait(40);
   Func_02001084(Actor_GetById(8), 8, 0);
   Func_02005d34();
   Func_02005d2c();

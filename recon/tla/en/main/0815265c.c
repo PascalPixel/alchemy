@@ -749,7 +749,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     if (mode != 6)
       BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -19,7 +19,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
 s32 Party_GetLeaderActor(void);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Event_UpdateDebugSkip(void);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Leader_StopMoving(void);
 void Event_Start(void);
 void Event_End(void);

@@ -26,7 +26,7 @@ enum FlashingStrikeMode {
 /// args->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
-  WaitFrames(29);
+  wait(29);
   args->variant = SPARK_GROUPS_THRASH;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
@@ -45,7 +45,7 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 /// overriding the ability's own.
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
-  WaitFrames(12);
+  wait(12);
   args->variant = SPARK_GROUPS_SEVERE_BLOW;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
@@ -119,7 +119,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0x80000);
   else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-  WaitFrames(16);
+  wait(16);
 
   if (work->args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,

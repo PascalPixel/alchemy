@@ -68,7 +68,7 @@ s32 Func_02001130(s32 actor) {
   Func_02001a74(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
     Func_02001a7c(5, 263, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
   }
   Func_02001a1c();
 }
@@ -119,13 +119,13 @@ s32 Func_0200122c(s32 actor) {
   }
   Func_02001a64(message);
   FieldMessage_ShowAtActor(actor, 0);
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   if (message == (s32)MsgYouLookA) {
     Actor_StartRepeatedMotion(14, 1);
     Actor_SetModeById(14, 4);
-    FieldEvent_WaitFrames(15);
+    FieldEvent_Wait(15);
     Actor_SetAngleToward(14, gAdventure.currentOwner, 0);
-    FieldEvent_WaitFrames(5);
+    FieldEvent_Wait(5);
     FieldMessage_ShowAtActor(14, 0);
   }
   Func_02001a1c();

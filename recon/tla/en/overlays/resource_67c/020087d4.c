@@ -35,14 +35,14 @@ void Func_020007d4(void) {
   Actor_ArmCallback_(gAdventure.currentOwner, 0xc000, 0);
   Func_020007a8();
   Func_02003ef4(78);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Func_02003ef4(162);
   Func_02003d44_(0x10000, 0x10000, 0x10000);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02003d44_(0x10000, 0x20000, 0x10000);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02003d44_(0x10000, 0x30000, 0x10000);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   priority = 0x480;
   Task_Add(Func_020006d0, priority);
   Func_02003e44_(0x28000, 0x4000);
@@ -64,7 +64,7 @@ cell:
 
     Func_02003d24_(gData_02003fb8[index], gData_02003fb8[index + 1], 7, 13, 80,
                    27);
-    WaitFrames(1);
+    wait(1);
   }
   j++;
   if (j <= 6)
@@ -75,7 +75,7 @@ cell:
   Func_02003e54();
   Func_02003d44_(-1, -1, 0xe666);
   Func_02003ef4(390);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02003ef4(80);
   Sound_WaitForBgmRestore();
   Func_02003d84();

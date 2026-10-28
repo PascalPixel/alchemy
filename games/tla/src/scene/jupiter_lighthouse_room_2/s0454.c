@@ -3,7 +3,7 @@
 #include "adventure.h"
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
@@ -40,7 +40,7 @@ void Func_02000454(void) {
       } while (0);
       angle += 0x1800;
       object->angle = angle;
-      WaitFrames(2);
+      wait(2);
     }
     Func_020022bc(12);
   }

@@ -645,7 +645,7 @@ Func_02000458:
 	movs r1, #8
 	bl Actor_SetModeById
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #16]
 	ldr r4, [sp, #16]
 	ldr r1, [sp, #96]
@@ -665,7 +665,7 @@ Func_02000458:
 	ldr r3, .L_0200874c
 	str r3, [r0, #108]
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	movs r1, #2
 	adds r0, r6, #0
 	bl Func_02001828

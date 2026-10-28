@@ -26,7 +26,7 @@ next:
     Actor_SetModeById(gAdventure.currentOwner, mode);
   }
   Actor_CenterOnColumn(gAdventure.currentOwner, 2, -8);
-  FieldEvent_WaitFrames(5);
+  FieldEvent_Wait(5);
   Func_02001210(123);
   Func_02001198(work->value154);
   Event_FinishScreenTransition();

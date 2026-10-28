@@ -11,7 +11,7 @@
 extern u8 gMapBlocks[];
 
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -89,7 +89,7 @@ void Func_020006d0(void) {
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(leader, 0);
   Func_02004b18(leader, 6);
-  WaitFrames(6);
+  wait(6);
   Func_02004e30(152);
   Func_02004b18(leader, 7);
   leader->speedLimit = 0x30000;
@@ -100,7 +100,7 @@ void Func_020006d0(void) {
   Func_02004b50(leader, position[0], 0, position[2]);
   Func_02004b58(leader);
   Func_02004b18(leader, 6);
-  WaitFrames(6);
+  wait(6);
   Func_02004c28();
   Func_02004dc8();
   Func_02004dc0();

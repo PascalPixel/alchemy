@@ -12,8 +12,8 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

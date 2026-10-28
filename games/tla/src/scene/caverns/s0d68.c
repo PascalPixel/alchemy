@@ -8,7 +8,7 @@ void Func_02000d68(void) {
   else
     Call3((void (*)())Func_0200110c, 8, 0xe00000, 0xe00000);
   Actor_ArmCallback(4, 0xc000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   Call6((void (*)())Func_02001094, 96, 14, 72, 14, 2, 1);
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
@@ -18,6 +18,6 @@ void Func_02000d68(void) {
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
   Func_02001164(123);
-  FieldEvent_WaitFrames(14);
+  FieldEvent_Wait(14);
   Func_02001134(value);
 }

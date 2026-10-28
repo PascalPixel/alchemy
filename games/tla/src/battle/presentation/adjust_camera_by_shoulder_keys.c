@@ -46,11 +46,11 @@ s32 AutoBattle_RunAction(s16 *action) {
       return 1;
     break;
   case 3:
-    WaitFrames(45);
+    wait(45);
     AutoBattle_ShowDefend(action);
     break;
   case 2:
-    WaitFrames(45);
+    wait(45);
     Func_0811ca54(action);
     break;
   case 0:

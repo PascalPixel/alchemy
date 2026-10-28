@@ -4,7 +4,7 @@
 #include "flag_call.h"
 
 struct Actor *Actor_GetById(s32 id);
-s32 WaitFrames(s32 frames);
+s32 wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Camera_FollowActor(s32 id, s32 a);
 
@@ -18,7 +18,7 @@ void Func_020024c8(void) {
   if (Flag_IsSet(0x109)) {
     s32 height;
 
-    WaitFrames(1);
+    wait(1);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->velocityY = zero;
     object->terrainHeight = height;

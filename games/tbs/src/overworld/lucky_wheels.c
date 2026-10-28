@@ -1272,7 +1272,7 @@ void LuckyWheels_Run(void) {
         }
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
     }
 
     for (j = 0; j != 17; j++) {
@@ -1280,7 +1280,7 @@ void LuckyWheels_Run(void) {
                               0x100);
       LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0x10000 - (j << 12),
                               0x100);
-      WaitFrames(1);
+      wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);

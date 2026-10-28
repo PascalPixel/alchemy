@@ -94,7 +94,7 @@ Func_081039fc:
 	ldr r0, [r2, #52]
 	bl WindowSprite_ClearListFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	ldr r0, [sp, #80]
 	bl Window_CloseIfOpen
@@ -702,7 +702,7 @@ Func_081039fc:
 	b .L_08103fc6
 .L_08103fc0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08103fc6:
 	bl Message_AllTypedFar
 	cmp r0, #0
@@ -777,7 +777,7 @@ Func_081039fc:
 	b .L_08104064
 .L_0810405e:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08104064:
 	bl Message_AllTypedFar
 	cmp r0, #0
@@ -797,7 +797,7 @@ Func_081039fc:
 	movs r3, #1
 	strb r3, [r2, #3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #132
 	lsls r0, r0, #6
 	movs r1, #132
@@ -882,7 +882,7 @@ Func_081039fc:
 	cmp r3, #0
 	beq .L_08104140
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08104140:
 	ldr r1, [sp, #104]
 	cmp r1, #3
@@ -1307,7 +1307,7 @@ Func_081039fc:
 	str r0, [r5]
 .L_08104488:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08103e9e
 .L_08104490:
 	movs r0, #0
@@ -1329,7 +1329,7 @@ Func_081039fc:
 	movs r1, #1
 	bl Window_CloseIfOpen
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #5
 	str r3, [sp, #0]
 	movs r3, #2
@@ -1358,7 +1358,7 @@ Func_081039fc:
 	movs r6, #0
 	strb r6, [r3, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r7, #0
 	add sp, #168
 	pop {r3, r5, r6, r7}

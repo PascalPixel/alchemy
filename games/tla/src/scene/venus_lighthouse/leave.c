@@ -14,7 +14,7 @@ struct VenusActor {
 void Func_02001c1c(s32 message);
 void Camera_FollowActor(s32 actor, s32 target);
 void Func_02001c4c(void);
-void Import_EventWaitFrames(s32 frames);
+void Import_EventWait(s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -59,7 +59,7 @@ static inline void Venus_ObjAttach(s32 actor, s32 target) {
 
 static inline void Venus_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_EventWaitFrames(frames);
+  Import_EventWait(frames);
 }
 
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {

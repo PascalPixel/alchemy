@@ -3884,7 +3884,7 @@ Func_081b83c4:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #108]
 	adds r2, #1
 	str r2, [sp, #108]
@@ -3966,7 +3966,7 @@ Func_081b83c4:
 	bl Graphics_ScaleRgb555BufferB
 	add r11, r5
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r0, r11
 	cmp r0, #17
 	bne .L_081ba28a

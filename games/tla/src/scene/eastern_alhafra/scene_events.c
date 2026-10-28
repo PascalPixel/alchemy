@@ -31,7 +31,7 @@ void Actor_ArmCallback();
 void Actor_SetPositionAndReset();
 void Actor_WaitForMoveById();
 void Motion_SetVarCbAndRefresh();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
@@ -80,30 +80,30 @@ void Func_02000730(void) {
   Func_02004b3c(MsgWhatSYour);
   Func_02004b6c(22, 0x101, 40);
   Actor_SetAngleToward(22, gAdventure.currentOwner, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Call3((void (*)())Func_02004b4c, 22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   FieldMessage_ShowAtActor(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Call3((void (*)())Func_02004b4c, 22, 0, 0);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     FieldMessage_ShowAtActor(22, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-      FieldEvent_WaitFrames(30);
+      FieldEvent_Wait(30);
       Call3((void (*)())Func_02004b4c, 22, 0, 0);
     } else {
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
       FieldMessage_ShowAtActor(22, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-        FieldEvent_WaitFrames(30);
+        FieldEvent_Wait(30);
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
       } else {
-        FieldEvent_WaitFrames(20);
+        FieldEvent_Wait(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
       }
@@ -141,7 +141,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02004bac(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -169,7 +169,7 @@ run:
   Call3(Actor_SetPositionAndReset, 4, 488, 440);
   Call4((void (*)())Func_02004bec, 5, -16, 0, 0);
   Func_02004b5c(4, 0x8000);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02004b3c(MsgIDonTKnowWhatWe);
   Call3((void (*)())Func_02004b4c, 5, 0, 5);
   Actor_SetModeById(5, 2);

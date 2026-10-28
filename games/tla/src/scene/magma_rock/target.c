@@ -5,7 +5,7 @@
 #include "macros.h"
 
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_02000ff4(void);
 void Func_020011e4(struct Actor *object);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
@@ -22,13 +22,13 @@ void Func_02001444(void) {
 
   Func_02003aec();
   Func_02003bcc(0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
   Actor_SetPartAttribute(object, 7);
-  FieldEvent_WaitFrames(3);
+  FieldEvent_Wait(3);
   Actor_SetPartAttribute(work->target, 0);
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   Func_020011e4(work->target);
   Func_02003af4();
 }

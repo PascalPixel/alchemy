@@ -12,7 +12,7 @@ s32 Func_02003398();
 s32 Func_02003488();
 s32 Func_02003328();
 s32 Func_020034b8();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 GameFlag_ClearBit();
 s32 Func_020033a0();
 
@@ -28,12 +28,12 @@ void Func_020016fc(void) {
   FIELD_AT(t0, s32, 12) = -917504;
   Call6(Func_02003328, 0x33, 0x16, 0x21, 0x16, 1, 1);
   Call1(Func_020034b8, 0x248);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_Wait, 0x1e);
   Call1(Func_020034b8, 0xbc);
   Call6(Func_02003328, 0x32, 0x14, 0x1f, 0x14, 1, 2);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_Wait, 5);
   Call6(Func_02003328, 0x34, 0x14, 0x1f, 0x14, 1, 2);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_Wait, 5);
   Call1(GameFlag_ClearBit, 0x200);
   Func_020033a0();
 }

@@ -38,7 +38,7 @@ void Func_080f8070(void);
 void Func_080f8078(void);
 void Func_080f8080(s32 shown);
 void Func_080f8090(s32 index, s32 x, s32 y);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_0803f9c0(s32 glow, s32 sub);
 void StatusMenu_DrawCharacterSummary(struct Window *window,
                                      struct SaveSummary *summary);
@@ -182,7 +182,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   for (i = 0, y = 144; i < 4; i++, y += 24)
     Func_080f8090(i, y, 128);
   Func_080f8080(0);
-  WaitFrames(1);
+  wait(1);
 
   while (1) {
     if (summaryDirty != 0) {
@@ -194,12 +194,12 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
           summaryWindow = Window_Create(1, 10, 14, 9, 2);
         StatusMenu_DrawCharacterSummary(summaryWindow,
                                         &save->summary[selectedFile]);
-        WaitFrames(1);
+        wait(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, 2);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Func_08043a64(partyWindow, 0, 0, &save->summary[selectedFile]);
-        WaitFrames(1);
+        wait(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
                 (s8)save->summary[selectedFile].djinn[1] +
                 (s8)save->summary[selectedFile].djinn[2] +
@@ -232,7 +232,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
       Window_FillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
     }
     Func_08045018(modePicture);
-    WaitFrames(1);
+    wait(1);
     if (gInput.repeat & 0x40) {
       Sound_PlayFar(111);
       summaryDirty = 1;
@@ -278,7 +278,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   PaletteGlow_Stop();
   HeapSlot_Release(220);
   Func_0803f9c0(gAdventure.unk220[5], gAdventure.unk220[6]);
-  WaitFrames(1);
+  wait(1);
 done:
   return result;
 }

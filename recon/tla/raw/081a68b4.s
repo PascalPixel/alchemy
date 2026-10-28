@@ -28,7 +28,7 @@ Func_081a68b4:
 	b .L_081a6a9c
 .L_081a68e0:
 	ldr r0, [r5, #28]
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	beq .L_081a68ec
 	b .L_081a69f2
@@ -244,7 +244,7 @@ Func_081a68b4:
 	strh r3, [r5, #22]
 .L_081a6a80:
 	ldr r0, [r5, #28]
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	bne .L_081a69f2
 	ldrh r3, [r5, #4]

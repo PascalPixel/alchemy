@@ -1151,7 +1151,7 @@ BattleEffect_RunOdyssey:
 	movs r0, #1
 	str r3, [r2]
 	add r11, r7
-	bl WaitFrames
+	bl wait
 	mov r0, r11
 	cmp r0, #114
 	beq .L_081914b2

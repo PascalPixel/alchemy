@@ -24,7 +24,7 @@ void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02005d9c(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
@@ -55,14 +55,14 @@ void Func_02003b7c(s32 x, s32 y) {
   i = 0;
 fadeIn:
   REG_BLDALPHA = (i << 9) | 16;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i != 8)
     goto fadeIn;
   i = 0;
 fadeOut:
   REG_BLDALPHA = (16 - i) | 0x1000;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i != 16)
     goto fadeOut;

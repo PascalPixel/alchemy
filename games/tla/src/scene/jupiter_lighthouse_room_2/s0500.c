@@ -7,8 +7,8 @@ struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -47,11 +47,11 @@ void Func_02000500(s32 unused, s32 id) {
   asm("" ::: "memory");
   if (object->terrainHeight !=
       Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
-    WaitFrames(2);
+    wait(2);
     for (i = 0; i <= 29 &&
                 (object->y > object->terrainHeight || object->velocityY != 0);
          i++)
-      WaitFrames(1);
+      wait(1);
     Func_0200232c(188);
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
@@ -62,13 +62,13 @@ void Func_02000500(s32 unused, s32 id) {
     Func_0200220c(28, 39, 1, 1, 20, 39);
     CopyCells(28, 39, 1, 1, 20, 39);
     CopyCells(92, 39, 1, 1, 84, 39);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Func_0200232c(167);
     CopyCells(92, 40, 1, 1, 84, 40);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200232c(167);
     CopyCells(92, 41, 1, 1, 84, 41);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200232c(167);
     CopyCells(93, 41, 1, 1, 85, 41);
     Func_02002304(168 << 17, 164 << 18, 2, 236);

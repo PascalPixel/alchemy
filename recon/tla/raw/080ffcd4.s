@@ -88,7 +88,7 @@ Func_080ffcd4:
 	movs r3, #1
 	movs r0, #1
 	mov r11, r3
-	bl WaitFrames
+	bl wait
 	b .L_080ffd98
 .L_080ffd96:
 	add r6, sp, #20
@@ -111,7 +111,7 @@ Func_080ffcd4:
 	mov r8, r3
 .L_080ffdba:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	add r3, sp, #28
 	ldr r1, [r6, #20]
 	movs r0, #0

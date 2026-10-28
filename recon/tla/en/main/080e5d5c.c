@@ -88,7 +88,7 @@ void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
 void Task_Add(void (*func)(void), s32 order);
@@ -237,34 +237,34 @@ void Func_080e5d5c(void) {
     particle++;
     sprite++;
   }
-  WaitFrames(1);
+  wait(1);
   Func_080dbed0(shine, scene->x, scene->y + lift, scene->z);
   Actor_SetMode(shine, 1);
-  WaitFrames(15);
+  wait(15);
   for (i = 24; i >= 0; i--) {
     shine->y += 0x8000;
-    WaitFrames(1);
+    wait(1);
   }
-  WaitFrames(15);
+  wait(15);
   work->state = 0;
   work->timer = 0;
   work->sparkles = 0;
   if (!inReach) {
     Task_Add(BattleEffect_SinkAndShrinkObject, 0x480);
     while (work->state != 999)
-      WaitFrames(1);
+      wait(1);
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
     Sound_PlayFar(114);
-    WaitFrames(1);
+    wait(1);
   } else {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080ce31c(scene->fieldKind));
     Task_Add(Func_080e5a64, 0x480);
     frame = 0;
     while (work->state != 999) {
-      WaitFrames(1);
+      wait(1);
       scene->fading = work->fading;
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1))
@@ -273,7 +273,7 @@ void Func_080e5d5c(void) {
       frame++;
     }
     Task_Remove(Func_080e5a64);
-    WaitFrames(10);
+    wait(10);
     Sound_PlayFar(114);
     Func_080dbf94(shine, shine->x, shine->y, shine->z);
   }

@@ -8,16 +8,16 @@ void Func_02001cc8(void) {
     Func_02004a24(0);
     object->motionFlags = 3;
     do {
-      WaitFrames(1);
+      wait(1);
       /* FAKEMATCH: one more use of the object in the loop gives it r5 and the
        * speed r6; without it, 14 instructions differ in tla-en. */
       __asm__("" : : "l"(object));
     } while (object->velocityY != 0);
     Import_SoundPlay(188);
-    WaitFrames(10);
+    wait(10);
     object->motionFlags = 0;
     ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
-    WaitFrames(1);
+    wait(1);
     GameFlag_SetBit(0x94e);
     Func_020048cc();
   }
@@ -28,13 +28,13 @@ void Func_02001d3c(void) {
   Func_02004a24(0);
   Import_SoundPlay(158);
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
   ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x26666, 0x13333);
   Actor_Jump(gAdventure.currentOwner, 4, 0);
   Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 220);
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   {
     u8 *flags = &Actor_GetById(gAdventure.currentOwner)->actionFlags;
 
@@ -50,7 +50,7 @@ void Func_02001d3c(void) {
   ShamanVillage_ObjWalk(15, 120, 208);
   Func_02004944(16, 15);
   Func_02004944(17, 15);
-  WaitFrames(1);
+  wait(1);
   ShamanVillage_ObjSpeed(16, 0xcccc, 0x6666);
   ShamanVillage_ObjSpeed(17, 0xcccc, 0x6666);
   Actor_ResetAndSetPositionInMode2(16, 104, 212);
@@ -70,7 +70,7 @@ void Func_02001d3c(void) {
   ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x6666, 0x3333);
   Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 264);
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */

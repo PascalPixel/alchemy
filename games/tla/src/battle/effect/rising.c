@@ -3,7 +3,7 @@
 #include "mem.h"
 
 s32 Party_GetLeaderActor(void);
-void WaitFrames(s32);
+void wait(s32);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Actor_StartScriptFar(struct Actor *object,
@@ -40,7 +40,7 @@ void Func_080cf350(struct Actor *object) {
   }
   Actor_SetTargetPosition(object, owner->x, owner->y + 0x240000, owner->z);
   Actor_SetSpritePriorityDirectFar(object, 1);
-  WaitFrames(3);
+  wait(3);
   Actor_SetMode(owner, 28);
   Actor_StartScriptFar(object, gData_080f0074);
   owner->angle = 0x4000;
@@ -59,11 +59,11 @@ void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
       object->update = Marker_MoveLeaderAwayFromEmitter;
     }
     if (flags == 3)
-      WaitFrames(60);
+      wait(60);
     if (flags & 2)
       Func_080cf350(object);
     if (flags == 3)
-      WaitFrames(80);
+      wait(80);
     Actor_SetMode(owner, 1);
   }
 }
@@ -120,7 +120,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
     if (flags & 2)
       Func_080cf350(object);
 
-    WaitFrames(80);
+    wait(80);
     Actor_SetMode(owner, 1);
     Actor_Destroy(object);
   }

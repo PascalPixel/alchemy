@@ -17,7 +17,7 @@ s32 Map_GetTerrainHeight();
 s32 Actor_SetAnimationSpeed();
 s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
-s32 WaitFrames();
+s32 wait();
 extern u8 Func_020031f8[];
 extern u8 gAdventure[];
 
@@ -164,10 +164,10 @@ L_0200ba56:
   t53 = FIELD_AT(sp_, s32, 4);
   Func_02004bf8(v_r5, t52, t51, t53);
   Func_02004c00(v_r5);
-  WaitFrames(2);
+  wait(2);
   goto L_0200b8b6;
 L_0200ba7c:
-  WaitFrames(10);
+  wait(10);
 L_0200ba82:
   FIELD_AT(v_r5, s32, 108) = 0;
   t58 = *(u8 *)(v_r5 + 90);

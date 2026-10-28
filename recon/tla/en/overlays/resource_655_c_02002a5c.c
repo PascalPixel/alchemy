@@ -16,7 +16,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -68,7 +68,7 @@ struct EffectView {
 
 extern struct Actor *gData_02004420;
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -106,13 +106,13 @@ void Func_02002a5c(void) {
   Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
   Func_02003cc8(9, 0x100, 20);
   Func_02002bcc();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSpritePriority(9, 3);
   Actor_SetSpritePriority(gAdventure.currentOwner, 3);
   Actor_SetModeById(gAdventure.currentOwner, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   for (i = 0; i <= 39;) {
     if (i == 5)
       Func_02003df8(204);
@@ -120,7 +120,7 @@ void Func_02002a5c(void) {
     leader->scaleY += -0x300;
     i++;
     leader->y += -0x9999;
-    WaitFrames(1);
+    wait(1);
   }
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_FinishScreenTransition();

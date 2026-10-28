@@ -3,7 +3,7 @@
 extern s16 gData_02007520;
 extern s32 gData_0200751c;
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Waits for the values to agree, for at most 300 frames.
 void Func_081a17d0(void) {
@@ -11,7 +11,7 @@ void Func_081a17d0(void) {
 
   if (gData_0200751c != gData_02007520 << 16) {
     do {
-      WaitFrames(1);
+      wait(1);
       frames++;
       if (frames > 299)
         break;

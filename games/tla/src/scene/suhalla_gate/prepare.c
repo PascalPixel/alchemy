@@ -11,9 +11,9 @@ void Func_02000308(void) {
   Actor_GetById(0)->motionFlags = 0;
   Func_02000aa0(158);
   Func_02000970(66, 36, 71, 8, 2, 2);
-  WaitFrames(4);
+  wait(4);
   Func_02000970(68, 36, 71, 8, 2, 2);
-  WaitFrames(4);
+  wait(4);
   Actor_CenterOnColumn_(0, 3, -16);
   Func_02000aa0(123);
   Func_02000a38(value);

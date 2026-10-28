@@ -62,10 +62,10 @@ void Func_08044b98(s32 member) {
     Sound_PlayFar(81);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     Resource_ResetEntry(handle);
   }
 }

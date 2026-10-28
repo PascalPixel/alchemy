@@ -20,7 +20,7 @@ void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
 
   if (first != NULL && second != NULL) {
     FacingObject_TurnPairToFaceEachOther(first, second);
-    Event_WaitFrames(wait);
+    Event_Wait(wait);
   }
 }
 
@@ -61,7 +61,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
     }
     if (turning == 0)
       break;
-    WaitFrames(1);
+    wait(1);
   }
 }
 

@@ -1025,7 +1025,7 @@ Func_02000818:
 	bl Func_0200015c
 .L_02008a2a:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_02008a30:
 	mov r0, r8
 	bl Func_02001f9c
@@ -1324,7 +1324,7 @@ Func_02000c94:
 	bl Func_02002054
 .L_02008cb2:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r6, #160
 	lsls r6, r6, #19
 	movs r5, #0
@@ -1470,7 +1470,7 @@ Func_02000da0:
 	str r3, [r2]
 .L_02008dcc:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_02008e2c
 	movs r4, #160
 	lsls r4, r4, #19
@@ -1779,7 +1779,7 @@ Func_02000ef0:
 	bl Func_0200015c
 .L_02009030:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_02009036:
 	mov r0, r8
 	bl Func_02001f9c
@@ -1890,7 +1890,7 @@ Func_02001108:
 	.4byte 0x00005ccb
 .L_020091c0:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_02009218
 	movs r4, #160
 	lsls r4, r4, #19
@@ -2021,7 +2021,7 @@ Func_02001108:
 	b .L_020091c0
 .L_020092b8:
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r4, #0
 	mov r8, r4
 .L_020092c2:
@@ -2088,7 +2088,7 @@ Func_02001108:
 	movs r3, #0
 	bl Func_0200015c
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_02009344:
 	movs r0, #1
 	movs r2, #180
@@ -2137,7 +2137,7 @@ Func_02001108:
 	movs r1, #0
 	bl Func_0200015c
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -2154,12 +2154,12 @@ Func_02001108:
 	adds r5, r0, #0
 	str r3, [r5, #108]
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_02001f4c
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, .L_02009414
 	movs r4, #166
 	lsls r4, r4, #1
@@ -2547,14 +2547,14 @@ Func_02001a14:
 	bl Camera_MoveWithinMapBounds
 	bl Event_StartScreenTransition
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_02009b18
 	bl Task_Add
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #21
 	movs r1, #23
 	movs r2, #9
@@ -2597,7 +2597,7 @@ Func_02001a14:
 	adds r0, #18
 	bl Func_02002054
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r7, #0
 .L_02009af0:
 	movs r3, #31
@@ -2667,7 +2667,7 @@ Func_02001a14:
 	movs r3, #0
 	bl Func_0200015c
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_02009b78:
 	movs r1, #180
 	adds r7, #1
@@ -2715,7 +2715,7 @@ Func_02001a14:
 	bl Func_0200015c
 	adds r7, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #16
 	bne .L_02009b84
 	mov r0, r8
@@ -2726,7 +2726,7 @@ Func_02001a14:
 	bl Func_02002054
 .L_02009bf0:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r6, #160
 	lsls r6, r6, #19
 	movs r5, #0

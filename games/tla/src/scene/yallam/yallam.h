@@ -50,7 +50,7 @@ void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void Actor_CenterOnColumn(s32 actor, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Func_02000088(struct Actor *object, struct Actor *target,

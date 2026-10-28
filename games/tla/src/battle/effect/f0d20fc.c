@@ -5,7 +5,7 @@
 void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Tile_ClearLeftPixels(s32 x, s32 y, s32 width);
-void WaitFrames(s32 count);
+void wait(s32 count);
 void *Resource_GetTableEntry(s32 resourceId);
 
 extern s16 gData_080f3230[];
@@ -33,7 +33,7 @@ void Func_080d20fc(void) {
           Tile_ClearLeftPixels(x, y, gData_080f3230[step]);
       }
     }
-    WaitFrames(2);
+    wait(2);
     if (gData_080f3230[step] == -9)
       break;
     step++;

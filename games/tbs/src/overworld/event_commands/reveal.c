@@ -102,7 +102,7 @@ void FieldPsynergy_Reveal(void) {
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
   work->revealActive = 0;
 #endif
-  WaitFrames(1);
+  wait(1);
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
@@ -119,7 +119,7 @@ void FieldPsynergy_Reveal(void) {
   FieldEffect_SpawnNearbyMarkers();
   frame = 0;
   do {
-    WaitFrames(1);
+    wait(1);
     state->value = frame;
     frame++;
   } while (frame <= 18);
@@ -163,7 +163,7 @@ void FieldPsynergy_EndReveal(void) {
     PaletteFade_SetSource(0, 0);
     PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
     PaletteFade_StartInterpolation(30);
-    WaitFrames(1);
+    wait(1);
 
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES),
                                       FIELD_PSYNERGY_REVEAL, &eventTarget);
@@ -174,7 +174,7 @@ void FieldPsynergy_EndReveal(void) {
       transition->nextMode = 0;
       transition->duration = 1;
       transition->step = 1;
-      WaitFrames(10);
+      wait(10);
     }
   }
 }

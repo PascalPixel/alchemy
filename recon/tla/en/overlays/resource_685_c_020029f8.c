@@ -18,7 +18,7 @@ extern const u16 Field_Palette685[];
 
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -53,10 +53,10 @@ void Func_020029f8(s32 id, s32 mode) {
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
       object->angle += 0x2000;
-      WaitFrames(1);
+      wait(1);
     }
   }
-  WaitFrames(2);
+  wait(2);
   object->scaleX = 0;
   Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
@@ -107,7 +107,7 @@ void Func_020029f8(s32 id, s32 mode) {
       break;
     }
     Func_02003604(sprite);
-    WaitFrames(1);
+    wait(1);
   }
   Func_020034d4(id, 0, 0);
   Resource_ResetEntry(slot);

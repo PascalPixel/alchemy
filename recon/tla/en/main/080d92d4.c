@@ -34,7 +34,7 @@ typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
 extern s32 gData_080f393c;
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                    s32 wobble);
 void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
@@ -70,14 +70,14 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
       Func_080d9498(index, from->x, from->y + 0x80000, from->z, endX,
                     toY + 0x80000, endZ, Trig_Sin(gData_080f393c) * 4);
       slot->unk18 = 0;
-      WaitFrames(1);
+      wait(1);
       Func_080d9790(index, from->x, from->y + 0x80000, from->z, endX,
                     toY + 0x80000, endZ, Trig_Sin(gData_080f393c) * 4);
     } else {
       Func_080d9498(index, from->x, from->y + 0x80000, from->z, to->x,
                     to->y + 0x80000, to->z, Trig_Sin(gData_080f393c) * 4);
       gData_080f393c += 0x1000;
-      WaitFrames(6);
+      wait(6);
       Actor_SetMode(from, 2);
       Actor_SetMode(to, 2);
     }

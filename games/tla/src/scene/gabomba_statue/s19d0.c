@@ -11,7 +11,7 @@ void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020057b4(void);
 void Func_02005854(s32 sound);
 void Func_020020f0(s32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void GameFlag_SetBit(s32 flag);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -30,15 +30,15 @@ void Func_020019d0(void) {
   Func_020057b4();
   Func_02005854(586);
   Func_020020f0(0);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02005854(582);
   actor->motionFlags = 0;
   actor->y = 0x80000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   actor->y = 0;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_020020f0(-1);
   GameFlag_SetBit(0x8cd);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_020056bc();
 }

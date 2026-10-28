@@ -11,8 +11,8 @@
 extern char MsgWeReSaved[];
 
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -57,7 +57,7 @@ void Func_02002ab0(void) {
   boat->scaleX = 0x13333;
   boat->scaleY = 0x13333;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  WaitFrames(1);
+  wait(1);
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      0);
@@ -92,7 +92,7 @@ void Func_02002ab0(void) {
     MAP_HALF(map, 0x11e) += 0xff80;
     MAP_HALF(map, 0x11c) += 128;
     Actor_GetById(10)->scaleY += -0x300;
-    WaitFrames(1);
+    wait(1);
   }
   Func_02004da8();
   GameFlag_SetBit(0x200);
@@ -106,7 +106,7 @@ void Func_02002ab0(void) {
   Func_02004df8(0x9999, 1);
   MAP_HALF(map, 0x11e) = 0;
   MAP_HALF(map, 0x11c) = 0xe000;
-  WaitFrames(1);
+  wait(1);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x0e470000, -1, 0x1dd00000, 0);
   Func_02004b40();
   Func_02004c88(8, 0x0e6a0000, 0x1dc00000);
@@ -117,10 +117,10 @@ void Func_02002ab0(void) {
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
-  WaitFrames(1);
+  wait(1);
   Func_02004da8();
   Func_02004d10(5, 0x102);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02004cf0(5, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
   Func_02004cf0(9, 0);

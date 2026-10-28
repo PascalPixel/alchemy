@@ -412,7 +412,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
       Actor_FaceDirection(ACTOR_THIRSTY_OLD_WOMAN, FACING_SOUTH - FACING_STEP,
                           0);
       FieldCamera_WaitForArrival();
-      Event_WaitFrames(120);
+      Event_Wait(120);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
       FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       FieldCamera_WaitForArrival();
@@ -631,10 +631,10 @@ static void Altin_EnterDoor(void) {
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
-    Event_WaitFrames(4);
+    Event_Wait(4);
     MapGrid_CopyCellsTo(40, 33, column, row, 2, 2);
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
-    Event_WaitFrames(4);
+    Event_Wait(4);
   } else {
     Event_PlaySound(SE_DOOR_OPEN);
     // The north door's row in gAltin_Doors plays its opening at
@@ -664,7 +664,7 @@ static void Altin_EnterDoor(void) {
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
     }
   }
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -743,9 +743,9 @@ static void Altin_BeastHopAway(void) {
   Event_PlaySound(SE_SPLASH);
   Actor_ReleaseById(ACTOR_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
-  Event_WaitFrames(4);
+  Event_Wait(4);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Import_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
@@ -856,12 +856,12 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
   // Redraw at the leader after the map and actor state are ready.
-  WaitFrames(1);
+  wait(1);
   Event_Start();
   FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
   MapGrid_CenterOnFollowedPoint();
   Event_End();
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Sets up inside Altin's buildings (CottageRoomsD): the families still
@@ -963,19 +963,19 @@ static void Altin_ScareOffBeast(void) {
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Import_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
   Scene_QueueMusic(-1);
   Task_Remove(Altin_BeastSpawnSpray);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_BEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
   Event_PlaySound(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_WATER_BEAST, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);
   Altin_BeastHopAway();
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);

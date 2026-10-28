@@ -970,7 +970,7 @@ Func_0816aeec:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #84]
 	ldr r2, [sp, #60]

@@ -29,7 +29,7 @@ void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_SetMode(void *object, s32 mode);
 void Camera_WorldToScreen(void *position);
@@ -68,20 +68,20 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x201090);
-  WaitFrames(30);
+  wait(30);
   Actor_ArmCallback(djinniId, 0x4000, 0);
-  WaitFrames(20);
+  wait(20);
   Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlayFar(174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  WaitFrames(20);
+  wait(20);
   Sound_PlayFar(140);
   djinni->update = BattleEffect_SpinUpAngle;
   djinni->timer = 0;
-  WaitFrames(80);
+  wait(80);
   djinni->update = BattleEffect_ShrinkObjectAndDestroySlow;
   Actor_SetMode(djinni, 3);
 
@@ -115,13 +115,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     ((struct FieldParticle *)slot)->scaleY = value;
     ((struct FieldParticle *)slot)->scaleX = value;
     remaining--;
-    WaitFrames(1);
+    wait(1);
     slot = (u8 *)slot + sizeof(struct FieldParticle);
   } while (remaining >= 0);
 
-  WaitFrames(60);
+  wait(60);
   Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
-  WaitFrames(20);
+  wait(20);
   Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
@@ -129,7 +129,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   {
     s32 nextState;
 
-    WaitFrames(20);
+    wait(20);
     nextState = 2;
     slotState = effectSlots;
     slotState += 144;
@@ -142,9 +142,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     } while (remaining >= 0);
   }
 
-  WaitFrames(60);
+  wait(60);
   leader->update = BattleEffect_SetObjectAlternatingWords;
-  WaitFrames(100);
+  wait(100);
 
   // Every spark still in use goes (state 5).
   {
@@ -162,12 +162,12 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     } while (remaining >= 0);
   }
 
-  WaitFrames(10);
+  wait(10);
   slot = NULL;
   leader->update = slot;
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
-  WaitFrames(30);
+  wait(30);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

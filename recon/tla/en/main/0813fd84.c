@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -247,7 +247,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       actor[3] += 0x100000;
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   actor[18] = 0xab85;
   actor[3] = 0;
@@ -582,7 +582,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     WAIT_TRANSFER(work);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   count = -1;
   Render_BuildQuadStrip(Data_02012000, 8, 16, 32);
@@ -612,7 +612,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   work->transferPending = 1;
-  WaitFrames(1);
+  wait(1);
   Iwram_FillWords(canvas, 0x4000, 0);
   REG_BG2CNT = 0x786;
   BattleBackground_LoadFar(1, 0x45, 0);
@@ -644,7 +644,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           ((struct RuinObject *)work->objects[k * 9 + j])->tile;
     }
   }
-  WaitFrames(1);
+  wait(1);
   level = 0;
   for (frame = 0; frame != 102; frame++, level += 2) {
     if ((gInput.repeat & 3) && frame <= 84 && count == -1) {
@@ -874,7 +874,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = work->savedBg1Y;
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     if (count > 0 && --count == 0) {
       break;
     }
@@ -884,7 +884,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  WaitFrames(1);
+  wait(1);
   gCameraSceneParameters[4] = 120;
   Sound_PlayFar(390);
   for (i = 0; i != 18; i++) {
@@ -1021,7 +1021,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Func_08158ce0(r, r);
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
     }
   }
   Palette_LoadBasicObjColors();

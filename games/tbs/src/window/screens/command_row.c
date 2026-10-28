@@ -11,7 +11,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
   result = Message_OpenWindow(message, x, y, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   return result;
 }
 
@@ -329,7 +329,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
     work->holdTilemapUpload = 0;
-    WaitFrames(1);
+    wait(1);
   }
   if (mode != COMMAND_ROW_PARTY)
     gBattleMenuWork->commandSelection[1] = selectionUi->selectedIndex;
@@ -357,7 +357,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   }
   // Restore the normal BG1 handler after clearing the command strip.
   work->dirty = 1;
-  WaitFrames(1);
+  wait(1);
   Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -366,7 +366,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                       IO_WRITE_16);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
-  WaitFrames(1);
+  wait(1);
   return command;
 }
 

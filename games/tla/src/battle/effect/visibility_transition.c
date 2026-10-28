@@ -6,7 +6,7 @@
 extern const u8 gData_080f1140[];
 
 void Leader_StopMoving(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
 void BattleEffect_RunVisibilityTransition(void) {
@@ -16,7 +16,7 @@ void BattleEffect_RunVisibilityTransition(void) {
     Leader_StopMoving();
     Func_080d46a4(0x9d89, 6);
     while (gInput.held & 0x200)
-      WaitFrames(1);
+      wait(1);
     party = &gAdventure;
     /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */

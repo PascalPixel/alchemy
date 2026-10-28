@@ -11,14 +11,14 @@ void Func_020004a8(void) {
     Actor_ArmCallback_(4, 0xa000, 0);
     Func_02005378_(14, -16, -16, 0xc000);
     Actor_WaitForMoveById(14);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02005280((s32)&MsgKandoreanTemple11);
     Func_02005298(14, 0);
     Func_020052b0(14, 0x2000);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Actor_SetSpeedParameters_(14, 0x13333, 0x9999);
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);

@@ -13,7 +13,7 @@ void Func_020010e4();
 void Func_0200113c();
 void GameFlag_SetBit();
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02000d68();
 void Actor_CommitPositionAndActivate();
 void Actor_ArmCallback();
@@ -26,7 +26,7 @@ void GameFlag_Test();
 void Func_02000e20(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 16, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   ((void (*)())Func_02000d68)();
   return;
 }
@@ -34,14 +34,14 @@ void Func_02000e20(void) {
 void Func_02000e44(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
   Value3((s32 (*)())Actor_CommitPositionAndActivate, 4, -16, 0);
-  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
+  Value1((s32 (*)())FieldEvent_Wait, 10);
   Value0((s32 (*)())Func_02000d68);
   return;
 }
 
 void Func_02000e6c(void) {
   Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   ((void (*)())Func_02000d68)();
   return;
 }

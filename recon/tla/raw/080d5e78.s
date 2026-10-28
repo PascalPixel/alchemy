@@ -46,7 +46,7 @@ ObjectEffect_EndContextEffect:
 	adds r0, r5, #0
 	bl Actor_SetMode
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r6, #1
 	mov r2, r8
 	strb r6, [r2, #27]

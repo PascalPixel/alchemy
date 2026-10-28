@@ -74,7 +74,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
 
@@ -253,7 +253,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);

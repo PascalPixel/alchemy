@@ -31,13 +31,13 @@ void Func_02004e5c();
 void Func_02004fcc();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Actor_SetSingleChildFlags();
 s32 Import_ActorCreate();
 void Func_02004dac();
 void Func_02004d9c();
 void Animation_ApplyChildValues();
-void WaitFrames();
+void wait();
 void Func_02005014();
 void GameFlag_SetBit();
 void Func_02004f6c();
@@ -159,7 +159,7 @@ L_0200bfc8:
   Call3((void (*)())Func_02004ebc, 11, 0, 0);
   Call3((void (*)())Func_02004ebc, FIELD_AT(r7, s32, 532), 0, 0);
   Event_StartScreenTransition();
-  Call1((void (*)())FieldEvent_WaitFrames, 15);
+  Call1((void (*)())FieldEvent_Wait, 15);
   Call3((void (*)())Func_02004ebc, 11, 0x2a00000, 0x1800000);
   v12 = Actor_GetById(11);
   Call2((void (*)())Actor_SetSingleChildFlags, v12, 0);
@@ -189,13 +189,13 @@ L_0200c09c:
 L_0200c0a2:
   r3 = r8;
   if (r8 != 0) {
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())wait, 1);
     r3 = FIELD_AT(r6, s32, 40);
     if ((FIELD_AT(r6, s32, 40)) <= -1)
       goto L_0200c09c;
   }
   Call1((void (*)())Func_02005014, 188);
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call1((void (*)())GameFlag_SetBit, 0x109);
   Call1((void (*)())Func_02004f6c, 3);
 L_0200c0d2:

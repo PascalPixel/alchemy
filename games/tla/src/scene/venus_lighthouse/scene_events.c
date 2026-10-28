@@ -35,7 +35,7 @@ void VenusLighthouse_RunSetupStep(void) {
   Func_02001c84(4, 10);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
   Func_02001c9c();
-  Import_EventWaitFrames(10);
+  Import_EventWait(10);
   Field_DispatchTypeHandler(1);
   Func_02001c8c();
   Func_02001c94();

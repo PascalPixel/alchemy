@@ -1076,7 +1076,7 @@ BattleEffect_RunGaia:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #40]
 	adds r4, #1
 	str r4, [sp, #40]

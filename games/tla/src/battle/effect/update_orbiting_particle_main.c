@@ -165,13 +165,13 @@ void FieldEffect_RunFrost(void) {
       particle->targetZ = p->z;
     }
 
-    WaitFrames(3);
+    wait(3);
     cnt--;
   } while (cnt >= 0);
 
-  WaitFrames(10);
+  wait(10);
   Sound_PlayFar(115);
-  WaitFrames(50);
+  wait(50);
 
   if (target != NULL && scene->enabled == 0) {
     Sound_PlayFar(212);
@@ -179,9 +179,9 @@ void FieldEffect_RunFrost(void) {
     cnt = 7;
     do {
       Animation_ApplyChildValuesFar((struct ActorView *)target, 7);
-      WaitFrames(1);
+      wait(1);
       Animation_ApplyChildValuesFar((struct ActorView *)target, 0);
-      WaitFrames(4);
+      wait(4);
       cnt--;
     } while (cnt >= 0);
 
@@ -195,7 +195,7 @@ void FieldEffect_RunFrost(void) {
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstObjectId,
                                    scene->secondObjectId);
-    WaitFrames(20);
+    wait(20);
   }
 
   BattleEffect_PrepareBufferInterpolation();

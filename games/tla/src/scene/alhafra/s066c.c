@@ -7,7 +7,7 @@ s32 Func_02001c74();
 s32 FieldMessage_ShowAtActor();
 s32 Func_02001d34();
 s32 Event_AskYesNoWithActorAnimation();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_02001c8c();
 s32 GameFlag_SetBit();
 s32 Actor_SetPositionAndReset();
@@ -29,25 +29,25 @@ void Func_0200066c(s32 actor) {
     Call1(Func_02001c74, message);
     Call2(FieldMessage_ShowAtActor, actor, 0);
     if (Value2(Event_AskYesNoWithActorAnimation, Func_02001d34(), 0) != 0) {
-      Call1(FieldEvent_WaitFrames, 20);
+      Call1(FieldEvent_Wait, 20);
       Call1(Func_02001c74, message + 1);
       Call2(Func_02001c8c, actor, 0);
     } else {
       Call1(GameFlag_SetBit, 0x8b9);
-      Call1(FieldEvent_WaitFrames, 20);
+      Call1(FieldEvent_Wait, 20);
       Call1(Func_02001c74, message + 2);
       Call2(Func_02001c8c, actor, 0);
       Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 72,
             344);
       Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
-      Call1(FieldEvent_WaitFrames, 10);
+      Call1(FieldEvent_Wait, 10);
       Call3(Actor_SetSpeedParameters, actor, 0x10000, 0x8000);
       Call3(Actor_SetPositionAndReset, actor, 56, 328);
       Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xa000, 0);
       Call3(Actor_ArmCallback, actor, 0x2000, 0);
-      Call1(FieldEvent_WaitFrames, 20);
+      Call1(FieldEvent_Wait, 20);
       Call2(Motion_SetModeAndWaitAnimation, actor, 3);
-      Call1(FieldEvent_WaitFrames, 10);
+      Call1(FieldEvent_Wait, 10);
       Call2(Func_02001c8c, actor, 0);
     }
   }

@@ -214,7 +214,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // The second part: 64 puffs of sparkle for each target.
@@ -304,7 +304,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down.

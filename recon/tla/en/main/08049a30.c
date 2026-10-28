@@ -125,7 +125,7 @@ void Window_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_Close(void *window, s32 mode);
 void Resource_ResetEntry(s32 slot);
 
@@ -363,15 +363,15 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   Resource_ResetEntry(cursorHandle);
   for (i = 0; i < 5; i++)
     Resource_ResetEntry(iconSlots[i]);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

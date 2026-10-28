@@ -103,7 +103,7 @@ s32 PartyMemberChooser_Open(void) {
 
   gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Window_InitializeWork(0);
 
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
@@ -118,7 +118,7 @@ s32 PartyMemberChooser_Open(void) {
   WindowSprite_ClearListFar(menu->statusWindow);
   ItemMenu_Close();
   gActorSystemWork->suspended = 0;
-  WaitFrames(1);
+  wait(1);
   HeapSlot_Release(HEAP_SLOT_MENU);
   return result;
 }
@@ -160,7 +160,7 @@ s32 StatusScreen_Run(void) {
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
   menu->page = STATUS_SCREEN_PAGE_STATUS;
@@ -213,11 +213,11 @@ s32 StatusScreen_Run(void) {
   DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  WaitFrames(1);
+  wait(1);
 #endif
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
@@ -230,7 +230,7 @@ s32 StatusScreen_Run(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;
-  WaitFrames(1);
+  wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
@@ -331,7 +331,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
     result = PartyMemberChooser_RunRearrange();
   cursor = menu->memberCursors[slot];
   Icon_PrepareActor(cursor);
-  WaitFrames(1);
+  wait(1);
   return result;
 }
 
@@ -352,7 +352,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   Text_DrawMessageAsTilesFar(MsgReturnHelp, menu->helpWindow, 0, 16);
   menu->cursor->motion = ICON_HIDDEN;
   menu->secondCursor->motion = ICON_HIDDEN;
-  WaitFrames(1);
+  wait(1);
   window = menu->window;
   {
     s32 i;
@@ -386,7 +386,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   for (;;) {
     if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
       break;
-    WaitFrames(1);
+    wait(1);
     if (gKeysPressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
   }
@@ -481,7 +481,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       StatusScreen_SetSelectedMemberRow(menu, memberIndex);
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
@@ -503,7 +503,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
-      WaitFrames(1);
+      wait(1);
     } else if (gKeysRepeat & KEY_L) {
       if (PartyMemberChooser_MoveEntry(memberIndex, 0)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -514,7 +514,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
-      WaitFrames(1);
+      wait(1);
     } else if ((gKeysPressed & KEY_SELECT) &&
                GameFlag_GetFar(FLAG_DJINN_FIRST)) {
       DjinnMenu_ShowCurrentList();
@@ -579,7 +579,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       Menu_HideEmptyEntryIcons(menu->psynergies);
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
@@ -809,7 +809,7 @@ s32 StatusScreen_SelectCommand(void) {
         }
         StatusScreen_DrawSelectionCursor(side, selected, entries, 0);
         WindowSprite_ClearListFar(menu->helpWindow);
-        WaitFrames(1);
+        wait(1);
         if (side == 0)
           StatusScreen_DrawSelectionLabels(menu->helpWindow, selected, entries);
         else
@@ -825,7 +825,7 @@ s32 StatusScreen_SelectCommand(void) {
         MenuCursor_Position(24, selected * 8 + 48);
       else
         MenuCursor_Position(48, selected * 8 + 80);
-      WaitFrames(1);
+      wait(1);
       // Take the highlight off before the cursor moves.
       if (gKeysRepeat & KEYS_DPAD)
         StatusScreen_DrawSelectionCursor(side, selected, entries, 1);
@@ -1071,7 +1071,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   if (menu->page == 3)
     return;
   if (keepDrawn == 0) {
-    WaitFrames(1);
+    wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
   // The four element icons, then the Djinn counts and, in mode 1, the
@@ -1163,7 +1163,7 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
   Text_DrawMessageAsTilesFar(MsgExpLabel, window, 40, 8);
   Text_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);
   if (flags == 0) {
-    WaitFrames(1);
+    wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
   // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
@@ -1346,7 +1346,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 #else
   WindowSprite_ClearListFar(menu->infoWindow);
 #endif
-  WaitFrames(1);
+  wait(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
     MENU_DRAW_DESCRIPTION(
         (menu->psynergies[state->selectedIndex] & PSYNERGY_ABILITY_MASK) +
@@ -1422,7 +1422,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
       }
     }
   }
-  WaitFrames(1);
+  wait(1);
   return 1;
 }
 
@@ -1555,7 +1555,7 @@ s32 PsynergyMenu_SelectAction(void) {
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
         Unit_GetFar(menu->memberIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
-    WaitFrames(1);
+    wait(1);
     PagedList_Build(&state, 0);
     PsynergyMenu_DrawPreparedPsynergyIcons(menu->statusWindow,
                                            menu->memberIds[0]);
@@ -1570,9 +1570,9 @@ s32 PsynergyMenu_SelectAction(void) {
           PsynergyMenu_DrawListPage(menu->statusWindow, 0, &state);
         }
         PsynergyMenu_DrawRangePage(menu->statusWindow, 0, &state);
-        WaitFrames(1);
+        wait(1);
       }
-      WaitFrames(1);
+      wait(1);
       navigationResult = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                                &state.row, &state.page);
       menu->sideIcon[0]->motion = ICON_SHOWN;
@@ -1666,7 +1666,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 #else
   WindowSprite_ClearListFar(menu->descriptionWindow);
 #endif
-  WaitFrames(1);
+  wait(1);
   if (menu->items[state->selectedIndex] != 0) {
     MENU_DRAW_DESCRIPTION(
         (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
@@ -1735,7 +1735,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
       break;
     }
   }
-  WaitFrames(1);
+  wait(1);
   return 1;
 }
 
@@ -1832,7 +1832,7 @@ s32 ItemMenu_SelectItem(void) {
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, menu->statusWindow, 0,
                              -24);
   ItemMenu_PositionCategory();
-  WaitFrames(1);
+  wait(1);
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->questionWindow);
 
   done = 0;
@@ -1847,7 +1847,7 @@ s32 ItemMenu_SelectItem(void) {
     PagedList_Build(&state, 0);
     WindowSprite_RedrawSavedRectFar(menu->equipWindow);
     ItemMenu_DrawCategory(menu->equipWindow, menu->sideMember[0], 1);
-    WaitFrames(1);
+    wait(1);
     ItemMenu_DrawIcons(menu->items, 0);
     redraw = 1;
     listNeedsRedraw = 1;
@@ -1864,7 +1864,7 @@ s32 ItemMenu_SelectItem(void) {
       }
       menu->sideIcons[0]->motion = ICON_SHOWN;
       MenuCursor_Position(96, state.row * 16 + 52);
-      WaitFrames(1);
+      wait(1);
 
       navigationResult = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                                &state.row, &state.page);
@@ -2015,7 +2015,7 @@ void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode) {
   items = menu->items;
   ItemMenu_DrawEquippedItemNames(window, items);
   if (mode == 0) {
-    WaitFrames(1);
+    wait(1);
     ItemMenu_DrawIcons(items, 1);
     ItemMenu_ArrangeCategoryItemIcons(items);
   }

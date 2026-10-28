@@ -1113,7 +1113,7 @@ Func_0812381c:
 	ldr r0, .L_08124438
 	bl Message_ShowAndWaitCoreFar
 	movs r0, #60
-	bl WaitFrames
+	bl wait
 .L_081241aa:
 	movs r0, #1
 	negs r0, r0

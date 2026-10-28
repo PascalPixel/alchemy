@@ -105,7 +105,7 @@ Func_08109ad8:
 	lsls r0, r0, #2
 	bl Func_080f8058
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08109bb0:
 	ldr r1, [sp, #4]
 	mov r0, r10
@@ -123,7 +123,7 @@ Func_08109ad8:
 	cmp r2, #0
 	beq .L_08109c3e
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r0, r8
 	bl Inventory_CountFar
 	cmp r0, #0
@@ -196,7 +196,7 @@ Func_08109ad8:
 	bl Func_08108690
 	adds r7, r0, #0
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08109b5e
 .L_08109c72:
 	movs r0, #0
@@ -212,7 +212,7 @@ Func_08109ad8:
 	movs r1, #2
 	bl Window_CloseFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r5, #0
 	add sp, #8
 	pop {r3, r5, r6}

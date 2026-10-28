@@ -205,7 +205,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
@@ -348,7 +348,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // The giant leaves: the sky stops, the palette is restored and the
@@ -440,7 +440,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);

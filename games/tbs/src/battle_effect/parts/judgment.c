@@ -131,7 +131,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
   gProjection.centerY = 240;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The effect owns BG1's scroll until frame 280 of the sweep.

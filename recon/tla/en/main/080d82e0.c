@@ -157,13 +157,13 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   BattleEffect_InitializeSlots();
   effectSlots = gEffectWork;
   Shop_RestoreSceneTilesFar(0x201204);
-  WaitFrames(30);
+  wait(30);
   djinni->visible = 0;
   Sound_PlayFar(152);
   Actor_Jump(arg, 4, 15);
   Sound_PlayFar(152);
   Actor_Jump(arg, 4, 15);
-  WaitFrames(30);
+  wait(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
   Sound_PlayFar(153);
   Actor_Jump(arg, 8, 22);
@@ -171,11 +171,11 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
   Actor_SetMode((struct Actor *)djinni, 3);
-  WaitFrames(90);
+  wait(90);
   Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
-  WaitFrames(20);
+  wait(20);
   Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
-  WaitFrames(30);
+  wait(30);
   Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position[0] = djinni->x;
@@ -193,11 +193,11 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     ((struct FieldParticle *)slot)->scaleX = 0x8000;
     ((struct FieldParticle *)slot)->scaleY = Random16() + 0x18000;
     remaining--;
-    WaitFrames(1);
+    wait(1);
     slot += 72;
   } while (remaining >= 0);
 
-  WaitFrames(140);
+  wait(140);
   {
     s32 nextState;
 
@@ -213,9 +213,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     } while (remaining >= 0);
   }
 
-  WaitFrames(20);
+  wait(20);
   Map_SetScreenShakeFar(1, 1, 1);
-  WaitFrames(30);
+  wait(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {
     position[0] = leader->x;
@@ -236,9 +236,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     }
   }
 
-  WaitFrames(100);
+  wait(100);
   Sound_PlayFar(298);
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(151);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
@@ -261,7 +261,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
                                  gBattleEffect_SharedParticleScript);
   }
 
-  WaitFrames(15);
+  wait(15);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

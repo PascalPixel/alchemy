@@ -27,7 +27,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
     if (keepPosition == 0) {
       SET_ACTOR_POSITION(camera, subject->x.fixed, subject->y.fixed,
                          subject->z.fixed);
-      WaitFrames(1);
+      wait(1);
       if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
         MapGrid_CenterOnFollowedPointFar();
       }
@@ -105,7 +105,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   }
   if (shouldGlide == 0) {
     SET_ACTOR_POSITION(camera, positionX, positionY, positionZ);
-    WaitFrames(1U);
+    wait(1U);
     if (runtimeBlock->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
@@ -134,7 +134,7 @@ void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                            ->camera);
-  Event_WaitFrames(2);
+  Event_Wait(2);
 }
 
 /// The event command "get view centre": returns the camera actor.

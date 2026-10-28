@@ -38,7 +38,7 @@ void Func_02000970(s32 actor) {
     break;
   case 6:
     Actor_SetModeById(6, 4);
-    FieldEvent_WaitFrames(33);
+    FieldEvent_Wait(33);
     Func_0200488c(MsgYouVeBeen);
     Func_020048a4(6, 0);
     break;

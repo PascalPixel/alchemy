@@ -16,8 +16,8 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test();
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002c5c();
 s32 Func_02000194(void);
@@ -49,11 +49,11 @@ void Func_020007a4(s32 unused, s32 id) {
   if (object->terrainHeight !=
       Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
     object->motionFlags = 3;
-    WaitFrames(2);
+    wait(2);
     i = 0;
     if (object->y > object->terrainHeight || object->velocityY != 0) {
       do {
-        WaitFrames(1);
+        wait(1);
         i++;
         if (i > 29)
           break;
@@ -67,7 +67,7 @@ void Func_020007a4(s32 unused, s32 id) {
     if (spot == -1)
       return;
     Actor_SetSingleChildFlags(Actor_GetById(id), 0);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Func_020002f0();
     if (spot == 0)
       Call1(Func_02002c5c, 167);
@@ -83,17 +83,17 @@ void Func_020007a4(s32 unused, s32 id) {
       return;
     object = Actor_GetById(17);
     GameFlag_ClearBit(2582);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02002b6c();
     Func_02002c0c(0);
     Camera_MoveWithinMapBounds(166 << 18, -1, 136 << 16, 1);
     Func_02002bd4();
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Call1(Func_02002c5c, 151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
     Func_02002c3c(object->x, object->z, object->terrainId, 255);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Camera_FollowActor(gAdventure.currentOwner, 1);
     Func_02002bd4();
     Func_02002b74();
@@ -107,14 +107,14 @@ void Func_020007a4(s32 unused, s32 id) {
   if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
     GameFlag_SetBit(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Call1(Func_02002c5c, 167);
     Func_020005e8(1);
     if (!Value1(GameFlag_Test, 2583))
       return;
     object = Actor_GetById(9);
     GameFlag_ClearBit(2583);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Call1(Func_02002c5c, 151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;

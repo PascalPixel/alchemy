@@ -9,10 +9,10 @@ void Event_Start(void);
 void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_Destroy(struct Actor *object);
 void Camera_FollowActor(s32 actor, s32 mode);
 void BattleEffect_SpinObject(void);
@@ -53,16 +53,16 @@ void Func_080e3698(s32 actor) {
     ring->x = object->x;
     ring->y = object->y - 0x60000;
     ring->z = object->z;
-    WaitFrames(1);
+    wait(1);
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
   Sound_PlayFar(136);
   Actor_SetMode(ring, 6);
-  Event_WaitFrames(15);
+  Event_Wait(15);
   Actor_Destroy(ring);
   object->update = NULL;
   object->angle = angle;
   object->motionFlags = motionFlags;
-  WaitFrames(1);
+  wait(1);
   Camera_FollowActor(actor, 1);
 }

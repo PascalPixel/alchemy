@@ -85,12 +85,12 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
 
     do {
       Oam_AddSpriteAtDepth(entry, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | 0x300)) == 0);
 
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     Resource_ResetEntry(handle);
   }
 }

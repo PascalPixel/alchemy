@@ -78,7 +78,7 @@ struct Actor *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
 void Func_0200285c(struct Actor *object, s32 mode);
 void Func_02002874(struct Actor *object);
 void Import_SoundPlay(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Task_Add(void (*func)(void), s32 order);
 void Task_RemoveFar(void (*func)(void));
 void Func_02001fd0(void);
@@ -130,7 +130,7 @@ void Func_020023a4(s32 id) {
   Task_Add(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:
-    WaitFrames(1);
+    wait(1);
     if (work->stage != 999)
       goto wait;
   }

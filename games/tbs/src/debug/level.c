@@ -199,7 +199,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
     if ((gKeysPressed & KEY_B) != 0) {
       Sound_Play(SE_MENU_CANCEL);
       WindowSprite_RedrawSavedRect(window);
-      WaitFrames(1);
+      wait(1);
       Window_Close(window, 1);
 
       Unit_Calculate(ISAAC);
@@ -209,7 +209,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
       return;
     }
 
-    WaitFrames(1);
+    wait(1);
   }
 }
 
@@ -248,7 +248,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  WaitFrames(1);
+  wait(1);
   while (1) {
     if (redraw) {
       redraw = 0;
@@ -340,10 +340,10 @@ static void IncreaseItemAndLevel_SelectItem(void) {
         goto ahead;
     }
     seekDirection = 0;
-    WaitFrames(1);
+    wait(1);
   }
   WindowSprite_RedrawSavedRect(window);
-  WaitFrames(1);
+  wait(1);
   Window_Close(window, 1);
   Window_Close(details, 1);
 }
@@ -379,7 +379,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  WaitFrames(1);
+  wait(1);
   while (1) {
     if (redraw) {
       redraw = 0;
@@ -457,10 +457,10 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
         goto ahead;
     }
     seekDirection = 0;
-    WaitFrames(1);
+    wait(1);
   }
   WindowSprite_RedrawSavedRect(window);
-  WaitFrames(1);
+  wait(1);
   Window_Close(window, 1);
 #ifndef UBFIX
   // The original never initializes details or creates a second window.

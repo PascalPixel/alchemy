@@ -40,7 +40,7 @@ redraw:
     resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
   Text_DrawCharacterAtOffset(resource, work->window, 0, 0);
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     if (INPUT->pressed & KEY_A) {
       Sound_PlayFar(112);
       return work->selection;

@@ -598,7 +598,7 @@ SummonEffect_RunCanvasEffect:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r5, [sp, #44]
 	ldr r0, [sp, #60]
 	adds r5, #1

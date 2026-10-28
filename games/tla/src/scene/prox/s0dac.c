@@ -13,11 +13,11 @@ s32 Func_0200451c();
 s32 Func_02004534();
 s32 Actor_ArmCallback();
 s32 Func_020044dc();
-s32 WaitFrames();
+s32 wait();
 s32 Actor_SetMovementTypeById();
 s32 Actor_SetMovementTypeAndWaitById();
 struct Actor *Actor_GetById(s32 id);
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Motion_SetVarCbAndRefresh();
 s32 Event_AskYesNoWithActorAnimation();
@@ -53,7 +53,7 @@ void Func_02000dac(void) {
   Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Call2(Func_020044dc, 0x12, gAdventure.currentOwner);
   Call2(Func_020044dc, 0, gAdventure.currentOwner);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call3(Actor_ArmCallback, 0xe, 0xb000, 0);
   Call3(Actor_SetSpeedParameters, 0x12, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);
@@ -82,7 +82,7 @@ void Func_02000dac(void) {
   Call3(Actor_SetSpeedParameters, 0, 0x26666, 0x13333);
   Actor_GetById(0)->actionFlags &= 0xfe;
   Call3(Actor_SetPositionAndReset, 0, 0xa0, 0x8c);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_Wait, 1);
   Actor_GetById(0)->actionFlags |= 1;
   Call2(Motion_SetModeAndWaitAnimation, 0, 0x15);
   Call3(Actor_ArmCallback, 0xc, 0xb000, 0);
@@ -95,9 +95,9 @@ void Func_02000dac(void) {
   Call2(Func_0200454c, 0x12, 0xb000);
   Call2(Func_02004534, 0x8012, 0);
   Call2(Actor_SetModeById, 0, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_Wait, 0xa);
   Call2(Actor_SetModeById, 0, 1);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_Wait, 0xa);
   Call2(Func_0200454c, 0, 0x2000);
   Call2(Actor_SetModeById, 0x12, 3);
   Call2(Func_02004534, 0x8012, 0);
@@ -124,7 +124,7 @@ next_wait:
   i++;
 test_wait:
   if (i < 80) {
-    Call1(WaitFrames, 1);
+    Call1(wait, 1);
     if (gInput.held == 0)
       goto next_wait;
   }

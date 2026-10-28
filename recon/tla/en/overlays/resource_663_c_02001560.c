@@ -25,7 +25,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Func_02000348(u32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003b28(struct Actor *object, s32 mode);
@@ -60,7 +60,7 @@ void Func_02001560(void) {
       rise += 0x1999;
     leader->angle = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
-    WaitFrames(1);
+    wait(1);
   }
   Func_02003cd8(0x120);
   priority = &leader->priorityFlags;
@@ -97,7 +97,7 @@ void Func_02001560(void) {
                                  (ride->z - ride->y + dz) >> 20) >> 8 != 255)
         goto found;
       i++;
-      WaitFrames(1);
+      wait(1);
     } while (i != 60);
     dx = 0;
     leader->angle = 0xc000;
@@ -120,7 +120,7 @@ void Func_02001560(void) {
     leader->y = height;
     leader->terrainHeight = height;
     Func_02003b28(leader, 6);
-    WaitFrames(6);
+    wait(6);
     Func_02003cd8(152);
     Func_02003b28(leader, 7);
     leader->speedLimit = 0x20000;
@@ -157,6 +157,6 @@ void Func_02001560(void) {
   GameFlag_ClearBit(0x250);
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();
-  WaitFrames(10);
+  wait(10);
   Func_02003bd0();
 }

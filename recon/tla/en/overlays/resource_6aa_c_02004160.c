@@ -35,7 +35,7 @@ void Func_02004160(struct PushEvent *event) {
   Func_02004068();
   Func_02004de0(229);
   Func_02004c20(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
   {
     u32 zero = 0;
 
@@ -56,14 +56,14 @@ void Func_02004160(struct PushEvent *event) {
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
   Actor_SetModeById(gAdventure.currentOwner, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
       Func_02004de0(204);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;
-    WaitFrames(1);
+    wait(1);
   }
   do {
     Actor_GetById(gAdventure.currentOwner)->animationKind = 0;

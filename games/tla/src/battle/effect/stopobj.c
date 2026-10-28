@@ -14,5 +14,5 @@ void BattleEffect_StopMainActor(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
   BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
-  WaitFrames(1);
+  wait(1);
 }

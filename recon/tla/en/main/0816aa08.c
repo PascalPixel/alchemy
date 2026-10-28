@@ -225,7 +225,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
 
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(104);

@@ -16,7 +16,7 @@ struct LohoPicture {
 
 extern const struct LohoPicture gData_02001f14;
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -84,7 +84,7 @@ loop:
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Offset_(gAdventure.currentOwner, 0, -4);
   Func_02001448(123);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
   Func_020013d0(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

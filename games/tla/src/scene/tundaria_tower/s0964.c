@@ -5,7 +5,7 @@ extern const u8 gData_02003370[];
 void Func_02003118(s32 frames);
 void Func_020031a8(s32 cue);
 void Func_02002f90(struct Actor *object, const void *script);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
 
@@ -22,7 +22,7 @@ void Func_02000964(void) {
   Func_020031a8(132);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
-  FieldEvent_WaitFrames(2);
+  FieldEvent_Wait(2);
   TundariaTower_FadeTo(0x10000, 0);
   Func_02003118(2);
   object->actionFlags = 0;

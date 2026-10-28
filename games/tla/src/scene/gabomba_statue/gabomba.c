@@ -15,7 +15,7 @@ void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02005754(const u8 *message);
 void Func_02005764(s32 id, s32 value);
 void Func_02005714(s32 id, s32 a, s32 b);
@@ -55,7 +55,7 @@ void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);
 void Func_02005794(s32 id, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_0200578c(s32 id, s32 a, s32 b);
@@ -121,16 +121,16 @@ void Func_02002f70(void) {
   Func_02005714(20, 0, 0);
   Func_02005714(21, 0, 0);
   Func_02005714(22, 0, 0);
-  WaitFrames(1);
+  wait(1);
   Camera_SetBounds(220 << 17, -1, 182 << 16, 0);
   Func_02005714(gAdventure.currentOwner, 0, 0);
   fast = 0x4000;
   Actor_Slide(5, 236 << 17, 216 << 16, fast);
   slow = 0x3000;
   Actor_Slide(24, 236 << 17, 200 << 16, slow);
-  WaitFrames(1);
+  wait(1);
   Func_0200564c();
-  WaitFrames(1);
+  wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -157,7 +157,7 @@ void Func_02002f70(void) {
   spark->motionFlags |= 4;
   Actor_SetSingleChildFlags(spark, 0);
   Func_02005624(spark, 1);
-  WaitFrames(1);
+  wait(1);
   actor = Actor_GetById(5);
   actor->angle = ArcTan2(spark->z - actor->z, spark->x - actor->x);
   /* FAKEMATCH: the native stores the angle before it starts the camera call's
@@ -173,13 +173,13 @@ void Func_02002f70(void) {
   Func_02005774_(5, 0x2000);
   Func_02005764(5, 0);
   Func_02005794(24, 258);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02005764(24, 0);
   Actor_Slide(gAdventure.currentOwner, 236 << 17, 204 << 16, fast);
   Actor_Slide(7, 220 << 17, 204 << 16, fast);
   Actor_Slide(23, 228 << 17, 204 << 16, slow);
   Actor_Slide(6, 244 << 17, 204 << 16, fast);
-  WaitFrames(1);
+  wait(1);
   Func_02005764(23, 0);
   Actor_Turn(24, 0xd000, 0);
   Camera_SetBounds(220 << 17, -1, 132 << 17, 1);
@@ -192,12 +192,12 @@ void Func_02002f70(void) {
   Func_02005764(0x8006, 0);
   Actor_SetModeById(23, 4);
   Func_02005764(0x9017, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_020057e4(0x10000, 0);
   Func_020057dc(0, 0);
   Func_020057ec(60);
   GameFlag_ClearBit(265);
-  WaitFrames(60);
+  wait(60);
   Func_020057c4(18);
 }
 
@@ -205,11 +205,11 @@ void Func_02003338(void) {
   Func_0200533c();
   Func_02005724(23, gAdventure.currentOwner);
   Actor_SetPartAttribute(Actor_GetById(23), 15);
-  WaitFrames(10);
+  wait(10);
   Func_02005754(MsgGabombaChannelTiming);
   Func_02005764(23, 0);
   Func_02005714(23, 0, 0);
-  WaitFrames(1);
+  wait(1);
   GameFlag_SetBit(0x9ec);
   Func_02005364();
 }

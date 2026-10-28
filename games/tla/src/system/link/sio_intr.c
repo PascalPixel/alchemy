@@ -110,7 +110,7 @@ void Serial_RemoveIrqHandlers(void) {
 u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
-      WaitFrames(1);
+      wait(1);
     } while ((mask & gLinkStatus) != mask);
   }
   return (REG_SIOCNT << 0x1A) >> 0x1E;

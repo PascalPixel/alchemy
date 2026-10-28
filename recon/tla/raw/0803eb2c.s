@@ -25,7 +25,7 @@ Func_0803eb2c:
 	movs r3, #33
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldrh r5, [r5]
 	cmp r5, #1
 	bne .L_0803eb8c
@@ -76,7 +76,7 @@ Func_0803eb2c:
 	adds r0, r6, #0
 	bl Menu_LoadSelectionNodeResource
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #210
 	lsls r2, r2, #2
 	adds r3, r6, r2
@@ -85,7 +85,7 @@ Func_0803eb2c:
 	ldrh r0, [r3, #10]
 	bl Menu_OpenSelectionWindow
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0803ebd8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

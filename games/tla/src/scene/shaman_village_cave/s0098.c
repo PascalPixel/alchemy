@@ -6,12 +6,12 @@ void Func_02000098(s32 id) {
 
   object->motionFlags = 3;
   while (frames != 0) {
-    WaitFrames(1);
+    wait(1);
     if (object->velocityY == 0)
       break;
     frames--;
   }
-  WaitFrames(10);
+  wait(10);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
 }

@@ -11,7 +11,7 @@ void Func_02003e64(void);
 void Func_02003e6c(void);
 void Func_02003fa4(s32 skip);
 void Func_02003e24();
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02003ffc(s32 cue);
 
 void Func_020021d0(void) {
@@ -56,9 +56,9 @@ void Func_020021d0(void) {
       both = 1;
     }
     first->motionFlags = 3;
-    WaitFrames(10);
+    wait(10);
     Func_02003ffc(161);
-    WaitFrames(10);
+    wait(10);
     first->motionFlags = 0;
     GameFlag_SetBit(0x210);
     if (both) {
@@ -80,9 +80,9 @@ void Func_020021d0(void) {
       both = 1;
     }
     second->motionFlags = 3;
-    WaitFrames(10);
+    wait(10);
     Func_02003ffc(161);
-    WaitFrames(10);
+    wait(10);
     second->motionFlags = 0;
     GameFlag_SetBit(0x211);
     if (both) {

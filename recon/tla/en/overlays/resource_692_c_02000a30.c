@@ -39,7 +39,7 @@ void Func_02000a30(void) {
     if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
       object->terrainId = 2;
       object->motionFlags = 3;
-      WaitFrames(1);
+      wait(1);
       if (GameFlag_Test(770)) {
         object->gravity = 0x1000;
         object->priorityFlags |= 2;
@@ -51,7 +51,7 @@ void Func_02000a30(void) {
         Func_02004f30(213);
         Func_02004cb0(copy);
         Func_02004c98(object, 4);
-        WaitFrames(1);
+        wait(1);
         REG_BLDCNT = 0;
       } else {
         Func_0200063c(object);
@@ -65,7 +65,7 @@ void Func_02000a30(void) {
     if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
       object->terrainId = 2;
       object->motionFlags = 3;
-      WaitFrames(1);
+      wait(1);
       object->gravity = 0x1000;
       object->priorityFlags |= 2;
       REG_BLDALPHA = 0x1000;
@@ -76,7 +76,7 @@ void Func_02000a30(void) {
       Func_02004f30(213);
       Func_02004cb0(copy);
       Func_02004c98(object, 4);
-      WaitFrames(1);
+      wait(1);
       REG_BLDCNT = 0;
       Func_0200063c(object);
       object->motionFlags = 0;

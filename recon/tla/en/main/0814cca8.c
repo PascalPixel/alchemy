@@ -57,7 +57,7 @@ void HeapSlot_Release(s32 block);
 void *Unit_Get(s32 owner);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 
 typedef s32 (*FillWordsFunc)(void *destination, s32 size, u32 value);
@@ -83,7 +83,7 @@ void Func_0814cca8(void) {
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   FillWords_(buffer, 0x4000, 0);
   FillWords_((void *)0x06004000, 0x4000, 0);
-  WaitFrames(1);
+  wait(1);
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;

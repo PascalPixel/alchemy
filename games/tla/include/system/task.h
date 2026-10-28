@@ -31,7 +31,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// task is suspended, so no pass matches it.
 ///
 /// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// WaitFrames runs TASK_PASS_FRAME's once a frame.
+/// wait() runs TASK_PASS_FRAME's once a frame.
 #define TASK_PASS_VBLANK 0x480
 #define TASK_PASS_FRAME 0xc80
 

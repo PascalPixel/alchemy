@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -193,7 +193,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitFrames(1);
+  wait(1);
 
   for (frame = 0; frame != 170; frame++) {
     if ((gInput.repeat & 3) && frame > 10) {
@@ -446,7 +446,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);

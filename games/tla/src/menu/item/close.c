@@ -5,7 +5,7 @@
 
 void Menu_ReleaseEntryObjects(void);
 void ItemMenu_HideAllIcons(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_CloseIfOpen(void *window, s32 mode);
 
 void ItemMenu_Close(void) {
@@ -15,7 +15,7 @@ void ItemMenu_Close(void) {
   menu = Ram_HeapSlots->menuRuntime;
   Menu_ReleaseEntryObjects();
   ItemMenu_HideAllIcons();
-  WaitFrames(1);
+  wait(1);
   cursor = *(u8 **)(menu + 0x170);
   cursor[5] = 13;
   Window_CloseIfOpen(menu + 0x10, 1);
@@ -91,7 +91,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
   menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunOwnerSelection(menu->ownerIds, menu->items);
   Icon_PrepareActor(menu->paneIcons[pane]);
-  WaitFrames(1);
+  wait(1);
   return result;
 }
 
@@ -197,12 +197,12 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       }
       if (redraw == 2) {
         Func_08104ef8(selection / 4 * 4);
-        WaitFrames(1);
+        wait(1);
       }
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);
     }
     Func_080f8a44(selection % 4 * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (gInput.pressed & 1) {
       if (gInput.held & 0x200) {
         sortMode = (sortMode + 4) % 4;

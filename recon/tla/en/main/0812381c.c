@@ -548,7 +548,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       MessageArgument_PushFar(abilityId, 4);
       Sound_PlayFar(114);
       Message_ShowAndWaitCoreFar((s32)&MsgDjinnInRecovery);
-      WaitFrames(60);
+      wait(60);
       return -1;
     }
     {

@@ -172,7 +172,7 @@ Func_020001a0:
 	movs r0, #9
 	bl Actor_Jump
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -183,12 +183,12 @@ Func_020001a0:
 	movs r0, #9
 	bl Actor_SetAngleToward
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #4
 	movs r0, #9
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r2, #128
 	add r1, sp, #8
 	adds r0, r7, #0

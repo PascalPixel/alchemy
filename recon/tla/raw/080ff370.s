@@ -83,7 +83,7 @@ Func_080ff370:
 	cmp r5, #0
 	bne .L_080ff42a
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #96
 	str r3, [sp, #0]
 	adds r0, r7, #0

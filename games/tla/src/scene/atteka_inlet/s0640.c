@@ -16,7 +16,7 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02001010(void);
 void Func_02001018(void);
 void Func_02001060(s32 id, s32 x, s32 z);
@@ -40,7 +40,7 @@ void Func_02000640(void) {
     Func_02001108(0);
   } while (0);
   Func_02001070(18, gAdventure.currentOwner);
-  WaitFrames(1);
+  wait(1);
   Actor_ArmCallback(gAdventure.currentOwner, 0xa000, 0);
   Call3(Actor_SetSpeedParameters, 18, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(18, 532, 248);

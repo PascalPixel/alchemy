@@ -609,7 +609,7 @@ BattleEffect_RunWyrdCurse:
 	add r2, r10
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #28]
 	adds r3, #1
 	str r3, [sp, #28]

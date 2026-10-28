@@ -161,7 +161,7 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
     } while (work >= 0);
   }
 
-  WaitFrames(3);
+  wait(3);
   picture = Actor_CreateFar(SPRITE_BLANK, pictureX, 16 << 16, srcZ);
   if (picture == 0)
     return 0;
@@ -222,7 +222,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   actor->motionFlags = 0;
   Actor_SetMoveTargetFar(actor, leader->x.fixed, leader->y.fixed + (36 << 16),
                          leader->z.fixed);
-  WaitFrames(3);
+  wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
@@ -246,13 +246,13 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {
-      WaitFrames(60);
+      wait(60);
     }
     if (flags & 2) {
       ItemDisplay_RaiseAboveLeader(object);
     }
     if (flags == 3) {
-      WaitFrames(80);
+      wait(80);
     }
     Actor_SelectAnimationFar(leader, 1);
   }
@@ -289,7 +289,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     if (flags & 2)
       ItemDisplay_RaiseAboveLeader(actor);
 
-    WaitFrames(80);
+    wait(80);
     Actor_SelectAnimationFar(leader, 1);
     Actor_ReleaseFar(actor);
   }

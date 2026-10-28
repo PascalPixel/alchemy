@@ -247,7 +247,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -33,7 +33,7 @@ Func_080d82e0:
 	mov r9, r3
 	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	adds r2, r6, #0
 	movs r3, #0
 	adds r2, #91
@@ -51,7 +51,7 @@ Func_080d82e0:
 	adds r0, r5, #0
 	bl Actor_Jump
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_080d8470
 	movs r0, #153
 	str r3, [r6, #108]
@@ -76,20 +76,20 @@ Func_080d82e0:
 	movs r1, #3
 	bl Actor_SetMode
 	movs r0, #90
-	bl WaitFrames
+	bl wait
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r7]
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	ldr r0, [r7]
 	bl Actor_GetById
 	movs r1, #28
 	bl Actor_SetMode
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_080d8478
 	adds r2, r5, #0
 	adds r0, r1, #0
@@ -133,12 +133,12 @@ Func_080d82e0:
 	str r0, [r5, #44]
 	subs r7, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r5, #72
 	cmp r7, #0
 	bge .L_080d83dc
 	movs r0, #140
-	bl WaitFrames
+	bl wait
 	mov r2, r9
 	movs r1, #2
 	adds r2, #144
@@ -155,13 +155,13 @@ Func_080d82e0:
 	cmp r7, #0
 	bge .L_080d8430
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
 	bl Map_SetScreenShakeFar
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_080d8464
 	movs r7, #0
 	mov r5, r8
@@ -234,12 +234,12 @@ Func_080d82e0:
 	cmp r7, #23
 	ble .L_080d8480
 	movs r0, #100
-	bl WaitFrames
+	bl wait
 	movs r0, #149
 	lsls r0, r0, #1
 	bl Sound_PlayFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #151
 	bl Sound_PlayFar
 	mov r2, r10
@@ -310,7 +310,7 @@ Func_080d82e0:
 	bne .L_080d8528
 .L_080d8594:
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	bl Shop_InitializeEffectFar
 	bl BattleEffect_ClearActiveSlotsAndScheduleUpdates
 .L_080d85a2:

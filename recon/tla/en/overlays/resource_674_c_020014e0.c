@@ -36,7 +36,7 @@ void Func_02003f2c(s32 speaker, s32 flags);
 void Func_02003fc4(void);
 void Func_02003fbc(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
@@ -64,7 +64,7 @@ void Func_02003f7c(s32 a);
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1,                                   \
    Call3(Actor_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_WaitFrames(1), Actor_GetById(actor)->actionFlags |= 1)
+   FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
 
 #define SHOW_ITEM()                                                            \
   (glow = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
@@ -195,19 +195,19 @@ void Func_020014e0(void) {
       leader->update = Func_02001278;
       Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
       Actor_SetModeById(9, 3);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       Func_02003f2c(9, 0);
       Func_02003fc4();
       Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
       Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
       Actor_GetById(9)->update = Func_02000df8;
       Actor_ResetAndSetPosition(9, 0x120, 538);
-      FieldEvent_WaitFrames(40);
+      FieldEvent_Wait(40);
       Func_02003fc4();
       Func_020034ec();
       Actor_GetById(10)->update = Func_02000df8;
       Actor_ResetAndSetPositionInMode2(10, 0x120, 538);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();

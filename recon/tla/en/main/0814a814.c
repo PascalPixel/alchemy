@@ -318,7 +318,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
     Func_08158ce0(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down.

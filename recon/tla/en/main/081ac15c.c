@@ -93,7 +93,7 @@ void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 extern char MsgLuckyDiceCoins;
 extern char MsgLuckyDiceWinnings;
@@ -724,7 +724,7 @@ void LuckyDice_Run(void) {
 
     Dma_Set(sprites->oam, (void *)0x07000000,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
-    WaitFrames(1);
+    wait(1);
     frame++;
   }
 
@@ -732,7 +732,7 @@ void LuckyDice_Run(void) {
     scale = 0x10000 - (index << 12);
     Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
     Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
-    WaitFrames(1);
+    wait(1);
   }
   HeapSlot_Release(48);
   HeapSlot_Release(180);

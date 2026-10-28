@@ -23,8 +23,8 @@ void Func_02003148(s32 a);
 void Func_020031a8(s32 sound);
 void Func_02002fa8(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
@@ -52,7 +52,7 @@ void Func_020011e0(void) {
   Func_02003148(0);
   TundariaTower_CamBounds(-1, -1, -1, 0);
   Func_02002fa8();
-  WaitFrames(1);
+  wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -62,7 +62,7 @@ void Func_020011e0(void) {
   Event_WaitTransitionFrames();
   Func_020031a8(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = (void *)Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;

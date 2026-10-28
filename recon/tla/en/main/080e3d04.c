@@ -96,7 +96,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_SetMode(struct Actor *object, s32 mode);
 void Actor_Destroy(struct Actor *object);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -209,9 +209,9 @@ void Func_080e3d04(void) {
     object->scaleY = 0x14000;
     Actor_SetMode(object, 2);
     Sound_PlayFar(186);
-    WaitFrames(50);
+    wait(50);
     Actor_Destroy(object);
-    WaitFrames(10);
+    wait(10);
     goto end;
   }
   if (work->mode == 0) {
@@ -224,9 +224,9 @@ void Func_080e3d04(void) {
     ((u8 *)object)[85] = work->mode;
     Actor_SetMode(object, 2);
     Sound_PlayFar(186);
-    WaitFrames(45);
+    wait(45);
     Actor_Destroy(object);
-    WaitFrames(10);
+    wait(10);
     goto end;
   }
 
@@ -282,11 +282,11 @@ void Func_080e3d04(void) {
     sprite++;
     particle++;
   }
-  WaitFrames(1);
+  wait(1);
   work->emitting = 1;
   Task_Add(Func_080e38c8, 0x480);
   for (i = 0; i < 80; i++) {
-    WaitFrames(1);
+    wait(1);
     if (work->hit != 0) {
       pending = Func_080ce458(0x60000005, scene->fieldKind,
                               (s16)(work->hitObject | 0x100));
@@ -310,7 +310,7 @@ void Func_080e3d04(void) {
       particle++;
     if (j == 16)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(Func_080e38c8);
   Resource_ResetEntry(dropSlot);

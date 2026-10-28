@@ -16,7 +16,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02004f30(s32 sound);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02004c98(struct Actor *object, s32 mode);
 void Func_020046e8(s32 value);
 void Func_02004d10(s32 a, s32 b, s32 c);
@@ -55,12 +55,12 @@ next:
     if (!GameFlag_Test(flag)) {
       Func_02004f30(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
-      WaitFrames(2);
+      wait(2);
       Func_02004c98(trap, 0);
       Actor_SetPartAttribute(Actor_GetById(id), 0);
-      WaitFrames(2);
+      wait(2);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
-      WaitFrames(4);
+      wait(4);
       Actor_SetPartAttribute(Actor_GetById(id), 0);
       Func_020046e8(0);
       GameFlag_SetBit(flag);
@@ -71,22 +71,22 @@ next:
         Func_02004f30(185);
         Shake(0x10000, 0x40000, 0x10000);
         Func_020046e8(0);
-        WaitFrames(8);
+        wait(8);
         Func_02004c98(trap, 2);
         Func_020049c0(-2, trap->terrainId);
         Func_020046e8(1);
-        WaitFrames(16);
+        wait(16);
         Func_020049c0(-2, trap->terrainId);
-        WaitFrames(4);
+        wait(4);
         Shake(-1, -1, 0xe666);
-        WaitFrames(8);
+        wait(8);
         leader->motionFlags = 3;
-        WaitFrames(5);
+        wait(5);
         Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
-        WaitFrames(2);
+        wait(2);
         Func_02004f30(188);
         Func_0200481c();
-        WaitFrames(20);
+        wait(20);
         GameFlag_SetBit(second);
       }
     }

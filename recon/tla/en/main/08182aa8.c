@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -247,7 +247,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     y += 4;
     REG_BG2X = y << 8;
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit = Ram_HeapSlots->unk64[1];
@@ -945,7 +945,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
@@ -957,10 +957,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           (volatile u32 *)0x040000d4);
   *(volatile u16 *)(BG_PLTT + 0xbc) = *(volatile u16 *)(BG_PLTT + 0x1e8);
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitFrames(1);
+  wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gCameraSceneParameters[4] = 120;
-  WaitFrames(1);
+  wait(1);
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x130), 512);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
@@ -1048,7 +1048,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     Heap_Release(verts);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

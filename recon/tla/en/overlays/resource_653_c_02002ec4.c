@@ -30,7 +30,7 @@ void Func_02002ec4(void) {
   Func_02005370(0);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_02005158();
-  WaitFrames(1);
+  wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -40,7 +40,7 @@ void Func_02002ec4(void) {
   Event_WaitTransitionFrames();
   Func_020053d8(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
@@ -67,7 +67,7 @@ void Func_02002ec4(void) {
   Func_020052d0(gAdventure.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_SetModeById(gAdventure.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();

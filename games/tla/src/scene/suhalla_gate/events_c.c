@@ -4,16 +4,16 @@ void Func_02000650(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_020009d0_(8, 0x1d80000, 0x1e00000);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Actor_SetAngleToward(gAdventure.currentOwner, 8, 0);
   Func_02000a18(gAdventure.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump_(8, 4, 0);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Actor_Jump(8, 4, 0);
   Actor_SetPositionAndCommit_(8, 480, 472);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_SetPositionAndCommit_(8, 496, 464);
   Actor_Jump(8, 4, 0);
@@ -29,23 +29,23 @@ void Func_0200071c(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_020009d0_(8, 0x1d80000, 0x1e00000);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Actor_SetAngleToward(gAdventure.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
   /* FAKEMATCH: the native builds both arguments before loading the leader. */
   __asm__ volatile("" : "+r"(x), "+r"(z));
   Func_02000a18(gAdventure.currentOwner, x, z);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Actor_ResetAndSetPositionInMode2_(gAdventure.currentOwner, 488, 440);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump_(8, 4, 0);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   Actor_Jump(8, 4, 0);
   Actor_SetPositionAndCommit_(8, 488, 480);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_SetPositionAndCommit_(8, 504, 472);
   Actor_Jump(8, 4, 0);
@@ -67,12 +67,12 @@ void Func_02000800(void) {
   Event_WaitTransitionFrames();
   Func_02000a08(9, 0, 10);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Motion_SetVarCbAndRefresh(9, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02000a08(9, 0, 10);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   GameFlag_SetBit(0x896);
   Actor_SetModeById(9, 2);
   leader = Actor_GetById(gAdventure.currentOwner);
@@ -81,7 +81,7 @@ void Func_02000800(void) {
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Func_020009d0(9, 0, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000990();
 }
 
@@ -101,7 +101,7 @@ void Func_020008cc(void) {
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Func_020009d0(16, 0, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_CommitPositionAndActivate(gAdventure.currentOwner, 16, 0);
   Func_02000990();
 }

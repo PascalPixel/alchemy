@@ -286,7 +286,7 @@ Func_080dd054:
 	mov r0, r9
 	bl Actor_SetMode
 	movs r0, #15
-	bl WaitFrames
+	bl wait
 	movs r0, #204
 	mov r3, r10
 	lsls r0, r0, #6
@@ -362,7 +362,7 @@ Func_080dd054:
 	b .L_080dd396
 .L_080dd34c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #0]
 	movs r3, #0
 	ldrsb r3, [r0, r3]

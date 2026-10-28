@@ -240,7 +240,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     }
   }
   gCameraSceneParameters[4] = 240;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
@@ -546,7 +546,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   } while (++frame != 244 && (frame <= 16 || !(gInput.repeat & 3)));
 
   // Act two: restore the display; a pillar waits above each target.
@@ -655,7 +655,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   } while (++frame != 144);
 
   for (i = 0; i != 8; i++)

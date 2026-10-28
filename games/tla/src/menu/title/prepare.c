@@ -24,8 +24,8 @@ extern struct TitleSprite gData_020006f0[];
 extern u32 gFrameCount;
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 void Func_0200031c(s32 unused);
@@ -48,29 +48,29 @@ void Func_02000644(s32 cue);
 /// entrance 2; entrances 8, 1, 2 and 3 each lead to their own scene.
 // ☀️'s Title_Run with ⚓️'s entrances.
 s32 Func_0200005c(void) {
-  s32 wait;
+  s32 frames;
   s32 limit;
 
   if (gAdventure.entrance == 10) {
     Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
     Func_02000644(75);
     Func_0200031c(0);
-    WaitFrames(120);
+    wait(120);
     // Goto loops: the native reloads gInput's address on every pass,
     // which loop.c hoists out of a for loop.
-    wait = 0;
+    frames = 0;
     goto test;
   next:
-    wait++;
+    frames++;
   test:
     limit = 3599;
     /* FAKEMATCH: the bound goes through an empty asm: the native compares 3599
      * with bgt, where combine plainly canonicalizes the test to 3600 with bge
      * (differ 4). */
     __asm__("" : "+l"(limit));
-    if (wait > limit)
+    if (frames > limit)
       goto out;
-    WaitFrames(1);
+    wait(1);
     if (gInput.pressed == 0)
       goto next;
   out:
@@ -83,7 +83,7 @@ s32 Func_0200005c(void) {
     Func_02000644(78);
     Fade_ToBlack(60);
     Fade_Wait();
-    FieldEvent_WaitFrames(240);
+    FieldEvent_Wait(240);
     Func_02000644(0);
     Func_02000604((s32)&SceneId_Title, 2);
     return 0;
@@ -105,14 +105,14 @@ s32 Func_0200005c(void) {
            * call, where plainly sched2 fills the call's stall with it (differ
            * 2). */
           __asm__ volatile("");
-          wait = 0;
+          frames = 0;
           goto test2;
         next2:
-          wait++;
+          frames++;
         test2:
-          if (wait > 119)
+          if (frames > 119)
             continue;
-          WaitFrames(1);
+          wait(1);
           if (gInput.pressed != 0)
             continue;
           goto next2;
@@ -144,7 +144,7 @@ s32 Func_0200005c(void) {
   Func_02000644(78);
   Fade_ToBlack(30);
   Fade_Wait();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Func_02000644(0);
   return 0;
 }

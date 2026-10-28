@@ -584,7 +584,7 @@ BattleEffect_RunJuggle:
 	add r2, r8
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #16]
 	ldr r0, [sp, #56]
 	movs r7, #128

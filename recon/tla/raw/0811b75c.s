@@ -43,7 +43,7 @@ Func_0811b75c:
 	cmp r3, #0
 	bne .L_0811b7ac
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0811b7ac:
 	ldr r3, [sp, #16]
 	movs r2, #0

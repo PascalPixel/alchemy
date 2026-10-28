@@ -198,11 +198,11 @@ The Title and the File Screen need none of this: they are ordinary scenes.
 The screen refreshes about 60 times a second, at each
 [VBlank](glossary.md#vblank). The game moves in
 [frames](glossary.md#frame), and every frame happens inside one function,
-`WaitFrames`. Whatever code is in charge (the scene sequence, an event, a
+`wait()`. Whatever code is in charge (the scene sequence, an event, a
 menu, a battle effect) calls it when time must pass:
 
 ```c
-void WaitFrames(s32 frames) {         /* simplified */
+void wait(s32 frames) {         /* simplified */
   while (frames--) {
     Task_RunPass(TASK_PASS_FRAME);    /* every queued task, once */
     Oam_BuildBuffer(...);             /* this frame's picture */
@@ -222,7 +222,7 @@ carrier's line, `Event_ShowMessageAndWait` simplified:
 ```c
 window = FieldMessage_ShowAtActor(actorId, flags);  /* open her window */
 while (!Window_IsClosedFar(window))
-  WaitFrames(1);                                    /* the water keeps moving */
+  wait(1);                                    /* the water keeps moving */
 ```
 
 The window itself is drawn by a task, which types the line out and closes the
@@ -236,17 +236,17 @@ window once the player presses A.
 | …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
 | next  | scene sequence         | the carrier walks on                          | nothing asked for: next frame                 |
 
-The conversation is the function itself, paused inside `WaitFrames` and
+The conversation is the function itself, paused inside `wait()` and
 resumed on the next line, so nothing has to note how far it has got: the place
 it has reached in its own code says so. To allow a wait from deep inside any
-function, `WaitFrames` copies the caller's stack aside while the frame runs
-([Runtime](src/runtime/README.md#the-stack-switch-in-waitframes)).
+function, `wait()` copies the caller's stack aside while the frame runs
+([Runtime](src/runtime/README.md#the-stack-switch-in-wait)).
 
 ### When a frame runs long
 
 Each VBlank interrupts the game, whatever it is doing. The interrupt always
 mixes the next slice of sound and reads the buttons, and it puts up a new
-picture only if `WaitFrames` has finished one. A frame whose tasks take longer
+picture only if `wait()` has finished one. A frame whose tasks take longer
 than one refresh still runs to the end, while the screen shows the old picture
 until the next VBlank. Every wait, walk and animation is counted in frames, so
 they all slow down together, while the music, counted in VBlanks, keeps its
@@ -255,7 +255,7 @@ tempo. This is the game's slowdown. The VBlanks a frame took are counted in
 
 **Reference:** [System: Waiting and tasks](system.md#waiting-and-tasks) ·
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
-`Event_WaitFrames`
+`Event_Wait`
 
 ## The scene sequence
 

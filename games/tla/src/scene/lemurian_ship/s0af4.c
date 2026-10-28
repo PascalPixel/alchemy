@@ -12,18 +12,18 @@ void Func_02000af4(void) {
     Func_02002de0(243);
     LemurianShip_ObjEmoteWait(gAdventure.currentOwner, 0x102);
     Func_02002c48(0, 0x20000, 0x10000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02002c48(0, 0, 0);
     LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
     leader->field22 = 2;
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Actor_Jump(gAdventure.currentOwner, 4, 0);
     LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x33333, 0x19999);
     LemurianShip_ObjCommit(gAdventure.currentOwner, 812, 88);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02002de0(232);
     LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     leader->field22 = 1;
   }
 }
@@ -34,7 +34,7 @@ void Func_02000bf0(s32 id) {
   Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
   Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2f8);
@@ -46,7 +46,7 @@ void Func_02000c50(s32 id) {
   Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
   Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2f9);
@@ -58,7 +58,7 @@ void Func_02000cb0(s32 id) {
   Actor_SetAngleToward(id, gAdventure.currentOwner, 0);
   Actor_StartRepeatedMotion(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2ff);
@@ -82,7 +82,7 @@ void Func_02000d44(void) {
   Actor_StartRepeatedMotion(11, 2);
   Actor_StartRepeatedMotion(12, 2);
   Motion_SetVarCbAndRefresh(13, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02002de0(147);
   Func_02000d10(9);
   Func_02000d10(10);
@@ -95,7 +95,7 @@ void Func_02000d44(void) {
   Func_02002cd0(11, 0, 0);
   Func_02002cd0(12, 0, 0);
   Func_02002cd0(13, 0, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02002de0(52);
   Actor_SetMovementTypeAndWaitById(8, gData_02002e9c);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party

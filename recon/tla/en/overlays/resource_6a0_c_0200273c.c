@@ -12,11 +12,11 @@ void Func_02002b6c(void);
 void Func_02002c0c(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02002afc(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02002c5c(s32 sound);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -47,7 +47,7 @@ void Func_0200273c(void) {
   Func_02002c0c(0);
   CamBounds(-1, -1, -1, 0);
   Func_02002afc();
-  WaitFrames(1);
+  wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
   actor->bounce = 0;
@@ -57,7 +57,7 @@ void Func_0200273c(void) {
   Event_WaitTransitionFrames();
   Func_02002c5c(204);
   actor->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -87,7 +87,7 @@ void Func_0200273c(void) {
   Func_02002bbc(gAdventure.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_SetModeById(gAdventure.currentOwner, 1);
   Func_02002b74();
 }

@@ -117,7 +117,7 @@ Func_080feb58:
 	lsls r0, r0, #2
 	bl Func_08104ef8
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_080fec5a:
 	ldr r0, [r7, #16]
 	ldr r1, [sp, #0]
@@ -140,7 +140,7 @@ Func_080feb58:
 	subs r0, #10
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_080fecf8
 	movs r2, #1
 	ldr r3, [r1, #4]

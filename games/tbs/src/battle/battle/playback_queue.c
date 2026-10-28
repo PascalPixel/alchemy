@@ -82,7 +82,7 @@ s32 BattleMessage_WaitForAdvance(void) {
   struct BattleMessageOffset *offset;
 
   while (!Message_AllTypedFar())
-    WaitFrames(1);
+    wait(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
@@ -113,11 +113,11 @@ s32 BattleMessage_WaitForAdvance(void) {
     if ((gKeysHeld & KEY_B) || (gKeysPressed & KEY_ADVANCE) ||
         (frame > 15 && (gKeysHeld & KEY_ADVANCE)))
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Sound_PlayFar(SE_MENU_CURSOR_MOVE);
   VramCache_FreeEntry(tileSlot);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Shows the cursor bobbing at (x, y), in screen pixels, and waits for one of
@@ -142,7 +142,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   position.x = x;
   position.y = y;
   while (!Message_AllTypedFar())
-    WaitFrames(1);
+    wait(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
@@ -158,10 +158,10 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     Oam_AddSpriteAtDepth(prompt, 240);
     if (gKeysPressed & KEY_ADVANCE)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   VramCache_FreeEntry(tileSlot);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Sets gBattleMessageWork->marked, which the next message reads, as

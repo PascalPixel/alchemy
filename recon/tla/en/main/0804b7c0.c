@@ -59,7 +59,7 @@ s32 Message_ShowLocalizedAndWait(void) {
     Message_CopyExpanded((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
     Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
-      WaitFrames(1);
+      wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
              *(s32 *)((u8 *)((void **)Ram_HeapSlots)[57] + 0x4C) != 0);
     Window_Close(work, 1);

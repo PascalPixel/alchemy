@@ -14,10 +14,10 @@ __udivsi3:
 	.thumb_func
 __umodsi3:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -154,10 +154,10 @@ FieldMessage_Show:
 	.thumb_func
 Func_02004030:
 	overlay_veneer Func_08038248
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02004040
 	.thumb_func
 Func_02004040:

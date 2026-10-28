@@ -13,7 +13,7 @@ s32 Func_020045ec();
 s32 Func_0200463c();
 s32 Func_02004404();
 s32 GameFlag_SetBit();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_020044d4();
 s32 Func_02004584();
 s32 Func_0200456c();
@@ -42,7 +42,7 @@ void Func_02000914(void) {
     Call1(Func_0200463c, 0x9e);
     Call6(Func_02004404, 0x59, 0, 0x4d, 0x10, 1, 2);
     Call1(GameFlag_SetBit, 0x200);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_Wait, 0xa);
     {
       s32 y = 0xc0;
       Call4(Func_020044d4, 8, 0x2080000, 0x1680000, y << 6);
@@ -51,7 +51,7 @@ void Func_02000914(void) {
     FIELD_AT((t8 + 0x55), u8, 0) = t0;
     Call2(Func_0200456c, 0x19999, 0x3333);
     Call4(Camera_MoveWithinMapBounds, 0x2280000, -1, 0x1840000, 1);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_Wait, 0xa);
     Call3(Actor_SetSpeedParameters, 8, 0x13333, 0x9999);
     Call3(Actor_SetPositionAndReset, 8, 0x20e, 0x180);
     Call3(Actor_ArmCallback, 9, 0x8000, 0);

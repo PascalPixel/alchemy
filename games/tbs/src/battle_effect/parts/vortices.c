@@ -233,7 +233,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != 80; frame++) {

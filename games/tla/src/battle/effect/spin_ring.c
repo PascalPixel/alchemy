@@ -9,8 +9,8 @@ void Event_Start(void);
 void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitFrames(s32 frames);
-void Event_WaitFrames(s32 frames);
+void wait(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_Destroy(struct Actor *object);
 void BattleEffect_SpinObject(void);
 
@@ -44,7 +44,7 @@ void Func_080e37e0(s32 actor) {
     do {
       ring->scaleY += 0x200;
     } while (0);
-    WaitFrames(1);
+    wait(1);
   }
   ring->scaleX = 0x18000;
   ring->scaleY = 0x10000;
@@ -53,10 +53,10 @@ void Func_080e37e0(s32 actor) {
   object->scaleY = object->scaleX = 0x8000;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
-    WaitFrames(1);
+    wait(1);
   }
   Actor_SetSingleChildFlagsFar(Actor_GetById(actor), 1);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_Destroy(ring);
   object->update = NULL;
   object->angle = angle;

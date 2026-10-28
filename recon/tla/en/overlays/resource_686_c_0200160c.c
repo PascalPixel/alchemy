@@ -36,7 +36,7 @@ extern s32 gData_02003788;
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020015ac(void);
 void Func_02002df4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -61,7 +61,7 @@ void Func_0200160c(void) {
   level = work->level >> 19;
   leader->motionFlags = 0;
   Func_02002e24(0x40000, 0x40000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02002eec(0x22c);
   Func_02002df4(22, 66, 3, 1, 7, 66);
   Func_02002df4(22, 1, 3, 5, 7, 1);
@@ -72,7 +72,7 @@ step:
     s32 rise;
 
     for (j = 0; j < gData_02003780; j++)
-      FieldEvent_WaitFrames(1);
+      FieldEvent_Wait(1);
     rise = gData_02003788;
     work->level += rise;
     cells = map->layers[2].cells;
@@ -81,7 +81,7 @@ step:
       leader->y += rise;
       leader->terrainHeight = leader->y;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
     if (level == 2 && i == 0) {
       Func_02002df4(11, 70, 1, 1, 11, 69);
       Func_02002e04(10, 68, 1, 1, 11, 68);
@@ -93,7 +93,7 @@ step:
   if (++i <= 15)
     goto step;
   Func_02002e24(-1, -1, 0xe666);
-  FieldEvent_WaitFrames(5);
+  FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gData_02003782 = 0;

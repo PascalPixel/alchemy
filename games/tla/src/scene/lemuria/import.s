@@ -6,10 +6,10 @@
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -66,10 +66,10 @@ Func_02001bb4:
 	.thumb_func
 Func_02001bbc:
 	overlay_veneer Party_FindOwnerWithActionFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02001bcc
 	.thumb_func
 Func_02001bcc:

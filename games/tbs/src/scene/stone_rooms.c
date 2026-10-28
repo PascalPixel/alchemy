@@ -137,10 +137,10 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Event_Start();
 
   Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
 
   Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
 
   // "Shut yer yaps!"; the two thieves start.
   Event_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
@@ -148,14 +148,14 @@ static void StoneRooms_LeaderSilencesThieves(void) {
 
   Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 
   // Turn from the two thieves to the party for the remaining dialogue.
   Actor_TurnToFaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 
   Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
@@ -170,7 +170,7 @@ static void StoneRooms_LeaderSilencesThieves(void) {
 static void StoneRooms_LeftThiefRegretsEscape(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId(MsgVaultLeftThiefRegretsEscape);
   Event_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
   Event_End();
@@ -184,7 +184,7 @@ static void StoneRooms_LeftThiefRegretsEscape(void) {
 static void StoneRooms_RightThiefRegretsStaying(void) {
   Event_Start();
   Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId(MsgVaultRightThiefRegretsStaying);
   Event_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
   Event_End();

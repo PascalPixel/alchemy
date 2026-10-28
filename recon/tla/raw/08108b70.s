@@ -177,7 +177,7 @@ Func_08108b70:
 	movs r5, #4
 .L_08108ce0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7]
 	ands r3, r5
 	cmp r3, #0
@@ -207,7 +207,7 @@ Func_08108b70:
 	mov r9, r0
 .L_08108d24:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08108c08
 .L_08108d2c:
 	ldr r0, [sp, #24]
@@ -217,7 +217,7 @@ Func_08108b70:
 	ldr r0, [sp, #28]
 	bl Window_CloseFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	beq .L_08108d48
 	b .L_08109038
@@ -332,7 +332,7 @@ Func_08108b70:
 	lsls r0, r0, #2
 	bl Func_080f8058
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08108e30:
 	movs r5, #128
 	lsls r5, r5, #3
@@ -432,7 +432,7 @@ Func_08108b70:
 	bl Sound_PlayFar
 	add r5, r10
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldrh r1, [r5]
 	adds r0, r6, #0
 	bl Shop_SelectBuyCount
@@ -471,7 +471,7 @@ Func_08108b70:
 	bl Func_08108690
 	mov r9, r0
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08108dc0
 	.2byte 0x0000
 .L_08108f68:
@@ -499,7 +499,7 @@ Func_08108b70:
 	movs r1, #2
 	bl Window_CloseFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #0
 	bne .L_08108ff8
 	movs r3, #129
@@ -582,7 +582,7 @@ Func_08108b70:
 	movs r1, #2
 	bl Window_CloseFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 	add sp, #40
 	pop {r3, r5, r6, r7}

@@ -5,7 +5,7 @@
 #include "input.h"
 
 void *FieldMessage_ShowAtActor(s32 object, s32 message);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 ObjectTable_ReadActiveValue(s32 key);
 void *Scene_FindActorPlacement(s32 id);
 void Window_CloseMatchingIdFar(s32 id);
@@ -27,7 +27,7 @@ void Func_080d3fb0(s32 object, s32 message) {
   u32 frames;
 
   frames = 0;
-  WaitFrames(1);
+  wait(1);
   id = ObjectTable_ReadActiveValue(object);
   if (object <= 7) {
     masked = object & 0x0fff;
@@ -38,7 +38,7 @@ void Func_080d3fb0(s32 object, s32 message) {
 
   if (work->waitMode == 0) {
     while (Window_IsClosedFar((s32)window) == 0) {
-      WaitFrames(1);
+      wait(1);
       frames++;
       if (frames > 600 ||
           ((HELD & 4) && (HELD & 0x100) && (HELD & 0x200) && (HELD & 1)))
@@ -47,14 +47,14 @@ void Func_080d3fb0(s32 object, s32 message) {
   }
 
   Func_080d4330(0x80000000);
-  WaitFrames(1);
+  wait(1);
 }
 
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 
 void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
   Func_080d3fb0(object, message);
-  Event_WaitFrames(frames);
+  Event_Wait(frames);
 }
 
 void Func_080d3fb0(s32 object, s32 message);
@@ -118,7 +118,7 @@ void Func_080d40dc(s32 speaker) {
     window = Message_OpenWindowFar((s16)work->messageId, px, py, 1);
     work->objectStatus = window;
     while (Window_IsClosedFar(window) == 0)
-      WaitFrames(1);
+      wait(1);
   }
   work->messageId++;
 }

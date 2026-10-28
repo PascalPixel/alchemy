@@ -35,7 +35,7 @@ void Import_EventEnd();
 void Import_EventSetMessageId();
 void Import_EventShowMessageAndWait();
 void GameFlag_SetBit();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Actor_SetSpeedParameters();
 void Actor_SetPositionAndReset();
 void Actor_WaitForMoveById();
@@ -82,7 +82,7 @@ void Func_020000f0(void) {
   Call2(Import_EventShowMessageAndWait, 8, 0);
   Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
   Call2(Import_ActorSetAttachedEffect, 8, 0x102);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call3(Func_02003298, 8, 0, 20);
   Import_ActorShowEmote(8, 0x101, 20);
   Call2(Import_EventShowMessageAndWait, 8, 0);
@@ -95,10 +95,10 @@ void Func_020000f0(void) {
   Call2(Import_EventShowMessageAndWait, 8, 0);
   Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x8000, 20);
   Call2(Import_ActorSetAttachedEffect, gAdventure.currentOwner, 0x102);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call2(Import_EventShowMessageAndWait, 8, 0);
   Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Actor_SetAngleToward(gAdventure.currentOwner, 8, 0);
   Call2(Import_EventShowMessageAndWait, 8, 0);
   Call2((void (*)())Import_ActorSetAnimation, 8, 2);
@@ -121,9 +121,9 @@ void Func_020002b4(void) {
   Import_EventStart();
   Func_02003310(0);
   Motion_SetVarCbAndRefresh(5, 1);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Motion_SetVarCbAndRefresh(5, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Import_EventSetMessageId(MsgIdejimaAwakeningExclamation);
   Func_02003298(5, 0, 40);
   Value3(Import_ActorShowEmote, 5, 0x101, 20);
@@ -145,12 +145,12 @@ void Func_020002b4(void) {
   Actor_Jump(5, 4, 20);
   Import_EventShowMessageAndWait(5, 0);
   Actor_SetAngleToward(5, gAdventure.currentOwner, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Actor_SetAngleToward(gAdventure.currentOwner, 5, 0);
   Import_ActorShowEmote(5, 0x108, 0);
   Import_EventShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Value3(Import_ActorShowEmote, 5, 0x101, 0);
   Value2(FieldMessage_ShowAtActor, 5, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {

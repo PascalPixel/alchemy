@@ -2,7 +2,7 @@
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Func_0200209c(void);
 void Func_020020b4(s32 cue);
 void Func_02001274(struct Actor *object, s32 mode);
@@ -20,7 +20,7 @@ void Func_020012ac(void) {
 
     if (hit != 0 && Func_020020a4(2, hit) != 0)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Func_02001274(object, 2);
 }

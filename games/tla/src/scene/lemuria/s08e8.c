@@ -19,7 +19,7 @@ void Func_02001bb4(s32 value);
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Actor_SetAngleToward();
 void Actor_SetPositionAndReset();
 void Actor_SetSpeedParameters();
@@ -68,20 +68,20 @@ void Func_02000934(void) {
   Value3(Func_02001ca4, 30, 0x100, 30);
   Call3(Actor_SetAngleToward, 30, gAdventure.currentOwner, 0);
   Call1((void (*)())Actor_RefreshSelectorById, 30);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_Wait, 5);
   Value2(FieldMessage_ShowAtActor, 30, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, 4, 0)) {
-    Call1(FieldEvent_WaitFrames, 30);
+    Call1(FieldEvent_Wait, 30);
     Call3(Func_02001c7c, 30, 0, 0);
   } else {
-    Call1(FieldEvent_WaitFrames, 20);
+    Call1(FieldEvent_Wait, 20);
     Call2(Motion_SetModeAndWaitAnimation, 30, 3);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Call3(Func_02001c7c, 30, 0, 5);
     Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x1d0,
           0x410);
     Call2(Func_02001c94, gAdventure.currentOwner, 0xc000);
-    Call1(FieldEvent_WaitFrames, 5);
+    Call1(FieldEvent_Wait, 5);
     Call3(Actor_SetSpeedParameters, 30, 0x13333, 0x9999);
     Call3(Actor_SetPositionAndReset, 30, 0x1b8, 0x418);
     Call1(GameFlag_SetBit, 0x908);

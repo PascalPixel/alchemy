@@ -490,7 +490,7 @@ BattleEffect_RunThorn:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #44]
 	ldr r2, [sp, #32]
 	adds r1, #1

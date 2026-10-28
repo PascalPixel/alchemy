@@ -232,7 +232,7 @@ Func_080ccec8:
 	movs r0, #246
 	bl Sound_PlayFar
 	movs r0, #30
-	bl Event_WaitFrames
+	bl Event_Wait
 	ldr r0, .L_080cd178
 	movs r1, #1
 	bl FieldMessage_ShowFar
@@ -413,7 +413,7 @@ Func_080ccec8:
 	bl BattleEffect_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	mov r3, r8
 	cmp r3, #128
 	bne .L_080cd238
@@ -484,7 +484,7 @@ Func_080ccec8:
 	bl BattleEffect_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 .L_080cd2c8:
 	adds r0, r7, #0
 	bl PartyInventory_AddFar

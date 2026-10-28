@@ -59,7 +59,7 @@ BattleEffect_RunTripleChomp:
 .L_0818b8d4:
 	bl BattleEffect_SetApproachMotion
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	movs r1, #23
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -439,7 +439,7 @@ BattleEffect_RunTripleChomp:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #48]
 	adds r1, #1
 	str r1, [sp, #48]

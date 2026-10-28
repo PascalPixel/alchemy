@@ -25,7 +25,7 @@ void Func_02002ba4();
 s32 GameFlag_Test();
 void Actor_Stop();
 s32 Actor_GetById();
-void WaitFrames();
+void wait();
 
 void Func_020005e8(s32 a0) {
   s32 t1, t6, t7, t9, t16, t17, t19, t20, v_r5, v_r6, v_r7;
@@ -57,7 +57,7 @@ L_02008670:
   if (v_r6 <= 5)
     goto L_0200864e;
   v_r7 = (v_r7 + 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 8 of 175 instructions differ in
    * tla-en. */
@@ -106,7 +106,7 @@ L_02008730:
   if (v_r6 <= 5)
     goto L_0200870c;
   v_r7 = (v_r7 + 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 8 of 175 instructions differ in
    * tla-en. */

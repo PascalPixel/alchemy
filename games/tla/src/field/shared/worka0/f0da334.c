@@ -16,7 +16,7 @@ void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
                   second->y + 0x80000, second->z,
                   Trig_Sin(gData_080f3948) << 2);
     gData_080f3948 += 0x1000;
-    WaitFrames(6);
+    wait(6);
     Actor_SetMode(first, 2);
     Actor_SetMode(second, 2);
   }

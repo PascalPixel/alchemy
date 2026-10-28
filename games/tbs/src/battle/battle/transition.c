@@ -53,11 +53,11 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
     Random16();
     Random16();
     REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
-    WaitFrames(1);
+    wait(1);
   }
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  WaitFrames(4);
+  wait(4);
   registerCursor = &REG_BG0CNT;
   *registerCursor++ = bg0cnt;
   *registerCursor++ = bg1cnt;
@@ -335,7 +335,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       gBgScroll[0].y = 32;
       gBgScroll[1].y = 32;
       gBgScroll[1].x = 8;
-      WaitFrames(1);
+      wait(1);
       REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
       REG_WIN0V = WIN_RANGE(0, 136);
       REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -355,9 +355,9 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = 32;
-      WaitFrames(1);
+      wait(1);
       PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
-      WaitFrames(20);
+      wait(20);
       // BG0's priority bit 1 cleared again at the next VBlank, undoing
       // BGCNT_PRIORITY(2) above; setting no bits queues a write that changes
       // nothing.
@@ -392,7 +392,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
                             DISPCNT_WIN1_ON,
                         IO_WRITE_16);
-    WaitFrames(1);
+    wait(1);
     {
       s32 start = 0;
 
@@ -407,8 +407,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       *timer = start;
     }
     Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
-    WaitFrames(1);
-    WaitFrames(20);
+    wait(1);
+    wait(20);
     PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
@@ -427,19 +427,19 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                                     SPRITE_SEMI_TRANSPARENT);
     for (index = 0; index != 16; index++) {
       REG_BLDALPHA = BLEND_ALPHA(index, 16);
-      WaitFrames(1);
+      wait(1);
     }
     for (index = 0; index != visibleCount; index++)
       BattleHighlight_SetSpriteMode(visibleUnits[index], SPRITE_OPAQUE);
     BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
-    WaitFrames(1);
+    wait(1);
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   }
   // Both: the battle's own BG1 and display.
   Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   REG_BG1CNT = BATTLE_BG1CNT;
-  WaitFrames(1);
+  wait(1);
   REG_BG1CNT = BATTLE_BG1CNT;
   REG_BG0CNT &= ~BGCNT_PRIORITY(2);
   gBgScroll[1].x = 8;

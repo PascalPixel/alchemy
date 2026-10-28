@@ -19,11 +19,11 @@ void Func_02000388(void) {
   Func_02000cb4();
   Func_02000d44(0);
   Actor_StartRepeatedMotion(8, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02000d24(0x10000, 0);
   Func_02000d1c(0x10003, 1);
   Func_02000d2c(60);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Func_02000ca4((s32)&MsgIAmTheShadow, 0, 6);
   party = (struct AnemosInnerSanctumEntranceParty *)&gAdventure;
   party->battleGroup = 0x1a9f;
@@ -43,13 +43,13 @@ void Func_02000408(void) {
   Func_02000d64(151);
   Actor_SetPartAttribute(Actor_GetById(8), 7);
   Actor_SetPartAttribute(Actor_GetById(15), 7);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02000d64(190);
   Func_02000cdc(15, 8);
-  WaitFrames(1);
+  wait(1);
   Actor_SetMovementTypeById(8, gData_02000ea4);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e20);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e5c);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000cbc();
 }

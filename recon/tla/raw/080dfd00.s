@@ -141,7 +141,7 @@ FieldEffect_RunWhirlwind:
 	str r0, [r7, #28]
 	adds r6, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #11
 	blt .L_080dfdb2
 	ldr r3, .L_080dffe8
@@ -159,7 +159,7 @@ FieldEffect_RunWhirlwind:
 	cmp r1, #1
 	bne .L_080dfef8
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #0]
 	cmp r2, #0
 	beq .L_080dfe4e
@@ -218,22 +218,22 @@ FieldEffect_RunWhirlwind:
 	strh r0, [r5, #6]
 .L_080dfeba:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	add r8, r3
 	mov r1, r8
 	cmp r1, #15
 	ble .L_080dfe54
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	movs r0, #120
-	bl WaitFrames
+	bl wait
 .L_080dfed6:
 	movs r1, #1
 	adds r0, r7, #0
 	bl Actor_SetMode
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r0, #136
 	bl Sound_PlayFar
 	adds r0, r7, #0
@@ -247,7 +247,7 @@ FieldEffect_RunWhirlwind:
 	cmp r3, #1
 	bhi .L_080dffd2
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 	adds r0, r7, #0
 	movs r1, #1
 	bl Actor_SetMode

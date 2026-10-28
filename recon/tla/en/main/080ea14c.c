@@ -60,9 +60,9 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
 void Task_Add(void (*func)(void), s32 order);
@@ -147,14 +147,14 @@ void Func_080ea14c(s32 targetId) {
     sprite++;
     mote++;
   }
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(139);
   Actor_SetMode(target, 2);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   target->action = 0;
   target->update = Func_080e9e8c;
   Sound_PlayFar(142);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
   Task_Add(Func_080e9f68, 0x480);
@@ -299,13 +299,13 @@ void Func_080ea14c(s32 targetId) {
       nextSpark = (nextSpark + 1) & 31;
     }
     sparks = 0;
-    WaitFrames(1);
+    wait(1);
     timer++;
   } while (state != 999);
   Actor_ResetMotion(owner);
   owner->scaleX = 0x10000;
   owner->scaleY = 0x10000;
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Task_Remove(Func_080e9f68);
   BattleEffect_PrepareBufferInterpolation();
   Resource_ResetEntry(moteEntry);

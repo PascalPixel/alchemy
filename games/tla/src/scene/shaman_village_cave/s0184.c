@@ -4,7 +4,7 @@
 #include "call.h"
 
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02001080();
 void Func_02001088();
 void Func_020011e0();
@@ -60,13 +60,13 @@ void Func_02000184(void) {
     Call1(Actor_WaitForMoveById, 17);
     Call3(Actor_Jump, 17, 4, 20);
     Call2(Func_02001168, 17, 258);
-    Call1(FieldEvent_WaitFrames, 30);
+    Call1(FieldEvent_Wait, 30);
     Actor_GetById(17)->actionFlags &= ~1;
     Call3(Actor_OffsetPositionAndReset, 17, 8, 0);
     Call1(Actor_WaitForMoveById, 17);
-    Call1(FieldEvent_WaitFrames, 30);
+    Call1(FieldEvent_Wait, 30);
     Call3(Func_02001160, 17, 258, 0);
-    Call1(FieldEvent_WaitFrames, 30);
+    Call1(FieldEvent_Wait, 30);
     Func_02001088();
     Call1(GameFlag_SetBit, 516);
     return;

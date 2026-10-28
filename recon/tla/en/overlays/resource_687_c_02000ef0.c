@@ -23,7 +23,7 @@ void Func_02001f6c();
 s32 Math_Cosine();
 s32 Math_Sine();
 void Func_0200015c();
-void WaitFrames();
+void wait();
 s32 Func_02001f9c();
 s32 Func_02001fb4();
 
@@ -102,7 +102,7 @@ L_02008ffa:
   Func_0200015c((FIELD_AT(r6, s32, 8)) + 262144, FIELD_AT(r8, s32, 12),
                 FIELD_AT(r6, s32, 12), r11, r7, r7, r5, r9);
 L_02009030:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
 L_02009036:
   v3 = Func_02001f9c(r8);
   r0 = v3;

@@ -129,7 +129,7 @@ struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 void Func_080cb05c(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 BattleEffect_SumCounters(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
@@ -284,7 +284,7 @@ s32 SceneSequence_Run(void) {
         Actor_GetById(Party_GetLeaderActor()), 0);
   }
   Func_080cb05c();
-  WaitFrames(2);
+  wait(2);
   OVERLAY_CALL(1);
   result = work->warp;
   if (result != 0) {
@@ -297,19 +297,19 @@ s32 SceneSequence_Run(void) {
     if (n == 0) {
       if (*arrival == 1) {
         HeapSlot_Alloc(92, 0x1938);
-        WaitFrames(20);
+        wait(20);
         HeapSlot_Release(92);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (*arrival == 1) {
         HeapSlot_Alloc(92, 0x1938);
-        WaitFrames(20);
+        wait(20);
         HeapSlot_Release(92);
       }
       *(volatile u16 *)0x05000000 = n;
       if (!ObjectEffect_RunPendingFlagEvent())
-        WaitFrames((work->transitionFrames + 1) / 2);
+        wait((work->transitionFrames + 1) / 2);
     }
     n = *(s8 *)&gAdventure.unk2c2;
     if (n == 1) {
@@ -530,7 +530,7 @@ s32 SceneSequence_Run(void) {
         UiTimedNotice_CloseIfActiveFar();
         if (packed == 0) {
           Func_080cb82c();
-          WaitFrames(1);
+          wait(1);
         }
         Func_080ce61c(work->psynergy);
         if (packed == 0)
@@ -567,7 +567,7 @@ s32 SceneSequence_Run(void) {
             } while (--n != 0);
             if (freeBlocks - 136 < 0) {
               *(u16 *)(objects + 4) = 1;
-              WaitFrames(1);
+              wait(1);
             }
             Func_08038358(0);
             *(u16 *)(objects + 4) = 0;
@@ -584,7 +584,7 @@ s32 SceneSequence_Run(void) {
     if (Func_080cb8e8() != NULL)
       Func_080200b0();
     do {
-      WaitFrames(1);
+      wait(1);
       leader = Func_080cb8e8();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
         if (Data_020004ac == 0 || (leader->action == 0 && leader->unk66 == 0))
@@ -597,9 +597,9 @@ done:
   if (work->transitionActive != 0) {
     ScreenTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
-    WaitFrames(work->transitionFrames);
+    wait(work->transitionFrames);
   }
-  WaitFrames(1);
+  wait(1);
   HeapSlot_Release(108);
   return result;
 }

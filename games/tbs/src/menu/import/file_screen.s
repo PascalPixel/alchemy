@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
-	.set import.WaitFrames, 1
+	.set import.wait, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.Heap_AllocEwram, 1
@@ -47,7 +47,7 @@
 	.set import.Party_StartChildhood, 1
 	.set import.BuildStamp_GetTime, 1
 	.set import.InventorySnapshot_Restore, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_Wait, 1
 	.set import.Actor_GetById, 1
 	.set import.Event_SetDestination, 1
 	.set import.Event_StartScreenTransition, 1

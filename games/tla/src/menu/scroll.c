@@ -57,7 +57,7 @@ s32 Menu_SelectionLoop(s32 mode) {
 
   Menu_LoadSelectionNodeResource(screen, 0);
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     if (screen->busy != 0) {
       continue;
     }
@@ -85,7 +85,7 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
   u32 result;
 
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     if (screen->busy != 0) {
       continue;
     }

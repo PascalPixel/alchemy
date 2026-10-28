@@ -3,8 +3,8 @@
 #include "actor.h"
 #include "adventure.h"
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
@@ -26,10 +26,10 @@ void Func_02001b94(void) {
   z >>= 20;
   Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitFrames(1);
+  wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_020022b4()->y -= 0x80000;
 }
 
@@ -73,5 +73,5 @@ void Func_02001c1c(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_02001b94();
   Func_0200232c(161);
   Func_02002204(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
 }

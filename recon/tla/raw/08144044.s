@@ -347,7 +347,7 @@ BattleEffect_RunHaunt:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #28]
 	ldr r1, [sp, #40]
 	adds r2, #1

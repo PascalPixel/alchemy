@@ -28,7 +28,7 @@ s32 GameFlag_SetBit();
 s32 GameFlag_Test();
 s32 Actor_SetSpritePriority();
 s32 Actor_GetById();
-s32 WaitFrames();
+s32 wait();
 extern u8 Data_02004cec[];
 extern u8 gAdventure[];
 extern char SceneId_Ov6abRoom1;
@@ -129,7 +129,7 @@ L_02008494:
   Call3((void (*)())Func_0200432c, 12, 0, 0);
 L_020084c2:
   Func_02000d88();
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
   t40 = Value1((s32 (*)())GameFlag_Test, 0xa3a);
   if (t40 != 0)
     goto L_020084f8;

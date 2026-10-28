@@ -51,7 +51,7 @@ void Func_02001880(void) {
                                           gData_02004c5c);
   Actor_SetMovementTypeById(15, gData_02004cac);
   do {
-    WaitFrames(1);
+    wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   /* FAKEMATCH: one more use of the shaman's flag gives its address r5 and the
    * owner's r6; as plain C, 36 instructions differ in tla-en. */
@@ -64,7 +64,7 @@ void Func_02001880(void) {
   Actor_ResetAndSetPositionInMode2(gAdventure.currentOwner, 184, 128);
   ShamanVillage_ObjWalk(15, 264, 128);
   Actor_SetModeById(gAdventure.currentOwner, 1);
-  WaitFrames(1);
+  wait(1);
   Func_02004934(gAdventure.currentOwner, 0, 0);
   Func_02004934(15, 0, 0);
   Event_FinishScreenTransition();
@@ -121,7 +121,7 @@ void Func_02001aa4(void) {
   Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02004cac);
   do {
-    WaitFrames(1);
+    wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the
    * owner's (r5, then r6), as in Func_02001880 above. */
@@ -134,7 +134,7 @@ void Func_02001aa4(void) {
   Actor_ResetAndSetPositionInMode2(15, 184, 128);
   ShamanVillage_ObjWalk(gAdventure.currentOwner, 264, 128);
   Actor_SetModeById(15, 1);
-  WaitFrames(1);
+  wait(1);
   Func_02004934(15, 0, 0);
   Func_02004934(gAdventure.currentOwner, 0, 0);
   Event_FinishScreenTransition();

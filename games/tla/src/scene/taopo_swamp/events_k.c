@@ -16,7 +16,7 @@ void Func_020022ac(void) {
     while (sprite->level != 0) {
       sprite->level--;
       sprite->dirty = 1;
-      WaitFrames(1);
+      wait(1);
     }
     Func_020028a0();
     sprite->mode |= 8;

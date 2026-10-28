@@ -68,7 +68,7 @@ void BattleEffect_ClearOwnedSlot(void *slot);
 void Func_080dc954(void);
 void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_080dbb40(void);
 void Task_Remove(void (*func)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
@@ -101,7 +101,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (event->mode == 3 && block != NULL && block[0x2a01] != 0) {
     i = 0;
     do {
-      WaitFrames(1);
+      wait(1);
       if (++i > 89)
         break;
     } while (block[0x2a01] != 0);

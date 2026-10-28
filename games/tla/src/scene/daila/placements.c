@@ -50,7 +50,7 @@ void Func_0200009c(void) {
   Import_SoundPlay(123);
   Import_ActorSetAnimation(gAdventure.currentOwner, 2);
   CenterAndWalk(gAdventure.currentOwner, 2, -6);
-  Import_EventWaitFrames(10);
+  Import_EventWait(10);
   Import_EventSetExitRequest(work->exit);
   Import_EventFinishScreenTransition();
   Import_EventWaitTransitionFrames();

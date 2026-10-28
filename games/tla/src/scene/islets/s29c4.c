@@ -14,7 +14,7 @@ extern const u8 MsgWellHereWe[];
 s32 Actor_GetById();
 void Func_02003eec();
 void Func_02003edc();
-void WaitFrames();
+void wait();
 void Actor_SetPartAttribute();
 void Actor_SetModeById();
 void Event_StartScreenTransition(void);
@@ -46,13 +46,13 @@ void Func_020029c4(void) {
 
   Call2(Func_02003eec, 9, gAdventure.currentOwner);
   Call3(Func_02003edc, 10, 0xf00000, 0x21c0000);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   guide->angle = 0x4000;
   leader->update = Func_02001278;
   Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gAdventure.currentOwner),
         15);
   Call2(Actor_SetModeById, 9, 3);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
 #endif
@@ -67,7 +67,7 @@ void Func_020029c4(void) {
   Call2(Func_02003dec, (s32)guide, gData_02004508);
   Call2(Actor_SetMovementTypeById, 10, gData_02004554);
   do
-    Call1(WaitFrames, 1);
+    Call1(wait, 1);
   while (*done == 0);
   leader->update = 0;
   guide->update = 0;

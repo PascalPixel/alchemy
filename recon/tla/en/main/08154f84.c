@@ -88,7 +88,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 #define THORN_INTERVAL 8
 #define PUFF_COUNT 1024
@@ -259,7 +259,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Tear down: stop the transfer, free both blitters, close the layer.

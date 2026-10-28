@@ -30,7 +30,7 @@ s32 Actor_GetById();
 void Func_02002520();
 void Func_02002538();
 void Actor_Stop();
-void WaitFrames();
+void wait();
 void Actor_SetSpeedParameters();
 void Actor_SetMovementTypeById();
 s32 Func_02002570();
@@ -58,7 +58,7 @@ void Func_02001d14(void);
 void Func_02002530();
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02002578();
 
 void Func_02001944(void) {
@@ -72,7 +72,7 @@ void Func_02001944(void) {
   Call1(Actor_Stop, 10);
   ((struct Actor *)Value1(Actor_GetById, 9))->update = 0;
   ((struct Actor *)Value1(Actor_GetById, 10))->update = 0;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call3(Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
   Call3(Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
   Call2(Actor_SetMovementTypeById, 9, gData_0200277c);
@@ -97,7 +97,7 @@ void Func_02001944(void) {
   Call2(Actor_SetMovementTypeById, 10, gData_020028dc);
   Call2(Actor_SetMovementTypeAndWaitById, 11, gData_02002948);
   Call3(Func_020024f8, 5, 0x1280000, 0x3680000);
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
   Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call3(Actor_SetPositionAndReset, 5, 312, 854);
@@ -136,27 +136,27 @@ void Func_02001944(void) {
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (*count != 34)
     goto wait1;
   actor->unk66 = 2;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait2:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (actor->action != 42)
     goto wait2;
   actor->unk66 = 2;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait3:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (actor->action != 108)
     goto wait3;
   actor->unk66 = 3;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   Func_02001730();
   Call3(Actor_Jump, 8, 4, 0);
@@ -177,7 +177,7 @@ wait3:
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Call1(Func_020025a0, 123);
-    Call1(FieldEvent_WaitFrames, 40);
+    Call1(FieldEvent_Wait, 40);
     Call1(Func_02002578, 15);
   }
 }

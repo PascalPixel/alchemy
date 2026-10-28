@@ -4,7 +4,7 @@
 #include "call.h"
 
 void Camera_MoveWithinMapBounds();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02002698();
 void Func_02003c28();
 void Func_02003c30();
@@ -43,7 +43,7 @@ void Func_02002dd4(void) {
   Call3(Actor_SetPositionAndReset, 16, 0x2f8, 200);
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 1);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call1(Func_02003df8, 153);
   actor->velocityY = 0x80000;
   Call2(Actor_SetSingleChildFlags,
@@ -59,9 +59,9 @@ void Func_02002dd4(void) {
   Call3(Actor_SetPositionAndReset, 16, 0x338, 200);
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 1);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Call2(Actor_WatchAndSetScript, 16, gAdventure.currentOwner);
   Call1(Actor_Stop, gAdventure.currentOwner);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_Wait, 20);
   Func_02003c30();
 }

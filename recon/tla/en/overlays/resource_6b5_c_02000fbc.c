@@ -27,7 +27,7 @@ s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Window_Close(s32 window, s32 release);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 void Func_02000fbc(s32 actor) {
   s32 window;
@@ -79,7 +79,7 @@ keys:
     goto chosen;
   if (gInput.pressed & 2)
     goto cancel;
-  WaitFrames(1);
+  wait(1);
   goto redraw;
 chosen:
   Window_Close(window, 1);
@@ -92,10 +92,10 @@ cancel:
   goto chosen;
 done:
   Func_02001ad4(78);
-  WaitFrames(120);
+  wait(120);
   Func_02001ad4(0x2c5);
   Func_02001a64((s32)MsgComeBackWhen);
   Func_02001a74(actor, 0);
-  WaitFrames(10);
+  wait(10);
   Func_02001a1c();
 }

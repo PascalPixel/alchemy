@@ -172,7 +172,7 @@ Func_08125d74:
 	strh r6, [r5, #6]
 	movs r0, #1
 	mov r8, r1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_08125efc
 	movs r3, #128
 	ldr r2, .L_08125f00
@@ -234,7 +234,7 @@ Func_08125d74:
 	bl Irq_SetHandler
 	strh r6, [r5, #2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -245,7 +245,7 @@ Func_08125d74:
 	bl PartyStatus_CreateWindowFar
 	adds r5, #8
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	adds r0, r5, #0
 	movs r1, #2
 	bl QueueIoWriteDelay10
@@ -263,7 +263,7 @@ Func_08125d74:
 	bne .L_08125f8c
 .L_08125f84:
 	movs r0, #60
-	bl WaitFrames
+	bl wait
 	b .L_08125f92
 .L_08125f8c:
 	ldr r0, [sp, #8]
@@ -378,7 +378,7 @@ Func_08125d74:
 .L_0812606c:
 	strh r4, [r0]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #0]
 	ldr r2, .L_081260d8
 	movs r1, #206
@@ -429,9 +429,9 @@ Func_08125d74:
 .L_081260dc:
 	.4byte Func_08125d68
 .L_081260e0:
-	bl WaitFrames
+	bl wait
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -499,7 +499,7 @@ Func_08125d74:
 	strh r3, [r2]
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #16
 	bne .L_0812616a
 	movs r6, #0
@@ -524,7 +524,7 @@ Func_08125d74:
 	movs r3, #0
 	strh r3, [r2, #2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
@@ -540,7 +540,7 @@ Func_08125d74:
 	bl Irq_SetHandler
 	strh r5, [r6]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	strh r5, [r6]
 	movs r1, #128
 	lsls r1, r1, #19

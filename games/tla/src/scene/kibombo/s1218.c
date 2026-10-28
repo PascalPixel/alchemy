@@ -12,7 +12,7 @@ void Func_02001218(void) {
   Func_02005b1c(7, gAdventure.currentOwner);
   Actor_SetSpritePriority(
       7, Actor_GetById(gAdventure.currentOwner)->sprite->priority);
-  WaitFrames(1);
+  wait(1);
   Kibombo_ObjArm(gAdventure.currentOwner, 0xa000, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 62, 444);

@@ -13,8 +13,8 @@ struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
 void Func_02002968(s32 mode);
 void Func_020028a0(void);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 u16 Random16Far(void);
 struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const u8 *script);
@@ -36,7 +36,7 @@ void Func_0200013c(s32 unused, s32 id) {
   Func_02002898();
   Func_02002968(0);
   actor->motionFlags = 3;
-  WaitFrames(5);
+  wait(5);
   actor->motionFlags = 0;
   sprite = actor->animation;
   raw = (u8 *)sprite;
@@ -68,7 +68,7 @@ void Func_0200013c(s32 unused, s32 id) {
         }
       }
     }
-    WaitFrames(3);
+    wait(3);
   }
   kind = &actor->animationKind;
   *kind = 0;
@@ -86,9 +86,9 @@ void Func_0200013c(s32 unused, s32 id) {
         splashSprite->priority = 2;
       }
     }
-    WaitFrames(15);
+    wait(15);
   }
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   *kind = 1;
   Func_020028d0(id, 0, 0);
   Func_020028a0();

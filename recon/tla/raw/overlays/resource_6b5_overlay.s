@@ -46,7 +46,7 @@ Func_0200039c:
 	b .L_de_020084fa
 .L_de_020083d0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r10, r3
@@ -84,7 +84,7 @@ Func_0200039c:
 	adds r7, #1
 .L_de_02008418:
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_de_02008474
 	mov r1, sp
 	bl Message_DecodeRawUnbounded
@@ -172,7 +172,7 @@ Func_0200039c:
 	cmp r3, r2
 	bgt .L_de_020084fa
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r10, r3
@@ -206,7 +206,7 @@ Func_0200039c:
 	b .L_de_02008532
 .L_de_02008500:
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_de_02008532
 .L_de_02008508:
 	mov r0, r9
@@ -274,7 +274,7 @@ Func_0200039c:
 	b .L_020084de
 .L_020083d0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r10, r3
@@ -309,7 +309,7 @@ Func_0200039c:
 	adds r7, #1
 .L_02008414:
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_02008534
 	mov r1, sp
 	bl Message_DecodeRawUnbounded
@@ -385,7 +385,7 @@ Func_0200039c:
 	cmp r3, r2
 	bgt .L_020084de
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r10, r3
@@ -419,7 +419,7 @@ Func_0200039c:
 	b .L_02008516
 .L_020084e4:
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_02008516
 .L_020084ec:
 	mov r0, r9
@@ -536,7 +536,7 @@ Func_02000578:
 	b .L_0200879a
 .L_0200860c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r9, r3
@@ -564,7 +564,7 @@ Func_02000578:
 	cmp r0, #0
 	bne .L_0200860c
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #4]
 	adds r6, #1
 	cmp r6, r2
@@ -572,7 +572,7 @@ Func_02000578:
 	b .L_02008690
 .L_02008654:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	negs r3, r3
 	add r9, r3
@@ -598,7 +598,7 @@ Func_02000578:
 	cmp r0, #0
 	bne .L_02008654
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	adds r6, #1
 .L_02008690:
 	cmp r6, #2
@@ -703,7 +703,7 @@ Func_02000578:
 	b .L_0200879a
 .L_02008756:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #1
 	negs r2, r2
 	add r10, r2
@@ -731,9 +731,9 @@ Func_02000578:
 	cmp r0, #0
 	bne .L_02008756
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 .L_0200879a:
 	adds r0, r7, #0
 	bl Heap_Release
@@ -838,7 +838,7 @@ Func_02000864:
 	b .L_0200896e
 .L_02008922:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255
@@ -887,7 +887,7 @@ Func_02000864:
 	bl Window_Close
 .L_02008984:
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 .L_0200898a:
 	mov r2, r8
 	cmp r2, #0
@@ -905,7 +905,7 @@ Func_02000864:
 	movs r0, #5
 	bl Func_0200198c
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	movs r0, #5
 	bl Func_02001994
 	movs r0, #116
@@ -927,7 +927,7 @@ Func_02000864:
 	movs r0, #8
 	bl FieldMessage_ShowAtActor
 	movs r0, #45
-	bl WaitFrames
+	bl wait
 	movs r1, #128
 	movs r2, #128
 	movs r0, #4
@@ -988,7 +988,7 @@ Func_02000864:
 	movs r0, #5
 	bl Func_0200198c
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	movs r0, #5
 	bl Func_02001994
 	movs r0, #4
@@ -1257,7 +1257,7 @@ Func_02000fbc:
 	cmp r3, #0
 	bne .L_020090d6
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_02009028
 .L_020090be:
 	adds r0, r7, #0
@@ -1278,7 +1278,7 @@ Func_02000fbc:
 	movs r0, #78
 	bl Func_02001ad4
 	movs r0, #120
-	bl WaitFrames
+	bl wait
 	movs r0, #227
 	lsls r0, r0, #1
 	adds r0, #255
@@ -1289,7 +1289,7 @@ Func_02000fbc:
 	movs r1, #0
 	bl Func_02001a74
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02001a1c
 	add sp, #4
 	pop {r3, r5, r6}
@@ -1359,7 +1359,7 @@ Func_0200145c:
 	movs r0, #4
 	bl LinkLobby_WriteSlotValue
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #5
 	bl Func_02001994
 	ldr r2, .L_02009518
@@ -1639,7 +1639,7 @@ Func_0200145c:
 	lsls r0, r0, #2
 	bl GameFlag_ClearBit
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	bl Func_02000044
 	movs r0, #0
 	bl LinkLobby_WriteSlotValue

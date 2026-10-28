@@ -23,7 +23,7 @@ void Func_02000bb8(void);
 
 void Func_02000bf0(void);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02000ff8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Task_Add_(void (*func)(void),
@@ -95,7 +95,7 @@ void Func_02000ed0(void) {
     Func_02000ff8(1, 16, 1, 1, 4, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 20);
     Func_02000ff8(1, 16, 1, 1, 4, 21);
-    WaitFrames(1);
+    wait(1);
   }
   if (GameFlag_Test(0x300))
     Func_02001060_(14, 120 << 16, 376 << 16);

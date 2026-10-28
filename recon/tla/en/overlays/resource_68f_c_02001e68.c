@@ -25,7 +25,7 @@ void Actor_SetAnimationSpeed();
 s32 Func_02003028();
 void Func_02002fb0();
 void Func_02002fb8();
-void WaitFrames();
+void wait();
 
 s32 Func_02001e68(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 v0, r5, r0, r2, r3, r9, r6, r8, r1, r7, r11, v1, v2, r10, v3, v4, v5, v6,
@@ -138,11 +138,11 @@ L_0200a03a:
   FIELD_AT(r5, s32, 52) = 0x10000;
   Func_02002fb0(r5, stack[2], FIELD_AT(r5, s32, 12), stack[1]);
   Func_02002fb8(r5);
-  Call1((void (*)())WaitFrames, 2);
+  Call1((void (*)())wait, 2);
   r0 = v7;
   goto L_02009e9a;
 L_0200a060:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
 L_0200a066:
   FIELD_AT(r5, s32, 108) = 0;
   FIELD_AT(r5, u8, 90) = 1 | (FIELD_AT(r5, u8, 90));

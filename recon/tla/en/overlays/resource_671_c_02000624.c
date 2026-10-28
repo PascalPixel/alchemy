@@ -52,7 +52,7 @@ struct Orbiter *Actor_GetById(s32 id);
 s32 Func_02005834(s32 value);
 void Func_020020f0(s32 value);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))

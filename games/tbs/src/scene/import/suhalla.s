@@ -3,7 +3,7 @@
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_Wait, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Event_SetMessageId, 1

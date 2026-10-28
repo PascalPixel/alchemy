@@ -491,7 +491,7 @@ void SelectionMenu_Close(void) {
 
   SelectionMenu_StopDrawing();
   Window_Close(state->window, 2);
-  WaitFrames(1);
+  wait(1);
   node = state->head;
   while (node != 0) {
     if (node->kind != ICON_KIND_NONE) {
@@ -629,7 +629,7 @@ s32 SelectionMenu_Run(s32 mode) {
 
   SelectionMenu_HighlightIcon(screen, 0);
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     // No input while the row is pushed down.
     if (screen->verticalScroll != 0) {
       continue;
@@ -655,7 +655,7 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
   u32 result;
 
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     if (screen->verticalScroll != 0) {
       continue;
     }
@@ -702,7 +702,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuWork *screen) {
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  wait(1);
   screen->cursorIndex++;
   if (screen->cursorIndex == SELECTION_ROWS && nextEntry + 1 < screen->count) {
     screen->cursorIndex--;
@@ -716,9 +716,9 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuWork *screen) {
   }
   screen->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
-  WaitFrames(1);
+  wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Moves the cursor one entry left, scrolling the row at its second place.
@@ -732,7 +732,7 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen) {
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  wait(1);
   cursorIndex = screen->cursorIndex;
   if (cursorIndex == 1 && screen->top != 0) {
     screen->records[0].base = ARROW_SCROLL_FRAMES;
@@ -747,9 +747,9 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen) {
   }
   screen->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
-  WaitFrames(1);
+  wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Moves the cursor one entry right, scrolling the row at its edge and
@@ -762,7 +762,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
   state->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  wait(1);
   state->cursorIndex++;
   // With more entries than the five shown, stepping past the last gathers the
   // icons at the row's start (12 pixels a frame), refills them from the first
@@ -784,7 +784,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
       node->targetY = state->baseY;
       node->dx = -12;
       while (node->targetX != node->x)
-        WaitFrames(1);
+        wait(1);
       node = state->head;
       if (node != NULL) {
         entryIndex = 0;
@@ -821,9 +821,9 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
   }
   state->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
-  WaitFrames(1);
+  wait(1);
   SelectionMenu_OpenNameWindow(state->head->kind, 0);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Moves the cursor one entry left, scrolling the row at its edge and
@@ -834,7 +834,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
   state->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  wait(1);
   // As SelectionMenu_StepRight, mirrored: from the second place with entries
   // before it the row scrolls back; from the first entry the icons gather at
   // the row's last place (12 pixels a frame), refill from the last five entries
@@ -869,7 +869,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       }
       node = state->head;
       while (node->x != node->targetX)
-        WaitFrames(1);
+        wait(1);
       // Keep the native count-up: assigning count - 5 directly removes
       // 20 bytes from the English object.
       i = 0;
@@ -900,9 +900,9 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
   }
   state->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
-  WaitFrames(1);
+  wait(1);
   SelectionMenu_OpenNameWindow(state->head->kind, 0);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Redraws the command icon at row place rowIndex in its plain state, in its
@@ -1012,7 +1012,7 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
     last->previous = node;
     node = screen->head;
     do {
-      WaitFrames(1);
+      wait(1);
     } while (node->scale != 0);
     screen->head = node->next;
     VramCache_FreeEntry(node->slot);
@@ -1053,7 +1053,7 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
     node->scaleStep = -32;
     node = screen->head;
     do {
-      WaitFrames(1);
+      wait(1);
     } while (node->scale != 256);
     while (node->next != NULL)
       node = node->next;
@@ -1213,7 +1213,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   Menu_SendNodeCountList(screen);
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  wait(1);
   screen->records[0].kind = 0;
   screen->records[1].kind = 0;
   screen->records[14].kind = 0;
@@ -1233,7 +1233,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
       other->dx = (node->x - other->x) >> 1;
     }
   }
-  WaitFrames(2);
+  wait(2);
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
       VramCache_FreeEntry(other->slot);
@@ -1257,7 +1257,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   node->dx = (node->targetX - node->x) >> 1;
   screen->unread = 0;
   screen->cursorIndex |= 0x80;
-  WaitFrames(2);
+  wait(2);
   other = SelectionMenu_FindFreeIcon(SELECTION_ICON_CHOSEN);
   other->kind = node->kind;
   other->message = node->message;
@@ -1420,7 +1420,7 @@ s32 FieldMenu_Run(void) {
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
       FieldEffect_ClearRandomParticlesFar();
-      WaitFrames(1);
+      wait(1);
     }
 #endif
 #ifdef UBFIX
@@ -1479,7 +1479,7 @@ s32 FieldMenu_Run(void) {
 /// and waits a frame.
 void PartyStatus_OpenAndWait(void) {
   PartyStatus_CreateWindow(1);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Closes the party status window, kept in heap block 16 (gPartyStatusWork),
@@ -1490,7 +1490,7 @@ void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 UNUSED void SelectionMenu_CreateEmpty(void) {
   SelectionMenu_Create();
   SelectionMenu_Clear();
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Runs a selection row with the cursor on entry initialIndex, cancellable,

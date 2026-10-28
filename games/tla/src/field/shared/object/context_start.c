@@ -61,7 +61,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   Actor_SetMode(object, mode);
-  WaitFrames(18);
+  wait(18);
 }
 
 void ObjectEffect_StartContextEffect26(void) {

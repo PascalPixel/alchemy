@@ -60,7 +60,7 @@ s32 Func_02000e4c(s32 id) {
       choice = -1;
       break;
     }
-    WaitFrames(1);
+    wait(1);
   }
   Window_Close(window, 1);
   {
@@ -85,6 +85,6 @@ s32 Func_02000e4c(s32 id) {
       Func_02001a74(9, 0);
     }
   }
-  WaitFrames(10);
+  wait(10);
   Func_02001a1c();
 }

@@ -75,13 +75,13 @@ Func_02000328:
 	beq .L_ja_0200836a
 .L_ja_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_ja_020086b4
 	movs r1, #1
 	bl Func_020023b8
@@ -119,13 +119,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_ja_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_ja_020086c8
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov r10, r1
 .L_ja_02008446:
@@ -158,7 +158,7 @@ Func_02000328:
 	movs r7, #5
 .L_ja_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -283,7 +283,7 @@ Func_02000328:
 	movs r7, #1
 .L_ja_02008578:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -809,7 +809,7 @@ Func_02000328:
 	movs r7, #1
 .L_ja_020089c6:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -844,13 +844,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_ja_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -959,13 +959,13 @@ Func_02000328:
 	beq .L_fr_0200836a
 .L_fr_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_fr_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -1003,13 +1003,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_fr_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_fr_020086c0
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov r10, r1
 .L_fr_02008446:
@@ -1042,7 +1042,7 @@ Func_02000328:
 	movs r7, #5
 .L_fr_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -1164,7 +1164,7 @@ Func_02000328:
 	movs r7, #1
 .L_fr_02008572:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -1689,7 +1689,7 @@ Func_02000328:
 	movs r7, #1
 .L_fr_020089be:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -1728,13 +1728,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_fr_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -1843,13 +1843,13 @@ Func_02000328:
 	beq .L_de_0200836a
 .L_de_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_de_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -1887,13 +1887,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_de_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_de_020086c0
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov sl, r1
 .L_de_02008446:
@@ -1926,7 +1926,7 @@ Func_02000328:
 	movs r7, #5
 .L_de_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -2048,7 +2048,7 @@ Func_02000328:
 	movs r7, #1
 .L_de_02008572:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -2573,7 +2573,7 @@ Func_02000328:
 	movs r7, #1
 .L_de_020089be:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -2612,13 +2612,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_de_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -2724,13 +2724,13 @@ Func_02000328:
 	beq .L_es_0200836a
 .L_es_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_es_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -2768,13 +2768,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_es_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_es_020086c0
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov sl, r1
 .L_es_02008446:
@@ -2807,7 +2807,7 @@ Func_02000328:
 	movs r7, #5
 .L_es_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -2929,7 +2929,7 @@ Func_02000328:
 	movs r7, #1
 .L_es_02008572:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -3454,7 +3454,7 @@ Func_02000328:
 	movs r7, #1
 .L_es_020089be:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -3493,13 +3493,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_es_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -3605,13 +3605,13 @@ Func_02000328:
 	beq .L_it_0200836a
 .L_it_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_it_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -3649,13 +3649,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_it_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_it_020086c0
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov sl, r1
 .L_it_02008446:
@@ -3688,7 +3688,7 @@ Func_02000328:
 	movs r7, #5
 .L_it_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -3810,7 +3810,7 @@ Func_02000328:
 	movs r7, #1
 .L_it_02008572:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -4335,7 +4335,7 @@ Func_02000328:
 	movs r7, #1
 .L_it_020089be:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -4374,13 +4374,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_it_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -4485,13 +4485,13 @@ Func_02000328:
 	beq .L_0200836a
 .L_020083cc:
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_020086b4
 	movs r1, #1
 	bl Func_020023b8
@@ -4529,13 +4529,13 @@ Func_02000328:
 	cmp r3, #0
 	bne .L_02008446
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020086c8
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #1
 	mov r10, r1
 .L_02008446:
@@ -4568,7 +4568,7 @@ Func_02000328:
 	movs r7, #5
 .L_0200847c:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -4693,7 +4693,7 @@ Func_02000328:
 	movs r7, #1
 .L_02008578:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r1, #1
@@ -5219,7 +5219,7 @@ Func_02000328:
 	movs r7, #1
 .L_020089c6:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	bl Func_020022f8
 	movs r3, #1
@@ -5258,13 +5258,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_02008a2c:
 	movs r0, #0
 	pop {r3, r5}
@@ -5341,7 +5341,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_fr_02008b6c:
 	movs r5, #3
 	b .L_fr_02008bc4
@@ -5387,7 +5387,7 @@ Func_02000b24:
 	b .L_fr_02008c00
 .L_fr_02008bbe:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_fr_02008bc4:
 	ldr r3, .L_fr_02008bfc
 	movs r2, #2
@@ -5420,11 +5420,11 @@ Func_02000b24:
 	.4byte gInput
 .L_fr_02008c00:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_fr_02008d74
 	bl Serial_StartReceive
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r1, #3
 	movs r2, #1
 	movs r3, #0
@@ -5473,10 +5473,10 @@ Func_02000b24:
 	strh r3, [r2, #6]
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	b .L_fr_02008b6c
 .L_fr_02008c86:
 	ldr r3, .L_fr_02008d84
@@ -5499,7 +5499,7 @@ Func_02000b24:
 	cmp r3, #0
 	beq .L_fr_02008cb6
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_fr_02008d8c
 	adds r5, #1
 	cmp r5, r1
@@ -5517,7 +5517,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 .L_fr_02008cce:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_fr_02008d94
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -5533,10 +5533,10 @@ Func_02000b24:
 	b .L_fr_02008d66
 .L_fr_02008cee:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	movs r1, #2
 	bl Window_Close
@@ -5657,7 +5657,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_es_02008b6c:
 	movs r5, #3
 	b .L_es_02008bc2
@@ -5702,7 +5702,7 @@ Func_02000b24:
 	b .L_es_02008bfc
 .L_es_02008bbc:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_es_02008bc2:
 	ldr r3, .L_es_02008bf8
 	movs r2, #2
@@ -5734,11 +5734,11 @@ Func_02000b24:
 	.4byte gInput
 .L_es_02008bfc:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_es_02008d70
 	bl Serial_StartReceive
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r1, #3
 	movs r2, #1
 	movs r3, #0
@@ -5787,10 +5787,10 @@ Func_02000b24:
 	strh r3, [r1, #6]
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	b .L_es_02008b6c
 .L_es_02008c82:
 	ldr r3, .L_es_02008d80
@@ -5813,7 +5813,7 @@ Func_02000b24:
 	cmp r3, #0
 	beq .L_es_02008cb2
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_es_02008d88
 	adds r5, #1
 	cmp r5, r1
@@ -5831,7 +5831,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 .L_es_02008cca:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_es_02008d90
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -5847,10 +5847,10 @@ Func_02000b24:
 	b .L_es_02008d62
 .L_es_02008cea:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	movs r1, #2
 	bl Window_Close
@@ -5975,7 +5975,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_02008b74:
 	movs r5, #3
 	b .L_02008bcc
@@ -6021,7 +6021,7 @@ Func_02000b24:
 	b .L_02008c08
 .L_02008bc6:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_02008bcc:
 	ldr r3, .L_02008c04
 	movs r2, #2
@@ -6054,11 +6054,11 @@ Func_02000b24:
 	.4byte gInput
 .L_02008c08:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r0, .L_02008d7c
 	bl Serial_StartReceive
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r1, #3
 	movs r2, #1
 	movs r3, #0
@@ -6107,10 +6107,10 @@ Func_02000b24:
 	strh r3, [r2, #6]
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002220
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	b .L_02008b74
 .L_02008c8e:
 	ldr r3, .L_02008d8c
@@ -6133,7 +6133,7 @@ Func_02000b24:
 	cmp r3, #0
 	beq .L_02008cbe
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_02008d94
 	adds r5, #1
 	cmp r5, r1
@@ -6151,7 +6151,7 @@ Func_02000b24:
 	bl Text_DrawMessage
 .L_02008cd6:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_02008d9c
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -6167,10 +6167,10 @@ Func_02000b24:
 	b .L_02008d6e
 .L_02008cf6:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_02002228
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	movs r1, #2
 	bl Window_Close
@@ -7194,7 +7194,7 @@ Func_02000e44:
 	bl Func_02002408
 .L_ja_020094c6:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_ja_020097cc
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -7252,7 +7252,7 @@ Func_02000e44:
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 	bl Func_020022f8
 	bl Func_020023e8
@@ -7275,7 +7275,7 @@ Func_02000e44:
 	bl Text_DrawCharacterAtOffset
 .L_ja_02009590:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_ja_020097cc
 	movs r2, #1
 	ldr r3, [r1, #4]
@@ -7643,7 +7643,7 @@ Func_02000e44:
 	bne .L_ja_0200986e
 .L_ja_0200988c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_ja_0200911e
 .L_ja_02009894:
 	add sp, #124
@@ -8475,7 +8475,7 @@ Func_02000e44:
 	bl Func_02002408
 .L_fr_0200949a:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_fr_02009750
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -8533,7 +8533,7 @@ Func_02000e44:
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 	bl Func_020022f8
 	bl Func_020023e8
@@ -8556,7 +8556,7 @@ Func_02000e44:
 	bl Text_DrawCharacterAtOffset
 .L_fr_02009564:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_fr_02009750
 	movs r2, #1
 	ldr r3, [r1, #4]
@@ -8870,7 +8870,7 @@ Func_02000e44:
 	bne .L_fr_020097c2
 .L_fr_020097e0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_fr_020090c2
 .L_fr_020097e8:
 	sub sp, #-124
@@ -9699,7 +9699,7 @@ Func_02000e44:
 	bl Func_02002408
 .L_020094a2:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_02009758
 	movs r2, #1
 	ldr r3, [r3, #4]
@@ -9757,7 +9757,7 @@ Func_02000e44:
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 	bl Func_020022f8
 	bl Func_020023e8
@@ -9780,7 +9780,7 @@ Func_02000e44:
 	bl Text_DrawCharacterAtOffset
 .L_0200956c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_02009758
 	movs r2, #1
 	ldr r3, [r1, #4]
@@ -10094,7 +10094,7 @@ Func_02000e44:
 	bne .L_020097ca
 .L_020097e8:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_020090ca
 .L_020097f0:
 	add sp, #124

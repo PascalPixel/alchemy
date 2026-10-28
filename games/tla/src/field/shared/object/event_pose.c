@@ -20,14 +20,14 @@ void Actor_SetSingleChildFlagsFar(struct ActorView *, u32);
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 5);
   Sound_PlayFar(125);
-  WaitFrames(12);
+  wait(12);
 }
 
 void ObjectEvent_Spring(u32 objectId) {
   struct Actor *object;
 
   object = ObjectTable_Get(objectId);
-  WaitFrames(18);
+  wait(18);
   Actor_SetMode(object, 7);
   Sound_PlayFar(146);
   if (object != 0) {
@@ -39,7 +39,7 @@ void ObjectEvent_Spring(u32 objectId) {
 void ObjectEvent_SetMode4WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 4);
   Sound_PlayFar(124);
-  WaitFrames(12);
+  wait(12);
 }
 
 void ObjectEvent_SetMode2(u32 objectId) {
@@ -49,7 +49,7 @@ void ObjectEvent_SetMode2(u32 objectId) {
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 6);
   Sound_PlayFar(124);
-  WaitFrames(12);
+  wait(12);
 }
 
 struct Actor *ObjectEvent_GetObject(u32 objectId) {

@@ -14,7 +14,7 @@ void Func_020005f8(s32 skip);
 void Func_02000610(s32 cue);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_02000038(struct Actor *object) {
   if ((gData_020007e4 >> 1) & 1)

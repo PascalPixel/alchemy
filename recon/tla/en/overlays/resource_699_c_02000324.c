@@ -23,8 +23,8 @@ struct CellTarget {
 };
 
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct Actor *object,

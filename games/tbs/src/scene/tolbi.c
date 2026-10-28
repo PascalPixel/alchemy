@@ -267,7 +267,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   Actor_TurnToFaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
-  WaitFrames(1);
+  wait(1);
   kid->timer &= KID_CHASES_YOUNGER;
   Event_End();
 }
@@ -305,7 +305,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   Actor_TurnToFaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
-  WaitFrames(1);
+  wait(1);
   kid->timer &= KID_CHASES_YOUNGER;
   Event_End();
 }
@@ -423,7 +423,7 @@ static void Tolbi_EnterDoor(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
-    Event_WaitFrames(10);
+    Event_Wait(10);
   }
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -515,7 +515,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId(MsgTolbiWantTestLuck);
   Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -579,47 +579,47 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
   Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_A,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_B,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_TOLBI_SOLDIER_A, 2);
   Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
   // window showing Babi's portrait. The poster, placed with Babi's sprite,
   // becomes the speaker so that answering closes that portrait window.
   Event_OpenMessage(ACTOR_TOLBI_SOLDIER_A, 0);
-  Event_WaitFrames(25);
+  Event_Wait(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
   Message_OpenWindow((firstMsg + 3), 11, 12, 2);
   gFieldWork->speaker = ACTOR_TOLBI_MISSING_PERSON_POSTER;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    Event_WaitFrames(30);
-    Event_WaitFrames(10);
+    Event_Wait(30);
+    Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 232, 248);
-    Event_WaitFrames(2);
+    Event_Wait(2);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 232, 248);
     Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
     Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 248, 248);
@@ -627,25 +627,25 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    Event_WaitFrames(30);
-    Event_WaitFrames(10);
+    Event_Wait(30);
+    Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     gFieldWork->message += 1;
     Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 184);

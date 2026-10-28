@@ -15,7 +15,7 @@
 extern const u8 gDebug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
-void WaitFrames(s32 count);
+void wait(s32 count);
 void Window_LoadGraphics(void);
 void Func_08014b70(void);
 
@@ -63,7 +63,7 @@ redraw:
     *p = ((value >> 10) & 31) + HEX_DIGIT;
     map++;
   }
-  WaitFrames(1);
+  wait(1);
   for (;;) {
     if (gInput.repeat & KEY_UP) {
       channel--;
@@ -132,7 +132,7 @@ redraw:
       value = *colors;
       red = 0;
       for (;;) {
-        WaitFrames(1);
+        wait(1);
         if (!(gInput.held & KEY_START))
           break;
         if (red == 0)
@@ -150,7 +150,7 @@ redraw:
     }
     if (gInput.repeat & KEY_SELECT)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Window_LoadGraphics();
   Func_08014b70();

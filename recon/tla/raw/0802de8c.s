@@ -228,7 +228,7 @@ Func_0802de8c:
 	bl Task_Add
 .L_0802e062:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, .L_0802e288
 	mov r9, r10
 .L_0802e06c:
@@ -748,7 +748,7 @@ Func_0802de8c:
 .L_0802e426:
 	movs r0, #1
 	str r4, [sp, #0]
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #0]
 	b .L_0802e06c
 	.2byte 0x0000

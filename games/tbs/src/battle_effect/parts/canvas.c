@@ -330,11 +330,11 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   // is BATTLE_BACKGROUND_FIXED, holds for the frames BG2 is being changed.
   BattleEffect_ClearActorTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
-  WaitFrames(1);
+  wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   gBgScroll[1].y = 32;
-  WaitFrames(1);
+  wait(1);
 
   // Start the background palette fade.
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
@@ -349,7 +349,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       IO_WRITE_16);
-  WaitFrames(1);
+  wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -359,7 +359,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
-  WaitFrames(1);
+  wait(1);
   // Show it: 14/16 of the canvas over all below, inside both windows.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
@@ -382,7 +382,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   work->shakeFrames = 0;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Opens the canvas layer as BattleEffect_StartCanvasLayer does, but with the
@@ -409,14 +409,14 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 
   BattleEffect_ClearActorTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
-  WaitFrames(1);
+  wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
   gBgScroll[1].y = 32;
-  WaitFrames(1);
+  wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
                               BATTLE_BACKGROUND_FADE_RESTORE);
   work->fadeFrames = 24;
@@ -426,7 +426,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
-  WaitFrames(1);
+  wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -435,7 +435,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
-  WaitFrames(1);
+  wait(1);
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
@@ -445,7 +445,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
-  WaitFrames(1);
+  wait(1);
 
   offset = 0;
   for (row = 0; row != 16; row++) {
@@ -454,7 +454,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Opens the canvas layer with BG2 a wrapping 256x256 map: each row of the
@@ -519,13 +519,13 @@ void BattleEffect_EndCanvasLayer(void) {
                           DISPCNT_WIN1_ON,
                       IO_WRITE_16);
   REG_BLDCNT = 0;
-  WaitFrames(1);
+  wait(1);
 
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 7);
-  WaitFrames(1);
+  wait(1);
   for (i = 0; i != 8; i++) {
     BattleBackground_SetPaletteLevelFar(battle->background, 21 - i * 3);
-    WaitFrames(1);
+    wait(1);
   }
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -533,7 +533,7 @@ void BattleEffect_EndCanvasLayer(void) {
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       IO_WRITE_16);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Hides BG1 and the windows and starts bringing the battle background's
@@ -556,9 +556,9 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                                               DISPCNT_OBJ_ON);
-  WaitFrames(1);
+  wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Shows the canvas on BG1 instead of BG2, at its own size: BG1 becomes a
@@ -628,7 +628,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Draws a line on the 128x128 8bpp canvas (16 tiles across), keeping the

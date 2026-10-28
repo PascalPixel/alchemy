@@ -17,10 +17,10 @@ struct Actor *Actor_GetById(u32 actor);
 struct Actor *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void FacingObject_TurnPairToFaceEachOther(struct Actor *first,
                                           struct Actor *second);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_StartRepeatedMotion(s32 actor, s32 variant);
 void Func_080d489c(s32 actor, s32 value);
 
@@ -40,7 +40,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   object->velocityY = 0x50000;
   object->scaleY = object->scaleX = 0x6666;
   do {
-    WaitFrames(1);
+    wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
     object->angle += 0x1000;
   } while (object->scaleX <= 0xffff);
@@ -48,17 +48,17 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   Actor_SetMode(owner, 1);
   FacingObject_TurnPairToFaceEachOther(object, owner);
   owner->action = owner->angle;
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);
   Func_080d489c(ownerId, 258);
-  Event_WaitFrames(32);
+  Event_Wait(32);
   object->gravity = 0x10000;
   object->velocityY = 0x60000;
   Sound_PlayFar(152);
-  Event_WaitFrames(15);
+  Event_Wait(15);
   object->velocityY = 0x60000;
   Sound_PlayFar(152);
-  Event_WaitFrames(23);
+  Event_Wait(23);
   Sound_PlayFar(146);
 
   from[0] = object->x;
@@ -73,6 +73,6 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
     object->y = from[1] + i * (to[1] - from[1]) / 20 +
                 Trig_Sin((i << 15) / 20) * 40;
     object->z = from[2] + i * (to[2] - from[2]) / 20;
-    WaitFrames(1);
+    wait(1);
   }
 }

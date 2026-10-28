@@ -8,7 +8,7 @@ struct MarsLighthouseEntranceEventWork {
   s32 value1ac;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02004718(void);
@@ -38,11 +38,11 @@ void Func_020048e8(void) {
   Event_WaitTransitionFrames();
   Func_02004738();
   Func_02004dc8();
-  WaitFrames(40);
+  wait(40);
   Func_02004718();
   Func_02004d58_(0x10000, 1);
   Func_02004d60(16);
-  WaitFrames(16);
+  wait(16);
   {
     struct Adventure *party = &gAdventure;
 

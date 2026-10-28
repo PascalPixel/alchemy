@@ -12,8 +12,8 @@ struct WarpTarget {
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 ArcTan2(s32, s32);
 struct Actor *Actor_GetById(s32 id);
 void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
@@ -69,14 +69,14 @@ static __inline__ void GameFlag_SetBit_(s32 flag) {
   GameFlag_SetBit(flag);
 }
 
-static __inline__ void WaitFrames_(s32 frames) {
+static __inline__ void wait_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitFrames(frames);
+  wait(frames);
 }
 
-static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
+static __inline__ void FieldEvent_Wait_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitFrames(frames);
+  FieldEvent_Wait(frames);
 }
 
 static __inline__ s32 ArcTan2_(s32 a0, s32 a1) {

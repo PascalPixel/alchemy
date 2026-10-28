@@ -10,7 +10,7 @@
 void Func_02000dac();
 void Func_02000e74();
 struct Actor *Actor_GetById();
-void WaitFrames();
+void wait();
 
 void Func_02000e0c();
 void Func_02000f24();
@@ -46,7 +46,7 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
     /* FAKEMATCH: ⚓️ loads the scale before it builds the bound. */
     __asm__ volatile("" : "+l"(object));
     while (object->scaleX < 0x10000) {
-      WaitFrames(1);
+      wait(1);
       scale = object->scaleX;
       /* FAKEMATCH: and loads it again before it builds the step. */
       __asm__ volatile("" : "+l"(scale));
@@ -69,7 +69,7 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   object0->y = 0x200000;
   object0->motionFlags = 3;
   object0->gravity = 0x170a;
-  Call1((void (*)())WaitFrames, 50);
+  Call1((void (*)())wait, 50);
 L_02008a06:
   return;
 }

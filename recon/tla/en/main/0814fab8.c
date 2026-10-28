@@ -453,7 +453,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

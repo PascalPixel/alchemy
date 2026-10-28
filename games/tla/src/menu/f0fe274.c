@@ -25,7 +25,7 @@ struct OwnerMenuState {
 
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 a, s32 b, s32 c, s32 d);
@@ -72,7 +72,7 @@ s32 Func_080fe274(void) {
   transition = heap->screenTransition;
   heap->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   saved = *(u16 *)&transition->active;
   transition->active = 17;
   Menu_SuspendFieldTasks();
@@ -105,7 +105,7 @@ s32 Func_080fe274(void) {
   MenuIcon_ReleaseObjects();
   Menu_ResumeFieldTasks();
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Func_08038290();
   Text_UseExtraTilesFar(0);
   CopyWords_((void *)0x05000000, palette, 64);
@@ -118,7 +118,7 @@ s32 Func_080fe274(void) {
   HeapSlot_Release(220);
   heap->objectSystem->suspended = 0;
   transition->active = saved;
-  WaitFrames(1);
+  wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)heap->windowTiles)->menuBusy = 0;
   return result;

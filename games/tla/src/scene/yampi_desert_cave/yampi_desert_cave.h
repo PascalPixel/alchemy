@@ -28,7 +28,7 @@ extern const u8 gData_02001ddc[];
 extern const u8 gData_02001e78[];
 
 s32 Task_Add(void (*func)(void), s32 priority);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Func_020001d4(struct YampiDesertCaveRect *rect);
 void Func_02000458(struct YampiDesertCaveRect rect);
 void Func_02000898(void);

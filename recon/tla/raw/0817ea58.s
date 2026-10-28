@@ -766,7 +766,7 @@ BattleEffect_RunDaedalus:
 	movs r7, #1
 	str r7, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #140]
 	adds r4, #1
 	str r4, [sp, #140]
@@ -3706,7 +3706,7 @@ BattleEffect_RunDaedalus:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #140]
 	movs r7, #200
 	adds r4, #1
@@ -4393,7 +4393,7 @@ BattleEffect_RunDaedalus:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #140]
 	adds r3, #1
 	str r3, [sp, #140]

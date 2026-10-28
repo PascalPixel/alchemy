@@ -154,7 +154,7 @@ void Func_080eb960(s32 objectId) {
         phase = PHASE_DONE;
       break;
     }
-    WaitFrames(1);
+    wait(1);
     frame++;
   } while (phase != PHASE_DONE);
   Resource_ResetEntry(entry);

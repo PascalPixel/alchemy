@@ -14,7 +14,7 @@ void Func_020006ec(void) {
   Func_02005324(0);
   Actor_Stop(13);
   Actor_SetModeById(13, 1);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_SetAngleToward(13, 4, 0);
   if (GameFlag_Test(0x301)) {
     Func_0200524c((s32)MsgGaroh21);

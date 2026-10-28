@@ -45,7 +45,7 @@ void Window_CloseAll(void) {
     index = 0;
     if (done)
       break;
-    WaitFrames(1);
+    wait(1);
   }
   while (index != UI_WINDOW_COUNT) {
     if (direct->flags != 0)

@@ -17,7 +17,7 @@
    } *)(base))                                                                 \
        ->v)
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Task_RemoveFar(void *func);
 void Func_02003434(s32 x, s32 y, s32 z);
 s32 Resource_ResetEntry(u32 entry);
@@ -56,7 +56,7 @@ void Func_02003078(void) {
         state = 999;
       break;
     }
-    WaitFrames(1);
+    wait(1);
     time++;
   } while (state != 999);
   Task_RemoveFar(Func_02002de4);

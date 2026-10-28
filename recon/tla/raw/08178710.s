@@ -953,7 +953,7 @@ BattleEffect_RunRisingDragon:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #64]
 	ldr r3, [sp, #84]
 	adds r1, #1

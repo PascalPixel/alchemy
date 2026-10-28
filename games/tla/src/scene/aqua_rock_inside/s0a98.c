@@ -8,7 +8,7 @@ void Func_02000a98(void) {
   Func_02003688(22, 4, 16, 0);
   for (i = 5; i >= 0; i--) {
     Func_020036b8(33, 55);
-    WaitFrames(15);
+    wait(15);
   }
   GameFlag_SetBit(0xa66);
 }

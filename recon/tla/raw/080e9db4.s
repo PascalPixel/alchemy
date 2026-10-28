@@ -33,7 +33,7 @@ Func_080e9db4:
 .L_080e9df2:
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #59
 	bgt .L_080e9e06
 .L_080e9dfe:
@@ -45,7 +45,7 @@ Func_080e9db4:
 	movs r0, #132
 	bl Sound_PlayFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	movs r6, #0
@@ -54,7 +54,7 @@ Func_080e9db4:
 .L_080e9e1c:
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #19
 	bgt .L_080e9e30
 	ldr r2, [r5, #12]
@@ -63,7 +63,7 @@ Func_080e9db4:
 	bgt .L_080e9e1c
 .L_080e9e30:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	movs r6, #0
@@ -72,7 +72,7 @@ Func_080e9db4:
 .L_080e9e40:
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #19
 	bgt .L_080e9e54
 	ldr r2, [r5, #12]
@@ -81,7 +81,7 @@ Func_080e9db4:
 	bgt .L_080e9e40
 .L_080e9e54:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #0
 	str r3, [r5, #68]
 	str r3, [r5, #40]

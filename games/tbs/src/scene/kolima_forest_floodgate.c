@@ -260,47 +260,47 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   if (*gKolimaForestFloodgateMap == 0) {
     Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, PIXELS(256), PIXELS(462));
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
-    WaitFrames(3);
+    wait(3);
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
-    WaitFrames(3);
+    wait(3);
     MapGrid_CopyCells(79, 34, 1, 2, 83, 25);
-    WaitFrames(30);
+    wait(30);
     MapGrid_CopyCells(67, 34, 2, 5, 79, 25);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(69, 34, 2, 5, 79, 25);
     Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_BURST);
     Sound_Play(SE_LOG_FALL);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(71, 34, 2, 5, 79, 25);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(73, 34, 2, 5, 79, 25);
     MapGrid_CopyCells(75, 38, 2, 1, 79, 29);
-    WaitFrames(4);
+    wait(4);
     MapGrid_CopyCells(77, 38, 2, 1, 79, 29);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(79, 38, 2, 1, 79, 29);
-    WaitFrames(8);
+    wait(8);
     MapGrid_CopyCells(65, 53, 2, 1, 79, 29);
     MapGrid_CopyCells(65, 40, 2, 4, 15, 28);
   } else {
     Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, PIXELS(256), PIXELS(480));
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
-    WaitFrames(3);
+    wait(3);
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
-    WaitFrames(3);
+    wait(3);
     MapGrid_CopyCells(76, 34, 1, 2, 83, 25);
-    WaitFrames(30);
+    wait(30);
     MapGrid_CopyCells(65, 45, 2, 4, 15, 28);
     MapGrid_CopyCells(71, 50, 2, 5, 79, 25);
     Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_CHURN);
     Sound_Play(SE_WATER_DRAIN);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(69, 50, 2, 5, 79, 25);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(67, 50, 2, 5, 79, 25);
-    WaitFrames(6);
+    wait(6);
     MapGrid_CopyCells(65, 50, 2, 5, 79, 25);
-    WaitFrames(30);
+    wait(30);
   }
   if (*gKolimaForestFloodgateMap == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateMap, 9, 30);
@@ -316,12 +316,12 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   // the upper lines shifted, more often as the chance climbs to 100%.
   gKolimaForestFloodgate_ShakeChance = 0;
   Task_AddFrame(KolimaForestFloodgate_CaptureShakeScroll, TASK_PASS_FRAME);
-  WaitFrames(1);
+  wait(1);
   Irq_SetHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
   Sound_Play(SE_WATER_LEVEL);
   gKolimaForestFloodgate_ShakeChance = 0;
   do {
-    WaitFrames(1);
+    wait(1);
     nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
@@ -335,9 +335,9 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_DrawCellPanel(9, 83, 16, 5, 1, 9, 19);
     MapGrid_DrawCellPanel(41, 83, 16, 5, 2, 9, 19);
   }
-  WaitFrames(1);
+  wait(1);
   Irq_SetHandler(IRQ_HBLANK, 0, 0);
-  WaitFrames(1);
+  wait(1);
   Task_Remove(KolimaForestFloodgate_CaptureShakeScroll);
   *(u16 *)gKolimaForestFloodgateMap ^= 1;
   KolimaForestFloodgate_DrawWaterLevel();
@@ -351,16 +351,16 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 72, 176);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, -8, 0);
-  Event_WaitFrames(24);
+  Event_Wait(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
@@ -378,16 +378,16 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 104, 176);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
-  Event_WaitFrames(24);
+  Event_Wait(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
@@ -590,13 +590,13 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   quarter = facing / 0x4000;
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   FieldActor_SetMoveTarget(actor, x, 0, z);
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   Actor_StartCamera(work->camera, (s32)actor);
@@ -604,13 +604,13 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
-  Event_WaitFrames(24);
+  Event_Wait(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMove(actor);
   Actor_SelectAnimation(actor, 1);
   Event_PlaySound(SE_STOP_ACTION_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  Event_WaitFrames(15);
+  Event_Wait(15);
   Event_End();
 }
 

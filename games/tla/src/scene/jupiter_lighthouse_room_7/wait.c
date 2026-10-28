@@ -11,7 +11,7 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02002be4(s32 a, s32 b);
 void Func_02000060(s32 value);
 void Func_020000b4(void);
@@ -46,6 +46,6 @@ void Func_02000160(void) {
 }
 
 void Func_02000184(void) {
-  WaitFrames(10);
+  wait(10);
   Func_02000100();
 }

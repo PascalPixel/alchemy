@@ -72,7 +72,7 @@ void Input_ResetKeyRepeat(void);
 void Sound_PlayFar(s32 cue);
 void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_08104540(void) {
   s32 selectedPages[2];
@@ -109,7 +109,7 @@ s32 Func_08104540(void) {
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  wait(1);
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Heap_AllocEwram(96);
@@ -204,12 +204,12 @@ s32 Func_08104540(void) {
       Input_ResetKeyRepeat();
       redraw = 1;
     }
-    WaitFrames(1);
+    wait(1);
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
-  WaitFrames(1);
+  wait(1);
   Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
@@ -217,6 +217,6 @@ s32 Func_08104540(void) {
   WindowSprite_RedrawSavedRectFar(menu->unknownWindow02c);
   WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
-  WaitFrames(1);
+  wait(1);
   return result;
 }

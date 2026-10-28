@@ -63,17 +63,17 @@ void Message_Show(s32 message) {
   }
 }
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Message_AllTyped(void);
 s32 Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 
 void Message_ShowAndWaitCore(s32 message) {
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   Message_Show(message);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
 }
 
 /// Builds the render entries of a message and queues them in the window;

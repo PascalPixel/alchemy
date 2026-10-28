@@ -14,7 +14,7 @@ s32 Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
@@ -46,11 +46,11 @@ void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
       Window_Close(window, 1);
     else {
       while (Message_AllTyped() == 0)
-        WaitFrames(1);
+        wait(1);
       if (mode != 0) {
         Window_Close(window, 0);
         while (Window_IsClosed(window) == 0)
-          WaitFrames(1);
+          wait(1);
       } else
         Window_Close(window, 1);
       work->speakerVoiceSound = 0;

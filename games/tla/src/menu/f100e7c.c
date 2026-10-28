@@ -42,7 +42,7 @@ void HeapSlot_Release(s32 slot);
 void Heap_Release(void *block);
 s32 GameFlag_Test(s32 flag);
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_InitializeWork(s32 mode);
 void Menu_SuspendFieldTasks(void);
 void Menu_ResumeFieldTasks(void);
@@ -83,7 +83,7 @@ s32 Func_08100e7c(void) {
   gAdventure.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Window_InitializeWork(0);
   backdrop = Heap_AllocEwram(0x2130);
   menu->backdrop = backdrop;
@@ -121,7 +121,7 @@ s32 Func_08100e7c(void) {
   Func_0810106c();
   MenuIcon_ReleaseObjects();
   Menu_ResetTwoResourceEntries();
-  WaitFrames(1);
+  wait(1);
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   Ram_HeapSlots->objectSystem->suspended = 0;
@@ -129,7 +129,7 @@ s32 Func_08100e7c(void) {
   Text_UseExtraTilesFar(0);
   CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
   CopyWords_((void *)0x05000080, backdrop->palette, 128);
-  WaitFrames(1);
+  wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Heap_Release(menu->backdrop);

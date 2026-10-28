@@ -28,7 +28,7 @@ extern const u8 gData_0200308c[];
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_02001d50(void);
 void Func_02001d58(void);
 void Func_02001eb8(s32 skip);

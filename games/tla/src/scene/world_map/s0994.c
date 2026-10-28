@@ -10,7 +10,7 @@ struct EventDestination {
   s16 scene;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
@@ -97,7 +97,7 @@ void Func_02000994(void) {
     if (seen) {
       Func_02004df8_(0x16666, 6);
       Func_02004c98(5, gAdventure.currentOwner);
-      WaitFrames(1);
+      wait(1);
       Actor_SetPositionAndReset_(5, x + 24, z - 12);
       Actor_ArmCallback_(5, 0x6000, 0);
       Func_02004d00_(gAdventure.currentOwner, 0xe000);
@@ -106,13 +106,13 @@ void Func_02000994(void) {
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      WaitFrames(1);
+      wait(1);
       Actor_SetPositionAndReset_(gAdventure.currentOwner, 7312, 0x2000);
       Func_02004df8_(0x10000, 6);
     } else {
       Func_02004df8_(0x16666, 6);
       Func_02004c98(5, gAdventure.currentOwner);
-      WaitFrames(1);
+      wait(1);
       z -= 12;
       Actor_SetPositionAndReset_(5, x + 24, z);
       Actor_ArmCallback_(5, 0x6000, 0);
@@ -134,12 +134,12 @@ void Func_02000994(void) {
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      WaitFrames(1);
+      wait(1);
       Actor_SetPositionAndReset_(gAdventure.currentOwner, 7312, 0x2000);
       Flag_Set(0x9b3);
       Func_02004df8_(0x10000, 6);
     }
-    WaitFrames(8);
+    wait(8);
     Func_02004c28();
   } else {
     struct EventDestination *work = Ram_HeapSlots->eventWork;

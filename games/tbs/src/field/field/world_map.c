@@ -731,7 +731,7 @@ void WorldMap_StartStillPicture(void) {
   Task_SuspendAll(TilesetAnim_Update);
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-  WaitFrames(1);
+  wait(1);
   TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & one],
                           (u8 *)gMapGridCellBuffer);
   perspective->windowTop = 200;
@@ -786,13 +786,13 @@ void WorldMap_LoadAreaGraphics(void) {
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
-  WaitFrames(1);
+  wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry((u32)&ResourceId_DefaultGridCells),
                       decodeBuffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
   Task_ResumeAll(TilesetAnim_Update);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Puts the default world map cells back after the still picture and returns to
@@ -806,12 +806,12 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
-  WaitFrames(1);
+  wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
                       gMapGridCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
   Task_ResumeAll(TilesetAnim_Update);
-  WaitFrames(1);
+  wait(1);
 }
 
 #undef WORLD_MAP_BG_PALETTE

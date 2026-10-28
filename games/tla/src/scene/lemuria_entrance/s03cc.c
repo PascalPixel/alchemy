@@ -6,7 +6,7 @@
 extern u8 MsgFieldAddressCompanion;
 extern const u8 gData_020005e4[];
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Actor_RefreshSelectorById(u32 id);
@@ -36,7 +36,7 @@ void Func_020003cc(void) {
   Func_020005cc(0);
   Actor_SetSpeedParameters_(8, 0x451e, 0x228f);
   Actor_SetMovementTypeById(8, gData_020005e4);
-  FieldEvent_WaitFrames(80);
+  FieldEvent_Wait(80);
   Func_0200059c((s32)&MsgFieldAddressCompanion);
   Func_02000310(6, 90);
   Func_02000310(7, 90);
@@ -60,7 +60,7 @@ void Func_020003cc(void) {
   Func_02000310(4, 90);
   Func_02000310(7, 250);
   Actor_RefreshSelectorById(8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   work = Ram_HeapSlots->eventWork;
   work->delay = 30;
   work->screenEffect = 0x204;

@@ -16,7 +16,7 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02004da8(s32 id, s32 owner);
 void Func_020042e0(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02004da0(s32 id, s32 a, s32 b);
 s32 Func_02004ed0(struct Actor *object);
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
@@ -40,16 +40,16 @@ void Func_020042f8(const u16 *table) {
   Func_02004da8(8, gAdventure.currentOwner);
   Func_02004da8(9, gAdventure.currentOwner);
   Func_02004da8(10, gAdventure.currentOwner);
-  WaitFrames(1);
+  wait(1);
   Func_020042e0(8);
   Func_020042e0(9);
   Func_020042e0(10);
   Actor_SetModeById(9, 0);
-  WaitFrames(1);
+  wait(1);
   Func_02004da0(8, 0, 0);
   Func_02004da0(9, 0, 0);
   Func_02004da0(10, 0, 0);
-  WaitFrames(1);
+  wait(1);
   goto test;
 next:
   id = table[0];
@@ -75,5 +75,5 @@ next:
 test:
   if (*table != 0xffff)
     goto next;
-  WaitFrames(10);
+  wait(10);
 }

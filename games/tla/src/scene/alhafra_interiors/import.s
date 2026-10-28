@@ -16,10 +16,10 @@ GameFlag_SetBit:
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
 	.endif
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000a94
 	.thumb_func
 Func_02000a94:

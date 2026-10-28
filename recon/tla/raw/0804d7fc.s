@@ -148,7 +148,7 @@ Func_0804d7fc:
 	ldr r0, [r7, #124]
 	bl Window_Close
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	bl Menu_EndResourceSelection
 	adds r0, r5, #0
 	add sp, #4

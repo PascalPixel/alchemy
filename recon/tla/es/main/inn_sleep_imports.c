@@ -49,14 +49,14 @@ void Inn_PlaySleep(s32 roomPrice) {
   state = Ram_HeapSlots->eventWork;
   state->effect = 0x209;
   state->delay = 60;
-  WaitFrames(20);
+  wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   Sound_PlayFar(86);
   Sound_WaitForJingle();
-  WaitFrames(10);
+  wait(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  WaitFrames(30);
+  wait(30);
   ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
 }

@@ -96,10 +96,10 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
-    WaitFrames(1);
+    wait(1);
   } else {
     view->targetYaw = facingAngle;
-    WaitFrames(1);
+    wait(1);
   }
 
   BattleHighlight_SetModes(0, 0);
@@ -151,11 +151,11 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   REG_DISPCNT |= 0x6000;
 
   if (missed != 0) {
-    WaitFrames(10);
+    wait(10);
     BattleMotion_ResetObjectAtScaledAnchor(work.actors[0]);
-    WaitFrames(2);
-    WaitFrames(4);
-    WaitFrames(10);
+    wait(2);
+    wait(4);
+    wait(10);
     BattleEvent_Push(0, plan->targetIds[0]);
     BattleEvent_Push(4, (u32)&MsgNimblyDodgesBlow);
     BattleEvent_DispatchQueued();
@@ -189,7 +189,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
           BattleCamera_SetViewAtPairMidpoint(first, second,
                                                    index * 30 / frames + 100);
         }
-        WaitFrames(1);
+        wait(1);
       }
     }
     Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);

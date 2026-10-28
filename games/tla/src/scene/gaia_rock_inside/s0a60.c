@@ -28,7 +28,7 @@ struct Actor *Actor_GetById(u32 id);
 u32 Func_02004904(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Return the table for the current room.
 const void *Func_020009e8(void) {
@@ -98,5 +98,5 @@ void Func_02000af8(s32 unused, u32 id) {
   object->collisionFlags = 1;
   GameFlag_SetBit(*state + 0xa50);
   GameFlag_SetBit(0x200);
-  WaitFrames(20);
+  wait(20);
 }

@@ -76,7 +76,7 @@ Func_02000568:
 	adds r3, r3, r1
 	str r3, [r0, #16]
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5
@@ -161,7 +161,7 @@ Func_0200087c:
 	adds r3, r3, r2
 	str r3, [r0, #16]
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5
@@ -246,7 +246,7 @@ Func_02000994:
 	bl Actor_SetSpritePriority
 	bl Func_020039a0
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #25
 	str r3, [sp, #4]
 	movs r5, #18
@@ -280,7 +280,7 @@ Func_02000994:
 	adds r3, #82
 	strh r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [r6, #12]
 	ldr r2, .L_02008cdc
 	movs r5, #0
@@ -329,7 +329,7 @@ Func_02000994:
 	str r3, [r2, #16]
 	bl Func_02003988
 	movs r0, #4
-	bl WaitFrames
+	bl wait
 	movs r2, #192
 	lsls r2, r2, #18
 	ldr r3, [r2, #108]
@@ -447,7 +447,7 @@ Func_02000994:
 	adds r3, #4
 	strh r3, [r5]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r0, #195
 	lsls r0, r0, #1
 	bl Func_02003b48
@@ -464,19 +464,19 @@ Func_02000994:
 	adds r3, #3
 	strh r3, [r5]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #2
 	strh r3, [r5]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #1
 	strh r3, [r5]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r3, #128
 	lsls r3, r3, #5
 	strh r3, [r5]
@@ -498,7 +498,7 @@ Func_02000994:
 	str r5, [sp, #4]
 	bl Func_02003998
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_020039c0
 	movs r3, #192
 	lsls r3, r3, #18
@@ -586,7 +586,7 @@ Func_02001340:
 	adds r3, #128
 	strh r3, [r7, #18]
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #3
 	bls .L_0200937a
 	ldr r3, [r6, #12]
@@ -604,7 +604,7 @@ Func_02001340:
 	strh r3, [r7, #18]
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #7
 	bls .L_02009398
 	ldr r3, [r6, #12]
@@ -618,7 +618,7 @@ Func_02001340:
 	adds r3, #128
 	strh r3, [r7, #18]
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #3
 	bls .L_020093ba
 	movs r2, #1
@@ -632,7 +632,7 @@ Func_02001340:
 	adds r3, r3, r0
 	str r3, [r6, #12]
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	mov r0, r8
 	ldr r2, [r0, #8]
 	ldr r3, [r6, #8]
@@ -716,7 +716,7 @@ Func_02001474:
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r2, r10
 	adds r2, #85
 	movs r3, #3
@@ -736,7 +736,7 @@ Func_02001474:
 	bl Task_Add
 .L_02009508:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r4, r10
 	ldr r3, [r4, #40]
 	cmp r3, #0
@@ -820,7 +820,7 @@ Func_02001474:
 	mov r2, r10
 	str r3, [r2, #40]
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -847,7 +847,7 @@ Func_02001474:
 	str r3, [r2, #16]
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #7
 	bls .L_020095de
 	bl Func_020039c0
@@ -864,7 +864,7 @@ Func_02001474:
 	movs r3, #0
 	strb r3, [r2]
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	bl Func_020039e0
 	add sp, #68
 	pop {r3, r5, r6, r7}
@@ -961,7 +961,7 @@ Func_02001d24:
 	movs r0, #14
 	bl Func_02003a30
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #178
 	movs r2, #196
 	movs r0, #14
@@ -1024,7 +1024,7 @@ Func_02001d24:
 	movs r0, #13
 	bl Actor_SetPositionAndReset
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #13
 	movs r1, #0
 	bl Func_02003a80
@@ -1199,7 +1199,7 @@ Func_02001d24:
 	movs r0, #12
 	bl Func_02003a30
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #204
 	lsls r2, r2, #8
 	movs r0, #12
@@ -1494,19 +1494,19 @@ Func_02001d24:
 	adds r1, r5, #0
 	bl Actor_SetMovementTypeById
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	adds r1, r5, #0
 	movs r0, #13
 	bl Actor_SetMovementTypeAndWaitById
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	mov r2, r9
 	ldr r0, [r2]
 	bl Actor_Stop
 	movs r0, #14
 	bl Actor_Stop
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #14
 	movs r1, #0
 	movs r2, #40

@@ -74,14 +74,14 @@ void Func_020007d8(void) {
   Func_02001294(6, 0);
   Actor_WatchAndSetScript(6, gAdventure.currentOwner);
   GondowanCliffs_ObjEmote(gAdventure.currentOwner, 258);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
   Actor_SetModeById(gAdventure.currentOwner, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
   Func_0200124c(22, 0, 0);
   GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);

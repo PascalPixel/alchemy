@@ -21,7 +21,7 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
                               s32 reuse);
 void Resource_ResetEntry(s32 slot);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *p;
@@ -67,7 +67,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     last->prev = p;
     p = screen->head;
     do {
-      WaitFrames(1);
+      wait(1);
     } while (p->scale != 0);
     screen->head = p->next;
     Resource_ResetEntry(p->slot);
@@ -108,7 +108,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     p->scaleStep = -32;
     p = screen->head;
     do {
-      WaitFrames(1);
+      wait(1);
     } while (p->scale != 256);
     while (p->next != NULL)
       p = p->next;

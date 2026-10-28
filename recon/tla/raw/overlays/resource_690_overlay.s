@@ -453,7 +453,7 @@ Func_02000fd0:
 	movs r6, #8
 .L_02008ffe:
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, [r7, #12]
 	ldr r2, .L_020091ac
 	subs r6, #1
@@ -464,7 +464,7 @@ Func_02000fd0:
 	movs r0, #10
 	bl Func_0200156c
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #192
 	movs r1, #1
 	movs r2, #224
@@ -488,7 +488,7 @@ Func_02000fd0:
 	movs r0, #10
 	bl Actor_WaitForMoveById
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, .L_020091b0
 	movs r2, #133
 	lsls r2, r2, #2
@@ -516,7 +516,7 @@ Func_02000fd0:
 	cmp r0, #0
 	bne .L_020090f4
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -542,7 +542,7 @@ Func_02000fd0:
 	movs r0, #10
 	bl Actor_OffsetPositionAndResetMotion
 	movs r0, #5
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #10
 	movs r1, #0
 	movs r2, #0
@@ -575,7 +575,7 @@ Func_02000fd0:
 	movs r0, #10
 	bl Actor_WaitForMoveById
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #11
 	str r3, [sp, #0]
 	str r3, [sp, #4]
@@ -588,7 +588,7 @@ Func_02000fd0:
 	movs r1, #2
 	bl Actor_SetModeById
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #131
 	lsls r0, r0, #1
 	adds r0, #255
@@ -620,7 +620,7 @@ Func_02000fd0:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #132
 	mov r3, r8
 	lsls r0, r0, #1
@@ -678,7 +678,7 @@ Func_0200138c:
 	movs r5, #32
 .L_020093d2:
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, [r7, #12]
 	ldr r2, .L_02009554
 	subs r5, #1
@@ -714,7 +714,7 @@ Func_0200138c:
 	movs r5, #48
 .L_02009420:
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, [r7, #12]
 	ldr r2, .L_02009554
 	subs r5, #1
@@ -725,7 +725,7 @@ Func_0200138c:
 	movs r0, #10
 	bl Func_02001620
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	b .L_02009548
 .L_02009442:
 	cmp r6, #19
@@ -750,7 +750,7 @@ Func_0200138c:
 	movs r5, #32
 .L_0200946e:
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, [r7, #12]
 	ldr r2, .L_02009554
 	subs r5, #1
@@ -772,10 +772,10 @@ Func_0200138c:
 	ldr r1, .L_02009558
 	bl Actor_SetMovementTypeById
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 .L_020094aa:
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	b .L_02009548
 .L_020094b2:
 	movs r0, #129
@@ -810,7 +810,7 @@ Func_0200138c:
 	movs r5, #16
 .L_020094f4:
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r3, [r7, #12]
 	ldr r2, .L_02009554
 	subs r5, #1
@@ -821,7 +821,7 @@ Func_0200138c:
 	movs r0, #10
 	bl Func_02001620
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #129
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
@@ -1231,11 +1231,11 @@ Func_02001770:
 	adds r0, r7, #0
 	bl Func_02002010
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_02009790
 .L_020099e6:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_020099ec:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -1551,7 +1551,7 @@ Func_02001a1c:
 	b .L_ja_02009bfe
 .L_ja_02009bf6:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r5, #1
 .L_ja_02009bfe:
 	cmp r5, #179
@@ -1604,11 +1604,11 @@ Func_02001a1c:
 	adds r0, r7, #0
 	bl Func_02002010
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_ja_020099da
 .L_ja_02009c6c:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_ja_02009c72:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -1854,7 +1854,7 @@ Func_02001a1c:
 	b .L_02009cfa
 .L_02009bca:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r5, #1
 .L_02009bd2:
 	cmp r5, #179
@@ -1945,7 +1945,7 @@ Func_02001a1c:
 	b .L_02009c86
 .L_02009c7e:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r5, #1
 .L_02009c86:
 	cmp r5, #179
@@ -1998,11 +1998,11 @@ Func_02001a1c:
 	adds r0, r7, #0
 	bl Func_02002010
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_02009a42
 .L_02009cf4:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_02009cfa:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -2277,11 +2277,11 @@ Func_02001d3c:
 	adds r0, r5, #0
 	bl Func_02002010
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	b .L_02009d6e
 .L_02009f34:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 .L_02009f3a:
 	movs r3, #0
 	str r3, [r5, #108]

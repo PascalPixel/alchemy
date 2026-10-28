@@ -28,7 +28,7 @@ void Func_02000bdc(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 340);
 
   Actor_ArmCallback(4, 0xc000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
   Actor_WaitForMoveById(4);
@@ -39,26 +39,26 @@ void Func_02000bdc(void) {
   Actor_OffsetPositionAndResetMotion(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
-  FieldEvent_WaitFrames(14);
+  FieldEvent_Wait(14);
   Func_02000db0(value);
 }
 
 void Func_02000c58(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 16, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000bdc();
 }
 
 void Func_02000c7c(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, -16, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000bdc();
 }
 
 void Func_02000ca4(void) {
   Actor_ArmCallback(4, 0xc000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000bdc();
 }

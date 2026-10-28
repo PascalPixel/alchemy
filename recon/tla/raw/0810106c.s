@@ -24,7 +24,7 @@ Func_0810106c:
 	str r4, [sp, #0]
 	bl Func_08101638
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #0]
 	movs r5, #2
 .L_081010a0:

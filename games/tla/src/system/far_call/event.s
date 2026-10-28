@@ -5,10 +5,10 @@
 	.thumb_func
 ParentSequence_RunFar:
 	overlay_veneer ParentSequence_Run
-	.global FieldEvent_WaitFramesFar
+	.global FieldEvent_WaitFar
 	.thumb_func
-FieldEvent_WaitFramesFar:
-	overlay_veneer Event_WaitFrames
+FieldEvent_WaitFar:
+	overlay_veneer Event_Wait
 	.global Event_StartFar
 	.thumb_func
 Event_StartFar:

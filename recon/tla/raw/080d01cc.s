@@ -38,7 +38,7 @@ ScreenTransition_Start:
 	mov r0, r10
 	bl Fade_FromBlack
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_080d04d2
 .L_080d0220:
 	movs r3, #160
@@ -50,7 +50,7 @@ ScreenTransition_Start:
 	mov r0, r10
 	bl BattleEffect_StartBufferInterpolation
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_080d027c
 	ldr r4, .L_080d0280
 	ldrh r3, [r4]
@@ -135,7 +135,7 @@ ScreenTransition_Start:
 	ldr r0, .L_080d0304
 	bl Task_Add
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_080d0308
 	ldr r4, .L_080d030c
 	ldrh r3, [r4]
@@ -221,7 +221,7 @@ ScreenTransition_Start:
 	movs r0, #15
 	bl ScreenTransition_FillTilemapAndSolidTile
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d03fc
@@ -298,7 +298,7 @@ ScreenTransition_Start:
 	mov r9, r0
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #0
 	bne .L_080d048e
 	movs r1, #144

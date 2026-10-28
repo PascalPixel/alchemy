@@ -23,7 +23,7 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_ObjWalk(gAdventure.currentOwner, 272, 336);
   ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0xc000, 0);
   ShrineOfTheSeaGod_ObjPlace(14, 272 << 16, 336 << 16);
-  WaitFrames(1);
+  wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
   ShrineOfTheSeaGod_ObjTurn(14, 0, 0);
   ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0x8000, 40);

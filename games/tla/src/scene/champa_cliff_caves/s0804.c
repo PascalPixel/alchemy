@@ -19,40 +19,40 @@ void Func_02000804(s32 actor) {
   Func_020005e8(actor);
   Func_02003534_(8, 0x3000);
   Actor_SetModeById(8, 7);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02003544(8, 257, 50);
   Actor_SetModeById(8, 1);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Func_0200351c(8, 0, 5);
   Actor_SetModeById(8, 7);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02003544(8, 261, 50);
   Actor_SetModeById(8, 1);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Func_0200351c(8, 0, 5);
   Actor_SetModeById(8, 7);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02003544(8, 256, 50);
   Actor_SetModeById(8, 1);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Func_0200351c(8, 0, 5);
   Motion_SetVarCbAndRefresh(8, 2);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_0200351c(8, 0, 5);
   Func_0200067c(0);
   Func_02003534(8, 0x8000);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02003544(8, 258, 30);
   /* FAKEMATCH: called as returning a value, which the native's argument order
    * shows (r1 before r0); scene_call.h declares it void for the scenes that
    * match so. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200351c(8, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
   } else {
-    FieldEvent_WaitFrames(35);
+    FieldEvent_Wait(35);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Func_0200351c(8, 0, 5);
   }

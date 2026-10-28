@@ -38,7 +38,7 @@ extern u8 gData_020023c4[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 

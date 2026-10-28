@@ -6,7 +6,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_02003e64();
@@ -30,7 +30,7 @@ void Func_02003620(void) {
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
   Call2((void (*)())Actor_SetSingleChildFlags, (s32)object0, 0);
   Call2((void (*)())Actor_SetModeById, *(s32 *)((u8 *)v5 + 0), 18);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_Wait, 40);
   *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
   ((void (*)())Event_FinishScreenTransition)();
   ((void (*)())Event_WaitTransitionFrames)();

@@ -7,7 +7,7 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02004df4();
 void Func_02004e3c();
 void Func_02004e5c();
@@ -27,7 +27,7 @@ s32 Actor_GetById();
 void Actor_SetModeById();
 s32 Random16Far();
 void FieldMessage_Show();
-void WaitFrames();
+void wait();
 extern u8 MsgGaiaRockInside01[];
 
 void Func_02002020(void) {
@@ -52,19 +52,19 @@ void Func_02002020(void) {
   Call3((void (*)())Actor_ResetAndSetPosition, 13, 0x1f0, 0x2c8);
   FIELD_AT(v_r10, s32, 40) = 0x60000;
   Call1((void (*)())Actor_WaitForMoveById, 13);
-  Call1((void (*)())FieldEvent_WaitFrames, 45);
+  Call1((void (*)())FieldEvent_Wait, 45);
   Call3((void (*)())Actor_SetAngleToward, 8, FIELD_AT(v_r5, s32, 0), 0);
   Call3((void (*)())Actor_SetAngleToward, 9, FIELD_AT(v_r5, s32, 0), 0);
   Call1((void (*)())Func_02005014, 0x240);
   Call2((void (*)())Actor_SetModeById, 8, 5);
   Call2((void (*)())Actor_SetModeById, 9, 5);
-  Call1((void (*)())WaitFrames, 30);
+  Call1((void (*)())wait, 30);
   Call2((void (*)())Actor_SetModeById, 8, 2);
   Call2((void (*)())Actor_SetModeById, 9, 2);
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Actor_SetModeById, 8, 3);
   Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_Wait, 40);
   Call1((void (*)())Func_02005014, 191);
   t26 = Value1((s32 (*)())GameFlag_Test, 0xa62);
   v_r5 = 119;
@@ -77,7 +77,7 @@ L_0200a10a:
   t28 = Value0((s32 (*)())Random16Far);
   FIELD_AT(v_r8, s32, 40) = t28;
   v_r5 = (v_r5 + -1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if (v_r5 >= 0)
     goto L_0200a10a;
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x4000, 0xccc);
@@ -92,7 +92,7 @@ L_0200a10a:
     FIELD_AT(v_r7, s32, 40) = t34;
     t35 = Value0((s32 (*)())Random16Far);
     FIELD_AT(v_r8, s32, 40) = t35;
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())wait, 1);
   }
   v_r5 = 9;
 L_0200a18c:
@@ -101,7 +101,7 @@ L_0200a18c:
   t38 = Value0((s32 (*)())Random16Far);
   FIELD_AT(v_r8, s32, 40) = t38;
   v_r5 = (v_r5 + -1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if (v_r5 >= 0)
     goto L_0200a18c;
   v_r5 = 40;
@@ -115,14 +115,14 @@ L_0200a1d8:
   t44 = Value0((s32 (*)())Random16Far);
   FIELD_AT(v_r8, s32, 40) = t44;
   v_r5 = (v_r5 + -1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if (v_r5 >= 0)
     goto L_0200a1d8;
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
 L_0200a1f8:
   Call2((void (*)())Actor_SetModeById, 8, 4);
   Call2((void (*)())Actor_SetModeById, 9, 4);
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_Wait, 30);
   t50 = Value1((s32 (*)())Actor_GetById, gAdventure.currentOwner);
   if (t50 == 0)
     goto L_0200a22e;

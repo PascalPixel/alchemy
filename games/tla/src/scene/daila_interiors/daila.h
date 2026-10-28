@@ -6,7 +6,7 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Import_EventSetMessageId(s32 message);
 void Import_EventShowMessageAndWait(s32 actor, s32 flags);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
@@ -34,7 +34,7 @@ static inline void Daila_FlagClr(s32 flag) {
 
 static inline void Daila_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitFrames(frames);
+  FieldEvent_Wait(frames);
 }
 
 static inline void Daila_MessageSet(s32 message) {

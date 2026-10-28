@@ -8,7 +8,7 @@ extern const u8 gData_02003fb8[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Func_02000038(const void *data);
 void Func_020001d0(const void *data);
@@ -31,7 +31,7 @@ void Func_02003aa0(void) {
   Func_020001d0(gData_02003f92);
   if (GameFlag_Test(519) == 0) {
     Func_02002140();
-    WaitFrames(10);
+    wait(10);
   }
   Func_02001ff4();
   if (GameFlag_Test(265) == 0) {

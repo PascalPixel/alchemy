@@ -81,7 +81,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
 
   if (work != NULL) {
     while (Message_AllTyped() == 0) {
-      WaitFrames(1);
+      wait(1);
     }
 
     if (flags & 0x20) {
@@ -91,7 +91,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
     if (!(flags & 4)) {
       Window_Close(work, release);
       while (Window_IsClosed(work) == 0) {
-        WaitFrames(1);
+        wait(1);
       }
     }
   }
@@ -100,7 +100,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   *(u8 *)(base + TEXT_WORK_TAIL + 5) = zero;
   *(u16 *)(base + TEXT_WORK_TAIL) = zero;
   *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
-  WaitFrames(3);
+  wait(3);
 }
 
 void WindowSystem_Update(void) {

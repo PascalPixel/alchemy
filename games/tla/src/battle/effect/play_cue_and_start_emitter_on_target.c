@@ -44,7 +44,7 @@ s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode
   if (object != 0) {
     Sound_PlayFar(0x7C);
     Actor_SetMode(object, 4);
-    WaitFrames(0xC);
+    wait(0xC);
     result = BattleEffect_StartRandomParticleEmitter(effect, mode);
   }
   return result;

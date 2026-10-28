@@ -5,7 +5,7 @@
 void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000ff0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -36,7 +36,7 @@ void Func_02000c8c(void) {
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Actor_CenterOnColumn_(gAdventure.currentOwner, 2, -4);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020010f0(*(s16 *)(work + 340));

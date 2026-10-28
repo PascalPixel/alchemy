@@ -59,7 +59,7 @@ again:
       spriteFlags = leader->sprite->flags;
     Event_Start();
     Actor_SelectAnimationFar(leader, 6);
-    WaitFrames(6);
+    wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
@@ -82,17 +82,17 @@ again:
       Actor_SelectAnimationFar(platform, 7);
       leader->y.fixed -= Q16_ONE;
       leader->groundHeight -= Q16_ONE;
-      WaitFrames(2);
+      wait(2);
       leader->y.fixed -= Q16_ONE;
       leader->groundHeight -= Q16_ONE;
-      WaitFrames(10);
+      wait(10);
       leader->y.fixed += Q16_ONE;
       leader->groundHeight += Q16_ONE;
-      WaitFrames(4);
+      wait(4);
       leader->y.fixed += Q16_ONE;
       leader->groundHeight += Q16_ONE;
     } else {
-      WaitFrames(6);
+      wait(6);
     }
     *flags = saved;
     Event_End();
@@ -103,7 +103,7 @@ again:
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
       Actor_SelectAnimationFar(leader, 1);
-      WaitFrames(6);
+      wait(6);
       goto again;
     }
     result = 0;
@@ -176,7 +176,7 @@ s32 Field_ClimbDown(void) {
     actor->velocityY = 0x40000;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
-    Event_WaitFrames(6);
+    Event_Wait(6);
     gAdventure.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->facing = FACING_NORTH;
@@ -235,20 +235,20 @@ s32 Field_ClimbUp(void) {
       actor->steeringFlags = 0;
       Actor_SetPositionAndCommit(gAdventure.leaderActorId, gridX, gridZ);
       Actor_SelectAnimationFar(actor, 6);
-      WaitFrames(4);
+      wait(4);
       Actor_SelectAnimationFar(actor, 7);
       actor->velocityY = 0x40000;
-      WaitFrames(4);
+      wait(4);
       actor->motionFlags = 0;
       spriteFlags &= 0xfe;
       Actor_SetSpriteFlagsFar(actor, spriteFlags);
       actor->speedLimit = Q16_ONE;
       actor->velocityY = 0;
       Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
-      WaitFrames(4);
+      wait(4);
       gAdventure.movementMode = LEADER_MOVEMENT_CLIMB;
       actor->steeringFlags = ACTOR_FACES_MOTION;
-      WaitFrames(8);
+      wait(8);
     } else {
       goto failure;
     }
@@ -263,7 +263,7 @@ s32 Field_ClimbUp(void) {
     spriteFlags |= 1;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, spriteFlags);
-    Event_WaitFrames(4);
+    Event_Wait(4);
     gAdventure.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
   }

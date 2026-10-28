@@ -21,7 +21,7 @@ void Func_02001a68(void) {
   Call1((void (*)())Func_02003fa4, 0);
   Call3((void (*)())Actor_SetAngleToward, 9, gAdventure.currentOwner,
         0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Func_02003fc4();
@@ -43,7 +43,7 @@ void Func_02001a68(void) {
     Call2((void (*)())Actor_SetPartAttribute,
           Actor_GetById(gAdventure.currentOwner), 15);
     Call2((void (*)())Actor_SetModeById, 9, 3);
-    Call1((void (*)())FieldEvent_WaitFrames, 20);
+    Call1((void (*)())FieldEvent_Wait, 20);
     Func_02003fc4();
     Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
     Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
@@ -57,15 +57,15 @@ void Func_02001a68(void) {
     object->update = update;
     Call2((void (*)())Actor_SetMovementTypeById, 9,
           (s32)gData_020045a4);
-    Call1((void (*)())FieldEvent_WaitFrames, 30);
+    Call1((void (*)())FieldEvent_Wait, 30);
     Actor_GetById(10)->update = update;
     Call2((void (*)())Actor_SetMovementTypeById, 10,
           (s32)gData_020045f0);
     do {
-      Call1((void (*)())WaitFrames, 1);
+      Call1((void (*)())wait, 1);
     } while (*done == 0);
     Func_020034ec();
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())wait, 1);
     ((struct IsletsEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

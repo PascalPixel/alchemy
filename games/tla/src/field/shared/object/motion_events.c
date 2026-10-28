@@ -29,7 +29,7 @@ void Actor_WaitForAnimationChange(u32 objectId) {
     savedNo = &saved;
     *savedNo = group->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
-      WaitFrames(1);
+      wait(1);
       if (*savedNo != group->lastNo)
         break;
       if (group->entries[0] != NULL && group->entries[0]->script != NULL &&
@@ -62,7 +62,7 @@ void Actor_Jump(u32 objectId, s32 speed, s32 eventId) {
     } else {
       Sound_PlayFar(0x98);
     }
-    Event_WaitFrames(eventId);
+    Event_Wait(eventId);
   }
 }
 

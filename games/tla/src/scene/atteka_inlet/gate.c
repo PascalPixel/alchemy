@@ -15,7 +15,7 @@ void GameFlag_SetBit(s32 flag);
 struct FieldActor *Actor_GetById(s32 id);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_0200097c(void);
 void Func_02001010(void);
 void Func_02001018(void);
@@ -58,7 +58,7 @@ void Func_020007ac(void) {
       moved = 1;
     }
     Func_02001060(14, 120 << 16, 376 << 16);
-    WaitFrames(1);
+    wait(1);
     Actor_Jump(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)

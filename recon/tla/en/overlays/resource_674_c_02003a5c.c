@@ -21,7 +21,7 @@ void Func_02003790(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
 void Actor_SetModeById(u32 id, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(u32 id);
 void Func_02003d0c(void);
@@ -53,12 +53,12 @@ void Func_02003a5c(struct PushTarget target, s32 id, void (*callback)(void)) {
   Func_02003790(0, cell.x, cell.z, width, height, 0);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gAdventure.currentOwner, 8);
-  WaitFrames(15);
+  wait(15);
   Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (target.x - start.x) >> 17,
                                             (target.z - start.z) >> 17);
   Actor_GetById(gAdventure.currentOwner)->update = Func_02003d0c;
-  WaitFrames(4);
+  wait(4);
   Func_02003de4(object, 2);
   Func_02003ffc(239);
   Actor_SetSpeedParameters(id, 0x8000, 0x1999);

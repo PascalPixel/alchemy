@@ -11,18 +11,18 @@ void Func_02000958(s32 value) {
   Func_02003eac(0);
   Func_02003ef4(188);
   Func_02003cf4(107, 96, 19, 29, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02003cf4(108, 96, 19, 29, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02003cf4(107, 98, 19, 29, width, height);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02003cf4(108, 98, 19, 29, width, height);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_Wait(15);
   Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   Actor_GetById(gAdventure.currentOwner)->speedLimit =
       Actor_GetById(gAdventure.currentOwner)->acceleration = 0x8000;
   Func_02003ef4(123);
   Actor_ResetAndSetPositionInMode2(gAdventure.currentOwner, 312, 496);
-  FieldEvent_WaitFrames(5);
+  FieldEvent_Wait(5);
   Func_02003e5c(value);
 }

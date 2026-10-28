@@ -6,7 +6,7 @@ void Actor_WaitForCommandEnd(struct ActorView *object) {
   if (object->value00 != 0 &&
       ((const s32 *)object->value00)[object->value04] != 17) {
     do {
-      WaitFrames(1);
+      wait(1);
       cnt++;
       if (cnt > 599)
         break;

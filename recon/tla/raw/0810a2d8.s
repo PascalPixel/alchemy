@@ -127,23 +127,23 @@ Func_0810a2d8:
 	bl Func_0810857c
 	bl Message_CloseFinishedWindowsFar
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r0, #100
 	bl Sound_PlayFar
 	movs r0, #110
-	bl WaitFrames
+	bl wait
 	movs r0, #100
 	bl Sound_PlayFar
 	movs r0, #110
-	bl WaitFrames
+	bl wait
 	movs r0, #100
 	bl Sound_PlayFar
 	movs r0, #110
-	bl WaitFrames
+	bl wait
 	movs r0, #112
 	bl Sound_PlayFar
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	mov r2, r8
 	strh r6, [r2, r5]
 	ldr r1, [sp, #12]

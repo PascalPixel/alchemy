@@ -31,8 +31,8 @@ void Func_02004be4(s32 skip);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetModeById(u32 id, s32 mode);
 void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 void Func_02000fa4(void);
 void Func_02004c9c(s32 cue);
 void Camera_FollowActor(u32 id, s32 mode);
@@ -64,20 +64,20 @@ void Func_02000514(void) {
       Func_02004c7c(gate->x + 0x180000, gate->z, 2, 0);
       Actor_SetModeById(15, 3);
       Actor_OffsetPositionAndResetMotion(15, 0, 16);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       gate->gravity = 0xccc;
       gate->motionFlags = 3;
       i = 0;
       while (gate->y > 0) {
         i++;
-        WaitFrames(1);
+        wait(1);
         if (i > 59)
           break;
       }
       Func_02000fa4();
       Func_02004c9c(240);
       Actor_SetModeById(15, 8);
-      FieldEvent_WaitFrames(60);
+      FieldEvent_Wait(60);
       Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02004a9c();
     }

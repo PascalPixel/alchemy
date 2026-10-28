@@ -37,7 +37,7 @@ s32 Shop_ChooseMember(void) {
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
-      WaitFrames(1);
+      wait(1);
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
       } else {
@@ -59,7 +59,7 @@ s32 Shop_ChooseMember(void) {
       Window_CloseFar(listWindow, 2);
       Window_CloseFar(shop->itemWindow, 2);
       Window_CloseFar(shop->moneyWindow, 2);
-      WaitFrames(1);
+      wait(1);
       return 0;
     }
 
@@ -73,7 +73,7 @@ s32 Shop_ChooseMember(void) {
       memberIndex++;
       redraw = 1;
     }
-    WaitFrames(1);
+    wait(1);
   }
 }
 
@@ -170,11 +170,11 @@ s32 Shop_SelectSell(s32 unitId) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     Window_CloseFar(descriptionWindow, 2);
-    WaitFrames(1);
+    wait(1);
     if (result != 0)
       break;
 
@@ -261,7 +261,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     shop->mode = 0xc;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 0x30);
     result = Shop_SelectQuantity(0, quantityLimit, unitSalePrice);
-    WaitFrames(1);
+    wait(1);
     Icon_PrepareActorFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);
   }

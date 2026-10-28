@@ -40,5 +40,5 @@ void Menu_EndResourceSelection(void) {
     i += 1;
   }
   HeapSlot_Release(232);
-  WaitFrames(1U);
+  wait(1U);
 }

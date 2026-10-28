@@ -20,7 +20,7 @@ s32 Actor_GetById();
 s32 Actor_FindInCell();
 s32 Func_02003aac();
 s32 Func_02003a54();
-void WaitFrames();
+void wait();
 void Func_02003c54();
 void Func_02003a84();
 s32 Func_02003a8c();
@@ -84,7 +84,7 @@ L_0200840a:
   r5 = 204;
   Call2((void (*)())Func_02003a54, r8, 8);
   r5 = r5 << 6;
-  Call1((void (*)())WaitFrames, 15);
+  Call1((void (*)())wait, 15);
   r5 = r5 + 51;
   Call1((void (*)())Func_02003c54, 185);
   FIELD_AT(r6, s32, 48) = r5;

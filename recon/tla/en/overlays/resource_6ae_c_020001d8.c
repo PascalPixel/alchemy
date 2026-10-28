@@ -19,7 +19,7 @@ extern const u8 gData_02005b0c[];
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
@@ -51,7 +51,7 @@ next:
     return;
   PlaceObject(8, 0x2000000, 0x1080000);
   PlaceObject(9, 0x2000000, 0x10f0000);
-  WaitFrames(1);
+  wait(1);
   Actor_SetSpritePriority(8, 1);
   object = Actor_GetById(8);
   object->motionFlags = 4;

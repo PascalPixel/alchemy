@@ -317,7 +317,7 @@ Func_080d50f8:
 	str r2, [sp, #8]
 	bl Actor_SetSingleChildFlagsFar
 	movs r0, #6
-	bl Event_WaitFrames
+	bl Event_Wait
 	movs r5, #0
 	mov r3, r11
 	strb r5, [r3]

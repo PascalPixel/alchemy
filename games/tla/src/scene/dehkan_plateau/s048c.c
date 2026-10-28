@@ -4,7 +4,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
@@ -36,18 +36,18 @@ loop:
     Func_02003df8(185);
     Call3((void (*)())Func_02003c00, 0x10000, 0x40000, 0x10000);
     Func_02000974(0);
-    WaitFrames(8);
+    wait(8);
     Func_02003ba0(object, 2);
     Func_02000bc0(-4, object->terrainId, id);
     Func_02000974(1);
-    WaitFrames(16);
+    wait(16);
     Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
-    WaitFrames(8);
+    wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
-    WaitFrames(2);
+    wait(2);
     Func_02003df8(188);
     Func_02000aa8();
-    WaitFrames(20);
+    wait(20);
     GameFlag_SetBit(flag);
     GameFlag_SetBit(flag + 1);
   }

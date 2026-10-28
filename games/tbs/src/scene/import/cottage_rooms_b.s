@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
 	.set import.__umodsi3, 1
-	.set import.WaitFrames, 1
+	.set import.wait, 1
 	.set import.ArcTan2, 1
 	.set import.Trig_Sin, 1
 	.set import.HeapSlot_Alloc, 1
@@ -30,7 +30,7 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_Wait, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Scene_AssignViewFlags, 1

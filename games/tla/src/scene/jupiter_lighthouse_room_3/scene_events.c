@@ -22,12 +22,12 @@ void Func_02000134(s32 unused, s32 id) {
     placed = 1;
   }
   if (placed) {
-    WaitFrames_(10);
+    wait_(10);
     Func_02002470(134);
     for (i = 0; i < 30; i++) {
       if (object->y <= object->terrainHeight && object->velocityY == 0)
         break;
-      WaitFrames(1);
+      wait(1);
     }
     object->motionFlags = 0;
     mode = 0;

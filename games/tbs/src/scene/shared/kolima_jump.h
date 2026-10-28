@@ -22,7 +22,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   if (ret == 0) {
     Event_Start();
     Actor_SelectAnimation(actor, 6);
-    WaitFrames(6);
+    wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
@@ -39,13 +39,13 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Import_ActorSetAnimation(ACTOR_FIRST_PLACED + 2, 7);
     actor->y.fixed += -PIXELS(1);
     actor->groundHeight += -PIXELS(1);
-    WaitFrames(2);
+    wait(2);
     actor->y.fixed += -PIXELS(1);
     actor->groundHeight += -PIXELS(1);
-    WaitFrames(10);
+    wait(10);
     actor->y.fixed += PIXELS(1);
     actor->groundHeight += PIXELS(1);
-    WaitFrames(4);
+    wait(4);
     actor->y.fixed += PIXELS(1);
     actor->groundHeight += PIXELS(1);
     *flags = saved;

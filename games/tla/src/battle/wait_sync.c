@@ -41,7 +41,7 @@ s32 LinkBattle_WaitSync(void) {
           if (sig[2] == peer[2] && sig[3] == peer[3])
             return 0;
         }
-        WaitFrames(1);
+        wait(1);
       }
     }
     return -1;
@@ -76,7 +76,7 @@ s32 LinkBattle_SyncTurn(void) {
     sig[1] = 'x';
     sig[4] = 'T';
     sig[5] = 'U';
-    WaitFrames(1);
+    wait(1);
     for (;;) {
       if ((gLinkStatus & 3) != 3) {
         if (++lost > 24)
@@ -89,7 +89,7 @@ s32 LinkBattle_SyncTurn(void) {
             sig[5] == peer[5])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // "rn"
@@ -106,7 +106,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (sig[6] == peer[6] && sig[7] == peer[7])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // "EXEC"
@@ -126,7 +126,7 @@ s32 LinkBattle_SyncTurn(void) {
             sig[3] == peer[3])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // "tu"
@@ -144,7 +144,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (sig[4] == peer[4] && sig[5] == peer[5])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // "RN": wait for the peer to move on from "rn".
@@ -159,7 +159,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (peer[6] != 'r' || peer[7] != 'n')
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   return 0;

@@ -213,14 +213,14 @@ Func_080ea14c:
 	cmp r2, #0
 	bge .L_080ea2d4
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #139
 	bl Sound_PlayFar
 	movs r1, #2
 	ldr r0, [sp, #40]
 	bl Actor_SetMode
 	movs r0, #60
-	bl Event_WaitFrames
+	bl Event_Wait
 	ldr r2, [sp, #40]
 	movs r3, #0
 	adds r2, #100
@@ -231,7 +231,7 @@ Func_080ea14c:
 	str r3, [r1, #108]
 	bl Sound_PlayFar
 	movs r0, #80
-	bl Event_WaitFrames
+	bl Event_Wait
 	ldr r1, .L_080ea38c
 	ldr r0, [sp, #40]
 	bl Actor_StartScriptFar
@@ -770,7 +770,7 @@ Func_080ea14c:
 	movs r1, #0
 	movs r0, #1
 	str r1, [sp, #8]
-	bl WaitFrames
+	bl wait
 	movs r1, #186
 	ldr r3, [sp, #36]
 	lsls r1, r1, #2
@@ -789,7 +789,7 @@ Func_080ea14c:
 	str r3, [r2, #24]
 	str r3, [r2, #28]
 	movs r0, #10
-	bl Event_WaitFrames
+	bl Event_Wait
 	ldr r0, .L_080ea7bc
 	bl Task_Remove
 	bl BattleEffect_PrepareBufferInterpolation

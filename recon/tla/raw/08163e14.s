@@ -165,7 +165,7 @@ Func_08163e14:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #197
 	lsls r1, r1, #1
 	adds r1, #255
@@ -737,7 +737,7 @@ Func_08163e14:
 	movs r0, #1
 	str r3, [r2]
 	add r9, r7
-	bl WaitFrames
+	bl wait
 	mov r0, r9
 	cmp r0, #124
 	beq .L_081643d0

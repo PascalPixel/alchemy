@@ -75,7 +75,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 s32 Func_080ce31c(s32 kind);
@@ -166,7 +166,7 @@ void Func_080e572c(void) {
                         Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
   Sound_PlayFar(130);
-  WaitFrames(1);
+  wait(1);
   work->phase = 0;
   work->timer = 0;
   work->paletteMode = 1;
@@ -177,7 +177,7 @@ void Func_080e572c(void) {
   pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
   frame = 0;
   while (work->phase != 999) {
-    WaitFrames(1);
+    wait(1);
     if (work->phase == 999)
       frame = 999;
     Field_RunPsynergyEvent(pending, work->shake, frame);

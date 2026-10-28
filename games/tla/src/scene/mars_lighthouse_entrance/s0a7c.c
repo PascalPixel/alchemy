@@ -37,10 +37,10 @@ void Func_02000a7c(void) {
   Func_02004d10(0x10000, 0x2000);
   Camera_SetBounds(0x3680000, -1, 0xa80000, 1);
   Func_02004d20();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Camera_SetBounds(0x3680000, -1, 0x1080000, 1);
   Func_02004d20();
-  FieldEvent_WaitFrames(120);
+  FieldEvent_Wait(120);
   Func_02004cb0();
 }
 
@@ -57,7 +57,7 @@ void Func_02000af4(void) {
     party[0x2c2] = 2;
   }
   Func_02004d30(14);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02004718();
 }
 

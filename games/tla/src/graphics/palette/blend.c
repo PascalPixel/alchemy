@@ -16,7 +16,7 @@ void ScreenTransition_InitializeState(s32 value) {
   state->mode = value;
   state->value = 0;
   Task_Add((s32)(ScreenTransition_UpdateDissolve), TASK_PASS_VBLANK);
-  WaitFrames(0x78);
+  wait(0x78);
 }
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,

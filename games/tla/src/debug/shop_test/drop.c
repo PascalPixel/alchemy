@@ -4,7 +4,7 @@
 
 void Func_02000df8();
 struct Actor *Actor_GetById();
-void WaitFrames();
+void wait();
 
 void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
@@ -21,7 +21,7 @@ void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
      * barrier the bound's first byte comes first. */
     __asm__ volatile("" : "+l"(object));
     while (object->scaleX < 0x10000) {
-      WaitFrames(1);
+      wait(1);
       scale = object->scaleX;
       /* FAKEMATCH: and loads it again before it builds the step. */
       __asm__ volatile("" : "+l"(scale));
@@ -43,6 +43,6 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
     object->y = 0x200000;
     object->motionFlags = 3;
     object->gravity = 0x170a;
-    Call1((void (*)())WaitFrames, 50);
+    Call1((void (*)())wait, 50);
   }
 }

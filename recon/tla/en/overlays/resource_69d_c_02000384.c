@@ -15,8 +15,8 @@
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_020000c0(void);
 void Func_0200017c(void);
 void Func_020001ac(void);
@@ -54,13 +54,13 @@ s32 Func_02000384(void) {
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -0x780000;
     Event_StartScreenTransition();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     i = 0;
     if (leader->y < 0) {
     rise:
       leader->terrainHeight = leader->y = leader->y + 0x30000;
       leader->angle += 0x1800;
-      WaitFrames(2);
+      wait(2);
       i++;
       if (i <= 89 && leader->y < 0)
         goto rise;
@@ -71,7 +71,7 @@ s32 Func_02000384(void) {
     leader->velocityY = 0x30000;
     leader->gravity = 0x8000;
     Actor_SetModeById(gAdventure.currentOwner, 1);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
     leader->gravity = 0x10000;
     leader->priorityFlags |= 64;
     Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;

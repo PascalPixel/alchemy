@@ -4,7 +4,7 @@
 FarCall_OverworldTable:
 	export SceneSequence_RunFar, SceneSequence_Run
 	export ParentSequence_RunFar, ParentSequence_Run
-	export Event_WaitFramesFar, Event_WaitFrames
+	export Event_WaitFar, Event_Wait
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End
 	overlay_veneer Event_RunActorUpdateAndWait

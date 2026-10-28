@@ -19,7 +19,7 @@ extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];
 struct Actor *Actor_GetById(u32 id);
 void Func_02005f94(s32 cue);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_02005ed4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
@@ -38,7 +38,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_02005d6c(struct Actor *object, const u8 *script);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_020040b0(void);
 void Func_02005f3c(void);
 
@@ -49,7 +49,7 @@ void Func_02004138(s32 idA, s32 idB) {
   s32 i;
 
   Func_02005f94(78);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Call2(Func_02005ed4, 0x8000, 0x1000);
   Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
                              ((s16 *)&a->z)[1] << 16, 1);
@@ -63,7 +63,7 @@ void Func_02004138(s32 idA, s32 idB) {
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gData_020060e0);
   Func_02005f94(194);
-  FieldEvent_WaitFrames(45);
+  FieldEvent_Wait(45);
   Func_02005e94(idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
@@ -82,16 +82,16 @@ void Func_02004138(s32 idA, s32 idB) {
     Animation_SetStateFlags(spark, 1);
     Func_02005d6c(spark, gData_02006094);
     REG_BLDALPHA = 0x1004;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x100a;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x1010;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x100a;
-    WaitFrames(2);
+    wait(2);
   }
   REG_BLDALPHA = 0x1008;
-  WaitFrames(30);
+  wait(30);
   for (i = 0; i != 16; i++) {
     spark = Import_ActorCreate(0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
@@ -115,10 +115,10 @@ void Func_02004138(s32 idA, s32 idB) {
       b->speedLimit = 0x3333;
       Actor_SetMovementTypeById(idB, gData_02006104);
     }
-    WaitFrames(8);
+    wait(8);
   }
   Func_02005f94(220);
-  WaitFrames(16);
+  wait(16);
   for (i = 2; i != 32; i += 2) {
     spark = Import_ActorCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
     spark->action = Random16Far();
@@ -138,10 +138,10 @@ void Func_02004138(s32 idA, s32 idB) {
     Func_02005d6c(spark, gData_020060c0);
   }
   Func_02005f94(220);
-  WaitFrames(50);
+  wait(50);
   Value2(Func_02005f04, 0x7fff, 0);
   Value1(Func_02005f14, 8);
-  WaitFrames(16);
+  wait(16);
   Call3(Func_02005dcc, 0, 0, 0);
   Func_02005e94(idA, 0);
   Func_02005e94(idB, 0);
@@ -151,9 +151,9 @@ void Func_02004138(s32 idA, s32 idB) {
   Actor_SetMovementTypeById(idA, gData_02006128);
   Actor_SetMovementTypeById(idB, gData_02006158);
   b->update = Func_020040b0;
-  WaitFrames(120);
+  wait(120);
   b->update = 0;
   Func_02005f94(390);
   Func_02005f3c();
-  WaitFrames(1);
+  wait(1);
 }

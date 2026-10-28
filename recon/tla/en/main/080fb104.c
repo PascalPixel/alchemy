@@ -58,7 +58,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 void Func_080fabe0(void);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 
 s32 Func_080fb104(void) {
@@ -147,7 +147,7 @@ s32 Func_080fb104(void) {
       }
     }
     Func_080f8a44(column * 40 + 86, row * 8 + 30);
-    WaitFrames(1);
+    wait(1);
 
     if ((gInput.pressed & 1) != 0) {
       if (commandStates[commandIndex] == -1) {

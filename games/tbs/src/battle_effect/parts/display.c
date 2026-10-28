@@ -24,7 +24,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Scrolls BG1 by (scrollStepX, scrollStepY) once every scrollInterval

@@ -292,7 +292,7 @@ Func_080fbe6c:
 	bl Sound_PlayFar
 .L_080fc0d2:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_080fc0d8:
 	movs r0, #168
 	lsls r0, r0, #1

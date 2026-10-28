@@ -59,7 +59,7 @@ void Func_081091cc(void *window, s32 itemId, s32 value, s32 kind);
 void Shop_DrawMsg(void *window, s32 message);
 void Sound_PlayFar(s32 cue);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_CloseFar(void *window, s32 style);
 void Func_08109188(void);
 void WindowSprite_PrepareForRedrawFar(void *window);
@@ -137,12 +137,12 @@ s32 Func_08109cac(s32 unitId) {
          * as plain statements, 2 of 374 instructions differ in tla-en. */
         __asm__ volatile("");
         while (gInput.held & 4)
-          WaitFrames(1);
+          wait(1);
         shop->detailsHidden = 1;
         Window_CloseFar(window, 2);
         Func_08109188();
         WindowSprite_PrepareForRedrawFar(shop->listWindow);
-        WaitFrames(1);
+        wait(1);
         redraw = 1;
         continue;
       }
@@ -176,10 +176,10 @@ s32 Func_08109cac(s32 unitId) {
         Sound_PlayFar(111);
         redraw = 1;
       }
-      WaitFrames(1);
+      wait(1);
     }
     Window_CloseFar(nameWindow, 2);
-    WaitFrames(1);
+    wait(1);
     if (result != 0)
       break;
     if (shop->partyAction == 1) {

@@ -20,7 +20,7 @@ s32 Import_ActorShowEmote();
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_PrepareObjectAndApplyValue();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
 void Actor_TurnToFaceEachOther();
@@ -67,7 +67,7 @@ void Func_0200049c(void) {
   Actor_Jump(6, 4, 0);
   Import_ActorSetAnimation(6, 1);
   Actor_SetSingleChildFlags(Actor_GetById(6), 1);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Actor_TurnToFaceEachOther(6, gAdventure.currentOwner, 0);
   Import_EventShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
@@ -79,7 +79,7 @@ void Func_0200049c(void) {
   Import_ActorShowEmote(6, 0x100, 20);
   Import_EventShowMessageAndWait(6, 0);
   Actor_SetAngleToward(6, gAdventure.currentOwner, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Import_ActorSetAnimation(6, 3);
   Import_EventShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
@@ -258,7 +258,7 @@ void Func_020006a8(void) {
     Call3(Actor_Jump, 6, 4, 0);
     Call2(Import_ActorSetAnimation, 6, 1);
     Actor_SetSingleChildFlags(Actor_GetById(6), 1);
-    Call1(FieldEvent_WaitFrames, 20);
+    Call1(FieldEvent_Wait, 20);
     Call3(Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 6, 212, 680);
     Call3(Actor_SetPositionAndReset, 6, 192, 712);

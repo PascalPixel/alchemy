@@ -162,7 +162,7 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);

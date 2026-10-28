@@ -17,8 +17,8 @@ void Func_020028a0(void);
 struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 
 void Func_02002144(void) {
   u8 *state = gSceneState;
@@ -60,9 +60,9 @@ void Func_02002144(void) {
         sparkSprite[9] = (sparkSprite[9] & ~12) | 8;
       }
     }
-    WaitFrames(15);
+    wait(15);
   }
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   *kind = 1;
   sprite[17] &= 3;
   sprite[26] = 0;

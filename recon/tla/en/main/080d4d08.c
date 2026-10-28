@@ -37,7 +37,7 @@ extern struct MapCell gMapCellBuffer[];
 struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080d4ccc(struct Actor *object, s32 *position);
@@ -123,7 +123,7 @@ again:
       spriteFlags = ((struct JumpSprite *)leader->animation)->flags;
     Event_Start();
     Actor_SetMode(leader, 6);
-    WaitFrames(6);
+    wait(6);
     Sound_PlayFar(152);
     Actor_SetMode(leader, 7);
     leader->speedLimit = 0x30000;
@@ -158,17 +158,17 @@ again:
       Actor_SetMode(platform, 7);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;
-      WaitFrames(2);
+      wait(2);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;
-      WaitFrames(10);
+      wait(10);
       leader->y += 0x10000;
       leader->terrainHeight += 0x10000;
-      WaitFrames(4);
+      wait(4);
       leader->y += 0x10000;
       leader->terrainHeight += 0x10000;
     } else {
-      WaitFrames(6);
+      wait(6);
     }
     *flags = saved;
     Event_End();
@@ -178,7 +178,7 @@ again:
     if (GetMapCellCollisionFar(leader->terrainId, position[0], position[2]) ==
         254) {
       Actor_SetMode(leader, 1);
-      WaitFrames(6);
+      wait(6);
       goto again;
     }
     result = 0;

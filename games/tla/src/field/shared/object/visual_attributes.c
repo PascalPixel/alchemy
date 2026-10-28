@@ -33,7 +33,7 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 wait) {
     object->action = angle;
     Actor_StartScriptFar((struct ActorView *)object,
                                  (u32)gActor_StepAngleScript);
-    Event_WaitFrames(wait);
+    Event_Wait(wait);
   }
 }
 

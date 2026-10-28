@@ -4,7 +4,7 @@
 
 extern const u16 gData_02001678[];
 void Func_02001408(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 static inline void RegSet(s32 value, s32 reg) {
   /* FAKEMATCH: the value passes through an s32 inline parameter: the native
@@ -27,7 +27,7 @@ void Func_02000070(void) {
   i = 15;
 next:
   layer[3] -= 0x10000;
-  WaitFrames(4);
+  wait(4);
   i--;
   if (i >= 0)
     goto next;
@@ -35,7 +35,7 @@ next:
 next2:
   RegSet(0x3f42, 0x04000050);
   RegSet(gData_02001678[i], 0x04000052);
-  WaitFrames(8);
+  wait(8);
   i++;
   if (i <= 7)
     goto next2;

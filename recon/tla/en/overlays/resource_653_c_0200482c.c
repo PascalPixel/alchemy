@@ -41,7 +41,7 @@ void Func_0200482c(void) {
   Call1((void (*)())Func_02005370, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call4((void (*)())Func_02005238, 16, 0x1780000, 0x1880000, 0);
   Call4((void (*)())Func_02005238, gAdventure.currentOwner, 0x1780000,
         0x1980000, 0);
@@ -110,7 +110,7 @@ void Func_0200482c(void) {
                                           gData_02005564);
   Actor_SetMovementTypeById(16, gData_020055a0);
   Actor_SetMovementTypeAndWaitById(12, gData_020055e4);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_Wait, 40);
   Func_02000bcc();
   Call3((void (*)())Actor_ArmCallback, 16, 0x3000, 0);
   Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0xa000,
@@ -209,7 +209,7 @@ void Func_0200482c(void) {
   Call1((void (*)())Actor_Stop, 16);
   Call1((void (*)())Actor_Stop,
         gAdventure.currentOwner);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call3((void (*)())Actor_ArmCallback, 16, 0x3000, 0);
   Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0xa000,
         10);

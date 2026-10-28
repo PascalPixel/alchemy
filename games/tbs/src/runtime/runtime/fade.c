@@ -114,7 +114,7 @@ void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target,
 void ScreenFade_Wait(void) {
   if (gScreenFadeVBlanks != 0) {
     do {
-      WaitFrames(1);
+      wait(1);
     } while (gScreenFadeVBlanks != 0);
   }
 }

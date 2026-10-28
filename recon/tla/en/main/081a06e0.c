@@ -37,7 +37,7 @@ s32 Func_081a06e0(s32 mode) {
   s32 slide;
   s32 odd;
   s32 step;
-  s32 wait;
+  s32 frame;
   u32 blend;
 
   gRenderOamEnabled = 0;
@@ -60,7 +60,7 @@ s32 Func_081a06e0(s32 mode) {
 
   if (mode == 1) {
     Func_081a0a70();
-    WaitFrames(60);
+    wait(60);
     for (slide = 0;; slide++) {
       odd = slide & 1;
       Func_081a052c(gDisplayScroll_SlideResources[slide], odd ^ 1);
@@ -70,10 +70,10 @@ s32 Func_081a06e0(s32 mode) {
           REG_BLDALPHA = (step << 8) | (16 - step);
         else
           REG_BLDALPHA = blend | step;
-        for (wait = 0; wait <= 3; wait++) {
+        for (frame = 0; frame <= 3; frame++) {
           if (gInput.held & 8)
             goto done;
-          WaitFrames(1);
+          wait(1);
         }
         blend -= 0x100;
       }
@@ -83,7 +83,7 @@ s32 Func_081a06e0(s32 mode) {
             goto done;
           if (gDisplayScroll_Busy == 2)
             goto done;
-          WaitFrames(1);
+          wait(1);
         } while (Data_02007500 == 0);
       }
       Data_02007500--;
@@ -91,7 +91,7 @@ s32 Func_081a06e0(s32 mode) {
   } else {
     Func_081a0e0c(mode - 2);
     while (gDisplayScroll_Busy <= 375)
-      WaitFrames(1);
+      wait(1);
     Func_081a0fb8();
   }
 

@@ -10,8 +10,8 @@ extern u8 MsgImilVoicesDisbeliefReply[];
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
 s32 Task_Add(void (*func)(void), s32 order);
@@ -39,7 +39,7 @@ void Func_020001b0(void) {
   Func_02000568();
   Func_020005f8(0);
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
-  WaitFrames(1);
+  wait(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);
   Actor_SetSpritePriority(8, 2);
@@ -47,7 +47,7 @@ void Func_020001b0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Call2((void (*)())Func_02000600, 13, 14);
   Func_02000598(MsgImilVoicesDisbeliefReply);
   Call2((void (*)())Func_020005a0, 3, 0);
@@ -121,9 +121,9 @@ void Func_020001b0(void) {
   Call2((void (*)())Func_02000600, 13, 14);
   Call2((void (*)())Func_020005a0, 6, 0);
   Func_02000608();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   *(u16 *)0x05000000 = 0;
-  WaitFrames(1);
+  wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 16;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x201;
   Event_FinishScreenTransition();

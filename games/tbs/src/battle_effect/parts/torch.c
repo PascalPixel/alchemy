@@ -156,7 +156,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1),
                           DMA_COPY_HALFWORDS(63));
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);

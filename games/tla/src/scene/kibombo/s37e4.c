@@ -92,7 +92,7 @@ void Func_02003948(void) {
     Func_02003898();
   Actor_SetMovementTypeById(gAdventure.currentOwner,
                                           gData_02005cd0);
-  WaitFrames(12);
+  wait(12);
   Func_02005c9c(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

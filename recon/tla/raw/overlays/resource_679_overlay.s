@@ -605,7 +605,7 @@ Func_020011a8:
 	bl Func_02001c8c
 .L_0200924a:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	cmp r2, r3
@@ -616,7 +616,7 @@ Func_020011a8:
 	movs r1, #49
 	bl Func_02001c6c
 	movs r0, #3
-	bl WaitFrames
+	bl wait
 	b .L_020092e8
 .L_0200926e:
 	ldr r3, [r5, #8]

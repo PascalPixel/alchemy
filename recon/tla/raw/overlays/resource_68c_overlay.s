@@ -69,7 +69,7 @@ Func_02000a5c:
 	movs r0, #4
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #10
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -94,14 +94,14 @@ Func_02000a5c:
 	movs r0, #4
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #4
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #4
 	movs r1, #8
 	movs r2, #16
@@ -131,7 +131,7 @@ Func_02000a5c:
 	movs r0, #4
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #8
 	movs r2, #16
 	negs r2, r2
@@ -139,12 +139,12 @@ Func_02000a5c:
 	movs r0, #4
 	bl Actor_CommitPositionAndActivate
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #3
 	movs r0, #10
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r2, #10
@@ -164,7 +164,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r2, #10
@@ -179,13 +179,13 @@ Func_02000a5c:
 	movs r0, #4
 	bl Func_020028e4
 	movs r0, #50
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #12
 	movs r2, #12
 	movs r0, #10
 	bl Actor_CommitPositionAndActivate
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #2
 	adds r1, #255
 	movs r2, #30
@@ -200,7 +200,7 @@ Func_02000a5c:
 	cmp r0, #0
 	bne .L_02008c64
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r1, #0
@@ -219,7 +219,7 @@ Func_02000a5c:
 	b .L_02008c8a
 .L_02008c64:
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -240,7 +240,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	adds r0, #10
@@ -253,7 +253,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r2, #10
@@ -264,14 +264,14 @@ Func_02000a5c:
 	movs r0, #10
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #192
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r2, #10
@@ -286,7 +286,7 @@ Func_02000a5c:
 	movs r0, #4
 	bl Func_020028e4
 	movs r0, #50
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #2
 	adds r1, #255
 	movs r2, #30
@@ -301,7 +301,7 @@ Func_02000a5c:
 	cmp r0, #0
 	bne .L_02008d58
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r1, #0
@@ -322,7 +322,7 @@ Func_02000a5c:
 	.4byte MsgLemuriaInteriors10
 .L_02008d58:
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -366,14 +366,14 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_SetPositionAndReset
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	movs r2, #10
@@ -384,7 +384,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	adds r0, #10
@@ -397,7 +397,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #10
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -413,7 +413,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #132
 	movs r2, #50
 	lsls r1, r1, #1
@@ -423,13 +423,13 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_SetModeById
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #182
 	lsls r0, r0, #1
 	adds r0, #255
 	bl Func_02002924
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #11
 	movs r1, #3
 	bl Actor_StartRepeatedMotion
@@ -438,7 +438,7 @@ Func_02000a5c:
 	movs r0, #11
 	bl Func_020028e4
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #11
 	movs r1, #3
 	bl Actor_StartRepeatedMotion
@@ -447,7 +447,7 @@ Func_02000a5c:
 	movs r0, #11
 	bl Func_020028e4
 	movs r0, #50
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #3
 	movs r0, #11
 	bl Actor_SetModeById
@@ -571,7 +571,7 @@ Func_02000a5c:
 .L_02008f92:
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #191
 	ble .L_02008ede
 	movs r3, #128
@@ -579,12 +579,12 @@ Func_02000a5c:
 	mov r2, r11
 	strh r3, [r2, #6]
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #1
 	movs r0, #11
 	bl Actor_SetModeById
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -602,7 +602,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #7
@@ -616,17 +616,17 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_CommitPositionAndActivate
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #3
 	movs r0, #11
 	bl Actor_SetModeById
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #1
 	movs r0, #11
 	bl Actor_SetModeById
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #10
 	bl Actor_GetById
 	adds r0, #90
@@ -640,7 +640,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_CommitPositionAndActivate
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #10
 	bl Actor_GetById
 	adds r0, #90
@@ -649,14 +649,14 @@ Func_02000a5c:
 	orrs r3, r2
 	strb r3, [r0]
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #192
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	adds r0, #10
@@ -668,7 +668,7 @@ Func_02000a5c:
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #132
 	movs r2, #40
 	lsls r1, r1, #1
@@ -678,7 +678,7 @@ Func_02000a5c:
 	movs r0, #11
 	bl Actor_SetModeById
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r5, .L_020090dc
 	ldr r3, [sp, #0]
 	mov r1, r11
@@ -793,7 +793,7 @@ Func_02000a5c:
 .L_02009194:
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #191
 	ble .L_020090e0
 	movs r1, #176
@@ -868,7 +868,7 @@ Func_02000a5c:
 	str r3, [r2, #16]
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #15
 	ble .L_020091d8
 	movs r1, #0
@@ -876,19 +876,19 @@ Func_02000a5c:
 	movs r0, #11
 	bl Func_02002874
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #10
 	bl Actor_ArmCallback
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r1, #3
 	movs r0, #10
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	lsls r0, r0, #7
 	adds r0, #10

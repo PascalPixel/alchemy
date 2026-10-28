@@ -55,8 +55,8 @@ void Func_02003b38(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
+void wait(s32 frames);
 s32 Camera_FollowActor(s32 id, s32 a);
 void Func_02003c30(void);
 void Func_02003c20(s32 a, s32 b);
@@ -156,7 +156,7 @@ row:
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
   }
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();
@@ -176,10 +176,10 @@ glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
   ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
   i++;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   if (i != 64)
     goto glow;
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   REG_BLDALPHA = 15;
   REG_BLDCNT = 0xc42;
   Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
@@ -204,7 +204,7 @@ burst:
   }
   REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
   ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
     if (j != 255)
       goto burst;
   }
@@ -212,7 +212,7 @@ burst:
   Call6((void (*)())Func_02003b80, 38, 9, 1, 1, 16, 9);
   Call6((void (*)())Func_02003b80, 38, 9, 1, 1, 24, 9);
   Func_02003b50();
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
@@ -222,16 +222,16 @@ burst:
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
   i++;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);
   ((u8 *)Actor_GetById(8))[99] = 0;
-  WaitFrames(30);
+  wait(30);
   Actor_GetById(8)->update = 0;
   Actor_SetPartAttribute(Actor_GetById(8), 6);
   Func_02003ba0();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   REG_BLDCNT = 0;
   Func_02003b00();
   Func_02003af8();

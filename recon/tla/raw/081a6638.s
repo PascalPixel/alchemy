@@ -101,7 +101,7 @@ Func_081a6638:
 	strh r3, [r2]
 	bl PaletteFade_Start
 	movs r0, #150
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	bne .L_081a671c
 	movs r0, #2
@@ -110,7 +110,7 @@ Func_081a6638:
 	movs r0, #40
 	bl PaletteFade_Start
 	movs r0, #60
-	bl Title_WaitFramesOrPress
+	bl Title_WaitOrPress
 	cmp r0, #0
 	beq .L_081a6720
 	b .L_081a671c

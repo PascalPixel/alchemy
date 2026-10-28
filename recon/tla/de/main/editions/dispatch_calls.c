@@ -49,7 +49,7 @@ void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
 s32 InitializeAnimationObjects(struct ActorSpriteView *);
 s32 ResourceMetadata_Register(struct ActorSpriteView *);
 void Actor_StartScript(struct ActorView *, u32);
-s32 WaitFrames(s32);
+s32 wait(s32);
 
 extern const s32 gActor_CameraScript[];
 extern const s32 gActorScript_EndScript[];

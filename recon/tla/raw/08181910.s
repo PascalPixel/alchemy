@@ -666,7 +666,7 @@ BattleEffect_RunLifeShear:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r4, #1
 	add r9, r4
 	mov r1, r9

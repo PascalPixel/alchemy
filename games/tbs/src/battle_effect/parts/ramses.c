@@ -90,7 +90,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
-  WaitFrames(1);
+  wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_DesertBackdrop, 0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);

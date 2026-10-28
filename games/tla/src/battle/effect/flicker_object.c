@@ -9,7 +9,7 @@ void BattleEffect_WaitForArcGroups(void) {
   s32 i = 0;
 
   while (work->age[0] <= 31 || work->age[1] <= 31) {
-    WaitFrames(1);
+    wait(1);
     i++;
     if (i > 89)
       return;

@@ -56,7 +56,7 @@ extern char ResourceId_GreenVineSheet;
 // middle of the targets.
 extern const s8 Data_08198422[];
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
@@ -178,7 +178,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     frame++;
   } while (frame != VINE_FRAMES);
 

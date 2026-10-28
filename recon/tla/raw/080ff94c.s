@@ -29,7 +29,7 @@ PsynergyMenu_DrawRangePage:
 	sub sp, #8
 	bl WindowSprite_RedrawSavedRectFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r1, r11
 	ldr r3, [r1, #24]
 	movs r2, #226
@@ -247,7 +247,7 @@ PsynergyMenu_DrawRangePage:
 	cmp r2, #4
 	ble .L_080ffa58
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #1
 	add sp, #8
 	pop {r3, r5, r6, r7}

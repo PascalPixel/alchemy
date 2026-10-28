@@ -32,7 +32,7 @@ void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 s32 Actor_SetModeById(u32 id, s32 mode);
 void Func_02001538(void);
 void Func_02002898(s32 message, s32 a1, s32 a2);
@@ -70,7 +70,7 @@ void Func_020006ac(void) {
     Func_02002988(30);
     Event_WaitTransitionFrames();
     Actor_SetModeById(0, 1);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Func_02002898((s32)MsgFieldShowAnemosPower, 0, -2);
     Func_02002978_(0x10000, 0);
     Func_02002988(30);
@@ -110,7 +110,7 @@ void Func_02000734(void) {
   do {
   } while (0);
   for (i = 0; i <= 31; i++) {
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
     if (!(i & 1)) {
       random = Random16Far();
       /* FAKEMATCH: random * 24 written in steps with two barriers: ⚓️ loads x

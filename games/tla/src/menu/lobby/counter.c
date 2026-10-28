@@ -31,7 +31,7 @@ s32 Func_02000bb0(void) {
   Func_02001ab4(0);
   Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
   if (Func_0200006c(0) == 0)
-    WaitFrames(1);
+    wait(1);
   if (Func_0200006c(0) == 0) {
     LinkLobby_WriteSlotValue(5);
     Func_02000044();

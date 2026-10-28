@@ -12,7 +12,7 @@ struct OwnerMenuState {
   u16 skipSlide;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// The twin of The Broken Seal's UiMenu_SlideCursor.
 void Func_080f8ab4(s32 x, s32 y) {
@@ -66,6 +66,6 @@ void Func_080f8ab4(s32 x, s32 y) {
     cursor->oam.y = cursor->y = (py >> 4) + (work->ownerWindow->y << 3) - 56;
     steps--;
     if (steps != 0)
-      WaitFrames(1);
+      wait(1);
   } while (steps != 0);
 }

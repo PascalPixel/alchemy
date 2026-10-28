@@ -59,11 +59,11 @@ s32 Func_020007b8(void) {
   flag = GameFlag_Test(0x302);
   gLinkExchangeState = result;
   if (!flag) {
-    WaitFrames(5);
+    wait(5);
     result = Func_02000578();
     if (result < 0)
       goto fail;
-    WaitFrames(5);
+    wait(5);
     first = result = Func_0200039c();
     if (result < 0)
       goto check;
@@ -71,7 +71,7 @@ s32 Func_020007b8(void) {
     first = result = Func_0200039c();
     if (result < 0)
       goto fail;
-    WaitFrames(10);
+    wait(10);
     result = Func_02000578();
     if (result < 0)
       goto fail;

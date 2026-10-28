@@ -29,9 +29,9 @@ void Func_020003ac(void) {
   Func_02000a30();
   Actor_WaitForMoveById(gAdventure.currentOwner);
   Actor_ArmCallback(gAdventure.currentOwner, 0xa000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_Jump(8, 6, 20);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02000a08(8, 0, 10);
   {
     s32 x = 256;
@@ -44,7 +44,7 @@ void Func_020003ac(void) {
   }
   Func_02000a08(8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02000a08(8, 0, 10);
   Actor_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);

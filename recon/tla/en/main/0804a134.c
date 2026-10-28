@@ -103,7 +103,7 @@ void Window_DrawThreeTileColumn(struct PsynergyMenuWindow *window, s32 x,
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_Close(void *window, s32 mode);
 void Resource_ResetEntry(s32 slot);
 
@@ -331,15 +331,15 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         }
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   for (i = 0; i < 5; i++)
     Resource_ResetEntry(iconSlots[i]);
   Resource_ResetEntry(cursorHandle);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

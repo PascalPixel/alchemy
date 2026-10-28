@@ -61,12 +61,12 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   kind = args->kind;
   work->args = args;
   unit = Unit_GetFar(args->user);
-  WaitFrames(1);
+  wait(1);
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  WaitFrames(1);
+  wait(1);
   // Two blitters, additive and brightest-wins; BEAM_ARC_A_INVERTED draws its
   // pictures upside down, and EFFECT_SIDE_PARTY mirrors them.
   if (kind == BEAM_ARC_A_INVERTED) {
@@ -105,7 +105,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   slots = (DrawRectangle *)gHeapSlots;
   draw[0] = slots[HEAP_SLOT_RAM_CODE];
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
-  WaitFrames(1);
+  wait(1);
   // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
   // small Mars Djinni's palette, a party member the crescent's. The sparks and
   // the yellow orb follow.
@@ -134,7 +134,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   else
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_CrescentSheet), 128);
-  WaitFrames(1);
+  wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
                              Ram_MapGridCellBuffer, 1, 0);
@@ -156,7 +156,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   anchor.x += scrollX;
   gBgScroll[1].x = scrollX;
   gBgScroll[1].y = 80;
-  WaitFrames(1);
+  wait(1);
   // 64 sparks start at the first target's middle and fly away from the
   // centre of the field at random speeds, mostly rising; variant is a
   // spark's life in moves, 16 to 79, so the later sparks are larger and last
@@ -334,7 +334,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   // buffer; an enemy user (unit id past PIERS) also takes the small Mars
   // Djinni's palette.
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
-  WaitFrames(1);
+  wait(1);
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
@@ -356,12 +356,12 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
-  WaitFrames(1);
+  wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet,
                              work->imageStorage, 1, 0);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
-  WaitFrames(1);
+  wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
                              Ram_MapGridCellBuffer, 1, 1);
   if (work->args->user > PIERS)
@@ -370,11 +370,11 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
         128);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
-  WaitFrames(1);
+  wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
-  WaitFrames(1);
+  wait(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering: 64 motes, each in its own random rotation around the
@@ -526,7 +526,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   // Fade the background palette back in over 7 frames.
   for (frame = 0, background = &gBattleWork->background; frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(*background, 6 - frame);
-    WaitFrames(1);
+    wait(1);
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }

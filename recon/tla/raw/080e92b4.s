@@ -194,7 +194,7 @@ Func_080e92b4:
 	movs r0, #2
 	bl Func_080e89e4
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #238
 	bl Sound_PlayFar
 	movs r3, #128
@@ -625,7 +625,7 @@ Func_080e92b4:
 	str r0, [sp, #64]
 .L_080e9776:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #60]
 	movs r3, #186
 	ldr r2, [sp, #64]

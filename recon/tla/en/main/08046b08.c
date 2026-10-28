@@ -263,7 +263,7 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Unit_CalculateFar(s32 member);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Resource_ResetEntry(s32 slot);
 void PartyStatus_Draw(s32 flags);
 
@@ -1236,7 +1236,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         Sound_PlayFar(111);
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   for (i = 3; i >= 0; i--)
@@ -1245,7 +1245,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     Resource_ResetEntry(statusSlots[10 - i]);
   Resource_ResetEntry(portraitSlot);
   Resource_ResetEntry(cursorSlot);
-  WaitFrames(1);
+  wait(1);
   Func_08041b68();
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
@@ -1253,7 +1253,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   NAVIGATION->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleActor_CommitPlacementFar();
-  WaitFrames(1);
+  wait(1);
   Heap_Release(djinnList);
   return 0;
 }

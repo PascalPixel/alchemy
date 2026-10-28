@@ -19,7 +19,7 @@ void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
@@ -75,7 +75,7 @@ void Func_020000c8(void) {
     MapCopyAttr(11, 9, 4, 1, 8, 14);
     if (FlagCheck(0x301) == 0) {
       Func_02000300((s32)MsgMadraNeedEldersPermission);
-      FieldEvent_WaitFrames(10);
+      FieldEvent_Wait(10);
       Motion_SetVarCbAndRefresh(8, 1);
       Func_02000310(8, 0, 5);
       Motion_SetModeAndWaitAnimation(9, 3);

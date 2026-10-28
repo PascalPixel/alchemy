@@ -319,16 +319,16 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         }
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   VramCache_FreeEntry(cursorHandle);
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     VramCache_FreeEntry(iconSlots[i]);
   }
-  WaitFrames(1);
+  wait(1);
   return result;
 }

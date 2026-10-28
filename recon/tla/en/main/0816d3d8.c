@@ -250,7 +250,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     Func_08158ce0(2, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Actor_SetAnimationSpeedFar(user, 16);

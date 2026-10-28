@@ -15,7 +15,7 @@ void Script_WaitForEventTimeout(void *fieldObject) {
 
   waitedFrames = 0;
   while (waitedFrames < 600 && Actor_IsTargetUnset(fieldObject) == 0) {
-    WaitFrames(1);
+    wait(1);
     waitedFrames++;
   }
 }

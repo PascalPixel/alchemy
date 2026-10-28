@@ -436,7 +436,7 @@ Func_020006ec:
 	movs r0, #20
 	bl Func_02000ed4
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_02008a48
 	bl Func_02000ea4
 	movs r0, #20
@@ -446,7 +446,7 @@ Func_020006ec:
 	movs r0, #20
 	bl Actor_StartRepeatedMotion
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #97
@@ -871,7 +871,7 @@ Func_02000bc0:
 	adds r0, r5, #0
 	bl Func_02000e24
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #204
 	bl Func_02000f24
 	adds r2, r5, #0
@@ -890,7 +890,7 @@ Func_02000bc0:
 	cmp r6, #179
 	bgt .L_02008d18
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	cmp r2, r3
@@ -918,7 +918,7 @@ Func_02000bc0:
 	lsls r0, r0, #9
 	bl Func_02000e54
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -928,7 +928,7 @@ Func_02000bc0:
 	negs r0, r0
 	bl Func_02000e54
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	ldr r2, [r5, #16]
 	movs r3, #1
 	ldr r1, [r5, #12]
@@ -936,7 +936,7 @@ Func_02000bc0:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02000ecc
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	adds r0, r5, #0
 	movs r1, #1
 	bl Actor_SetSingleChildFlags
@@ -947,7 +947,7 @@ Func_02000bc0:
 	lsls r3, r3, #11
 	str r3, [r5, #40]
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #18

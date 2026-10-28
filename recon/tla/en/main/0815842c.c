@@ -74,7 +74,7 @@ extern const u8 Data_08198513[];
 extern const u8 Data_08198517[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -218,7 +218,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Teardown.

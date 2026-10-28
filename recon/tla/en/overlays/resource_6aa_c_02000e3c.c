@@ -9,7 +9,7 @@
        ->v)
 s32 Event_FinishScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_02000df0();
 s32 Func_02004bc0();
 s32 Func_02004ca8();
@@ -21,7 +21,7 @@ s32 Actor_SetAnimationSpeed();
 s32 Actor_SetSingleChildFlags();
 s32 Actor_GetById();
 s32 Actor_SetModeById();
-s32 WaitFrames();
+s32 wait();
 extern u8 gMapCellBuffer[];
 extern u8 gAdventure[];
 
@@ -43,7 +43,7 @@ void Func_02000e3c(s32 p0) {
   Func_02004d00(t7, 0x100, 0);
   Func_02004bc0(t1, 27);
   Actor_SetAnimationSpeed(t1, 48);
-  WaitFrames(30);
+  wait(30);
   FIELD_AT(t1, u16, 6) = 0x4000;
   FIELD_AT(t1, u8, 85) = 0;
   t12 = FIELD_AT(t1, s32, 8);
@@ -72,7 +72,7 @@ L_02008ed4:
 L_02008f0a:
   t20 = FIELD_AT((s32)gAdventure, s32, 532);
   Actor_SetModeById(t20, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   v_r5 = 0;
 L_02008f22:
   if (v_r5 != 5)
@@ -88,7 +88,7 @@ L_02008f48:
   FIELD_AT(v_r6, s32, 28) = (t25 + v_r2);
   t26 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(v_r6, s32, 12) = (t26 - 0x9999);
-  WaitFrames(1);
+  wait(1);
   v_r5 = (v_r5 + 1);
   if (v_r5 <= 39)
     goto L_02008f22;

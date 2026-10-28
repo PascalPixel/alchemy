@@ -1379,7 +1379,7 @@ BattleEffect_RunHealingMotes:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #8]
 	movs r1, #128
 	ldr r3, [sp, #64]

@@ -14,10 +14,10 @@ GameFlag_SetBit:
 	.thumb_func
 Func_020002a8:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_020002b8
 	.thumb_func
 Func_020002b8:

@@ -4,7 +4,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_020005c4();
 void Func_020005cc();
 void Func_02000604();
@@ -30,11 +30,11 @@ void Func_020000f4(void) {
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_0200812c;
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_02000604, ((s32)MsgMikasallaInteriors03 + 1));
   goto L_02008138;
 L_0200812c:
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_02000604, ((s32)MsgMikasallaInteriors03 + 2));
 L_02008138:
   Call2((void (*)())Func_02000614, 10, 0);
@@ -94,10 +94,10 @@ void Func_020001fc(s32 actor) {
     Value2((s32 (*)())FieldMessage_ShowAtActor, actor, 0);
     if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
                Value0((s32 (*)())Func_02000634), 0) == 0) {
-      Call1((void (*)())FieldEvent_WaitFrames, 10);
+      Call1((void (*)())FieldEvent_Wait, 10);
       Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors17 + 1);
     } else {
-      Call1((void (*)())FieldEvent_WaitFrames, 20);
+      Call1((void (*)())FieldEvent_Wait, 20);
       Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors17 + 2);
     }
     Call2((void (*)())Func_02000614, actor, 0);

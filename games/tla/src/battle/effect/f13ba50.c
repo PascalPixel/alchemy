@@ -14,5 +14,5 @@ void Func_0813ba50(void) {
   REG_WININ = 0x3537;
   REG_WINOUT = 0x3f21;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-  WaitFrames(1);
+  wait(1);
 }

@@ -6,10 +6,10 @@
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:

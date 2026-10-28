@@ -7,12 +7,12 @@ void Func_02002830(void) {
 
   Func_02003eec(9, gAdventure.currentOwner);
   Func_02003edc(10, 0x1110000, 0x2080000);
-  WaitFrames(1);
+  wait(1);
   object->angle = 0xc000;
   owner->update = (void (*)(void))Func_02001278;
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
   Actor_SetModeById(9, 3);
-  WaitFrames(1);
+  wait(1);
   work = Ram_HeapSlots->eventWork;
   work->field1ac = 0x201;
   Event_StartScreenTransition();

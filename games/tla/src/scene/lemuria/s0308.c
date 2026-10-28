@@ -6,7 +6,7 @@
 struct Actor *Actor_GetById(s32 id);
 void Actor_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
 void Actor_SetModeById(u32 id, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02001bcc(void);
 void Func_02001bd4(void);
 void Func_02001c6c(s32 message);
@@ -43,7 +43,7 @@ void Func_02000308(void) {
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;
-  WaitFrames(1);
+  wait(1);
 }
 
 /// The same for actor 19.
@@ -69,5 +69,5 @@ void Func_02000398(void) {
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;
-  WaitFrames(1);
+  wait(1);
 }

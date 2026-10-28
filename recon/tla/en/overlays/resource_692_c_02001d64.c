@@ -12,8 +12,8 @@
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_02004e90(s32 value);
 void Func_02004da0(s32 id, s32 x, s32 z);
 
@@ -53,7 +53,7 @@ void Func_02001d64(void) {
   Func_02004e90(0);
   Func_02004f30(107);
   Func_02004d10(0x30000, 0x30000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Camera_MoveWithinMapBounds(194 << 18, -1, 136 << 17, 1);
   Func_02004e20();
   options.type = 403;
@@ -96,15 +96,15 @@ void Func_02001d64(void) {
       Actor_GetById(12)->update = Func_02001d04;
       Func_02004d10(-1, -1, 0xe666);
     }
-    WaitFrames(3);
+    wait(3);
   }
   Actor_WaitForMoveById(12);
   Func_02004d18();
   Func_02004f30(288);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   GameFlag_SetBit(2552);
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02004e20();
-  WaitFrames(10);
+  wait(10);
   Func_02004d48();
 }

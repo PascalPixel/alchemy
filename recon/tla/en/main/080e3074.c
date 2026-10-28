@@ -44,7 +44,7 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void BattleEffect_SpinObject(void);
 void Camera_WorldToScreen(s32 *position);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
@@ -111,11 +111,11 @@ void Func_080e3074(void) {
   Actor_SetMode(ring, 2);
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(207);
   for (i = 0; i < 20; i++) {
     ring->scaleY = (i << 16) / 20;
-    WaitFrames(1);
+    wait(1);
   }
   for (i = 0; i < 60; i++) {
     for (j = 0; j < 4; j++)
@@ -127,7 +127,7 @@ void Func_080e3074(void) {
     step = step * 123 / 128;
     canvas->angle += 0x400;
     canvas->command = 3;
-    WaitFrames(1);
+    wait(1);
   }
   BattleEffect_PrepareBufferInterpolation();
   work->follower = ring;
@@ -154,7 +154,7 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitFrames(1);
+      wait(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
@@ -162,7 +162,7 @@ void Func_080e3074(void) {
     frame = 0;
     Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
     owner->motionFlags = 0;
-    WaitFrames(1);
+    wait(1);
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
@@ -170,7 +170,7 @@ void Func_080e3074(void) {
     while (work->state != 999) {
       if (frame == 30)
         Func_080e249c();
-      WaitFrames(1);
+      wait(1);
       frame++;
     }
     Task_Remove(Func_080e2ec0);
@@ -185,13 +185,13 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitFrames(1);
+      wait(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     Actor_SetSingleChildFlagsFar(owner, 0);
     owner->motionFlags = 0;
-    WaitFrames(1);
+    wait(1);
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
     work->to[1] = owner->y;
     work->to[2] = *(s16 *)(event + 0xd3e) << 16;
@@ -200,20 +200,20 @@ void Func_080e3074(void) {
     while (work->state != 999) {
       if (frame == 30)
         Func_080e249c();
-      WaitFrames(1);
+      wait(1);
       frame++;
     }
     Task_Remove(Func_080e2d64);
     for (i = 0; i < 16; i++) {
       owner->scaleX += -0x800;
       owner->scaleY = owner->scaleX;
-      WaitFrames(1);
+      wait(1);
     }
     owner->scaleX = 0;
     for (i = 0; i < 32; i++) {
       ring->scaleX += -0x800;
       ring->scaleY += -0x200;
-      WaitFrames(1);
+      wait(1);
     }
     ring->scaleX = 0;
     if (work->kind)
@@ -226,7 +226,7 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitFrames(1);
+      wait(1);
     }
     owner->update = NULL;
     owner->angle = owner->action;
@@ -234,7 +234,7 @@ void Func_080e3074(void) {
     while (work->count != 0) {
       if (frame == 30)
         Func_080e249c();
-      WaitFrames(1);
+      wait(1);
       frame++;
     }
     if (work->kind)
@@ -246,7 +246,7 @@ void Func_080e3074(void) {
       owner->angle += 0x1000;
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitFrames(1);
+      wait(1);
     }
   }
   Sound_PlayFar(136);

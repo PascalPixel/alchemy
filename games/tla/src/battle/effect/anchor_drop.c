@@ -14,7 +14,7 @@ struct ModeEvent {
 };
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
@@ -35,6 +35,6 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
     object->motionFlags = 3;
   }
   object->gravity = 0x170a;
-  WaitFrames(50);
+  wait(50);
   event->cue = id | 0x1000;
 }

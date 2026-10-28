@@ -95,7 +95,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -224,7 +224,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);

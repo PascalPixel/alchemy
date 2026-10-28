@@ -25,7 +25,7 @@ void Actor_ShakeAngle(u32 objectId) {
     b >>= 4;
     a >>= 4;
     object->angle = cur + (a - b);
-    WaitFrames(1);
+    wait(1);
   }
   object->angle = angle;
 }

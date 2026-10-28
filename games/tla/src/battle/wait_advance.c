@@ -36,7 +36,7 @@ extern u32 gFrameCount;
 extern u8 Data_0812996c[];
 
 s32 Message_AllTypedFar(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 slot, s32 source);
 s32 Resource_ResetEntry(u32 slot);
@@ -62,7 +62,7 @@ void BattleMessage_WaitForAdvance(void) {
   struct AdvanceOffset *offset;
 
   while (!Message_AllTypedFar())
-    WaitFrames(1);
+    wait(1);
   prompt = &promptStorage;
   /* FAKEMATCH(temporary): the arrow sheet's address held in a local, so the
    * native's stack frame offset is added after the window loads; as
@@ -93,9 +93,9 @@ void BattleMessage_WaitForAdvance(void) {
     if ((gInput.held & 2) || (gInput.pressed & 0x303) ||
         (frame > 15 && (*(volatile u32 *)&gInput.held & 0x303)))
       break;
-    WaitFrames(1);
+    wait(1);
   }
   Sound_PlayFar(111);
   Resource_ResetEntry(tileSlot);
-  WaitFrames(1);
+  wait(1);
 }

@@ -208,7 +208,7 @@ Func_020001e4:
 	movs r1, #0
 	bl Func_020013d8
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_ja_02008202
 .L_ja_020082ea:
 	movs r0, #112
@@ -255,13 +255,13 @@ Func_020001e4:
 	movs r3, #8
 	bl Text_DrawCharacterAtOffset
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 	movs r0, #116
 	bl Func_02001408
 	b .L_ja_02008362
 .L_ja_0200835c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_ja_02008362:
 	ldr r1, .L_ja_020084ac
 	movs r2, #1
@@ -316,7 +316,7 @@ Func_020001e4:
 	movs r0, #113
 	bl Func_02001408
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	b .L_ja_02008486
 .L_ja_020083de:
 	movs r7, #0
@@ -538,7 +538,7 @@ Func_020001e4:
 	movs r1, #0
 	bl Func_020013d8
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_020081fc
 .L_020082bc:
 	movs r0, #112
@@ -583,13 +583,13 @@ Func_020001e4:
 	movs r3, #8
 	bl Text_DrawCharacterAtOffset
 	movs r0, #5
-	bl WaitFrames
+	bl wait
 	movs r0, #116
 	bl Func_02001408
 	b .L_0200832e
 .L_02008328:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0200832e:
 	ldr r1, .L_0200848c
 	movs r2, #1
@@ -655,7 +655,7 @@ Func_020001e4:
 	movs r0, #113
 	bl Func_02001408
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	b .L_02008468
 .L_020083c0:
 	movs r7, #0

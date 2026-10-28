@@ -24,7 +24,7 @@ void Func_02000cd8(s32 unused, s32 id) {
     struct Actor *object = Actor_GetById(25);
 
     if (object->x >> 20 == 32) {
-      WaitFrames(30);
+      wait(30);
       object->z += 0x10000;
       GameFlag_SetBit_(0x950);
     }

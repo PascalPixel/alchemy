@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -229,7 +229,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       cells += 2;
     }
   }
-  WaitFrames(1);
+  wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
@@ -242,7 +242,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if ((gInput.repeat & 3) && frame > 15 && frame <= 185) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
       frame = 186;
       REG_BLDALPHA = 0x1010;
       for (i = 0; i != 28; i++) {
@@ -776,7 +776,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       BattleEffect_CountDownBattlerTints();
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);

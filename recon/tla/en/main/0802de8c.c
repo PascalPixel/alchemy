@@ -60,7 +60,7 @@ s32 Func_0802e444(s32 spriteId, s32 direction);
 void Func_0802e4c8(s32 x, s32 y, void *ring);
 void Battle_PlaceActorsByFormationKind(void);
 void Fade_FromBlack(s32 vblanks);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 System_ReturnZero(s32 resource, void *table);
 
 void Func_0802de8c(void) {
@@ -137,7 +137,7 @@ restart:
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
 
 next:
-  WaitFrames(1);
+  wait(1);
   for (;;) {
     s32 changed;
 
@@ -297,6 +297,6 @@ next:
       backdrop = (backdrop + 1) & 7;
       *(volatile u16 *)0x05000000 = gData_0802f054[backdrop];
     }
-    WaitFrames(1);
+    wait(1);
   }
 }

@@ -34,7 +34,7 @@ s32 Unit_AddPp(s32, s32);
 void GameFlag_SetBit(s32);
 struct Actor *Actor_GetById(s32);
 void Actor_Jump(s32, s32, s32);
-void FieldEvent_WaitFrames(s32);
+void FieldEvent_Wait(s32);
 void Actor_SetPositionAndReset(s32, s32, s32);
 void Actor_ArmCallback(s32, s32, s32);
 void Actor_SetAngleToward(s32, s32, s32);
@@ -65,8 +65,8 @@ void Func_02000078(s32 message) {
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
 }
 
 void Func_020000a4(s32 message, s32 count) {
@@ -83,7 +83,7 @@ void Func_020000a4(s32 message, s32 count) {
   wait:
     if (INPUT_HELD != 0)
       goto next;
-    WaitFrames(1);
+    wait(1);
   check:
     if (INPUT_HELD & 2)
       goto done;
@@ -242,7 +242,7 @@ void Func_02000464(s32 unused, s32 actor) {
   Actor_Emote(actor, 0x100, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   if (GameFlag_TestBit(0x200) == 0) {
     Func_02000e94((s32)MsgDailaInteriorsGah);
     Func_02000e9c(actor, 0);
@@ -256,31 +256,31 @@ void Func_02000464(s32 unused, s32 actor) {
     Actor_ArmCallback(actor, 0x8000, 0);
     GameFlag_ClearBit(0x200);
   }
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
 }
 
 void Func_02000508(s32 unused, s32 actor) {
   Actor_SetAngleToward(actor, 4, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_Emote(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
   Func_02000e9c(actor, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
 }
 
 void Func_0200055c(s32 unused, s32 actor) {
   Actor_SetAngleToward(actor, 4, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Actor_Emote(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
   Func_02000e9c(actor, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
 }
 
 void Func_020005b0(void) {
@@ -288,7 +288,7 @@ void Func_020005b0(void) {
   s32 flags;
 
   Actor_SetModeById(21, 2);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   frames = 25;
   flags = 0;
   Func_02000dac(57, 16, 4, 6, frames, flags);

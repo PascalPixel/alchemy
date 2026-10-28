@@ -3,7 +3,7 @@
 #include "adventure.h"
 
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -38,7 +38,7 @@ void Func_02003490(void) {
   Actor_GetById(gAdventure.currentOwner)->update = Func_0200343c;
   Actor_GetById(gAdventure.currentOwner)->acceleration = 0x2000;
   Actor_GetById(gAdventure.currentOwner)->speedLimit = 0x20000;
-  WaitFrames(5);
+  wait(5);
   Func_02004df8_(0xc000, 60);
   Event_StartScreenTransition();
   Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14537, 8577);

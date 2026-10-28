@@ -14,7 +14,7 @@ extern u8 gMapShapeGrid[];
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_020014a8(s32 id, s32 target);
 void Func_0200056c(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
@@ -32,16 +32,16 @@ void Func_02000584(u16 *list) {
   Func_020014a8(8, gAdventure.currentOwner);
   Func_020014a8(9, gAdventure.currentOwner);
   Func_020014a8(10, gAdventure.currentOwner);
-  WaitFrames(1);
+  wait(1);
   Func_0200056c(8);
   Func_0200056c(9);
   Func_0200056c(10);
   Actor_SetModeById(9, 0);
-  WaitFrames(1);
+  wait(1);
   Func_020014a0(8, 0, 0);
   Func_020014a0(9, 0, 0);
   Func_020014a0(10, 0, 0);
-  WaitFrames(1);
+  wait(1);
   goto test;
 body:
   {
@@ -73,5 +73,5 @@ body:
 test:
   if (list[0] != 0xffff)
     goto body;
-  WaitFrames(10);
+  wait(10);
 }

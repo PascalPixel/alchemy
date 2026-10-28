@@ -78,7 +78,7 @@ void Func_02000744(void) {}
 void Func_02000748(s32 actor) {
   Func_02000c4c(Actor_GetById(actor), gData_02001860);
   Func_02000c4c(Actor_GetById(gAdventure.currentOwner), gData_020017b0);
-  WaitFrames(100);
+  wait(100);
   Func_02000d4c(Actor_GetById(actor));
   Func_02000d4c(Actor_GetById(gAdventure.currentOwner));
 }

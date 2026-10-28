@@ -2061,7 +2061,7 @@ BattleEffect_RunHaures:
 	str r2, [r3]
 .L_08187e22:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r7, [sp, #16]
 	ldr r0, [sp, #12]
 	ldr r1, [sp, #76]
@@ -3009,7 +3009,7 @@ BattleEffect_RunHaures:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r5, [sp, #20]
 	ldr r7, [sp, #76]
 	adds r5, #8

@@ -23,7 +23,7 @@ struct CloakCaster {
 
 void Task_Remove(void (*func)(void));
 void FieldEffect_CheckCloakTile(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 #define SE_CLOAK_END 154
 
@@ -50,10 +50,10 @@ void Func_080debd8(void) {
     entry->param = CLOAK_FLICKER_PALETTE;
     sprite->blend = 2;
     sprite->dirty = 1;
-    WaitFrames(2);
+    wait(2);
     sprite->dirty = 1;
     sprite->blend = 0;
-    WaitFrames(2);
+    wait(2);
   }
 
   // ...then between the flicker palette and the caster's own.
@@ -61,10 +61,10 @@ void Func_080debd8(void) {
     entry->param = CLOAK_FLICKER_PALETTE;
     sprite->blend = 0;
     sprite->dirty = 1;
-    WaitFrames(2);
+    wait(2);
     entry->param = 0;
     sprite->dirty = 1;
-    WaitFrames(2);
+    wait(2);
   }
 
   sprite->blend = 1;

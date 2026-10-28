@@ -36,7 +36,7 @@ Menu_ConfirmSelection:
 	movs r3, #33
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #128
 	lsls r2, r2, #2
 	movs r0, #128
@@ -99,7 +99,7 @@ Menu_ConfirmSelection:
 	bne .L_0803f468
 .L_0803f484:
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	movs r1, #210
 	lsls r1, r1, #2
 	adds r3, r5, r1
@@ -187,7 +187,7 @@ Menu_ConfirmSelection:
 	movs r0, #2
 	orrs r3, r2
 	strh r3, [r1]
-	bl WaitFrames
+	bl wait
 	movs r0, #1
 	bl Resource_FindFreeTransferEntry
 	ldrh r3, [r6, #10]

@@ -14,12 +14,12 @@ extern s32 gData_020007e4;
 
 struct FieldActor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetSpritePriority(u32, s32);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 void Actor_SetModeById(u32, s32);
@@ -64,7 +64,7 @@ void Func_020001b0(void) {
   Func_02000568();
   Func_020005f8(0);
   Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
-  WaitFrames(1);
+  wait(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);
   Variant(8, 2);
@@ -72,7 +72,7 @@ void Func_020001b0(void) {
   WORD_AT(Ram_HeapSlots->eventWork, 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Talk(13, 14);
   Func_02000598((s32)MsgImilVoicesDisbeliefReply);
   Say(3, 0);
@@ -140,9 +140,9 @@ void Func_020001b0(void) {
   Talk(13, 14);
   Say(6, 0);
   Func_02000608();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   *(u16 *)0x05000000 = 0;
-  WaitFrames(1);
+  wait(1);
   WORD_AT(Ram_HeapSlots->eventWork, 436) = 16;
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 513;
   Event_FinishScreenTransition();

@@ -574,7 +574,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     frame++;
   } while (frame != 400);
 

@@ -25,10 +25,10 @@ void Func_02000e40(s32 actor) {
   Func_02001d44(msg);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001e14(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001d44(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02001d44(msg + 2);
   }
   Func_02001d54(actor, 0);

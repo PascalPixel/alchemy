@@ -14,7 +14,7 @@
 void BattleEffect_LongApproachThenSpark(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18,
                                  0xc3333);
-  WaitFrames(26);
+  wait(26);
   effect->variant = 5;
   BattleEffect_RunSparkGroups(effect, 2);
 }

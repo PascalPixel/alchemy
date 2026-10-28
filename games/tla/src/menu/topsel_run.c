@@ -61,5 +61,5 @@ loop:
 
 void PartyStatus_OpenAndWait(void) {
   PartyStatus_CreateWindow(1);
-  WaitFrames(1);
+  wait(1);
 }

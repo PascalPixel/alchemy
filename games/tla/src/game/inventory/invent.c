@@ -12,7 +12,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
     u8 *anim = (u8 *)obj->animation;
 
     while (cnt <= 89) {
-      WaitFrames(1);
+      wait(1);
       if (value != anim[0x18]) {
         break;
       }

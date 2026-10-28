@@ -101,7 +101,7 @@ void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 #define DICE_GAME_THROW(dice, spinRate)                                        \
   {                                                                            \
@@ -1080,7 +1080,7 @@ void Func_081b83c4(void) {
     }
     Dma_Set(sprites->oam, (void *)0x07000000,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
-    WaitFrames(1);
+    wait(1);
     frame++;
   }
 
@@ -1089,7 +1089,7 @@ void Func_081b83c4(void) {
                                 0x10000 - (index << 12), 256);
     Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000,
                                 0x10000 - (index << 12), 256);
-    WaitFrames(1);
+    wait(1);
   }
   HeapSlot_Release(48);
   HeapSlot_Release(180);

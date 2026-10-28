@@ -30,7 +30,7 @@ void MessageArgument_Push(s32, s32);
 s32 Message_DecodeMode1(s32);
 s32 Message_Start(struct Window *, s32, s32, s32, s32);
 void Sound_PlayFar(s32);
-void WaitFrames(s32);
+void wait(s32);
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Window_Close(struct Window *, s32);
 
@@ -89,12 +89,12 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     do {
       Oam_AddSpriteAtDepth(entry1, 250);
       Oam_AddSpriteAtDepth(entry2, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     Resource_ResetEntry(handle1);
     Resource_ResetEntry(handle2);
   }

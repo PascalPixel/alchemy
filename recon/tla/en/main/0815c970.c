@@ -67,7 +67,7 @@ extern const u8 gData_081986c8[];
 extern const s8 gData_081986ec[];
 extern const u8 gData_081986ce[];
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -183,7 +183,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   // Teardown.

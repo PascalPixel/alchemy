@@ -172,9 +172,9 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   } else
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
   if (variant == 4)
-    WaitFrames(8);
+    wait(8);
   else
-    WaitFrames(16);
+    wait(16);
 
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
@@ -245,7 +245,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     Func_08158ce0(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(HEAP_BLITTER);

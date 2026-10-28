@@ -79,7 +79,7 @@ void Func_02000270(void) {
     else
       CenterOn(owner, 2, -4);
   }
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02002578(*(s16 *)(event + 340));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

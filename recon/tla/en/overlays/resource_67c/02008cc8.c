@@ -59,7 +59,7 @@ void Func_02000cc8(s32 id) {
       object->x = x - offset;
     }
     object->angle += 0x1000;
-    WaitFrames(1);
+    wait(1);
   test:
     position[0] = object->x;
     position[1] = object->y;

@@ -70,7 +70,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // Light gathering on the user and bursting, for the scenes.
 
@@ -205,7 +205,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(SLOT_BLITTER);

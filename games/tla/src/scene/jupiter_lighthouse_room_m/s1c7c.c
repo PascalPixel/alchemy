@@ -81,16 +81,16 @@ void Func_02001c7c(void) {
   Func_020048cc(4, 0x100, 30);
   Camera_MoveWithinMapBounds(705 << 16, 0, 177 << 16, 1);
   Func_020048f4();
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Actor_SetSingleChildFlags(Actor_GetById(2), 0);
   Actor_SetModeById(2, 32);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   JupiterLighthouseRoomM_Func_020048b4(0, 0x6000);
   Func_0200489c(0, 0, 5);
   Func_020048cc(26, 0x107, 30);
   Func_0200489c(26, 0, 5);
   Actor_OffsetPositionAndReset(26, 24, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   do {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
      * zero is not kept in r8 for the store of the owner below (without: differ

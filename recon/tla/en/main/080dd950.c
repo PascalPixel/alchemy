@@ -66,7 +66,7 @@ void Func_080dd950(void) {
     BattleEffect_ApplyColorToSourceBuffer(0, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
     BattleEffect_StartBufferInterpolation(30);
-    WaitFrames(1);
+    wait(1);
     ev = Func_080ce458(0x40000005, 8, Func_080ce31c(8));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, work->value18, work->value1a);
@@ -74,7 +74,7 @@ void Func_080dd950(void) {
       scene[0x53e] = 0;
       scene[0x53c] = 1;
       scene[0x53d] = 1;
-      WaitFrames(10);
+      wait(10);
     }
   }
 }

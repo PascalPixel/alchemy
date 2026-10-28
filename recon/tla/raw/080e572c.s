@@ -280,7 +280,7 @@ Func_080e572c:
 	movs r0, #130
 	bl Sound_PlayFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #168
 	movs r6, #168
 	lsls r3, r3, #5
@@ -337,7 +337,7 @@ Func_080e572c:
 	mov r8, r2
 .L_080e59f4:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r0, #0
 	ldrsh r3, [r6, r0]
 	cmp r3, r8

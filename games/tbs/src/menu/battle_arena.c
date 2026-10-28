@@ -500,7 +500,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   Event_Start();
   Event_SetMessageId(MsgLobbyWantParticipatePlease);
   FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
-  WaitFrames(5);
+  wait(5);
   GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   Event_End();
 #ifdef UBFIX
@@ -567,7 +567,7 @@ waitRecord:
     result = -1;
     goto done;
   }
-  WaitFrames(1);
+  wait(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -588,7 +588,7 @@ testRecord:
   if (record[0x12a] != 0) {
     result++;
   }
-  WaitFrames(2);
+  wait(2);
   // Put the prefix before the name, shifting it right and cutting it to the
   // 14 letters and terminator a Unit name holds.
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
@@ -634,7 +634,7 @@ waitRecovery:
     result = -1;
     goto done;
   }
-  WaitFrames(1);
+  wait(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -649,7 +649,7 @@ testRecovery:
   if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
   } else {
-    WaitFrames(2);
+    wait(2);
   }
   goto done;
 second:
@@ -758,7 +758,7 @@ static s32 BattleArena_SendPartyRecords(void) {
       }
     } while (0);
     while (Serial_GetActiveTransfers() != 0) {
-      WaitFrames(1);
+      wait(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
         /* FAKEMATCH(one-pass): the retry limit's test in a one-pass block,
@@ -772,13 +772,13 @@ static s32 BattleArena_SendPartyRecords(void) {
         } while (0);
       }
     }
-    WaitFrames(2);
+    wait(2);
   }
   // The padding loop is written with goto (MATCHING.md): as for (; i <= 2;
   // i++) round a while loop, 127 of 254 instructions differ in tbs-en.
   goto next;
 wait:
-  WaitFrames(1);
+  wait(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -790,7 +790,7 @@ test:
   if (Serial_GetActiveTransfers() != 0) {
     goto wait;
   }
-  WaitFrames(2);
+  wait(2);
   i++;
 next:
   // Pad to three records with the last copy marked absent (side 0).
@@ -836,7 +836,7 @@ next:
     }
     goto testOffer;
   waitOffer:
-    WaitFrames(1);
+    wait(1);
     if (--timeout < 0 ||
         (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
       if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -848,8 +848,8 @@ next:
     if (Serial_GetActiveTransfers() != 0) {
       goto waitOffer;
     }
-    WaitFrames(1);
-    WaitFrames(2);
+    wait(1);
+    wait(2);
   }
 done:
   Heap_Release(heap);
@@ -876,11 +876,11 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   // Every failure reaches the one reset: as nested ifs before a single
   // if (result < 0), 16 of 62 instructions differ in tbs-en.
   if (!receiveFirst) {
-    WaitFrames(5);
+    wait(5);
     result = BattleArena_SendPartyRecords();
     if (result < 0)
       goto fail;
-    WaitFrames(5);
+    wait(5);
     receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto check;
@@ -888,7 +888,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
     receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto fail;
-    WaitFrames(10);
+    wait(10);
     result = BattleArena_SendPartyRecords();
     if (result < 0)
       goto fail;
@@ -943,7 +943,7 @@ static s32 BattleArena_EnterBattle(void) {
     if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingOpponent, 5, 4, 1);
     while (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
-      WaitFrames(1);
+      wait(1);
       cancelEntry = 0;
       if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED))
         cancelEntry = 1;
@@ -969,7 +969,7 @@ static s32 BattleArena_EnterBattle(void) {
     }
     if (window)
       Window_Close(window, 1);
-    WaitFrames(5);
+    wait(5);
   }
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
@@ -983,13 +983,13 @@ static s32 BattleArena_EnterBattle(void) {
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
-    WaitFrames(8);
+    wait(8);
     TilesetAnim_Pause(5);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
       Actor_SetAngleToward(ACTOR_ATTENDANT, gAdventure.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyGoodLuck);
       FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
-      WaitFrames(45);
+      wait(45);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
       Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1009,7 +1009,7 @@ static s32 BattleArena_EnterBattle(void) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
         Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
-        WaitFrames(8);
+        wait(8);
         TilesetAnim_Pause(5);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
@@ -1087,7 +1087,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   Actor_SetAngleToward(ACTOR_ATTENDANT, gAdventure.leaderActorId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
-    WaitFrames(1);
+    wait(1);
   }
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
@@ -1259,7 +1259,7 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
       presetIndex = -1;
       break;
     }
-    WaitFrames(1);
+    wait(1);
   }
   Window_Close(window, 1);
   if (presetIndex >= 0) {
@@ -1275,7 +1275,7 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
     Event_SetMessageId(MsgLobbySettingsMadeRest);
     Event_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
   }
-  WaitFrames(10);
+  wait(10);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -1478,13 +1478,13 @@ static s32 BattleArena_SaveBattleResults(void) {
   Sound_Play(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   window = Message_OpenWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   Window_Close(window, 1);
 #ifdef UBFIX
   return 0;
@@ -1500,13 +1500,13 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
   Sound_Play(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   window = Message_OpenWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
   while (Message_AllTyped() == 0)
-    WaitFrames(1);
+    wait(1);
   Window_Close(window, 1);
 #ifdef UBFIX
   return 0;
@@ -1552,7 +1552,7 @@ s32 BattleArena_RunRoundResult(void) {
       gAdventure.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-  WaitFrames(1);
+  wait(1);
   TilesetAnim_Pause(5);
 
   // The payload's halfwords 4 to 7 hold the link battle's phase word
@@ -1673,7 +1673,7 @@ s32 BattleArena_RunRoundResult(void) {
       GameFlag_Clear(FLAG_AREA_TEMP_E8);
       work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
-      WaitFrames(20);
+      wait(20);
       BattleArena_InitializeSerial();
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);

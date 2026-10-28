@@ -93,7 +93,7 @@ BattleEffect_RunMoloch:
 	str r4, [sp, #24]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #128
 	lsls r1, r1, #2
 	movs r0, #12
@@ -944,7 +944,7 @@ BattleEffect_RunMoloch:
 	movs r0, #1
 	str r3, [r2]
 	add r9, r4
-	bl WaitFrames
+	bl wait
 	movs r0, #148
 	lsls r0, r0, #1
 	cmp r9, r0

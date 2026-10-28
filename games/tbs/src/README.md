@@ -46,7 +46,7 @@ classes, Djinn and the [game flags](../glossary.md#game-flag), with the `.tsv` t
 item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
 
 [Runtime](runtime/README.md) starts the console and runs every [frame](../glossary.md#frame)
-through `WaitFrames`, with the keypad, the [heap](../glossary.md#heap-and-pools), screen fades, [sprites](../glossary.md#sprite-and-oam), saving and
+through `wait()`, with the keypad, the [heap](../glossary.md#heap-and-pools), screen fades, [sprites](../glossary.md#sprite-and-oam), saving and
 the link cable. [Cartridge and memory](cartridge/README.md) holds the memory map, the
 [far-call](../glossary.md#far-call) tables, the overlay stubs, the flash save library and the resource
 directory, the numbered list through which every picture, table and overlay

@@ -525,7 +525,7 @@ static void LunpaFortress_CratesSink(void) {
   Actor_SetDestination(ACTOR_CAVE_CRATES, 248, 376);
   Actor_WaitForMoveById(ACTOR_CAVE_CRATES);
   Event_PlaySound(SE_SPLASH_SMALL);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   LunpaFortress_LowerCrates();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
 }
@@ -786,7 +786,7 @@ static void LunpaFortress_TakeCellKey(void) {
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 264, 792);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   ItemDisplay_ShowItem(ITEM_CELL_KEY, 3);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1387,7 +1387,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   }
   Event_ShowMessageAndWait(actorId, 0);
   Event_FinishScreenTransition();
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_EventSetExitRequest(EXIT_THROWN_OUT);
   Event_End();
 }
@@ -1455,7 +1455,7 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   messageBase = MsgLunpaShiftAlready;
   Event_SetMessageId(messageBase);
   Event_ShowMessageAndWait(actorId, 0);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_SetMessageId((messageBase + 1));
   Event_ShowMessageAndWait(actorId, 0);
@@ -1533,7 +1533,7 @@ static void LunpaFortress_FightThreeGuards(void) {
   Event_PlaySound(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetAngleToward(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ACTOR_PARTY_LEADER,
                        0);
   messageBase = MsgLunpaWho3;
@@ -1549,7 +1549,7 @@ static void LunpaFortress_FightThreeGuards(void) {
                        0);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER,
                        ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0);
-  Event_WaitFrames(65);
+  Event_Wait(65);
   Actor_FaceDirection(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE,
                       FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST,
@@ -1568,12 +1568,12 @@ static void LunpaFortress_FightThreeGuards(void) {
   Event_SetMessageId((messageBase + 5));
   Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0);
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 3);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAngleToward(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE,
                        ACTOR_PARTY_LEADER, 0);
   Actor_SetAngleToward(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ACTOR_PARTY_LEADER,
                        0);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Actor_WalkTo(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 672, 88);
   Actor_WaitForMoveById(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST);
 #if TBS_PATCH_1
@@ -1581,7 +1581,7 @@ static void LunpaFortress_FightThreeGuards(void) {
                        0);
 #endif
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 3);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId((messageBase + 6));
   Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
   gFieldWork->transition =
@@ -1658,7 +1658,7 @@ static void LunpaFortress_EntranceGuardThrowsPartyOut(void) {
   }
   Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD, 0);
   Event_FinishScreenTransition();
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_EventSetExitRequest(EXIT_THROWN_OUT);
   Event_End();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY);
@@ -1687,7 +1687,7 @@ static void LunpaFortress_SentriesThrowPartyOut(void) {
   Event_SetMessageId(challengeMessage + 1);
   Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_FIRST_SENTRY, 0);
   Event_FinishScreenTransition();
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_EventSetExitRequest(EXIT_THROWN_OUT);
   Event_End();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
@@ -1716,9 +1716,9 @@ static __inline__ void
 LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
                                void (*openPassage)(void)) {
   MapGrid_CopyCells(6, 77, 1, 2, cellX, cellY);
-  Event_WaitFrames(5);
+  Event_Wait(5);
   MapGrid_CopyCells(7, 77, 1, 2, cellX, cellY);
-  Event_WaitFrames(1);
+  Event_Wait(1);
   openPassage();
 }
 
@@ -1730,7 +1730,7 @@ static void LunpaFortress_FlipFirstSwitch(void) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Event_PlaySound(SE_THUMP);
-      Event_WaitFrames(1);
+      Event_Wait(1);
       LunpaFortress_FlipHiddenSwitch(17, 82,
                                      LunpaFortress_OpenFirstSwitchPassage);
       GameFlag_Set(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
@@ -1746,7 +1746,7 @@ static void LunpaFortress_FlipSecondSwitch(void) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Event_PlaySound(SE_THUMP);
-      Event_WaitFrames(1);
+      Event_Wait(1);
       LunpaFortress_FlipHiddenSwitch(3, 55,
                                      LunpaFortress_OpenSecondSwitchPassage);
       GameFlag_Set(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
@@ -1826,16 +1826,16 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(15);
+  Event_Wait(15);
 }
 
 /// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
 static void LunpaFortress_ActivateLeverTrap(void) {
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Event_PlaySound(SE_RUMBLE);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_WaitFrames(5);
+  Event_Wait(5);
   Event_PlaySound(SE_CRASH);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1844,7 +1844,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
 }
 
 /// The camera finds Toadonpa, the monster Dodonpa has freed; it lumbers
@@ -1852,7 +1852,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
 static void LunpaFortress_RevealMonster(void) {
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_TOADONPA_BOSS, 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId(MsgLunpaPrepareBecomeMonster);
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetSpeed(ACTOR_TOADONPA_BOSS, PIXELS(1), PIXELS(1) / 2);
@@ -1862,7 +1862,7 @@ static void LunpaFortress_RevealMonster(void) {
   FieldCamera_FollowActor(ACTOR_TOADONPA_BOSS, 1);
   Actor_WaitForMoveById(ACTOR_TOADONPA_BOSS);
   Import_ActorSetAnimation(ACTOR_TOADONPA_BOSS, 4);
-  Event_WaitFrames(30);
+  Event_Wait(30);
 }
 
 /// The party spreads out and faces Toadonpa.
@@ -1904,11 +1904,11 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
     Actor_Jump(ACTOR_TOADONPA_HAMMET, 4, 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 1);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkTo(ACTOR_IVAN, 464, 192);
     Actor_WaitForMoveById(ACTOR_IVAN);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -1922,20 +1922,20 @@ static void LunpaFortress_FindHammet(void) {
     Actor_WalkTo(ACTOR_TOADONPA_DODONPA, 458, 272);
     Actor_WaitForMoveById(ACTOR_TOADONPA_DODONPA);
     Actor_FaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, -8, 8);
     Actor_WaitForMoveById(ACTOR_TOADONPA_DODONPA);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_PlaySound(SE_SWITCH);
     FieldMessage_Show(messageBase + 1, 1);
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
     LunpaFortress_ActivateLeverTrap();
-    Event_WaitFrames(120);
+    Event_Wait(120);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
     Actor_StartRepeatedMotion(ACTOR_GARET, 2);
     Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     messageBase += 2;
     LunpaFortress_PositionPartyForMonster();
     Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_PARTY_LEADER, 0);
@@ -1944,7 +1944,7 @@ static void LunpaFortress_FindHammet(void) {
     LunpaFortress_RevealMonster();
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Event_WaitFrames(1);
+    Event_Wait(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     Event_SetAfterBattleDestination((s32)&SceneId_LunpaFortressToadonpa,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
@@ -1952,13 +1952,13 @@ static void LunpaFortress_FindHammet(void) {
   } else {
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
     messageBase = MsgLunpaTimeEat;
     Event_SetMessageId(messageBase);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(140);
+    Event_Wait(140);
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
     Actor_Jump(ACTOR_TOADONPA_HAMMET, 4, 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 1);
@@ -1971,56 +1971,56 @@ static void LunpaFortress_FindHammet(void) {
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkTo(ACTOR_IVAN, 464, 192);
     Actor_WaitForMoveById(ACTOR_IVAN);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Event_SetMessageId(messageBase + 2);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
-    Event_WaitFrames(110);
+    Event_Wait(110);
     Event_PlaySound(MUS_IVAN);
     Event_SetMessageId(messageBase + 3);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetSpeed(ACTOR_TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 520, 208);
     Actor_WaitForMoveById(ACTOR_TOADONPA_HAMMET);
     Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 1);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP,
                         0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_SOUTH + FACING_STEP, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_IVAN, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_SetMessageId(messageBase + 4);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Event_WaitFrames(120);
+    Event_Wait(120);
     Event_SetMessageId(messageBase + 5);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(25);
+    Event_Wait(25);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, 3);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     Actor_WalkTo(ACTOR_IVAN, 480, 200);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 6);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 4);
-    Event_WaitFrames(80);
+    Event_Wait(80);
     Event_SetMessageId(messageBase + 7);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
@@ -2031,10 +2031,10 @@ static void LunpaFortress_FindHammet(void) {
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(5);
+    Event_Wait(5);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Event_PlaySound(MUS_SATUROS_AND_MENARDI);
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Actor_PlaceCurrentWithinCameraBounds(ACTOR_TOADONPA_DODONPA, 1);
@@ -2049,33 +2049,33 @@ static void LunpaFortress_FindHammet(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 9);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_HAMMET, 0);
     Event_SetMessageId(messageBase + 10);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_IVAN, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Event_SetMessageId(messageBase + 11);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
     Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 12);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 4);
     Event_SetMessageId(messageBase + 13);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
@@ -2087,18 +2087,18 @@ static void LunpaFortress_FindHammet(void) {
     Actor_WalkTo(ACTOR_IVAN, 472, 216);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(messageBase + 15);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 16);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
     Actor_WalkTo(ACTOR_MIA, 440, 216);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(messageBase + 17);
     Event_ShowMessageAndWait(ACTOR_MIA, 0);
     Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 4);
@@ -2109,25 +2109,25 @@ static void LunpaFortress_FindHammet(void) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 19);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 20);
     Event_ShowMessageAndWait(ACTOR_GARET, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_SetMessageId(messageBase + 21);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
     Actor_WalkTo(ACTOR_TOADONPA_DODONPA, 456, 280);
     Actor_WaitForMoveById(ACTOR_TOADONPA_DODONPA);
     Actor_FaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-    Event_WaitFrames(80);
+    Event_Wait(80);
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, -8, 8);
     Actor_WaitForMoveById(ACTOR_TOADONPA_DODONPA);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Event_PlaySound(SE_SWITCH);
     FieldMessage_Show(MsgLunpaDodonpaPulledLever, 1);
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
@@ -2136,7 +2136,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_PlaySound(MUS_BOSS_BATTLE);
     Event_SetMessageId(messageBase + 23);
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_BOSS, 0);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_BOSS, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_BOSS, 0);
@@ -2147,7 +2147,7 @@ static void LunpaFortress_FindHammet(void) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_TRAP_SEEN);
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Event_WaitFrames(1);
+    Event_Wait(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     Event_SetAfterBattleDestination((s32)&SceneId_LunpaFortressToadonpa,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
@@ -2194,7 +2194,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 5);
   Event_StartScreenTransition();
-  Event_WaitFrames(120);
+  Event_Wait(120);
 
   // The fallen monster has pinned Dodonpa; decide whether to help him.
   aftermathMessage = MsgLunpaUhnnGetOff;
@@ -2206,22 +2206,22 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((aftermathMessage + 2));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 512, 232);
   Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 4);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((aftermathMessage + 3));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(15);
+  Event_Wait(15);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_SetMessageId((aftermathMessage + 4));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
@@ -2234,21 +2234,21 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
   Event_SetMessageId((aftermathMessage + 6));
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Event_SetMessageId((aftermathMessage + 7));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_SetMessageId((aftermathMessage + 8));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId((aftermathMessage + 9));
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
@@ -2259,7 +2259,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
   } else {
     Event_SetMessageId((aftermathMessage + 11));
     Event_ShowMessageAndWait(ACTOR_MIA, 0);
@@ -2267,17 +2267,17 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
-    Event_WaitFrames(80);
+    Event_Wait(80);
     Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, 3);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
     Event_SetMessageId((aftermathMessage + 12));
     Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_HAMMET, 0);
@@ -2286,7 +2286,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Event_WaitFrames(80);
+    Event_Wait(80);
     Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
@@ -2317,12 +2317,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Event_PlaySound(SE_LOG_PUSH);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 7);
   // Move the party and both monster parts together to free Dodonpa.
@@ -2341,17 +2341,17 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetDestinationOffset(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, -24, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
@@ -2378,22 +2378,22 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WaitForMoveById(ACTOR_MIA);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-  Event_WaitFrames(30);
-  Event_WaitFrames(60);
+  Event_Wait(30);
+  Event_Wait(60);
   // Debate Dodonpa's punishment before his father arrives.
   punishmentMessage = MsgLunpaAbleGet;
   Event_SetMessageId(punishmentMessage);
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 6);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 7);
   Event_SetMessageId((punishmentMessage + 1));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
@@ -2401,9 +2401,9 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 5);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Event_SetMessageId((punishmentMessage + 3));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DODONPA, 7);
@@ -2417,12 +2417,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_SetMessageId((punishmentMessage + 5));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2430,7 +2430,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((punishmentMessage + 6));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((punishmentMessage + 7));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_WalkTo(ACTOR_GARET, 448, 208);
@@ -2440,24 +2440,24 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((punishmentMessage + 8));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((punishmentMessage + 9));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((punishmentMessage + 10));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId((punishmentMessage + 11));
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_MIA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((punishmentMessage + 12));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_GARET, 0);
   Event_SetMessageId((punishmentMessage + 13));
@@ -2469,12 +2469,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((punishmentMessage + 15));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
@@ -2484,34 +2484,34 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((punishmentMessage + 16));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_GARET, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_SetMessageId((punishmentMessage + 17));
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_IVAN, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId((punishmentMessage + 18));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Event_SetMessageId((punishmentMessage + 19));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId((punishmentMessage + 20));
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Event_SetMessageId((punishmentMessage + 21));
   FieldMessage_ShowAtActor(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2537,7 +2537,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_DONPA, 0);
   FieldCamera_MoveTo(0x1c80000, -1, 0xf00000, 1);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_PlaySound(MUS_COLOSSO);
   // Donpa takes charge and orders his son to remain imprisoned.
   donpaMessage = MsgLunpaDad;
@@ -2553,7 +2553,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_NORTH + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 4);
-  Event_WaitFrames(89);
+  Event_Wait(89);
   Event_SetMessageId((donpaMessage + 2));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
@@ -2563,18 +2563,18 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   80);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 4);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 4));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Event_SetMessageId((donpaMessage + 5));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, 3);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 6));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
@@ -2587,24 +2587,24 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, 3);
   Event_SetMessageId((donpaMessage + 9));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_TOADONPA_DODONPA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_SetAttachedEffect(ACTOR_TOADONPA_DODONPA, 0);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 496, 240);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
   Event_SetMessageId((donpaMessage + 10));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_SetMessageId((donpaMessage + 11));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 12));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 3);
@@ -2615,15 +2615,15 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((donpaMessage + 14));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 3);
-  Event_WaitFrames(140);
+  Event_Wait(140);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DONPA, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
   Event_SetMessageId((donpaMessage + 15));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
@@ -2632,38 +2632,38 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_MIA, ACTOR_TOADONPA_DONPA, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((donpaMessage + 17));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Event_SetMessageId((donpaMessage + 18));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((donpaMessage + 19));
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_IVAN, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 20));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 4);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Event_SetMessageId((donpaMessage + 21));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
@@ -2674,9 +2674,9 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 3);
-  Event_WaitFrames(80);
+  Event_Wait(80);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 4);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   Event_SetMessageId((donpaMessage + 23));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -2684,13 +2684,13 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((donpaMessage + 24));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DONPA, 1);
-  Event_WaitFrames(50);
+  Event_Wait(50);
   Event_SetMessageId((donpaMessage + 25));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Event_SetMessageId((donpaMessage + 26));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -2698,31 +2698,31 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 28));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 90);
   Event_SetMessageId((donpaMessage + 29));
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH + FACING_STEP, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 30));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Event_SetMessageId((donpaMessage + 31));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 32));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   Event_SetMessageId((donpaMessage + 33));
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId((donpaMessage + 34));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
@@ -2732,24 +2732,24 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_SetMessageId((donpaMessage + 36));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Event_SetMessageId((donpaMessage + 37));
   FieldMessage_ShowAtActor(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     Event_SetMessageId((donpaMessage + 38));
     Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   }
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 3);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   // Rejoin the companions, then escort Hammet out of the fortress.
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2774,7 +2774,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, PIXELS(0), PIXELS(0));
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetSpeed(ACTOR_TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 472, 184);
   Actor_WaitForMoveById(ACTOR_TOADONPA_HAMMET);
@@ -2782,21 +2782,21 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAngleToward(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_SetMessageId((donpaMessage + 39));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_SetMessageId((donpaMessage + 40));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_TOADONPA_HAMMET, PIXELS(1), PIXELS(1) / 2);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 480, 248);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_SetSpritePriority(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 480, 216);
@@ -2806,11 +2806,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitFrames(5);
+  Event_Wait(5);
   Import_ActorSetAnimation(ACTOR_TOADONPA_HAMMET, 3);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Import_ActorSetAnimation(ACTOR_TOADONPA_DONPA, 3);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 480, 248);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 456, 248);
   Actor_WaitForMoveById(ACTOR_TOADONPA_HAMMET);
@@ -2823,13 +2823,13 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 352, 360);
   Actor_WaitForMoveById(ACTOR_TOADONPA_HAMMET);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 352, 360);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_FinishScreenTransition();
-  Event_WaitFrames(1);
-  Event_WaitFrames(210);
+  Event_Wait(1);
+  Event_Wait(210);
   Import_EventSetExitRequest(LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES);
   Event_End();
 }
@@ -2871,13 +2871,13 @@ static void LunpaFortress_ReadSentrysThoughts(void) {
   case 5:
     Actor_ArmCallback(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_NORTH + FACING_STEP, 0);
-    Event_WaitFrames(50);
+    Event_Wait(50);
     Actor_ArmCallback(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_NORTHWEST + FACING_STEP, 0);
-    Event_WaitFrames(50);
+    Event_Wait(50);
     Actor_ArmCallback(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_SOUTH + FACING_STEP, 0);
-    Event_WaitFrames(50);
+    Event_Wait(50);
     Event_SetMessageId(MsgLunpaTakeCareAnybody);
     Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
@@ -2894,21 +2894,21 @@ static void LunpaFortress_TalkToSentry(void) {
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_NORTH + FACING_STEP, 0);
-  Event_WaitFrames(50);
+  Event_Wait(50);
   Actor_FaceDirection(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_NORTHWEST + FACING_STEP, 0);
-  Event_WaitFrames(50);
+  Event_Wait(50);
   Actor_FaceDirection(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_SOUTH + FACING_STEP, 0);
-  Event_WaitFrames(50);
+  Event_Wait(50);
   messageBase = MsgLunpaLeftGuardHearsSomeone;
   Event_SetMessageId(messageBase);
   Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
   Import_ActorSetAnimation(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 4);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_FaceDirection(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
                       FACING_NORTHWEST + FACING_STEP, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Event_SetMessageId(messageBase + 1);
   Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
 }
@@ -2950,9 +2950,9 @@ static void LunpaFortress_TalkToAttendant(void) {
                            0);
       Actor_PlaceCurrentWithinCameraBounds(ACTOR_UPPER_FLOOR_DONPA, 1);
       FieldCamera_WaitForArrival();
-      Event_WaitFrames(60);
+      Event_Wait(60);
       Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       Actor_ShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Event_SetMessageId(whisperMessage + 1);
@@ -2961,7 +2961,7 @@ static void LunpaFortress_TalkToAttendant(void) {
                       60);
       Event_SetMessageId(whisperMessage + 2);
       Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
-      Event_WaitFrames(70);
+      Event_Wait(70);
       Actor_ShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
       Actor_SetAngleToward(ACTOR_UPPER_FLOOR_ATTENDANT, ACTOR_PARTY_LEADER, 0);
@@ -2974,7 +2974,7 @@ static void LunpaFortress_TalkToAttendant(void) {
         Event_SetMessageId(whisperMessage + 5);
         FieldMessage_ShowAtActor(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
       }
-      Event_WaitFrames(60);
+      Event_Wait(60);
       Actor_ShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       familyMessage = MsgLunpaDonpaKnowsCoddled;
@@ -3027,12 +3027,12 @@ static void LunpaFortress_TalkToDonpa(void) {
       Event_SetMessageId(rewardMessage);
       Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_DONPA, 0);
       Actor_RunRepeatedMotion(ACTOR_UPPER_FLOOR_DONPA, 1);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       Actor_SetSpeed(ACTOR_UPPER_FLOOR_DONPA, PIXELS(1) / 10, PIXELS(1) / 20);
       Actor_SetDestinationOffset(ACTOR_UPPER_FLOOR_DONPA, -4, 0);
       Actor_WaitForMoveById(ACTOR_UPPER_FLOOR_DONPA);
       Import_ActorSetAnimation(ACTOR_UPPER_FLOOR_DONPA, 3);
-      Event_WaitFrames(60);
+      Event_Wait(60);
       Actor_SetSpeed(ACTOR_UPPER_FLOOR_DONPA, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetDestinationOffset(ACTOR_UPPER_FLOOR_DONPA, -6, 0);
       Actor_SetAngleToward(ACTOR_UPPER_FLOOR_DONPA, ACTOR_PARTY_LEADER, 0);
@@ -3044,9 +3044,9 @@ static void LunpaFortress_TalkToDonpa(void) {
                            0);
       Event_SetMessageId(rewardMessage + 2);
       Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_DONPA, 0);
-      Event_WaitFrames(70);
+      Event_Wait(70);
       Import_ActorSetAnimation(ACTOR_UPPER_FLOOR_ATTENDANT, 3);
-      Event_WaitFrames(60);
+      Event_Wait(60);
       Actor_SetSpeed(ACTOR_UPPER_FLOOR_ATTENDANT, PIXELS(2) / 5, PIXELS(1) / 5);
       Actor_WalkTo(ACTOR_UPPER_FLOOR_ATTENDANT, 880, 112);
       Actor_WaitForMoveById(ACTOR_UPPER_FLOOR_ATTENDANT);
@@ -3055,7 +3055,7 @@ static void LunpaFortress_TalkToDonpa(void) {
       Event_SetMessageId(rewardMessage + 3);
       Event_ShowMessageAndWait(ACTOR_UPPER_FLOOR_DONPA, 0);
       Import_ActorSetAnimation(ACTOR_UPPER_FLOOR_DONPA, 3);
-      Event_WaitFrames(70);
+      Event_Wait(70);
       Actor_SetDestinationOffset(ACTOR_UPPER_FLOOR_DONPA, 8, 0);
       Actor_WaitForMoveById(ACTOR_UPPER_FLOOR_DONPA);
       Import_ActorSetAnimation(ACTOR_UPPER_FLOOR_DONPA, 5);
@@ -3065,9 +3065,9 @@ static void LunpaFortress_TalkToDonpa(void) {
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_UPPER_FLOOR_ATTENDANT,
                                 0);
-      Event_WaitFrames(60);
+      Event_Wait(60);
       Import_ActorSetAnimation(ACTOR_UPPER_FLOOR_ATTENDANT, 3);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       GameFlag_Set(FLAG_LUNPA_FORTRESS_REWARD_SHOWN);
     } else {
       Event_SetMessageId(MsgLunpaWellWorriedDodonpa);
@@ -3135,7 +3135,7 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
       Actor_Jump(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
       Actor_Stop(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
       Actor_RefreshSelectorById(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       frightMessage = MsgLunpaWhWhWho;
       Event_SetMessageId(frightMessage);
       Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
@@ -3143,9 +3143,9 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
                       EMOTE_IN_FRONT | EMOTE_WINCE, 30);
       Event_SetMessageId(frightMessage + 1);
       Event_ShowMessageAndWait(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       Import_ActorSetAnimation(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 4);
-      Event_WaitFrames(30);
+      Event_Wait(30);
     }
     purposeMessage = MsgLunpaDontLookNearly;
     Event_SetMessageId(purposeMessage);
@@ -3300,9 +3300,9 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     Task_AddFrame(LunpaFortress_UpdateGroundFloorPatrolDetection,
                   TASK_PASS_FRAME);
     Task_AddFrame(LunpaFortress_CheckGroundFloorDoorApproach, TASK_PASS_FRAME);
-    WaitFrames(1);
+    wait(1);
     MapGrid_CenterOnFollowedPoint();
-    WaitFrames(1);
+    wait(1);
     MapGrid_CopyCells(101, 9, 10, 8, 110, 9);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
@@ -3327,7 +3327,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   Actor_ConfigureSpriteColor(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD,
                              SPRITE_COLOR_GRB);
   Actor_ConfigureSpriteColor(ACTOR_GROUND_FLOOR_FIRST_SENTRY, SPRITE_COLOR_GRB);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Sets LunpaFortressUpperFloor up: beaten guards gone or lying where they
@@ -3360,9 +3360,9 @@ static void LunpaFortress_InitializeUpperFloor(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddFrame(LunpaFortress_UpdatePairedGuardDetection, TASK_PASS_FRAME);
-    WaitFrames(1);
+    wait(1);
     MapGrid_CenterOnFollowedPoint();
-    WaitFrames(1);
+    wait(1);
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_MIDDLE_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_PASSAGE:
@@ -3383,9 +3383,9 @@ static void LunpaFortress_InitializeUpperFloor(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddFrame(LunpaFortress_UpdateHallGuardDetection, TASK_PASS_FRAME);
-    WaitFrames(1);
+    wait(1);
     MapGrid_CenterOnFollowedPoint();
-    WaitFrames(1);
+    wait(1);
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE:

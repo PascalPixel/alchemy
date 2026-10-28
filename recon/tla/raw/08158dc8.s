@@ -908,7 +908,7 @@ BattleEffect_RunThor:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r6, [sp, #24]
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
@@ -1844,7 +1844,7 @@ BattleEffect_RunThor:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #100]
 	adds r2, #1
 	str r2, [sp, #100]

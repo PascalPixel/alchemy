@@ -8,7 +8,7 @@ extern char MsgLoho27;
 extern const u8 gData_02001900[];
 extern const u8 gData_02001a80[];
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void FieldMessage_Show(s32 message, s32 mode);
@@ -46,10 +46,10 @@ void Func_0200012c(s32 actor) {
   Func_02001380(msg);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001420(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001380(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02001380(msg + 2);
   }
   Func_02001390(actor, 0);

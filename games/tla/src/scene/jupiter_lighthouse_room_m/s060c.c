@@ -80,10 +80,10 @@ void Func_0200060c(void) {
   Func_020049c4(124);
   Camera_MoveWithinMapBounds_(194 << 18, -1, 208 << 16, 1);
   Func_020048f4();
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
   Func_020049c4(217);
   Func_0200474c_(49, 103, 4, 3, 49, 76);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_Wait(6);
   Func_0200474c_(49, 106, 4, 3, 49, 76);
   x = object->x >> 20;
   if (x == 49)
@@ -111,7 +111,7 @@ void Func_0200060c(void) {
     i = 0;
     if (object->y > object->terrainHeight) {
       do {
-        WaitFrames(1);
+        wait(1);
         i++;
         if (i > 29)
           break;
@@ -126,17 +126,17 @@ void Func_0200060c(void) {
       Actor_OffsetPositionAndResetMotion_(23, -32, 0);
     else
       Actor_OffsetPositionAndResetMotion_(23, 32, 0);
-    FieldEvent_WaitFrames(7);
+    FieldEvent_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;
     object->terrainHeight = -0xf00000;
-    FieldEvent_WaitFrames(80);
+    FieldEvent_Wait(80);
     Func_0200475c_(0x50000, 0x50000, 0x10000);
     Func_020049c4(144);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
     Func_02004844(23, 0, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
   } else if (spot == 1 || spot == 4) {
     Actor_SetSpritePriority(23, 1);
     Func_020048e4_(0x40000, 0x8000);
@@ -146,17 +146,17 @@ void Func_0200060c(void) {
     object->gravity = 0x8000;
     object->motionFlags = 2;
     object->terrainHeight = -0xf00000;
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    FieldEvent_WaitFrames(60);
+    FieldEvent_Wait(60);
     Func_0200475c_(0x50000, 0x50000, 0x10000);
     Func_020049c4(144);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
     Func_02004844(23, 0, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
   }
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();

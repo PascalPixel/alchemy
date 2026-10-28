@@ -21,12 +21,12 @@ void Func_020029f8(u32 id, s32 cue);
 void Func_02002930(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002910(struct Actor *object, s32 mode);
 void Func_02002938(struct Actor *object);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02002998(void);
 void Func_02002a48(s32 skip);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 u16 Random16Far(void);
 void Func_020029a0(void);
 void Func_02002a18(s32 mode);
@@ -59,11 +59,11 @@ void Func_02000d80(void) {
     Func_02002910(leader, 7);
     Func_02002938(leader);
     do
-      WaitFrames(1);
+      wait(1);
     while (leader->y != leader->terrainHeight);
     Func_02001d30(leader);
     Func_02002910(leader, 6);
-    WaitFrames(3);
+    wait(3);
     return;
   }
   ahead.x = leader->x;
@@ -79,13 +79,13 @@ void Func_02000d80(void) {
     Actor_SetSingleChildFlags(leader, 0);
     gAdventure.renderMode = 2;
     Func_02001d30(leader);
-    FieldEvent_WaitFrames(5);
+    FieldEvent_Wait(5);
     for (i = 59; i >= 0; i--) {
       leader->y += 0x20000;
       leader->angle += 0x1000;
       if (Random16Far() <= 0xfff)
         Func_02001d30(leader);
-      WaitFrames(1);
+      wait(1);
     }
     gAdventure.renderMode = 0;
     Func_020029a0();

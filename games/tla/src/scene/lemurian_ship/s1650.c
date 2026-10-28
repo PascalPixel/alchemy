@@ -25,7 +25,7 @@ void Func_02001650(void) {
   Func_02002cd8(6, gAdventure.currentOwner);
   Func_02002cd8(5, gAdventure.currentOwner);
   Func_02002cd8(8, gAdventure.currentOwner);
-  LemurianShip_WaitFrames(1);
+  wait_(1);
   LemurianShip_ObjSpeed(7, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(5, 0xcccc, 0x6666);

@@ -40,7 +40,7 @@ void Func_08109188(void);
 void Func_080f8060(void *window, s32 a, s32 b);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
@@ -80,7 +80,7 @@ s32 Func_08109ad8(void) {
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
-        WaitFrames(1);
+        wait(1);
       }
       Func_0810928c(listWindow, memberIndex, 0);
       Shop_DrawItemCount(shop->itemWindow, unitId);
@@ -88,7 +88,7 @@ s32 Func_08109ad8(void) {
     }
     input = &gInput;
     if (input->pressed & 1) {
-      WaitFrames(1);
+      wait(1);
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(113);
         continue;
@@ -113,7 +113,7 @@ s32 Func_08109ad8(void) {
       break;
     } else {
       redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
-      WaitFrames(1);
+      wait(1);
     }
   }
   Func_0810bea8(0);
@@ -121,6 +121,6 @@ s32 Func_08109ad8(void) {
   Window_CloseFar(listWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   Window_CloseFar(shop->moneyWindow, 2);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

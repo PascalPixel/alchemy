@@ -14,10 +14,10 @@ Import_GameFlagSet:
 	.thumb_func
 Func_02000c48:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Import_EventWaitFrames
+	.global Import_EventWait
 	.thumb_func
-Import_EventWaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+Import_EventWait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Import_EventStart
 	.thumb_func
 Import_EventStart:

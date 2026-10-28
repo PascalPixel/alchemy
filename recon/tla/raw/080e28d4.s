@@ -52,7 +52,7 @@ Func_080e28d4:
 	.4byte 0x00001000
 .L_080e2938:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [r7, #24]
 	movs r3, #182
 	lsls r3, r3, #2
@@ -83,7 +83,7 @@ Func_080e28d4:
 	adds r3, #100
 	strh r2, [r3]
 	movs r0, #10
-	bl Event_WaitFrames
+	bl Event_Wait
 	mov r0, r9
 	movs r1, #3
 	bl Actor_StartRepeatedMotion
@@ -92,7 +92,7 @@ Func_080e28d4:
 	mov r0, r9
 	bl Func_080d489c
 	movs r0, #32
-	bl Event_WaitFrames
+	bl Event_Wait
 	str r5, [r7, #72]
 	movs r5, #192
 	lsls r5, r5, #11
@@ -100,12 +100,12 @@ Func_080e28d4:
 	str r5, [r7, #40]
 	bl Sound_PlayFar
 	movs r0, #15
-	bl Event_WaitFrames
+	bl Event_Wait
 	movs r0, #152
 	str r5, [r7, #40]
 	bl Sound_PlayFar
 	movs r0, #23
-	bl Event_WaitFrames
+	bl Event_Wait
 	movs r0, #146
 	bl Sound_PlayFar
 	ldr r3, [r7, #8]
@@ -174,7 +174,7 @@ Func_080e28d4:
 	adds r5, r5, r0
 	str r5, [r7, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	add r8, r3
 	cmp r8, r11

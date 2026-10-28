@@ -18,8 +18,8 @@ void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(u32 id);
 void Func_02001e70(u32 id, s32 angle);
 void Func_02001f10(s32 cue);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(u32 id);
 void GameFlag_SetBit(s32 flag);
 
@@ -49,15 +49,15 @@ climb:
   }
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i <= 351)
     goto climb;
   Actor_SetSpritePriority(gAdventure.currentOwner, 1);
   Func_02001f10(298);
-  WaitFrames(1);
+  wait(1);
   Func_02001f10(125);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Actor_GetById(gAdventure.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);

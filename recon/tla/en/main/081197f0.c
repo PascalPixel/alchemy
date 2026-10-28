@@ -90,7 +90,7 @@ void ObjectSystem_InitializeFar(s32 mode);
 void WindowSystem_InitBattleFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void BattleParty_AssignMemberSlots(void);
 s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
@@ -218,7 +218,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       if ((gLinkStatus & 3) == 3)
         break;
       linkWaitFrames++;
-      WaitFrames(1);
+      wait(1);
       if (linkWaitFrames > 24) {
         battle->linkPaused = 1;
         break;
@@ -380,7 +380,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       if (LinkBattle_SyncTurn() < 0)
         goto aborted_scripted;
     } else {
-      WaitFrames(20);
+      wait(20);
     }
     if (GameFlag_Test(0x16e) == 0)
       continue;
@@ -388,14 +388,14 @@ s32 Func_081197f0(s32 enemyGroup) {
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
                                          0, 4, 1);
     while (Message_AllTypedFar() == 0)
-      WaitFrames(1);
+      wait(1);
     Window_CloseFar(window, 1);
-    WaitFrames(1);
+    wait(1);
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
                                          10, 4, 1);
     Func_08120060(44, 24);
     Window_CloseFar(window, 1);
-    WaitFrames(1);
+    wait(1);
   }
 
 won:

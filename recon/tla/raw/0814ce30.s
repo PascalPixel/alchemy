@@ -1608,7 +1608,7 @@ BattleEffect_RunCybele:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #56]
 	movs r1, #183
 	adds r0, #1

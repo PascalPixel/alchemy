@@ -36,7 +36,7 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   Menu_DrawFlagBitTable(win, page);
   UiTextResource_Initialize(obj, &res);
   for (;;) {
-    WaitFrames(1);
+    wait(1);
     ret = Menu_HandleFlagGridInput(win, &page, cur);
     if (ret == -1)
       break; // Close.

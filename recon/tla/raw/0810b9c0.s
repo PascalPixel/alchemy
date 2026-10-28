@@ -111,7 +111,7 @@ Func_0810b9c0:
 	bl Shop_DrawMsg
 .L_0810baa0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, .L_0810bc94
 	movs r3, #1
 	ldr r2, [r4, #4]
@@ -119,7 +119,7 @@ Func_0810b9c0:
 	cmp r2, #0
 	beq .L_0810bb30
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #11
@@ -171,7 +171,7 @@ Func_0810b9c0:
 	b .L_0810bb22
 .L_0810bb1c:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0810bb22:
 	bl Message_AllTypedFar
 	cmp r0, #0
@@ -229,7 +229,7 @@ Func_0810b9c0:
 	movs r5, #4
 .L_0810bb96:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [r6]
 	ands r3, r5
 	cmp r3, #0
@@ -251,7 +251,7 @@ Func_0810b9c0:
 	ldr r0, [r3]
 	bl WindowSprite_PrepareForRedrawFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_0810bc64
 .L_0810bbce:
 	ldr r3, [r4, #12]
@@ -345,7 +345,7 @@ Func_0810b9c0:
 	ldr r0, [sp, #20]
 	bl Window_CloseFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r5, #0
 	add sp, #32
 	pop {r3, r5, r6, r7}

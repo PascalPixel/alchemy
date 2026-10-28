@@ -151,7 +151,7 @@ Func_080d92d4:
 	movs r3, #0
 	str r3, [r0, #24]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, .L_080d9494
 	ldr r0, [r2]
 	bl Trig_Sin
@@ -197,7 +197,7 @@ Func_080d92d4:
 	adds r3, r3, r0
 	str r3, [r6]
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	adds r0, r7, #0
 	movs r1, #2
 	bl Actor_SetMode

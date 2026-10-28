@@ -15,7 +15,7 @@ void Func_02000e78(void) {
   Task_RemoveFar(Func_02002180);
   Scene_ArmCallback(21, 0x4000, 0);
   Actor_Stop(gAdventure.currentOwner);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   GameFlag_SetBit(0x88b);
   Func_02004048();
 }

@@ -22,7 +22,7 @@ struct FadeWork {
 };
 
 void *HeapSlot_AllocEwram();
-void WaitFrames();
+void wait();
 void Func_08020268();
 
 /// In control mode 3, marks the event work busy, shows its object and, when a
@@ -48,7 +48,7 @@ void Func_080cb82c(void) {
       fade->step = zero;
       fade->active = 1;
       fade->pending = zero;
-      WaitFrames(2);
+      wait(2);
     }
     Func_08020268();
   }

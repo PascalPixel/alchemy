@@ -153,7 +153,7 @@ enum HeapSlot {
   /// save, load, copy or delete and each scan of the files, as the main
   /// menu's (Save_ScanFileSummaries).
   HEAP_SLOT_SAVE = 51,
-  /// Lives for one frame: WaitFrames builds the OAM list in it, and the field
+  /// Lives for one frame: wait() builds the OAM list in it, and the field
   /// sprite decoder keeps its code there between its own uses.
   HEAP_SLOT_FRAME_SCRATCH = 52,
   /// A RAM copy of Tile_CopyStrided, which uploads field sprite pictures to

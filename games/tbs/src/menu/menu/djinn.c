@@ -86,7 +86,7 @@ s32 DjinnMenu_Run(void) {
   gAdventure.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Window_InitializeWork(0);
   backdrop = Heap_AllocEwram(0x2130);
   menu->backdrop = backdrop;
@@ -125,7 +125,7 @@ s32 DjinnMenu_Run(void) {
   DjinnMenu_RunScreen();
   DjinnFigures_ReleaseBottomRow();
   IconMenu_ReleaseArrows();
-  WaitFrames(1);
+  wait(1);
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   gActorSystemWork->suspended = 0;
@@ -133,7 +133,7 @@ s32 DjinnMenu_Run(void) {
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
-  WaitFrames(1);
+  wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Heap_Release(menu->backdrop);
@@ -213,7 +213,7 @@ s32 DjinnMenu_RunScreen(void) {
   cursor->motion = ICON_HIDDEN;
   cursor->animationStep = 0;
   Menu_OpenBackdropScreen();
-  WaitFrames(1);
+  wait(1);
   step = DJINN_STEP_SELECT_DJINN;
   do {
     switch (step) {
@@ -498,7 +498,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
-  WaitFrames(1);
+  wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
@@ -777,7 +777,7 @@ s32 DjinnMenu_ShowHelp(void) {
   previous = 0;
   selection = 0;
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  wait(1);
   WindowSprite_PrepareForRedrawFar(menu->helpWindow);
   message = MsgDjinnInfoPrompt;
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 0);
@@ -808,7 +808,7 @@ s32 DjinnMenu_ShowHelp(void) {
     previous = selection;
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
-      WaitFrames(1);
+      wait(1);
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_WrapIndex(selection, 7);
@@ -858,7 +858,7 @@ s32 DjinnMenu_ShowHelp(void) {
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);
   WindowSprite_ClearListFar(helpWindow);
-  WaitFrames(1);
+  wait(1);
   Window_CloseFar(statusWindow, 1);
   Window_CloseFar(list, 1);
   Window_CloseFar(helpWindow, 1);
@@ -1148,7 +1148,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       MenuCursor_Position(memberColumn * 56 - 8, 52);
     else
       MenuCursor_Position(memberColumn * 56 - 8, djinnRow * 8 + 60);
-    WaitFrames(1);
+    wait(1);
     // Holding R after R on a Djinni keeps the group commands up; they
     // end when R is let go or pressed again (the latch is cleared when they
     // began).
@@ -1171,7 +1171,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       case DJINN_TUTORIAL_CLOSE:
         while (!(gKeysPressed & KEY_A)) {
           MenuCursor_Position(150, 26);
-          WaitFrames(1);
+          wait(1);
         }
         pressed = KEY_B;
         repeat = KEY_B;
@@ -1184,15 +1184,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(MsgDjinnTutorialRecovery, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
-          WaitFrames(1);
+          wait(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAgain, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
           backdrop->tutorialTimer = 0;
@@ -1211,7 +1211,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow = Message_OpenWindowFar(MsgDjinnTutorialGive, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
           backdrop->tutorialTimer = 0;
@@ -1245,7 +1245,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(MsgDjinnTutorialSetAfterGive, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
           backdrop->tutorialTimer = 0;
@@ -1275,36 +1275,36 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(MsgDjinnTutorialPowers, 9, 9, 1);
           MenuCursor_Slide(2, 146);
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
-            WaitFrames(1);
+            wait(1);
           }
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
-          WaitFrames(1);
+          wait(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialUnleash, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
-            WaitFrames(1);
+            wait(1);
           }
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
-          WaitFrames(1);
+          wait(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialDemonstrate, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
-            WaitFrames(1);
+            wait(1);
           }
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
-          WaitFrames(1);
+          wait(1);
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 16;
         }

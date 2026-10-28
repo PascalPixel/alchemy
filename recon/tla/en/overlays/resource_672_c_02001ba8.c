@@ -44,7 +44,7 @@ void Func_02001ba8(void) {
         back->y += 0x10000;
       }
       Func_02001d40();
-      WaitFrames(1);
+      wait(1);
     }
   } else if (gAdventure.entrance == 2) {
     Func_02000be8();

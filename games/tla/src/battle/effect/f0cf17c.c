@@ -27,7 +27,7 @@ extern const u8 Data_080f01b8[];
 s32 Party_GetLeaderActor(void);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 void Actor_Destroy(struct Actor *object);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScriptFar(struct Actor *object,
                                   const u8 *script);
@@ -77,7 +77,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor,
       object++;
     } while (i >= 0);
   }
-  WaitFrames(3);
+  wait(3);
   picture =
       Func_080200c0(489, position[0], position[1] + 0x100000, position[2]);
   if (picture == NULL)

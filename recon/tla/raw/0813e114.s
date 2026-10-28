@@ -335,7 +335,7 @@ Func_0813e114:
 	str r3, [r2]
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #120
 	beq .L_0813e3a8
 	b .L_0813e24c

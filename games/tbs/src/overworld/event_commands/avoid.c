@@ -116,25 +116,25 @@ void FieldPsynergy_Avoid(void) {
     actor->arcFrames = zero;
   }
   Sound_PlayFar(SE_SPIN);
-  WaitFrames(15);
+  wait(15);
   actor->arcPhase = 1;
-  WaitFrames(10);
+  wait(10);
   // Flash white for 2 frames in every 5.
   for (count = 0; count < 20; count++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     group->dirty = 1;
-    WaitFrames(2);
+    wait(2);
     group->dirty = 1;
     entry->colorMode = SPRITE_COLOR_NORMAL;
     group->flags = SPRITE_FLAG_SHADOW;
-    WaitFrames(3);
+    wait(3);
   }
   actor->update = NULL;
   actor->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
-  WaitFrames(15);
+  wait(15);
   Sound_PlayFar(SE_NOTE_MID);
-  WaitFrames(55);
+  wait(55);
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.

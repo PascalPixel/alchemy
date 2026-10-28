@@ -46,7 +46,7 @@ s16 Menu_RunSelection(void) {
   UiTextResource_Initialize(&object, &resource);
 
   while (gInput.held != 0)
-    WaitFrames(1);
+    wait(1);
 
   for (;;) {
     result =
@@ -65,6 +65,6 @@ s16 Menu_RunSelection(void) {
 
     UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
     primary = result;
-    WaitFrames(1);
+    wait(1);
   }
 }

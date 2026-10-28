@@ -35,7 +35,7 @@ void Animation_WaitForTrackEnd(struct AnimObject *object) {
     i = 0;
     if (track->script[track->index] != 241) {
       do {
-        WaitFrames(1);
+        wait(1);
         i++;
         if (i > 89)
           break;
@@ -95,7 +95,7 @@ void Map_RenderAnimatedTilePicturesForObject(u8 *object) {
     Map_RenderAnimatedTilePicture(object, pos + 2);
     Map_RenderAnimatedTilePicture(object, pos + 3);
     pos += 4;
-    WaitFrames(1);
+    wait(1);
   } while (pos <= 0x7f);
 }
 
@@ -127,7 +127,7 @@ void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
         Map_RenderAnimatedTilePicture(*p++, pos3);
       } while (n != 0);
     }
-    WaitFrames(1U);
+    wait(1U);
     pos += 4;
   } while (pos <= 0x7FU);
 }

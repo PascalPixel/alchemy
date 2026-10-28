@@ -137,7 +137,7 @@ s32 Save_EraseSelectedFile(void) {
     } else {
       Message_OpenWindow((s32)&MsgEraseConfirm, ERASE_CONFIRM_X, 1, 2);
       while (Message_AllTyped() == 0)
-        WaitFrames(1);
+        wait(1);
       if (Menu_RunConfirmSelection(1, 0, 3, 1) != 0) {
         Message_CloseFinishedWindows();
       } else {

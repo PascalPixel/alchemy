@@ -85,7 +85,7 @@ void Func_080dba5c(void);
 void Sound_PlayFar(s32 cue);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Func_08020330(struct Actor *object);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
@@ -173,12 +173,12 @@ void Func_080e68d0(void) {
     Func_080dba5c();
   Sound_PlayFar(138);
   Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
-  WaitFrames(10);
+  wait(10);
   Actor_SetMode(object, 1);
-  WaitFrames(15);
+  wait(15);
   for (i = 9; i >= 0; i--) {
     object->y += -0x28000;
-    WaitFrames(1);
+    wait(1);
   }
   Actor_SetMode(object, 2);
   Sound_PlayFar(132);
@@ -201,11 +201,11 @@ void Func_080e68d0(void) {
   if (Func_080dbc04(scene->x, scene->z, caster->terrainId) == 0)
     failed = 3;
   if (failed) {
-    WaitFrames(2);
+    wait(2);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
     Sound_PlayFar(114);
-    WaitFrames(1);
+    wait(1);
     goto end;
   }
 
@@ -324,11 +324,11 @@ void Func_080e68d0(void) {
   }
   if (work->mode == 3) {
   grow:
-    WaitFrames(6);
+    wait(6);
     work->other->scaleX = 0x10000;
-    WaitFrames(4);
+    wait(4);
   } else {
-    WaitFrames(10);
+    wait(10);
   }
 
   work->phase = 0;
@@ -339,7 +339,7 @@ void Func_080e68d0(void) {
     while (work->phase != 999) {
       if (i == 24)
         Func_080e716c();
-      WaitFrames(1);
+      wait(1);
       i++;
     }
   } else {
@@ -348,7 +348,7 @@ void Func_080e68d0(void) {
     i = 0;
     while (work->phase != 999) {
       stage = 0;
-      WaitFrames(1);
+      wait(1);
       if (i == 30)
         stage = 1;
       if (i == 50)

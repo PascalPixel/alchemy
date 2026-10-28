@@ -91,7 +91,7 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 struct RenderModel *Render_AllocateModelList(s32 count);
@@ -146,7 +146,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   focus.x = 128 << 16;
   focus.y = 64 << 16;
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitFrames(1);
+  wait(1);
   BattleEffect_SpawnObjects(12, 654, 2);
 
   for (frame = 0; frame != SUMMON16_FRAMES; frame++) {
@@ -405,7 +405,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

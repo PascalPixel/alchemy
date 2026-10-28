@@ -21,7 +21,7 @@ void Func_020043f8(void) {
       ShamanVillage_ObjPlace(15, 0x780000, 0xd00000);
       ShamanVillage_ObjPlace(16, 0x680000, 0xd40000);
       ShamanVillage_ObjPlace(17, 0x880000, 0xd40000);
-      WaitFrames(1);
+      wait(1);
     }
   }
   if (GameFlag_Test(0x202))
@@ -92,29 +92,29 @@ void Func_02004534(void) {
     Actor_SetModeById(gAdventure.currentOwner, 41);
     Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                        0);
-    WaitFrames(1);
+    wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     i = 0;
     goto test_stand;
   next_stand:
     i++;
   test_stand:
     if (i < 60) {
-      WaitFrames(1);
+      wait(1);
       if (gInput.held == 0)
         goto next_stand;
     }
     Actor_SetModeById(gAdventure.currentOwner, 42);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     i = 0;
     goto test_turn;
   next_turn:
     i++;
   test_turn:
     if (i < 30) {
-      WaitFrames(1);
+      wait(1);
       if (gInput.held == 0)
         goto next_turn;
     }

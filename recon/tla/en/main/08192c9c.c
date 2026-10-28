@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -541,7 +541,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   while (*(volatile u32 *)(0x040000d4 + 8) & 0x80000000) {
   }
   work->transferPending = 1;
-  WaitFrames(1);
+  wait(1);
   REG_BG2PA = 0x80;
   *(volatile u32 *)0x04000028 = 0;
   REG_BLDALPHA = 0x1010;
@@ -576,7 +576,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         REG_BLDALPHA = 0x1010;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         work->transferPending = 1;
-        WaitFrames(1);
+        wait(1);
         if (frame <= 386) {
           for (i = 0; i != 16; i++)
             ResourceObject_ReleaseFar(work->objects[i]);
@@ -589,7 +589,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       } else {
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         work->transferPending = 1;
-        WaitFrames(1);
+        wait(1);
         break;
       }
     }
@@ -718,7 +718,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
       battle[0x867] = 1;
       BattleBackground_LoadFar(1, 0x76, 0);
       colors = Resource_GetTableEntry(0xa5);
@@ -1456,7 +1456,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     frame++;
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   camera[27] = savedZoom;
@@ -1466,7 +1466,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   while (*(volatile u32 *)(0x040000d4 + 8) & 0x80000000) {
   }
   work->transferPending = 1;
-  WaitFrames(1);
+  wait(1);
   REG_BG2PA = 0x80;
   *(volatile u32 *)0x04000028 = 0;
   gBgScroll[1].x = savedScroll;

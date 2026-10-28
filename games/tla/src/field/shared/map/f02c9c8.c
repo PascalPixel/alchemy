@@ -43,7 +43,7 @@ s32 Func_0802c9c8(void) {
   gData_030011f8 = Map_ShowBg1FromBuffer;
   state->windowTop = 0;
   state->windowBottom = 159;
-  WaitFrames(1);
+  wait(1);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), buffer);
   Map_UpdateCurrentTileBlock();
@@ -52,5 +52,5 @@ s32 Func_0802c9c8(void) {
   state->picturePending = 0;
   state->pictureShown = 0;
   Func_0802d088(state->area, 0);
-  WaitFrames(1);
+  wait(1);
 }

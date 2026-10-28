@@ -4,7 +4,7 @@
 #include "irq.h"
 #include "display_transition.h"
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Fade_FromBlack(s32 vblanks);
 void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 index);
@@ -37,7 +37,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->active = (REG_WINOUT & 0xff00) | 1;
     Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
     Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
-    WaitFrames(1);
+    wait(1);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -49,7 +49,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
-    WaitFrames(1);
+    wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
     state->start = 32;
     state->end = 64;

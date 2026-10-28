@@ -41,7 +41,7 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
     Actor_CenterOnColumn_(id, 2, -8);
   else
     Actor_OffsetPositionAndResetMotion_(id, 0, -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02002b44(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

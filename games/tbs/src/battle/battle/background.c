@@ -452,7 +452,7 @@ void BattleBackground_FadeAlphaOut(void) {
     // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
     // code.
     REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
-    WaitFrames(1);
+    wait(1);
   }
 }
 
@@ -468,7 +468,7 @@ void BattleBackground_FadeAlphaIn(void) {
   // code.
   for (step = 1; step <= 16; step += 2) {
     REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
-    WaitFrames(1);
+    wait(1);
   }
 }
 
@@ -521,7 +521,7 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
       if (gKeysPressed & KEY_A)
         selectedValue = battle->debugValue;
       else {
-        WaitFrames(1);
+        wait(1);
         continue;
       }
       break;
@@ -644,7 +644,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     Task_Remove(BattleBackground_StepHighlightBlend);
     REG_BLDY = mode;
     BattleHighlight_ClearAllSpriteModes();
-    WaitFrames(1);
+    wait(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   if (battle != 0 && mode != HIGHLIGHT_OFF) {
@@ -672,7 +672,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
         } while (unitId != BATTLE_UNIT_LIST_END);
       }
     }
-    WaitFrames(1);
+    wait(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
     Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_VBLANK);
   }

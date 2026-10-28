@@ -330,7 +330,7 @@ Func_0813e7e0:
 	add r3, r10
 	str r6, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r5, #1
 .L_0813ea80:
 	movs r2, #250
@@ -386,7 +386,7 @@ Func_0813e7e0:
 	movs r0, #2
 	bl BattleStaging_ConfigurePaletteFadeFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_0813eb68
 	ldr r0, .L_0813eb6c
 	ldrh r3, [r0]

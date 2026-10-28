@@ -206,7 +206,7 @@ Func_080ddbd8:
 	movs r0, #131
 	bl Sound_PlayFar
 	movs r0, #2
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #0]
 	subs r2, #1
 	str r2, [sp, #0]
@@ -215,7 +215,7 @@ Func_080ddbd8:
 	b .L_080ddc06
 .L_080ddd88:
 	movs r0, #8
-	bl WaitFrames
+	bl wait
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3

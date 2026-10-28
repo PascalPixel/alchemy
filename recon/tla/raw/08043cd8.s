@@ -401,7 +401,7 @@ Func_08043cd8:
 	movs r0, #0
 	bl Func_080f8080
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #2
 	mov r11, r3
 .L_08043fd4:
@@ -450,7 +450,7 @@ Func_08043cd8:
 	adds r1, r6, #0
 	bl StatusMenu_DrawCharacterSummary
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #28]
 	cmp r3, #0
 	bne .L_0804404c
@@ -470,7 +470,7 @@ Func_08043cd8:
 	adds r3, r6, #0
 	bl Func_08043a64
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #192
 	lsls r2, r2, #6
 	movs r1, #192
@@ -576,7 +576,7 @@ Func_08043cd8:
 	ldr r0, [sp, #16]
 	bl Func_08045018
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, .L_0804422c
 	movs r3, #64
 	ldr r2, [r1, #12]
@@ -819,7 +819,7 @@ Func_08043cd8:
 	ldrb r1, [r3]
 	bl Func_0803f9c0
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_08044330:
 	adds r0, r5, #0
 	add sp, #40

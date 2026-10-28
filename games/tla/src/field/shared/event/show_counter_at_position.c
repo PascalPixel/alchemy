@@ -41,6 +41,6 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 
   ret = Message_OpenWindowFar((s16)state->messageId, px, py, 1);
   while (Window_IsClosedFar(ret) == 0)
-    WaitFrames(1);
+    wait(1);
   state->messageId++;
 }

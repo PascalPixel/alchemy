@@ -6,10 +6,10 @@
 	.thumb_func
 __umodsi3:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -130,10 +130,10 @@ Unit_LevelUpTo:
 	.thumb_func
 Item_AdjustCounter:
 	overlay_veneer Item_AdjustCounterFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:

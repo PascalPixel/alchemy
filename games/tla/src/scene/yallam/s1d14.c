@@ -11,7 +11,7 @@
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02001730();
 void Func_0200182c();
 void Func_02001ec0();
@@ -25,7 +25,7 @@ void Actor_ArmCallback();
 void Actor_Jump();
 s32 Actor_GetById();
 void FieldMessage_ShowAtActor();
-void WaitFrames();
+void wait();
 extern u8 MsgIfYouWant[];
 
 void Func_02001d14(void) {
@@ -45,37 +45,37 @@ void Func_02001d14(void) {
   Func_0200182c();
   FIELD_AT(v5, s16, 0) = 1;
 L_02009d78:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   v6 = v7;
   v6 = (v6 + 100);
   if (FIELD_AT(v6, s16, 0) != 114)
     goto L_02009d78;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009da0:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (FIELD_AT(v6, s16, 0) != 150)
     goto L_02009da0;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009dc4:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (FIELD_AT(v6, s16, 0) != 154)
     goto L_02009dc4;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009de8:
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   if (FIELD_AT(v6, s16, 0) != 216)
     goto L_02009de8;
   FIELD_AT(v5, s16, 0) = 3;
-  Call1(WaitFrames, 1);
+  Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   Func_02001730();
   Call3(Actor_Jump, 8, 4, 0);
@@ -100,7 +100,7 @@ L_02009e90:
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Call1(Func_020025a0, 123);
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_Wait, 40);
   Call1(Func_02002578, 15);
 L_02009eb4:
 }

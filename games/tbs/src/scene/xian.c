@@ -370,7 +370,7 @@ static void Xian_TalkToWaterCarrier(void) {
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     savedFacing = carrier->facing;
     Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(MsgXianNowMustGetWaterAgain);
     if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) == 0) {
       gFieldWork->message++;
@@ -393,7 +393,7 @@ static void Xian_TalkToWaterCarrier(void) {
       (Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
-    Event_WaitFrames(5);
+    Event_Wait(5);
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     if (leader->x.fixed < carrier->x.fixed) {
@@ -419,7 +419,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   Import_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
@@ -438,7 +438,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   do {
-    WaitFrames(3);
+    wait(3);
     scaleY = puddle->scaleY;
     scaleX = puddle->scaleX;
     puddle->scaleY = scaleY + 0x1999;
@@ -448,11 +448,11 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   70);
   Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Event_SetMessageId(MsgXianDoingMadeMeSpillMy);
   FieldEvent_ShowMessageThenWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   Scene_PlayQueuedMusic();
@@ -528,7 +528,7 @@ static void Xian_TalkToKungFuStudent(void) {
   demonstrationSeen = GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN);
   if (demonstrationSeen != 0) {
     Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(MsgXianKungFuStrong);
     Event_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
@@ -550,7 +550,7 @@ static void Xian_TalkToKungFuStudent(void) {
                                        stepBackOffset[2] / 0x10000);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
@@ -599,10 +599,10 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     GameFlag_Set(FLAG_XIAN_STRIKE_SHOWN);
     Scene_PlayQueuedMusic();
@@ -642,7 +642,7 @@ static void Xian_JumpOverSpilledWater(void) {
     if (FieldActor_CheckMovementCollision(leader, landing) == 0) {
       Event_Start();
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
-      WaitFrames(6);
+      wait(6);
       Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       leader->speedLimit = PIXELS(3);
@@ -742,10 +742,10 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Task_Remove(rotationFunc);
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Import_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_SetMessageId(MsgXianWhaWhaHappened);
   if (Event_GetFlag(FLAG_XIAN_TREE_JUMPED)) {
     gFieldWork->message++;
@@ -781,7 +781,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);

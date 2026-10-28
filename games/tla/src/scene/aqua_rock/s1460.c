@@ -32,7 +32,7 @@ void Func_02001460(void) {
     __asm__("" : : "r"(angle));
     angle += 0x2000;
     object->angle = angle;
-    WaitFrames(1);
+    wait(1);
   }
   Func_02001d30(object);
   object->motionFlags = saved;

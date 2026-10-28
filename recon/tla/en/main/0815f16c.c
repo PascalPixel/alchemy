@@ -208,7 +208,7 @@ s32 Trig_Sin(s32);
 void HeapSlot_Release(s32);
 void Heap_Release(void *);
 void *Resource_GetTableEntry(s32);
-void WaitFrames(s32);
+void wait(s32);
 void Task_Add(void *, s32);
 void Task_Remove(void *);
 s32 Random16(void);
@@ -659,7 +659,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                         40);
     }
     work->unk78e8 = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   if (kind == 41) {
@@ -2277,7 +2277,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->unk78e8 = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||

@@ -40,10 +40,10 @@ void Func_02000590(void) {
     Camera_SetBounds(0x2b00000, -1, 0x1680000, 1);
     Func_02004d20();
     Func_02004dc8();
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
     Func_02004718();
     BattleEffect_PrepareBufferInterpolation();
-    WaitFrames(10);
+    wait(10);
     Func_02004cb0();
     Flag_Set(0xa36);
   } else {
@@ -59,7 +59,7 @@ void Func_02000590(void) {
       party[0x2c2] = 2;
     }
     Func_02004d30(18);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
     Func_02004718();
   }
 }
@@ -77,7 +77,7 @@ void Func_02000648(void) {
     party[0x2c2] = 2;
   }
   Func_02004d30(17);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02004718();
 }
 

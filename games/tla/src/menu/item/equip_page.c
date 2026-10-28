@@ -40,7 +40,7 @@ struct MenuResult {
 
 void WindowSprite_RedrawSavedRectFar(void *window);
 void WindowSprite_ClearListFar(void *window);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Text_DrawCharacterAtOffsetFar(u8 *message, void *window, s32 x, s32 y);
 void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
@@ -62,7 +62,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 #if LANGUAGE == LANGUAGE_JAPANESE
   // Japanese clears the name's window and draws the name as a resource.
   WindowSprite_ClearListFar(menu->infoWindow);
-  WaitFrames(1);
+  wait(1);
   if (menu->items[state->selectedIndex] != 0) {
     Text_DrawMessageFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
                                (s32)MsgItemPlainName,
@@ -70,7 +70,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   }
 #else
   WindowSprite_RedrawSavedRectFar(menu->infoWindow);
-  WaitFrames(1);
+  wait(1);
   if (menu->items[state->selectedIndex] != 0) {
     Text_DrawCharacterAtOffsetFar(
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
@@ -131,6 +131,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       break;
     }
   }
-  WaitFrames(1);
+  wait(1);
   return 1;
 }

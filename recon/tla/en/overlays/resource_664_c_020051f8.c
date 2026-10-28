@@ -29,7 +29,7 @@ struct Actor *Actor_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02005d84(void);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_02004f3c(void);
@@ -69,9 +69,9 @@ s32 Func_020051f8(void) {
     Func_02002770();
     if (gAdventure.entrance == 16 && !GameFlag_Test(265)) {
       Actor_GetById(gAdventure.currentOwner)->terrainId = 1;
-      WaitFrames(8);
+      wait(8);
       Func_02005d84();
-      WaitFrames(1);
+      wait(1);
     }
     if (gAdventure.entrance <= 11 || gAdventure.entrance == 16) {
       Task_Add(Func_02004f3c, 0x480);

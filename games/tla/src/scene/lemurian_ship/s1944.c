@@ -7,14 +7,14 @@ void Func_02001944(s32 actor, s32 id) {
   Func_02002da8(0);
   object->scaleX = 0x1000;
   object->scaleY = 0x1000;
-  WaitFrames(1);
+  wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02002de0(103);
   Actor_SetMovementTypeById(actor, gData_02002e30);
   Actor_SetMovementTypeAndWaitById(id, gData_02002e6c);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_02002c70();
 }
 
@@ -24,7 +24,7 @@ void Func_020019ac(void) {
     Func_02002da8(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_02001a04();
     Func_02002c70();
   }
@@ -49,7 +49,7 @@ void Func_02001a04(void) {
   LemurianShip_ObjSpeed(9, 0xcccc, 0x6666);
   Actor_Jump(9, 6, 0);
   LemurianShip_ObjCommit(9, 0x340, 88);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   LemurianShip_ObjSpeed(9, 0x19999, 0xcccc);
   Actor_SetSpritePriority(9, 3);
   LemurianShip_ObjCommit(9, 0x338, 72);

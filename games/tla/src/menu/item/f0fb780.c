@@ -64,7 +64,7 @@ s32 Func_080fb780(s32 value) {
     cursor->motion = 13;
   }
   Palette_CopyObjectBankToBackground14();
-  WaitFrames(1);
+  wait(1);
 
   for (;;) {
     if (GameFlag_Test(336) != 0)
@@ -91,11 +91,11 @@ s32 Func_080fb780(s32 value) {
       counter += 1;
       changed = 1;
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   WindowSprite_RedrawSavedRectFar(window);
-  WaitFrames(1);
+  wait(1);
   Window_CloseFar(window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
   Window_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);

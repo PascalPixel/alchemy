@@ -14,10 +14,10 @@ void Func_020023b0(void) {
   z >>= 20;
   Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitFrames(1);
+  wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_02002af8()->y -= 0x80000;
 }
 
@@ -48,5 +48,5 @@ void Func_02002438(struct JupiterLighthouseAerieWork *table,
   Func_020023b0();
   Func_02002b68(161);
   Func_02002a40(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
 }

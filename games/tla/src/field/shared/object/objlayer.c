@@ -95,7 +95,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleEffect_StartBufferInterpolationFar(1);
-  WaitFrames(1);
+  wait(1);
   dispcnt = REG_DISPCNT;
   /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain
    * statement starts the mask first (one pair of instructions swapped). */

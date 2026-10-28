@@ -116,7 +116,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     BattleHighlight_SetSpriteMode(actor, 1);
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = (16 - i) | 0x1000;
-    WaitFrames(1);
+    wait(1);
   }
 
   if (plan->failure != 0) {
@@ -192,11 +192,11 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = i | 0x1000;
-    WaitFrames(1);
+    wait(1);
   }
   for (i = 0; i != count; i++)
     BattleHighlight_SetSpriteMode(units[i], 0);
   BattleCamera_SetView(0, 0, 0, 100);
-  WaitFrames(1);
+  wait(1);
   return 0;
 }

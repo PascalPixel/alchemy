@@ -335,7 +335,7 @@ Func_080eb960:
 	str r2, [sp, #28]
 .L_080ebbfa:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #186
 	ldr r1, [sp, #28]
 	lsls r2, r2, #2

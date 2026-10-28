@@ -799,7 +799,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   {
@@ -811,7 +811,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   }
   VramCache_FreeEntry(portraitSlot);
   VramCache_FreeEntry(cursorSlot);
-  WaitFrames(1);
+  wait(1);
 #if TBS_PATCH_1
   Window_MarkVisibleTextTiles();
 #endif
@@ -829,6 +829,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                            HEAP_SLOT_BATTLE]
       ->timerHidden = 0;
 #endif
-  WaitFrames(1);
+  wait(1);
   return 0;
 }

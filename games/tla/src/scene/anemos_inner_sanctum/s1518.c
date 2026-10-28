@@ -8,7 +8,7 @@ extern char SceneId_Ov6B0Room4;
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 value, s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Event_FinishScreenTransition(void);
@@ -44,7 +44,7 @@ void Func_02001518(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, x, z);
   }
   Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 10);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;
    * called directly the three share one register, two instructions shorter
@@ -58,7 +58,7 @@ void Func_02001518(void) {
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
   Func_02003310(object, object->x, object->y + 0x800000, object->z);
-  FieldEvent_WaitFrames(80);
+  FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020033a0();

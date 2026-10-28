@@ -27,14 +27,14 @@ Func_0811ca54:
 	movs r3, #40
 	str r3, [r2, #4]
 	movs r0, #40
-	bl WaitFrames
+	bl wait
 	b .L_0811ca94
 .L_0811ca88:
 	movs r3, #40
 	str r1, [r2]
 	str r3, [r2, #4]
 	movs r0, #40
-	bl WaitFrames
+	bl wait
 .L_0811ca94:
 	movs r2, #8
 	ldrsh r3, [r5, r2]

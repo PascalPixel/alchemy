@@ -115,7 +115,7 @@ void Func_080ddbd8(void) {
       Actor_SetTargetPosition((struct Actor *)obj, pos[0], pos[1], pos[2]);
     }
     Sound_PlayFar(131);
-    WaitFrames(2);
+    wait(2);
   }
-  WaitFrames(8);
+  wait(8);
 }

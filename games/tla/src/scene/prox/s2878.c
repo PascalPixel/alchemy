@@ -13,7 +13,7 @@ s32 Actor_SetPartAttribute();
 s32 GameFlag_Test();
 s32 Func_020044cc();
 s32 Func_02004404();
-s32 WaitFrames();
+s32 wait();
 s32 Func_0200442c();
 
 void Func_02002878(void) {
@@ -42,7 +42,7 @@ void Func_02002878(void) {
     if (t8 != 0) {
       t9 = Value1(Actor_GetById, 0xa);
       FIELD_AT(t9, u16, 6) = 0xb000;
-      Call1(WaitFrames, 1);
+      Call1(wait, 1);
     }
   }
   t11 = Value1(GameFlag_Test, 0xa3d);

@@ -59,7 +59,7 @@ extern char ResourceId_FlameballSheet;
 extern const u16 gData_08197410[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -193,7 +193,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     angle -= 0x800;
     frame++;
   } while (frame != 96);

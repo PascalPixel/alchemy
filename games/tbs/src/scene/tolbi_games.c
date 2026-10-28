@@ -286,7 +286,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
     Event_SetMessageId(question + 2);
@@ -300,7 +300,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
     Event_SetMessageId(question + 2);
@@ -412,9 +412,9 @@ s32 TolbiSpring_Initialize(void) {
                                  SPRITE_COLOR_RBG);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Event_WaitFrames(10);
+      Event_Wait(10);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 112);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       coinChange = gAdventure.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
@@ -424,7 +424,7 @@ s32 TolbiSpring_Initialize(void) {
         } else {
           Sound_Play(MUS_JINGLE_SMALL);
         }
-        Event_WaitFrames(20);
+        Event_Wait(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
         Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
@@ -443,7 +443,7 @@ s32 TolbiSpring_Initialize(void) {
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Event_WaitFrames(10);
+      Event_Wait(10);
       if (wonPrizes[0] == -1) {
         TolbiSpring_OfferLuckyWheels(1);
       } else if (wonPrizes[0] != -2) {
@@ -461,9 +461,9 @@ s32 TolbiSpring_Initialize(void) {
             Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
             ItemDisplay_ShowItem(item, 3);
             PartyInventory_GiveItem(item, 0);
-            Event_WaitFrames(10);
+            Event_Wait(10);
             Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-            Event_WaitFrames(30);
+            Event_Wait(30);
           }
         }
         gAdventure.wonPrizes[0] = -2;
@@ -481,20 +481,20 @@ static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
                                                 s32 sourceRow) {
   MapGrid_CopyCellsTo(sourceColumn, sourceRow, 70, 0, 3, 8);
   Sound_Play(SE_CAST);
-  Event_WaitFrames(8);
+  Event_Wait(8);
 }
 
 /// Animates the spring's prize reveal, gives the item, and closes it.
 static void TolbiSpring_RevealPrize(s32 item) {
   Event_Start();
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Sound_Play(SE_BOSS_ROAR);
-  Event_WaitFrames(100);
+  Event_Wait(100);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
 
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   TolbiSpring_ShowPrizePicture(85, 20);
   TolbiSpring_ShowPrizePicture(88, 20);
   TolbiSpring_ShowPrizePicture(91, 20);
@@ -512,11 +512,11 @@ static void TolbiSpring_RevealPrize(s32 item) {
   MapGrid_CopyCellsTo(100, 29, 70, 0, 3, 8);
   Sound_Play(SE_CAST);
 
-  Event_WaitFrames(70);
+  Event_Wait(70);
   Sound_Play(SE_RECOVERY);
   ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 
   TolbiSpring_ShowPrizePicture(97, 29);
   TolbiSpring_ShowPrizePicture(94, 29);
@@ -546,14 +546,14 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
     *(s32 *)(springLayer + 12) -= PIXELS(1);
-    WaitFrames(4);
+    wait(4);
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
   for (stepIndex = 0; stepIndex < 8; stepIndex++) {
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
     Io_Write16(*alphaSteps++, &REG_BLDALPHA);
-    WaitFrames(8);
+    wait(8);
   }
 }
 
@@ -641,7 +641,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 128);
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 152);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_LeaveFor(SEQUENCE_DICE, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
@@ -696,14 +696,14 @@ prompt:
     if (coins == 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessage(-1, 0);
-      WaitFrames(1);
+      wait(1);
       goto prompt;
     }
   } else if (choice == SPRING_TOSS_MEDAL) {
     if (medals == 0) {
       Event_SetMessageId(message + 2);
       Event_ShowMessage(-1, 0);
-      WaitFrames(1);
+      wait(1);
       goto prompt;
     }
     if (PartyInventory_CountFreeSlots() == 0) {
@@ -721,7 +721,7 @@ prompt:
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   }
-  WaitFrames(5);
+  wait(5);
   Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
@@ -734,7 +734,7 @@ prompt:
       result = -1;
       break;
     }
-    WaitFrames(1);
+    wait(1);
   }
   Window_Close(window, 2);
 #else
@@ -770,14 +770,14 @@ prompt:
       if (coins == 0) {
         Event_SetMessageId(message + 1);
         Event_ShowMessage(-1, 0);
-        WaitFrames(1);
+        wait(1);
         continue;
       }
     } else if (choice == SPRING_TOSS_MEDAL) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
         Event_ShowMessage(-1, 0);
-        WaitFrames(1);
+        wait(1);
         continue;
       }
       if (PartyInventory_CountFreeSlots() == 0) {
@@ -794,7 +794,7 @@ prompt:
     result = MsgTolbiToss;
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
-    WaitFrames(5);
+    wait(5);
     Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
@@ -807,7 +807,7 @@ prompt:
         result = -1;
         break;
       }
-      WaitFrames(1);
+      wait(1);
     }
     Window_Close(window, 2);
     break;
@@ -845,7 +845,7 @@ prompt:
         Event_ShowMessage(-1, 0);
       } else {
         Event_PlaySound(SE_MENU_CANCEL);
-        Event_WaitFrames(10);
+        Event_Wait(10);
       }
     } else {
       // The prize ring limits the weighted pool of medal rewards.
@@ -1508,7 +1508,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 1);
       }
     }
-    WaitFrames(1);
+    wait(1);
     if (sTossEnded == 1) {
       break;
     }

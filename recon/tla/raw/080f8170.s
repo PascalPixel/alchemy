@@ -62,7 +62,7 @@ Func_080f8170:
 	cmp r5, #0
 	bne .L_080f8200
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r2, r9
 	movs r3, #32
 	ldr r0, [r2, #40]
@@ -147,7 +147,7 @@ Func_080f8170:
 	cmp r5, #0
 	bne .L_080f82b2
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r2, r9
 	movs r3, #80
 	ldr r0, [r2, #40]

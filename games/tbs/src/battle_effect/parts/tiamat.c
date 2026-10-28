@@ -158,7 +158,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
   EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleEffect_SelectLivingTargets(work->args);
-    WaitFrames(1);
+    wait(1);
     BattleEffect_SpawnObjects(8, SPRITE_TIAMAT, 2);
   }
 

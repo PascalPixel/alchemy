@@ -28,9 +28,9 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void FieldMessage_Show(s32 message, s32 mode);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
@@ -101,7 +101,7 @@ static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
 
 static __inline__ void Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitFrames(frames);
+  wait(frames);
 }
 
 static __inline__ void Cue(s32 cue) {

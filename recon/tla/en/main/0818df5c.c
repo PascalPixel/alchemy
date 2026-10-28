@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -196,7 +196,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
-  WaitFrames(1);
+  wait(1);
   Iwram_FillWords(gMapCellBuffer, 0x8000, 0x01010101);
   Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
@@ -458,10 +458,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       size = 0x10000;
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
-  WaitFrames(1);
+  wait(1);
   transition[4] = 0;
   Task_Remove(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
@@ -634,7 +634,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

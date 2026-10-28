@@ -12,7 +12,7 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *object) {
 
   count = 60;
   while (count != 0) {
-    WaitFrames(1);
+    wait(1);
     busy = object->busy;
     count--;
     if (busy == 0) {

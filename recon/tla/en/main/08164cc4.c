@@ -277,7 +277,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
   CopyWords_((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
-  WaitFrames(1);
+  wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
   REG_BG1CNT = 0x1f80;
@@ -338,7 +338,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         }
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
     } while (limit <= 191);
   }
   REG_BLDCNT = 0x3f42;
@@ -528,11 +528,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         }
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
       frame++;
       work->frame++;
     } while (frame != STREAM_FRAMES);
-    WaitFrames(1);
+    wait(1);
     transition->active = 0;
     Task_Remove(BattleEffect_AdvanceBg2OnInterval);
     Task_Remove(BattleEffect_ArmPaletteHBlankDma);
@@ -710,7 +710,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     work->shakeFrames = 1;
     Func_08158ce0(8, 8);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -13,7 +13,7 @@ void Func_02002e18(void) {
     Contigo_ObjWalk(gAdventure.currentOwner, 158, 394);
     Contigo_ObjTurn(8, 0x5000, 0);
     Contigo_ObjMoveTo(2, gAdventure.currentOwner);
-    WaitFrames(1);
+    wait(1);
     Contigo_ObjSpeed(2, 0xcccc, 0x6666);
     Contigo_ObjWalk(2, 144, 374);
     Contigo_ObjFace(2, 0xe000);
@@ -48,7 +48,7 @@ void Func_02002e18(void) {
     Contigo_Jump(8, 265, 20);
     Contigo_MessagePut(8, 0);
     Contigo_ObjMoveTo(0, gAdventure.currentOwner);
-    WaitFrames(1);
+    wait(1);
     Contigo_Jump(0, 256, 0);
     Contigo_ObjSpeed(0, 0x13333, 0x9999);
     Contigo_ObjWalk(0, 168, 380);
@@ -57,7 +57,7 @@ void Func_02002e18(void) {
     Contigo_Jump(8, 256, 0);
     Contigo_ObjTurn(8, 0x3000, 0);
     Contigo_ObjMoveTo(9, gAdventure.currentOwner);
-    WaitFrames(1);
+    wait(1);
     Contigo_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
     Contigo_ObjAction(gAdventure.currentOwner, gData_02004ac0);
     Contigo_ObjSpeed(9, 0xcccc, 0x6666);

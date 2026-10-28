@@ -14,12 +14,12 @@ void Func_020012b4(void) {
   object = Actor_GetById(64);
   Func_02002cd0(64, object->x, object->z + 0xfed00000);
   Actor_SetPartAttribute(Actor_GetById(64), 0);
-  WaitFrames(10);
+  wait(10);
   Camera_FollowActor(gAdventure.currentOwner, 0);
-  WaitFrames(1);
+  wait(1);
   LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
   Func_02002c10();
-  WaitFrames(1);
+  wait(1);
   GameFlag_SetBit(0x9e4);
   Func_02002d88(0x10000, 0);
   Func_02002c70();

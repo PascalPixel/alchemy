@@ -23,7 +23,7 @@
        ->v)
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_02003640();
 void Func_020036e0();
 void Func_02004524();
@@ -45,7 +45,7 @@ s32 Actor_GetById();
 void Actor_SetModeById();
 void Actor_SetPartAttribute();
 void Actor_SetPositionAndResetMotion();
-void WaitFrames();
+void wait();
 extern u8 MsgLookTheGreatGabomba[];
 extern u8 gData_02007950[];
 
@@ -61,24 +61,24 @@ void Func_02004a28(void) {
   Call2((void (*)())Actor_SetPartAttribute, t5, 7);
   t7 = Value1((s32 (*)())Actor_GetById, 13);
   Call2((void (*)())Actor_SetPartAttribute, t7, 7);
-  Call1((void (*)())WaitFrames, 8);
+  Call1((void (*)())wait, 8);
   t10 = Value1((s32 (*)())Actor_GetById, 12);
   Call2((void (*)())Actor_SetPartAttribute, t10, 0);
   t12 = Value1((s32 (*)())Actor_GetById, 13);
   Call2((void (*)())Actor_SetPartAttribute, t12, 0);
-  Call1((void (*)())WaitFrames, 8);
+  Call1((void (*)())wait, 8);
   Call3((void (*)())Func_02005b94, 17, 0x100, 20);
   Call1((void (*)())Func_02005b4c, (s32)&MsgLookTheGreatGabomba);
   Call3((void (*)())Func_02005b5c, 17, 0, 20);
   Call1((void (*)())Func_02005c9c, 0x240);
   Call2((void (*)())Func_020036e0, 1, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_02005c9c, 233);
   FIELD_AT(v_r6, s32, 28) = 0x1999;
   t22 = Value1((s32 (*)())Actor_GetById, 14);
   Call4((void (*)())Actor_SetPositionAndResetMotion, t22, 0x1080000, 0x180000,
         0x1340000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   Call2((void (*)())Actor_SetModeById, 14, 3);
   v_r5 = 0;
 L_0200cae8:
@@ -89,7 +89,7 @@ L_0200cae8:
   asm("");
   FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + 0x2000);
   v_r5 = (v_r5 + 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 8 of 288 instructions differ in
    * tla-en. */
@@ -106,7 +106,7 @@ L_0200cb2a:
   v_r5 = (s32)&gData_02007950;
   FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) =
       (FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) + -0x8000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if (FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) > 0x240000)
     goto L_0200cb2a;
 L_0200cb48:
@@ -125,7 +125,7 @@ L_0200cb5e:
   FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + -0x2000);
   v_r5 = (v_r5 + 1);
   FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + -0x8000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if ((u32)v_r5 <= (u32)3)
     goto L_0200cb5e;
   Call4((void (*)())Actor_SetPositionAndResetMotion,
@@ -139,16 +139,16 @@ L_0200cb96:
    * tla-en. */
   asm("");
   v_r5 = (v_r5 + 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   if ((u32)v_r5 <= (u32)3)
     goto L_0200cb96;
 L_0200cbb2:
   Call3((void (*)())Func_02005b0c, 14, 0, 0);
   Call2((void (*)())Func_020036e0, 0, 0);
   Call2((void (*)())Func_02003640, 1, 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Func_02003640, 0, 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_Wait, 40);
   Call1((void (*)())Func_02005c9c, 0x240);
   Call2((void (*)())Func_02003640, 1, 1);
   Call2((void (*)())Func_020036e0, 1, 0);
@@ -156,7 +156,7 @@ L_0200cbb2:
   t43 = Value1((s32 (*)())Actor_GetById, 14);
   Call4((void (*)())Actor_SetPositionAndResetMotion, t43, 0x1080000, 0x180000,
         0x1340000);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   v_r5 = 0;
 L_0200cc1c:
   FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + 0x2000);
@@ -166,7 +166,7 @@ L_0200cc1c:
   asm("");
   FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + 0x8000);
   v_r5 = (v_r5 + 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 8 of 288 instructions differ in
    * tla-en. */
@@ -174,7 +174,7 @@ L_0200cc1c:
   if ((u32)v_r5 <= (u32)7)
     goto L_0200cc1c;
   Call2((void (*)())Func_02005b9c, 17, 0x102);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Func_02005b7c, 17, 0x3000);
   Call2((void (*)())Func_02005b64, 0x4011, 0);
   Value3((s32 (*)())Func_02005b94, 17, 0x108, 20);

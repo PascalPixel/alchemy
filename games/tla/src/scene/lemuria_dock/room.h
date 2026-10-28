@@ -33,7 +33,7 @@ extern const u8 gData_0200059c[];
 extern const struct WarpTarget gData_02000610;
 
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Task_Add(void (*func)(void), s32 priority);

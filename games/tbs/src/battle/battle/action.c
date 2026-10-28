@@ -531,7 +531,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       Sound_PlayFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
-      WaitFrames(60);
+      wait(60);
       return ACTION_REPORTED;
     }
     // Unleash the set Djinni; it goes on standby.

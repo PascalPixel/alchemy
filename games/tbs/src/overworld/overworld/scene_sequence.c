@@ -127,7 +127,7 @@ s32 SceneSequence_Run(s32 entrance) {
         // (Entrance_PlayArrival) plays through the fade; with none,
         // wait out half of it.
         if (Entrance_PlayArrival() == 0)
-          WaitFrames((work->transitionFrames + 1) / 2);
+          wait((work->transitionFrames + 1) / 2);
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
@@ -349,7 +349,7 @@ s32 SceneSequence_Run(s32 entrance) {
               } while (--n != 0);
               if (free - 136 < 0) {
                 ctrl->wait = 1;
-                WaitFrames(1);
+                wait(1);
               }
               PauseMenu_RunFar(0);
               ctrl->wait = 0;
@@ -380,7 +380,7 @@ s32 SceneSequence_Run(s32 entrance) {
           Actor_StartPlayerControlFar(actor);
       }
       do {
-        WaitFrames(1);
+        wait(1);
         actor = work->actors[gAdventure.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
@@ -393,7 +393,7 @@ done:
   if (work->transitionActive != 0) {
     ScreenTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
-    WaitFrames(work->transitionFrames);
+    wait(work->transitionFrames);
   }
   HeapSlot_Release(HEAP_SLOT_FIELD);
   return result;

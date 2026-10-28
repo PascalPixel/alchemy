@@ -25,7 +25,7 @@ s32 Func_0200034c();
 void Func_02001f6c();
 void Func_02002054();
 void Func_0200015c();
-void WaitFrames();
+void wait();
 s32 Func_02001f9c();
 s32 Func_02001fb4();
 
@@ -162,7 +162,7 @@ L_020089f2:
   Func_0200015c((FIELD_AT(r6, s32, 8)) + 262144, FIELD_AT(r8, s32, 12),
                 FIELD_AT(r6, s32, 12), 0x8000, r7, r7, r5, r10);
 L_02008a2a:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
 L_02008a30:
   v6 = Func_02001f9c(r8);
   if (v6 != 0)

@@ -131,9 +131,9 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
           Text_DrawCharacterAtOffsetFar((s32)MsgCoins, window,
                                           QUANTITY_COINS_X, 0);
         }
-        WaitFrames(1);
+        wait(1);
       }
-      WaitFrames(1);
+      wait(1);
       Window_CloseFar(window, 2);
     }
   }

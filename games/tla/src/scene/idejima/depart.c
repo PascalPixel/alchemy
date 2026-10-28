@@ -14,7 +14,7 @@
 #include "text/msg_ids.h"
 
 void GameFlag_SetBit();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 s32 Event_AskYesNoWithActorAnimation();
 void Actor_SetSpeedParameters();
 void Actor_SetMovementTypeById();
@@ -168,14 +168,14 @@ void Idejima_RunAlexDeparture(void) {
   Actor_WatchAndSetScript(5, 6);
   Call3(Actor_SetSpeedParameters, 6, 0x6666, 0x3333);
   Call3(Actor_SetPositionAndReset, 6, 86, 0x2ec);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Value3(Import_ActorShowEmote, 6, 0x109, 80);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
   Actor_Stop(gAdventure.currentOwner);
   Actor_Stop(8);
   Actor_Stop(5);
   Motion_SetModeAndWaitAnimation(6, 3);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Import_ActorSetAnimation(5, 4);
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
@@ -230,7 +230,7 @@ void Idejima_RunAlexDeparture(void) {
   }
   Value3(Import_ActorShowEmote, 8, 0x109, 40);
   Motion_SetModeAndWaitAnimation(6, 4);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Call3(Actor_ArmCallback, 8, 0x8000, 20);

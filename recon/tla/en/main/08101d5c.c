@@ -52,7 +52,7 @@ s32 Resource_ResetEntry(u32 entry);
 void Window_CloseFar(void *window, s32 mode);
 void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 extern char MsgDjinnInfoPrompt[], MsgDjinnInfoTopic[], MsgDjinnInfoText[];
 
 s32 Func_08101d5c(void) {
@@ -79,7 +79,7 @@ s32 Func_08101d5c(void) {
   result = 0;
   previous = 0;
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  wait(1);
   WindowSprite_PrepareForRedrawFar(menu->helpWindow);
   message = (s32)MsgDjinnInfoPrompt;
   Text_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
@@ -109,7 +109,7 @@ s32 Func_08101d5c(void) {
     previous = selection;
     for (;;) {
       Func_080f8a44(-12, (list->y + selection) * 8 + 8);
-      WaitFrames(1);
+      wait(1);
       if (input->repeat & 0x90) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
@@ -157,7 +157,7 @@ s32 Func_08101d5c(void) {
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   WindowSprite_ClearListFar(statusWindow);
   WindowSprite_ClearListFar(helpWindow);
-  WaitFrames(1);
+  wait(1);
   Window_CloseFar(statusWindow, 1);
   Window_CloseFar(list, 1);
   Window_CloseFar(helpWindow, 1);

@@ -20,7 +20,7 @@ s32 Map_GetTerrainHeight();
 s32 Actor_SetAnimationSpeed();
 s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
-s32 WaitFrames();
+s32 wait();
 extern u8 Func_02002d04[];
 extern u8 IwramMulQ16[];
 extern u8 gData_0200483c[];
@@ -146,7 +146,7 @@ L_0200b212:
     goto L_0200b21e;
   goto L_0200b34e;
 L_0200b21e:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   v_r5 = (v_r5 + 1);
 L_0200b226:
   if (v_r5 > 179)
@@ -209,7 +209,7 @@ L_0200b29c:
   v_r5 = 0;
   goto L_0200b2da;
 L_0200b2d2:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   v_r5 = (v_r5 + 1);
 L_0200b2da:
   if (v_r5 > 179)
@@ -246,10 +246,10 @@ L_0200b322:
   t81 = FIELD_AT(sp_, s32, 16);
   Call4((void (*)())Func_02004204, v_r7, t80, t79, t81);
   Call1((void (*)())Func_0200420c, v_r7);
-  Call1((void (*)())WaitFrames, 2);
+  Call1((void (*)())wait, 2);
   goto L_0200b096;
 L_0200b348:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())wait, 10);
 L_0200b34e:
   FIELD_AT(v_r7, s32, 108) = 0;
   t86 = FIELD_AT(v_r7, u8, 90);

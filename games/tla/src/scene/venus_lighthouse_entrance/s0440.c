@@ -12,7 +12,7 @@ s32 Func_020028b4();
 s32 Func_020029cc();
 s32 Import_SoundPlay();
 s32 Actor_SetModeById();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Actor_GetById();
 s32 Func_02002884();
 s32 Func_02002864();
@@ -29,7 +29,7 @@ void Func_02000440(void) {
   Call1(Import_SoundPlay, 0xa5);
   Call2(Actor_SetModeById, 0xa, 3);
   Call2(Actor_SetModeById, 0xb, 3);
-  Call1(FieldEvent_WaitFrames, 0x15);
+  Call1(FieldEvent_Wait, 0x15);
   t7 = Value1(Actor_GetById, 0xa);
   FIELD_AT((t7 + 0x55), u8, 0) = 0;
   FIELD_AT(t7, s32, 48) = 0x20000;

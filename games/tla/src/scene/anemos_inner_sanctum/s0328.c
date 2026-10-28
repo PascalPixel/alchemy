@@ -10,7 +10,7 @@ struct AnemosInnerSanctumEventWork {
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000158(void);
@@ -42,11 +42,11 @@ void Func_02000328(void) {
   Event_WaitTransitionFrames();
   Func_02000178();
   Func_020034a8();
-  WaitFrames(40);
+  wait(40);
   Func_02000158();
   Func_02003458_(0x10000, 1);
   Func_02003468(16);
-  WaitFrames(16);
+  wait(16);
   {
     struct Adventure *party = &gAdventure;
 

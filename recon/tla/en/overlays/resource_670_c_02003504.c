@@ -23,9 +23,9 @@ void Func_02003504(void) {
   Func_02005c9c(154);
   for (i = 0; i <= 7; i++) {
     Actor_SetPartAttribute(Actor_GetById(17), 7);
-    WaitFrames(2);
+    wait(2);
     Actor_SetPartAttribute(Actor_GetById(17), 0);
-    WaitFrames(2);
+    wait(2);
   }
   Func_02005c9c(209);
   for (i = 0, angle = 0; i <= 15; i++, angle += 0x160000) {

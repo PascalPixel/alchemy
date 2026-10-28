@@ -61,7 +61,7 @@ void Func_02003c14(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   KIBOMBO_TASK_ADD(Func_02002d64, 0x480);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   // As a for loop, loop.c keeps gInput's address and the mask in registers
   // across the wait; the native builds both again each frame (differ 18).
   i = 0;
@@ -71,7 +71,7 @@ next:
 test:
   if (i > 159)
     goto done;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_Wait(1);
   if ((gInput.held & 11) == 0)
     goto next;
 done:

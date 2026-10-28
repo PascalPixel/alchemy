@@ -3,8 +3,8 @@
 #include "text/msg_ids.h"
 #include "task.h"
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -55,7 +55,7 @@ void Func_02002698(void) {
   Func_02004cd8((s32)MsgTheyVeDone);
   Func_02004cf0(8, 0);
   Func_02004b78_(0x40000, 0x40000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004cf0(5, 0);
   Func_02004db0();
   Func_02004e30(145);
@@ -64,9 +64,9 @@ void Func_02002698(void) {
   Func_02004d88(60);
   Task_Add(Func_02002594, TASK_PASS_VBLANK);
   Func_02004b78_(0x50000, 0x50000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004b78_(0x70000, 0x60000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004da8();
   Func_02004b78_(0x30000, 0x30000, 0x10000);
   Func_02004cf0(9, 0);
@@ -75,7 +75,7 @@ void Func_02002698(void) {
   Camera_MoveWithinMapBounds_(0x07c40000, -1, 0x1d810000, 1);
   Func_02004df8_(0x9999, 60);
   Func_02004d30();
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004da8();
   Func_02004cf0(5, 0);
   Func_02004cf0(8, 0);
@@ -85,12 +85,12 @@ void Func_02002698(void) {
   Actor_SetModeById(5, 19);
   Actor_SetModeById(8, 5);
   Actor_SetModeById(9, 7);
-  WaitFrames(4);
+  wait(4);
   Func_02004e30(145);
   Func_02002640(32, 128, 32, 0);
-  WaitFrames(4);
+  wait(4);
   Func_02002640(64, 128, 32, 0);
-  WaitFrames(4);
+  wait(4);
   Camera_MoveWithinMapBounds_(0x08040000, -1, 0x1d810000, 1);
   Func_02004d30();
   Func_02004da8();
@@ -100,9 +100,9 @@ void Func_02002698(void) {
   Func_02004db0();
   Func_02004b78_(0x30000, 0x30000, 0x10000);
   Func_02002640(96, 128, 32, 0);
-  WaitFrames(20);
+  wait(20);
   Func_02002640(0, 160, 32, 0);
-  WaitFrames(20);
+  wait(20);
   Func_02002640(32, 160, 32, 0);
   Camera_MoveWithinMapBounds_(0x08640000, -1, 0x1d810000, 1);
   Func_02004d30();
@@ -114,5 +114,5 @@ void Func_02002698(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004d40(64);
-  FieldEvent_WaitFrames(120);
+  FieldEvent_Wait(120);
 }

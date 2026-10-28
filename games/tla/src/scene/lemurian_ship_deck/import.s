@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -94,10 +94,10 @@ FieldMessage_Show:
 	.thumb_func
 Func_02001f4c:
 	overlay_veneer Func_08038248
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02001f5c
 	.thumb_func
 Func_02001f5c:

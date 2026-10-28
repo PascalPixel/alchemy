@@ -203,7 +203,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

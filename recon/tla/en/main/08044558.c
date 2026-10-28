@@ -53,7 +53,7 @@ void Func_08108030(struct NameCursor *cursor);
 void Func_08108038(struct NameCursor *cursor);
 s32 Text_SetString(const u8 *str);
 void WindowSprite_PrepareForRedraw(struct Window *window);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Window_SetTilemapFlagRect(struct Window *window, s32 x, s32 y,
                                  s32 width, s32 height, s32 palette);
 void Sound_PlayFar(s32 cue);
@@ -139,7 +139,7 @@ s32 Func_08044558(s32 member) {
     }
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 14);
-    WaitFrames(1);
+    wait(1);
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 15);
     if (cursorDirty) {
@@ -236,7 +236,7 @@ s32 Func_08044558(s32 member) {
           nameCaret.output->active = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawPaddedLabel(nameWindow, originalName);
-          WaitFrames(10);
+          wait(10);
         } else {
           u8 *dst = originalName;
           u8 *src = editedName;
@@ -273,8 +273,8 @@ s32 Func_08044558(s32 member) {
   Window_Close(keyboardWindow, 2);
   Window_Close(nameWindow, 2);
   Func_0803d450(member);
-  WaitFrames(1);
+  wait(1);
   while (gInput.held != 0)
-    WaitFrames(1);
+    wait(1);
   return result;
 }

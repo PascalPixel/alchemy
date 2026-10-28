@@ -556,7 +556,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       Iwram_FillWords((void *)0x06006500, 32, TEXT_CANVAS_BACKGROUND_WORD);
       Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   // Leave the Djinn column in WINDOW_PALETTE.
@@ -572,6 +572,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   Window_MarkVisibleTextTiles();
   Text_UseExtraTiles(0);
   Heap_Release(djinnEntries);
-  WaitFrames(1);
+  wait(1);
   return (s32)encodedDjinn;
 }

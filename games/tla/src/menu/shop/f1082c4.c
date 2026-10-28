@@ -47,7 +47,7 @@ s32 Func_081080a8(void);
 void Func_0810a2c8(void);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Func_0810824c(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
@@ -89,7 +89,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
         Func_08108b70();
       } else {
         Func_081084f4((s32)MsgOutOfStock);
-        WaitFrames(1);
+        wait(1);
       }
     } else if (action == 3) {
       Func_081084f4((s32)MsgFixDamaged);

@@ -24,7 +24,7 @@ void Func_02000fe0(const u8 *event) {
   Func_02004d00(gAdventure.currentOwner, 0x100, 0);
   Func_02004bc0(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
-  WaitFrames(30);
+  wait(30);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   if ((event[3] & 64) == 0) {
@@ -45,7 +45,7 @@ void Func_02000fe0(const u8 *event) {
     Func_02000df0();
   }
   Actor_SetModeById(gAdventure.currentOwner, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_Wait(16);
   i = 0;
 next:
   if (i == 5)
@@ -53,7 +53,7 @@ next:
   leader->scaleX -= 0x400;
   leader->scaleY -= 0x300;
   leader->y -= 0x9999;
-  WaitFrames(1);
+  wait(1);
   i++;
   if (i <= 39)
     goto next;

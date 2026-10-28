@@ -8,7 +8,7 @@ struct Trigger;
 
 void Func_02000bc0(s32 id, s32 flag);
 struct Actor *Actor_GetById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02000f24(s32 cue);
 
 extern const u8 gData_0200102c[];
@@ -44,11 +44,11 @@ void Func_02000100(s32 id) {
 
   object->motionFlags = 3;
   for (frames = 60; frames != 0; frames--) {
-    WaitFrames(1);
+    wait(1);
     if (object->velocityY == 0)
       break;
   }
-  WaitFrames(10);
+  wait(10);
   object->motionFlags = 0;
 }
 #else
@@ -75,14 +75,14 @@ void Func_02000100(s32 id, s32 cue) {
    * reload copy comes before the store (differ 2). */
   held = flags;
   while (frames != 0) {
-    WaitFrames(1);
+    wait(1);
     frames--;
     if (object->velocityY == 0)
       break;
   }
   if (cue != 0)
     Func_02000f24(cue);
-  WaitFrames(10);
+  wait(10);
   *held = 0;
 }
 #endif

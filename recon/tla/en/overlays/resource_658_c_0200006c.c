@@ -26,7 +26,7 @@ struct MadraPlacement {
 extern s32 gData_02003308[];
 
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -64,7 +64,7 @@ next:
   Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_CenterOnColumn(gAdventure.currentOwner, 2, -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02002c30(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

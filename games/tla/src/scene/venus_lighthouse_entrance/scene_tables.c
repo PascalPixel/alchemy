@@ -12,7 +12,7 @@
 #include "actor.h"
 
 struct Actor *Actor_GetById(u32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Import_SoundPlay(s32 cue);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -29,7 +29,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
   Func_02002a44();
   Func_02002a5c(Actor_GetById(5), 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_020023a4(object);
   Func_02002a5c(Actor_GetById(5), 0);
   Func_02002a54();

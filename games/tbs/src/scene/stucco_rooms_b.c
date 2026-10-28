@@ -100,7 +100,7 @@ static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   Event_SetMessageId(question);
   FieldMessage_ShowAtActor(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
     Event_SetMessageId(question + 2);
@@ -199,15 +199,15 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_SetMessageId(MsgTolbiHeyWhatsThis);
 
   // A sparkle on the floor where she finds it.
-  Event_WaitFrames(40);
+  Event_Wait(40);
   sparkle = FieldActor_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
   Actor_SetSpriteFlags(sparkle, 0);
   Actor_SelectAnimation(sparkle, 6);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SelectAnimation(sparkle, 1);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_Release(sparkle);
-  Event_WaitFrames(2);
+  Event_Wait(2);
 
   // She runs to it and picks it up.
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
@@ -215,33 +215,33 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 600, 848);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 568, 848);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
 
   // She notices the party.
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                   EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                       FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                   EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
@@ -251,13 +251,13 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
                  PIXELS(7) / 10);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 32);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(9) / 5,
                  PIXELS(9) / 10);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 48);
@@ -272,30 +272,30 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
 static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiHeWontSailShipEven);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
   Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
 
   FieldEffect_SpawnAttached(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
                             EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
                             ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_End();
 }
 
@@ -386,7 +386,7 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
     Event_SetMessageId(MsgTolbiLookStrongGo);
     Event_ShowMessageAndWait(speaker, 0);
     FieldEffect_SpawnAttached(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     Event_ShowMessageAndWait(speaker, 0);
   }
 }
@@ -445,9 +445,9 @@ static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
       GameFlag_Set(FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO);
       Event_SetMessageId(MsgTolbiHello);
       Event_ShowMessage(speaker, 0);
-      Event_WaitFrames(10);
+      Event_Wait(10);
       Actor_RunRepeatedMotion(speaker, 2);
-      Event_WaitFrames(20);
+      Event_Wait(20);
     }
     Event_SetMessageId(MsgTolbiHoHumFine);
     Event_ShowMessage(speaker, 0);

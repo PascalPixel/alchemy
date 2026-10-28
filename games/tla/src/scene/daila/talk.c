@@ -13,10 +13,10 @@ void Daila_TalkBeenBefore(void) {
     Import_EventSetMessageId(msg);
     Import_FieldMessageShowAtActor(8, 0);
     if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
-      Import_EventWaitFrames(10);
+      Import_EventWait(10);
       Import_EventSetMessageId(msg + 1);
     } else {
-      Import_EventWaitFrames(20);
+      Import_EventWait(20);
       Import_EventSetMessageId(msg + 2);
     }
     Import_EventShowMessageAndWait(8, 0);
@@ -37,10 +37,10 @@ void Daila_TalkIndraMoved(void) {
   Import_EventSetMessageId(msg);
   Import_FieldMessageShowAtActor(9, 0);
   if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
-    Import_EventWaitFrames(10);
+    Import_EventWait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
-    Import_EventWaitFrames(20);
+    Import_EventWait(20);
     Import_EventSetMessageId(msg + 2);
   }
   Import_EventShowMessageAndWait(9, 0);
@@ -56,10 +56,10 @@ void Daila_TalkBoat(void) {
   Import_EventSetMessageId(msg);
   Import_FieldMessageShowAtActor(9, 0);
   if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
-    Import_EventWaitFrames(10);
+    Import_EventWait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
-    Import_EventWaitFrames(20);
+    Import_EventWait(20);
     Import_EventSetMessageId(msg + 2);
   }
   Import_EventShowMessageAndWait(9, 0);

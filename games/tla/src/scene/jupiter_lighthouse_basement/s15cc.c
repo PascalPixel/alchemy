@@ -21,8 +21,8 @@ struct CellTarget {
 };
 
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
@@ -58,10 +58,10 @@ void Func_020015cc(void) {
   z >>= 20;
   Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitFrames(1);
+  wait(1);
   Actor_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_02001cdc()->y -= 0x80000;
 }
 
@@ -97,5 +97,5 @@ void Func_02001654(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_020015cc();
   Func_02001d4c(161);
   Func_02001c34(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
 }

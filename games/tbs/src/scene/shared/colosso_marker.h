@@ -68,19 +68,19 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
     // BLEND_ALPHA(i + 1, 15 - i), whose operand order compiles differently.
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
                         IO_WRITE_16);
-    WaitFrames(1);
+    wait(1);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
   actor->scaleX = 0x11000;
   actor->scaleY = 0xf000;
-  Event_WaitFrames(1);
+  Event_Wait(1);
   actor->scaleX = 0x10000;
   actor->scaleY = 0x10000;
-  Event_WaitFrames(13);
+  Event_Wait(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
   Actor_SetAnimationAndWait(id, 3);
-  Event_WaitFrames(20);
+  Event_Wait(20);
 }
 
 /// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
@@ -101,7 +101,7 @@ void Colosso_RestoreWarrior(s32 id) {
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);
     Import_ActorSetAnimation(id, 3);
-    Event_WaitFrames(30);
+    Event_Wait(30);
   }
   zero = 0;
   // Stored as bytes through a pointer, the plain-C form of system->fill and
@@ -126,7 +126,7 @@ void Colosso_RestoreWarrior(s32 id) {
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SelectAnimation(actor, 0);
   Actor_SelectAnimation(actor, 1);
-  WaitFrames(1);
+  wait(1);
 }
 
 /// Stops the actor where it is: no velocity and no destination.

@@ -49,7 +49,7 @@ void Func_02004534(void) {
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
     Call2(Func_02005e74, 6, gAdventure.currentOwner);
-    Call1(FieldEvent_WaitFrames, 1);
+    Call1(FieldEvent_Wait, 1);
     Call3(Actor_ResetAndSetPositionInMode2, gAdventure.currentOwner,
           0x100, 0x88);
     Call3(Actor_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
@@ -58,23 +58,23 @@ void Func_02004534(void) {
     Call1(Actor_WaitForMoveById, 6);
     Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
     Call3(Actor_ArmCallback, 6, 0x8000, 0);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_Wait, 0xa);
     Call2(Func_02005eac, 6, 0);
     Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
-    Call1(FieldEvent_WaitFrames, 0x1e);
+    Call1(FieldEvent_Wait, 0x1e);
     Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x100,
           0x98);
     Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_ArmCallback, 6, 0x4000, 0);
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_Wait, 0x14);
     Call2(Actor_SetModeById, 6, 3);
-    Call1(FieldEvent_WaitFrames, 0x1e);
+    Call1(FieldEvent_Wait, 0x1e);
     Call3(Actor_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_SetPositionAndReset, 6, 0x108, 0x89);
     Call3(Actor_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_Wait, 0x14);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
@@ -86,10 +86,10 @@ void Func_02004534(void) {
     Call2(Party_LearnAbility, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
     Call3(Actor_TurnToFaceEachOther, gAdventure.currentOwner, 6, 0);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_Wait, 0xa);
     Call2(Actor_SetModeById, 6, 3);
     Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Actor_SetModeById, 6, 2);
     object = Actor_GetById(gAdventure.currentOwner);
@@ -114,7 +114,7 @@ void Func_02004740(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02004534();
   }
 }
@@ -129,7 +129,7 @@ void Func_020047b0(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 280, 136);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02004534();
   }
 }
@@ -144,7 +144,7 @@ void Func_02004818(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02004534();
   }
 }

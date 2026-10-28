@@ -6,7 +6,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_0200282c();
 void Func_02002834();
 void Func_020028ac();
@@ -21,7 +21,7 @@ void Actor_SetAngleToward();
 struct Actor *Actor_GetById();
 void FieldMessage_ShowAtActor();
 
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Func_020028ac();
 void Func_020028c4();
 void Func_0200291c();
@@ -38,11 +38,11 @@ void Func_02000154(s32 arg0) {
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_02008184;
-  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
+  Value1((s32 (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors13 + 1));
   goto L_02008190;
 L_02008184:
-  Value1((s32 (*)())FieldEvent_WaitFrames, 20);
+  Value1((s32 (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors13 + 2));
 L_02008190:
   Call2((void (*)())Func_020028c4, arg0, 0);
@@ -59,11 +59,11 @@ void Func_020001a0(s32 arg0) {
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_020081d0;
-  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
+  Value1((s32 (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors18 + 1));
   goto L_020081dc;
 L_020081d0:
-  Value1((s32 (*)())FieldEvent_WaitFrames, 20);
+  Value1((s32 (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors18 + 2));
 L_020081dc:
   Call2((void (*)())Func_020028c4, arg0, 0);
@@ -89,16 +89,16 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   result3 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result2, 0);
   if (result3 != 0)
     goto L_0200824e;
-  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
+  Value1((s32 (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors19 + 1));
   goto L_0200825a;
 L_0200824e:
-  Value1((s32 (*)())FieldEvent_WaitFrames, 20);
+  Value1((s32 (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_020028ac, ((s32)MsgLemuriaInteriors19 + 2));
 L_0200825a:
   Call2((void (*)())Func_020028c4, arg1, 0);
   Call3((void (*)())Actor_ArmCallback, arg1, value1, 0);
-  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
+  Value1((s32 (*)())FieldEvent_Wait, 10);
   ((void (*)())Func_02002834)();
   return;
 }

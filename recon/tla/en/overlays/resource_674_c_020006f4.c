@@ -45,7 +45,7 @@ struct Actor *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
 void Func_02003e3c(struct Actor *object, s32 item);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_Stop(s32 actor);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Func_02003f54(s32 actor, s32 emote, s32 frames);
@@ -57,7 +57,7 @@ void FieldMessage_Show(const u8 *message, s32 a);
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1,                                   \
    Call3(Actor_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_WaitFrames(1), Actor_GetById(actor)->actionFlags |= 1)
+   FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
 
 /// Object 10 walks round and hands item 454 back over the leader's head.
 #define HAND_BACK()                                                            \
@@ -65,7 +65,7 @@ void FieldMessage_Show(const u8 *message, s32 a);
     Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);                \
     Call3(Actor_SetPositionAndReset, 10, 0x80, 164);                    \
     Func_02003f3c(10, 0x8000);                                                 \
-    FieldEvent_WaitFrames(20);                                                 \
+    FieldEvent_Wait(20);                                                 \
     Call3(Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);               \
     STEP(10, 108, 168);                                                        \
     trader = Actor_GetById(10);                                               \
@@ -75,7 +75,7 @@ void FieldMessage_Show(const u8 *message, s32 a);
       Actor_SetModeById(gAdventure.currentOwner, 28);                        \
       item->motionFlags = 0;                                                   \
       Func_02003e3c(item, 454);                                                \
-      FieldEvent_WaitFrames(20);                                               \
+      FieldEvent_Wait(20);                                               \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
     Func_02003fc4();                                                           \
@@ -115,7 +115,7 @@ void Func_020006f4(void) {
           item->motionFlags = 0;
           item->unk5c[0] = 1;
         }
-        FieldEvent_WaitFrames(10);
+        FieldEvent_Wait(10);
         Func_02003fbc();
         Actor_Stop(10);
         Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
@@ -158,12 +158,12 @@ void Func_020006f4(void) {
       STEP(gAdventure.currentOwner, 132, 190);
       Actor_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
       STEP(gAdventure.currentOwner, 120, 190);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_Wait(20);
       Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 98,
             168);
       Actor_Jump(gAdventure.currentOwner, 4, 10);
       Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
-      FieldEvent_WaitFrames(10);
+      FieldEvent_Wait(10);
       Func_02003fc4();
       Func_02003f3c(gAdventure.currentOwner, 0x4000);
       FieldMessage_Show(MsgOhThatRed + 2, 1);

@@ -113,7 +113,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   }
   if (delay != 0) {
     view->targetYaw = 0x2000;
-    WaitFrames(delay);
+    wait(delay);
   }
   if (request->command == 10) {
     Func_0811d7e8(request, &battle->plan);
@@ -225,7 +225,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   } else {
     if (result == -1) {
       BattleMessage_WaitForAdvance();
-      WaitFrames(3);
+      wait(3);
     }
     BattleHighlight_SetModes(0, 0);
   }

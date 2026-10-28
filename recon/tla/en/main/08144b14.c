@@ -269,7 +269,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

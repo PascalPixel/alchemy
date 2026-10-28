@@ -94,11 +94,11 @@ copy:
   REG_BLDCNT = 0x3f41;
   gBgScroll[0] = -104;
   gBgScroll[1] = 16;
-  WaitFrames(30);
+  wait(30);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x7fff, 0);
   Func_0200492c(1);
-  WaitFrames(1);
+  wait(1);
   Func_02004924_(0x7fff, 0);
   Func_0200491c_(0x10003, 0);
   Func_0200492c(8);
@@ -115,7 +115,7 @@ copy:
 fade:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
   i++;
-  WaitFrames(1);
+  wait(1);
   if (i != 32)
     goto fade;
   Func_0200474c_(104, 42, 5, 11, 61, 42);
@@ -132,7 +132,7 @@ fade:
   REG_DISPCNT |= 0x100;
   gBgScroll[0] = 0;
   gBgScroll[1] = 0;
-  WaitFrames(1);
+  wait(1);
   gCpuLoadDisplayEnabled = 1;
   Func_0200475c_(0, 0, 0);
 }

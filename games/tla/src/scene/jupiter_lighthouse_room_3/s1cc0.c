@@ -18,10 +18,10 @@ void Func_02001cc0(void) {
   z >>= 20;
   Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitFrames(1);
+  wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_020023f0()->y -= 0x80000;
 }
 
@@ -65,5 +65,5 @@ void Func_02001d48(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_02001cc0();
   Func_02002470(161);
   Func_02002328(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_Wait(12);
 }

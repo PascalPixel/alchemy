@@ -92,5 +92,5 @@ void Message_CloseFinishedWindows(void) {
     slotIndex++;
     slot++;
   } while (slotIndex != 3);
-  WaitFrames(10);
+  wait(10);
 }

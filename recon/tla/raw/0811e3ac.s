@@ -259,7 +259,7 @@ Func_0811e3ac:
 	movs r0, #154
 	bl Sound_PlayFar
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #4]
 	cmp r1, #0
 	beq .L_0811e5d8
@@ -316,7 +316,7 @@ Func_0811e3ac:
 	strh r3, [r7]
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #16
 	bne .L_0811e618
 	mov r3, r8
@@ -506,7 +506,7 @@ Func_0811e3ac:
 .L_0811e7ac:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #29
 	ble .L_0811e780
 	mov r3, r8

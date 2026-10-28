@@ -25,7 +25,7 @@ void Func_02004424(void) {
   work->screenEffect = effect = effect * 2 + 255;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_Wait(40);
   Func_02005b4c((s32)MsgOhTheMagic);
   Kibombo_MessagePut(17, 0);
   Kibombo_ObjTurn(17, 0x3000);

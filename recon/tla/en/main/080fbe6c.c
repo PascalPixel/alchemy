@@ -63,7 +63,7 @@ void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void *Unit_Get(s32 owner);
 s32 GameFlag_Test(s32 flag);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
   s32 value = base;
@@ -136,7 +136,7 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
         changed = 1;
         Sound_PlayFar(111);
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   WindowSprite_RedrawSavedRectFar(window);

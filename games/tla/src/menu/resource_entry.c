@@ -79,7 +79,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
     table = gMenu_SelectionStepDelays;
     diff = cur - goal;
     dist = AbsoluteDifference(diff, cur, goal);
-    WaitFrames(table[dist] + delay);
+    wait(table[dist] + delay);
 
     if (pos == goal)
       break;
@@ -90,7 +90,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
     pos += step;
   }
 
-  WaitFrames(48);
+  wait(48);
   Sound_PlayFar(SOUND_MENU_CONFIRM);
   return goal;
 }

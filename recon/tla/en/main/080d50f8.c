@@ -32,7 +32,7 @@ struct ClimbSprite {
 struct Actor *Actor_GetById(s32 id);
 void Event_Start(void);
 void Event_End(void);
-void Event_WaitFrames(s32 frames);
+void Event_Wait(s32 frames);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_08020258(s32 *position);
 s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
@@ -124,7 +124,7 @@ s32 Func_080d50f8(void) {
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
-    Event_WaitFrames(6);
+    Event_Wait(6);
     gAdventure.renderMode = 0;
     leader->actionFlags = 1;
     leader->angle = 0xc000;

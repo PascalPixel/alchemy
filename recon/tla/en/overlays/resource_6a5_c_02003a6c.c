@@ -13,7 +13,7 @@ s32 Func_02005884();
 s32 Func_020059f4();
 s32 Actor_SetSpritePriority();
 s32 Actor_GetById();
-s32 WaitFrames();
+s32 wait();
 extern u8 Data_02006a1c[];
 extern u8 gData_020059fc[];
 extern u8 gData_02005a0c[];
@@ -136,7 +136,7 @@ L_0200bb7c:
     goto L_0200bb8a;
   FIELD_AT(sp_, s32, 4) = 0x18000;
 L_0200bb8a:
-  WaitFrames(1);
+  wait(1);
   if (v_r8 != 0)
     goto L_0200bba2;
   if (v_r7 != 40)

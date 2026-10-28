@@ -74,7 +74,7 @@ void Task_Add(void (*func)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_08104ef8(s32 first);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void Window_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
@@ -121,7 +121,7 @@ s32 Func_080fa870(s32 mode) {
           ((selection * 3 + menu->pageWindow->x) << 3) - 2;
       if (redraw == 2) {
         Func_08104ef8(selection / 4 * 4);
-        WaitFrames(1);
+        wait(1);
       }
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);
       if (mode == 1) {
@@ -168,7 +168,7 @@ s32 Func_080fa870(s32 mode) {
       redraw = 0;
     }
     Func_080f8a44(selection % 4 * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (gInput.pressed & 1) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
         Sound_PlayFar(114);
@@ -189,7 +189,7 @@ s32 Func_080fa870(s32 mode) {
   Icon_PrepareActor(marker);
   marker->state = 13;
   Func_080fac58();
-  WaitFrames(1);
+  wait(1);
   menu->paneIndex[1] = selection;
   menu->selectedOwner = menu->ownerIds[selection];
   menu->paneOwner[1] = menu->ownerIds[selection];

@@ -196,7 +196,7 @@ Func_080fdad4:
 	str r0, [sp, #40]
 	movs r0, #1
 	str r4, [sp, #8]
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #8]
 	mov r0, r8
 	adds r2, r4, #0
@@ -268,7 +268,7 @@ Func_080fdad4:
 .L_080fdce4:
 	movs r0, #1
 	str r4, [sp, #8]
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #8]
 	mov r1, r10
 	ldr r0, [r4, #24]
@@ -634,7 +634,7 @@ Func_080fdad4:
 	ldr r3, [r3]
 	movs r0, #1
 	strb r2, [r3, #5]
-	bl WaitFrames
+	bl wait
 	ldr r0, [r7, #40]
 	ldrh r1, [r7, r5]
 	movs r2, #0
@@ -831,7 +831,7 @@ Func_080fdad4:
 	str r1, [sp, #44]
 .L_080fe14e:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #44]
 	add sp, #104
 	pop {r3, r5, r6, r7}

@@ -183,7 +183,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   REG_WININ = 0x2737;
   REG_WIN0H = 0xf0;
   REG_WIN1V = 0x1088;
-  WaitFrames(1);
+  wait(1);
 
   // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
@@ -385,7 +385,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Func_081180e8(PHASE_SUMMON_RESULTS);

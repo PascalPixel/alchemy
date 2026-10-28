@@ -9,7 +9,7 @@ void Func_0200580c(s32 value);
 void Func_02005854(s32 sound);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -46,9 +46,9 @@ void Func_0200176c(void) {
   Actor_SetSpeed(gAdventure.currentOwner, speed, 0x19999);
   Actor_SetPosition(gAdventure.currentOwner, 152, 488);
   actor->motionFlags = 3;
-  FieldEvent_WaitFrames(8);
+  FieldEvent_Wait(8);
   Func_02005854(161);
   Actor_SetModeById(gAdventure.currentOwner, 22);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Func_020056bc();
 }

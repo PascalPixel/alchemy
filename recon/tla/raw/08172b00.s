@@ -1302,7 +1302,7 @@ Func_08172b00:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #76]
 	ldr r1, [sp, #44]
 	adds r0, #1

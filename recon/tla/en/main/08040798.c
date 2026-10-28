@@ -36,7 +36,7 @@ void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Window_Close(struct RenderInput *window, s32 release);
 
@@ -67,7 +67,7 @@ s32 Func_08040798(s32 selected) {
   first = 0;
   Func_080405dc();
   work = Ram_HeapSlots->unkd0[0];
-  WaitFrames(1);
+  wait(1);
   window = Func_08040628();
   pair = RenderResource_CreatePair(7, window, 40, -16);
   if (settingsOnly != 0) {
@@ -109,7 +109,7 @@ s32 Func_08040798(s32 selected) {
       redraw = 0;
     }
     Func_08045018(pair);
-    WaitFrames(1);
+    wait(1);
     if (PRESSED & 1) {
       result = selected;
       Sound_PlayFar(112);
@@ -147,7 +147,7 @@ s32 Func_08040798(s32 selected) {
   }
   Window_Close(window, 2);
   Func_08040614();
-  WaitFrames(1);
+  wait(1);
   if (result >= 0)
     result += first;
   return result;

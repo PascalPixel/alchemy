@@ -5,8 +5,8 @@
 extern u8 MsgIsTheWay[];
 extern const u8 gData_020017f8[];
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -61,10 +61,10 @@ void Func_02000960(void) {
   Motion_SetModeAndWaitAnimation(11, 3);
   Func_0200110c(11, 0);
   Actor_WatchAndSetScript(11, gAdventure.currentOwner);
-  WaitFrames(30);
+  wait(30);
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_Wait(60);
   Call3((void (*)())Func_020010d4, 27, 0, 0);
   Actor_SetMovementTypeById(11, gData_020017f8);
   Func_0200108c();

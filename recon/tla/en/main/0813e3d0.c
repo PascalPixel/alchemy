@@ -89,7 +89,7 @@ void EffectPosition_ProjectBattler(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
@@ -228,7 +228,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(SLOT_BLITTER);

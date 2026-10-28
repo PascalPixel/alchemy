@@ -6,7 +6,7 @@
 #include "system/dma.h"
 
 struct Actor *Actor_GetById(u32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_02005d5c(struct Actor *object, s32 mode);
@@ -32,7 +32,7 @@ void Func_020007b4(s32 mode, s32 step) {
     secondSprite = second->animation;
     second->motionFlags = 0;
     second->y += -0x1c0000;
-    WaitFrames(1);
+    wait(1);
     entry = &gResourceTableEntries[secondSprite->vramBlock];
     second->watchedObject = (void *)(entry->offset + 0x6010000);
     entry = &gResourceTableEntries[firstSprite->vramBlock];

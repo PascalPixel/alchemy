@@ -13,7 +13,7 @@ s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001bc4(s32 script, s32 x, s32 z);
@@ -50,7 +50,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02001cd4(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

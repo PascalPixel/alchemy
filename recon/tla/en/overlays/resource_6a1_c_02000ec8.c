@@ -21,7 +21,7 @@ struct Actor *Actor_GetById(s32 id);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_02002160(struct Actor *object, s32 mode);
 void Func_020022c8(s32 sound);
@@ -67,12 +67,12 @@ void Func_02000ec8(struct PushTarget target, s32 id, void (*callback)(void)) {
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedParameters_(gAdventure.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gAdventure.currentOwner, 8);
-  WaitFrames(15);
+  wait(15);
   Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (target.x - from[0]) >> 17,
                                             (target.z - from[2]) >> 17);
   Actor_GetById(gAdventure.currentOwner)->update = Func_02001178;
-  WaitFrames(4);
+  wait(4);
   Func_02002160(object, 2);
   Func_020022c8(239);
   Actor_SetSpeedParameters_(id, 0x8000, 0x1999);

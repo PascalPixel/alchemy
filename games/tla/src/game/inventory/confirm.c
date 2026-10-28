@@ -5,7 +5,7 @@
 
 s16 *Scene_FindActorPlacement(s32 action);
 s32 Message_AllTypedFar(void);
-void WaitFrames(s32 count);
+void wait(s32 count);
 s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
 void Actor_SetModeById(u32 id, s32 mode);
 void Window_CloseMatchingIdFar(s32 sprite);
@@ -28,9 +28,9 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   s32 answer;
 
   while (Message_AllTypedFar() == 0)
-    WaitFrames(1);
+    wait(1);
 
-  WaitFrames((2 - gAdventure.eventMode) * 3);
+  wait((2 - gAdventure.eventMode) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;

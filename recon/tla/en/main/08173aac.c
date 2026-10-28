@@ -72,7 +72,7 @@ void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -1311,7 +1311,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 1)
       WAIT_TRANSFER(work) {}
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
   HeapSlot_Release(SLOT_BLITTER);
   if (mode == 0 || mode == 6)

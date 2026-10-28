@@ -139,7 +139,7 @@ Func_08191530:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r5, #0
 	bl Task_Remove
 	movs r0, #104
@@ -206,7 +206,7 @@ Func_08191530:
 	add r3, r10
 	str r4, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, .L_08191934
 	movs r0, #0
 	mov r11, r0
@@ -456,7 +456,7 @@ Func_08191530:
 	strh r0, [r4]
 	movs r0, #1
 	str r4, [sp, #8]
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #8]
 	movs r1, #1
 	add r11, r1

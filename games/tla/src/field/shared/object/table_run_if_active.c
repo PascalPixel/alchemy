@@ -14,7 +14,7 @@ void Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 s32 Message_AllTypedFar(void);
 s32 Window_IsClosedFar(s32 window);
 void Message_CloseFinishedWindowsFar(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// If the actor has graphics, ends the window of the speaker its graphics ID
 /// names.
@@ -50,7 +50,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTypedFar())
-      WaitFrames(delay);
+      wait(delay);
   }
 
   secondWindow =
@@ -59,22 +59,22 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (!Message_AllTypedFar())
-    WaitFrames(1);
+    wait(1);
 
-  WaitFrames(1);
+  wait(1);
   while (!(gInput.pressed & 0x303))
-    WaitFrames(1);
+    wait(1);
 
-  WaitFrames(1);
+  wait(1);
   Window_CloseMatchingIdFar(firstSprite);
   Window_CloseMatchingIdFar(secondSprite);
   Message_CloseFinishedWindowsFar();
-  WaitFrames(1);
+  wait(1);
 
   while (!Window_IsClosedFar(firstWindow))
-    WaitFrames(1);
+    wait(1);
   while (!Window_IsClosedFar(secondWindow))
-    WaitFrames(1);
+    wait(1);
 
-  WaitFrames(1);
+  wait(1);
 }

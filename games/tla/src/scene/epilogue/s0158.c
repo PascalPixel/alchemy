@@ -19,13 +19,13 @@ struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
 struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
 s32 Message_AllTyped(void);
 void Window_Close(struct EpilogueWindow *window, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;
 /// in mode 2 it restarts the window's text. Then it waits for the text, closes
 /// both windows and waits the given frames.
-void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
+void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
                    s32 mode) {
   s32 wide;
   struct EpilogueWindow *window;
@@ -53,18 +53,18 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
     window->unk0a = 0;
   }
   while (!Message_AllTyped())
-    WaitFrames(1);
-  WaitFrames(1);
+    wait(1);
+  wait(1);
   Window_Close(window, 2);
   if (!wide) {
     Window_Close(name, 2);
     gData_02000a34 = wide;
   }
-  if (wait > 0) {
-    s32 i = wait;
+  if (frames > 0) {
+    s32 i = frames;
 
     do {
-      WaitFrames(1);
+      wait(1);
     } while (--i != 0);
   }
   gData_02000a28++;

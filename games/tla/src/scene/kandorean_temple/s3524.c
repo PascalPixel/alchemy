@@ -45,9 +45,9 @@ void Func_02003584(void) {
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
                                      object->z + 0x30000);
-    WaitFrames_(1);
+    wait_(1);
   }
-  FieldEvent_WaitFrames_(20);
+  FieldEvent_Wait_(20);
   party = &gAdventure;
   object->angle = 0x4000;
   /* FAKEMATCH: the barrier loads the adventure's address among the angle's
@@ -56,9 +56,9 @@ void Func_02003584(void) {
   asm volatile("" : "+l"(party));
   Func_020052d0(party->currentOwner, 258);
   Actor_SetModeById_(party->currentOwner, 27);
-  FieldEvent_WaitFrames_(30);
+  FieldEvent_Wait_(30);
   Actor_SetModeById_(party->currentOwner, 28);
-  FieldEvent_WaitFrames_(10);
+  FieldEvent_Wait_(10);
   Actor_SetSpritePriority_(party->currentOwner, 3);
   for (i = 0; i <= 39; i++) {
     {
@@ -73,7 +73,7 @@ void Func_02003584(void) {
     object->scaleY += delta;
     delta = -0x20000;
     object->y += delta;
-    WaitFrames_(1);
+    wait_(1);
     if (i == 10)
       Func_020053d8(204);
     if (i == 20) {

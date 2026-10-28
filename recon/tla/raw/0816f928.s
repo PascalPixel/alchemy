@@ -385,7 +385,7 @@ BattleEffect_RunHurricane:
 	add r2, r8
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #1
 	add r11, r3
 	mov r4, r11

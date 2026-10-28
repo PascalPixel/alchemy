@@ -43,14 +43,14 @@ s32 Import_PartyGetLeaderActor(void);
 void Import_EventStart(void);
 void Import_EventEnd(void);
 void Import_EventResolvePendingActions(s32 skip);
-void Import_EventWaitFrames(s32 frames);
+void Import_EventWait(s32 frames);
 void Import_SoundPlay(s32 cue);
 void Import_GameFlagSet(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_RefreshSelectorById(s32 actor);
 void Actor_SetPartAttribute(struct VenusActor *object, s32 value);
@@ -108,9 +108,9 @@ void Func_020006ac(void) {
     z = 238;
   }
   Actor_SetPositionAndReset(leader, actor->xPixel, z * 4);
-  Import_EventWaitFrames(1);
+  Import_EventWait(1);
   Import_ActorGet(leader)->selectFlags |= 1;
-  Import_EventWaitFrames(20);
+  Import_EventWait(20);
   Actor_SetPartAttribute(actor, 0);
   actor->update = Func_020005a8;
   Func_02001c34(leader, 258, 60);
@@ -146,7 +146,7 @@ void Func_0200078c(void) {
   } else if (!Venus_FlagCheck(0x201)) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
-    Import_EventWaitFrames(5);
+    Import_EventWait(5);
     Venus_CopyCells(52, 50, 42, 49, 1, 1);
     Venus_CopyCells(52, 117, 41, 117, 3, 5);
     Venus_FlagSet(0x201);

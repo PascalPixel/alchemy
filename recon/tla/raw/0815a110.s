@@ -193,7 +193,7 @@ BattleEffect_RunBurstScene:
 	movs r2, #8
 	bl BattleMotion_ApproachTargetFar
 	movs r0, #7
-	bl WaitFrames
+	bl wait
 	b .L_0815a2a0
 .L_0815a290:
 	ldr r3, [sp, #68]
@@ -205,7 +205,7 @@ BattleEffect_RunBurstScene:
 	bl BattleMotion_ApproachTargetFar
 .L_0815a2a0:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #68]
 	mov r3, sp
 	adds r3, #128
@@ -1063,7 +1063,7 @@ BattleEffect_RunBurstScene:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #52]
 	ldr r3, [sp, #40]
 	adds r0, #1

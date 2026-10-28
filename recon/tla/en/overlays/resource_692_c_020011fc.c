@@ -31,7 +31,7 @@ void Func_020011fc(void) {
   Func_02004d40();
   Func_02004e90(0);
   Func_02004c98(leader, 6);
-  WaitFrames(6);
+  wait(6);
   Func_02004f30(152);
   Func_02004c98(leader, 7);
   leader->speedLimit = 0x30000;
@@ -46,7 +46,7 @@ void Func_020011fc(void) {
     leader->z += target->z - position[2] + stepZ;
     position[0] = target->x;
     position[2] = target->z;
-    WaitFrames(1);
+    wait(1);
   }
   leader->x = target->x;
   leader->terrainHeight = leader->y = target->y + 0x100000;

@@ -16,7 +16,7 @@
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02004c98(struct Actor *object, s32 mode);
@@ -111,9 +111,9 @@ end:
                     ((Random16Far() & 31) - 16) << 13, 0,
                     ((Random16Far() & 31) - 16) << 13, 0x1320000, &options);
     }
-    WaitFrames(1);
+    wait(1);
   }
-  WaitFrames(24);
+  wait(24);
   if (cell == 222) {
     Func_02001350();
     Func_02004d48();
@@ -121,7 +121,7 @@ end:
   }
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02004e20();
-  WaitFrames(10);
+  wait(10);
   Func_02004d48();
   return;
 hit:
@@ -139,6 +139,6 @@ hit:
   GameFlag_ClearBit(752);
   Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02004e20();
-  WaitFrames(10);
+  wait(10);
   Func_02004d48();
 }

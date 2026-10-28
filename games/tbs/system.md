@@ -56,9 +56,9 @@ a task must never wait itself, and none does. A frame that runs past one
 VBlank still finishes, so the game slows down rather than skipping ahead:
 that is its [slowdown](glossary.md#slowdown).
 
-Waiting is `WaitFrames(n)`; a task is added with `Task_Add` and stopped with
+Waiting is `wait(n)`; a task is added with `Task_Add` and stopped with
 `Task_Remove`. [Runtime](src/runtime/README.md#the-frame-loop) has the
-frame's order, [the stack switch](src/runtime/README.md#the-stack-switch-in-waitframes)
+frame's order, [the stack switch](src/runtime/README.md#the-stack-switch-in-wait)
 and [the task runner](src/runtime/README.md#the-task-runner).
 
 ## Banks and far calls

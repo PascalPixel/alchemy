@@ -92,15 +92,15 @@ enum { CPU_LOAD_PEAK_FRAMES = 30 };
 /// into Stop until L and R are pressed again. A soft reset requested by the
 /// keypad interrupt happens here. Called everywhere the game waits: every
 /// scene, menu and battle that lets time pass goes through it. Events wait with
-/// Event_WaitFrames instead, which debug fast-forward can skip.
+/// Event_Wait instead, which debug fast-forward can skip.
 ///
-/// Code may call WaitFrames deep inside its own call chains, so a caller
+/// Code may call wait() deep inside its own call chains, so a caller
 /// whose stack has grown below the frame-wait stack top has its stack copied
 /// aside into gSavedStack first, and the loop runs at that top; the copy is
 /// put back on return. Each frame it allocates and releases the frame scratch
 /// heap slot, sets gFrameRenderPending, and counts up gFrameCount and
 /// gPlayTimeFrames.
-void WaitFrames(s32 frames) {
+void wait(s32 frames) {
   u8 *sp;
   u32 frameIndex;
   u8 *base;
@@ -295,7 +295,7 @@ void WaitFrames(s32 frames) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, called by WaitFrames. When the repeat timer
+/// Runs once a frame after VBlank, called by wait(). When the repeat timer
 /// has run out, the held keys repeat into gKeysRepeat. gKeysRepeatDirected is
 /// the same keys with at most one D-pad direction: of several held directions
 /// it keeps the one added last (gKeysDirection remembers it), and with all

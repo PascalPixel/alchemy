@@ -62,7 +62,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   while (1) {
     Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
                            HIGHLIGHT_PALETTE);
-    WaitFrames(1);
+    wait(1);
     Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
                            WINDOW_PALETTE);
     if (moved) {
@@ -96,7 +96,7 @@ s32 ColossoMenu_Choose(s32 unused) {
     }
   }
   Window_Close(window, 2);
-  WaitFrames(1);
+  wait(1);
   VramCache_FreeEntry(slot);
   return row;
 }
@@ -162,12 +162,12 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     do {
       Oam_AddSpriteAtDepth(entry, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     VramCache_FreeEntry(handle);
   }
 }
@@ -217,11 +217,11 @@ void Party_ShowJoinedMessage(s32 member) {
     Sound_PlayFar(MUS_JOINED);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     VramCache_FreeEntry(handle);
   }
 }
@@ -291,12 +291,12 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     do {
       Oam_AddSpriteAtDepth(firstEntry, 250);
       Oam_AddSpriteAtDepth(secondEntry, 250);
-      WaitFrames(1);
+      wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
-    WaitFrames(1);
+    wait(1);
     VramCache_FreeEntry(firstHandle);
     VramCache_FreeEntry(secondHandle);
   }

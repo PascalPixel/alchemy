@@ -48,7 +48,7 @@ Func_02000054:
 .L_020080ae:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #59
 	bgt .L_020080d6
 	ldr r3, .L_02008128
@@ -64,7 +64,7 @@ Func_02000054:
 	movs r0, #1
 	str r3, [r1, #4]
 	str r3, [r1, #12]
-	bl WaitFrames
+	bl wait
 .L_020080d6:
 	bl Message_AllTyped
 	ldr r1, .L_02008128
@@ -78,7 +78,7 @@ Func_02000054:
 .L_020080ea:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl wait
 	cmp r5, #9
 	bgt .L_0200810c
 	ldr r1, .L_02008128
@@ -299,7 +299,7 @@ Func_02000848:
 	movs r0, #112
 	bl Func_02000e78
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_020088ac:
 	mov r3, r10
 	cmp r3, #0
@@ -354,7 +354,7 @@ Func_02000848:
 	bl Text_DrawStringInWindow
 .L_02008924:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, .L_02008aa8
 	movs r2, #1
 	ldr r3, [r3, #4]

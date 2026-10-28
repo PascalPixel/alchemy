@@ -110,7 +110,7 @@ void FieldPsynergy_StopCasterUpdate(void) {
 
   user->update = NULL;
   Actor_SetSpriteColorModeFar(user, SPRITE_COLOR_NORMAL);
-  WaitFrames(1);
+  wait(1);
 }
 
 #define SETUP_OBJECT_SLOTS (gActors)
@@ -176,7 +176,7 @@ void FieldPsynergy_End(void) {
 
       if (active != 0) {
         waited++;
-        WaitFrames(1);
+        wait(1);
       }
     } while (active != 0 && waited <= 29);
 

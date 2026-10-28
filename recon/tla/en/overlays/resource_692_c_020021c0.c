@@ -36,7 +36,7 @@ void Func_020021c0(void) {
   i = 0;
   do {
     object->scaleY = object->scaleX += 0x1000;
-    WaitFrames(5);
+    wait(5);
     i++;
   } while (i != 16);
   GameFlag_SetBit(((s8 *)work)[0xd30] + 0x2ee);
@@ -46,10 +46,10 @@ void Func_020021c0(void) {
     Func_02004e90(0);
     Call3((void (*)())Func_02004d10, 0x20000, 0x10000, 0x10000);
     Func_02004f30(141);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Camera_MoveWithinMapBounds(0x2680000, -1, 0x1280000, 1);
     Func_02004e20();
-    FieldEvent_WaitFrames(30);
+    FieldEvent_Wait(30);
     Func_02004f30(0x22d);
     {
       register u16 alpha __asm__("r3") =
@@ -68,13 +68,13 @@ void Func_020021c0(void) {
     i = 0;
     do {
       other->y -= 0x10000;
-      FieldEvent_WaitFrames(5);
+      FieldEvent_Wait(5);
       i++;
     } while (i != 32);
     Func_02004f30(0x22a);
     Func_02004c98(other, 4);
     Func_02004cb0(actor);
-    FieldEvent_WaitFrames(1);
+    FieldEvent_Wait(1);
     {
       register u16 off __asm__("r3") =
           0; /* FAKEMATCH: the zero pinned to r3 in a one-pass block (differ 4

@@ -143,7 +143,7 @@ BattleEffect_RunJudgment:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r4, [sp, #84]
 	ldr r2, .L_08167444
 	movs r3, #1
@@ -1100,7 +1100,7 @@ BattleEffect_RunJudgment:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r5, [sp, #72]
 	adds r5, #1
 	str r5, [sp, #72]
@@ -1138,7 +1138,7 @@ BattleEffect_RunJudgment:
 	cmp r7, #16
 	bne .L_08167b72
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	movs r1, #160
@@ -3016,7 +3016,7 @@ BattleEffect_RunJudgment:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r1, [sp, #72]
 	movs r2, #168
 	adds r1, #1

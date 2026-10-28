@@ -2,7 +2,7 @@
 
 extern u8 gData_0200308c;
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 static __inline__ void Blend_WriteAlpha(s32 value) {
   // The s32 parameter keeps each constant a word built with shifts; a u16 store
@@ -29,7 +29,7 @@ void Func_02000510(void) {
   i = 0;
 loop:
   BLEND_SET_ALPHA(((16 - i) << 8) | i);
-  WaitFrames(4);
+  wait(4);
   i++;
   if (i < 16)
     goto loop;
@@ -48,7 +48,7 @@ void Func_02000550(void) {
   i = 0;
 loop:
   BLEND_SET_ALPHA((i << 8) | (16 - i));
-  WaitFrames(3);
+  wait(3);
   i++;
   if (i < 16)
     goto loop;

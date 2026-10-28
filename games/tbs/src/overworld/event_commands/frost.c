@@ -151,13 +151,13 @@ void FieldPsynergy_Frost(void) {
       particle->targetZ = p->z;
     }
 
-    WaitFrames(3);
+    wait(3);
     remainingCycles--;
   } while (remainingCycles >= 0);
 
-  WaitFrames(10);
+  wait(10);
   Sound_PlayFar(SE_ICE);
-  WaitFrames(50);
+  wait(50);
 
   if (target != NULL && effectWork->enabled == 0) {
     Sound_PlayFar(SE_POWER_UP);
@@ -166,9 +166,9 @@ void FieldPsynergy_Frost(void) {
     remainingCycles = 15;
     do {
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
-      WaitFrames(1);
+      wait(1);
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_NORMAL);
-      WaitFrames(4);
+      wait(4);
       remainingCycles--;
     } while (remainingCycles >= 0);
 
@@ -183,7 +183,7 @@ void FieldPsynergy_Frost(void) {
     if (event != NULL) {
       Field_RunPsynergyEvent(event, gAdventure.leaderActorId, eventTarget);
     }
-    WaitFrames(20);
+    wait(20);
   }
 
   FieldPsynergy_FadeFromCastColor();

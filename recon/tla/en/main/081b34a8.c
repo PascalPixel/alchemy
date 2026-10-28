@@ -107,7 +107,7 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
 s32 PartyInventory_CountItemFar(s32 item);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 extern char ResourceId_FarCall00C;
 extern char ResourceId_ParticleSpritesD;
@@ -417,7 +417,7 @@ void LuckyWheels_Run(void) {
         }
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      wait(1);
     }
 
     for (j = 0; j != 17; j++) {
@@ -425,7 +425,7 @@ void LuckyWheels_Run(void) {
                            0x100);
       Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000,
                            0x10000 - (j << 12), 0x100);
-      WaitFrames(1);
+      wait(1);
     }
     HeapSlot_Release(188);
     HeapSlot_Release(104);

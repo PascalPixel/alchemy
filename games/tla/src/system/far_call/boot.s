@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global WaitFramesFar
+	.global waitFar
 	.thumb_func
-WaitFramesFar:
-	overlay_veneer WaitFrames
+waitFar:
+	overlay_veneer wait
 	.global Task_ResetAllFar
 	.thumb_func
 Task_ResetAllFar:

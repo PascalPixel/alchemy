@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global wait
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+wait:
+	overlay_veneer waitFar
 	.global Random16Far
 	.thumb_func
 Random16Far:

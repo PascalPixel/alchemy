@@ -155,11 +155,11 @@ FieldEffect_RunDouse:
 	str r0, [r7, #28]
 	adds r6, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #11
 	blt .L_080deebc
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	mov r3, r8
 	adds r3, #65
 	ldrb r3, [r3]
@@ -211,7 +211,7 @@ FieldEffect_RunDouse:
 	cmp r10, r3
 	bne .L_080defa6
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7, #8]
 	str r3, [r6]
 	ldr r3, [r7, #12]
@@ -262,7 +262,7 @@ FieldEffect_RunDouse:
 	movs r0, #132
 	bl Sound_PlayFar
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	mov r3, r10
 	cmp r3, #12
 	bne .L_080df028
@@ -289,7 +289,7 @@ FieldEffect_RunDouse:
 	blt .L_080def64
 .L_080df030:
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	b .L_080df0d8
 .L_080df038:
 	mov r3, r8
@@ -358,7 +358,7 @@ FieldEffect_RunDouse:
 	bl Animation_ApplyChildValuesFar
 .L_080df0c0:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r0, #1
 	negs r0, r0
 	add r10, r0
@@ -367,7 +367,7 @@ FieldEffect_RunDouse:
 	bne .L_080df058
 .L_080df0d2:
 	movs r0, #70
-	bl WaitFrames
+	bl wait
 .L_080df0d8:
 	ldr r2, [sp, #4]
 	ldr r3, [sp, #8]
@@ -420,7 +420,7 @@ FieldEffect_RunDouse:
 	str r0, [r7, #28]
 	adds r6, #1
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r6, #11
 	blt .L_080df0e2
 	adds r0, r7, #0

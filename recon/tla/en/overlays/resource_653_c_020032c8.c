@@ -21,7 +21,7 @@ void Func_020032c8(void) {
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   leader->motionFlags = 0;
-  WaitFrames(1);
+  wait(1);
   GameFlag_ClearBit(0x208);
   GameFlag_SetBit(0x209);
   GameFlag_ClearBit(0x301);
@@ -43,11 +43,11 @@ rise:
   if ((u16)i <= 15)
     goto rise;
   Func_02005158();
-  WaitFrames(1);
+  wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
 fall:
   leader->y += -0x6c000;
   statue->y += -0x6c000;
@@ -58,7 +58,7 @@ fall:
   Func_02000cf8(18, 0x18000, limit);
   Func_02000cf8(19, 0xc000, limit);
   Func_02000cf8(20, 0, limit);
-  WaitFrames(1);
+  wait(1);
   if (Actor_GetById(20)->scaleY > limit)
     goto fall;
   gData_0200629c = 0;
@@ -76,7 +76,7 @@ fall:
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
   Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
                                      1);
-  WaitFrames(1);
+  wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();
 }

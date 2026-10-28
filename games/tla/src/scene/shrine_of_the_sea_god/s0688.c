@@ -23,13 +23,13 @@ void Func_02000688(void) {
   Func_02003ac8();
   Func_02003b48(244);
   Io_Write16(0x1001, &REG_BLDALPHA);
-  WaitFrames(10);
+  wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
-  WaitFrames(10);
+  wait(10);
   Io_Write16(0x1003, &REG_BLDALPHA);
-  WaitFrames(10);
+  wait(10);
   Io_Write16(0x1004, &REG_BLDALPHA);
-  WaitFrames(10);
+  wait(10);
   Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
@@ -38,7 +38,7 @@ void Func_02000688(void) {
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
-  WaitFrames(10);
+  wait(10);
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
   Func_0200063c(65, 51);
   Func_0200063c(65, 58);

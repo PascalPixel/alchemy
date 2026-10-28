@@ -89,7 +89,7 @@ s32 Func_0804d7fc(s32 mode) {
   WindowSprite_PrepareForRedraw(work->lowerWindow);
   Window_Close(*upper, 2);
   Window_Close(work->lowerWindow, 2);
-  WaitFrames(1);
+  wait(1);
   Menu_EndResourceSelection();
   return result;
 }

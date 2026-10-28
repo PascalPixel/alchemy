@@ -55,11 +55,11 @@ void Func_020003b8(s32 unused, s32 id) {
   if (object->x >> 20 == 63 && object->z >> 20 == 15) {
     GameFlag_SetBit(2572);
     object->motionFlags = 3;
-    WaitFrames(2);
+    wait(2);
     i = 0;
     if (object->y > object->terrainHeight || object->velocityY != 0) {
       do {
-        WaitFrames(1);
+        wait(1);
         i++;
         if (i > 29)
           break;
@@ -84,41 +84,41 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_02004924(0x10000, 0);
     Func_0200491c(0x10003, 0);
     Func_0200492c(60);
-    FieldEvent_WaitFrames(50);
+    FieldEvent_Wait(50);
     Func_020048b4_(gAdventure.currentOwner, 0x6000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_020048b4_(gAdventure.currentOwner, 0x2000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_020048b4_(gAdventure.currentOwner, 0x6000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_020048b4_(gAdventure.currentOwner, 0x2000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_020048b4_(gAdventure.currentOwner, 0x4000);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Func_020048cc(gAdventure.currentOwner, 257, 50);
     Func_020048b4_(gAdventure.currentOwner, 0);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     Actor_SetModeById(gAdventure.currentOwner, 22);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_Wait(40);
     Func_02002efc(0);
     Func_020000c4();
     Actor_SetModeById(gAdventure.currentOwner, 1);
     Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
     Actor_StartRepeatedMotion(4, 3);
     Func_020048d4(4, 258);
-    FieldEvent_WaitFrames(40);
-    FieldEvent_WaitFrames(60);
+    FieldEvent_Wait(40);
+    FieldEvent_Wait(60);
     Func_020048e4(0x30000, 0x6000);
     Camera_MoveWithinMapBounds_(131 << 19, 0, 174 << 16, 1);
     Func_020048f4();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     object->update = 0;
     Func_020049c4(80);
     Sound_WaitForJingle();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
     Func_020048f4();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02002efc(1);
     Func_020047dc();
   }

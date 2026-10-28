@@ -540,7 +540,7 @@ Func_08144628:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [sp, #36]
 	ldr r2, .L_08144aa0
 	adds r3, #1

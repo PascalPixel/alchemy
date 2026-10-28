@@ -32,7 +32,7 @@ struct ShopRuntime {
   s8 shopType;
 };
 
-void WaitFrames(s32);
+void wait(s32);
 s32 Message_AllTypedFar(void);
 void Message_CloseFinishedWindowsFar(void);
 

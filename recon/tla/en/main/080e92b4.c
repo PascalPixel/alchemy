@@ -81,7 +81,7 @@ void Func_080e43a4(void *source, void *buffer, s32 size);
 void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
 void Func_080e8c9c(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
@@ -167,7 +167,7 @@ void Func_080e92b4(void) {
                   animation->width * animation->height);
   }
   Func_080e89e4(2);
-  WaitFrames(1);
+  wait(1);
   Sound_PlayFar(238);
   counter = 0;
   amplitude = 0x20000;
@@ -279,7 +279,7 @@ void Func_080e92b4(void) {
         phase = 999;
       break;
     }
-    WaitFrames(1);
+    wait(1);
     timer++;
   } while (phase != 999);
   Sound_PlayFar(390);

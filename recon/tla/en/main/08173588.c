@@ -282,7 +282,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
 
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(104);

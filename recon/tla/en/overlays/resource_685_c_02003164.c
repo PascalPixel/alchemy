@@ -36,7 +36,7 @@ struct Vec3 {
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void Task_Add(void (*func)(void), s32 priority);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02002c88(void);
 void Func_02002de4(void);
 
@@ -67,6 +67,6 @@ void Func_02003164(const struct Vec3 *origin) {
         state = 999;
       }
     }
-    WaitFrames(1);
+    wait(1);
   } while (state != 999);
 }

@@ -11,7 +11,7 @@ void Func_02001c68(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001a1c();
   }
 }
@@ -26,7 +26,7 @@ void Func_02001cd8(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 280, 184);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001a1c();
   }
 }
@@ -41,7 +41,7 @@ void Func_02001d40(void) {
     Actor_SetPositionAndReset(gAdventure.currentOwner, 248, 184);
     Actor_SetPositionAndReset(gAdventure.currentOwner, 264, 184);
     Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02001a1c();
   }
 }

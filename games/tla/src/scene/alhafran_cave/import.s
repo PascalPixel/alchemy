@@ -50,10 +50,10 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02001420:
 	overlay_veneer Func_08020360
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Func_02001430
 	.thumb_func
 Func_02001430:

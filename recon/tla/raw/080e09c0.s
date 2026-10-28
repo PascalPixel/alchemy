@@ -179,7 +179,7 @@ Func_080e09c0:
 	movs r1, #1
 	bl Actor_SetMode
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r7, #15
 .L_080e0b40:
 	mov r0, r8
@@ -189,7 +189,7 @@ Func_080e09c0:
 	adds r3, r3, r1
 	str r3, [r0, #12]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #0
 	bge .L_080e0b40
 	movs r0, #132
@@ -211,11 +211,11 @@ Func_080e09c0:
 	cmp r7, #0
 	bge .L_080e0b6a
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_080e0c4e
 .L_080e0b84:
 	movs r0, #6
-	bl WaitFrames
+	bl wait
 	movs r3, #132
 	lsls r3, r3, #6
 	add r3, r10
@@ -299,7 +299,7 @@ Func_080e09c0:
 	bl Sound_PlayFar
 .L_080e0c32:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #132
 	lsls r3, r3, #6
 	adds r3, #4

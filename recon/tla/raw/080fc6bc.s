@@ -98,7 +98,7 @@ Func_080fc6bc:
 	cmp r3, #0
 	beq .L_080fc7a0
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r1, #0
 	ldr r0, [sp, #36]
 	mov r2, r8
@@ -229,7 +229,7 @@ Func_080fc6bc:
 	bls .L_080fc840
 .L_080fc880:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r2, r8
 	ldr r2, [r2, #24]
 	mov r3, r8
@@ -301,7 +301,7 @@ Func_080fc6bc:
 	movs r0, #114
 	bl Sound_PlayFar
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_080fc9d2
 .L_080fc912:
 	movs r0, #111
@@ -395,7 +395,7 @@ Func_080fc6bc:
 	ldr r3, [r3]
 	movs r0, #1
 	strb r2, [r3, #5]
-	bl WaitFrames
+	bl wait
 	b .L_080fc9e0
 .L_080fc9d2:
 	movs r0, #168
@@ -494,7 +494,7 @@ Func_080fc6bc:
 	str r3, [sp, #32]
 .L_080fca9e:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #32]
 	add sp, #88
 	pop {r3, r5, r6, r7}

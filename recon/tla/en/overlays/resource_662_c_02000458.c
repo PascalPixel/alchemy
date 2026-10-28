@@ -31,7 +31,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 void Func_02000458(struct PushMove move) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -56,12 +56,12 @@ void Func_02000458(struct PushMove move) {
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gAdventure.currentOwner, 8);
-  WaitFrames(15);
+  wait(15);
   Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (move.x - from[0]) >> 17,
                                             (move.z - from[2]) >> 17);
   Actor_GetById(gAdventure.currentOwner)->update = Func_02000754;
-  WaitFrames(4);
+  wait(4);
   Func_02001828(object, 2);
   Func_02001960(239);
   Actor_SetSpeedParameters(move.slot, 0x8000, 0x1999);

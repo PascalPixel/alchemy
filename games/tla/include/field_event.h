@@ -57,7 +57,7 @@ void Sound_PlayFar(s32 cue);
 
 void Import_EventStart(void);
 void Import_EventEnd(void);
-void Import_EventWaitFrames(s32 frames);
+void Import_EventWait(s32 frames);
 void Import_EventResolvePendingActions(s32 skip);
 void Import_EventSetMessageId(s32 message);
 s32 Import_FieldMessageShowAtActor(s32 speaker, s32 flags);

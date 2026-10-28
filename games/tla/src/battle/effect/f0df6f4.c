@@ -41,7 +41,7 @@ void Func_080df6f4(void) {
       BattleEffect_SpawnItemBreakMode1(pos.x + 0x200000, pos.y, pos.z, 0x8000);
   pair[1] = BattleEffect_SpawnItemBreakMode1(pos.x - 0x200000, pos.y, pos.z, 0);
 
-  WaitFrames(15);
+  wait(15);
   walk = pair;
   for (n = 0; n < 2; n++) {
     obj = *walk++;

@@ -81,7 +81,7 @@ void Func_080f8170(s32 window, s32 ownerId, s32 x, s32 y);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
 void Func_08104ef8(s32 first);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Menu_HighlightPageEntry(struct MenuWindow *window, s32 selection, s32 count);
 void WindowSprite_RedrawSavedRectFar(s32 window);
 void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
@@ -119,7 +119,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
         PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
         if (redraw == 2) {
           Func_08104ef8(selection / 4 * 4);
-          WaitFrames(1);
+          wait(1);
         }
         Menu_HighlightPageEntry(menu->rowWindow, selection, count);
         if (!GameFlag_Test(0x151) && !shown) {
@@ -134,7 +134,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
       }
     }
     Func_080f8a44((selection % 4) * 24 - 10, 16);
-    WaitFrames(1);
+    wait(1);
     if (KEYS_PRESSED & 1) {
       Sound_PlayFar(112);
       result = menu->ownerIds[selection];
@@ -150,7 +150,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
   icon = menu->rowCursor;
   Icon_PrepareActor(icon);
   icon->active = 13;
-  WaitFrames(1);
+  wait(1);
   menu->tabIndex[1] = selection;
   menu->selectedOwner = menu->ownerIds[selection];
   menu->ownerId = menu->ownerIds[selection];

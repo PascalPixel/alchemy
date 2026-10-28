@@ -73,6 +73,6 @@ next2:
     else
       LemurianShip_ObjCenter(owner, 2, -4);
   }
-  FieldEvent_WaitFrames(4);
+  FieldEvent_Wait(4);
   Func_02002d70(work->exit);
 }

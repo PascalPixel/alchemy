@@ -57,9 +57,9 @@ void Func_080dda30(s32 unused) {
      * instructions differ in tla-en. */
     asm("");
     target->priorityFlags |= 2;
-    WaitFrames(10);
+    wait(10);
     Sound_PlayFar(126);
-    WaitFrames(40);
+    wait(40);
   } else if (kind == 1) {
     struct BurstParticleVector position;
     struct BurstParticleVector *p = &position;
@@ -80,12 +80,12 @@ void Func_080dda30(s32 unused) {
         Actor_StartScriptFar(piece, (u32)gData_080f0ee8);
         piece->motionFlags = 2;
       }
-      WaitFrames((((u32)Random16() * 2) >> 16) + 2);
+      wait((((u32)Random16() * 2) >> 16) + 2);
       n--;
     } while (n >= 0);
     Func_080daecc(scene->secondObjectId, 1);
   } else {
-    WaitFrames(10);
+    wait(10);
     Sound_PlayFar(126);
   }
   BattleEffect_PrepareBufferInterpolation();
@@ -115,9 +115,9 @@ void FieldEffect_RunGrowth(void) {
       Actor_StartScriptFar(object, (u32)gData_080f0ee8);
       *((u8 *)object + 0x55) = 2;
     }
-    WaitFrames((((u32)Random16() * 2) >> 16) + 2);
+    wait((((u32)Random16() * 2) >> 16) + 2);
     entryCount--;
   } while (entryCount >= 0);
-  WaitFrames(30);
+  wait(30);
   BattleEffect_PrepareBufferInterpolation();
 }

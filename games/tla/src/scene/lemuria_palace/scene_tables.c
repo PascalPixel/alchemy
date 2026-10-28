@@ -19,7 +19,7 @@ struct DoorStep {
 
 struct Actor *Actor_GetById();
 void Actor_SetSpeedParameters();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_02001fb4();
@@ -49,7 +49,7 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_020020b4(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

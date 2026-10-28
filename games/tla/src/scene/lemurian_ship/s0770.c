@@ -19,15 +19,15 @@ void Func_02000798(void) {
     Func_02002c68();
     Func_02002da8(0);
     LemurianShip_BlendStart(16, 47, 1, 1, x, 46);
-    WaitFrames(1);
+    wait(1);
     flags = &object->motionFlags;
     *flags = 3;
     do {
-      WaitFrames(1);
+      wait(1);
       moving = object->velocityY;
     } while (moving != 0);
     Func_02002de0(188);
-    WaitFrames(10);
+    wait(10);
     *flags = moving;
     GameFlag_SetBit(0x200);
     LemurianShip_BlendStart(14, 46, 1, 1, 16, 46);

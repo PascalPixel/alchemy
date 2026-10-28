@@ -26,7 +26,7 @@ s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
@@ -45,25 +45,25 @@ void Func_080e9db4(void) {
     i = 0;
     goto test;
     do {
-      WaitFrames(1);
+      wait(1);
       if (++i > 59)
         break;
     test:;
     } while (object->y > object->terrainHeight);
     Sound_PlayFar(132);
-    WaitFrames(1);
+    wait(1);
     for (i = 0; i < 20; i++) {
       if (object->y <= object->terrainHeight)
         break;
-      WaitFrames(1);
+      wait(1);
     }
-    WaitFrames(1);
+    wait(1);
     for (i = 0; i < 20; i++) {
       if (object->y <= object->terrainHeight)
         break;
-      WaitFrames(1);
+      wait(1);
     }
-    WaitFrames(1);
+    wait(1);
     object->bounce = 0;
     object->velocityY = 0;
     object->y = object->terrainHeight;

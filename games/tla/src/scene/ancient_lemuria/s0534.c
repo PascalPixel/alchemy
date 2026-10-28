@@ -10,7 +10,7 @@ extern u8 MsgLemuriaStayExploringAlternate[];
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetSpeedParameters();
 void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void Actor_SetPositionAndReset();
@@ -38,7 +38,7 @@ void Func_02000534(void) {
     Call4(Func_02001a0c, 11, 0, -16, 0x5000);
     Actor_ArmCallback(4, 0xc000, 0);
     Actor_WaitForMoveById(11);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_Wait(20);
     if (GameFlag_Test(7)) {
       Func_02001994(MsgLemuriaStayExploring);
       Func_020019a4(11, 0, 10);

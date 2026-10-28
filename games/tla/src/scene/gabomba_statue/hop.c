@@ -32,7 +32,7 @@ void Func_0200565c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005664(struct Actor *object);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
@@ -44,7 +44,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   Func_020057d4(object);
   saved = *flags;
   Func_02005624(object, 6);
-  WaitFrames(6);
+  wait(6);
   Func_02005854(152);
   Func_02005624(object, 7);
   object->speedLimit = 0x30000;
@@ -57,5 +57,5 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   *flags = saved;
   Func_02005624(object, 6);
   Actor_SetSingleChildFlags(object, 1);
-  WaitFrames(3);
+  wait(3);
 }

@@ -23,7 +23,7 @@ s32 Message_DecodeMode1(s32 message);
 s32 Message_Start(struct Window *window, s32 entries, s32 x,
                               s32 y, s32 flags);
 void Sound_PlayFar(s32 cue);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Func_0803cf6c(s32 message);
 s32 Resource_ResetEntry(u32 slot);
@@ -54,10 +54,10 @@ void Func_08044dc8(s32 summon) {
   Message_Start(window, entries, 0, 2, 0);
   Sound_PlayFar(81);
   do
-    WaitFrames(1);
+    wait(1);
   while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
   Window_Close(window, 2);
-  WaitFrames(1);
+  wait(1);
 
   window = Window_Create(3, 1, 24, 7, 0);
   if (window == NULL)
@@ -84,9 +84,9 @@ void Func_08044dc8(s32 summon) {
   Func_0803cf6c((s32)Msg_0034 + 4);
   Message_Start(window, entries, 4, 2, 0);
   do
-    WaitFrames(1);
+    wait(1);
   while ((gInput.pressed & 0x303) == 0);
   Window_Close(window, 2);
-  WaitFrames(1);
+  wait(1);
   Resource_ResetEntry(resource);
 }

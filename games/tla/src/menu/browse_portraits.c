@@ -98,10 +98,10 @@ s32 Func_0804e3f4(void) {
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
     }
-    WaitFrames(1);
+    wait(1);
   }
   Window_Close((struct Window *)window, 2);
   Window_Close((struct Window *)portrait, 2);
-  WaitFrames(1);
+  wait(1);
   return 0;
 }

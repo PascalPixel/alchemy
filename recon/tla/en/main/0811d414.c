@@ -66,7 +66,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions,
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
-      WaitFrames(1);
+      wait(1);
       if (--timeout < 0)
         return -1;
       if ((gLinkStatus & 3) != 3) {
@@ -81,7 +81,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions,
       if (status == -1)
         return status;
       while (Serial_GetActiveTransfers()) {
-        WaitFrames(1);
+        wait(1);
         if (--timeout < 0)
           return -1;
         if ((gLinkStatus & 3) != 3) {
@@ -107,7 +107,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions,
     while (Serial_GetActiveTransfers()) {
       if (gSerialReceivedSize > 20)
         return -1;
-      WaitFrames(1);
+      wait(1);
       if (--timeout < 0)
         return -1;
       if ((gLinkStatus & 3) != 3) {
@@ -127,7 +127,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions,
       while (Serial_GetActiveTransfers()) {
         if (gSerialReceivedSize > (u32)(result * 16 + 19) / 20 * 20)
           return -1;
-        WaitFrames(1);
+        wait(1);
         if (--timeout < 0)
           return -1;
         if ((gLinkStatus & 3) != 3) {

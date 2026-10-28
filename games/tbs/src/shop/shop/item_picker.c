@@ -46,7 +46,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
       Shop_DrawMemberItems(shop->itemWindow, unitId);
     }
 
-    WaitFrames(1);
+    wait(1);
     if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
@@ -90,7 +90,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   Menu_ReleaseEntryActorsFar();
   Window_CloseFar(partyWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
-  WaitFrames(1);
+  wait(1);
   Shop_ReleaseWork();
   return result;
 }
@@ -174,7 +174,7 @@ s32 Shop_SelectUse(s32 unitId) {
       Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
     }
 
-    WaitFrames(1);
+    wait(1);
 
     if ((gKeysPressed & KEY_A) != 0) {
       discardStatus = Inventory_CheckDiscardFar(unitId, slot);
@@ -192,7 +192,7 @@ s32 Shop_SelectUse(s32 unitId) {
       }
       Sound_PlayFar(SE_MENU_CANCEL);
       while (Message_AllTypedFar() == 0)
-        WaitFrames(1);
+        wait(1);
       Message_CloseFinishedWindowsFar();
       continue;
     }
@@ -237,7 +237,7 @@ s32 Shop_SelectUse(s32 unitId) {
 
   Window_CloseFar(descriptionWindow, 2);
   Window_CloseFar(priceWindow, 2);
-  WaitFrames(1);
+  wait(1);
   return selectionResult;
 }
 

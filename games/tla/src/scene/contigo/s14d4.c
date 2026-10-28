@@ -9,7 +9,7 @@ void Func_020014d4(void) {
     Func_0200406c();
     Func_02004204(1);
     Func_020040d4(16, 664 << 16, 952 << 16);
-    WaitFrames(1);
+    wait(1);
     Actor_SetAngleToward(16, gAdventure.currentOwner, 0);
     work->unk16a = 200;
     Func_02004074();

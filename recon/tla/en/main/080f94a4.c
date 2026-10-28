@@ -58,7 +58,7 @@ void ItemMenu_Close(void);
 void Menu_ResetTwoResourceEntries(void);
 void Func_08038290(void);
 void Event_ClearInvalidPackedValuesFar(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 s32 Func_080f94a4(void) {
   void *backup;
@@ -74,7 +74,7 @@ s32 Func_080f94a4(void) {
   backup = Heap_AllocEwram(size);
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
-  WaitFrames(1);
+  wait(1);
   Window_InitializeWork(0);
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
   Func_080fa368(0, 3, 0, 7);
@@ -109,9 +109,9 @@ s32 Func_080f94a4(void) {
   Iwram_CopyWords((void *)0x06004000, backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
-  WaitFrames(1);
+  wait(1);
   Menu_ResumeFieldTasks();
-  WaitFrames(1);
+  wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;
   Event_ClearInvalidPackedValuesFar();

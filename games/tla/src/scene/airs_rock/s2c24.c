@@ -4,7 +4,7 @@
 #include "flag_call.h"
 
 struct Actor *Actor_GetById(s32 id);
-s32 WaitFrames(s32 frames);
+s32 wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Camera_FollowActor(s32 id, s32 a);
@@ -23,6 +23,6 @@ void Func_02002c24(s32 height) {
     object->actionFlags = 1;
     Camera_FollowActor(gAdventure.currentOwner, 0);
     Func_02003b50();
-    WaitFrames(1);
+    wait(1);
   }
 }

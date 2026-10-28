@@ -100,7 +100,7 @@ extern u8 MsgDjinnStatusHelp[];
 extern u8 MsgDjinnCompareConfirm[];
 extern u8 gMenu_BackdropBorderTile[];
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Func_08104e38(s32 first, s32 second);
@@ -206,7 +206,7 @@ s32 Func_081039fc(u32 mode) {
     menu->memberY[1] = 32;
   }
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  wait(1);
   Window_CloseIfOpen(&menu->helpWindow, 1);
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   pageCounts[0] = 1;
@@ -381,7 +381,7 @@ s32 Func_081039fc(u32 mode) {
           Func_080f8ab4(2, 96);
           gAdventure.eventMode = 1;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
@@ -413,12 +413,12 @@ s32 Func_081039fc(u32 mode) {
           Func_080f8ab4(106, 56);
           gAdventure.eventMode = 1;
           while (Message_AllTypedFar() == 0)
-            WaitFrames(1);
+            wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
-          WaitFrames(1);
+          wait(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
@@ -450,7 +450,7 @@ s32 Func_081039fc(u32 mode) {
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       if ((redraw >> 1) != 0)
-        WaitFrames(1);
+        wait(1);
       if (mode == 3) {
         previewMode = 0;
         addPairSlot = 0;
@@ -587,7 +587,7 @@ s32 Func_081039fc(u32 mode) {
             Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Func_08105350(0, 0);
@@ -595,7 +595,7 @@ s32 Func_081039fc(u32 mode) {
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
-  WaitFrames(1);
+  wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
   Window_CloseIfOpen(&menu->window, 1);
   Window_CloseIfOpen(&menu->secondWindow, 1);
@@ -603,6 +603,6 @@ s32 Func_081039fc(u32 mode) {
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
-  WaitFrames(1);
+  wait(1);
   return result;
 }

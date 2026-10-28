@@ -98,7 +98,7 @@ void Func_02000c38(void) {
   Func_02001e2c(123);
   Actor_SetModeById(gAdventure.currentOwner, 2);
   Actor_CenterOnColumn_(gAdventure.currentOwner, 2, -6);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_Wait(10);
   Func_02001d94(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -37,7 +37,7 @@ void Func_02001d50(void) {
   Contigo_ObjMoveTo(7, gAdventure.currentOwner);
   Contigo_ObjMoveTo(6, gAdventure.currentOwner);
   Contigo_ObjMoveTo(9, gAdventure.currentOwner);
-  WaitFrames(1);
+  wait(1);
   Contigo_ObjSpeed(5, 0xcccc, 0x6666);
   Contigo_ObjSpeed(7, 0xcccc, 0x6666);
   Contigo_ObjSpeed(9, 0xcccc, 0x6666);
@@ -238,7 +238,7 @@ void Func_02001d50(void) {
   Actor_SetPartAttribute(Actor_GetById(8), 15);
   angle = 0xb000;
   Func_020040dc(8, 0xa00000, 0x1d20000, angle);
-  WaitFrames(1);
+  wait(1);
   Contigo_MessagePut(8, 0);
   Contigo_ObjFollow(gAdventure.currentOwner, 8);
   Contigo_ObjFollow(5, 8);

@@ -9,7 +9,7 @@ s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Func_02000f00(void);
 void Func_02000fac(void);
 void Func_02004e5c(void);
@@ -39,10 +39,10 @@ void Func_020011c8(void) {
     Func_02000f00();
     Func_02004f0c((s32)MsgGaiaRockInside03);
     Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02004f14(10, 0);
     Motion_SetModeAndWaitAnimation(10, 3);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02000fac();
   }
   Func_02004e64();

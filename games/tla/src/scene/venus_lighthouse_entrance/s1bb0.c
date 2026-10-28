@@ -17,7 +17,7 @@ void Actor_SetModeById(s32 a, s32 b);
 s32 Actor_GetById(s32 a);
 void Actor_ResetAndSetPosition(s32 a, s32 b, s32 c);
 void Func_0200290c(s32 a, s32 b, s32 c);
-void FieldEvent_WaitFrames(s32 a);
+void FieldEvent_Wait(s32 a);
 void Actor_CommitPositionAndActivate(s32 a, s32 b, s32 c);
 void Func_020028bc(void);
 extern u8 MsgNotThatWayThe[];
@@ -39,7 +39,7 @@ void Func_02001bb0(void) {
   }
   Call1(Actor_WaitForMoveById, 8);
   Call3(Func_0200290c, 8, 0, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_Wait, 0xa);
   Call3(Actor_CommitPositionAndActivate, 5, -16, 0);
   Func_020028bc();
 }

@@ -250,7 +250,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

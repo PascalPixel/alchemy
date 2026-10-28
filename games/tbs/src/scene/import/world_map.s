@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__umodsi3, 1
-	.set import.WaitFrames, 1
+	.set import.wait, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
@@ -43,7 +43,7 @@
 	.set import.DjinnRecovery_AddStandby, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_Wait, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1

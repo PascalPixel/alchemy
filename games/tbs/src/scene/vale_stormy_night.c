@@ -371,7 +371,7 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_SanctumDoorOpens, 45, 11);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 257, 420);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(
       VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR);
 }
@@ -424,7 +424,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 54, 32);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 406, 727);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST);
 }
 
@@ -447,7 +447,7 @@ static void ValeStormyNight_LeaveToCottageRoomsA(void) {
     GameFlag_Set(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   } else {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
-    Event_WaitFrames(3);
+    Event_Wait(3);
     Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH);
   }
 }
@@ -464,7 +464,7 @@ static void ValeStormyNight_LeaveToIsaacsHouse(void) {
     MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   }
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 340, 888);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE);
 }
 
@@ -475,7 +475,7 @@ static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_GrandparentsDoorOpens, 49, 69);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 326, 1126);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
@@ -488,7 +488,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_WestHouseDoorOpens, 52, 76);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 374, 1238);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST);
 }
 
@@ -503,7 +503,7 @@ static void ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(
       VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR);
 }
@@ -515,7 +515,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBWest(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST);
 }
 
@@ -526,7 +526,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBEast(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 1182);
-  Event_WaitFrames(3);
+  Event_Wait(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST);
 }
 
@@ -718,7 +718,7 @@ s32 ValeStormyNight_Initialize(void) {
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
   }
-  WaitFrames(1);
+  wait(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
       gAdventure.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValeStormyNight_DoraSendsIsaacToThePlaza();
@@ -767,7 +767,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Weather_StartRain();
   Weather_StartLightning();
   Weather_LastLightning();
-  WaitFrames(60);
+  wait(60);
   // The camera looks down on the door of Isaac's house; Kyle waits outside.
   FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
   FieldCamera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
@@ -803,11 +803,11 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Event_SetMessageId(message);
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_WalkToAndWait(ACTOR_KYLE, 294, 838);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_KYLE, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -818,7 +818,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
   // Dora runs to Kyle: "Let me help you, Kyle!" "It's too dangerous, Dora."
@@ -851,7 +851,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   // Kyle and Dora run north toward the Boulder and out of sight.
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkTo(ACTOR_KYLE, 297, 750);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_DORA, 297, 750);
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
@@ -889,7 +889,7 @@ static void ValeStormyNight_FirstRockFalls(void) {
       // east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_Play(SE_RUMBLE);
-      WaitFrames(40);
+      wait(40);
       Sound_Play(SE_CRASH);
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
@@ -903,7 +903,7 @@ static void ValeStormyNight_FirstRockFalls(void) {
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK, 344, 932);
       rockSprite->image.priority = 3;
       rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-      Event_WaitFrames(40);
+      Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -964,7 +964,7 @@ static void ValeStormyNight_SecondRockFalls(void) {
       // A rumble, then the rock rolls down the slope from the north-east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_Play(SE_RUMBLE);
-      WaitFrames(40);
+      wait(40);
       Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
       rock->speedLimit = PIXELS(3) / 2;
@@ -978,7 +978,7 @@ static void ValeStormyNight_SecondRockFalls(void) {
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 258, 852);
       Actor_SetSpritePriority(ACTOR_FIRST_ROCK + 1, 2);
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 224, 872);
-      Event_WaitFrames(40);
+      Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1041,7 +1041,7 @@ static void ValeStormyNight_ThirdRockFalls(void) {
       // behind it.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Event_PlaySound(SE_RUMBLE);
-      WaitFrames(40);
+      wait(40);
       Event_PlaySound(SE_CRASH);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1052,7 +1052,7 @@ static void ValeStormyNight_ThirdRockFalls(void) {
       actor->targetY = actor->y.fixed;
       actor->bounce = 0x8000;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 2, 64, 703);
-      Event_WaitFrames(40);
+      Event_Wait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
       Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1113,7 +1113,7 @@ static void ValeStormyNight_FourthRockFalls(void) {
       // A rumble, then the rock rolls in from the east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_Play(SE_RUMBLE);
-      WaitFrames(40);
+      wait(40);
       Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 3, PIXELS(474), PIXELS(1147));
       rock->speedLimit = PIXELS(1);
@@ -1123,7 +1123,7 @@ static void ValeStormyNight_FourthRockFalls(void) {
       rock->targetY = targetHeight;
       rock->bounce = 0x8000;
       Actor_SetPositionAndReset(ACTOR_FIRST_ROCK + 3, 432, 1147);
-      Event_WaitFrames(40);
+      Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1184,13 +1184,13 @@ static void ValeStormyNight_BumpIntoShovingMan(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
   Scene_PlayQueuedMusic();
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_ShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   message = MsgValeHuh;
   Event_SetMessageId(message);
   Event_ShowMessage(ACTOR_SHOVING_MAN, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_AskYesNo(ACTOR_SHOVING_MAN, 0);
   Actor_RunRepeatedMotion(ACTOR_SHOVING_MAN, 2);
   Event_SetMessageId((message + 4));
@@ -1214,7 +1214,7 @@ static void ValeStormyNight_HearGaretStruggling(void) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 382, 619);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
       Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       Event_ShowMessage(ACTOR_GARET_CHILD, 0);
       GameFlag_Set(FLAG_VALE_STORM_HEARD_GARET);
       Event_End();
@@ -1231,7 +1231,7 @@ static void ValeStormyNight_GaretCallsAfterIsaac(void) {
       GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
     Event_Start();
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_SetMessageId(MsgValeDontLeaveMeHere);
     ValeStormyNight_GaretLeavesHisChest();
     Event_End();
@@ -1246,7 +1246,7 @@ static void ValeStormyNight_TalkToGaret(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     Event_Start();
     Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_SetMessageId(MsgValeBoulderNeedGet);
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTHEAST, 10);
@@ -1279,15 +1279,15 @@ static void ValeStormyNight_GaretLeavesHisChest(void) {
   } else {
     Event_SetMessageId(MsgValeRockHitsLose);
   }
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 40);
   Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Import_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_SetAngleToward(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
   if (agreedToLeaveBelongings != 0) {
     Event_SetMessageId(MsgValeKnowRightOk);
@@ -1339,16 +1339,16 @@ static void ValeStormyNight_UnusedGaretJoinsIsaac(void) {
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValeStormyNight_UnusedGaretRunsUpScript);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetScript(ACTOR_GARET_CHILD,
                     gValeStormyNight_UnusedGaretPantingScript);
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     actor = Actor_Get(ACTOR_GARET_CHILD);
     actor->scaleY = Q16_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_AskYesNo(ACTOR_GARET_CHILD, 0);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_SetMessageId((message + 5));
     FieldEvent_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 20);
@@ -1388,13 +1388,13 @@ static void ValeStormyNight_WarnAboutMtAleph(void) {
   Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
   Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Event_SetMessageId(MsgValeNorthLeadsToMtAleph);
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
@@ -1425,10 +1425,10 @@ static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Actor_SetSpeedParameters(ACTOR_GARET_CHILD, speed, acceleration);
   Actor_SetPositionAndReset(ACTOR_GARET_CHILD, x, y);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Event_SetMessageId(MsgValeCantGetAroundThisRock);
   Event_ShowMessageAndWait(ACTOR_GARET_CHILD, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 2);
@@ -1465,13 +1465,13 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Event_Start();
     Event_CallWithLastActiveActorId(gValeStormyNight_BoulderWatchers);
     Scene_StartEventPsynergy();
-    WaitFrames(1);
+    wait(1);
     Event_PlaySound(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     Event_PlaySound(SE_CRASH);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetPosition(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
@@ -1486,15 +1486,15 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Actor_ShowEmote(ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Event_PlaySound(SE_CRASH);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Event_PlaySound(SE_CRASH);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     // Show the four elders holding back the Boulder.
     Import_ActorSetAnimation(ACTOR_ELDER_EAST, ANIM_BEARDED_ELDER_HOLD_BACK);
     Import_ActorSetAnimation(ACTOR_ELDER_WEST, ANIM_BEARDED_ELDER_HOLD_BACK);
@@ -1519,7 +1519,7 @@ static void ValeStormyNight_WatchBoulderFall(void) {
           Actor_Get(ACTOR_ELDER_FAR_EAST));
       ValeStormyNight_FlashPaletteAndSpawnEffects(
           Actor_Get(ACTOR_ELDER_FAR_WEST));
-      WaitFrames(1);
+      wait(1);
     }
     // Run the palette effects while the boulder rocks back and forth.
     shakeShift = &sShakeShift;
@@ -1529,9 +1529,9 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Task_AddOrUpdateFrame(updateEffects, TASK_PASS_FRAME);
     cycleBoulderPalette = ValeStormyNight_CycleBoulderPalette;
     Task_AddFrame(cycleBoulderPalette, TASK_PASS_FRAME);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     *shakeShift = 1;
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Actor_SetPosition(ACTOR_BOULDER, PIXELS(114), PIXELS(290));
     movingActor = Actor_Get(ACTOR_BOULDER);
     boulderHeight = movingActor->y.fixed + PIXELS(64);
@@ -1568,7 +1568,7 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Event_PlaySound(SE_CRASH);
     *shakeShift = 1;
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_ELDER_EAST,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_ELDER_EAST, 2);
@@ -1584,7 +1584,7 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     // boys, and the camera returns to Isaac.
     sShakeDone = 1;
     Import_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_STAND);
-    WaitFrames(1);
+    wait(1);
     Actor_SetSpriteColorById(ACTOR_ELDER_FAR_WEST, SPRITE_COLOR_NORMAL);
     Actor_ShowEmote(ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ELDER_FAR_WEST, FACING_WEST, 40);
@@ -1596,7 +1596,7 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Actor_RunRepeatedMotion(ACTOR_ELDER_FAR_WEST, 2);
     Actor_Jump(ACTOR_ELDER_FAR_WEST, 4, 40);
     Import_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_CALL_OUT);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     FieldEvent_ShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1605,19 +1605,19 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     FieldCamera_WaitForArrival();
     Scene_PlayQueuedMusic();
     Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(30);
+    Event_Wait(30);
     Task_Remove(updateEffects);
     Task_Remove(cycleBoulderPalette);
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Scene_EndEventPsynergy();
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
     movingActor = Actor_GetById(ACTOR_PARTY_LEADER);
     if (movingActor != 0) {
@@ -1736,7 +1736,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   Actor_FaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX_CHILD), 0);
-  WaitFrames(3);
+  wait(3);
   Event_SetMessageId(MsgValeNoBrother);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA_CHILD, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -1751,13 +1751,13 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   }
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 132, 1094);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_FELIX_CHILD, 3);
@@ -1768,13 +1768,13 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Sound_Play(SE_HEAVY_IMPACT);
   Actor_Jump(ACTOR_FELIX_CHILD, 4, 0);
   Import_ActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Import_ActorSetPosition(ACTOR_FELIX_CHILD, 0, 0);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Scene_PlayQueuedMusic();
   Import_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   {
@@ -1809,7 +1809,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
   Actor_StartRepeatedMotion(ACTOR_JENNA_CHILD, 3);
   Event_ShowMessageAndWait(ACTOR_JENNA_CHILD, 0);
@@ -1817,30 +1817,30 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 234, 1205);
   Actor_Jump(ACTOR_JENNA_CHILD, 2, 0);
   Actor_SetDestination(ACTOR_JENNA_CHILD, 227, 1201);
-  Event_WaitFrames(90);
+  Event_Wait(90);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForArrival();
   Import_ActorSetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
-  WaitFrames(1);
+  wait(1);
   Sound_Play(SE_DRIP);
   {
     struct Actor *actor;
     actor = Actor_GetById(ACTOR_FELIX_CHILD);
     actor->velocityY = PIXELS(2);
   }
-  Event_WaitFrames(6);
+  Event_Wait(6);
   Import_ActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Scene_PlayQueuedMusic();
-  Event_WaitFrames(20);
+  Event_Wait(20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), -1, PIXELS(1232), 1);
   FieldCamera_WaitForArrival();
   Actor_RunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0);
   {
@@ -1893,7 +1893,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_ShowEmote(ACTOR_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 10);
   Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_KYLE, FACING_EAST, 10);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_WEST, 0);
@@ -1901,7 +1901,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Import_ActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
   Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_DORA, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 1);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
@@ -1916,13 +1916,13 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_JENNAS_MOTHER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_WEST, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   ValeStormyNight_DoraGoesForHelp();
@@ -1952,7 +1952,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Import_ActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
   Actor_SetSpeed(ACTOR_JENNA_CHILD, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1963,7 +1963,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
                          gValeStormyNight_DoraRunsIntoRiversideHouse);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_DORA, 149, 1175);
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_WalkToAndWait(ACTOR_JENNAS_MOTHER, 250, 1214);
@@ -1988,26 +1988,26 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Actor_SetScript(ACTOR_JENNAS_FATHER, script);
   Actor_SetScript(ACTOR_JENNAS_MOTHER, script);
   Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_PlaySound(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorCloses, 38, 72);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Scene_PlayQueuedMusic();
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Scene_PlayQueuedMusic();
   Actor_SetScript(ACTOR_DORA, gValeStormyNight_DoraComesOutOfRiversideHouse);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Actor_SetScript(ACTOR_JENNA_CHILD,
                   gValeStormyNight_JennaComesOutOfRiversideHouse);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Event_PlaySound(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorCloses, 35, 73);
   Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
   Scene_PlayQueuedMusic();
-  Event_WaitFrames(40);
+  Event_Wait(40);
   northMessage = MsgValeGoLookNorth;
   Event_SetMessageId(northMessage);
   FieldEvent_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -2016,10 +2016,10 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
                                  40);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetScript(ACTOR_DORA, gValeStormyNight_DoraHeadsNorth);
   Actor_SetScript(ACTOR_JENNA_CHILD, gValeStormyNight_JennaHeadsForPlaza);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
   Actor_RefreshSelectorById(ACTOR_DORA);
@@ -2053,7 +2053,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-    Event_WaitFrames(40);
+    Event_Wait(40);
   } else {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -2062,12 +2062,12 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   }
   Actor_SetScript(ACTOR_DORA, gValeStormyNight_DoraLeavesForHelp);
-  Event_WaitFrames(90);
+  Event_Wait(90);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   Import_ActorSetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -2089,7 +2089,7 @@ static void ValeStormyNight_TalkAboutSavingFelix(void) {
 
   Event_Start();
   Import_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
   if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
     Event_SetMessageId(MsgValeTwoDontEnough);
@@ -2103,7 +2103,7 @@ static void ValeStormyNight_TalkAboutSavingFelix(void) {
   }
   Actor_ArmCallback(ACTOR_KYLE, facing, 20);
   Import_ActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   {
     struct Actor *villager;
     s32 pulseDelay;
@@ -2113,7 +2113,7 @@ static void ValeStormyNight_TalkAboutSavingFelix(void) {
     villager->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
   }
-  Event_WaitFrames(20);
+  Event_Wait(20);
   GameFlag_Set(FLAG_VALE_STORM_KYLE_GREETED_ISAAC);
   Event_End();
 }
@@ -2184,11 +2184,11 @@ static void ValeStormyNight_BoulderSweepsThemAway(void) {
       FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
       Actor_SetSpeed(ACTOR_DORA, PIXELS(7) / 5, PIXELS(7) / 10);
       Actor_SetScript(ACTOR_DORA, gValeStormyNight_DoraRunsToRiver);
-      Event_WaitFrames(60);
+      Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
       FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitFrames(40);
+      Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 20);
       Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -2202,9 +2202,9 @@ static void ValeStormyNight_BoulderSweepsThemAway(void) {
       FieldCamera_MoveWithinMapBounds(PIXELS(182), -1, PIXELS(1360), 1);
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 182, 1384);
       Actor_SetAngleToward(ACTOR_EXHAUSTED_STRONGMAN, ACTOR_DORA, 0);
-      Event_WaitFrames(30);
+      Event_Wait(30);
       Actor_SetAnimationAndWait(ACTOR_EXHAUSTED_STRONGMAN, ANIM_NOD);
-      Event_WaitFrames(10);
+      Event_Wait(10);
       Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_GARET_CHILD, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_JENNA_CHILD, ACTOR_DORA, 0);
@@ -2219,13 +2219,13 @@ static void ValeStormyNight_BoulderSweepsThemAway(void) {
       Actor_TurnToFaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN,
                                 0);
       Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-      Event_WaitFrames(40);
+      Event_Wait(40);
       Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_GARET_CHILD, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_JENNA_CHILD, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_EXHAUSTED_STRONGMAN, ACTOR_DORA, 0);
       Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-      Event_WaitFrames(20);
+      Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Import_ActorSetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
@@ -2259,7 +2259,7 @@ static __inline__ void ValeStormyNight_PlayImpactBeat(s32 shakeAmplitude,
                                                       s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
   Event_PlaySound(SE_CRASH);
-  Event_WaitFrames(frames);
+  Event_Wait(frames);
 }
 
 /// The Boulder comes down the river and carries Felix, his parents and Kyle
@@ -2300,18 +2300,18 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   // Bring the group to the riverbank as the lightning subsides.
   entryActions = gValeStormyNight_ToRiverbankPath;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, entryActions);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SetScript(ACTOR_JENNA_CHILD, entryActions);
   Weather_LastLightning();
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Actor_SetScript(ACTOR_PARTY_LEADER, entryActions);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Weather_StopLightning();
   Actor_SetScript(ACTOR_GARET_CHILD, entryActions);
-  Event_WaitFrames(128);
+  Event_Wait(128);
   ValeStormyNight_StepOffBridge();
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
-  Event_WaitFrames(104);
+  Event_Wait(104);
   FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
   Actor_WalkToAndWait(ACTOR_DORA, 158, 1272);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
@@ -2323,7 +2323,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_RunScriptAndWait(ACTOR_GARET_CHILD, gValeStormyNight_GaretGatherPath);
   ValeStormyNight_PlayImpactBeat(PIXELS(4), 20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2332,7 +2332,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
   Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_Wait(20);
   lookingActor = Actor_Get(ACTOR_PARTY_LEADER);
   random = Random_Next();
   random = Math_RemainderUnsigned(random, 20) + 20;
@@ -2353,34 +2353,34 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
   lookAroundActions = gValeStormyNight_LookAroundScript;
   Actor_SetScript(ACTOR_DORA, lookAroundActions);
-  Event_WaitFrames(30);
+  Event_Wait(30);
   Actor_SetScript(ACTOR_PARTY_LEADER, lookAroundActions);
   Actor_SetScript(ACTOR_JENNA_CHILD, lookAroundActions);
   Actor_SetScript(ACTOR_GARET_CHILD, lookAroundActions);
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, lookAroundActions);
-  Event_WaitFrames(10);
+  Event_Wait(10);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   ValeStormyNight_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitFrames(120);
+  Event_Wait(120);
   ValeStormyNight_PlayImpactBeat(PIXELS(3), 40);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   ValeStormyNight_PlayImpactBeat(PIXELS(4), 20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   ValeStormyNight_PlayImpactBeat(PIXELS(3), 40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Weather_StopLightning();
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitFrames(1);
+  Event_Wait(1);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldCamera_SetSpeed(PIXELS(8), PIXELS(8));
   FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
-  WaitFrames(40);
+  wait(40);
   // Stage the boulder and its shadow for the downriver camera shot.
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
   currentActor = Actor_Get(ACTOR_BOULDER);
@@ -2407,25 +2407,25 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   currentActor->velocityY = stoppedVelocity;
   currentActor = FieldCamera_GetActor();
   currentActor->velocityZ = stoppedVelocity;
-  WaitFrames(1);
+  wait(1);
   FieldCamera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
   MapGrid_CenterOnFollowedPoint();
-  WaitFrames(1);
+  wait(1);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(30);
-  WaitFrames(30);
+  wait(30);
   // Follow the boulder script until its eighth movement phase.
   Task_AddFrame(ValeStormyNight_UpdateBoulderShadow, TASK_PASS_FRAME);
   Actor_SetScript(ACTOR_BOULDER, gValeStormyNight_BoulderRollsDownriver);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
-    WaitFrames(1);
+    wait(1);
   } while ((s16)actor->userValue != 8);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
-  WaitFrames(60);
+  wait(60);
   MapGrid_WaitForShakeToSettle();
   currentActor = FieldCamera_GetActor();
   currentActor->targetX = ACTOR_NO_TARGET;
@@ -2442,7 +2442,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   currentActor->velocityZ = resetValue;
   Task_Remove(ValeStormyNight_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
-  WaitFrames(1);
+  wait(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
   boulderShadow->scaleX = 0x14000;
   boulderShadow->scaleY = 0x14000;
@@ -2454,7 +2454,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   actor->z.fixed = resetValue;
   actor->targetX = resetValue;
   actor->targetZ = resetValue;
-  WaitFrames(1);
+  wait(1);
   // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
   Actor_SetPosition(ACTOR_DORA, PIXELS(169), PIXELS(1264));
@@ -2488,7 +2488,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
-  WaitFrames(1);
+  wait(1);
   boulderShadow = Actor_Get(ACTOR_KYLE);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2536,12 +2536,12 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
-  WaitFrames(160);
+  wait(160);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
-  Event_WaitFrames(80);
-  Event_WaitFrames(100);
+  Event_Wait(80);
+  Event_Wait(100);
   Task_Remove(ValeStormyNight_FlickerBoulderShadow);
   boulderShadowSprite->scale = boulderShadow->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
@@ -2604,13 +2604,13 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   Actor_SetPosition(ACTOR_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
-  WaitFrames(60);
+  wait(60);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Scene_PlayQueuedMusic();
-  Event_WaitFrames(60);
+  Event_Wait(60);
   Party_RemoveMemberRestored(1);
   Weather_ResumeLightning();
 }
@@ -2620,7 +2620,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
 /// shows the event in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
 static void ValeStormyNight_FlashLightning(void) {
-  WaitFrames(20);
+  wait(20);
   Event_SetFlag(FLAG_WEATHER_HELD);
   TilesetAnim_Pause(0);
   TilesetAnim_Pause(1);
@@ -2631,10 +2631,10 @@ static void ValeStormyNight_FlashLightning(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
-  WaitFrames(120);
+  wait(120);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
-  WaitFrames(60);
+  wait(60);
   GameFlag_Clear(FLAG_WEATHER_HELD);
   TilesetAnim_Resume(0);
   TilesetAnim_Resume(1);
@@ -2733,9 +2733,9 @@ static void ValeStormyNight_StrongmanTriesToGoForHelp(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO) != 0) {
     Actor_Stop(ACTOR_EXHAUSTED_STRONGMAN);
-    Event_WaitFrames(10);
+    Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     if ((s16)leader->facing >= 0) {
       Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
                                ANIM_STRONGMAN_PROPPED_UP);
@@ -2744,7 +2744,7 @@ static void ValeStormyNight_StrongmanTriesToGoForHelp(void) {
                                ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_SetMessageId(MsgValeICantMoveGetHelp);
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
@@ -2764,14 +2764,14 @@ static void ValeStormyNight_StrongmanTriesToGoForHelp(void) {
       Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
                                ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_SetMessageId(MsgValeIllGo);
     FieldEvent_ShowMessageThenWait(ACTOR_EXHAUSTED_STRONGMAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STAND);
     Actor_Jump(ACTOR_EXHAUSTED_STRONGMAN, 4, 0);
-    Event_WaitFrames(80);
+    Event_Wait(80);
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
-    Event_WaitFrames(40);
+    Event_Wait(40);
     if ((s16)leader->facing >= 0) {
       Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
                                ANIM_STRONGMAN_PROPPED_UP);
@@ -2779,11 +2779,11 @@ static void ValeStormyNight_StrongmanTriesToGoForHelp(void) {
       Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
                                ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
-    Event_WaitFrames(2);
+    Event_Wait(2);
     Actor_Jump(ACTOR_EXHAUSTED_STRONGMAN, 2, 0);
-    Event_WaitFrames(60);
+    Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
-    Event_WaitFrames(20);
+    Event_Wait(20);
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                     gValeStormyNight_SquashAndStretchScript);
@@ -2809,15 +2809,15 @@ static void ValeStormyNight_GaretFollowsIsaac(void) {
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_Get(ACTOR_GARET_CHILD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(249), PIXELS(1240));
-  WaitFrames(1);
+  wait(1);
   Event_SetMessageId(MsgValeIsaac);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0);
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(172), PIXELS(1278));
-  WaitFrames(1);
+  wait(1);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0,
                                  10);

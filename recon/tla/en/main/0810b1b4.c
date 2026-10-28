@@ -38,7 +38,7 @@ struct Effect_080b2f4c {
 };
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 sound_id);
 
 void Shop_RestoreSceneTiles(s32 address);
@@ -107,7 +107,7 @@ void Func_0810b1b4(s32 member) {
   Sound_PlayFar(Data_0810cf28[shop->action]);
   Shop_RestoreSceneTiles(0x00202108);
   Func_08009280(shop->partyMemberIcons[member], 0);
-  WaitFrames(20);
+  wait(20);
   callbackPriority = 0x480;
   Task_Add(Shop_ResetEffects, callbackPriority);
 
@@ -125,7 +125,7 @@ void Func_0810b1b4(s32 member) {
     Func_08009248(effect->object, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
-    WaitFrames(3);
+    wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;
     }
@@ -145,11 +145,11 @@ void Func_0810b1b4(s32 member) {
     }
   }
 
-  WaitFrames(20);
+  wait(20);
   Sound_PlayFar(126);
   shop->burstMember = -1;
   Func_08009248(shop->partyMemberIcons[member], 0);
-  WaitFrames(20);
+  wait(20);
 
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
@@ -170,6 +170,6 @@ void Func_0810b1b4(s32 member) {
   Task_Remove(Shop_ResetEffects);
   Func_08009280(shop->partyMemberIcons[member], 16);
   Shop_InitializeEffect();
-  WaitFrames(30);
+  wait(30);
   shop->cursor.anchor->active = savedCursorMode;
 }

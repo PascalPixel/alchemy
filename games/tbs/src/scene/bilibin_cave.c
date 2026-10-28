@@ -308,7 +308,7 @@ static void BilibinCave_DouseIceRoomFire(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   // Match the replacement's drawing priority to its cell behavior.
   Actor_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
   Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
@@ -324,7 +324,7 @@ static void BilibinCave_DouseIceRoomFire(void) {
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
   Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
-  Event_WaitFrames(40);
+  Event_Wait(40);
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   Actor_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
   Event_End();
@@ -378,7 +378,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
       Event_Start();
-      Event_WaitFrames(40);
+      Event_Wait(40);
       Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
@@ -390,7 +390,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   } else {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
       Event_Start();
-      Event_WaitFrames(40);
+      Event_Wait(40);
       Event_PlaySound(SE_SHIMMER);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
@@ -607,7 +607,7 @@ static void BilibinCave_PushTorch(void) {
     return;
 
   Actor_SelectAnimation(leader, 8);
-  WaitFrames(15);
+  wait(15);
   Sound_Play(SE_PUSH);
 
   target->speedLimit = PIXELS(1) / 5;

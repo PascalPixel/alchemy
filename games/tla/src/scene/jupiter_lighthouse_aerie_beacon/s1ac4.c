@@ -13,7 +13,7 @@ s32 Func_020059c4();
 s32 Actor_GetById();
 s32 Func_020059dc();
 s32 Func_020059f4();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_Wait();
 s32 Func_020059d4();
 s32 Func_020059cc();
 s32 Actor_SetModeById();
@@ -22,7 +22,7 @@ void Func_02001ac4(s32 a0, s32 a1) {
   Func_020059c4();
   Call2(Func_020059dc, Value1(Actor_GetById, a0), 2);
   Call1(Func_020059f4, 0xc9);
-  Call1(FieldEvent_WaitFrames, 0x3c);
+  Call1(FieldEvent_Wait, 0x3c);
   Call2(Func_020059dc, Value1(Actor_GetById, a0), 0);
   Func_020059d4();
   Func_020059cc();

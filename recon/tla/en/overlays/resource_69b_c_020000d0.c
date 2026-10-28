@@ -23,7 +23,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Camera_FollowActor(s32 id, s32 a);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);
 void Func_020021b4(struct Actor *object, s32 a);
@@ -55,7 +55,7 @@ void Func_020000d0(s32 kind) {
   Camera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
     leader->y += -0x10000;
-    WaitFrames(1);
+    wait(1);
   }
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
@@ -70,14 +70,14 @@ void Func_020000d0(s32 kind) {
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
-    WaitFrames(1);
+    wait(1);
   }
   Func_020021b4(effect, 6);
   i = 14;
 spin:
   leader->angle += 0x2000;
   i--;
-  WaitFrames(1);
+  wait(1);
   if (i >= 0)
     goto spin;
   Func_020021d4(effect);

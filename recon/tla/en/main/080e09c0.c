@@ -57,7 +57,7 @@ void Resource_ResetEntry(s32 slot);
 s32 VramCache_Load(s32 slot, s32 size, void *data);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
@@ -123,18 +123,18 @@ void Func_080e09c0(void) {
 
     Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
     Actor_SetMode(object, 1);
-    WaitFrames(10);
+    wait(10);
     for (i = 15; i >= 0; i--) {
       object->y += -0x20000;
-      WaitFrames(1);
+      wait(1);
     }
     Sound_PlayFar(132);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
         BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
-      WaitFrames(1);
+      wait(1);
     } else {
-      WaitFrames(6);
+      wait(6);
       work->object = object;
       work->phase = 0;
       work->timer = 0;
@@ -149,7 +149,7 @@ void Func_080e09c0(void) {
           work->hit = 1;
           Sound_PlayFar(395);
         }
-        WaitFrames(1);
+        wait(1);
       }
       Task_Remove(Func_080e0618);
     }

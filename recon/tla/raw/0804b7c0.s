@@ -73,7 +73,7 @@ Func_0804b7c0:
 	adds r5, #228
 .L_0804b846:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r3, [r7, #4]
 	ands r3, r6
 	cmp r3, #0

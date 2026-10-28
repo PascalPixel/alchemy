@@ -34,7 +34,7 @@ s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 void Window_Close(void *window, s32 release);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 struct ItemSummary *Func_02000d48(s32 item);
 void Func_02000e78(s32 cue);
 
@@ -55,7 +55,7 @@ void Func_02000848(void) {
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
   Func_02000e78(112);
-  WaitFrames(1);
+  wait(1);
 loop:
   {
     if (redraw) {
@@ -73,7 +73,7 @@ loop:
         Text_DrawStringInWindow(gData_02000ea8, window, 0, 32);
       }
     }
-    WaitFrames(1);
+    wait(1);
     if (gInput.pressed & 1) {
       if (PartyInventory_Add(item) == -1) {
         Func_02000e78(113);

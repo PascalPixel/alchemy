@@ -856,7 +856,7 @@ Func_08049a30:
 	str r3, [sp, #16]
 .L_0804a0d8:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	b .L_08049b78
 .L_0804a0e0:
 	ldr r0, [sp, #52]
@@ -866,7 +866,7 @@ Func_08049a30:
 	mov r0, r11
 	bl Window_Close
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r0, [sp, #56]
 	bl Resource_ResetEntry
 	ldr r5, [sp, #24]
@@ -878,7 +878,7 @@ Func_08049a30:
 	cmp r7, #0
 	bge .L_0804a100
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r0, r10
 	add sp, #304
 	pop {r3, r5, r6, r7}

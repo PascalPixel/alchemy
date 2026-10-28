@@ -38,7 +38,7 @@ Func_080400e8:
 	bl RenderResource_CreatePair
 	str r0, [sp, #12]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r2, #160
 	movs r3, #160
 	lsls r2, r2, #3
@@ -350,7 +350,7 @@ Func_080400e8:
 	ldr r0, [sp, #12]
 	bl Func_08045018
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r5, .L_0804055c
 	movs r3, #4
 	ldr r2, [r5, #4]
@@ -586,7 +586,7 @@ Func_080400e8:
 .L_0804058e:
 	bl Func_0803fd14
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	adds r0, r6, #0
 	add sp, #20
 	pop {r3, r5, r6, r7}

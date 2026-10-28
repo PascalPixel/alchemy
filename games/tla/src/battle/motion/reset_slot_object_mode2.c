@@ -130,7 +130,7 @@ struct SlotEffectEntry {
   struct SlotEffectObject *object;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 u8 *ResourceMetadata_RegisterFar(s32 resource, s32 id);
 void Animation_SetWorkEntryFar(u8 *effect, s32 entry);
 
@@ -145,7 +145,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
         Animation_SetWorkEntryFar(effect, 1);
         effect[6] = 3;
       }
-      WaitFrames(10);
+      wait(10);
     }
   }
 }

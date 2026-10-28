@@ -30,7 +30,7 @@ s32 Menu_SelectCoinsOrMedals();
 void Window_Close();
 void Message_CloseFinishedWindows();
 s32 Func_020013d8();
-void WaitFrames();
+void wait();
 void Func_02001408();
 s32 PartyInventory_CountFreeSlots();
 s32 Event_AskYesNoWithActorAnimation();
@@ -38,7 +38,7 @@ s32 Party_AdjustCoins();
 s32 PartyInventory_Remove();
 s32 Func_02001184();
 void Func_02001328();
-void FieldEvent_WaitFrames();
+void FieldEvent_Wait();
 s32 GameFlag_Test();
 void GameFlag_SetBit();
 s32 Func_0200049c();
@@ -93,7 +93,7 @@ L_02008288:
   }
   Func_020013c8(r0);
   Call2((void (*)())Func_020013d8, -1, 0);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
   goto L_020081fc;
 L_020082bc:
   Value1((s32 (*)())Func_02001408, 112);
@@ -116,11 +116,11 @@ L_020082ee:
   r6 = v6;
   Call4((void (*)())Text_DrawCharacterAtOffset, r5, r6, 0, 0);
   Call4((void (*)())Text_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
-  Call1((void (*)())WaitFrames, 5);
+  Call1((void (*)())wait, 5);
   Value1((s32 (*)())Func_02001408, 116);
   goto L_0200832e;
 L_02008328:
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())wait, 1);
 L_0200832e:
   r1 = (s32)gInput;
   r2 = 1;
@@ -168,7 +168,7 @@ L_02008378:
   goto L_02008468;
 L_020083b2:
   Value1((s32 (*)())Func_02001408, 113);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_Wait, 10);
   r0 = v10;
   goto L_02008468;
 L_020083c0:

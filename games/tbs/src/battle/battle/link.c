@@ -59,7 +59,7 @@ s32 LinkBattle_ReceiveParty(void) {
     if (opponent->side != 0) {
       memberCount += 1;
     }
-    WaitFrames(2);
+    wait(2);
 
     // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
     // right to make room for it, then write it in; the name's end is cut.
@@ -94,7 +94,7 @@ s32 LinkBattle_ReceiveParty(void) {
   if (Serial_StartReceive(Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) !=
       -1) {
     Serial_WaitForReceive();
-    WaitFrames(2);
+    wait(2);
   }
   Heap_Release(buffer);
   return memberCount;
@@ -137,7 +137,7 @@ s32 LinkBattle_SendParty(void) {
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
-    WaitFrames(2);
+    wait(2);
   }
   // Empty places up to three.
   for (; i < LINK_PARTY_SIZE; i++) {
@@ -145,7 +145,7 @@ s32 LinkBattle_SendParty(void) {
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
-    WaitFrames(2);
+    wait(2);
   }
 
   // The Djinn recovery list, its units renumbered for the opponent.
@@ -164,8 +164,8 @@ s32 LinkBattle_SendParty(void) {
     list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();
-    WaitFrames(1);
-    WaitFrames(2);
+    wait(1);
+    wait(2);
   }
   Heap_Release(buffer);
 }
@@ -244,7 +244,7 @@ s32 LinkBattle_WaitSync(void) {
           if (signature[2] == peer[2] && signature[3] == peer[3])
             return 0;
         }
-        WaitFrames(1);
+        wait(1);
       }
     }
     return -1;
@@ -281,7 +281,7 @@ s32 LinkBattle_SyncTurn(void) {
     signature[1] = 'x';
     signature[4] = 'T';
     signature[5] = 'U';
-    WaitFrames(1);
+    wait(1);
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
         if (++missed > LINK_MAX_MISSED_FRAMES)
@@ -294,7 +294,7 @@ s32 LinkBattle_SyncTurn(void) {
             signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // Advance to "rn" only after the peer has reached "TU".
@@ -311,7 +311,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (signature[6] == peer[6] && signature[7] == peer[7])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // Confirm "rn" before publishing the execution signature.
@@ -331,7 +331,7 @@ s32 LinkBattle_SyncTurn(void) {
             signature[2] == peer[2] && signature[3] == peer[3])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // Confirm the execution signature before acknowledging with "tu".
@@ -349,7 +349,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
 
     // "RN": wait for the other console to move on from "rn".
@@ -364,7 +364,7 @@ s32 LinkBattle_SyncTurn(void) {
         if (peer[6] != 'r' || peer[7] != 'n')
           break;
       }
-      WaitFrames(1);
+      wait(1);
     }
   }
   return 0;

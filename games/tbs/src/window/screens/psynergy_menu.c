@@ -281,16 +281,16 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         }
       }
     }
-    WaitFrames(1);
+    wait(1);
   }
 
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
-  WaitFrames(1);
+  wait(1);
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     VramCache_FreeEntry(iconSlots[i]);
   }
   VramCache_FreeEntry(cursorHandle);
-  WaitFrames(1);
+  wait(1);
   return result;
 }

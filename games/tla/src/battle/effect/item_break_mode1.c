@@ -34,7 +34,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
         object->scaleY = scale;
         object->scaleX = scale;
         object->angle += 0x2000;
-        WaitFrames(1);
+        wait(1);
         limit = 255;
         scale = object->scaleX;
         /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then

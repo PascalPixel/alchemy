@@ -23,7 +23,7 @@ Func_080e74d8:
 	bl ObjectTable_Get
 	adds r7, r0, #0
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	bl BattleEffect_InitializeSharedScene
 	ldr r0, .L_080e75d4
 	bl Resource_GetTableEntry
@@ -82,14 +82,14 @@ Func_080e74d8:
 	cmp r3, #99
 	ble .L_080e7540
 	movs r0, #10
-	bl WaitFrames
+	bl wait
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	mov r0, r9
 	bl Actor_ArmCallback
 	movs r0, #20
-	bl WaitFrames
+	bl wait
 	movs r1, #28
 	adds r0, r7, #0
 	bl Actor_SetMode
@@ -98,7 +98,7 @@ Func_080e74d8:
 	str r3, [r7, #108]
 	bl Sound_PlayFar
 	movs r0, #30
-	bl WaitFrames
+	bl wait
 	movs r0, #220
 	bl Sound_PlayFar
 	ldr r6, .L_080e75d0
@@ -121,7 +121,7 @@ Func_080e74d8:
 	adds r3, r3, r5
 	adds r3, r3, r6
 	strh r3, [r7, #6]
-	bl WaitFrames
+	bl wait
 	movs r2, #1
 	negs r2, r2
 	add r9, r2
@@ -367,7 +367,7 @@ Func_080e74d8:
 	str r3, [sp, #16]
 .L_080e77c8:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	movs r3, #186
 	ldr r2, [sp, #16]
 	lsls r3, r3, #2

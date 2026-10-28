@@ -308,7 +308,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     Func_08158ce0(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     frame++;
   } while (frame != BLADE_FRAMES);
 

@@ -14,7 +14,7 @@
 #include "actor.h"
 #include "macros.h"
 
-void WaitFrames(s32);
+void wait(s32);
 
 void Camera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;
@@ -31,7 +31,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
     Actor_StartCameraFar(target, obj);
     if (flag == 0) {
       SET_POSITION(target, obj->x, obj->y, obj->z);
-      WaitFrames(1);
+      wait(1);
       if (work->controlMode != 3)
         Map_CenterOnFollowedPointFar();
     }

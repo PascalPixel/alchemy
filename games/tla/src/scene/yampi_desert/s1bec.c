@@ -7,13 +7,13 @@ void Func_02001bec(void) {
   Func_020041b8(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_Wait(20);
   Actor_SetModeById(gAdventure.currentOwner, 28);
   object = Func_02001b70();
   PartyInventory_GiveItem(209, 0);
   if (object != 0) {
     Actor_SetPositionAndResetMotion((struct Actor *)object, 0, 0, 0);
-    WaitFrames(1);
+    wait(1);
     Func_02003fc8(object);
   }
   Actor_SetModeById(gAdventure.currentOwner, 1);

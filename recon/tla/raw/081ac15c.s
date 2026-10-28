@@ -2246,7 +2246,7 @@ LuckyDice_Run:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	ldr r2, [sp, #100]
 	adds r2, #1
 	str r2, [sp, #100]
@@ -2277,7 +2277,7 @@ LuckyDice_Run:
 	bl Graphics_ScaleRgb555Buffer
 	mov r7, r11
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	cmp r7, #17
 	bne .L_081ad2da
 	movs r0, #48

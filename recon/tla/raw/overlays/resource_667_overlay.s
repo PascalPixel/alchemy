@@ -40,7 +40,7 @@ Func_02000514:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	ldr r0, .L_02008648
 	bl Func_02001538
 	movs r0, #14
@@ -110,7 +110,7 @@ Func_02000514:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_Wait
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #10
@@ -127,7 +127,7 @@ Func_02000514:
 	b .L_0200862a
 .L_02008624:
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 .L_0200862a:
 	ldr r3, .L_0200864c
 	ldr r3, [r3]

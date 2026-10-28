@@ -305,7 +305,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
   }
 
   HeapSlot_Release(188);

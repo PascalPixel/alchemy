@@ -15,7 +15,7 @@ struct Actor *Actor_GetById(s32 id);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_Wait(s32 frames);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -82,19 +82,19 @@ next:
   if (all) {
     Func_02003398();
     Func_02003488(0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_02003420(0xcccc, 0x1999);
     id = 9;
     if (gAdventure.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
     Func_02003438(id, 1);
     Func_02003430();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_Wait(10);
     Func_020034b8(0x246);
     Actor_SetModeById(id, 2);
     GameFlag_SetBit(0x207);
     Actor_GetById(id)->motionFlags = 4;
-    FieldEvent_WaitFrames(80);
+    FieldEvent_Wait(80);
     Func_020033a0();
   }
 }

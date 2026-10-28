@@ -44,11 +44,11 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     facing = 0x2000;
   if (transition->targetYaw == facing) {
     transition->frames = 40;
-    WaitFrames(40);
+    wait(40);
   } else {
     transition->targetYaw = facing;
     transition->frames = 40;
-    WaitFrames(40);
+    wait(40);
   }
   work.kind = action->parameter;
   work.initialValue = action->range;

@@ -38,7 +38,7 @@ void Func_02002cd0(s32 a, s32 b) {
   s32 i;
 
   Func_02004f30(78);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_Wait(30);
   Func_02004e10(0x8000, 0x1000);
   Camera_MoveWithinMapBounds(((s16 *)&first->x)[1] << 16,
                              ((s16 *)&first->y)[1] << 16,
@@ -53,7 +53,7 @@ void Func_02002cd0(s32 a, s32 b) {
   first->speedLimit = 0x3333;
   Actor_SetMovementTypeById(a, gData_02005590);
   Func_02004f30(194);
-  FieldEvent_WaitFrames(45);
+  FieldEvent_Wait(45);
   Func_02004dc0(a, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
@@ -72,16 +72,16 @@ void Func_02002cd0(s32 a, s32 b) {
     Animation_SetStateFlags(object, 1);
     Func_02004ca0(object, gData_02005544);
     REG_BLDALPHA = 0x1004;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x100a;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x1010;
-    WaitFrames(2);
+    wait(2);
     REG_BLDALPHA = 0x100a;
-    WaitFrames(2);
+    wait(2);
   }
   REG_BLDALPHA = 0x1008;
-  WaitFrames(30);
+  wait(30);
   for (i = 0; i != 16; i++) {
     object = Import_ActorCreate(672, second->x, second->y, second->z);
     Func_02004f30(195);
@@ -105,10 +105,10 @@ void Func_02002cd0(s32 a, s32 b) {
       second->speedLimit = 0x3333;
       Actor_SetMovementTypeById(b, gData_020055b4);
     }
-    WaitFrames(8);
+    wait(8);
   }
   Func_02004f30(220);
-  WaitFrames(16);
+  wait(16);
   for (i = 2; i != 32; i += 2) {
     object = Import_ActorCreate(672, second->x,
                                  second->y + (i << 16) - 0x80000, second->z);
@@ -129,10 +129,10 @@ void Func_02002cd0(s32 a, s32 b) {
     Func_02004ca0(object, gData_02005570);
   }
   Func_02004f30(220);
-  WaitFrames(50);
+  wait(50);
   Func_02004e40(0x7fff, 0);
   Func_02004e50(8);
-  WaitFrames(16);
+  wait(16);
   Func_02004d10(0, 0, 0);
   Func_02004dc0(a, 0);
   Func_02004dc0(b, 0);
@@ -142,9 +142,9 @@ void Func_02002cd0(s32 a, s32 b) {
   Actor_SetMovementTypeById(a, gData_020055d8);
   Actor_SetMovementTypeById(b, gData_02005608);
   second->update = (void (*)(void))Func_02002c48;
-  WaitFrames(120);
+  wait(120);
   second->update = 0;
   Func_02004f30(390);
   Func_02004ea0();
-  WaitFrames(1);
+  wait(1);
 }

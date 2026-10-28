@@ -167,7 +167,7 @@ Func_080d1f20:
 	strh r3, [r6]
 	movs r0, #1
 	str r2, [sp, #0]
-	bl WaitFrames
+	bl wait
 	adds r5, #1
 	ldr r2, [sp, #0]
 	cmp r5, #23

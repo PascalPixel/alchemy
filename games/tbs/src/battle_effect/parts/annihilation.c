@@ -59,7 +59,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                              0, 0);
   BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
                                  0);
-  WaitFrames(1);
+  wait(1);
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
   i = 0;

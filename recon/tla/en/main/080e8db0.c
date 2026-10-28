@@ -86,7 +86,7 @@ void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *source, void *buffer, s32 size);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
@@ -140,7 +140,7 @@ void Func_080e8db0(void) {
   }
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
-  WaitFrames(10);
+  wait(10);
 
   shown = -1;
   width = targetSprite->width;
@@ -210,7 +210,7 @@ void Func_080e8db0(void) {
     if (showing == -1 && shown >= 0)
       shown -= 2;
 
-    WaitFrames(1);
+    wait(1);
     frameCount++;
     frames++;
   } while (state != SWAY_DONE);

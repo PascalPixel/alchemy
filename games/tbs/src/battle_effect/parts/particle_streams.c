@@ -226,7 +226,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
-  WaitFrames(1);
+  wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
@@ -502,7 +502,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       frame++;
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
-    WaitFrames(1);
+    wait(1);
     view->busy = 0;
     Task_Remove(BattleEffect_AdvanceBg2OnInterval);
     Task_Remove(BattleEffect_ArmPaletteHBlankDma);

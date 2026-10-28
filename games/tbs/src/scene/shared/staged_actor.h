@@ -124,7 +124,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
 
   Actor_SelectAnimation(lead, 8);
   rate = 0x3333;
-  WaitFrames(15);
+  wait(15);
   Sound_Play(SE_PUSH);
   next->speedLimit = rate;
   next->acceleration = rate;
@@ -459,7 +459,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                                          CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(15);
+  Event_Wait(15);
 
   {
     s32 horizontalDelta = probe.position.x - originalPosition.x;
@@ -482,7 +482,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
 #endif
-  Event_WaitFrames(4);
+  Event_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(actor, 3);
   else

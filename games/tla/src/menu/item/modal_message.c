@@ -30,7 +30,7 @@ void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
 void Text_DrawMessageFar(s32 message, struct RenderInput *window, s32 x,
                             s32 y);
 void Window_CloseIfOpen(struct RenderInput **handle, s32 mode);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 /* FAKEMATCH(volatile): a volatile view of gInput makes each of the three tests
  * load the keys afresh; as gInput.pressed & KEY_A and so on, 76 of 127
@@ -75,9 +75,9 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
     Text_DrawMessageFar(message, window, 0, 0);
 #endif
   if (x != -1) {
-    WaitFrames(1);
+    wait(1);
     do {
-      WaitFrames(1);
+      wait(1);
     } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
              !(INPUT->pressed & KEY_START));
     WindowSprite_ClearListFar(window);

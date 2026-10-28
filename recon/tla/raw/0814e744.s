@@ -328,7 +328,7 @@ BattleEffect_RunBreak:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl wait
 	mov r1, r11
 	ldr r3, [r1, #20]
 	movs r0, #1

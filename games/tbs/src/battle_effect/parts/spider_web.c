@@ -231,7 +231,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = transparent;
-    WaitFrames(1);
+    wait(1);
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.

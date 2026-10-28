@@ -5,7 +5,7 @@
 	.global Task_Wait
 	.thumb_func
 Task_Wait:
-	overlay_veneer WaitFramesFar
+	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
 Task_Add:
@@ -62,10 +62,10 @@ FieldMessage_Show:
 	.thumb_func
 Func_020031a8:
 	overlay_veneer Func_080ad208
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_Wait
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_Wait:
+	overlay_veneer FieldEvent_WaitFar
 	.global Import_EventStart
 	.thumb_func
 Import_EventStart:

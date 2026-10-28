@@ -10,7 +10,7 @@ struct EventDestination {
   s16 scene;
 };
 
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);

@@ -27,7 +27,7 @@ struct Actor *Actor_GetById(s32 id);
 struct WorkA4Slot *Func_080dae70(s32 id);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            u32 flags);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 struct ChainLink {
   struct ChainLink *next;
@@ -85,18 +85,18 @@ void Func_080db0b0(s32 id) {
   if ((slot->phase ^ (side << 15)) & 0x8000) {
     for (swing = start; swing >= 0; swing -= 64) {
       slot->swing = swing;
-      WaitFrames(1);
+      wait(1);
     }
     start = 0;
   }
   for (swing = start; swing <= 0x600; swing += 64) {
     slot->swing = swing;
     slot->phase = (side << 15) + 0x4000;
-    WaitFrames(1);
+    wait(1);
   }
   while ((slot->phase & 0xff00) != ((side ^ 1) << 15) + 0x4000) {
     slot->swing = 0x600;
-    WaitFrames(1);
+    wait(1);
   }
 
   sprite = leader->animation;
@@ -143,13 +143,13 @@ void Func_080db0b0(s32 id) {
     }
     if (gInput.pressed != 0)
       break;
-    WaitFrames(1);
+    wait(1);
   }
 
   sprite->angle = 0;
   slot->active = 0;
   Actor_SetMode(leader, 6);
-  WaitFrames(6);
+  wait(6);
   Sound_PlayFar(152);
   Actor_SetMode(leader, 7);
   leader->speedLimit = 0x30000;
@@ -157,7 +157,7 @@ void Func_080db0b0(s32 id) {
   leader->velocityY = 0x40000;
   leader->motionFlags &= 0x7e;
   Actor_SetSingleChildFlagsFar(leader, 0);
-  WaitFrames(5);
+  wait(5);
   Actor_SetMode(leader, 16);
   leader->motionFlags = 0;
   rootX = slot->root->next->x;
@@ -179,7 +179,7 @@ void Func_080db0b0(s32 id) {
     leader->targetX = leader->x;
     leader->targetY = leader->y;
     heldSprite->angle = angle;
-    WaitFrames(1);
+    wait(1);
   }
   slot->active = 1;
   Actor_SetMode(leader, 7);
@@ -187,13 +187,13 @@ void Func_080db0b0(s32 id) {
   leader->velocityY = 0x40000;
   for (i = 7; i >= 0; i--) {
     slot->spacing -= 0x1000;
-    WaitFrames(1);
+    wait(1);
   }
   slot->spacing = 0xe0000;
   heldSprite->angle = 0;
   Actor_SetMode(leader, 6);
   Actor_SetSingleChildFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
-  WaitFrames(6);
+  wait(6);
   slot->active = 1;
 }

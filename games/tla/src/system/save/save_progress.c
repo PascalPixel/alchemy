@@ -58,14 +58,14 @@ struct Window *SaveProgress_Open(u32 kind) {
   Text_DrawMessage(message + 1, window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
   Sound_PlayFar(298);
-  WaitFrames(10);
+  wait(10);
   Heap_Release(tiles);
   return window;
 }
 
 /// Closes the progress screen.
 struct Window *SaveProgress_Close(struct Window *window) {
-  WaitFrames(10);
+  wait(10);
   Func_080c8698();
   Sound_SetBgmVolumeTargetFar(0x100, 30);
   Window_Close(window, 0);

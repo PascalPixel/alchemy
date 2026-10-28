@@ -33,7 +33,7 @@ void Shop_DrawMsg(s32 win, s32 message) {
     Text_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
     WindowSprite_ClearListFar(win);
-    WaitFrames(1);
+    wait(1);
     Text_DrawMessageFar(message, win, 0, 0);
 #endif
   }

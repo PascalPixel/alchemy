@@ -133,7 +133,7 @@ s32 Battle_Run(s32 enemyGroup) {
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
-      WaitFrames(1);
+      wait(1);
       linkWaitFrames++;
       if (linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
         battle->linkPaused = 1;
@@ -287,7 +287,7 @@ s32 Battle_Run(s32 enemyGroup) {
       if (LinkBattle_SyncTurn() < 0)
         goto aborted;
     } else {
-      WaitFrames(20);
+      wait(20);
     }
     if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
@@ -297,13 +297,13 @@ s32 Battle_Run(s32 enemyGroup) {
     // the cursor, at pixel (92, 24).
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
-      WaitFrames(1);
+      wait(1);
     Window_CloseFar(tutorialWindow, 1);
-    WaitFrames(1);
+    wait(1);
     tutorialWindow = Message_OpenWindowFar(MsgTutorialStandby, 10, 4, 1);
     BattleMessage_WaitForAdvanceAt(92, 24);
     Window_CloseFar(tutorialWindow, 1);
-    WaitFrames(1);
+    wait(1);
   }
 
 won:

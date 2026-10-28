@@ -39,7 +39,7 @@ s32 LinkBattle_ReceiveParty(void) {
     if (name_entry[298] != 0) {
       named_count += 1;
     }
-    WaitFrames(2);
+    wait(2);
     Message_DecodeRawUnboundedFar((s32)MsgEnemyLabel, name_text);
     i = 0;
     if (name_text[i] != 0) {
@@ -70,7 +70,7 @@ s32 LinkBattle_ReceiveParty(void) {
   buffer = Heap_AllocEwram(340);
   if (Serial_StartReceive(Resource_FarCall005(1)) != -1) {
     Serial_WaitForReceive();
-    WaitFrames(2);
+    wait(2);
   }
   Heap_Release(buffer);
   return named_count;
@@ -127,14 +127,14 @@ s32 LinkBattle_SendParty(void) {
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
-    WaitFrames(2);
+    wait(2);
   }
   for (; i <= 2; i++) {
     ((struct LinkUnit *)buffer)->side = 0;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
-    WaitFrames(2);
+    wait(2);
   }
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
@@ -157,8 +157,8 @@ s32 LinkBattle_SendParty(void) {
   }
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();
-    WaitFrames(1);
-    WaitFrames(2);
+    wait(1);
+    wait(2);
   }
   Heap_Release(buffer);
 }

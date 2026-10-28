@@ -31,7 +31,7 @@
 
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void HeapSlot_Release(s32 slot);
-void WaitFrames(s32 frames);
+void wait(s32 frames);
 
 // Summon 25's screen wipe: a soft-edged grey band, drawn once into the
 // canvas, slides across the screen on BG2 at speed pixels per frame, from
@@ -91,7 +91,7 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
     scrollX += (s8)speed;
     REG_BG2X = scrollX << 8;
     work->transferPending = 1;
-    WaitFrames(1);
+    wait(1);
     if (i == half && midpoint != NULL)
       midpoint();
   }

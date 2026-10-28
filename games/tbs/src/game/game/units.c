@@ -37,13 +37,13 @@ void Game_RestartQuest(void) {
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
-/// to recover), or for the enemy side battle unit 0x83 itself, read as a
-/// bank. The bank also holds the summon flags Summon_ListLearned reads.
-/// Called by the battle code that sets, recovers and links Djinn
+/// to recover), or for the enemy side battle unit FIRST_ENEMY_UNIT + 3 itself,
+/// read as a bank. The bank also holds the summon flags Summon_ListLearned
+/// reads. Called by the battle code that sets, recovers and links Djinn
 /// (DjinnRecovery_CountDown, BattleSummon_UpdateAvailability, the link battle).
 void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
-    return Unit_Get(0x83);
+    return Unit_Get(FIRST_ENEMY_UNIT + 3);
   }
   return &gMainRoutineWork.summonMask;
 }
@@ -70,9 +70,9 @@ u32 Party_GetAverageLevel(void) {
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the main routine's work, 0x80 to 0x85 the enemies of the
-/// current battle. Anything else, or an enemy outside a battle, is NULL. Nearly
-/// every bank calls it, through GAME.S as Unit_GetFar.
+/// characters in the main routine's work, FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT
+/// + 5 the enemies of the current battle. Anything else, or an enemy outside a
+/// battle, is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
@@ -90,8 +90,8 @@ struct Unit *Unit_Get(u32 unitId) {
     unit = &states[unitId];
     return unit;
   }
-  if (unitId - 0x80 < 6 && gEnemyUnits != NULL) {
-    unit = &((struct Unit *)gEnemyUnits)[unitId - 0x80];
+  if (unitId - FIRST_ENEMY_UNIT < 6 && gEnemyUnits != NULL) {
+    unit = &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
     return unit;
   }
   return NULL;
@@ -113,7 +113,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 #ifdef BUGFIX
   if (recordIndex > 164U) {
 #else
-  if (recordIndex > 0xF9U) {
+  if (recordIndex > 249U) {
 #endif
     recordIndex = 0;
   }
@@ -178,15 +178,17 @@ void Unit_Calculate(s32 unitId) {
     stats->element[index][1] = unit->baseElement[index].resistance;
   }
 
-  // A gauge is HP or PP as a fraction of its maximum, 0x4000 full. When
-  // either no longer gives its stat to within 1 (the stat was written
+  // A gauge is HP or PP as a fraction of its maximum, UNIT_GAUGE_FULL full.
+  // When either no longer gives its stat to within 1 (the stat was written
   // without Unit_RecalculateGauges), both gauges are reset to full and the
   // unit's HP and PP refilled, before the fractions carry over to the new
   // maxima.
-  if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / 0x4000, unit->hp) > 1 ||
-      UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / 0x4000, unit->pp) > 1) {
-    unit->hpGauge = 0x4000;
-    unit->ppGauge = 0x4000;
+  if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
+          1 ||
+      UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
+          1) {
+    unit->hpGauge = UNIT_GAUGE_FULL;
+    unit->ppGauge = UNIT_GAUGE_FULL;
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
   }
@@ -430,7 +432,7 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->hp, 0, statLimit);
   unit->hpMax = stats->hp;
   if (previousMaximum != unit->hpMax) {
-    value = stats->hp * unit->hpGauge / 0x4000;
+    value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
     CLAMP(value, 0, statLimit);
     if (unit->hp != 0 && value == 0)
       value = 1;
@@ -441,7 +443,7 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->pp, 0, statLimit);
   unit->ppMax = stats->pp;
   if (previousMaximum != unit->ppMax) {
-    value = stats->pp * unit->ppGauge / 0x4000;
+    value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
     CLAMP(value, 0, statLimit);
     if (unit->pp != 0 && value == 0)
       value = 1;
@@ -544,7 +546,7 @@ struct MapLocalStateSnapshotView {
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
-  /// gActorSnapshot.slots[0]: set to 0xff, ACTOR_SNAPSHOT_EMPTY,
+  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
   /// so a new game holds no saved actors.
   u8 firstSnapshotSlot;
 };
@@ -559,25 +561,25 @@ void MainRoutineWork_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene state, flags and save metadata in DMA order:
-  // 0xb0 words are gMainRoutineWork up to the characters (units, which
-  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
-  // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
+  // 176 words are gMainRoutineWork up to the characters (units, which
+  // Party_InitializeCharacters sets up); 993 words run from gSceneLocalState
+  // through gInventorySnapshot and gActorSnapshot; 128 words are all
   // 4096 flags.
   zero = 0;
   START_DMA(&zero, &gMainRoutineWork,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 176);
   zero = 0;
   START_DMA(&zero, gSceneLocalState,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x3e1);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 993);
   WAIT_DMA();
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
   ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
-      0xff;
+      ACTOR_SNAPSHOT_EMPTY;
   zero = 0;
   START_DMA(&zero, gBattleArenaRecord + 0x1c,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;

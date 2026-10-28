@@ -48,7 +48,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
     multiplier /= 2;
     break;
   }
-  return multiplier + 0x100;
+  return multiplier + 256;
 }
 
 /// The battle's random number generator, the same linear congruential one as
@@ -183,7 +183,7 @@ s32 RollWeaponUnleash(struct Unit *unit) {
     return 1;
   }
   rate = ((Equipment_GetUnleashRateBonus(unit) + (item->unleashChance * 5))
-          << 0x10) /
+          << 16) /
          100;
   if (rate > (Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;

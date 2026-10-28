@@ -22,7 +22,7 @@ s32 GameFlag_Get(s32 flag) {
   flag = GAME_FLAG_BYTE(flag);
   flagBytes = gGameFlagBytes;
   flagValue = flagBytes[flag] & flagMask;
-  return (u32)((0 - flagValue) | flagValue) >> 0x1F;
+  return (u32)((0 - flagValue) | flagValue) >> 31;
 }
 
 /// Sets `flag` and returns its byte number. Called from every bank, as
@@ -92,7 +92,7 @@ u8 GameFlag_IncrementByte(s32 flag) {
 
   flagBytes = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  if (flagBytes[flag] <= 0xFE) {
+  if (flagBytes[flag] <= 254) {
     flagBytes[flag]++;
   }
   return flagBytes[flag];

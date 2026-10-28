@@ -92,12 +92,12 @@ Func_081039fc:
 .L_08103aaa:
 	mov r2, r10
 	ldr r0, [r2, #52]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
 	ldr r0, [sp, #80]
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	movs r3, #5
 	str r3, [sp, #0]
 	movs r3, #2
@@ -106,7 +106,7 @@ Func_081039fc:
 	movs r3, #30
 	movs r1, #0
 	movs r2, #0
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	mov r3, sp
 	movs r7, #1
 	adds r3, #124
@@ -416,7 +416,7 @@ Func_081039fc:
 	movs r3, #15
 	str r6, [sp, #0]
 	str r5, [sp, #4]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	mov r2, r10
 	adds r2, #56
 	str r2, [sp, #40]
@@ -426,9 +426,9 @@ Func_081039fc:
 	movs r2, #5
 	str r6, [sp, #0]
 	str r5, [sp, #4]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	ldr r0, [sp, #84]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r3, [sp, #104]
 	cmp r3, #2
 	bne .L_08103d8c
@@ -443,12 +443,12 @@ Func_081039fc:
 	ldr r1, [sp, #84]
 	movs r2, #96
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_08103e60
 	ldr r1, [sp, #84]
 	movs r2, #96
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_08103de4
 .L_08103dac:
 	ldr r1, [sp, #104]
@@ -458,24 +458,24 @@ Func_081039fc:
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_08103e60
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_08103de4
 .L_08103dcc:
 	ldr r0, .L_08103e68
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_08103e60
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_08103de4:
 	movs r3, #182
 	lsls r3, r3, #1
@@ -501,7 +501,7 @@ Func_081039fc:
 	cmp r5, #0
 	bne .L_08103e16
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 .L_08103e16:
 	mov r3, r8
 	lsls r2, r3, #3
@@ -518,7 +518,7 @@ Func_081039fc:
 	cmp r3, #0
 	bne .L_08103e3a
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 .L_08103e3a:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -554,7 +554,7 @@ Func_081039fc:
 	cmp r5, #0
 	beq .L_08103e7e
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 .L_08103e7e:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -569,7 +569,7 @@ Func_081039fc:
 	ldr r0, [sp, #84]
 	movs r2, #7
 	movs r3, #1
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 .L_08103e9e:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -685,7 +685,7 @@ Func_081039fc:
 	movs r2, #0
 	movs r3, #1
 	adds r0, #3
-	bl UiText_OpenMessageWindowFar
+	bl Message_OpenWindowFar
 	adds r7, r0, #0
 	mov r0, r10
 	ldr r3, [r0, #20]
@@ -704,12 +704,12 @@ Func_081039fc:
 	movs r0, #1
 	bl WaitFrames
 .L_08103fc6:
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	beq .L_08103fc0
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r2, #128
 	mov r1, r9
 	ldr r3, .L_081041c8
@@ -760,7 +760,7 @@ Func_081039fc:
 	movs r2, #0
 	movs r3, #1
 	adds r0, #2
-	bl UiText_OpenMessageWindowFar
+	bl Message_OpenWindowFar
 	adds r7, r0, #0
 	mov r0, r10
 	ldr r3, [r0, #20]
@@ -779,12 +779,12 @@ Func_081039fc:
 	movs r0, #1
 	bl WaitFrames
 .L_08104064:
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	beq .L_0810405e
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r2, #128
 	mov r1, r9
 	ldr r3, .L_081041c8
@@ -837,7 +837,7 @@ Func_081039fc:
 	movs r3, #224
 	movs r1, #128
 	movs r2, #16
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	ldr r3, [sp, #88]
 	cmp r3, #1
 	bne .L_081040f2
@@ -845,7 +845,7 @@ Func_081039fc:
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_0810411c
 .L_081040f2:
 	ldr r0, [sp, #88]
@@ -861,22 +861,22 @@ Func_081039fc:
 	adds r2, #2
 	ldrb r0, [r2, r3]
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081041d4
 	ldr r1, [sp, #84]
 	movs r2, #128
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_0810411c:
 	movs r3, #1
 	mov r1, r11
 	strb r3, [r1, #6]
 	mov r2, r10
 	ldr r0, [r2, #40]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r3, r10
 	ldr r0, [r3, #56]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r0, [sp, #96]
 	lsrs r3, r0, #1
 	cmp r3, #0
@@ -1050,7 +1050,7 @@ Func_081039fc:
 	subs r2, #2
 	subs r3, #1
 	str r4, [sp, #20]
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldr r3, [r6]
 	adds r5, #1
 	ldr r4, [sp, #20]
@@ -1071,7 +1071,7 @@ Func_081039fc:
 	adds r1, #40
 	subs r2, #3
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldrh r2, [r7, #8]
 	movs r1, #241
 	lsls r1, r1, #8
@@ -1080,7 +1080,7 @@ Func_081039fc:
 	adds r0, r7, #0
 	adds r3, r6, #0
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldrh r3, [r7, #14]
 	movs r2, #2
 	lsls r3, r3, #16
@@ -1327,7 +1327,7 @@ Func_081039fc:
 	strb r3, [r2, #6]
 	ldr r0, [sp, #80]
 	movs r1, #1
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #5
@@ -1338,22 +1338,22 @@ Func_081039fc:
 	movs r2, #0
 	movs r3, #17
 	movs r1, #13
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	movs r1, #1
 	ldr r0, [sp, #44]
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	movs r1, #1
 	ldr r0, [sp, #40]
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	mov r3, r10
 	ldr r0, [r3, #52]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r1, r10
 	ldr r0, [r1, #44]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r2, r10
 	ldr r0, [r2, #16]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r3, [r5, #60]
 	movs r6, #0
 	strb r6, [r3, #6]

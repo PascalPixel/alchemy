@@ -14,7 +14,7 @@ extern const u8 gData_020013c4[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 void Func_0200110c(void);
 void Func_020011ac(s32 skip);
 void Func_02001114(void);
@@ -29,7 +29,7 @@ void Func_02000474(void) {
 
   Func_0200110c();
   Func_020011ac(0);
-  UiText_ShowPositionedMessageAndWait((s32)&MsgFieldDoorWontBudge, 1);
+  FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
   work->flag = 1;
   Func_02001114();
 }

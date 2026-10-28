@@ -453,7 +453,7 @@ ReelGame_Run:
 	ldr r2, .L_081b38b8
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl UiWork_InitializeWithResourceCountersFar
+	bl WindowSystem_InitFieldFar
 	bl Func_081b336c
 	movs r7, #0
 	mov r10, r7
@@ -648,7 +648,7 @@ ReelGame_Run:
 	movs r2, #26
 	movs r3, #4
 	movs r0, #2
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	ldr r0, [sp, #36]
 	movs r2, #153
@@ -658,7 +658,7 @@ ReelGame_Run:
 	ldr r0, .L_081b39e4
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_081b39e8
 .L_081b39d0:
 	.4byte 0x00003740
@@ -681,7 +681,7 @@ ReelGame_Run:
 	movs r2, #26
 	movs r3, #4
 	movs r0, #2
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	ldr r3, [sp, #36]
 	ldr r5, .L_081b3c68
 	movs r7, #153
@@ -693,12 +693,12 @@ ReelGame_Run:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b3a20:
 	ldr r0, [sp, #40]
 	movs r1, #240

@@ -1,13 +1,13 @@
 #include "types.h"
 
 void Func_0803bb58(s32 no, u32 *pw, u32 *ph, u16 *spacing);
-void UiText_MeasureEntryDimensions(s32 no, u32 *pw, u32 *ph, u16 *spacing);
+void Text_MeasureEntry(s32 no, u32 *pw, u32 *ph, u16 *spacing);
 
 // The Japanese release's version also widens the window by 2 and lowers the
 // right limit to 29 while the window work's mode is set; written so, its
 // first two instructions after the frame come out swapped, so it stays on its
 // scaffold.
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
+void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                           u16 *spacing, u32 flags) {
   s32 x;
   s32 y;
@@ -25,7 +25,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
     if (flags & 1)
       Func_0803bb58(no, pw, ph, spacing);
     else
-      UiText_MeasureEntryDimensions(no, pw, ph, spacing);
+      Text_MeasureEntry(no, pw, ph, spacing);
   }
 
   if (*pw == 0 && *ph == 0)

@@ -9,7 +9,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "input.h"
-void UiWork_ClearValueNameTablesFar(void);
+void MessageArgument_ClearAllFar(void);
 s32 BattlePres_ShowDefendMessage(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);

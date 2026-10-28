@@ -21,7 +21,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002ae8(const void *data, s32 a, s32 b);
 void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -101,7 +101,7 @@ static __inline__ void Walk(s32 id, s32 a, s32 b) {
 
 static __inline__ void OpenAt(s32 id, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(id, flags);
+  FieldMessage_ShowAtActor(id, flags);
 }
 
 static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {

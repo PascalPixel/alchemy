@@ -25,7 +25,7 @@ DjinnMenu_DrawPage:
 	strb r3, [r2, #6]
 	mov r11, r0
 	ldr r0, [sp, #20]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	bl Party_CountActiveOwnersFar
 	adds r5, r0, #0
 	movs r0, #1
@@ -42,14 +42,14 @@ DjinnMenu_DrawPage:
 	ldr r1, [sp, #20]
 	movs r2, #0
 	movs r3, #80
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #10
 	str r3, [sp, #0]
 	ldr r0, [sp, #20]
 	movs r1, #0
 	movs r2, #10
 	movs r3, #28
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 .L_08101b32:
 	mov r0, r11
 	bl Func_081019a4
@@ -102,15 +102,15 @@ DjinnMenu_DrawPage:
 	b .L_08101ba2
 .L_08101b92:
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	b .L_08101ba8
 .L_08101b9a:
 	movs r0, #15
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	b .L_08101ba8
 .L_08101ba2:
 	movs r0, #4
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 .L_08101ba8:
 	mov r2, r9
 	ldrh r3, [r5]

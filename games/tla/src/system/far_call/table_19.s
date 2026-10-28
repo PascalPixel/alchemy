@@ -5,7 +5,7 @@
 	.thumb_func
 Func_08038358:
 	overlay_veneer Func_0804e0d0
-	.global UiWindow_FillScreenBlockRectFar
+	.global BgScreen_FillRectFar
 	.thumb_func
-UiWindow_FillScreenBlockRectFar:
-	overlay_veneer UiWindow_FillScreenBlockRect
+BgScreen_FillRectFar:
+	overlay_veneer BgScreen_FillRect

@@ -14,11 +14,11 @@ extern s16 gData_02000a38;
 extern s16 gData_02000a2c;
 
 s32 BattleEffect_GetResourceId(s32 message);
-struct EpilogueWindow *UiText_OpenMessageWindow(s32 id, s32 x, s32 y,
+struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
                                                 s32 resource);
 struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
-s32 UiWork_IsComplete(void);
-void UiWork_Finalize(struct EpilogueWindow *window, s32 mode);
+s32 Message_AllTyped(void);
+void Window_Close(struct EpilogueWindow *window, s32 mode);
 void WaitFrames(s32 frames);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
@@ -34,7 +34,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
   name = 0;
   wide = 0x8000 & message;
   message &= 0x7fff;
-  window = UiText_OpenMessageWindow(
+  window = Message_OpenWindow(
       gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
   if (!wide) {
     /* FAKEMATCH(temporary): the name window held in a temporary until after
@@ -52,12 +52,12 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
     window->unk08 = 0;
     window->unk0a = 0;
   }
-  while (!UiWork_IsComplete())
+  while (!Message_AllTyped())
     WaitFrames(1);
   WaitFrames(1);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   if (!wide) {
-    UiWork_Finalize(name, 2);
+    Window_Close(name, 2);
     gData_02000a34 = wide;
   }
   if (wait > 0) {

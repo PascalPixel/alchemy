@@ -20,7 +20,7 @@ void Func_080d2c9c(void) {
   }
 }
 
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 
 void GameFlag_ClearBit(s32 flag);
 
@@ -34,7 +34,7 @@ struct EventWork15a {
 void Func_080d2cc4(s32 message) {
   EventRuntime_Start();
   EventRuntime_ResolvePendingActions(0);
-  UiText_ShowPositionedMessageAndWaitFar(message, 1);
+  FieldMessage_ShowFar(message, 1);
   GameFlag_ClearBit(0x142);
   EventRuntime_End();
   if (Party_FindOwnerWithActionFar(136) != -1)

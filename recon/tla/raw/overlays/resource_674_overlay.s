@@ -488,7 +488,7 @@ Func_020006f4:
 	mov r0, r9
 	adds r0, #2
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -1111,7 +1111,7 @@ Func_02000e38:
 	bl Func_02003fc4
 	movs r1, #1
 	ldr r0, .L_02009248
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #227
 	lsls r0, r0, #1
 	bl PartyInventory_Remove

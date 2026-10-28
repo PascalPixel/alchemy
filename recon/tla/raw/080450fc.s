@@ -76,7 +76,7 @@ Func_080450fc:
 .L_08045188:
 	.4byte gVBlankCount
 .L_0804518c:
-	.4byte gUi_ObjectPulseScales
+	.4byte gWindowSprite_PulseScales
 .L_08045190:
 	.4byte 0xffff0000
 .L_08045194:

@@ -42,32 +42,32 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   slot = BattleObject_Get(unitId);
   Object_SetMode(slot->object, 5);
   PartyStatus_DrawFar(0);
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
 
   if (unitId <= 7) {
     if (showMessage != 0)
-      UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
-    UiText_DrawQuantity(damage, 5);
-    UiText_DrawQuantity(unitId, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
+      Message_ShowAndWaitCoreFar((s32)MsgBitterBlow);
+    MessageArgument_PushFar(damage, 5);
+    MessageArgument_PushFar(unitId, 1);
+    Message_ShowAndWaitCoreFar((s32)MsgDmgP);
   } else {
     if (showMessage != 0)
-      UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
-    UiText_DrawQuantity(damage, 5);
-    UiText_DrawQuantity(unitId, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgE);
-    UiText_DrawQuantity(unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)MsgCritical);
+    MessageArgument_PushFar(damage, 5);
+    MessageArgument_PushFar(unitId, 1);
+    Message_ShowAndWaitCoreFar((s32)MsgDmgE);
+    MessageArgument_PushFar(unitId, 1);
   }
 
   BattleMotion_SetMode5AndActivateSlot(unitId);
   if (unitId <= 7) {
     if (character->hp <= 0) {
-      UiText_DrawQuantity(unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDown);
+      MessageArgument_PushFar(unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)MsgGoesDown);
     }
   } else if (character->hp <= 0) {
-    UiText_DrawQuantity(unitId, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
+    MessageArgument_PushFar(unitId, 1);
+    Message_ShowAndWaitCoreFar((s32)MsgDowned);
   }
 
   slot = BattleObject_Get(unitId);

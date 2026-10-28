@@ -129,10 +129,10 @@ Func_080c8178:
 	.thumb_func
 EventRuntime_SetMessageFar:
 	overlay_veneer EventRuntime_SetMessage
-	.global UiText_OpenMessageAtObjectFar
+	.global FieldMessage_ShowAtActorFar
 	.thumb_func
-UiText_OpenMessageAtObjectFar:
-	overlay_veneer UiText_OpenMessageAtObject
+FieldMessage_ShowAtActorFar:
+	overlay_veneer FieldMessage_ShowAtActor
 	.global Func_080c8190
 	.thumb_func
 Func_080c8190:
@@ -185,9 +185,9 @@ ObjectTable_RunIfActiveFar:
 	.thumb_func
 Battle_ShowPairedUnitWorkAndWaitFar:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWait
-	.global Ui_SetMessageVoiceFromActorFar
+	.global Message_SetVoiceFromActorFar
 	.thumb_func
-Ui_SetMessageVoiceFromActorFar:
+Message_SetVoiceFromActorFar:
 	overlay_veneer Func_080d4330
 	.global ObjectMotion_SetActionVariantFar
 	.thumb_func

@@ -30,7 +30,7 @@ void Func_081a0a70(void);
 void Func_081a052c(const void *resource, s32 layer);
 void Func_081a0e0c(s32 credits);
 void Func_081a0fb8(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 void Func_08014b70(void);
 
 s32 Func_081a06e0(s32 mode) {
@@ -98,7 +98,7 @@ s32 Func_081a06e0(s32 mode) {
 done:
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(0x1040, &REG_DISPCNT);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   gRenderOamEnabled = 1;
   return 0;

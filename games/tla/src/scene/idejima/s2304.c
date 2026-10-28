@@ -35,7 +35,7 @@ void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void DriftScene_SpawnObject();
 void Func_02003180();
 void Func_02003190();

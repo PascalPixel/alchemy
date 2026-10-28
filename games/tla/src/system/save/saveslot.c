@@ -18,11 +18,11 @@ s32 Save_LoadFileSummaries(void);
 void Save_ReleaseWork(void);
 s32 Save_BuildFileSummary(void);
 s32 Func_08042f10(s32 slot, void *buffer);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Sound_PlayFar(s32 cue);
 void ObjectTable_SnapshotFar(void);
-s32 UiWork_IsComplete(void);
-void UiWork_FinalizePendingCore(void);
+s32 Message_AllTyped(void);
+void Message_CloseFinishedWindows(void);
 
 /// Saves the game to slot (at most 2).
 s32 Save_ToFile(u32 slot) {
@@ -32,24 +32,24 @@ s32 Save_ToFile(u32 slot) {
   if (slot > 2)
     slot = 2;
   if (Func_0801596c() != 0) {
-    UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
     Save_LoadFileSummaries();
     gData_020036d0 = slot;
     Sound_PlayFar(85);
-    UiText_ShowPositionedMessageAndWait((s32)&MsgSaving, 13);
+    FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
     found = Func_08042f10(slot, gData_02000000);
-    while (UiWork_IsComplete() == 0)
+    while (Message_AllTyped() == 0)
       WaitFrames(1);
-    UiWork_FinalizePendingCore();
+    Message_CloseFinishedWindows();
     if (found != 0) {
-      UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+      FieldMessage_Show((s32)&MsgSaveFailed, 1);
       result = -3;
     } else {
-      UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 9);
+      FieldMessage_Show((s32)&MsgGameSaved, 9);
     }
   }
   Save_ReleaseWork();
@@ -73,7 +73,7 @@ s32 Func_08043690(void) {
   struct SaveWorkspace *work;
 
   if (Func_0801596c() != 0) {
-    UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -83,14 +83,14 @@ s32 Func_08043690(void) {
     } else {
       work = Ram_HeapSlots->serialWork;
       if (work->summary[slot].level != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgOverwriteConfirm, 13);
-        while (UiWork_IsComplete() == 0)
+        FieldMessage_Show((s32)&MsgOverwriteConfirm, 13);
+        while (Message_AllTyped() == 0)
           WaitFrames(1);
         if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0) {
-          UiWork_FinalizePendingCore();
+          Message_CloseFinishedWindows();
           goto done;
         }
-        UiWork_FinalizePendingCore();
+        Message_CloseFinishedWindows();
       }
       gData_020036d0 = slot;
       token = SaveProgress_Open(0);
@@ -98,12 +98,12 @@ s32 Func_08043690(void) {
       ObjectTable_SnapshotFar();
       found = Func_08042f10(slot, gData_02000000);
       SaveProgress_Close(token);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -3;
       } else {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 9);
+        FieldMessage_Show((s32)&MsgGameSaved, 9);
       }
     }
   }

@@ -24,7 +24,7 @@ void Func_02000bcc(void);
 void Func_020047f0(void);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-void UiText_OpenMessageAtObject(s32 id, s32 mode);
+void FieldMessage_ShowAtActor(s32 id, s32 mode);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 id, const void *callback);
@@ -67,7 +67,7 @@ void Func_0200482c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x3000, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000,
         0);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 16, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 16, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Call2((void (*)())Object_SetModeById, 12, 4);
     Call2((void (*)())Func_02005298, 12, 0);
@@ -115,7 +115,7 @@ void Func_0200482c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x3000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000,
         20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x5010, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x5010, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Func_020047f0();
     WORK->messageId++;
@@ -137,7 +137,7 @@ void Func_0200482c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x3000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000,
         0);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x5010, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x5010, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Call2((void (*)())Object_SetModeById, 12, 3);
     Call2((void (*)())Func_02005298, 0x400c, 0);

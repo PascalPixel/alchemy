@@ -13,9 +13,9 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
+void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                               u32 mode) {
-  u16 *map = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
+  u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
   s32 palette;
   s32 index;
 

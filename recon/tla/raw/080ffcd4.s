@@ -31,7 +31,7 @@ Func_080ffcd4:
 	movs r2, #0
 	mov r8, r4
 	str r4, [sp, #4]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	adds r3, r7, #0
 	adds r3, #240
 	str r3, [sp, #12]
@@ -46,12 +46,12 @@ Func_080ffcd4:
 	movs r2, #0
 	adds r3, r6, #0
 	subs r5, #2
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r0, r5, #0
 	mov r1, r10
 	movs r2, #64
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	bl Func_080ff850
 	movs r4, #226
 	lsls r4, r4, #1
@@ -239,12 +239,12 @@ Func_080ffcd4:
 	b .L_080ffd4c
 .L_080ffeb8:
 	ldr r0, [r7, #48]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r0, r10
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r3, [sp, #12]
 	ldr r0, [r3]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, [sp, #16]
 	add sp, #48
 	pop {r3, r5, r6, r7}

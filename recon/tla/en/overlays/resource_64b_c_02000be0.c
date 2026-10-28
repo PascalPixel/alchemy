@@ -16,7 +16,7 @@ u32 Random16Far(void);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *Unit_Get(s32 owner);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 struct ObjectRuntime *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
 void Func_02004b78(s32 a, s32 b, s32 c);
@@ -32,7 +32,7 @@ void Func_02000be0(void) {
 
   Func_02004c20();
   Func_02004db8(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgGazedIntoThe, 1);
+  FieldMessage_Show((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 slot = 79;
@@ -43,7 +43,7 @@ void Func_02000be0(void) {
     s32 x;
     struct ObjectRuntime *object;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgThereAreSome, 1);
+    FieldMessage_Show((s32)MsgThereAreSome, 1);
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
@@ -67,9 +67,9 @@ void Func_02000be0(void) {
     Func_02004b78(0x30000, 0x50000, 0x10000);
     Func_02004b78(-1, -1, 0xe666);
     FieldEvent_WaitFrames(30);
-    UiText_ShowPositionedMessageAndWait((s32)MsgTheBoatS, 1);
+    FieldMessage_Show((s32)MsgTheBoatS, 1);
   } else {
-    UiText_ShowPositionedMessageAndWait((s32)MsgTheBoatS + (roll >> 1), 1);
+    FieldMessage_Show((s32)MsgTheBoatS + (roll >> 1), 1);
   }
   Func_02004c28();
 }

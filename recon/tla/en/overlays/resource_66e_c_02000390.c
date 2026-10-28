@@ -25,7 +25,7 @@ void Func_02001148(s32 speaker, s32 flags);
 void FieldEvent_WaitFrames(s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 s32 Func_020011a0(s32 *unit, s32 *slot);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Func_02001188(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 u8 *Unit_Get(s32 unit);
@@ -34,7 +34,7 @@ struct ObjectRuntime *Object_GetById(u32 id);
 void Func_020010a0(struct ObjectRuntime *object, s32 item);
 void Func_02001108(s32 actor, s32 x, s32 z);
 void Func_020010b0(s32 item, s32 a);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
+void FieldMessage_Show(const u8 *message, s32 a);
 void Func_02001170(s32 a, s32 b);
 s32 Func_02001168(s32 a, s32 b);
 s32 Func_02001178(s32 frames);
@@ -73,7 +73,7 @@ ask:
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
     Func_02001138(MsgShallIGive);
-    UiText_OpenMessageAtObject(10, 0);
+    FieldMessage_ShowAtActor(10, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
       goto ask;
     message = MsgShallIGive + 1;
@@ -85,17 +85,17 @@ ask:
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_WaitFrames(60);
   Func_020010b0(ITEM(unitData, slot), 2);
-  UiText_ShowPositionedMessageAndWait(MsgPlacedOnThe, 1);
+  FieldMessage_Show(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   Func_02001138(message);
-  UiText_OpenMessageAtObject(10, 0);
+  FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
     goto read;
   Func_02001108(18, 0, 0);
   Func_020010b0(ITEM(unitData, slot), 2);
-  UiText_ShowPositionedMessageAndWait(message + 1, 1);
+  FieldMessage_Show(message + 1, 1);
   Func_02001138(message + 2);
-  UiText_OpenMessageAtObject(10, 0);
+  FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
     goto ask;
   message += 3;

@@ -97,7 +97,7 @@ Func_0803bde4:
 	bne .L_0803bea0
 	b .L_0803c058
 .L_0803bea0:
-	bl RenderOutput_AcquireFree
+	bl WindowSprite_AcquireFree
 	adds r5, r0, #0
 	movs r0, #0
 	cmp r5, #0
@@ -325,7 +325,7 @@ Func_0803bde4:
 	mov r3, r10
 	strb r3, [r5, #14]
 	adds r1, r5, #0
-	bl RenderOutput_AppendToList
+	bl WindowSprite_AppendToList
 	b .L_0803c058
 .L_0803c054:
 	.4byte 0x00004000

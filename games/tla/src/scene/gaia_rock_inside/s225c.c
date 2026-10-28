@@ -8,7 +8,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 u32 Random16Far(void);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
@@ -44,7 +44,7 @@ void Func_0200225c(void) {
   partner = Object_GetById(12);
   Func_02004e5c();
   Func_02004fcc(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
+  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gAdventure.currentOwner);
@@ -132,7 +132,7 @@ void Func_020024b8(void) {
   partner = Object_GetById(12);
   Func_02004e5c();
   Func_02004fcc(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
+  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gAdventure.currentOwner);
@@ -220,7 +220,7 @@ void Func_02002718(void) {
   partner = Object_GetById(14);
   Func_02004e5c();
   Func_02004fcc(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
+  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
   Func_02004ec4(14, gAdventure.currentOwner);

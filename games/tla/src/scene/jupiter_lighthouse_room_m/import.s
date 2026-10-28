@@ -61,7 +61,7 @@ Func_020046ac:
 	.global Func_020046b4
 	.thumb_func
 Func_020046b4:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -158,10 +158,10 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02004774:
 	overlay_veneer Func_08020360
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02004784
 	.thumb_func
 Func_02004784:
@@ -298,10 +298,10 @@ Object_SetPartAttribute:
 	.thumb_func
 Func_0200488c:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_0200489c
 	.thumb_func
 Func_0200489c:

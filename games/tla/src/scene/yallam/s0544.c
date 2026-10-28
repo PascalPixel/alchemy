@@ -4,7 +4,7 @@ void Func_02000544(void) {
   Func_02002488();
   Func_02002590(0);
   Func_02002520(MsgDoYouWant);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0)
     Func_02001944();
   else

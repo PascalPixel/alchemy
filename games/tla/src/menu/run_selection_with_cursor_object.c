@@ -32,7 +32,7 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = UiWindow_Create(1, 0, 28, 20, 2);
+  win = Window_Create(1, 0, 28, 20, 2);
   Menu_DrawFlagBitTable(win, page);
   UiTextResource_Initialize(obj, &res);
   for (;;) {
@@ -45,6 +45,6 @@ s32 Menu_RunSelectionWithCursorObject(void) {
     UiTextResource_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
   }
   UiTextResource_Release(res);
-  UiWork_Finalize(win, 2);
+  Window_Close(win, 2);
   return 0;
 }

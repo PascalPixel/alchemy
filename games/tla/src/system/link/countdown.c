@@ -47,7 +47,7 @@ extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 
-void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3,
+void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3,
                                s32 arg4);
 
 void Sound_PlayFar(s32 soundId);
@@ -147,7 +147,7 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
-      UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
+      Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
   }
 
 done:

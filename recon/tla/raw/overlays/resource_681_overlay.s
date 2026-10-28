@@ -1668,7 +1668,7 @@ Func_020019cc:
 	ldr r7, .L_02009b54
 	movs r1, #1
 	adds r0, r7, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r1, #128
 	ldr r0, [r6]
 	lsls r1, r1, #1
@@ -1761,7 +1761,7 @@ Func_020019cc:
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	adds r0, r7, #2
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #160
 	movs r1, #224
 	movs r2, #128
@@ -1883,7 +1883,7 @@ Func_020019cc:
 	bl Func_02004ebc
 	movs r1, #139
 	movs r0, #4
-	bl UiText_DrawQuantityPairWithCue
+	bl Party_LearnAbility
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #186

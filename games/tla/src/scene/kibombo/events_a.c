@@ -356,7 +356,7 @@ void Func_020007c8(void) {
 void Func_02000978(void) {
   Kibombo_ObjArm(gAdventure.currentOwner, 0x8000, 20);
   Func_02005b4c((s32)MsgItLooksLikeHas);
-  UiText_OpenMessageAtObject(6, 0);
+  FieldMessage_ShowAtActor(6, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, 0x4000, 10);
     Object_SetModeById(5, 3);

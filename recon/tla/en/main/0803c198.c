@@ -11,7 +11,7 @@
 #include "window.h"
 #include "uiwindow.h"
 
-// The sprite cell at RenderOutput.unk10: a link, then the OAM words.
+// The sprite cell at WindowSprite.unk10: a link, then the OAM words.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -21,17 +21,17 @@ struct GlyphSprite {
   u16 tile;
 };
 
-void *Func_0803c198(struct UiWindow *window, s32 character, s32 x, s32 y) {
-  struct UiRenderWork *work = Ram_HeapSlots->windowTiles;
+void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
+  struct WindowWork *work = Ram_HeapSlots->windowTiles;
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   struct GlyphSprite *sprite;
   s32 index;
   void *vram;
 
-  output = RenderOutput_AcquireFree();
+  output = WindowSprite_AcquireFree();
   if (output == NULL)
     return NULL;
   index = (output - work->outputs) * 4;
@@ -48,6 +48,6 @@ void *Func_0803c198(struct UiWindow *window, s32 character, s32 x, s32 y) {
   output->y = sprite->y;
   output->index = index;
   output->next = NULL;
-  RenderOutput_AppendToList(&window->output, output);
+  WindowSprite_AppendToList(&window->output, output);
   return vram;
 }

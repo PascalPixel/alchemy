@@ -32,7 +32,7 @@ Func_08101638:
 	ldr r0, [sp, #8]
 	movs r2, #5
 	movs r3, #30
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, .L_081017c4
@@ -118,12 +118,12 @@ Func_08101638:
 	mov r3, r10
 	ldr r6, [r3, #16]
 	adds r0, r6, #0
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r1, #8
 	negs r1, r1
 	movs r2, #11
 	adds r0, r6, #0
-	bl UiIcon_CreateWithResourceVariant
+	bl Icon_CreateWithResourceVariant
 	movs r3, #0
 	mov r11, r3
 	movs r3, #13
@@ -148,7 +148,7 @@ Func_08101638:
 	adds r2, r6, #0
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	mov r3, r8
 	adds r7, r0, #0
 	strb r3, [r7, #5]
@@ -172,7 +172,7 @@ Func_08101638:
 	mov r1, r9
 	adds r2, r6, #0
 	str r3, [sp, #0]
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	mov r3, r8
 	adds r7, r0, #0
 	strb r3, [r7, #5]

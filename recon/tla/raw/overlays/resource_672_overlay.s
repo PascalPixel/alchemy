@@ -733,7 +733,7 @@ Func_02000184:
 	bl ObjectMotion_ArmCallback
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r6]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -784,7 +784,7 @@ Func_02000184:
 	bl Func_02001e70
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r3, .L_02008954
 	movs r1, #133
 	lsls r1, r1, #2
@@ -1445,7 +1445,7 @@ Func_02001710:
 	lsls r0, r0, #7
 	movs r1, #0
 	adds r0, #5
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r6]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

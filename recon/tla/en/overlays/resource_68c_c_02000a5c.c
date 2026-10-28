@@ -32,7 +32,7 @@ void ObjectMotion_CommitPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
 void ObjectMotion_SetVariantCallback();
 void Func_020028e4();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Func_02002924();
 s32 __divsi3();
@@ -99,7 +99,7 @@ L_02008a86:
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 10, 12, 12);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value3((s32 (*)())Func_020028dc, 10, 0x101, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
   v3 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v3 == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 30);
@@ -127,7 +127,7 @@ L_02008a86:
   Call2((void (*)())Func_020028e4, 4, 0x102);
   Call1((void (*)())FieldEvent_WaitFrames, 50);
   Value3((s32 (*)())Func_020028dc, 10, 0x101, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
   v4 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v4 == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 30);

@@ -19,9 +19,9 @@
 
 void *Func_02000d00(s32, s32, s32, s32);
 void Func_02000d08(s32, s32);
-void UiWork_FinalizePendingCore(void);
-void UiText_OpenMessageWindow(s32, s32, s32, s32);
-s32 UiWork_IsComplete(void);
+void Message_CloseFinishedWindows(void);
+void Message_OpenWindow(s32, s32, s32, s32);
+s32 Message_AllTyped(void);
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
 
@@ -45,8 +45,8 @@ void Func_02000054(s32 message, s32 count) {
     Func_02000d08(1, 1);
     Func_02000d08(5, 2);
     Func_02000d08(0x1e240, 5);
-    UiWork_FinalizePendingCore();
-    UiText_OpenMessageWindow(message, 5, 0, 0x22);
+    Message_CloseFinishedWindows();
+    Message_OpenWindow(message, 5, 0, 0x22);
     /* FAKEMATCH: as for loops, loop.c moves the input address and masks out of
      * the waits; ⚓️ builds them at each test. */
     frames = 0;
@@ -66,7 +66,7 @@ void Func_02000054(s32 message, s32 count) {
     gInput.repeat = 1;
     WaitFrames(1);
   shown:
-    if (UiWork_IsComplete() == 0)
+    if (Message_AllTyped() == 0)
       goto skip;
     frames = 0;
     goto check;
@@ -84,6 +84,6 @@ void Func_02000054(s32 message, s32 count) {
     message++;
   }
 done:
-  UiWork_FinalizePendingCore();
-  UiWork_Finalize(window, 2);
+  Message_CloseFinishedWindows();
+  Window_Close(window, 2);
 }

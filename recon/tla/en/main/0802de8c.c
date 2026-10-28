@@ -52,10 +52,10 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id);
 struct ViewerSprite *ResourceObject_Create(s32 id);
 s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id);
-void Ui_SetGridColumnPriority(s32 slot, s32 value);
-void Ui_SetGridColumnParameter(s32 slot, s32 value);
-void Ui_FillGridColumnFromMetadata(s32 slot, s32 value);
-void Ui_SetGridColumnNumber(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
+void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
 s32 Func_0802e444(s32 spriteId, s32 direction);
 void Func_0802e4c8(s32 x, s32 y, void *ring);
 void Battle_PlaceActorsByFormationKind(void);
@@ -127,11 +127,11 @@ restart:
   }
   for (i = 0; i < 4; i++) {
     if (table[i].enabled != 0)
-      Ui_SetGridColumnPriority(i, table[i].priority);
+      SpriteViewer_SetGridColumnPriority(i, table[i].priority);
     else
-      Ui_SetGridColumnPriority(i, 8);
-    Ui_SetGridColumnParameter(i, table[i].colorMode);
-    Ui_FillGridColumnFromMetadata(i, table[i].animationIndex);
+      SpriteViewer_SetGridColumnPriority(i, 8);
+    SpriteViewer_SetGridColumnColorMode(i, table[i].colorMode);
+    SpriteViewer_StartStaggeredAnimations(i, table[i].animationIndex);
   }
   Func_0802e4c8(x, y, ring);
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
@@ -216,11 +216,11 @@ next:
       if (selectedLayer == 0)
         goto restart;
       if (table[selectedLayer].enabled != 0) {
-        Ui_SetGridColumnNumber(selectedLayer, table[selectedLayer].spriteId);
-        Ui_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
-        Ui_SetGridColumnParameter(selectedLayer,
+        SpriteViewer_SetGridColumnNumber(selectedLayer, table[selectedLayer].spriteId);
+        SpriteViewer_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
+        SpriteViewer_SetGridColumnColorMode(selectedLayer,
                                   table[selectedLayer].colorMode);
-        Ui_FillGridColumnFromMetadata(selectedLayer,
+        SpriteViewer_StartStaggeredAnimations(selectedLayer,
                                       table[selectedLayer].animationIndex);
       }
       goto next;
@@ -243,7 +243,7 @@ next:
       if (changed == 0)
         break;
       if (table[selectedLayer].enabled != 0)
-        Ui_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
+        SpriteViewer_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
       goto next;
 
     case 3:
@@ -263,7 +263,7 @@ next:
       if (changed == 0)
         break;
       if (table[selectedLayer].enabled != 0)
-        Ui_SetGridColumnParameter(selectedLayer,
+        SpriteViewer_SetGridColumnColorMode(selectedLayer,
                                   table[selectedLayer].colorMode);
       goto next;
     }
@@ -272,16 +272,16 @@ next:
       if (editMode == 0) {
         if (selectedLayer != 1) {
           if (table[selectedLayer].enabled != 0) {
-            Ui_FillGridColumnFromMetadata(selectedLayer,
+            SpriteViewer_StartStaggeredAnimations(selectedLayer,
                                           table[selectedLayer].animationIndex);
             if (selectedLayer == 0)
-              Ui_FillGridColumnFromMetadata(1, table[1].animationIndex);
+              SpriteViewer_StartStaggeredAnimations(1, table[1].animationIndex);
           }
           goto next;
         }
       } else if (selectedLayer != 0) {
         table[selectedLayer].enabled ^= 1;
-        Ui_SetGridColumnPriority(selectedLayer,
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
                                  table[selectedLayer].enabled != 0
                                      ? table[selectedLayer].priority
                                      : 8);

@@ -4,7 +4,7 @@
 
 s32 GameFlag_Test();
 s32 Func_02001c74();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Func_02001d34();
 s32 Event_AskYesNoWithActorAnimation();
 s32 FieldEvent_WaitFrames();
@@ -24,10 +24,10 @@ void Func_0200066c(s32 actor) {
 
   if (Value1(GameFlag_Test, 0x8b9) != 0) {
     Call1(Func_02001c74, message + 4);
-    Call2(UiText_OpenMessageAtObject, actor, 0);
+    Call2(FieldMessage_ShowAtActor, actor, 0);
   } else {
     Call1(Func_02001c74, message);
-    Call2(UiText_OpenMessageAtObject, actor, 0);
+    Call2(FieldMessage_ShowAtActor, actor, 0);
     if (Value2(Event_AskYesNoWithActorAnimation, Func_02001d34(), 0) != 0) {
       Call1(FieldEvent_WaitFrames, 20);
       Call1(Func_02001c74, message + 1);

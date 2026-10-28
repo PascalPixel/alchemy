@@ -2,23 +2,23 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
+s32 Message_Decode(s32 message, s32 mode);
 
-void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
+void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
                                   u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
   u16 *text;
   s32 zero;
   u32 cell;
-  struct UiRenderWork *canvas;
+  struct WindowWork *canvas;
   u16 *counter;
 
-  canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   counter = &canvas->count;
   zero = 0;
   *counter = zero;
-  UiText_BuildRenderEntries(character, 1);
+  Message_Decode(character, 1);
 
   canvas->entries[*counter] = zero;
   *counter = (u16)((*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1));
@@ -29,7 +29,7 @@ void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
     byteOffset = cell * 2;
     vramAddress = byteOffset + 0x06002000;
     text = canvas->entries;
-    UiText_RenderStringTiles(text, (s32)((u8 *)canvas->tilemap + byteOffset),
+    Text_DrawStringAsTiles(text, (s32)((u8 *)canvas->tilemap + byteOffset),
                              vramAddress, 7 & offsetX);
   }
 }

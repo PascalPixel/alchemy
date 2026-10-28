@@ -4,7 +4,7 @@
  * before speaker); the opener is declared void in scene_call.h for the scenes
  * that match with that. */
 #define Message_Open(speaker, flags)                                           \
-  ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(speaker, flags)
+  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags)
 
 void Func_02000318(s32 actor) {
   s32 message;
@@ -77,7 +77,7 @@ void Func_0200049c(void) {
   s32 message = (s32)MsgGarohInteriors47;
 
   Func_02000844(message);
-  UiText_OpenMessageAtObject(11, 0);
+  FieldMessage_ShowAtActor(11, 0);
   if (Event_AskYesNoWithActorAnimation(Func_0200088c(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000844(message + 1);

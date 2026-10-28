@@ -48,10 +48,10 @@ void EventRuntime_PrepareCurrentObject(void);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-void UiText_DrawQuantity(s32 value, s32 kind);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void MessageArgument_PushFar(s32 value, s32 kind);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 s32 Func_080d295c(s32 cursor);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
 void EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 a, s32 b);
@@ -68,8 +68,8 @@ void BattleEffect_ClearChildValueOnMismatch(void);
 void BattleEffect_CleanupSceneObjects(void);
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
-  (UiText_DrawQuantity((user), 1), UiText_DrawQuantity((ability), 4),          \
-   UiText_ShowPositionedMessageAndWaitFar((s32)&(message), 1))
+  (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),          \
+   FieldMessage_ShowFar((s32)&(message), 1))
 
 s32 Func_080ce61c(u32 code) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -122,10 +122,10 @@ s32 Func_080ce61c(u32 code) {
       FIELD_PSYNERGY_MESSAGE(userId, 149, MsgDoesNotWorkHere);
       return 0;
     }
-    UiText_DrawQuantity(149, 4);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseAbilityConfirm, 13);
+    MessageArgument_PushFar(149, 4);
+    FieldMessage_ShowFar((s32)&MsgUseAbilityConfirm, 13);
     cost = Func_080d295c(1);
-    UiWork_FinalizePendingCoreFar();
+    Message_CloseFinishedWindowsFar();
     if (cost != 0)
       return 0;
     {

@@ -10,8 +10,8 @@
 #include "types.h"
 #include "uiwindow.h"
 
-s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
-void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
+s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                      s32 y);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 
@@ -19,7 +19,7 @@ extern u8 Msg_0c59[];
 
 struct Func_0804bc08Work {
   u8 unk00[0x44];
-  struct UiWindow *window;
+  struct Window *window;
 };
 
 // Stand-in for the parent, Func_0804bc08, whose work block (from
@@ -30,8 +30,8 @@ void Func_0804bc08(void) {
   void Func_0804bbd0(void) {
     u16 text[64];
 
-    UiText_CopyMessageString((s32)Msg_0c59, text, 52);
-    UiText_RenderWideStringAtOffset(text, work->window, 0, 4);
+    Message_CopyExpanded((s32)Msg_0c59, text, 52);
+    Text_DrawWideStringAtOffset(text, work->window, 0, 4);
   }
 
   work = Runtime_AllocateBlock(228, 272);

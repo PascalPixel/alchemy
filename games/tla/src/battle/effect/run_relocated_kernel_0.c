@@ -1,6 +1,6 @@
 /// @file
 /// The runner for the ARM kernel at Data_081380ac (relocated_kernel_0.s), the
-/// same wrapper as Render_TransformVertices (project_vertices.c) and UiText_LookupMessage,
+/// same wrapper as Render_TransformVertices (project_vertices.c) and Message_Find,
 /// with two arguments. Nothing in the image calls it.
 #include "types.h"
 #include "dma.h"
@@ -17,7 +17,7 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   u32 size;
 
   /* FAKEMATCH: the wrapper keeps the size load after the parameter copies, as
-   * in UiText_LookupMessage. */
+   * in Message_Find. */
   do {
     size = (u32)Data_081380acCodeSize;
   } while (0);

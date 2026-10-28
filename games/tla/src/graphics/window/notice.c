@@ -9,18 +9,18 @@
 
 struct TimedNoticeWork {
   u8 unk000[0x21c];
-  struct UiWindow *window;
+  struct Window *window;
   u16 countdown;
 };
 
 #define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
 void UiTimedNotice_Update(void);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 extern u8 MsgDebugEntryName;
 
-void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
+void Text_DrawMessage(s32 resource, struct Window *window, s32 x, s32 y);
 
 /// Opens the area-name window, which closes after ninety frames.
 void UiTimedNotice_Create(void) {
@@ -30,7 +30,7 @@ void UiTimedNotice_Create(void) {
   s32 y;
   s32 x;
   s32 resource;
-  struct UiWindow *window;
+  struct Window *window;
   struct Adventure *state;
 
   work = TIMED_NOTICE_WORK;
@@ -45,12 +45,12 @@ void UiTimedNotice_Create(void) {
   __asm__("" : : "r"(state));
   resource = Scene_GetAreaNameIndexFar(state->scene, state->entrance) +
              (s32)&MsgDebugEntryName;
-  UiText_GetResourceDimensions(resource, &x, &y, &width, &height);
+  Text_GetMessageSize(resource, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
-  window = UiWindow_Create(x, y, width, height, 2);
+  window = Window_Create(x, y, width, height, 2);
   work->window = window;
-  UiText_DrawResource(resource, window, 0, 0);
+  Text_DrawMessage(resource, window, 0, 0);
   work->countdown = 90;
   Task_Add(UiTimedNotice_Update, TASK_PASS_VBLANK);
 }
@@ -69,17 +69,17 @@ void UiTimedNotice_Update(void) {
   count += 0xffff;
   *countdown = count;
   if ((count << 16) == 0) {
-    UiWork_Finalize(work->window, 2);
+    Window_Close(work->window, 2);
     Task_Remove(UiTimedNotice_Update);
   }
 }
 
 void UiTimedNotice_CloseIfActive(void) {
-  struct UiWindow *window;
+  struct Window *window;
 
   window = TIMED_NOTICE_WORK->window;
   if (window != NULL && window->flags != 0) {
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     Task_Remove(UiTimedNotice_Update);
   }
 }

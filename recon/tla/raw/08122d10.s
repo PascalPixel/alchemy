@@ -154,14 +154,14 @@ BattleEvent_Playback:
 	adds r3, #64
 	ldr r0, [r7, r3]
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	b .L_08122ff0
 .L_08122e50:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	b .L_08122ff0
 .L_08122e5e:
 	lsls r3, r6, #2
@@ -172,7 +172,7 @@ BattleEvent_Playback:
 	adds r3, #255
 	ands r0, r3
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	b .L_08122ff0
 .L_08122e74:
 	lsls r3, r6, #2
@@ -183,7 +183,7 @@ BattleEvent_Playback:
 	adds r3, #255
 	ands r0, r3
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	b .L_08122ff0
 .L_08122e8a:
 	movs r3, #192
@@ -225,7 +225,7 @@ BattleEvent_Playback:
 	str r3, [r2]
 	b .L_08122ff0
 .L_08122ed2:
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	b .L_08122ff0
 .L_08122ed8:
 	lsls r3, r6, #2
@@ -398,7 +398,7 @@ BattleEvent_Playback:
 	cmp r3, #13
 	bne .L_08123078
 .L_08123034:
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	bne .L_0812303e
 	b .L_08123494
@@ -476,7 +476,7 @@ BattleEvent_Playback:
 	movs r5, #128
 	lsls r5, r5, #19
 	adds r5, #74
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	adds r0, r5, #0
 	movs r1, #4
 	bl QueueIoWriteDelay10

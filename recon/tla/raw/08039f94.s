@@ -78,7 +78,7 @@ Func_08039f94:
 	mov r0, r9
 	adds r1, r6, #0
 	mov r2, r11
-	bl UiWindow_DrawBorder
+	bl Window_DrawBorder
 	ldr r3, [sp, #0]
 	cmp r3, #0
 	beq .L_0803a040

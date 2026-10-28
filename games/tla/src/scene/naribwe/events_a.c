@@ -32,7 +32,7 @@ void Func_020000d8(void) {
   if (GameFlag_Test_(0x85d) == 0) {
     msg = (s32)&MsgNaribwe02;
     Func_02000584(msg);
-    UiText_OpenMessageAtObject(14, 0);
+    FieldMessage_ShowAtActor(14, 0);
     if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
       GameFlag_SetBit_(0x85d);
@@ -52,7 +52,7 @@ void Func_02000140(void) {
   if (GameFlag_Test(0x85e) == 0) {
     msg = (s32)&MsgNaribwe07;
     Func_02000584(msg);
-    UiText_OpenMessageAtObject(18, 0);
+    FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
       GameFlag_SetBit(0x85d);
@@ -70,7 +70,7 @@ void Func_020001a8(void) {
   s32 msg = (s32)&MsgNaribwe09;
 
   Func_02000584(msg);
-  UiText_OpenMessageAtObject(19, 0);
+  FieldMessage_ShowAtActor(19, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000584(msg + 1);

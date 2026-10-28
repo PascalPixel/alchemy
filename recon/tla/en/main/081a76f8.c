@@ -22,7 +22,7 @@ void Fade_ToBlack(s32 vblanks);
 void Fade_FromWhite(s32 vblanks);
 void Fade_Wait(void);
 void DebugText_Clear(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 
 s32 Title_ShowAnimatedSplash(void) {
   u32 i;
@@ -60,7 +60,7 @@ s32 Title_ShowAnimatedSplash(void) {
     gBgScroll[i].x = 0;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   Fade_FromWhite(1);
   Fade_Wait();

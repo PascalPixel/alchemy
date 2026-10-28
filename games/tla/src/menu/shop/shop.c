@@ -67,11 +67,11 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place) {
 
 extern const u8 gShop_PriceTiles[];
 
-struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
+struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
                                             s32 y) {
   u8 *buf;
   s32 slot;
-  struct RenderOutput *sprite;
+  struct WindowSprite *sprite;
 
   buf = Runtime_AllocateBlock(56, 0x400);
   sprite = 0;
@@ -97,7 +97,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
     VramCache_Load(slot, 0x100, buf);
-    sprite = RenderOutput_CreateFar(slot, 0x80008000,
+    sprite = WindowSprite_CreateFar(slot, 0x80008000,
                                     (struct RenderInput *)window, x, y);
   }
   Runtime_ReleaseHeapBlock(56);

@@ -80,17 +80,17 @@ struct ListOwner {
 extern u8 MsgChangeCharacterHelp[];
 extern u32 gFrameCount;
 
-s32 UiWindow_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void *Unit_Get(s32 owner);
 s32 ItemMenu_CollectItems(void *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_PageResult(struct MenuResult *state, s32 pane);
 void Func_080f8a44(s32 x, s32 y);
-void UiIcon_PrepareObject(struct ListIcon *icon);
+void Icon_PrepareActor(struct ListIcon *icon);
 void WaitFrames(s32 frames);
 void Func_080fc608(void *window, s32 mode, struct MenuResult *state);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Func_080fc558(void *window, s32 *work, struct MenuResult *state);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
@@ -100,7 +100,7 @@ void Sound_PlayFar(s32 cue);
 s32 GameFlag_Test(s32 flag);
 void Func_08104ef8(s32 first);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
-void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
+void Window_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
                                     s32 height);
 
 s32 Func_080fc6bc(s32 pane) {
@@ -124,7 +124,7 @@ s32 Func_080fc6bc(s32 pane) {
   result = 0;
   previous = 0;
   menu->equipPreview = result;
-  UiWindow_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
 
@@ -145,13 +145,13 @@ s32 Func_080fc6bc(s32 pane) {
         changed = 0;
         if (owner->inventory[previous] != 0) {
           icon = menu->entryIcons[previous];
-          UiIcon_PrepareObject(icon);
+          Icon_PrepareActor(icon);
         }
         if (redraw != 0) {
           WaitFrames(1);
           Func_080fc608(window, 0, &state);
           if (pane == 0)
-            UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window,
+            Text_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window,
                                             0, 88);
           redraw = 0;
         }
@@ -236,8 +236,8 @@ s32 Func_080fc6bc(s32 pane) {
     }
   }
 
-  UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-  UiIcon_PrepareObject(menu->gridCursor);
+  Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
+  Icon_PrepareActor(menu->gridCursor);
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->paneOwner[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;

@@ -90,10 +90,10 @@ Func_020039b8:
 	.thumb_func
 Func_020039c0:
 	overlay_veneer Func_08020230
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

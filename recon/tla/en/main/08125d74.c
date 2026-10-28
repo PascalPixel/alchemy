@@ -35,7 +35,7 @@
 extern u8 Data_0812cd74[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
-void UiWindow_CreateWithLayoutBoundsFar(s32 flags);
+void PartyStatus_CreateWindowFar(s32 flags);
 void Func_08138028(struct BattlePresentationWork *work);
 void Func_08118bcc(s32 value);
 void BattlePres_AdvanceTransitionTimer(void);
@@ -104,7 +104,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     Runtime_SetIrqHandler(2, 32, Func_08125d68);
     gBgScroll[0].y = 32;
     WaitFrames(1);
-    UiWindow_CreateWithLayoutBoundsFar(Ram_HeapSlots->battleWork->partyStatus);
+    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     WaitFrames(20);
     QueueIoWriteDelay10(0x04000008, 2);
     QueueIoWriteDelay6(0x04000008, 0);
@@ -144,7 +144,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     Runtime_SetIrqHandler(2, 32, Func_08125d68);
     WaitFrames(1);
     WaitFrames(20);
-    UiWindow_CreateWithLayoutBoundsFar(Ram_HeapSlots->battleWork->partyStatus);
+    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     QueueIoWriteDelay10(0x04000008, 2);
     QueueIoWriteDelay6(0x04000008, 0);
     REG_BLDCNT = 0x3f40;

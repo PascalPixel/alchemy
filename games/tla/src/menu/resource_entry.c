@@ -32,8 +32,8 @@ struct MenuSelectionState {
 extern u8 gMenu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 
-void RenderOutput_PrepareForRedraw(void *work);
-void UiText_DrawCharacterAtOffset(s32 resourceId, void *work, s32 x, s32 y);
+void WindowSprite_PrepareForRedraw(void *work);
+void Text_DrawCharacterAtOffset(s32 resourceId, void *work, s32 x, s32 y);
 void Sound_PlayFar(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
@@ -66,14 +66,14 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   pos = start;
 
   for (;;) {
-    RenderOutput_PrepareForRedraw(state->work);
+    WindowSprite_PrepareForRedraw(state->work);
     resourceBase = state->resourceBase;
     if (resourceBase != 0) {
       resourceId = resourceBase + state->selection;
     } else {
       resourceId = state->resourceIds[state->selection] + (s32)&MsgCommandName;
     }
-    UiText_DrawCharacterAtOffset(resourceId, state->work, 0, 0);
+    Text_DrawCharacterAtOffset(resourceId, state->work, 0, 0);
 
     cur = state->selection;
     table = gMenu_SelectionStepDelays;
@@ -99,7 +99,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index) {

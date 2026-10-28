@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global RenderOutput_CreateLoadedFar
+	.global WindowSprite_CreateLoadedFar
 	.thumb_func
-RenderOutput_CreateLoadedFar:
-	overlay_veneer RenderOutput_CreateLoaded
+WindowSprite_CreateLoadedFar:
+	overlay_veneer WindowSprite_CreateLoaded
 	.global Func_080382c0
 	.thumb_func
 Func_080382c0:

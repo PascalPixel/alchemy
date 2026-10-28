@@ -3,7 +3,7 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Party_RemoveActiveOwner(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
@@ -16,7 +16,7 @@ static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
 void Func_020003b8(void) {
   s32 i;
 
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
+  FieldMessage_Show((s32)MsgYouGotTreasure, 1);
   gAdventure.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);

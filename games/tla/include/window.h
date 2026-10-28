@@ -17,7 +17,7 @@ enum { UI_TEXT_ENTRY_COUNT = 256 };
 /// The window system's work, as ☀️'s with its bytes before the tilemap: the
 /// windows' tilemap, the windows, the three text channels, the 64 render
 /// outputs, and the decoded message and its arguments.
-struct UiRenderWork {
+struct WindowWork {
   u16 tileCursor; ///< the text tile the next search for a free one starts at
   u8 alt;         ///< 1 lets text use the second range of tiles
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
@@ -27,10 +27,10 @@ struct UiRenderWork {
   u8 menuBusy;  ///< while set, the tilemap is not uploaded
   u8 level;     ///< text tiles' palette; 15 by default
   u16 tilemap[20][32]; ///< the windows' BG tilemap
-  struct UiWindow windows[UI_WINDOW_COUNT];
+  struct Window windows[UI_WINDOW_COUNT];
   struct UiChannelSlot channels[3];
-  struct RenderOutput outputs[UI_OUTPUT_COUNT];
-  struct RenderOutputList freeOutputs; ///< the outputs not in any window
+  struct WindowSprite outputs[UI_OUTPUT_COUNT];
+  struct WindowSpriteList freeOutputs; ///< the outputs not in any window
   u8 tileAttributes[0x100];            ///< per text tile, as ☀️'s
   u16 lineSpacing;             ///< the current channel's, copied in to draw
   u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
@@ -58,33 +58,33 @@ struct UiRenderWork {
   u8 unk138d[3]; ///< not named by ⚓️ code
 };
 
-STATIC_ASSERT(offsetof(struct UiRenderWork, tilemap) == 8);
-STATIC_ASSERT(offsetof(struct UiRenderWork, windows) == 0x508);
-STATIC_ASSERT(offsetof(struct UiRenderWork, channels) == 0x6b8);
-STATIC_ASSERT(offsetof(struct UiRenderWork, outputs) == 0x730);
-STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.head) == 0xe30);
-STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.tailLink) == 0xe34);
+STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
+STATIC_ASSERT(offsetof(struct WindowWork, windows) == 0x508);
+STATIC_ASSERT(offsetof(struct WindowWork, channels) == 0x6b8);
+STATIC_ASSERT(offsetof(struct WindowWork, outputs) == 0x730);
+STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.head) == 0xe30);
+STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.tailLink) == 0xe34);
 
-STATIC_ASSERT(offsetof(struct UiRenderWork, lineSpacing) == 0xf38);
-STATIC_ASSERT(offsetof(struct UiRenderWork, colour) == 0xf3e);
-STATIC_ASSERT(offsetof(struct UiRenderWork, entries) == 0xf40);
-STATIC_ASSERT(offsetof(struct UiRenderWork, menuState) == 5);
-STATIC_ASSERT(offsetof(struct UiRenderWork, level) == 7);
-STATIC_ASSERT(offsetof(struct UiRenderWork, tileAttributes) == 0xe38);
+STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 0xf38);
+STATIC_ASSERT(offsetof(struct WindowWork, colour) == 0xf3e);
+STATIC_ASSERT(offsetof(struct WindowWork, entries) == 0xf40);
+STATIC_ASSERT(offsetof(struct WindowWork, menuState) == 5);
+STATIC_ASSERT(offsetof(struct WindowWork, level) == 7);
+STATIC_ASSERT(offsetof(struct WindowWork, tileAttributes) == 0xe38);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-STATIC_ASSERT(offsetof(struct UiRenderWork, count) == 0x1342);
-STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) == 0x1346);
-STATIC_ASSERT(offsetof(struct UiRenderWork, values) == 0x134c);
-STATIC_ASSERT(offsetof(struct UiRenderWork, names) == 0x136c);
-STATIC_ASSERT(sizeof(struct UiRenderWork) == 0x1390);
+STATIC_ASSERT(offsetof(struct WindowWork, count) == 0x1342);
+STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1346);
+STATIC_ASSERT(offsetof(struct WindowWork, values) == 0x134c);
+STATIC_ASSERT(offsetof(struct WindowWork, names) == 0x136c);
+STATIC_ASSERT(sizeof(struct WindowWork) == 0x1390);
 #else
-STATIC_ASSERT(offsetof(struct UiRenderWork, count) == 0x1142);
-STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) == 0x1146);
-STATIC_ASSERT(offsetof(struct UiRenderWork, values) == 0x114c);
-STATIC_ASSERT(offsetof(struct UiRenderWork, names) == 0x116c);
-STATIC_ASSERT(sizeof(struct UiRenderWork) == 0x1190);
+STATIC_ASSERT(offsetof(struct WindowWork, count) == 0x1142);
+STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1146);
+STATIC_ASSERT(offsetof(struct WindowWork, values) == 0x114c);
+STATIC_ASSERT(offsetof(struct WindowWork, names) == 0x116c);
+STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 #endif
 
-void UiWork_InitializeFreeList(void);
+void WindowSprite_InitializeFreeList(void);
 
 #endif

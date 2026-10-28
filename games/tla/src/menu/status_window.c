@@ -16,7 +16,7 @@ typedef struct {
   u8 field0f;
 } Object0f;
 
-s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 handle);
@@ -37,7 +37,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource) {
   created = 0;
   handle = state->handle;
   if (handle == 0) {
-    created = UiWindow_UpdateOrCreate(&state->handle, 0, 5, 0x1E, 0xF, 2);
+    created = Window_UpdateOrCreate(&state->handle, 0, 5, 0x1E, 0xF, 2);
     handle = state->handle;
   }
   if (created != 0) {

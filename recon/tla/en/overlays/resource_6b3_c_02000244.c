@@ -1,5 +1,5 @@
 // Draft, differ 19 of 102: centres a message and hands it to Func_02000158. x
-// and y stay in their stack slots for UiText_GetResourceDimensions; GCSE copies
+// and y stay in their stack slots for Text_GetMessageSize; GCSE copies
 // their loads for the closing call into each branch, so an empty asm with a
 // memory clobber before the call keeps them as one load each, as the native has
 // (without it: 64; with x and y volatile their addresses take registers: 100).
@@ -21,7 +21,7 @@
 
 extern s32 gData_02000a28;
 
-void UiText_GetResourceDimensions();
+void Text_GetMessageSize();
 void Func_02000158();
 
 void Func_02000244(s32 message, s32 position, s32 wait) {
@@ -38,7 +38,7 @@ void Func_02000244(s32 message, s32 position, s32 wait) {
   x = 0;
   y = 0;
   wide = message & 0x8000;
-  UiText_GetResourceDimensions(gData_02000a28, &x, &y, &width, &height);
+  Text_GetMessageSize(gData_02000a28, &x, &y, &width, &height);
   if (width <= 24) {
     if (!wide)
       x = (25 - width) / 2 + 5;

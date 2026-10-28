@@ -24,12 +24,12 @@ void Menu_AppendResourceEntry(s32 no);
 void Menu_EndResourceSelection(void);
 void Resource_ResetPendingTransfer(void);
 s32 Shop_CanServe(s32 entry_id, s32 kind);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Obj;
 struct Object_0801c0dc;
 struct RenderInput;
-struct RenderOutput;
+struct WindowSprite;
 struct UiPanel;
 
 extern u8 gData_08105948[];
@@ -51,16 +51,16 @@ void Party_AdjustCoinsFar(s32);
 s32 Party_ListActiveOwnersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
 #ifndef OWN_RenderOutput_CreateFromResourceFar
-struct RenderOutput *
-RenderOutput_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
+struct WindowSprite *
+WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
                                    s32 arg3, s32 arg4);
 #endif
 void Resource_ScheduleOwnerReset(void);
 void *Text_FormatPlayTime(s32, u8 *);
-void Ui_SetRectHighlightFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
+void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Icon_PrepareActor(struct WindowSprite *icon);
 void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
-void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
+void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
 #endif

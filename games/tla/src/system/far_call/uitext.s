@@ -3,75 +3,75 @@
 	.include "games/tla/src/system/overlay.inc"
 	.global Resource_FarCall004
 Resource_FarCall004:
-	.global UiWork_InitializeWithResourceCountersFar
+	.global WindowSystem_InitFieldFar
 	.thumb_func
-UiWork_InitializeWithResourceCountersFar:
-	overlay_veneer UiWork_InitializeWithResourceCounters
-	.global UiWork_InitializeFar
+WindowSystem_InitFieldFar:
+	overlay_veneer WindowSystem_InitField
+	.global WindowSystem_InitBattleFar
 	.thumb_func
-UiWork_InitializeFar:
-	overlay_veneer UiWork_Initialize
-	.global UiWindow_CreateFar
+WindowSystem_InitBattleFar:
+	overlay_veneer WindowSystem_InitBattle
+	.global Window_CreateFar
 	.thumb_func
-UiWindow_CreateFar:
-	overlay_veneer UiWindow_Create
-	.global UiWork_FinalizeFar
+Window_CreateFar:
+	overlay_veneer Window_Create
+	.global Window_CloseFar
 	.thumb_func
-UiWork_FinalizeFar:
-	overlay_veneer UiWork_Finalize
-	.global Ui_AdjustValueWithoutLimitFar
+Window_CloseFar:
+	overlay_veneer Window_Close
+	.global Message_DecodeRawUnboundedFar
 	.thumb_func
-Ui_AdjustValueWithoutLimitFar:
-	overlay_veneer Ui_AdjustValueWithoutLimit
-	.global UiText_DecodeMessageFar
+Message_DecodeRawUnboundedFar:
+	overlay_veneer Message_DecodeRawUnbounded
+	.global Message_DecodeRawFar
 	.thumb_func
-UiText_DecodeMessageFar:
-	overlay_veneer UiText_DecodeMessage
-	.global UiText_CopyMessageStringFar
+Message_DecodeRawFar:
+	overlay_veneer Message_DecodeRaw
+	.global Message_CopyExpandedFar
 	.thumb_func
-UiText_CopyMessageStringFar:
-	overlay_veneer UiText_CopyMessageString
-	.global UiText_OpenMessageWindowFar
+Message_CopyExpandedFar:
+	overlay_veneer Message_CopyExpanded
+	.global Message_OpenWindowFar
 	.thumb_func
-UiText_OpenMessageWindowFar:
-	overlay_veneer UiText_OpenMessageWindow
-	.global UiText_ShowPositionedMessageAndWaitFar
+Message_OpenWindowFar:
+	overlay_veneer Message_OpenWindow
+	.global FieldMessage_ShowFar
 	.thumb_func
-UiText_ShowPositionedMessageAndWaitFar:
-	overlay_veneer UiText_ShowPositionedMessageAndWait
-	.global UiWork_IsCompleteFar
+FieldMessage_ShowFar:
+	overlay_veneer FieldMessage_Show
+	.global Message_AllTypedFar
 	.thumb_func
-UiWork_IsCompleteFar:
-	overlay_veneer UiWork_IsComplete
-	.global UiWork_IsIdleFar
+Message_AllTypedFar:
+	overlay_veneer Message_AllTyped
+	.global Window_IsClosedFar
 	.thumb_func
-UiWork_IsIdleFar:
-	overlay_veneer UiWork_IsIdle
-	.global UiWork_SetBusyFlagsFar
+Window_IsClosedFar:
+	overlay_veneer Window_IsClosed
+	.global Window_SetBusyFlagsFar
 	.thumb_func
-UiWork_SetBusyFlagsFar:
-	overlay_veneer UiWork_SetBusyFlags
-	.global RenderOutput_PrepareForRedrawFar
+Window_SetBusyFlagsFar:
+	overlay_veneer Window_SetBusyFlags
+	.global WindowSprite_PrepareForRedrawFar
 	.thumb_func
-RenderOutput_PrepareForRedrawFar:
-	overlay_veneer RenderOutput_PrepareForRedraw
-	.global UiWindow_ClearInteriorTilesFar
+WindowSprite_PrepareForRedrawFar:
+	overlay_veneer WindowSprite_PrepareForRedraw
+	.global Window_ClearInteriorTilesFar
 	.thumb_func
-UiWindow_ClearInteriorTilesFar:
-	overlay_veneer UiWindow_ClearInteriorTiles
-	.global UiWindow_DrawDividerLineFar
+Window_ClearInteriorTilesFar:
+	overlay_veneer Window_ClearInteriorTiles
+	.global Window_DrawDividerLineFar
 	.thumb_func
-UiWindow_DrawDividerLineFar:
-	overlay_veneer UiWindow_DrawDividerLine
-	.global UiText_DrawResourceFar
+Window_DrawDividerLineFar:
+	overlay_veneer Window_DrawDividerLine
+	.global Text_DrawMessageFar
 	.thumb_func
-UiText_DrawResourceFar:
-	overlay_veneer UiText_DrawResource
-	.global UiText_DrawCharacterAtOffsetFar
+Text_DrawMessageFar:
+	overlay_veneer Text_DrawMessage
+	.global Text_DrawCharacterAtOffsetFar
 	.thumb_func
-UiText_DrawCharacterAtOffsetFar:
-	overlay_veneer UiText_DrawCharacterAtOffset
-	.global UiText_DrawStringFar
+Text_DrawCharacterAtOffsetFar:
+	overlay_veneer Text_DrawCharacterAtOffset
+	.global Text_DrawStringFar
 	.thumb_func
-UiText_DrawStringFar:
-	overlay_veneer UiText_DrawString
+Text_DrawStringFar:
+	overlay_veneer Text_DrawString

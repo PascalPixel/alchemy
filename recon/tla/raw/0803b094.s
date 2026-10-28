@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_BuildRenderEntries
+	.global Message_Decode
 	.thumb_func
-UiText_BuildRenderEntries:
+Message_Decode:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -78,7 +78,7 @@ UiText_BuildRenderEntries:
 	mov r0, r10
 	ldr r1, [sp, #48]
 	mov r9, r3
-	bl UiText_LookupMessage
+	bl Message_Find
 	mov r3, sp
 	adds r3, #84
 	str r3, [sp, #12]
@@ -478,7 +478,7 @@ UiText_BuildRenderEntries:
 	add r5, sp, #68
 	adds r0, r5, #0
 	movs r2, #0
-	bl UiText_FormatNumber
+	bl String_FormatNumber
 	subs r4, r0, r5
 	cmp r4, #16
 	bne .L_0803b3fc
@@ -527,7 +527,7 @@ UiText_BuildRenderEntries:
 	ldr r1, [sp, #12]
 	adds r0, r2, r0
 	movs r2, #24
-	bl UiText_DecodeMessage
+	bl Message_DecodeRaw
 	ldr r3, [sp, #24]
 	adds r2, r6, #0
 	str r3, [sp, #4]
@@ -555,7 +555,7 @@ UiText_BuildRenderEntries:
 	ldr r1, [sp, #12]
 	adds r0, r2, r0
 	movs r2, #24
-	bl UiText_DecodeMessage
+	bl Message_DecodeRaw
 	ldr r1, [sp, #24]
 	add r3, sp, #52
 	str r1, [sp, #4]
@@ -575,7 +575,7 @@ UiText_BuildRenderEntries:
 	ldr r1, [sp, #12]
 	adds r0, r2, r0
 	movs r2, #24
-	bl UiText_DecodeMessage
+	bl Message_DecodeRaw
 	ldr r1, [sp, #12]
 	adds r0, r6, #0
 	ldrh r2, [r1]
@@ -607,7 +607,7 @@ UiText_BuildRenderEntries:
 	ldr r1, [sp, #12]
 	adds r0, r0, r3
 	movs r2, #24
-	bl UiText_DecodeMessage
+	bl Message_DecodeRaw
 	ldr r1, [sp, #12]
 	adds r0, r6, #0
 	ldrh r2, [r1]
@@ -954,7 +954,7 @@ UiText_BuildRenderEntries:
 	mov r1, r11
 	cmp r1, #0
 	beq .L_0803b782
-	bl UiWork_ClearValueNameTables
+	bl MessageArgument_ClearAll
 .L_0803b782:
 	ldr r0, [sp, #32]
 	add sp, #132

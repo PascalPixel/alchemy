@@ -79,13 +79,13 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-void UiWork_InitializeWithResourceCountersFar(void);
-struct RenderInput *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
+void WindowSystem_InitFieldFar(void);
+struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 mode);
-void UiWork_FinalizeFar(struct RenderInput *window, s32 mode);
-void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void Window_CloseFar(struct RenderInput *window, s32 mode);
+void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                      s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width,
+void Text_DrawNumberInWindowFar(s32 value, s32 width,
                                   struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
@@ -255,16 +255,16 @@ void LuckyDice_Run(void) {
   diceWork->particles[1].y = 0x600000;
   diceWork->particles[1].z = -0xa00000;
 
-  UiWork_InitializeWithResourceCountersFar();
-  window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+  WindowSystem_InitFieldFar();
+  window = Window_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+  Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                0);
-  window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+  window = Window_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11,
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11,
                                   sprites->helpWindow, 0, 8);
 
   frame = 0;
@@ -343,14 +343,14 @@ void LuckyDice_Run(void) {
         } else {
           digits = 5;
         }
-        window = UiWindow_CreateFar(8 - digits / 2, 16, digits + 13, 3, 6);
+        window = Window_CreateFar(8 - digits / 2, 16, digits + 13, 3, 6);
         sprites->winningsWindow = window;
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
                                         0);
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                         sprites->winningsWindow,
                                         digits * 8 + 56, 0);
-        UiText_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
+        Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
                                      56, 0);
       }
       if (payoutTimer > 0) {
@@ -370,17 +370,17 @@ void LuckyDice_Run(void) {
     } else if (state == 3) {
       if (payoutTimer == 0) {
         winnings = 0;
-        UiText_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
-        UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
+        Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
+        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
       }
       if (payoutTimer == 15) {
         state = 0;
-        UiWork_FinalizeFar(sprites->winningsWindow, 1);
-        window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+        Window_CloseFar(sprites->winningsWindow, 1);
+        window = Window_CreateFar(22, 16, 8, 4, 6);
         sprites->helpWindow = window;
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow + 1,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow + 1,
                                         sprites->helpWindow, 0, 8);
         resetDice = 1;
       }
@@ -409,24 +409,24 @@ void LuckyDice_Run(void) {
         diceWork->particles[1].y = 0xa00000;
       }
       if ((u32)gAdventure.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gInput.repeat & 2) {
         Sound_PlayFar(113);
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gInput.repeat & 1) {
         Sound_PlayFar(302);
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Window_CloseFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
         if ((u32)bet > (u32)gAdventure.coins) {
           bet = gAdventure.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
+        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
@@ -666,7 +666,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+          Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           Sound_PlayFar(93);
         } else {
@@ -681,13 +681,13 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
@@ -695,7 +695,7 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;

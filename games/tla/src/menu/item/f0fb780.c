@@ -32,13 +32,13 @@ void Task_Remove(void (*callback)(void));
 s32 Task_Add(void (*callback)(void), s32 order);
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_Test(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
+s32 Window_CreateFar(s32, s32, s32, s32, s32);
 void ItemMenu_DrawItemDetails(s32, s32);
-s32 RenderOutput_RedrawSavedRectFar(s32);
-void UiWork_FinalizeFar(s32, s32);
-void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
+s32 WindowSprite_RedrawSavedRectFar(s32);
+void Window_CloseFar(s32, s32);
+void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void Palette_LightenHighlight(s32);
-void UiWindow_DrawBorderFar(s32, s32, s32, s32);
+void Window_DrawBorderFar(s32, s32, s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
 /// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
@@ -56,7 +56,7 @@ s32 Func_080fb780(s32 value) {
 #if LANGUAGE != LANGUAGE_JAPANESE
   itemIcon->motion = 13;
 #endif
-  window = UiWindow_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, 2);
+  window = Window_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, 2);
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 
   {
@@ -94,11 +94,11 @@ s32 Func_080fb780(s32 value) {
     WaitFrames(1);
   }
 
-  RenderOutput_RedrawSavedRectFar(window);
+  WindowSprite_RedrawSavedRectFar(window);
   WaitFrames(1);
-  UiWork_FinalizeFar(window, 1);
-  RenderOutput_RedrawSavedRectFar(menu->mainWindow);
-  UiWindow_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);
+  Window_CloseFar(window, 1);
+  WindowSprite_RedrawSavedRectFar(menu->mainWindow);
+  Window_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);
   Palette_LightenHighlight(14);
   {
     s32 priority = 0x480;
@@ -113,7 +113,7 @@ s32 Func_080fb780(s32 value) {
 #if LANGUAGE == LANGUAGE_JAPANESE
   menu->unk21c = 1;
 #else
-  UiWindow_DrawBorderFar(13, 0, 17, 10);
+  Window_DrawBorderFar(13, 0, 17, 10);
 #endif
 
   return counter;

@@ -16,7 +16,7 @@ extern const u8 gDebug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 void Func_08014b70(void);
 
 #define PALETTE ((u16 *)0x05000000)
@@ -152,6 +152,6 @@ redraw:
       break;
     WaitFrames(1);
   }
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
 }

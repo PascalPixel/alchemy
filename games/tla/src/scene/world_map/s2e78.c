@@ -16,7 +16,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -93,7 +93,7 @@ void Func_02002e78(void) {
     Func_02004ce8(5, 0, 10);
     /* FAKEMATCH: called as returning a value, which the native's argument order
      * shows (r1 before r0). */
-    ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(7, 0);
+    ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(7, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Func_02004d08_(8, 265, 30);
       Func_02004ce8(9, 0, 10);

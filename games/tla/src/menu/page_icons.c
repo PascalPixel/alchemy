@@ -16,7 +16,7 @@ struct MenuPageWork {
 
 #include "ram_buffer.h"
 
-void UiIcon_PrepareObject(struct MenuPageIcon *icon);
+void Icon_PrepareActor(struct MenuPageIcon *icon);
 
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
@@ -33,7 +33,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
        i++) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
-    UiIcon_PrepareObject(icon);
+    Icon_PrepareActor(icon);
     icon->state = 1;
   }
 }

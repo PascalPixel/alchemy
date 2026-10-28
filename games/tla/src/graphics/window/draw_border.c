@@ -3,17 +3,17 @@
 #include "window.h"
 
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
-void UiWindow_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
-  UiWindow_ClearTileAttributesInRect(x, y, width, height);
+  Window_ClearTextTilesInRect(x, y, width, height);
   if (canvas->mode != 0)
     *cursor++ = 0xf01c;
   else
@@ -44,14 +44,14 @@ void UiWindow_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 }
 
 void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
-  UiWindow_ClearTileAttributesInRect(x, y, width, height);
+  Window_ClearTextTilesInRect(x, y, width, height);
   *cursor++ = 0xf008;
   cursor = Memory_FillHalfwordsDma(cursor, 0xf009f009, width - 2);
   *cursor++ = 0xf00a;

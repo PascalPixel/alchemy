@@ -95,7 +95,7 @@ Func_08103218:
 	mov r2, r9
 	adds r3, r5, #0
 	movs r1, #4
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	movs r1, #64
 	add r1, r11
@@ -106,7 +106,7 @@ Func_08103218:
 	mov r2, r9
 	adds r3, r5, #0
 	movs r1, #4
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	subs r5, #40
 	mov r1, r10
@@ -116,7 +116,7 @@ Func_08103218:
 	mov r2, r9
 	adds r3, r5, #0
 	movs r1, #4
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	mov r1, r8
 	movs r2, #58
@@ -125,7 +125,7 @@ Func_08103218:
 	adds r3, r5, #0
 	movs r1, #4
 	mov r2, r9
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r5, .L_08103630
 	adds r6, r7, #0
 	adds r6, #64
@@ -133,12 +133,12 @@ Func_08103218:
 	mov r1, r9
 	adds r2, r6, #0
 	mov r3, r10
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	adds r0, r5, #0
 	mov r1, r9
 	adds r2, r6, #0
 	mov r3, r8
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	b .L_08103370
 .L_08103336:
 	ldr r3, [sp, #48]
@@ -157,7 +157,7 @@ Func_08103218:
 	movs r1, #4
 	adds r3, r5, #0
 	mov r2, r9
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r1, [sp, #48]
 	mov r2, r9
 	movs r3, #58
@@ -167,7 +167,7 @@ Func_08103218:
 	str r3, [sp, #0]
 	movs r1, #4
 	adds r3, r5, #0
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_08103370:
 	ldr r2, [sp, #48]
 	adds r5, r7, #0
@@ -179,7 +179,7 @@ Func_08103218:
 	str r3, [sp, #0]
 	mov r2, r9
 	adds r3, r5, #0
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	movs r1, #3
 	ldrh r0, [r3, #62]
@@ -188,7 +188,7 @@ Func_08103218:
 	str r3, [sp, #0]
 	mov r2, r9
 	adds r3, r5, #0
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	movs r1, #3
 	adds r3, #64
@@ -198,7 +198,7 @@ Func_08103218:
 	str r3, [sp, #0]
 	mov r2, r9
 	adds r3, r5, #0
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	mov r2, r11
 	adds r3, #66
@@ -209,7 +209,7 @@ Func_08103218:
 	adds r3, #56
 	movs r1, #2
 	mov r2, r9
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_081033ca:
 	ldr r0, [sp, #208]
 	cmp r0, #1
@@ -313,12 +313,12 @@ Func_08103218:
 	mov r1, r9
 	adds r2, r6, #0
 	mov r3, r8
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	adds r3, r5, #0
 	ldr r0, .L_08103634
 	mov r1, r9
 	adds r2, r6, #0
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	ldr r2, [sp, #48]
 	adds r3, r7, #0
 	ldrb r0, [r2, #15]
@@ -326,45 +326,45 @@ Func_08103218:
 	movs r1, #2
 	mov r2, r9
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r5, .L_08103638
 	mov r3, r8
 	adds r0, r5, #0
 	adds r3, #56
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r8
 	adds r0, r5, #1
 	adds r3, #64
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r8
 	adds r0, r5, #2
 	adds r3, #72
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r8
 	adds r0, r5, #3
 	adds r3, #80
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r8
 	adds r0, r5, #4
 	adds r3, #88
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #5
 	mov r3, r8
 	adds r3, #96
 	adds r0, r5, #0
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, [sp, #44]
 	movs r1, #42
 	adds r1, #255
@@ -376,7 +376,7 @@ Func_08103218:
 	mov r3, r8
 	adds r3, #32
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_08103530:
 	ldr r2, [sp, #212]
 	cmp r2, #0
@@ -404,7 +404,7 @@ Func_08103218:
 	adds r3, #48
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r3, [sp, #212]
 	ldr r2, [sp, #60]
 	movs r1, #242
@@ -414,7 +414,7 @@ Func_08103218:
 	adds r1, #150
 	movs r3, #5
 	mov r0, r9
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldrb r2, [r6]
 	ldrb r3, [r5]
 .L_08103580:
@@ -443,7 +443,7 @@ Func_08103218:
 	adds r2, r5, #0
 	mov r0, r9
 	adds r3, r7, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	movs r0, #142
 	ldr r2, [sp, #48]
 	lsls r0, r0, #1
@@ -459,7 +459,7 @@ Func_08103218:
 	adds r2, r5, #0
 	mov r0, r9
 	adds r3, r7, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	adds r6, #1
 	movs r1, #192
 	lsls r6, r6, #24
@@ -485,7 +485,7 @@ Func_08103218:
 	mov r2, r9
 	adds r5, #56
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r0, [sp, #48]
 	movs r3, #56
 	ldrsh r2, [r0, r3]
@@ -539,7 +539,7 @@ Func_08103218:
 	mov r2, r9
 	adds r5, #64
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r0, [sp, #48]
 	movs r3, #58
 	ldrsh r2, [r0, r3]
@@ -581,7 +581,7 @@ Func_08103218:
 	adds r5, #72
 	movs r1, #4
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	ldr r0, [sp, #44]
 	ldrh r2, [r3, #60]
@@ -621,7 +621,7 @@ Func_08103218:
 	adds r5, #80
 	movs r1, #4
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #48]
 	ldr r0, [sp, #44]
 	ldrh r2, [r3, #62]
@@ -664,7 +664,7 @@ Func_08103218:
 	adds r6, #88
 	movs r1, #4
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	mov r0, r8
 	ldrh r2, [r5]
 	ldrh r3, [r0]
@@ -706,7 +706,7 @@ Func_08103218:
 	adds r6, #96
 	movs r1, #2
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	mov r0, r8
 	ldrb r2, [r5]
 	ldrb r3, [r0]
@@ -790,7 +790,7 @@ Func_08103218:
 	adds r2, #4
 	mov r0, r9
 	adds r1, r7, #0
-	bl UiIcon_CreateWithLoadedResource
+	bl Icon_CreateWithLoadedResource
 	mov r3, r8
 	ldrh r2, [r3]
 	ldr r3, .L_0810389c
@@ -798,7 +798,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_0810388a
 	movs r0, #4
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	b .L_081038aa
 .L_0810388a:
 	ldr r3, .L_081038a0
@@ -806,7 +806,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_081038a4
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	b .L_081038aa
 	.2byte 0x0000
 .L_0810389c:
@@ -815,7 +815,7 @@ Func_08103218:
 	.4byte 0x00004000
 .L_081038a4:
 	movs r0, #15
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 .L_081038aa:
 	mov r0, r8
 	ldr r1, [sp, #56]
@@ -835,7 +835,7 @@ Func_08103218:
 	mov r1, r9
 	adds r3, r5, #0
 	adds r2, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r2, r8
 	ldrh r0, [r2]
 	bl BattleAction_Get
@@ -845,7 +845,7 @@ Func_08103218:
 	mov r2, r9
 	adds r3, #88
 	str r5, [sp, #0]
-	bl UiText_DrawNumberAtOffsetFar
+	bl Text_DrawNumberAtOffsetFar
 	ldr r0, [sp, #8]
 	movs r1, #128
 	lsls r1, r1, #17
@@ -873,7 +873,7 @@ Func_08103218:
 	lsls r7, r1, #3
 .L_0810391a:
 	movs r0, #15
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	ldr r3, [sp, #56]
 	adds r2, r7, #0
 	lsls r6, r3, #3
@@ -881,7 +881,7 @@ Func_08103218:
 	adds r2, #88
 	mov r1, r9
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, [sp, #208]
 	cmp r0, #3
 	beq .L_0810399e
@@ -890,20 +890,20 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_08103956
 	movs r0, #4
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	adds r3, r6, #0
 	ldr r0, .L_081039ec
 	adds r3, #88
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r5, #1
 .L_08103956:
 	ldr r3, [sp, #64]
 	cmp r3, #0
 	beq .L_08103976
 	movs r0, #2
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	ldr r1, [sp, #56]
 	ldr r0, .L_081039f0
 	adds r3, r1, r5
@@ -911,7 +911,7 @@ Func_08103218:
 	adds r3, #88
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #1
 .L_08103976:
 	cmp r5, #0
@@ -921,17 +921,17 @@ Func_08103218:
 	adds r3, #88
 	mov r1, r9
 	adds r2, r7, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_08103988:
 	movs r0, #15
-	bl UiWork_SetParamNibbleFar
+	bl Text_SetColorFar
 	movs r3, #11
 	str r3, [sp, #0]
 	mov r0, r9
 	movs r1, #0
 	movs r2, #11
 	movs r3, #13
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 .L_0810399e:
 	movs r3, #192
 	lsls r3, r3, #18

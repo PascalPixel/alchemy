@@ -9,17 +9,17 @@
 #include "system.h"
 #include "uiflow.h"
 
-void RenderOutput_PrepareForRedraw(struct UiWindow *work);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void UiWindow_DrawBorder(s16 x, s16 y, u16 width, u16 height);
+void WindowSprite_PrepareForRedraw(struct Window *work);
+void WindowSprite_RedrawSavedRect(struct Window *window);
+void Window_DrawBorder(s16 x, s16 y, u16 width, u16 height);
 
-void UiWork_Finalize(struct UiWindow *work, s32 release) {
+void Window_Close(struct Window *work, s32 release) {
   u16 zero;
 
   if (work == 0)
     return;
 
-  RenderOutput_PrepareForRedraw(work);
+  WindowSprite_PrepareForRedraw(work);
   zero = 0;
   work->flags = zero;
   work->previousX = work->x;
@@ -28,7 +28,7 @@ void UiWork_Finalize(struct UiWindow *work, s32 release) {
   work->previousHeight = work->height;
 
   if (release != 0) {
-    UiWindow_EraseBorderRect((s16)work->x, (s16)work->y, work->width,
+    Window_EraseBorderRect((s16)work->x, (s16)work->y, work->width,
                              work->height);
     work->output.head = NULL;
     work->output.tailLink = NULL;
@@ -52,13 +52,13 @@ void UiWork_Finalize(struct UiWindow *work, s32 release) {
   }
 }
 
-void RenderOutput_PrepareForRedraw(struct UiWindow *work) {
+void WindowSprite_PrepareForRedraw(struct Window *work) {
   if (!(8 & work->flags)) {
-    RenderOutput_RedrawSavedRect(work);
-    RenderOutput_ClearList(work);
+    WindowSprite_RedrawSavedRect(work);
+    WindowSprite_ClearList(work);
   }
 }
 
-void RenderOutput_RedrawSavedRect(struct UiWindow *window) {
-  UiWindow_DrawBorder(window->x, window->y, window->width, window->height);
+void WindowSprite_RedrawSavedRect(struct Window *window) {
+  Window_DrawBorder(window->x, window->y, window->width, window->height);
 }

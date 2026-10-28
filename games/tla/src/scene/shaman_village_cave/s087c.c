@@ -22,8 +22,8 @@ void Camera_MoveWithinMapBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
-void UiWork_FinalizePendingCore();
+void FieldMessage_ShowAtActor();
+void Message_CloseFinishedWindows();
 
 #define EVENT_MESSAGE                                                          \
   (((struct {                                                                  \
@@ -81,13 +81,13 @@ void Func_0200087c(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 263, 30)
-  Call2(UiText_OpenMessageAtObject, 19, 0);
+  Call2(FieldMessage_ShowAtActor, 19, 0);
   if (Value1((s32 (*)())Func_020011e8, 1) == 0) {
-    UiWork_FinalizePendingCore();
+    Message_CloseFinishedWindows();
     Call3(Func_02001148, 20, 0, 5);
     EVENT_MESSAGE++;
   } else {
-    UiWork_FinalizePendingCore();
+    Message_CloseFinishedWindows();
     EVENT_MESSAGE++;
     Call3(Func_02001148, 20, 0, 5);
   }

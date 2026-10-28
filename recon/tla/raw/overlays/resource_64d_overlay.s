@@ -497,7 +497,7 @@ Func_02000510:
 	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r0, #5
@@ -2055,7 +2055,7 @@ Func_02000510:
 	bl Func_02002964
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #5
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

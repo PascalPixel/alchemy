@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Near miss, differ 10 of 217: The Broken Seal's international
-// UiText_MeasureEntryDimensions with ⚓️'s changes: code 176 is a control
+// Text_MeasureEntry with ⚓️'s changes: code 176 is a control
 // code, a page break (1) resets the counters before it ends the text, a text
 // mode window taller than 44 pixels keeps two lines and flags spacing[3], and
 // the counters are reset at the end. With case 1 before case 3 the call
@@ -16,11 +16,11 @@
 #include "window.h"
 #include "glyph.h"
 
-void UiWork_ResetCounters(void);
+void Text_ResetStyle(void);
 
-void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
+void Text_MeasureEntry(s32 entryIndex, u32 *outWidth,
                                    u32 *outHeight, u16 *spacing) {
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 lines;
   u32 width;
   u32 height;
@@ -36,7 +36,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
 
   /* FAKEMATCH: the parameter spills are stored before the work load. */
   asm("");
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   width = 0;
   height = 15;
   lines = 0;
@@ -50,7 +50,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
         lineWidth += 5;
         count++;
       } else {
-        glyph = gUiText_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - 32].width;
         style = work->outline;
         if (style == 1 || style == 5)
           glyph++;
@@ -72,7 +72,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
       height += 15;
       break;
     case 1:
-      UiWork_ResetCounters();
+      Text_ResetStyle();
     case 0:
       goto done;
     case 14:
@@ -128,5 +128,5 @@ done:
       lineIndex++;
     }
   }
-  UiWork_ResetCounters();
+  Text_ResetStyle();
 }

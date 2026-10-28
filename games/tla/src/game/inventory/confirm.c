@@ -4,12 +4,12 @@
 #include "ram_buffer.h"
 
 s16 *Scene_FindActorPlacement(s32 action);
-s32 UiWork_IsCompleteFar(void);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 count);
 s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
 void Object_SetModeById(u32 id, s32 mode);
-void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 sprite);
-void UiWork_FinalizePendingCoreFar(void);
+void Window_CloseMatchingIdFar(s32 sprite);
+void Message_CloseFinishedWindowsFar(void);
 void Object_WaitUntilChildValueDiffers(s32 actor, s32 value);
 
 /// The event command "choose yes or no": waits for the message, asks yes or no
@@ -22,12 +22,12 @@ void Object_WaitUntilChildValueDiffers(s32 actor, s32 value);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 sprite = *Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));
-  struct UiWindow *window = *(struct UiWindow **)(work + 0x1e4);
-  struct UiWindow *side = *(struct UiWindow **)(work + 0x1e8);
+  struct Window *window = *(struct Window **)(work + 0x1e4);
+  struct Window *side = *(struct Window **)(work + 0x1e8);
   s32 useBottom = 1;
   s32 answer;
 
-  while (UiWork_IsCompleteFar() == 0)
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
 
   WaitFrames((2 - gAdventure.eventMode) * 3);
@@ -50,14 +50,14 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
                                        *(s16 *)(work + 0xcb4));
   if (answer != 0) {
     Object_SetModeById(actor, 4);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
-    UiWork_FinalizePendingCoreFar();
+    Window_CloseMatchingIdFar(sprite);
+    Message_CloseFinishedWindowsFar();
     if (gAdventure.eventMode != 2)
       Object_WaitUntilChildValueDiffers(actor, 4);
   } else {
     Object_SetModeById(actor, 3);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
-    UiWork_FinalizePendingCoreFar();
+    Window_CloseMatchingIdFar(sprite);
+    Message_CloseFinishedWindowsFar();
     if (gAdventure.eventMode != 2)
       Object_WaitUntilChildValueDiffers(actor, 3);
   }

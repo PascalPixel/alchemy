@@ -74,8 +74,8 @@ void Menu_EnsureCancelSound(void) {
   }
 }
 
-void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(15); }
+void UiPalette_SetColor15(void) { Text_SetColorFar(15); }
 
-void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(2); }
+void UiPalette_SetColor2(void) { Text_SetColorFar(2); }
 
-void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(4); }
+void UiPalette_SetColor4(void) { Text_SetColorFar(4); }

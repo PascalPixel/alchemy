@@ -19,9 +19,9 @@
 
 struct WorkspaceScreen {
   u8 unk000[0x5a4];
-  struct RenderOutput *cursor;
+  struct WindowSprite *cursor;
   u8 unk5a8[0x68];
-  struct RenderOutput *icons[6];
+  struct WindowSprite *icons[6];
 };
 
 extern u8 MsgTestA[];
@@ -30,13 +30,13 @@ extern u8 MsgTestC[];
 extern const s8 gData_0805ea8f[];
 
 s32 GameFlag_Test(s32 flag);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
-void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0,
+void Window_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0,
                               s32 x1, s32 y1);
-void UiText_DrawResource(s32 message, struct RenderInput *window, s32 x, s32 y);
+void Text_DrawMessage(s32 message, struct RenderInput *window, s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-struct RenderOutput *RenderResource_CreateCommandIcon(s32 frame, s32 flag,
+struct WindowSprite *RenderResource_CreateCommandIcon(s32 frame, s32 flag,
                                                 struct RenderInput *window,
                                                 s32 x, s32 y);
 
@@ -68,29 +68,29 @@ struct RenderInput *Func_08040628(void) {
     top = 1;
     height = 19;
   }
-  win = UiWindow_Create(5, top, 20, height, 2);
+  win = Window_Create(5, top, 20, height, 2);
   for (i = 1; i < rows; i++)
-    UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
+    Window_DrawDividerLine(win, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
     msg = (s32)MsgTestA;
-    UiText_DrawResource(msg, win, 48, 4);
+    Text_DrawMessage(msg, win, 48, 4);
     msg++;
-    UiText_DrawResource(msg, win, 48, 28);
+    Text_DrawMessage(msg, win, 48, 28);
     y = 52;
   }
-  UiText_DrawResource((s32)MsgTestB, win, 48, y);
+  Text_DrawMessage((s32)MsgTestB, win, 48, y);
   y += 24;
   if (gDebugMode != 0) {
     msg = (s32)MsgTestC;
-    UiText_DrawResource(msg, win, 48, y);
+    Text_DrawMessage(msg, win, 48, y);
     y += 24;
-    UiText_DrawResource(msg + 1, win, 48, y);
+    Text_DrawMessage(msg + 1, win, 48, y);
     y += 24;
     msg += 2;
-    UiText_DrawResource(msg, win, 48, y);
+    Text_DrawMessage(msg, win, 48, y);
   }
-  work->cursor = RenderOutput_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
+  work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                                      0x40000000, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {

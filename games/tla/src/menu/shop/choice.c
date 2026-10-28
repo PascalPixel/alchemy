@@ -20,7 +20,7 @@
 
 struct ShopRuntime {
   u8 unk000[0x4dc];
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u8 unk4e0[0x1a];
   u16 keeperResource;
   u8 unk4fc[0xa];
@@ -31,8 +31,8 @@ struct Record_080b06c0 {
   u8 filler0[4];
   u8 values[21];
 };
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizePendingCoreFar(void);
+s32 Message_AllTypedFar(void);
+void Message_CloseFinishedWindowsFar(void);
 
 void Func_081084f4(s32 first) {
   struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
@@ -46,7 +46,7 @@ void Func_081084f4(s32 first) {
   asm volatile("");
   message = first;
   value = BattleEffect_GetResourceIdFar(state->keeperResource);
-  UiWork_FinalizePendingCoreFar();
+  Message_CloseFinishedWindowsFar();
   mode = state->shopType;
   if (mode == 3)
     message += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
@@ -54,8 +54,8 @@ void Func_081084f4(s32 first) {
     message += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   if (mode == 0)
     message += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  UiText_OpenMessageWindowFar(message, 5, 0, (value << 16) | 0x22);
-  while (UiWork_IsCompleteFar() == 0)
+  Message_OpenWindowFar(message, 5, 0, (value << 16) | 0x22);
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -66,7 +66,7 @@ void Func_0810857c(s32 messageId) {
   s8 mode;
   u8 saved;
   struct ShopRuntime *state;
-  struct RenderOutput **slot;
+  struct WindowSprite **slot;
 
   /* FAKEMATCH: the one-pass block loads the shop work before the anchor offset
    * is built (differ 2 without it). */
@@ -85,20 +85,20 @@ void Func_0810857c(s32 messageId) {
   if (mode == 0)
     no += MsgItemShopWelcome - MsgWeaponShopWelcome;
   (*slot)->active = 0xD;
-  UiWork_FinalizePendingCoreFar();
-  UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
-  while (UiWork_IsCompleteFar() == 0)
+  Message_CloseFinishedWindowsFar();
+  Message_OpenWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
   state->anchor->active = saved;
 }
 
 s32 Func_08108630(s32 arg0) {
-  struct RenderOutput **slot =
+  struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
   u8 saved = (*slot)->active;
 
-  UiIcon_PrepareObjectFar(*slot);
+  Icon_PrepareActorFar(*slot);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_ITALIAN)
   arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
@@ -110,11 +110,11 @@ s32 Func_08108630(s32 arg0) {
 }
 
 s32 Func_08108660(s32 arg0) {
-  struct RenderOutput **slot =
+  struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
   u8 saved = (*slot)->active;
 
-  UiIcon_PrepareObjectFar(*slot);
+  Icon_PrepareActorFar(*slot);
   arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);
   (*slot)->active = saved;
   return arg0;

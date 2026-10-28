@@ -4,7 +4,7 @@
 void Func_02000600(void) {
   Func_02004040();
   Func_020041b8(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgNorthAlhafraSouth, 1);
+  FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
   Func_02004048();
 }
 

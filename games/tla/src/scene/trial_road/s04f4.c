@@ -7,7 +7,7 @@ void Func_02005880(void);
 void Func_02005888(void);
 void Func_020059e8(s32 value);
 void Func_02005858(s32 value, s32 slot);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags);
+void FieldMessage_Show(s32 message, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_02000218(s32 a, s32 b);
 /// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
@@ -27,7 +27,7 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Func_020059e8(0);
   Func_02005858(owner, 1);
   Func_02005858(item, 2);
-  UiText_ShowPositionedMessageAndWait((s32)&MsgTrialRoadStoredItem, 1);
+  FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Func_02005a68(125);
   Motion_SetModeAndWaitAnimation(kind, 5);
   if (kind == 9 || kind == 11)

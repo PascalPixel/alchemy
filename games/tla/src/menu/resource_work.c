@@ -19,7 +19,7 @@ void *AffineEffect_InitializeWork(void) {
 }
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-void UiWork_Finalize(struct Work *work, s32 release);
+void Window_Close(struct Work *work, s32 release);
 
 void Menu_EndResourceSelection(void) {
   struct Work *child;
@@ -31,7 +31,7 @@ void Menu_EndResourceSelection(void) {
   Task_Remove(Func_0804cda8);
   child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
   if (child != 0) {
-    UiWork_Finalize(child, 2);
+    Window_Close(child, 2);
   }
   i = 0;
   while (i < (s32)FIELD_AT_OFFSET(work, s16, 0x8E)) {

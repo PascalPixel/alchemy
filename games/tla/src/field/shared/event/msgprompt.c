@@ -4,13 +4,13 @@
 #include "object_runtime.h"
 #include "input.h"
 
-void *UiText_OpenMessageAtObject(s32 object, s32 message);
+void *FieldMessage_ShowAtActor(s32 object, s32 message);
 void WaitFrames(s32 frames);
 s32 ObjectTable_ReadActiveValue(s32 key);
 void *Scene_FindActorPlacement(s32 id);
-void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 id);
-s32 UiWork_IsIdleFar(s32 window);
-void UiWork_FinalizePendingCoreFar(void);
+void Window_CloseMatchingIdFar(s32 id);
+s32 Window_IsClosedFar(s32 window);
+void Message_CloseFinishedWindowsFar(void);
 void Func_080d4330(s32 key);
 
 /* FAKEMATCH: each test reads the held keys again, as a volatile read; plain
@@ -22,7 +22,7 @@ void Func_080d4330(s32 key);
 void Func_080d3fb0(s32 object, s32 message) {
   s32 masked;
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  void *window = UiText_OpenMessageAtObject(object, message);
+  void *window = FieldMessage_ShowAtActor(object, message);
   s32 id;
   u32 frames;
 
@@ -34,15 +34,15 @@ void Func_080d3fb0(s32 object, s32 message) {
     if (Scene_FindActorPlacement(masked) == 0)
       id = masked;
   }
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(id);
+  Window_CloseMatchingIdFar(id);
 
   if (work->waitMode == 0) {
-    while (UiWork_IsIdleFar((s32)window) == 0) {
+    while (Window_IsClosedFar((s32)window) == 0) {
       WaitFrames(1);
       frames++;
       if (frames > 600 ||
           ((HELD & 4) && (HELD & 0x100) && (HELD & 0x200) && (HELD & 1)))
-        UiWork_FinalizePendingCoreFar();
+        Message_CloseFinishedWindowsFar();
     }
   }
 
@@ -63,7 +63,7 @@ void EventRuntime_ShowMessageAndWait(s32 object, s32 message) {
   Func_080d3fb0(object, message);
 }
 
-void *UiText_OpenMessageAtObject(s32 object, s32 message);
+void *FieldMessage_ShowAtActor(s32 object, s32 message);
 s32 EventRuntime_GetControlledOwner(void);
 s32 Event_AskYesNoWithActorAnimation(s32 owner, s32 mode);
 void Func_080d3fb0(s32 object, s32 message);
@@ -71,7 +71,7 @@ void Func_080d3fb0(s32 object, s32 message);
 s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
   s32 result;
 
-  UiText_OpenMessageAtObject(object, message);
+  FieldMessage_ShowAtActor(object, message);
   result =
       Event_AskYesNoWithActorAnimation(EventRuntime_GetControlledOwner(), 0);
   if (result == 0) {
@@ -86,7 +86,7 @@ s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
 
 void EventRuntime_Noop(void) {}
 
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
 
 /// Opens the next message for the speaker and waits until its window is idle.
 void Func_080d40dc(s32 speaker) {
@@ -115,9 +115,9 @@ void Func_080d40dc(s32 speaker) {
     py = py < 20 ? 20 : py;
     if (py > 220)
       py = 220;
-    window = UiText_OpenMessageWindowFar((s16)work->messageId, px, py, 1);
+    window = Message_OpenWindowFar((s16)work->messageId, px, py, 1);
     work->objectStatus = window;
-    while (UiWork_IsIdleFar(window) == 0)
+    while (Window_IsClosedFar(window) == 0)
       WaitFrames(1);
   }
   work->messageId++;

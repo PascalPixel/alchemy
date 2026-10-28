@@ -43,7 +43,7 @@ struct ShopUnit {
 extern u8 Msg04676[], Msg04675[];
 
 struct ShopUnit *Unit_Get(s32 unitId);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 s32 Inventory_CountFar(s32 unitId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_0810bca0(void *window, s32 unitId, s32 slot);
@@ -52,20 +52,20 @@ void WaitFrames(s32 frames);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
 void Sound_PlayFar(s32 cue);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizePendingCoreFar(void);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
+s32 Message_AllTypedFar(void);
+void Message_CloseFinishedWindowsFar(void);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
-void UiWork_FinalizeFar(void *window, s32 style);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void Window_CloseFar(void *window, s32 style);
+void WindowSprite_PrepareForRedrawFar(void *window);
 
 s32 Func_0810b9c0(s32 unitId) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   s32 inventoryCount = 1;
   s32 redraw = 1;
-  void *priceWindow = UiWindow_CreateFar(14, 8, 16, 4, 2);
-  void *nameWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+  void *priceWindow = Window_CreateFar(14, 8, 16, 4, 2);
+  void *nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
   s32 slot;
   s32 itemId;
   s32 flags;
@@ -101,13 +101,13 @@ s32 Func_0810b9c0(s32 unitId) {
         break;
       }
       if (flags & 1)
-        UiText_OpenMessageWindowFar((s32)Msg04676, 8, 1, 0);
+        Message_OpenWindowFar((s32)Msg04676, 8, 1, 0);
       else if (flags & 2)
-        UiText_OpenMessageWindowFar((s32)Msg04675, 8, 1, 0);
+        Message_OpenWindowFar((s32)Msg04675, 8, 1, 0);
       Sound_PlayFar(113);
-      while (UiWork_IsCompleteFar() == 0)
+      while (Message_AllTypedFar() == 0)
         WaitFrames(1);
-      UiWork_FinalizePendingCoreFar();
+      Message_CloseFinishedWindowsFar();
       continue;
     }
     if (gInput.pressed & 2) {
@@ -119,14 +119,14 @@ s32 Func_0810b9c0(s32 unitId) {
       u32 item = unit->inventory[slot];
 
       Sound_PlayFar(126);
-      window = UiWindow_CreateFar(0, 9, 16, 10, 2);
+      window = Window_CreateFar(0, 9, 16, 10, 2);
       ItemMenu_DrawItemDetailsFar(window, item);
       shop->detailsHidden = 0;
       while (gInput.held & 4)
         WaitFrames(1);
       shop->detailsHidden = 1;
-      UiWork_FinalizeFar(window, 2);
-      RenderOutput_PrepareForRedrawFar(shop->listWindow);
+      Window_CloseFar(window, 2);
+      WindowSprite_PrepareForRedrawFar(shop->listWindow);
       WaitFrames(1);
       redraw = 1;
       continue;
@@ -162,8 +162,8 @@ s32 Func_0810b9c0(s32 unitId) {
       redraw = 1;
     }
   }
-  UiWork_FinalizeFar(nameWindow, 2);
-  UiWork_FinalizeFar(priceWindow, 2);
+  Window_CloseFar(nameWindow, 2);
+  Window_CloseFar(priceWindow, 2);
   WaitFrames(1);
   return result;
 }

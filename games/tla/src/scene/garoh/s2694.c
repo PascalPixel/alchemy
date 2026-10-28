@@ -45,7 +45,7 @@ s32 Camera_FollowActor();
 s32 Object_GetById();
 s32 Object_LinkObjectAndSetCallback();
 s32 Object_SetModeById();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 extern u8 MsgGaroh14[];
 extern u8 gAdventure[];
 
@@ -124,7 +124,7 @@ void Func_02002694(void) {
   }
   Func_020052b4();
   Call2(Func_020052a4, 0x18000, 0x3000);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   t1 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t1 != 0)
     goto L_0200a818;
@@ -322,7 +322,7 @@ L_0200ac86:;
   Func_0200528c(9, 0x101, 60);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
   Call1(FieldEvent_WaitFrames, 10);
-  UiText_OpenMessageAtObject(10, 0);
+  FieldMessage_ShowAtActor(10, 0);
   t6 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t6 == 0)
     goto L_0200ace6;
@@ -439,7 +439,7 @@ L_0200ae32:;
     Object_SetModeById(a0, 3);
   }
   Call1(FieldEvent_WaitFrames, 20);
-  Call2(UiText_OpenMessageAtObject, 10, 0);
+  Call2(FieldMessage_ShowAtActor, 10, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);

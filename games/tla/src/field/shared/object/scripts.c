@@ -70,7 +70,7 @@ const s32 gObjectMotion_StepAngleScript[] = {
     SC_END,
 };
 
-/// gUi_RenderResultValues
+/// gWindow_RenderResultValues
 const u8 gData_080f330c[4] = {
     1,
     3,

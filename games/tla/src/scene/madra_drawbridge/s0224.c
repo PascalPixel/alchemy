@@ -10,7 +10,7 @@ void Func_02000310(s32 actor, s32 a, s32 b);
 void Func_02000318(s32 actor, s32 a);
 void Func_02000338(void);
 void Func_02000340(s32 skip);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);

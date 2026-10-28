@@ -57,7 +57,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   u8 *work;
 
   work = Runtime_AllocateBlock(0x44, 0x608);
-  Ui_PrepareTransferFromTableEntry(resource);
+  Icon_DrawMisc(resource);
   result = VramCache_Reload(index, (s32)(work + 0x400));
   Runtime_ReleaseHeapBlock(0x44);
   return result;

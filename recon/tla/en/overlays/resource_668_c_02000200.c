@@ -49,7 +49,7 @@ void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
 void FieldEvent_WaitFrames();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();

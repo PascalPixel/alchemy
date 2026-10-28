@@ -3,7 +3,7 @@
 #include "window.h"
 #include "uiwindow.h"
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 struct WindowTileWork {
   u8 unk000[2];
@@ -12,7 +12,7 @@ struct WindowTileWork {
   u8 table[256];
 };
 
-void UiWork_SetAltFlagAndClearTable(s32 alt) {
+void Text_UseExtraTiles(s32 alt) {
   struct WindowTileWork *work =
       (struct WindowTileWork *)Ram_HeapSlots->windowTiles;
   s32 i;
@@ -36,9 +36,9 @@ void Func_08041c50(void) {}
 
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
 /// joining it to the frame and divider tiles already on the tilemap.
-void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
+void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
                               u32 y2) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor;
   u32 pos;
   u32 tile;
@@ -51,7 +51,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
       y1 = y2;
       y2 = pos;
     }
-    UiWindow_ClearTileAttributesInRect((s16)win->x + x2, (s16)win->y + y1, 1,
+    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1,
                                        y2 - y1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x2;
     for (pos = y1; pos <= y2; pos++) {
@@ -125,7 +125,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
       x1 = x2;
       x2 = pos;
     }
-    UiWindow_ClearTileAttributesInRect((s16)win->x + x1, (s16)win->y + y1,
+    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1,
                                        x2 - x1, 1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x1;
     for (pos = x1; pos <= x2; pos++) {

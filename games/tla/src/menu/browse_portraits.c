@@ -10,12 +10,12 @@ extern s16 gPortrait_CharacterMap[];
 extern s16 gPortrait_SpriteMap[];
 
 struct RenderInput *Func_0803d3c0(s32 x, s32 y, s32 width, s32 height);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
-void RenderOutput_PrepareForRedraw(struct RenderInput *window);
+void WindowSprite_PrepareForRedraw(struct RenderInput *window);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
-void UiText_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *output,
+void Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *output,
                                s32 x, s32 y);
 
 extern u8 MsgTestName[];
@@ -24,7 +24,7 @@ extern u8 MsgTestName[];
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each
 /// drawn with its number and its name from MsgTestName; A or B leaves.
 s32 Func_0804e3f4(void) {
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   struct RenderInput *portrait;
   s32 redraw;
   struct RenderInput *window;
@@ -38,10 +38,10 @@ s32 Func_0804e3f4(void) {
   s32 cancel;
   u32 slotOffset;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Func_0803d3c0(0, 0, 10, 5);
-  window = UiWindow_Create(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
@@ -55,7 +55,7 @@ s32 Func_0804e3f4(void) {
   cancel = ((u32)(u16)count >> 16) | 2;
   /* FAKEMATCH(temporary): the slot's offset defined before the loop; as the
    * offset written at its load, 10 of 180 instructions differ in tla-en. */
-  slotOffset = offsetof(struct UiRenderWork, outputIds[1]);
+  slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
     if (gInput.repeat & 0x20) {
       redraw = 1;
@@ -80,7 +80,7 @@ s32 Func_0804e3f4(void) {
     if (redraw) {
       redraw = 0;
       index = (index + total) % total;
-      RenderOutput_PrepareForRedraw(window);
+      WindowSprite_PrepareForRedraw(window);
       if (index < count)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
@@ -95,13 +95,13 @@ s32 Func_0804e3f4(void) {
         slot = loaded;
         UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);
       }
-      UiText_DrawNumberInWindow(index, 2, window, 0, 0);
-      UiText_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
+      Text_DrawNumberInWindow(index, 2, window, 0, 0);
+      Text_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
     }
     WaitFrames(1);
   }
-  UiWork_Finalize((struct UiWindow *)window, 2);
-  UiWork_Finalize((struct UiWindow *)portrait, 2);
+  Window_Close((struct Window *)window, 2);
+  Window_Close((struct Window *)portrait, 2);
   WaitFrames(1);
   return 0;
 }

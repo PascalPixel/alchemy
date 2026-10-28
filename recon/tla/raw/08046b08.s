@@ -63,7 +63,7 @@ Func_08046b08:
 	cmp r0, #0
 	beq .L_08046b90
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r3, [sp, #92]
 	str r3, [r5, #68]
 .L_08046b90:
@@ -180,7 +180,7 @@ Func_08046b08:
 	movs r0, #0
 	str r1, [sp, #112]
 	str r1, [sp, #116]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r3, #10
 	str r0, [sp, #136]
 	str r3, [sp, #0]
@@ -188,7 +188,7 @@ Func_08046b08:
 	movs r3, #6
 	movs r1, #14
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #128]
 	bl Func_08041b68
 	ldr r2, [sp, #108]
@@ -361,7 +361,7 @@ Func_08046b08:
 	ldrh r2, [r3, #8]
 	ldrh r3, [r3, #10]
 	str r4, [sp, #0]
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	ldr r3, .L_08047114
 	movs r0, #1
 	ldr r3, [r3, #4]
@@ -920,7 +920,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #2
 	movs r3, #2
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	b .L_080472da
 .L_08047228:
 	cmp r2, #3
@@ -969,7 +969,7 @@ Func_08046b08:
 	movs r2, #20
 .L_08047278:
 	movs r3, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	b .L_080472da
 .L_08047280:
 	.4byte gOwnerStatus_StatCursors
@@ -1013,7 +1013,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #7
 	movs r3, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 .L_080472da:
 	add r1, sp, #436
 	ldr r3, [r1, #12]
@@ -1228,7 +1228,7 @@ Func_08046b08:
 	ldr r0, [sp, #92]
 	cmp r0, #0
 	bne .L_0804747e
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 .L_0804747e:
 	ldr r1, [sp, #92]
 	cmp r1, #3
@@ -1373,16 +1373,16 @@ Func_08046b08:
 	adds r0, r0, r3
 .L_0804758e:
 	movs r2, #32
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_080475a0
 .L_08047596:
 	ldr r0, .L_08047624
 	add r1, sp, #284
 	movs r2, #32
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_080475a0:
 	ldr r0, [sp, #136]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r2, [sp, #128]
 	ldr r4, [sp, #128]
 	movs r1, #12
@@ -1394,12 +1394,12 @@ Func_08046b08:
 	movs r4, #0
 	str r4, [sp, #0]
 	bl Func_0803a2b0
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 	movs r2, #0
 	add r0, sp, #284
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	cmp r10, r8
 	bne .L_080475d4
 	b .L_080476f0
@@ -1410,7 +1410,7 @@ Func_08046b08:
 	movs r1, #0
 	movs r3, #29
 	movs r2, #16
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	mov r1, r10
 	lsls r3, r1, #1
 	add r3, r11
@@ -1460,7 +1460,7 @@ Func_08046b08:
 	adds r0, r0, r3
 	movs r2, #32
 	mov r3, r11
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #15
 	bl Func_08041f70
 	mov r4, r8
@@ -1579,7 +1579,7 @@ Func_08046b08:
 	subs r2, #10
 	ldr r0, [sp, #136]
 	movs r3, #7
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r4, #1
 	add r8, r4
 .L_0804773a:
@@ -1603,7 +1603,7 @@ Func_08046b08:
 	adds r1, #54
 	movs r3, #7
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r3, [sp, #136]
 	movs r1, #243
 	ldrh r2, [r3, #8]
@@ -1613,7 +1613,7 @@ Func_08046b08:
 	subs r2, #10
 	movs r3, #7
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	b .L_08047d78
 .L_0804777c:
 	ldr r4, [sp, #92]
@@ -1633,7 +1633,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	mov r8, r1
 	str r3, [sp, #60]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r2, [sp, #64]
 	movs r3, #88
 	ldrh r3, [r2, r3]
@@ -1722,7 +1722,7 @@ Func_08046b08:
 	ldr r1, [sp, #140]
 	movs r3, #1
 	strb r3, [r1, #6]
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	beq .L_08047870
@@ -1739,16 +1739,16 @@ Func_08046b08:
 	add r1, sp, #156
 	adds r0, r0, r3
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_0804787a
 .L_08047870:
 	ldr r0, .L_08047940
 	add r1, sp, #156
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_0804787a:
 	ldr r0, [sp, #136]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r2, [sp, #128]
 	ldr r4, [sp, #128]
 	movs r1, #12
@@ -1764,7 +1764,7 @@ Func_08046b08:
 	add r0, sp, #156
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	cmp r10, r8
 	bne .L_080478aa
 	b .L_08047a58
@@ -1775,7 +1775,7 @@ Func_08046b08:
 	movs r1, #0
 	movs r2, #16
 	movs r3, #29
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	ldr r2, [sp, #60]
 	mov r1, r10
 	lsls r3, r1, #1
@@ -1803,7 +1803,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	movs r2, #11
 	mov r3, r9
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r1, #0
 	str r1, [sp, #0]
 	movs r1, #240
@@ -1812,7 +1812,7 @@ Func_08046b08:
 	adds r1, #30
 	movs r2, #12
 	mov r3, r9
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	mov r4, r8
 	add r2, sp, #420
 	lsls r3, r4, #2
@@ -1873,14 +1873,14 @@ Func_08046b08:
 	ldr r3, [sp, #16]
 	adds r0, r5, r0
 	movs r2, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r2, [sp, #16]
 	ldrb r0, [r6, #9]
 	movs r3, #104
 	str r2, [sp, #0]
 	movs r1, #2
 	ldr r2, [sp, #136]
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 	movs r0, #15
 	bl Func_08041f70
 	ldr r4, [sp, #140]
@@ -1899,7 +1899,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	movs r2, #15
 	mov r3, r9
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 .L_080479be:
 	ldrb r3, [r6, #8]
 	cmp r3, #255
@@ -1916,7 +1916,7 @@ Func_08046b08:
 	movs r1, #16
 	ldr r0, [sp, #136]
 	str r4, [sp, #0]
-	bl UiWindow_DrawThreeTileColumn
+	bl Window_DrawThreeTileColumn
 	ldr r0, [sp, #16]
 	movs r2, #1
 	add r8, r2
@@ -2018,7 +2018,7 @@ Func_08046b08:
 	subs r2, #10
 	ldr r0, [sp, #136]
 	movs r3, #7
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r4, #1
 	add r8, r4
 .L_08047aa2:
@@ -2042,7 +2042,7 @@ Func_08046b08:
 	adds r1, #54
 	movs r3, #7
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r3, [sp, #136]
 	movs r1, #243
 	ldrh r2, [r3, #8]
@@ -2052,7 +2052,7 @@ Func_08046b08:
 	subs r2, #10
 	movs r3, #7
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	b .L_08047d6e
 .L_08047ae4:
 	ldr r0, [sp, #92]
@@ -2067,7 +2067,7 @@ Func_08046b08:
 	mov r10, r1
 	mov r11, r2
 	mov r9, r1
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r4, [sp, #128]
 	movs r2, #14
 	ldrsh r1, [r4, r2]
@@ -2084,7 +2084,7 @@ Func_08046b08:
 	movs r1, #0
 	movs r2, #16
 	movs r3, #29
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r0, #0
 	ldr r7, [sp, #64]
 	str r0, [sp, #80]
@@ -2230,7 +2230,7 @@ Func_08046b08:
 	ldr r3, [sp, #80]
 	cmp r3, #0
 	beq .L_08047c7a
-	bl UiWork_ClearValueNameTables
+	bl MessageArgument_ClearAll
 	movs r3, #128
 	lsls r3, r3, #9
 	ands r3, r5
@@ -2243,7 +2243,7 @@ Func_08046b08:
 	beq .L_08047c54
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	b .L_08047c58
 .L_08047c54:
 	ldr r0, .L_08047cd8
@@ -2264,23 +2264,23 @@ Func_08046b08:
 .L_08047c70:
 	add r1, sp, #156
 	movs r2, #32
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_08047c84
 .L_08047c7a:
 	ldr r0, .L_08047ce0
 	add r1, sp, #156
 	movs r2, #32
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_08047c84:
 	ldr r0, [sp, #140]
 	mov r4, r9
 	strb r4, [r0, #6]
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 	movs r2, #0
 	add r0, sp, #156
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	cmp r10, r11
 	beq .L_08047d6e
 	ldr r2, [sp, #84]
@@ -2302,7 +2302,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	adds r3, r5, #0
 	adds r2, r6, #0
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r3, #248
 	lsls r3, r3, #14
 	ands r3, r7
@@ -2344,7 +2344,7 @@ Func_08046b08:
 	adds r2, #8
 	ldr r1, [sp, #136]
 	adds r3, r5, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #248
 	lsls r0, r0, #14
 	ands r0, r7
@@ -2356,7 +2356,7 @@ Func_08046b08:
 	movs r1, #2
 	ldr r2, [sp, #136]
 	str r5, [sp, #0]
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 .L_08047d36:
 	movs r0, #15
 	bl Func_08041f70
@@ -2400,7 +2400,7 @@ Func_08046b08:
 	cmp r1, #0
 	bne .L_08047db2
 	ldr r0, [sp, #136]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r3, [sp, #128]
 	movs r4, #14
 	ldrsh r1, [r3, r4]
@@ -2417,13 +2417,13 @@ Func_08046b08:
 	movs r1, #0
 	movs r2, #14
 	movs r3, #29
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 .L_08047db2:
 	ldr r0, [sp, #64]
 	ldr r1, [sp, #136]
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r0, [sp, #124]
 	cmp r0, #3
 	ble .L_08047dd0
@@ -2431,13 +2431,13 @@ Func_08046b08:
 	ldr r1, [sp, #136]
 	movs r2, #40
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_08047dd0:
 	ldr r1, [sp, #136]
 	ldr r0, .L_08048054
 	movs r2, #56
 	movs r3, #0
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r1, [sp, #64]
 	movs r3, #0
 	ldr r2, [sp, #136]
@@ -2445,13 +2445,13 @@ Func_08046b08:
 	str r3, [sp, #0]
 	movs r1, #2
 	movs r3, #72
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r7, .L_08048058
 	ldr r1, [sp, #136]
 	adds r0, r7, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r2, [sp, #64]
 	movs r4, #146
 	lsls r4, r4, #1
@@ -2462,12 +2462,12 @@ Func_08046b08:
 	ldr r2, [sp, #136]
 	movs r1, #8
 	movs r3, #40
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r0, .L_0804805c
 	ldr r1, [sp, #136]
 	movs r2, #40
 	movs r3, #24
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r2, [sp, #64]
 	movs r3, #24
 	movs r1, #56
@@ -2477,13 +2477,13 @@ Func_08046b08:
 	ldr r2, [sp, #136]
 	movs r1, #4
 	movs r3, #56
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r5, .L_08048060
 	ldr r1, [sp, #136]
 	adds r0, r5, #0
 	movs r2, #88
 	movs r3, #24
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r1, [sp, #64]
 	mov r2, r8
 	movs r4, #52
@@ -2492,12 +2492,12 @@ Func_08046b08:
 	str r2, [sp, #0]
 	movs r1, #4
 	ldr r2, [sp, #136]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	movs r3, #32
 	ldr r1, [sp, #136]
 	ldr r0, .L_08048064
 	movs r2, #40
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r4, [sp, #64]
 	ldr r2, [sp, #136]
 	movs r3, #58
@@ -2506,12 +2506,12 @@ Func_08046b08:
 	movs r1, #4
 	movs r3, #56
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r5, #0
 	ldr r1, [sp, #136]
 	movs r2, #88
 	movs r3, #32
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	ldr r2, [sp, #64]
 	movs r3, #96
 	movs r1, #54
@@ -2519,13 +2519,13 @@ Func_08046b08:
 	ldr r2, [sp, #136]
 	movs r1, #4
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r7, #0
 	ldr r1, [sp, #136]
 	subs r0, #10
 	movs r2, #136
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, [sp, #64]
 	ldr r2, [sp, #136]
 	ldrh r0, [r3, #60]
@@ -2533,13 +2533,13 @@ Func_08046b08:
 	str r3, [sp, #0]
 	movs r1, #3
 	movs r3, #184
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r7, #0
 	ldr r1, [sp, #136]
 	subs r0, #9
 	movs r2, #136
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r4, [sp, #64]
 	mov r1, r8
 	ldrh r0, [r4, #62]
@@ -2547,13 +2547,13 @@ Func_08046b08:
 	str r1, [sp, #0]
 	movs r3, #184
 	movs r1, #3
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r7, #0
 	ldr r1, [sp, #136]
 	subs r0, #8
 	movs r2, #136
 	movs r3, #32
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, [sp, #64]
 	ldr r2, [sp, #136]
 	adds r3, #64
@@ -2561,12 +2561,12 @@ Func_08046b08:
 	movs r1, #3
 	movs r3, #184
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	subs r0, r7, #7
 	ldr r1, [sp, #136]
 	movs r2, #136
 	movs r3, #40
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, [sp, #64]
 	ldr r2, [sp, #136]
 	adds r3, #66
@@ -2575,7 +2575,7 @@ Func_08046b08:
 	str r3, [sp, #0]
 	movs r1, #3
 	movs r3, #184
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r2, [sp, #64]
 	movs r4, #42
 	adds r4, #255
@@ -2586,7 +2586,7 @@ Func_08046b08:
 	adds r0, r0, r3
 	movs r2, #0
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r0, [sp, #92]
 	cmp r0, #0
 	bne .L_08048032
@@ -2597,23 +2597,23 @@ Func_08046b08:
 	ldr r1, [sp, #136]
 	movs r2, #0
 	movs r3, #72
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_08047f46:
 	ldr r1, [sp, #136]
 	subs r0, r7, #5
 	movs r2, #0
 	movs r3, #80
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	subs r0, r7, #4
 	ldr r1, [sp, #136]
 	movs r2, #0
 	movs r3, #88
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	subs r0, r7, #3
 	ldr r1, [sp, #136]
 	movs r2, #0
 	movs r3, #96
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r0, [sp, #64]
 	movs r2, #0
 	movs r1, #140
@@ -2645,7 +2645,7 @@ Func_08046b08:
 	adds r3, #8
 	ldr r0, [sp, #136]
 	mov r2, r9
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r1, [sp, #100]
 	cmp r1, #0
 	beq .L_08047fdc
@@ -2655,12 +2655,12 @@ Func_08046b08:
 	str r2, [sp, #0]
 	mov r3, r10
 	ldr r2, [sp, #136]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r0, .L_08048060
 	ldr r1, [sp, #136]
 	adds r2, r7, #0
 	movs r3, #72
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	adds r3, r7, #0
 	ldrb r0, [r6]
 	mov r4, r11
@@ -2668,7 +2668,7 @@ Func_08046b08:
 	movs r1, #1
 	ldr r2, [sp, #136]
 	str r4, [sp, #0]
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 .L_08047fdc:
 	ldr r0, [sp, #144]
 	mov r1, r8
@@ -2678,7 +2678,7 @@ Func_08046b08:
 	str r3, [sp, #0]
 	movs r1, #2
 	adds r3, r7, #0
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r1, [sp, #64]
 	adds r5, #72
 	movs r3, #88
@@ -2687,7 +2687,7 @@ Func_08046b08:
 	ldr r2, [sp, #136]
 	mov r3, r10
 	movs r1, #3
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r3, [sp, #64]
 	movs r1, #3
 	adds r5, r3, r5
@@ -2697,7 +2697,7 @@ Func_08046b08:
 	ldr r2, [sp, #136]
 	str r3, [sp, #0]
 	mov r3, r10
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	movs r2, #1
 	add r8, r2
 	movs r0, #32
@@ -3061,7 +3061,7 @@ Func_08046b08:
 	ldr r1, [sp, #136]
 	movs r2, #112
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_080482b2:
 	ldr r0, [sp, #92]
 	cmp r0, #0
@@ -3213,13 +3213,13 @@ Func_08046b08:
 .L_080483de:
 	adds r0, r7, #0
 	movs r1, #5
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r0, .L_0804843c
 	movs r2, #128
 	ldr r1, [sp, #48]
 	adds r0, r1, r0
 	ldr r1, [sp, #52]
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_08048452
 .L_080483f6:
 	cmp r3, #2
@@ -3239,11 +3239,11 @@ Func_08046b08:
 	ldr r3, [r3]
 	movs r1, #5
 	subs r0, r0, r3
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r0, .L_08048440
 	ldr r1, [sp, #52]
 	movs r2, #128
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_08048452
 	.2byte 0x0000
 .L_0804842c:
@@ -3264,13 +3264,13 @@ Func_08046b08:
 	ldr r1, [sp, #52]
 	adds r0, r0, r3
 	movs r2, #128
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_08048452:
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #128]
 	movs r2, #0
 	movs r3, #4
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	ldr r0, [sp, #52]
 	bl MemFree
 .L_08048464:
@@ -3514,12 +3514,12 @@ Func_08046b08:
 	bl Func_08041b68
 	movs r1, #1
 	ldr r0, [sp, #136]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r5, #192
 	ldr r0, [sp, #128]
 	movs r1, #1
 	lsls r5, r5, #18
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r3, [r5, #36]
 	adds r5, #228
 	adds r3, #65

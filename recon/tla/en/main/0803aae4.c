@@ -3,7 +3,7 @@
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
 // Draft, differ 10 of 126: The Broken Seal's international
-// UiText_RenderWideStringAtOffset with ⚓️'s additions: code 176 joins the
+// Text_DrawWideStringAtOffset with ⚓️'s additions: code 176 joins the
 // control codes (with no case of its own) and glyphs are drawn by
 // Func_0803bde4. All ten rows are one kind of swap, five times: the native
 // schedules a halfword load one slot earlier than sched2 ranks it here (the
@@ -16,17 +16,17 @@
 #include "uiwindow.h"
 #include "glyph.h"
 
-void UiWork_ResetCounters(void);
-s32 Func_0803bde4(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
+void Text_ResetStyle(void);
+s32 Func_0803bde4(struct Window *window, u32 c, s32 x, s32 y, s32 flags);
 
-void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
+void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                      s32 y) {
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 c;
   u32 next;
   s16 start;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   c = 0;
   start = x;
   if (text == NULL) {
@@ -55,7 +55,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         text++;
         break;
       case 7:
-        UiWork_ResetCounters();
+        Text_ResetStyle();
         break;
       case 3:
         x = start;
@@ -76,8 +76,8 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       if ((window->flags & 8) == 0) {
         next = *text;
         if (c > 32 && next > 32 &&
-            (u16)(gUiText_Glyphs[c - 32].width +
-                  gUiText_Glyphs[next - 32].width) <= 15) {
+            (u16)(gFont_Glyphs[c - 32].width +
+                  gFont_Glyphs[next - 32].width) <= 15) {
           c |= next << 8;
           text++;
         }

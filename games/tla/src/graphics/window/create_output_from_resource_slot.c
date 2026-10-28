@@ -21,13 +21,13 @@
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
-s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(ability, slot);
-    RenderOutput_Create(slot, 0x40000000, input, x, y); // 16x16 OBJ size.
+    WindowSprite_Create(slot, 0x40000000, input, x, y); // 16x16 OBJ size.
   }
 }

@@ -42,7 +42,7 @@ void Camera_FollowActor();
 struct ObjectRuntime *Object_GetById();
 void Object_SetModeById();
 void Object_SetPositionAndResetMotion();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 #include "map.h"
 #include "scene_ids.h"
@@ -82,7 +82,7 @@ void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetVariantCallback();
 void Object_RefreshSelectorById();
 void Party_SetFields1eeAnd1f0();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Func_020004f4(void) {
   struct MapWork *map;
@@ -262,7 +262,7 @@ void Func_020004f4(void) {
   Value3((s32 (*)())Func_020031f8, 8, 0x103, 50);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value3((s32 (*)())Func_020031f8, 25, 0x109, 50);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x1019, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x1019, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -407,7 +407,7 @@ void Func_02000c5c(void) {
   Call3((void (*)())Func_020031d8, 5, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 8, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 8, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
   result6 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result6 != 0)
     goto L_0200900c;
@@ -1166,7 +1166,7 @@ L_0200903c:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Value2((s32 (*)())Motion_SetVarCbAndRefresh, 25, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 25, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 25, 0);
   result18 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result18 != 0)
     goto L_0200ab7a;
@@ -1287,7 +1287,7 @@ L_0200abc0:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Value2((s32 (*)())Motion_SetVarCbAndRefresh, 6, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 6, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 6, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xe000, 0);
   result19 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result19 != 0)

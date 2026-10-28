@@ -6,12 +6,12 @@
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 flags);
-s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x,
+s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
                      s32 y);
 
-s32 UiText_GetSpeakerPortrait(u32 value) {
+s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;
 
@@ -72,23 +72,23 @@ s32 UiText_GetSpeakerPortrait(u32 value) {
   return result;
 }
 
-struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y) {
-  struct UiWindow *win;
+struct Window *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y) {
+  struct Window *win;
   s32 minusFour;
   s32 offset;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  if (UiText_GetSpeakerPortrait(arg0) == -1) {
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  if (Portrait_GetForSpeaker(arg0) == -1) {
     return 0;
   }
   minusFour = -4;
   offset = minusFour;
   if (work->mode != 0) {
-    win = UiWindow_Create(x, y, 6, 5, 2);
+    win = Window_Create(x, y, 6, 5, 2);
     offset = 0;
   } else {
-    win = UiWindow_Create(x, y, 5, 5, 2);
+    win = Window_Create(x, y, 5, 5, 2);
   }
   if (win != 0) {
     CreateSideObject(arg0, arg1, -1, win, offset, minusFour);
@@ -97,15 +97,15 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y) {
 }
 
 void Func_0803d450(s32 id) {
-  struct UiRenderWork *state;
-  struct UiWindow *work;
+  struct WindowWork *state;
+  struct Window *work;
   s32 index;
   s32 i;
-  struct RenderOutput *entity;
+  struct WindowSprite *entity;
 
-  state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   work = state->windows;
-  id = UiText_GetSpeakerPortrait(id);
+  id = Portrait_GetForSpeaker(id);
   if (id == -1)
     return;
 
@@ -122,7 +122,7 @@ void Func_0803d450(s32 id) {
   for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
     entity = work->output.head;
     if ((u8)entity->kind == 2 && (u8)entity->index == id) {
-      UiWork_Finalize(work, 2);
+      Window_Close(work, 2);
       return;
     }
   }

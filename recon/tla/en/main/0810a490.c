@@ -32,7 +32,7 @@ extern u8 Msg04695[];
 extern u8 MsgHereYouGo[];
 extern u8 MsgDontWantIt[];
 
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_0810857c(s32 message);
 void Func_081084f4(s32 message);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
@@ -61,10 +61,10 @@ void Func_0810a490(void *window, void *itemWindow) {
   if (creditCost > gAdventure.counterB)
     return;
   shop->selectedItem = 228;
-  UiText_DrawQuantity(228, 2);
+  MessageArgument_PushFar(228, 2);
   message = (s32)Msg04724;
   Func_0810857c(message);
-  UiText_DrawQuantity(shop->selectedItem, 2);
+  MessageArgument_PushFar(shop->selectedItem, 2);
   Func_0810857c(message + 1);
   redraw = 2;
   while (1) {
@@ -84,8 +84,8 @@ void Func_0810a490(void *window, void *itemWindow) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(113);
-        UiText_DrawQuantity(unitId, 1);
-        UiText_DrawQuantity(shop->selectedItem, 2);
+        MessageArgument_PushFar(unitId, 1);
+        MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
           Func_081084f4((s32)Msg04687);
         else

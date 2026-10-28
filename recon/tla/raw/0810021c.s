@@ -39,7 +39,7 @@ Func_0810021c:
 	movs r2, #10
 	movs r3, #15
 	adds r0, #52
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	adds r3, r7, #0
 	adds r3, #240
 	str r3, [sp, #8]
@@ -54,12 +54,12 @@ Func_0810021c:
 	adds r3, r6, #0
 	movs r2, #0
 	subs r5, #3
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r0, r5, #0
 	mov r1, r9
 	movs r2, #64
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_0810047e
 .L_0810029a:
 	add r4, sp, #52
@@ -86,7 +86,7 @@ Func_0810021c:
 	adds r3, r7, r4
 	strb r0, [r3]
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r2, r11
 	add r4, sp, #20
 	adds r2, #216
@@ -115,7 +115,7 @@ Func_0810021c:
 	adds r0, r5, #0
 	bl ItemMenu_DrawIcons
 	ldr r0, [r7, #52]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r4, #128
 	lsls r4, r4, #2
 	adds r4, #22
@@ -154,12 +154,12 @@ Func_0810021c:
 	mov r1, r9
 	movs r2, #0
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r1, r9
 	subs r0, r5, #3
 	movs r2, #64
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #0
 	mov r10, r1
 .L_08100374:
@@ -306,12 +306,12 @@ Func_0810021c:
 	b .L_0810029a
 .L_0810048c:
 	ldr r0, [r7, #48]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r2, [sp, #8]
 	ldr r0, [r2]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, [sp, #16]
 	add sp, #80
 	pop {r3, r5, r6, r7}

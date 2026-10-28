@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiWork_FinalizeSharedSlotFar
+	.global Window_CloseSharedFar
 	.thumb_func
-UiWork_FinalizeSharedSlotFar:
-	overlay_veneer UiMessage_Close
-	.global UiWork_ResetFreeChannelFar
+Window_CloseSharedFar:
+	overlay_veneer Message_Close
+	.global Message_ResetIdleFar
 	.thumb_func
-UiWork_ResetFreeChannelFar:
-	overlay_veneer UiWork_ResetFreeChannel
+Message_ResetIdleFar:
+	overlay_veneer Message_ResetIdle
 	.global UiTextResource_InitializeFar
 	.thumb_func
 UiTextResource_InitializeFar:

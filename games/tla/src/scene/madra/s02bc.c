@@ -3,7 +3,7 @@
 
 extern const u8 MsgHaveYouBy[];
 
-s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02000294(void);
 void Func_02002bd0(const u8 *message);
@@ -14,7 +14,7 @@ void Func_020002bc(void) {
   s32 a, b;
 
   Func_02002bd0(MsgHaveYouBy);
-  UiText_OpenMessageAtObject(33, 0);
+  FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     a = 0x103;
     b = 30;
@@ -23,7 +23,7 @@ void Func_020002bc(void) {
      * inline loads the id inside it. */
     __asm__ volatile("" : "+r"(a), "+r"(b));
     Func_02002c08(33, a, b);
-    UiText_OpenMessageAtObject(33, 0);
+    FieldMessage_ShowAtActor(33, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       a = 0x103;
       b = 30;

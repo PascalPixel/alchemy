@@ -65,7 +65,7 @@ void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_RemoveFar(s32 owner, s32 element, s32 index);
 void Unit_CalculateFar(s32 unitId);
-void RenderOutput_ClearListFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 void Func_081019a4(struct DjinnElementList *list);
 
 // Find the moved Djinni in the list and select its new position.
@@ -205,7 +205,7 @@ s32 Func_0810106c(void) {
       Unit_CalculateFar(menu->shownOwner[0]);
       Unit_CalculateFar(menu->shownOwner[1]);
       menu->cursor->active = 13;
-      RenderOutput_ClearListFar(menu->listWindow);
+      WindowSprite_ClearListFar(menu->listWindow);
       Func_081019a4(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = 1;
@@ -228,7 +228,7 @@ s32 Func_0810106c(void) {
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
-      RenderOutput_ClearListFar(menu->listWindow);
+      WindowSprite_ClearListFar(menu->listWindow);
       menu->cursor->active = 1;
       step = 2;
       break;
@@ -271,7 +271,7 @@ s32 Func_0810106c(void) {
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
-      RenderOutput_ClearListFar(menu->listWindow);
+      WindowSprite_ClearListFar(menu->listWindow);
       menu->cursor->active = 1;
       step = 2;
       break;

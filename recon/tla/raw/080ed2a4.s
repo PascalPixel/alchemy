@@ -127,7 +127,7 @@ Func_080ed2a4:
 	bl EventRuntime_FinishScreen
 	bl EventRuntime_WaitDelay
 	bl Task_ResetAll
-	bl UiWork_InitializeWithResourceCountersFar
+	bl WindowSystem_InitFieldFar
 	ldr r2, [sp, #12]
 	movs r0, #1
 	strh r5, [r2, #4]
@@ -242,7 +242,7 @@ Func_080ed2a4:
 	bne .L_080ed48c
 	ldr r0, .L_080ed6a8
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r2, #1
 	str r2, [sp, #4]
 .L_080ed48c:
@@ -357,7 +357,7 @@ Func_080ed2a4:
 	adds r3, #255
 	strh r3, [r2, #18]
 	ldr r0, [r2, #28]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	movs r2, #64
 	movs r3, #128
 	lsls r3, r3, #19

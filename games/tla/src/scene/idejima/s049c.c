@@ -42,7 +42,7 @@ void Camera_MoveWithinMapBounds();
 void ObjectMotion_EnableActionAndSetCallback();
 void Object_RefreshSelectorById();
 void Object_SetActionCallbackAndRefreshById();
-void UiText_ShowPositionedMessageAndWait();
+void FieldMessage_Show();
 void Task_Wait();
 void Func_02000098();
 
@@ -181,7 +181,7 @@ void Func_020006a8(void) {
                                        ((s16 *)&leader->z)[1]);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
     Call3(Func_02003228, 8, 0, 0);
-    Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgIdejimaHeyFelix + 8, 1);
+    Call2(FieldMessage_Show, (s32)MsgIdejimaHeyFelix + 8, 1);
     Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 20);
     FlagSet(0x863);
     Engine_EventEnd();

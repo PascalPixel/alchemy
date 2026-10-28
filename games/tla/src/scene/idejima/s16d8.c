@@ -35,7 +35,7 @@ void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void DriftScene_SpawnObject();
 void Func_02003180();
 void Func_02003190();
@@ -96,7 +96,7 @@ void Func_020016d8(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x3000, 40);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
   Call1((void (*)())Engine_EventSetMessage, MsgIdejimaIsThisThePlace);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x1008, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x1008, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call2((void (*)())Event_AskYesNoWithActorAnimation, 5, 0);
   Call1((void (*)())ObjectMotion_WaitForAnimationChange, 5);

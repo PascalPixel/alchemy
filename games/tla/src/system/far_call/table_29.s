@@ -20,7 +20,7 @@ Func_080c84f0:
 	.global Func_080c84f8
 	.thumb_func
 Func_080c84f8:
-	overlay_veneer Ui_FillBank15PaletteGrey
+	overlay_veneer Palette_FillNumber15Grey
 	.global Func_080c8500
 	.thumb_func
 Func_080c8500:

@@ -19,16 +19,16 @@ s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 
 s32 Save_WriteFile(s32 slot) {
   s32 result = 0;
 
   if (Func_0801596c() != 0) {
-    UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else if (Func_08042f10(slot, gData_02000000) != 0) {
-    UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+    FieldMessage_Show((s32)&MsgSaveFailed, 1);
     result = -3;
   }
   Save_ReleaseWork();
@@ -48,14 +48,14 @@ s32 Func_08043534(void) {
   if (value != -1) {
     found = Func_0801596c();
     if (found != 0) {
-      UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+      FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
       result = -9;
     } else {
       u8 *dst;
 
       found = Save_ReadPart(gData_020036d0, buffer);
       if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -2;
       }
       dst = (u8 *)buffer + (s32)gData_02000504;
@@ -65,7 +65,7 @@ s32 Func_08043534(void) {
       found = Func_08042f10(gData_020036d0, buffer);
       SaveProgress_Close(token);
       if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -3;
       }
     }

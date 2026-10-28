@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
+FieldMessage_ShowAtActor:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -145,7 +145,7 @@ UiText_OpenMessageAtObject:
 	str r0, [sp, #0]
 	mov r0, r8
 	str r4, [sp, #4]
-	bl UiText_GetResourceDimensionsAltFar
+	bl Text_GetMessageSizeAltFar
 	ldr r3, [sp, #40]
 	ldr r4, [sp, #4]
 	lsrs r2, r3, #31
@@ -234,7 +234,7 @@ UiText_OpenMessageAtObject:
 	subs r6, r3, #2
 .L_080d3e44:
 	ldr r0, [sp, #24]
-	bl Localization_LookupEntryIdFar
+	bl Portrait_GetForSpeakerFar
 	movs r3, #1
 	negs r3, r3
 	adds r7, r0, #0
@@ -253,7 +253,7 @@ UiText_OpenMessageAtObject:
 	mov r11, r2
 	str r3, [sp, #8]
 	str r7, [sp, #0]
-	bl UiText_GetResourceDimensionsAltFar
+	bl Text_GetMessageSizeAltFar
 	ldr r2, [sp, #44]
 	mov r8, r10
 	subs r1, r2, #5
@@ -289,7 +289,7 @@ UiText_OpenMessageAtObject:
 	mov r2, r11
 	ldr r5, [sp, #36]
 	str r7, [sp, #0]
-	bl UiText_GetResourceDimensionsFar
+	bl Text_GetMessageSizeFar
 	ldr r3, [sp, #36]
 	movs r1, #1
 	subs r5, r5, r3
@@ -308,7 +308,7 @@ UiText_OpenMessageAtObject:
 	mov r0, r8
 	add r2, sp, #44
 	ldr r5, [sp, #36]
-	bl UiText_GetResourceDimensionsFar
+	bl Text_GetMessageSizeFar
 	ldr r3, [sp, #36]
 	mov r8, r7
 	subs r5, r5, r3
@@ -375,7 +375,7 @@ UiText_OpenMessageAtObject:
 .L_080d3f50:
 	mov r0, r8
 .L_080d3f52:
-	bl UiText_OpenMessageWindowFar
+	bl Message_OpenWindowFar
 	mov r10, r0
 	ldr r1, [sp, #32]
 	ldrb r3, [r1, #4]
@@ -390,7 +390,7 @@ UiText_OpenMessageAtObject:
 	movs r0, #1
 	bl WaitFrames
 .L_080d3f72:
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	beq .L_080d3f6c
 .L_080d3f7a:

@@ -21,7 +21,7 @@ void Func_0200009c(void) {}
 
 void Func_020000a0(s32 id) {
   Func_020014b8((s32)&MsgOhStoppedBy);
-  UiText_OpenMessageAtObject(id, 0);
+  FieldMessage_ShowAtActor(id, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001590(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_020014b8((s32)(&MsgOhStoppedBy + 1));

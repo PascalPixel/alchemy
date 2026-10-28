@@ -43,8 +43,8 @@ extern char MsgAbilityDescription[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 WaitFrames(s32 frames);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+s32 Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 value);
 
@@ -61,7 +61,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   state->selectedIndex = combined;
 
   if (GameFlag_Test(0x151) == 0) {
-    RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+    WindowSprite_RedrawSavedRectFar(menu->infoWindow);
     WaitFrames(1);
 
     combined = state->selectedIndex;
@@ -69,7 +69,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
       s32 masked =
           (s32)(MsgAbilityDescription + (menu->psynergies[combined] & 0x1ff));
 
-      UiText_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+      Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
     }
   } else {
     GameFlag_ClearBit(0x2ff);

@@ -12,7 +12,7 @@ extern const u8 gData_02001dd4[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 void Func_02001348(s32 id, s32 x, s32 z);
 
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
@@ -44,6 +44,6 @@ void Func_02000d00(void) {
     u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
     if (facing == 0xc000)
-      UiText_ShowPositionedMessageAndWait((s32)&MsgLoho57, 1);
+      FieldMessage_Show((s32)&MsgLoho57, 1);
   } while (0);
 }

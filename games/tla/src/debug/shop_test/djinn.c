@@ -2,7 +2,7 @@
 #include "text/msg_ids.h"
 #include "edition.h"
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
 void Func_02000dc0(void);
 
@@ -22,7 +22,7 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
 void Func_02000638(void) {
   s32 djinn;
 
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouGotA, 1);
+  FieldMessage_Show((s32)MsgYouGotA, 1);
   for (djinn = 7; djinn < 13; djinn++)
     Func_020005fc(4, 0, djinn, 1);
   for (djinn = 7; djinn < 14; djinn++)
@@ -38,7 +38,7 @@ void Func_02000638(void) {
   s32 element;
   s32 djinn;
 
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouGotA, 1);
+  FieldMessage_Show((s32)MsgYouGotA, 1);
   for (element = 0; element < 4; element++) {
     for (djinn = 0; djinn < 18; djinn++)
       Djinn_AddToLeastLoadedOwner(element, djinn);

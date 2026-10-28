@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
-// Near miss of UiWindow_UpdateInterpolatedGeometry (The Broken Seal twin in
+// Near miss of Window_UpdateInterpolatedGeometry (The Broken Seal twin in
 // graphics/window/window.c; first written 2026-10-12): differ 2 of 92. After
 // each of three ratio calls the native loads the next operand (window->x,
 // window->height, window->y) before it stores the result to the scratch
@@ -17,7 +17,7 @@
 #include "types.h"
 #include "iwram_call.h"
 
-struct UiWindow {
+struct Window {
   s32 unk00;
   s32 unk04;
   u16 width;
@@ -36,11 +36,11 @@ struct UiWindow {
   s16 previousHeight;
 };
 
-void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 
 // Draw the window partway through opening or closing.
-void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
-  struct UiWindow *window = arg;
+void Window_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
+  struct Window *window = arg;
   s32 scratch[3];
   s32 frame;
   s32 duration;
@@ -91,7 +91,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
   scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
   height = scratch[2] >> 15;
 
-  UiWindow_DrawBorder(x, y, width, height);
+  Window_DrawBorder(x, y, width, height);
   if (savePosition != 0) {
     window->previousX = x;
     window->previousY = y;

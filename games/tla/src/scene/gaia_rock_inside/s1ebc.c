@@ -9,7 +9,7 @@
 extern char SceneId_Ov681Room1;
 
 s32 GameFlag_Test(s32 flag);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 s32 PartyInventory_FindOwner(s32 item);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
@@ -19,7 +19,7 @@ void Func_02001ebc(void) {
   s32 count;
 
   if (GameFlag_Test(0x927)) {
-    UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside08, 1);
+    FieldMessage_Show((s32)MsgGaiaRockInside08, 1);
   } else {
     s32 a = GameFlag_Test(0x9bc);
     s32 b = GameFlag_Test(0x9bd);

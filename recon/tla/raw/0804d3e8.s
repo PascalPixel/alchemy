@@ -72,7 +72,7 @@ Menu_CenterResourceEntries:
 	str r3, [sp, #0]
 	mov r1, r10
 	movs r3, #3
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [r7, #120]
 	add sp, #4
 	pop {r3, r5, r6}

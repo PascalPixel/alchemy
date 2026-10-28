@@ -13,7 +13,7 @@ struct ItemEntryMenu {
   struct ItemEntryIcon *entryIcons[32];
 };
 
-void UiIcon_PrepareObject(struct ItemEntryIcon *icon);
+void Icon_PrepareActor(struct ItemEntryIcon *icon);
 
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemEntryMenu *menu = Ram_HeapSlots->menuRuntime;
@@ -21,7 +21,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
   for (slot = 0; slot < 32; slot++) {
     if (items[slot] == 0) {
-      UiIcon_PrepareObject(menu->entryIcons[slot]);
+      Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->state = 13;
       /* FAKEMATCH(barrier): an empty asm keeps the counter's reload after the
        * state store; without it, 2 of 32 instructions differ in tla-en. */

@@ -222,8 +222,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         }
         plan->targetCount = targetCount;
         if (targetCount <= 0) {
-          UiText_DrawQuantity(request->unitId, 1);
-          UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+          MessageArgument_PushFar(request->unitId, 1);
+          Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
           if (actor->guardLevel == 0)
             actor->guardLevel = 1;
           return -1;
@@ -247,7 +247,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   plan->actorId = request->unitId;
   plan->actorId2 = request->unitId;
   plan->element = 4;
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
   if (actor->hp == 0)
     return -2;
 
@@ -276,28 +276,28 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     return -2;
   }
 
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
   if (request->command != 9) {
     if (actor->immobile) {
       actor->immobile = 0;
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgUnableToMove);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgUnableToMove);
       return -1;
     }
     if (actor->sleep) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsAsleep);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgIsAsleep);
       return -1;
     }
     if (actor->stun) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsParalyzed);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgIsParalyzed);
       return -1;
     }
     if ((actor->restraint & 1) && request->command != COMMAND_DEFEND &&
         (Battle_RandomFar() & 3) == 0) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsBound);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgIsBound);
       return -1;
     }
   }
@@ -316,10 +316,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   switch (request->command) {
   case COMMAND_FLEE:
     if ((u16)request->unitId <= 7) {
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
+      Message_ShowAndWaitCoreFar((s32)&MsgPartyFlees);
     } else {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRuns);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorRuns);
     }
     BattlePresentation_WaitForAdvance();
     plan->outcome = 7;
@@ -330,12 +330,12 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (Func_08123648(abilityId) == -1)
       return -1;
     if (abilityId != 1) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_DrawQuantity(Inventory_GetEquippedItemFar(actor, 1), 2);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls);
+      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, 1), 2);
+      Message_ShowAndWaitCoreFar((s32)&MsgWeaponHowls);
       Func_08120158();
-      UiText_DrawQuantity(abilityId, 4);
-      UiText_ShowMessageAndWaitCoreFar((s32)(&MsgWeaponHowls + 1));
+      MessageArgument_PushFar(abilityId, 4);
+      Message_ShowAndWaitCoreFar((s32)(&MsgWeaponHowls + 1));
     }
     break;
 
@@ -359,17 +359,17 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     ability = BattleAction_Get(abilityId);
     if (Func_08123648(abilityId) == -1)
       return -1;
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_DrawQuantity(abilityId, 4);
+    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(abilityId, 4);
     switch (abilityId) {
     case 600 ... 627:
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorCastsSpecial);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorCastsSpecial);
       break;
     case 590 ... 597:
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorCastsDjinni);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorCastsDjinni);
       break;
     default:
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorCasts);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorCasts);
       break;
     }
     if (actor->pp < ability->ppCost) {
@@ -395,23 +395,23 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     struct ItemDefinition *item;
 
     if (request->parameter < 0) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgItemAlreadyUsed);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgItemAlreadyUsed);
       return -1;
     }
     item = Item_Get(actor->inventory[request->parameter]);
     abilityId = item->actionId;
     if (abilityId == 0 || (actor->inventory[request->parameter] & 0x400)) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+      MessageArgument_PushFar(request->unitId, 1);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
       if (actor->guardLevel == 0)
         actor->guardLevel = 1;
       return -1;
     }
     if (Func_08123648(abilityId) == -1)
       return -1;
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_DrawQuantity(actor->inventory[request->parameter], 2);
+    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(actor->inventory[request->parameter], 2);
     if (item->useType == 2 || item->useType == 0) {
       switch (item->type) {
       case 1:
@@ -419,21 +419,21 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       case 6:
       case 7:
       case 8:
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRaisesItem);
+        Message_ShowAndWaitCoreFar((s32)&MsgActorRaisesItem);
         break;
       default:
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+        Message_ShowAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
         break;
       }
     } else {
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
     }
   } break;
 
   case COMMAND_DEFEND:
   case COMMAND_DEFEND2:
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+    MessageArgument_PushFar(request->unitId, 1);
+    Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
     return -1;
 
   case COMMAND_NONE:
@@ -445,8 +445,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     abilityId = request->parameter;
     if (Func_08123648(abilityId) == -1)
       return -1;
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_DrawQuantity(abilityId, 4);
+    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(abilityId, 4);
     if ((BattleAction_Get(abilityId)->flags & 15) == 6)
       message = (s32)&MsgActorUnleashesAbility;
     else
@@ -508,7 +508,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       message = (s32)&MsgEnemyAbility0d65;
       break;
     }
-    UiText_ShowMessageAndWaitCoreFar(message);
+    Message_ShowAndWaitCoreFar(message);
   } break;
 
   case COMMAND_DJINN:
@@ -544,10 +544,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         BattleEventRuntime_WaitForReady();
         return -2;
       }
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_DrawQuantity(abilityId, 4);
+      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(abilityId, 4);
       Sound_PlayFar(114);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgDjinnInRecovery);
+      Message_ShowAndWaitCoreFar((s32)&MsgDjinnInRecovery);
       WaitFrames(60);
       return -1;
     }
@@ -560,9 +560,9 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
                                   (request->parameter >> 8) & 15,
                                   request->parameter & 255);
       ability = BattleAction_Get(abilityId);
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_DrawQuantity(abilityId, 4);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUnleashesDjinn);
+      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(abilityId, 4);
+      Message_ShowAndWaitCoreFar((s32)&MsgActorUnleashesDjinn);
       plan->element = ability->element;
     }
     break;
@@ -592,14 +592,14 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (Func_08123648(abilityId) == -1)
       return -1;
     if (index != 4) {
-      UiText_DrawQuantity(request->unitId, 1);
-      UiText_DrawQuantity(abilityId, 4);
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgSummonLacksDjinn);
+      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(abilityId, 4);
+      Message_ShowAndWaitCoreFar((s32)&MsgSummonLacksDjinn);
       return -1;
     }
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_DrawQuantity(abilityId, 4);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorSummons);
+    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(abilityId, 4);
+    Message_ShowAndWaitCoreFar((s32)&MsgActorSummons);
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
 
@@ -630,8 +630,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       plan->presentationFlags = 0;
       plan->presentationFlags = Func_0811d79c(actor->enemyId);
     }
-    UiText_DrawQuantity(request->unitId, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
+    MessageArgument_PushFar(request->unitId, 1);
+    Message_ShowAndWaitCoreFar((s32)&MsgActorAttacks);
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

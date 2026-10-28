@@ -14,23 +14,23 @@
 #include "window.h"
 #include "stddef.h"
 
-s32 UiText_GetSpeakerPortrait(s32 key);
+s32 Portrait_GetForSpeaker(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 
-struct RenderOutput *RenderOutput_CreateWithTransform(s32 arg0,
+struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
                                                       struct RenderInput *arg1,
                                                       s32 arg2, s32 arg3) {
   s32 count;
   s32 unused;
-  struct RenderOutput *result;
+  struct WindowSprite *result;
 
   count = Resource_FindFreeEntry();
   if (count == 0x60) {
     return NULL;
   }
-  Ui_BuildPairedPatternsToSlot(arg0, 1, &count, &unused, 1);
-  result = RenderOutput_Create(count, 0x40000000, arg1, arg2, arg3);
+  Icon_BuildCommandIconTiles(arg0, 1, &count, &unused, 1);
+  result = WindowSprite_Create(count, 0x40000000, arg1, arg2, arg3);
   result->sentinel = 251;
   return result;
 }
@@ -38,17 +38,17 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 arg0,
 /// Loads the character entry for the key into the given side, or into a free
 /// one (resource id 999) when the side is 2 or more, and creates its output
 /// with that side's palette (14 + side).
-struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
+struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
                                       s32 arg3, s32 arg4, s32 arg5) {
-  struct UiRenderWork *state =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  struct RenderOutput *object = 0;
+  struct WindowWork *state =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowSprite *object = 0;
   s32 first;
   s32 second;
   s32 id;
   s32 slot;
 
-  id = UiText_GetSpeakerPortrait(objectKind);
+  id = Portrait_GetForSpeaker(objectKind);
   if (id == -1)
     return object;
 
@@ -70,7 +70,7 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
 
   slot = 14 + side;
   UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
-  object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3,
+  object = WindowSprite_Create(first, 0x80000000, (struct RenderInput *)arg3,
                                arg4, arg5);
   if (object != 0) {
     object->oam.palette = slot;
@@ -86,9 +86,9 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
 /// slot's palette (14 + slot), reusing the slot's VRAM cache entry. A slot of
 /// 2 or more means whichever slot already shows the picture, the second
 /// first; when neither does, nothing is loaded.
-void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  s32 id = UiText_GetSpeakerPortrait(key);
+void Portrait_Reload(u32 slot, s32 key, s32 unused) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  s32 id = Portrait_GetForSpeaker(key);
   s32 offset;
   s32 palette;
   s32 cached;
@@ -105,7 +105,7 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused) {
     else
       return;
   }
-  offset = offsetof(struct UiRenderWork, outputIds);
+  offset = offsetof(struct WindowWork, outputIds);
   palette = slot;
   cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
   /* FAKEMATCH(barrier): the palette's copy of the slot and the offset's

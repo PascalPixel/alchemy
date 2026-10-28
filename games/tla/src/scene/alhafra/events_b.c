@@ -4,7 +4,7 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001c74(s32 message);
 void Func_02001c8c(s32 a, s32 b);
@@ -21,7 +21,7 @@ void Func_0200013c(s32 actor) {
   if (Value1((s32 (*)())GameFlag_Test, 0x8b0) == 0) {
     msg = (s32)&MsgAlhafra03;
     Func_02001c74(msg);
-    UiText_OpenMessageAtObject(actor, 0);
+    FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
       Func_02001c74(msg + 1);
       Call1((void (*)())GameFlag_SetBit, 0x8b0);
@@ -39,7 +39,7 @@ void Func_020001a4(s32 actor) {
   s32 msg = (s32)&MsgAlhafra16;
 
   Func_02001c74(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001c74(msg + 1);
@@ -54,7 +54,7 @@ void Func_020001f0(s32 actor) {
   s32 msg = (s32)&MsgAlhafra33;
 
   Func_02001c74(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001c74(msg + 1);

@@ -8,7 +8,7 @@
 
 struct InventoryMenuState {
   u8 unk000[20];
-  struct RenderOutput *paneIcons[2];
+  struct WindowSprite *paneIcons[2];
   u8 unk01c[0x14];
   struct RenderInput *infoWindow;
   u8 unk034[0xc];
@@ -17,19 +17,19 @@ struct InventoryMenuState {
   u16 completionFlag;
 };
 
-void UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top,
+void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top,
                                      s32 *width, s32 *height);
-s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
+s32 Window_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
-void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
+void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
                         s32 height);
-void RenderOutput_RedrawSavedRectFar(struct RenderInput *window);
-void RenderOutput_ClearListFar(struct RenderInput *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void WindowSprite_RedrawSavedRectFar(struct RenderInput *window);
+void WindowSprite_ClearListFar(struct RenderInput *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                      s32 x, s32 y);
-void UiText_DrawResourceFar(s32 message, struct RenderInput *window, s32 x,
+void Text_DrawMessageFar(s32 message, struct RenderInput *window, s32 x,
                             s32 y);
-void UiWindow_CloseIfOpen(struct RenderInput **handle, s32 mode);
+void Window_CloseIfOpen(struct RenderInput **handle, s32 mode);
 void WaitFrames(s32 frames);
 
 /* FAKEMATCH(volatile): a volatile view of gInput makes each of the three tests
@@ -56,23 +56,23 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 
   menu->paneIcons[0]->active = 13;
   if (y != -1) {
-    UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
-    if (UiWindow_UpdateOrCreate(&menu->modalWindow, x, y, width, height,
+    Text_GetMessageSizeFar(message, &left, &top, &width, &height);
+    if (Window_UpdateOrCreate(&menu->modalWindow, x, y, width, height,
                                 0x102) == 0)
-      UiWindow_SetBounds(menu->modalWindow, x, y, width, height);
+      Window_SetBounds(menu->modalWindow, x, y, width, height);
     window = menu->modalWindow;
   } else {
     window = menu->infoWindow;
   }
-  RenderOutput_RedrawSavedRectFar(window);
-  RenderOutput_ClearListFar(window);
+  WindowSprite_RedrawSavedRectFar(window);
+  WindowSprite_ClearListFar(window);
 #if LANGUAGE == LANGUAGE_JAPANESE
-  UiText_DrawResourceFar(message, window, 0, 0);
+  Text_DrawMessageFar(message, window, 0, 0);
 #else
   if (y == -1)
-    UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
+    Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
   else
-    UiText_DrawResourceFar(message, window, 0, 0);
+    Text_DrawMessageFar(message, window, 0, 0);
 #endif
   if (x != -1) {
     WaitFrames(1);
@@ -80,7 +80,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
       WaitFrames(1);
     } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
              !(INPUT->pressed & KEY_START));
-    RenderOutput_ClearListFar(window);
+    WindowSprite_ClearListFar(window);
   } else {
     GameFlag_SetBit(337);
   }
@@ -88,6 +88,6 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   menu->paneIcons[0]->active = 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
   if (y != -1)
-    UiWindow_CloseIfOpen(&menu->modalWindow, 1);
+    Window_CloseIfOpen(&menu->modalWindow, 1);
 #endif
 }

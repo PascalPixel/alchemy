@@ -1,14 +1,14 @@
 	.section .rodata
 	.balign 4
 @ Scale factors, 256 to 1x
-	.global gUi_BounceScales
-gUi_BounceScales:
+	.global gWindowSprite_BounceScales
+gWindowSprite_BounceScales:
 	.2byte 256, 256, 260, 266, 274, 284, 294, 306
 	.2byte 320, 332, 344, 354, 364, 372, 378, 382
 	.2byte 384, 382, 378, 372, 364, 354, 344, 332
 	.2byte 320, 306, 294, 284, 274, 266, 260, 256
-	.global gUi_BounceScalesTail
-gUi_BounceScalesTail:
+	.global gWindowSprite_BounceScalesTail
+gWindowSprite_BounceScalesTail:
 	.byte -15, -28, -36, -40, -36, -28, -15, 0
 	.global gMenu_CursorBobOffsets
 gMenu_CursorBobOffsets:

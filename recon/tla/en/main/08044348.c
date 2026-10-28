@@ -9,9 +9,9 @@
 #include "resource.h"
 #include "mem.h"
 
-void UiWindow_DrawTilemapResource(struct UiWindow *window,
+void Window_DrawTilemapResource(struct Window *window,
                                   const void *resource) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
   s32 offset;
   u16 *map;

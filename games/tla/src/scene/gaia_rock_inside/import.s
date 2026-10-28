@@ -154,10 +154,10 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02004e3c:
 	overlay_veneer ObjectDispatch_SetSpritePriorityFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:
@@ -174,10 +174,10 @@ Func_02004e5c:
 	.thumb_func
 Func_02004e64:
 	overlay_veneer EventRuntime_EndFar
-	.global UiText_DrawQuantityPairWithCue
+	.global Party_LearnAbility
 	.thumb_func
-UiText_DrawQuantityPairWithCue:
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+Party_LearnAbility:
+	overlay_veneer Party_LearnAbilityFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

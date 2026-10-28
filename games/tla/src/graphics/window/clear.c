@@ -9,10 +9,10 @@
 #include "system.h"
 #include "render_input.h"
 
-void RenderOutput_ClearList(void *work) {
-  struct RenderOutputList *list = work;
-  struct RenderOutput *node;
-  struct RenderOutput *next;
+void WindowSprite_ClearList(void *work) {
+  struct WindowSpriteList *list = work;
+  struct WindowSprite *node;
+  struct WindowSprite *next;
 
   next = NULL;
   if (list != NULL) {
@@ -21,7 +21,7 @@ void RenderOutput_ClearList(void *work) {
     list->head = next;
     while (node != NULL) {
       next = node->next;
-      RenderOutput_Release(node);
+      WindowSprite_Release(node);
       node = next;
     }
   }

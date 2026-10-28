@@ -31,16 +31,16 @@ struct DjinnList {
 
 extern u8 Msg010de[];
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
 s32 Party_CountActiveOwnersFar(void);
 s32 Party_SumDjinnCountsFar(s32 owner);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
                                  s32 height);
 void Func_081019a4(struct DjinnList *list);
 s32 Func_08101a04(u32 entry);
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
-s32 UiWork_SetParamNibbleFar(s32 color);
+s32 Text_SetColorFar(s32 color);
 void WaitFrames(s32 frames);
 
 void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
@@ -57,12 +57,12 @@ void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
   s32 djinn;
 
   tiles[6] = 1;
-  RenderOutput_RedrawSavedRectFar(window);
+  WindowSprite_RedrawSavedRectFar(window);
   owners = Party_CountActiveOwnersFar();
   djinn = Party_SumDjinnCountsFar(-1);
   if (owners != 0 && (djinn - 1) / owners <= 6) {
-    UiText_DrawCharacterAtOffsetFar((s32)Msg010de, window, 0, 80);
-    UiWindow_DrawDividerLineFar(window, 0, 10, 28, 10);
+    Text_DrawCharacterAtOffsetFar((s32)Msg010de, window, 0, 80);
+    Window_DrawDividerLineFar(window, 0, 10, 28, 10);
   }
   Func_081019a4(list);
   for (column = 0, x = 8; column <= 3; column++, x += 56) {
@@ -75,13 +75,13 @@ void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
           if (element == (entries[i] & 0xe0) >> 5) {
             switch (Func_08101a04(entries[i])) {
             case 0:
-              UiWork_SetParamNibbleFar(2);
+              Text_SetColorFar(2);
               break;
             case 1:
-              UiWork_SetParamNibbleFar(15);
+              Text_SetColorFar(15);
               break;
             default:
-              UiWork_SetParamNibbleFar(4);
+              Text_SetColorFar(4);
               break;
             }
             Func_08101a54(window, x, y, entries[i]);

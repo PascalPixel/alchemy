@@ -14,7 +14,7 @@
 #include "resource_menu.h"
 #include "edition.h"
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 
 void Menu_CenterResourceEntries(s32, s32, s32);
@@ -42,7 +42,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = UiWindow_Create(x, y, *widthp, 3, 2);
+  work->window = Window_Create(x, y, *widthp, 3, 2);
 }
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
@@ -91,7 +91,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 }
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
-  UiWindow_OpenMode1AndWaitFrame();
+  PartyStatus_OpenAndWait();
   AffineEffect_InitializeWork();
   Menu_AppendResourceEntry(1);
   Menu_AppendResourceEntry(0xF);
@@ -103,6 +103,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 #endif
   arg1 = Menu_SelectResource(arg0, arg1 - 1);
   Menu_EndResourceSelection();
-  UiWork_CloseAndRelease();
+  Window_CloseAndRelease();
   return arg1;
 }

@@ -283,17 +283,17 @@ Func_0802de8c:
 	.section .rom.00039452, "ax"
 	.incbin "baserom.gba", 0x00039452, 0x00000002
 	.section .rom.00039454, "ax"
-	.global UiWindow_ClearInteriorTiles
-	.type UiWindow_ClearInteriorTiles, %function
+	.global Window_ClearInteriorTiles
+	.type Window_ClearInteriorTiles, %function
 	.thumb_func
-UiWindow_ClearInteriorTiles:
+Window_ClearInteriorTiles:
 	.incbin "baserom.gba", 0x00039454, 0x00000094
 	.section .rom.0003954c, "ax"
 	.balign 4
-	.global UiText_QueueRenderEntries
-	.type UiText_QueueRenderEntries, %function
+	.global Message_Start
+	.type Message_Start, %function
 	.thumb_func
-UiText_QueueRenderEntries:
+Message_Start:
 	.incbin "baserom.gba", 0x0003954c, 0x000000b0
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x00000002
@@ -321,24 +321,24 @@ Func_0803a8fc:
 	.section .rom.0003aa8a, "ax"
 	.incbin "baserom.gba", 0x0003aa8a, 0x00000002
 	.section .rom.0003aa8c, "ax"
-	.global UiText_RenderWideStringAtOffset
-	.type UiText_RenderWideStringAtOffset, %function
+	.global Text_DrawWideStringAtOffset
+	.type Text_DrawWideStringAtOffset, %function
 	.thumb_func
-UiText_RenderWideStringAtOffset:
+Text_DrawWideStringAtOffset:
 	.incbin "baserom.gba", 0x0003aa8c, 0x0000017c
 	.section .rom.0003ae60, "ax"
 	.incbin "baserom.gba", 0x0003ae60, 0x0000016c
 	.section .rom.0003afcc, "ax"
-	.global UiText_BuildRenderEntries
-	.type UiText_BuildRenderEntries, %function
+	.global Message_Decode
+	.type Message_Decode, %function
 	.thumb_func
-UiText_BuildRenderEntries:
+Message_Decode:
 	.incbin "baserom.gba", 0x0003afcc, 0x000007e0
 	.section .rom.0003b930, "ax"
-	.global UiText_MeasureEntryDimensions
-	.type UiText_MeasureEntryDimensions, %function
+	.global Text_MeasureEntry
+	.type Text_MeasureEntry, %function
 	.thumb_func
-UiText_MeasureEntryDimensions:
+Text_MeasureEntry:
 	.incbin "baserom.gba", 0x0003b930, 0x00000234
 	.global Func_0803bb58
 	.type Func_0803bb58, %function
@@ -368,10 +368,10 @@ Func_0803c274:
 	.balign 4
 	.incbin "baserom.gba", 0x0003c408, 0x0000013c
 	.section .rom.0003c544, "ax"
-	.global UiWork_AnimateSpriteSlots
-	.type UiWork_AnimateSpriteSlots, %function
+	.global WindowSprite_UpdateAll
+	.type WindowSprite_UpdateAll, %function
 	.thumb_func
-UiWork_AnimateSpriteSlots:
+WindowSprite_UpdateAll:
 	.incbin "baserom.gba", 0x0003c544, 0x00000464
 	.section .rom.0003d6d4, "ax"
 	.global ItemIcon_Compose
@@ -446,36 +446,36 @@ Func_080409f0:
 	.section .rom.000415f4, "ax"
 	.incbin "baserom.gba", 0x000415f4, 0x0000012c
 	.section .rom.00041720, "ax"
-	.global UiText_RenderStringTiles
-	.type UiText_RenderStringTiles, %function
+	.global Text_DrawStringAsTiles
+	.type Text_DrawStringAsTiles, %function
 	.thumb_func
-UiText_RenderStringTiles:
+Text_DrawStringAsTiles:
 	.incbin "baserom.gba", 0x00041720, 0x000003f0
 	.section .rom.00041ff8, "ax"
 	.balign 4
-	.global UiText_DrawResource
-	.type UiText_DrawResource, %function
+	.global Text_DrawMessage
+	.type Text_DrawMessage, %function
 	.thumb_func
-UiText_DrawResource:
+Text_DrawMessage:
 	.incbin "baserom.gba", 0x00041ff8, 0x0000006c
 	.section .rom.00042064, "ax"
-	.global UiText_DrawCharacterAtOffset
-	.type UiText_DrawCharacterAtOffset, %function
+	.global Text_DrawCharacterAtOffset
+	.type Text_DrawCharacterAtOffset, %function
 	.thumb_func
-UiText_DrawCharacterAtOffset:
+Text_DrawCharacterAtOffset:
 	.incbin "baserom.gba", 0x00042064, 0x00000098
 	.section .rom.00042150, "ax"
-	.global UiText_DrawStringAtOffset
-	.type UiText_DrawStringAtOffset, %function
+	.global Text_DrawStringAtOffset
+	.type Text_DrawStringAtOffset, %function
 	.thumb_func
-UiText_DrawStringAtOffset:
+Text_DrawStringAtOffset:
 	.incbin "baserom.gba", 0x00042150, 0x0000008c
 	.section .rom.000422c8, "ax"
 	.balign 4
-	.global UiText_DrawPrefixedNumberAtOffset
-	.type UiText_DrawPrefixedNumberAtOffset, %function
+	.global Text_DrawPrefixedNumberAtOffset
+	.type Text_DrawPrefixedNumberAtOffset, %function
 	.thumb_func
-UiText_DrawPrefixedNumberAtOffset:
+Text_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422c8, 0x000000a0
 	.section .rom.000425ce, "ax"
 	.incbin "baserom.gba", 0x000425ce, 0x00000002
@@ -854,10 +854,10 @@ Func_080d3a10:
 	.incbin "baserom.gba", 0x000e0a10, 0x00000118
 	.section .rom.000e0c88, "ax"
 	.balign 4
-	.global UiText_OpenMessageAtObject
-	.type UiText_OpenMessageAtObject, %function
+	.global FieldMessage_ShowAtActor
+	.type FieldMessage_ShowAtActor, %function
 	.thumb_func
-UiText_OpenMessageAtObject:
+FieldMessage_ShowAtActor:
 	.incbin "baserom.gba", 0x000e0c88, 0x00000328
 	.section .rom.000e11e6, "ax"
 	.incbin "baserom.gba", 0x000e11e6, 0x00000002

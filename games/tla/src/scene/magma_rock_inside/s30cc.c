@@ -13,7 +13,7 @@
 
 extern const u8 MsgBlazeTabletInscription[];
 
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
+void FieldMessage_Show(const u8 *message, s32 mode);
 s32 Func_02004d40();
 s32 Func_02004d48();
 s32 Func_02004dd0();
@@ -23,7 +23,7 @@ s32 Func_02004da0();
 s32 Func_02004d10();
 s32 Func_02004d18();
 s32 Func_02002cd0();
-s32 UiText_DrawQuantityPairWithCue();
+s32 Party_LearnAbility();
 s32 Object_TurnToFaceEachOther();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
@@ -44,7 +44,7 @@ void Func_020030cc(void) {
 
   Func_02004d40();
   Call1(Func_02004e90, 0);
-  UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription, 1);
+  FieldMessage_Show(MsgBlazeTabletInscription, 1);
   if (Value1(GameFlag_Test, 0x9fa) != 0) {
     Func_02004d48();
   } else {
@@ -81,15 +81,15 @@ void Func_020030cc(void) {
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
-    UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription + 3, 1);
+    FieldMessage_Show(MsgBlazeTabletInscription + 3, 1);
 #else
-    UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription + 2, 1);
+    FieldMessage_Show(MsgBlazeTabletInscription + 2, 1);
 #endif
     Call3(Func_02004d10, 0x50000, 0x70000, 0x10000);
     Call3(Func_02004d10, -1, -1, 0xe666);
     Call0(Func_02004d18);
     Call2(Func_02002cd0, 8, 5);
-    Call2(UiText_DrawQuantityPairWithCue, 5, 0x9a);
+    Call2(Party_LearnAbility, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
     Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 5, 0);
     Call1(FieldEvent_WaitFrames, 0xa);

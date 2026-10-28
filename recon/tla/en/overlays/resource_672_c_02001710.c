@@ -66,7 +66,7 @@ void Func_02001710(void) {
   GabombaStatueChamber_WaitFrames(1);
   Func_02001e88(5, 0x100, 20);
   GabombaStatueChamber_ObjArm(5, 0x8000, 0);
-  UiText_OpenMessageAtObject(0x4005, 0);
+  FieldMessage_ShowAtActor(0x4005, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     GabombaStatueChamber_ObjTurn(7, 0);
     Object_SetModeById(7, 3);

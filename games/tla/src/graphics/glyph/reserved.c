@@ -21,4 +21,4 @@ extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
-void UiWork_ReservedNoOp(void) {}
+void Window_ReservedNoOp(void) {}

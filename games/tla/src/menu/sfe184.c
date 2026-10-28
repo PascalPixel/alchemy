@@ -18,14 +18,14 @@ struct OwnerMenuState {
   u16 page;
 };
 
-void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
-void UiWindow_InitializeWork(s32 unused);
+void Window_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 a, s32 b, s32 c, s32 d);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Func_080fe240(void);
-void RenderOutput_ClearListFar(void *window);
+void WindowSprite_ClearListFar(void *window);
 void ItemMenu_Close(void);
 
 s32 Func_080fe184(void) {
@@ -35,13 +35,13 @@ s32 Func_080fe184(void) {
   s32 index;
 
   Ram_HeapSlots->objectSystem->suspended = 1;
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
-  UiWindow_InitializeWork(0);
+  Window_InitializeWork(0);
 
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Func_080fee04(0, 3, 0, 7);
-  state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   {
     struct {
       u16 value;
@@ -58,7 +58,7 @@ s32 Func_080fe184(void) {
 
   result = Func_080fe240();
 
-  RenderOutput_ClearListFar(state->statusWindow);
+  WindowSprite_ClearListFar(state->statusWindow);
   ItemMenu_Close();
   Ram_HeapSlots->objectSystem->suspended = 0;
   WaitFrames(1);

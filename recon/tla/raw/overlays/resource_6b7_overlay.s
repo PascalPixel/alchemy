@@ -48,7 +48,7 @@ Func_020002cc:
 	movs r3, #7
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	.ifdef TLA_EDITION_DE
 	movs r1, #9
 	.else
@@ -87,7 +87,7 @@ Func_020002cc:
 	movs r3, #10
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r3, #128
 	movs r2, #128
 	movs r6, #1
@@ -124,21 +124,21 @@ Func_020002cc:
 	bl __modsi3
 	adds r6, r0, #0
 	adds r0, r7, #0
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	adds r0, r7, #0
-	bl RenderOutput_ClearList
+	bl WindowSprite_ClearList
 	ldr r0, .L_02008558
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	mov r2, r9
 	str r2, [sp, #0]
 	adds r0, r6, #0
 	movs r1, #0
 	adds r2, r7, #0
 	movs r3, #80
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 	bl PartyInventory_HasSpace
 	cmp r0, #0
 	beq .L_020083c6
@@ -150,7 +150,7 @@ Func_020002cc:
 	movs r3, #32
 	ands r5, r6
 	ldr r0, .L_0200855c
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	adds r0, r5, #0
 	bl Func_020006bc
 	ldr r0, .L_02008560
@@ -158,16 +158,16 @@ Func_020002cc:
 	adds r0, r5, r0
 	movs r2, #120
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, .L_02008564
 	adds r1, r7, #0
 	adds r5, r5, r3
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	mov r0, r11
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	mov r0, r11
 	adds r1, r6, #0
 	bl ItemMenu_DrawItemDetails
@@ -177,7 +177,7 @@ Func_020002cc:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 .L_020083d2:
 	ldr r3, .L_0200856c
 	movs r2, #1
@@ -349,15 +349,15 @@ Func_020002cc:
 	b .L_02008334
 .L_02008520:
 	adds r0, r7, #0
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	movs r0, #1
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r11
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	add sp, #4
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -42,10 +42,10 @@ Func_020018f4:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global UiWork_FinalizePendingCore
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:
@@ -118,10 +118,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02001994:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_020019a4
 	.thumb_func
 Func_020019a4:

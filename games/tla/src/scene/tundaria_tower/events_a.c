@@ -61,7 +61,7 @@ void Func_020008a8(void) {
 void Func_02000920(void) {
   Func_02003048();
   Func_02003148(0);
-  UiText_ShowPositionedMessageAndWait(MsgThereSSomething, 1);
+  FieldMessage_Show(MsgThereSSomething, 1);
   if (GameFlag_Test(0x949)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 

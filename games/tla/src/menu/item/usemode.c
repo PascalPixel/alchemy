@@ -30,9 +30,9 @@ enum ItemMenuCommand {
 #define ITEM_COMMAND_TEXT_X 40
 #endif
 
-s32 UiWork_SetParamNibbleFar(s32 color);
+s32 Text_SetColorFar(s32 color);
 extern u8 MsgItemCommandUse[];
-void UiText_DrawCharacterAtOffsetFar(u32 message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(u32 message, s32 window, s32 x, s32 y);
 
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
@@ -40,43 +40,43 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   s32 useState;
   u32 firstCommandMessage;
 
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
 
   firstCommandMessage = (u32)MsgItemCommandUse;
   // "Use"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage, window, 0, 24);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage, window, 0, 24);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Equip"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window,
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window,
                                   ITEM_COMMAND_TEXT_X, 24);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Give"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 2, window, 0, 32);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 2, window, 0, 32);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Drop"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 3, window, 80, 32);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 3, window, 80, 32);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Details"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 4, window, 80, 24);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 4, window, 80, 24);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window,
+  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window,
                                   ITEM_COMMAND_TEXT_X, 32);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
 struct ItemDefinition *Item_Get(s32);
@@ -142,7 +142,7 @@ void Inventory_BreakFar(s32 owner, s32 slot);
 void Sound_PlayFar(s32 cue);
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 extern const u8 MsgItBroke[];
-void RenderOutput_RedrawSavedRectFar(void *window);
+void WindowSprite_RedrawSavedRectFar(void *window);
 
 void Func_080fb6d4(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
@@ -159,6 +159,6 @@ void Func_080fb6d4(void) {
     Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
     Sound_PlayFar(138);
     InventoryMenu_ShowModalMessage((s32)MsgItBroke, 0, -1);
-    RenderOutput_RedrawSavedRectFar(*(void **)(work + 0x30));
+    WindowSprite_RedrawSavedRectFar(*(void **)(work + 0x30));
   }
 }

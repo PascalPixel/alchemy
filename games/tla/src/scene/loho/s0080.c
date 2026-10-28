@@ -9,9 +9,9 @@ extern const u8 gData_02001900[];
 extern const u8 gData_02001a80[];
 
 void FieldEvent_WaitFrames(s32 frames);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 void Func_020012b0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_020012b8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -44,7 +44,7 @@ void Func_0200012c(s32 actor) {
   s32 msg = (s32)&MsgLoho23;
 
   Func_02001380(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001420(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001380(msg + 1);
@@ -56,6 +56,6 @@ void Func_0200012c(s32 actor) {
 }
 
 void Func_02000178(void) {
-  UiText_ShowPositionedMessageAndWait((s32)&MsgLoho27, 1);
+  FieldMessage_Show((s32)&MsgLoho27, 1);
   ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }

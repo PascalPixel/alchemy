@@ -35,7 +35,7 @@ struct ObjectRuntime *Object_GetById();
 void Object_LinkObjectAndSetCallback();
 void Object_SetModeById();
 void Party_RemoveActiveOwner();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 s32 Func_02000284(void) {
   struct ObjectRuntime *object;
@@ -255,7 +255,7 @@ void Func_0200031c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x8000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0, 0);
   Value1((s32 (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x200c, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x200c, 0);
   result2 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result2 != 0)
     goto L_020089be;

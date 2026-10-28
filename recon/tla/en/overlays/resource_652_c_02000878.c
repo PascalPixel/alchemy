@@ -24,8 +24,8 @@ struct ItemDefinition *Func_02000ce4(s32 item);
 s32 Func_02000df4(s32 *member, s32 *slot);
 s32 Func_02000dbc(s32 mode);
 void Func_02000dfc(s32 cue);
-void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
-void UiWork_FinalizePendingCore(void);
+void FieldMessage_Show(s32 msg, s32 mode);
+void Message_CloseFinishedWindows(void);
 u8 *Unit_Get(s32 owner);
 void Unit_Calculate(s32 owner);
 s32 Inventory_GetQuantity(s32 member, s32 slot);
@@ -48,25 +48,25 @@ s32 Func_02000878(s32 item, s32 unused) {
   owner = PartyInventory_Add(item);
   if (owner == -1) {
     Func_02000ccc(item, 2);
-    UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 1);
-    UiText_ShowPositionedMessageAndWait((s32)MsgItemCannotCarry, 1);
+    FieldMessage_Show((s32)MsgItemReceived, 1);
+    FieldMessage_Show((s32)MsgItemCannotCarry, 1);
   retry:
-    UiText_ShowPositionedMessageAndWait((s32)MsgItemDropPrompt, 1);
+    FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = Func_02000df4(&member, &slot);
     if (result == -1) {
       if (Func_02000ce4(item)->flags & 8) {
         Func_02000ccc(item, 2);
-        UiText_ShowPositionedMessageAndWait((s32)MsgItemDropPrompt + 4, 1);
+        FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
       }
       Func_02000ccc(item, 2);
-      UiText_ShowPositionedMessageAndWait((s32)MsgItemDropPrompt + 1, 5);
+      FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
       result = Func_02000dbc(1);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
       Func_02000ccc(item, 2);
-      UiText_ShowPositionedMessageAndWait((s32)MsgItemDropPrompt + 2, 1);
+      FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
       work->message = saved;
       return owner;
     } else {
@@ -75,7 +75,7 @@ s32 Func_02000878(s32 item, s32 unused) {
       if (Inventory_CountItem(member, item) > 29) {
         Func_02000ccc(member, 1);
         Func_02000ccc(item, 2);
-        UiText_ShowPositionedMessageAndWait((s32)MsgItemDropPrompt + 7, 1);
+        FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
         goto retry;
       }
       for (i = 0; i < count; i++)
@@ -86,11 +86,11 @@ s32 Func_02000878(s32 item, s32 unused) {
       Func_02000dfc(83);
       if (owner == gAdventure.currentOwner) {
         Func_02000ccc(item, 2);
-        UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 3);
+        FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
         Func_02000ccc(item, 2);
         Func_02000ccc(owner, 1);
-        UiText_ShowPositionedMessageAndWait((s32)MsgItemGiven, 3);
+        FieldMessage_Show((s32)MsgItemGiven, 3);
       }
       work->message = saved;
       return owner;
@@ -98,11 +98,11 @@ s32 Func_02000878(s32 item, s32 unused) {
   } else {
     Func_02000dfc(83);
     Func_02000ccc(item, 2);
-    UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 3);
+    FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gAdventure.currentOwner) {
       Func_02000ccc(item, 2);
       Func_02000ccc(owner, 1);
-      UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived + 1, 1);
+      FieldMessage_Show((s32)MsgItemReceived + 1, 1);
     }
     work->message = saved;
   }

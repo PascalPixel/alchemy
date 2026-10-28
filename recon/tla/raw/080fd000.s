@@ -46,7 +46,7 @@ Func_080fd000:
 	movs r2, #3
 	movs r3, #17
 	str r6, [sp, #4]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	cmp r0, #0
 	beq .L_080fd068
 	ldr r1, [r5]
@@ -62,7 +62,7 @@ Func_080fd000:
 	movs r2, #13
 	movs r3, #17
 	str r6, [sp, #4]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	cmp r0, #0
 	beq .L_080fd09e
 	ldr r3, [sp, #12]
@@ -71,7 +71,7 @@ Func_080fd000:
 	str r3, [sp, #0]
 	movs r0, #2
 	movs r3, #0
-	bl RenderOutput_CreateFromResourceFar
+	bl WindowSprite_CreateFromResourceFar
 	movs r1, #134
 	lsls r1, r1, #2
 	adds r3, r7, r1
@@ -147,11 +147,11 @@ Func_080fd000:
 	cmp r3, #0
 	bne .L_080fd148
 	ldr r0, [r7, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, [r7, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r0, [r7, #48]
-	bl UiText_DrawWorkValueWithLabel
+	bl Text_DrawWorkValueWithLabel
 	movs r1, #1
 	str r1, [sp, #8]
 	b .L_080fd150

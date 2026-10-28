@@ -5,11 +5,11 @@
 	.thumb_func
 BattleLayout_HighlightPartyPanelsFar:
 	overlay_veneer BattleLayout_HighlightPartyPanels
-	.global UiIcon_BuildItemIconTilesFar
+	.global Icon_BuildItemIconTilesFar
 	.thumb_func
-UiIcon_BuildItemIconTilesFar:
-	overlay_veneer UiIcon_BuildItemIconTiles
-	.global UiIcon_BuildAbilityIconTilesFar
+Icon_BuildItemIconTilesFar:
+	overlay_veneer Icon_BuildItemIconTiles
+	.global Icon_BuildAbilityIconTilesFar
 	.thumb_func
-UiIcon_BuildAbilityIconTilesFar:
-	overlay_veneer UiIcon_BuildAbilityIconTiles
+Icon_BuildAbilityIconTilesFar:
+	overlay_veneer Icon_BuildAbilityIconTiles

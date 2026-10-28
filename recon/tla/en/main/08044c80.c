@@ -21,22 +21,22 @@
 
 extern u8 MsgPairJoinedParty[];
 
-struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
+struct Window *Window_Create(s32, s32, s32, s32, s32);
+void Window_DrawDividerLine(struct Window *, s32, s32, s32, s32);
 s32 Party_LookupCharacterValueByFlag32(s32);
-s32 UiText_GetSpeakerPortrait(s32);
+s32 Portrait_GetForSpeaker(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
-void UiWork_PushValueSlot(s32, s32);
-s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
+void MessageArgument_Push(s32, s32);
+s32 Message_DecodeMode1(s32);
+s32 Message_Start(struct Window *, s32, s32, s32, s32);
 void Sound_PlayFar(s32);
 void WaitFrames(s32);
 s32 Sound_GetBgmRestoreDelayFar(void);
-void UiWork_Finalize(struct UiWindow *, s32);
+void Window_Close(struct Window *, s32);
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  struct UiWindow *window;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct Window *window;
   s32 sprite2[3];
   s32 sprite1[3];
   s32 *entry1;
@@ -49,16 +49,16 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   entry1 = sprite1;
   /* FAKEMATCH: the null window is also the style argument (ROM passes its
    * register). */
-  window = UiWindow_Create(1, 1, 28, 5, (s32)window);
+  window = Window_Create(1, 1, 28, 5, (s32)window);
   zero = 0;
 
   if (window != NULL) {
-    UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
+    Window_DrawDividerLine(window, 8, 0, 4, 4);
 
     work->dirty = 1;
 
     UiGlyph_LoadEntryWithPalette(
-        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(first)),
+        Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(first)),
         0, &handle1, &palette, 14, zero);
     p = entry1;
     *p++ = zero;
@@ -67,7 +67,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     entry2 = sprite2;
     UiGlyph_LoadEntryWithPalette(
-        UiText_GetSpeakerPortrait(Party_LookupCharacterValueByFlag32(second)),
+        Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(second)),
         0, &handle2, &palette, 15, zero);
     p = entry2;
     *p++ = zero;
@@ -77,11 +77,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
-    UiWork_PushValueSlot(first, 1);
-    UiWork_PushValueSlot(second, 1);
+    MessageArgument_Push(first, 1);
+    MessageArgument_Push(second, 1);
 
-    UiText_QueueRenderEntries(
-        window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2,
+    Message_Start(
+        window, Message_DecodeMode1((s32)MsgPairJoinedParty), 68, 2,
         zero);
 
     Sound_PlayFar(81);
@@ -93,7 +93,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     WaitFrames(1);
     Resource_ResetEntry(handle1);
     Resource_ResetEntry(handle2);

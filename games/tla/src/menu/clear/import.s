@@ -41,7 +41,7 @@ Resource_FindFreeEntry:
 	.global Func_02002208
 	.thumb_func
 Func_02002208:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -78,48 +78,48 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global UiWindow_Create
+	.global Window_Create
 	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
+Window_Create:
+	overlay_veneer Window_CreateFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_ShowPositionedMessageAndWait
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global RenderOutput_PrepareForRedraw
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
+	.global WindowSprite_PrepareForRedraw
 	.thumb_func
-RenderOutput_PrepareForRedraw:
-	overlay_veneer RenderOutput_PrepareForRedrawFar
-	.global UiWindow_DrawDividerLine
+WindowSprite_PrepareForRedraw:
+	overlay_veneer WindowSprite_PrepareForRedrawFar
+	.global Window_DrawDividerLine
 	.thumb_func
-UiWindow_DrawDividerLine:
-	overlay_veneer UiWindow_DrawDividerLineFar
-	.global UiText_DrawResource
+Window_DrawDividerLine:
+	overlay_veneer Window_DrawDividerLineFar
+	.global Text_DrawMessage
 	.thumb_func
-UiText_DrawResource:
-	overlay_veneer UiText_DrawResourceFar
-	.global UiText_DrawCharacterAtOffset
+Text_DrawMessage:
+	overlay_veneer Text_DrawMessageFar
+	.global Text_DrawCharacterAtOffset
 	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
+Text_DrawCharacterAtOffset:
+	overlay_veneer Text_DrawCharacterAtOffsetFar
 	.ifndef TLA_EDITION_JA
-	.global UiText_DrawStringInWindow
+	.global Text_DrawStringInWindow
 	.thumb_func
-UiText_DrawStringInWindow:
-	overlay_veneer UiText_DrawStringInWindowFar
+Text_DrawStringInWindow:
+	overlay_veneer Text_DrawStringInWindowFar
 	.endif
-	.global RenderOutput_Create
+	.global WindowSprite_Create
 	.thumb_func
-RenderOutput_Create:
-	overlay_veneer RenderOutput_CreateFar
-	.global UiWork_FinalizePendingCore
+WindowSprite_Create:
+	overlay_veneer WindowSprite_CreateFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global Menu_SelectSaveSlotAction
 	.thumb_func
 Menu_SelectSaveSlotAction:
@@ -132,14 +132,14 @@ Func_020022b0:
 	.thumb_func
 Func_020022b8:
 	overlay_veneer Func_08038210
-	.global RenderOutput_RedrawSavedRect
+	.global WindowSprite_RedrawSavedRect
 	.thumb_func
-RenderOutput_RedrawSavedRect:
-	overlay_veneer RenderOutput_RedrawSavedRectFar
-	.global UiWindow_SetTilemapEntry
+WindowSprite_RedrawSavedRect:
+	overlay_veneer WindowSprite_RedrawSavedRectFar
+	.global Window_SetTilemapEntry
 	.thumb_func
-UiWindow_SetTilemapEntry:
-	overlay_veneer UiWindow_SetTilemapEntryFar
+Window_SetTilemapEntry:
+	overlay_veneer Window_SetTilemapEntryFar
 	.global Func_020022d0
 	.thumb_func
 Func_020022d0:

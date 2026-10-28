@@ -4,7 +4,7 @@
 // the earlier barrier or pin removed, and finds nothing closer.
 // Draft, differ 6 of 146 (2026-10-24): an empty asm after the affine index
 // store takes one reordered pair off. Left: instruction order only.
-// Draft of RenderOutput_UpdateScaleAnimation: differ 8 of 146 (tla-en,
+// Draft of WindowSprite_UpdateScaleAnimation: differ 8 of 146 (tla-en,
 // 2026-10-18). Its ☀️ twin is games/tbs/src/window/window.c's function of
 // the same name: it steps a window output's bounce or grow scale and builds
 // the sprite's affine matrix for it.
@@ -38,27 +38,27 @@ struct OutputSprite {
   u16 otherX : 2;
   u16 tile;
 };
-extern u16 gUi_BounceScales[];
+extern u16 gWindowSprite_BounceScales[];
 
-void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
   s32 scale = 256;
   struct OutputSprite *sprite = (struct OutputSprite *)output->unk10;
   struct AffineTransform effect;
 
   switch ((u8)output->active) {
   case 9:
-    scale = gUi_BounceScales[output->animStep++ & 31];
+    scale = gWindowSprite_BounceScales[output->animStep++ & 31];
     break;
   case 10:
-    scale = gUi_BounceScales[output->animStep++ & 31] >> 1;
+    scale = gWindowSprite_BounceScales[output->animStep++ & 31] >> 1;
     break;
   case 11:
     if (output->animStep <= 7)
-      scale = gUi_BounceScales[output->animStep++ * 2 + 16];
+      scale = gWindowSprite_BounceScales[output->animStep++ * 2 + 16];
     break;
   case 12:
     if (output->animStep <= 7)
-      scale = gUi_BounceScales[output->animStep++ * 2 + 16] >> 1;
+      scale = gWindowSprite_BounceScales[output->animStep++ * 2 + 16] >> 1;
     break;
   }
   if (scale == 256) {

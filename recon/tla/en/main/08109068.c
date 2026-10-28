@@ -27,12 +27,12 @@ struct ItemDefinition {
   u16 price;
 };
 
-void RenderOutput_PrepareForRedrawFar(struct RenderInput *window);
+void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
 struct ItemDefinition *Item_Get(s32 item);
-struct RenderOutput *RenderOutput_CreateLoadedFar(s32 item, s32 mode,
+struct WindowSprite *WindowSprite_CreateLoadedFar(s32 item, s32 mode,
                                                   struct RenderInput *window,
                                                   s32 x, s32 y);
-struct RenderOutput *Shop_CreatePriceSprite(s32 value,
+struct WindowSprite *Shop_CreatePriceSprite(s32 value,
                                             struct RenderInput *window, s32 x,
                                             s32 y);
 
@@ -48,16 +48,16 @@ void Func_08109068(struct RenderInput *window, s32 selected) {
   s32 highlightFrame;
   s16 itemId;
   struct ItemDefinition *definition;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
 
   shop = Ram_HeapSlots->menuRuntime;
   itemIds = shop->stockItemIds;
   itemCount = shop->stockCount;
   stockIndex = selected / 7 * 7;
   if (window != 0) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
     if (stockIndex != 0) {
-      icon = RenderOutput_CreateFar(shop->previousPageIcon, 0x40000000, window,
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, 0x40000000, window,
                                     216, -16);
       zero = 0;
       icon->kind = zero;
@@ -65,7 +65,7 @@ void Func_08109068(struct RenderInput *window, s32 selected) {
       icon->animStep = zero;
     }
     if (stockIndex + 7 < itemCount) {
-      icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
+      icon = WindowSprite_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
                                     24);
       zero = 0;
       icon->kind = zero;
@@ -81,7 +81,7 @@ void Func_08109068(struct RenderInput *window, s32 selected) {
         itemId = *stockCursor;
         definition = Item_Get(itemId);
         icon =
-            RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
+            WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
         if (stockIndex == selected) {
           icon->active = 9;

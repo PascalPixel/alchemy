@@ -47,7 +47,7 @@ Func_0810a2d8:
 	beq .L_0810a344
 	mov r0, r10
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0810a478
 	bl Func_0810857c
 	b .L_0810a468
@@ -61,7 +61,7 @@ Func_0810a2d8:
 	bne .L_0810a362
 	mov r0, r10
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0810a47c
 	bl Func_0810857c
 	b .L_0810a468
@@ -77,7 +77,7 @@ Func_0810a2d8:
 	beq .L_0810a384
 	mov r0, r10
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0810a480
 	bl Func_0810857c
 	b .L_0810a468
@@ -92,10 +92,10 @@ Func_0810a2d8:
 .L_0810a394:
 	mov r0, r10
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r9
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r2, .L_0810a48c
 	mov r11, r2
 	mov r0, r11
@@ -121,11 +121,11 @@ Func_0810a2d8:
 	bl Shop_DrawItemCount
 	movs r1, #2
 	mov r0, r10
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r11
 	adds r0, #2
 	bl Func_0810857c
-	bl UiWork_FinalizePendingCoreFar
+	bl Message_CloseFinishedWindowsFar
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #100
@@ -159,7 +159,7 @@ Func_0810a2d8:
 	bl Shop_DrawItemCount
 	movs r1, #2
 	mov r0, r10
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r11
 	adds r0, #3
 	bl Func_0810857c

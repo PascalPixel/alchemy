@@ -544,7 +544,7 @@ Func_081b83c4:
 	adds r6, #28
 	cmp r0, #4
 	bne .L_081b879c
-	bl UiWork_InitializeWithResourceCountersFar
+	bl WindowSystem_InitFieldFar
 	movs r1, #6
 	str r1, [sp, #0]
 	mov r8, r1
@@ -552,7 +552,7 @@ Func_081b83c4:
 	movs r1, #0
 	movs r3, #3
 	movs r0, #18
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r3, #128
 	ldr r2, [sp, #120]
 	ldr r5, .L_081b8bec
@@ -564,7 +564,7 @@ Func_081b83c4:
 	adds r0, r5, #0
 	movs r2, #48
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r4, .L_081b8bf0
 	ldr r2, [r6]
 	ldr r0, [r4, #16]
@@ -572,14 +572,14 @@ Func_081b83c4:
 	movs r1, #6
 	str r3, [sp, #0]
 	mov r10, r4
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	mov r6, r8
 	movs r1, #3
 	movs r2, #12
 	movs r3, #3
 	movs r0, #18
 	str r6, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	ldr r0, [sp, #120]
 	movs r2, #153
@@ -590,13 +590,13 @@ Func_081b83c4:
 	str r1, [r7]
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #16
 	movs r2, #8
 	movs r3, #4
 	movs r0, #22
 	str r6, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r4, #128
 	ldr r3, [sp, #120]
 	ldr r5, .L_081b8bf4
@@ -609,12 +609,12 @@ Func_081b83c4:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r3, #8
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
@@ -633,7 +633,7 @@ Func_081b83c4:
 	str r3, [sp, #0]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r0, #1
 	bl Sound_PlayFar
 	movs r0, #0
@@ -658,7 +658,7 @@ Func_081b83c4:
 	adds r3, r2, r4
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	bl .L_081ba282
 .L_081b8932:
 	ldr r3, [r1, #12]
@@ -679,7 +679,7 @@ Func_081b83c4:
 	adds r3, r6, r0
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	adds r0, r5, #0
 	bl Sound_PlayFar
 	ldr r6, .L_081b8bfc
@@ -753,7 +753,7 @@ Func_081b83c4:
 	movs r5, #5
 	movs r1, #6
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r1, [sp, #92]
 	negs r0, r1
 	bl Party_AdjustCoinsFar
@@ -768,7 +768,7 @@ Func_081b83c4:
 	movs r3, #0
 	str r1, [sp, #0]
 	movs r1, #6
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r3, #0
 	movs r2, #2
 	str r2, [sp, #96]
@@ -784,7 +784,7 @@ Func_081b83c4:
 	movs r1, #6
 	movs r3, #24
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	bl .L_081b9550
 .L_081b8a46:
 	ldr r4, [sp, #96]
@@ -883,14 +883,14 @@ Func_081b83c4:
 	adds r6, r4, r5
 	ldr r0, [r6]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #16
 	movs r2, #8
 	movs r3, #4
 	movs r0, #22
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	ldr r5, .L_081b8bf4
 	adds r1, r0, #0
 	str r1, [r6]
@@ -898,12 +898,12 @@ Func_081b83c4:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #113
 	bl Sound_PlayFar
 	movs r6, #0
@@ -925,7 +925,7 @@ Func_081b83c4:
 	adds r4, #204
 	adds r3, r2, r4
 	ldr r0, [r3]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	ldr r5, [sp, #88]
 	cmp r5, #0
 	beq .L_081b8b72
@@ -953,7 +953,7 @@ Func_081b83c4:
 	ldr r0, [sp, #92]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r2, [sp, #92]
 	negs r0, r2
 	bl Party_AdjustCoinsFar
@@ -968,7 +968,7 @@ Func_081b83c4:
 	movs r1, #6
 	movs r3, #0
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	b .L_081b8c70
 .L_081b8bc6:
 	ldr r3, [r1, #12]
@@ -1053,12 +1053,12 @@ Func_081b83c4:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_081b8f1c
 	ldr r1, [r5]
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b8c70:
 	ldr r4, [sp, #72]
 	cmp r4, #0
@@ -1709,7 +1709,7 @@ Func_081b83c4:
 	ldr r0, [sp, #92]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r6, [sp, #60]
 	ldr r0, [sp, #88]
 	lsls r6, r6, #1
@@ -1737,7 +1737,7 @@ Func_081b83c4:
 	str r5, [sp, #96]
 	str r5, [sp, #56]
 	str r6, [sp, #68]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r2, #128
 	adds r1, r0, #0
 	ldr r0, [sp, #120]
@@ -1748,7 +1748,7 @@ Func_081b83c4:
 	ldr r0, .L_081b9218
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b9192:
 	movs r3, #0
 	str r3, [sp, #84]
@@ -1774,7 +1774,7 @@ Func_081b83c4:
 	ldr r0, [sp, #92]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r0, #1
 	str r5, [sp, #60]
 	bl Sound_PlayFar
@@ -1785,7 +1785,7 @@ Func_081b83c4:
 	movs r3, #4
 	movs r0, #22
 	str r5, [sp, #96]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r3, #128
 	ldr r2, [sp, #120]
 	ldr r5, .L_081b921c
@@ -1798,12 +1798,12 @@ Func_081b83c4:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r0, r5, #0
 	ldr r1, [r6]
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r5, #1
 	movs r4, #0
 	str r4, [sp, #80]
@@ -1859,7 +1859,7 @@ Func_081b83c4:
 	adds r2, #12
 	movs r1, #16
 	movs r3, #3
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r2, #128
 	adds r1, r0, #0
 	ldr r0, [sp, #120]
@@ -1871,21 +1871,21 @@ Func_081b83c4:
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	subs r5, #1
 	lsls r2, r7, #3
 	ldr r1, [r6]
 	adds r2, #48
 	adds r0, r5, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #0
 	ldr r2, [r6]
 	ldr r0, [sp, #76]
 	str r3, [sp, #0]
 	adds r1, r7, #0
 	movs r3, #48
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_081b92ae:
 	ldr r3, [sp, #84]
 	cmp r3, #19
@@ -1905,7 +1905,7 @@ Func_081b83c4:
 	adds r6, r4, r5
 	movs r1, #1
 	ldr r0, [r6]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl Sound_PlayFar
 	movs r0, #112
@@ -1918,7 +1918,7 @@ Func_081b83c4:
 	movs r2, #8
 	movs r3, #4
 	movs r0, #22
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	ldr r5, .L_081b950c
 	adds r1, r0, #0
 	str r1, [r6]
@@ -1926,12 +1926,12 @@ Func_081b83c4:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r3, #8
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #0
 	movs r2, #1
 	str r1, [sp, #80]
@@ -1952,7 +1952,7 @@ Func_081b83c4:
 	ldr r0, [sp, #92]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r6, [sp, #76]
 	cmp r6, #0
 	bgt .L_081b9348
@@ -1974,7 +1974,7 @@ Func_081b83c4:
 	movs r1, #6
 	str r3, [sp, #0]
 	movs r3, #0
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	b .L_081b9550
 .L_081b9372:
 	ldr r4, [sp, #76]
@@ -2002,7 +2002,7 @@ Func_081b83c4:
 	movs r1, #6
 	movs r3, #0
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r2, [sp, #92]
 	movs r4, #153
 	subs r2, #1
@@ -2015,7 +2015,7 @@ Func_081b83c4:
 	ldr r0, [sp, #92]
 	movs r1, #6
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	b .L_081b9550
 .L_081b93c6:
 	ldr r5, [sp, #96]
@@ -2050,7 +2050,7 @@ Func_081b83c4:
 	adds r5, r2, r3
 	ldr r0, [r5]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	ldr r4, [sp, #68]
 	cmp r4, #0
 	bne .L_081b9472
@@ -2067,7 +2067,7 @@ Func_081b83c4:
 	movs r0, #4
 	movs r3, #4
 	str r6, [sp, #64]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	str r1, [r5]
 	ldr r2, [sp, #104]
@@ -2078,7 +2078,7 @@ Func_081b83c4:
 	ldr r0, .L_081b9514
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_081b9452
 .L_081b9444:
 	movs r4, #0
@@ -2086,7 +2086,7 @@ Func_081b83c4:
 	movs r2, #0
 	movs r3, #0
 	str r4, [sp, #72]
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b9452:
 	ldr r5, [sp, #120]
 	movs r6, #128
@@ -2097,7 +2097,7 @@ Func_081b83c4:
 	ldr r0, .L_081b951c
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #0
 	movs r1, #1
 	str r0, [sp, #80]
@@ -3940,7 +3940,7 @@ Func_081b83c4:
 	adds r3, r0, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 .L_081ba282:
 	movs r2, #0
 	movs r6, #128

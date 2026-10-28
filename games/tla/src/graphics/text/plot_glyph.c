@@ -9,7 +9,7 @@
 #define PLOT_GLYPH_ROWS 14
 #endif
 
-void UiText_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
+void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
   s32 y;
   u8 *p;
   s32 bits;

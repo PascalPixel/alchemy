@@ -10,7 +10,7 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Func_020041cc(s32 color, s32 b);
 void Func_020041d4(s32 color, s32 b);
 void Func_020041dc(s32 frames);
@@ -42,9 +42,9 @@ void Func_02000af4(void) {
   Func_0200406c();
   Func_02004204(0);
   if (GameFlag_Test(0x9b2))
-    UiText_ShowPositionedMessageAndWait((s32)MsgContigo163, 1);
+    FieldMessage_Show((s32)MsgContigo163, 1);
   else
-    UiText_ShowPositionedMessageAndWait((s32)MsgContigo64, 1);
+    FieldMessage_Show((s32)MsgContigo64, 1);
   Contigo_ObjMode(17, 3);
   Func_020041d4(0x10000, 0);
   Func_020041cc(0x204084, 1);

@@ -23,9 +23,9 @@ void *Unit_Get(s32 unitId);
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
 extern u8 MsgYouHave[], MsgShopNoneInStock[];
 
-void RenderOutput_PrepareForRedrawFar(struct RenderInput *window);
-void UiText_DrawQuantity(s32 value, s32 digits);
-void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
+void MessageArgument_PushFar(s32 value, s32 digits);
+void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                      s32 x, s32 y);
 void Func_0810bf98(struct RenderInput *window, s32 x, s32 y, s32 unit);
 
@@ -41,14 +41,14 @@ void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
 
   unitBytes = (u8 *)Unit_Get(unitId);
   if (window != 0) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
-      UiText_DrawQuantity((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
-      UiText_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
+      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
+      Text_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
     } else {
-      UiText_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
     }
     Func_0810bf98(window, 8, 8, unitId);
   }

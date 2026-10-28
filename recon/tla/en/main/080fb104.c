@@ -45,9 +45,9 @@ enum {
 
 void Func_080fb410(s8 *commandStates);
 void ItemMenu_HideAllIcons(void);
-void RenderOutput_RedrawSavedRectFar(void *window);
+void WindowSprite_RedrawSavedRectFar(void *window);
 void ItemMenu_SetMessageWindowHeight7(void);
-void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
+void Window_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Func_080fc12c(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, void *window);
 void Func_080f8ab4(s32 x, s32 y);
@@ -84,11 +84,11 @@ s32 Func_080fb104(void) {
     void *messageWindow;
 
     ItemMenu_HideAllIcons();
-    RenderOutput_RedrawSavedRectFar(menu->listWindow);
+    WindowSprite_RedrawSavedRectFar(menu->listWindow);
     messageWindow = menu->messageWindow;
     ItemMenu_SetMessageWindowHeight7();
-    RenderOutput_RedrawSavedRectFar(messageWindow);
-    UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
+    WindowSprite_RedrawSavedRectFar(messageWindow);
+    Window_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     Func_080fc12c();
     ItemMenu_DrawCommands(commandStates, messageWindow);
   }

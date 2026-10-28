@@ -48,14 +48,14 @@ struct ShopUnit *Unit_Get(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
                                  s32 style);
-struct RenderOutput *RenderOutput_CreateFar(s32 code, s32 layers,
+struct WindowSprite *WindowSprite_CreateFar(s32 code, s32 layers,
                                             struct RenderInput *input, s32 x,
                                             s32 y);
 
@@ -72,9 +72,9 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
 
   if (window == 0)
     return;
-  RenderOutput_PrepareForRedrawFar(window);
+  WindowSprite_PrepareForRedrawFar(window);
   if (!Item_CanOwnerEquip(unitId, itemId)) {
-    UiText_DrawResourceFar((s32)MsgShopCannotEquip, window, 8, 24);
+    Text_DrawMessageFar((s32)MsgShopCannotEquip, window, 8, 24);
     return;
   }
   slot = Inventory_FindEquippedFar(unitId, item->type);
@@ -113,19 +113,19 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   without[3] = unit->luck;
   for (i = 0; i <= 2; i++) {
     if (without[i] > with[i])
-      ((u8 *)RenderOutput_CreateFar(shop->statDownIcon, 0x40000000,
+      ((u8 *)WindowSprite_CreateFar(shop->statDownIcon, 0x40000000,
                                     (struct RenderInput *)window, 56,
                                     i * 16 - 4))[4] = 0;
     else if (without[i] < with[i])
-      ((u8 *)RenderOutput_CreateFar(shop->statUpIcon, 0x40000000,
+      ((u8 *)WindowSprite_CreateFar(shop->statUpIcon, 0x40000000,
                                     (struct RenderInput *)window, 56,
                                     i * 16 - 4))[4] = 0;
-    UiText_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
+    Text_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
     if (without[i] != with[i])
-      UiText_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0,
+      Text_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
+    Text_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0,
                                     i * 16);
-    UiWindow_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
+    Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
   {
     s32 old = replaced;
@@ -134,6 +134,6 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
      * (differ 34 without the temporary and barrier, 32 with). */
     __asm__("");
     if (old != -1)
-      UiText_DrawCharacterAtOffsetFar(old + (s32)MsgItemName, window, 0, 48);
+      Text_DrawCharacterAtOffsetFar(old + (s32)MsgItemName, window, 0, 48);
   }
 }

@@ -13,11 +13,11 @@
 #include "window.h"
 #include "edition.h"
 
-s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
+s32 Text_MeasureEntry(s32 start, u32 *width, u32 *height, s32 mode);
 
-void UiWindow_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
+void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                  s32 width, s32 height, u32 field) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;
@@ -72,14 +72,14 @@ void Resource_CopyFixedBlockA(s32 slot) {
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-s32 UiText_SetRenderString(const u8 *str) {
-  struct UiRenderWork *work;
+s32 Text_SetString(const u8 *str) {
+  struct WindowWork *work;
   u16 *dst;
   s32 count;
   u32 width;
   u32 height;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   count = 0;
   if (*str != 0) {
     dst = work->entries;
@@ -98,11 +98,11 @@ s32 UiText_SetRenderString(const u8 *str) {
     } while (*str != 0);
   }
   work->entries[count] = 0;
-  UiText_MeasureEntryDimensions(0, &width, &height, 0);
+  Text_MeasureEntry(0, &width, &height, 0);
   return width;
 }
 
-void UiText_DrawPaddedLabel(s32 output, u8 *input) {
+void Text_DrawPaddedLabel(s32 output, u8 *input) {
   u8 text[20];
   s32 length = 0;
 
@@ -124,6 +124,6 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input) {
   text[length++] = 8;
   text[length++] = 15;
   text[length] = 0;
-  UiText_DrawString(text, output, 0, -2);
+  Text_DrawString(text, output, 0, -2);
 }
 #endif

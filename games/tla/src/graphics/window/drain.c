@@ -2,23 +2,23 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-void UiWork_DrainPending(void) {
-  struct UiRenderWork *state;
+void Window_CloseAll(void) {
+  struct WindowWork *state;
   struct UiChannelSlot *slot;
-  struct UiWindow *direct;
+  struct Window *direct;
   u32 done;
-  struct UiWindow *work;
-  struct UiWindow *pollWork;
+  struct Window *work;
+  struct Window *pollWork;
   s32 index;
 
-  state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   slot = state->channels;
   direct = state->windows;
   index = 0;
   do {
     work = slot->work;
     if (work != 0 && work->flags != 0)
-      UiWork_Finalize(work, 0);
+      Window_Close(work, 0);
     index++;
     slot++;
   } while (index != 3);
@@ -49,7 +49,7 @@ void UiWork_DrainPending(void) {
   }
   while (index != UI_WINDOW_COUNT) {
     if (direct->flags != 0)
-      UiWork_Finalize(direct, 0);
+      Window_Close(direct, 0);
     direct++;
     index++;
   }

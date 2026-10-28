@@ -3,7 +3,7 @@
 #include "text/msg_ids.h"
 
 s32 GameFlag_Test(s32 flag);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 position);
+void FieldMessage_ShowFar(s32 message, s32 position);
 
 s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
                                  s32 target) {
@@ -20,7 +20,7 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
     }
     if (GameFlag_Test(0x142)) {
       EventRuntime_Start();
-      UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
+      FieldMessage_ShowFar((s32)MsgNothingHappens, 1);
       EventRuntime_End();
     }
   }

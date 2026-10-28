@@ -21,7 +21,7 @@ void ObjectMotion_ArmCallback();
 void ObjectMotion_SetPositionAndReset();
 s32 Object_GetById();
 void Object_SetModeById();
-void UiText_ShowPositionedMessageAndWait();
+void FieldMessage_Show();
 extern u8 MsgTrialRoadGiveUpPrompt[];
 
 s32 Func_02000330(void) {
@@ -42,7 +42,7 @@ s32 Func_02000330(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000,
         0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, v_r5, 13);
+  Call2((void (*)())FieldMessage_Show, v_r5, 13);
   v_r5 = (v_r5 + 1);
   FIELD_AT((v_r6 + 0xcb0), s16, 0) = v_r5;
   FIELD_AT((v_r6 + 0xcb2), s16, 0) = 4;

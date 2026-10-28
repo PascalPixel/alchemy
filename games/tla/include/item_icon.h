@@ -33,7 +33,7 @@ struct IconWork {
 
 s32 Resource_ResetEntry(u32 entry);
 s32 Resource_FindFreeEntry(void);
-void UiIcon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
+void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
 void *Unit_Get(s32 owner);
 
 void Func_0810bdb0(void);

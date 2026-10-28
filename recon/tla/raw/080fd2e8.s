@@ -137,7 +137,7 @@ Func_080fd2e8:
 	cmp r3, #0
 	bne .L_080fd428
 	ldr r0, [r6, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r1, #182
 	lsls r1, r1, #1
 	adds r3, r6, r1
@@ -149,7 +149,7 @@ Func_080fd2e8:
 	ldr r1, [r6, #48]
 	adds r0, r0, r3
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r2, #1
 	mov r10, r2
 	b .L_080fd430
@@ -225,7 +225,7 @@ Func_080fd2e8:
 	ldr r5, [r6, #24]
 	movs r7, #13
 	adds r0, r5, #0
-	bl UiIcon_PrepareObject
+	bl Icon_PrepareActor
 	strb r7, [r5, #5]
 	movs r0, #1
 	bl WaitFrames

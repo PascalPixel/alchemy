@@ -37,7 +37,7 @@ extern u8 Msg04823[], Msg04824[];
 
 void Func_0810a9ac(s32 message);
 void Func_0810a9fc(s32 message);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_080f8060(void *window, s32 a, s32 b);
 s32 Shop_CanServe(s32 unitId, s32 serviceKind);
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
@@ -47,10 +47,10 @@ void WaitFrames(s32 frames);
 void Shop_DrawServiceParty(void *window, s32 memberIndex);
 void Shop_DrawSelectMsg(void *window, s32 unitId);
 void Sound_PlayFar(s32 cue);
-void RenderOutput_PrepareForRedrawFar(void *window);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void WindowSprite_PrepareForRedrawFar(void *window);
+void MessageArgument_PushFar(s32 value, s32 slot);
 s32 Func_08108660(s32 value);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Func_0810b1b4(s32 member);
 void Party_AdjustCoinsFar(s32 amount);
@@ -58,7 +58,7 @@ void Func_08109188(void);
 s32 Shop_CountUnits(void);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 void Menu_ReleaseEntryObjectsFar(void);
-void UiWork_FinalizeFar(void *window, s32 style);
+void Window_CloseFar(void *window, s32 style);
 
 s32 Func_0810abf0(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -73,11 +73,11 @@ s32 Func_0810abf0(void) {
   s32 messageBase;
 
   Func_0810a9ac((s32)Msg04823);
-  listWindow = UiWindow_CreateFar(1, 12, 13, 3, 2);
+  listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursorAnchor->active = 4;
   shop->mode = redraw;
   Func_080f8060(listWindow, 2, 0);
-  priceWindow = UiWindow_CreateFar(1, 16, 23, 3, 2);
+  priceWindow = Window_CreateFar(1, 16, 23, 3, 2);
   unitId = 0;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
     unitId = shop->partyMemberIds[memberIndex];
@@ -116,9 +116,9 @@ s32 Func_0810abf0(void) {
         Sound_PlayFar(113);
         continue;
       }
-      RenderOutput_PrepareForRedrawFar(listWindow);
-      UiText_DrawQuantity(unitId, 1);
-      UiText_DrawQuantity(price, 5);
+      WindowSprite_PrepareForRedrawFar(listWindow);
+      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(price, 5);
       messageBase = (s32)Msg04824;
       Func_0810a9ac(messageBase);
       if (Func_08108660(0) != 0) {
@@ -132,14 +132,14 @@ s32 Func_0810abf0(void) {
         chooseAgain = 1;
         continue;
       }
-      UiText_DrawQuantity(unitId, 1);
+      MessageArgument_PushFar(unitId, 1);
       Func_0810a9ac(messageBase + 3);
-      UiWork_FinalizePendingCoreFar();
+      Message_CloseFinishedWindowsFar();
       BattleUnit_ResetStateByMode(unitId, serviceKind);
       Func_0810b1b4(memberIndex % 4);
       Party_AdjustCoinsFar(-price);
       Func_08109188();
-      UiText_DrawQuantity(unitId, 1);
+      MessageArgument_PushFar(unitId, 1);
       Func_0810a9ac(messageBase + 4);
       if (Shop_CountUnits() != 0) {
         chooseAgain = 1;
@@ -155,8 +155,8 @@ s32 Func_0810abf0(void) {
     }
   }
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(priceWindow, 2);
-  UiWork_FinalizeFar(listWindow, 2);
+  Window_CloseFar(priceWindow, 2);
+  Window_CloseFar(listWindow, 2);
   WaitFrames(1);
   return 0;
 }

@@ -5,30 +5,30 @@
 	.thumb_func
 Func_080380f8:
 	overlay_veneer Func_0803d3c0
-	.global UiWork_FinalizeEntityMatchingLocalizedIdFar
+	.global Window_CloseMatchingIdFar
 	.thumb_func
-UiWork_FinalizeEntityMatchingLocalizedIdFar:
+Window_CloseMatchingIdFar:
 	overlay_veneer Func_0803d450
-	.global UiText_GetResourceDimensionsFar
+	.global Text_GetMessageSizeFar
 	.thumb_func
-UiText_GetResourceDimensionsFar:
-	overlay_veneer UiText_GetResourceDimensions
-	.global UiText_GetResourceDimensionsAltFar
+Text_GetMessageSizeFar:
+	overlay_veneer Text_GetMessageSize
+	.global Text_GetMessageSizeAltFar
 	.thumb_func
-UiText_GetResourceDimensionsAltFar:
-	overlay_veneer UiText_GetResourceDimensionsAlt
-	.global UiWork_ClearValueNameTablesFar
+Text_GetMessageSizeAltFar:
+	overlay_veneer Text_GetMessageSizeAlt
+	.global MessageArgument_ClearAllFar
 	.thumb_func
-UiWork_ClearValueNameTablesFar:
-	overlay_veneer UiWork_ClearValueNameTables
-	.global UiText_DrawQuantity
+MessageArgument_ClearAllFar:
+	overlay_veneer MessageArgument_ClearAll
+	.global MessageArgument_PushFar
 	.thumb_func
-UiText_DrawQuantity:
-	overlay_veneer UiWork_PushValueSlot
-	.global UiWindow_CreateWithLayoutBoundsFar
+MessageArgument_PushFar:
+	overlay_veneer MessageArgument_Push
+	.global PartyStatus_CreateWindowFar
 	.thumb_func
-UiWindow_CreateWithLayoutBoundsFar:
-	overlay_veneer UiWindow_CreateWithLayoutBounds
+PartyStatus_CreateWindowFar:
+	overlay_veneer PartyStatus_CreateWindow
 	.global PartyStatus_DrawFar
 	.thumb_func
 PartyStatus_DrawFar:
@@ -37,14 +37,14 @@ PartyStatus_DrawFar:
 	.thumb_func
 PartyStatus_CloseFar:
 	overlay_veneer PartyStatus_Close
-	.global UiWork_FinalizePendingCoreFar
+	.global Message_CloseFinishedWindowsFar
 	.thumb_func
-UiWork_FinalizePendingCoreFar:
-	overlay_veneer UiWork_FinalizePendingCore
-	.global UiWork_DrainPendingFar
+Message_CloseFinishedWindowsFar:
+	overlay_veneer Message_CloseFinishedWindows
+	.global Window_CloseAllFar
 	.thumb_func
-UiWork_DrainPendingFar:
-	overlay_veneer UiWork_DrainPending
+Window_CloseAllFar:
+	overlay_veneer Window_CloseAll
 	.global UiGlyph_ResetWorkStateFar
 	.thumb_func
 UiGlyph_ResetWorkStateFar:
@@ -100,4 +100,4 @@ Func_080381b0:
 	.global Func_080381b8
 	.thumb_func
 Func_080381b8:
-	overlay_veneer UiWork_ReservedNoOp
+	overlay_veneer Window_ReservedNoOp

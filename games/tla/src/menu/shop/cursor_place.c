@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u16 x;
   u16 y;
   s16 targetX;
@@ -44,7 +44,7 @@ struct SpriteAttr2 {
 };
 
 struct ShopCursorSprite3 {
-  struct RenderOutput *next;
+  struct WindowSprite *next;
   u8 unk04[2];
   u16 x;
   u16 y;

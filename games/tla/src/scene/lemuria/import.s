@@ -54,10 +54,10 @@ Animation_SetIndexAndInitializeObjects:
 	.thumb_func
 Func_02001ba4:
 	overlay_veneer ObjectDispatch_SetSpritePriorityFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02001bb4
 	.thumb_func
 Func_02001bb4:
@@ -154,10 +154,10 @@ Object_TurnToFaceEachOther:
 	.thumb_func
 Func_02001c6c:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02001c7c
 	.thumb_func
 Func_02001c7c:

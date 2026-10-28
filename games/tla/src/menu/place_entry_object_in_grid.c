@@ -14,15 +14,15 @@
 
 struct EntryIconMenu {
   u8 unk000[0x4c];
-  struct RenderOutput *entryIcons[32];
+  struct WindowSprite *entryIcons[32];
 };
 
 /// Places each of the 32 entry icons on the grid.
 // The Broken Seal's Menu_PlaceEntryObjectsInGrid.
 void Func_081005e4(s32 originX, s32 originY, s32 phase) {
   s32 i;
-  struct RenderOutput *obj;
-  struct RenderOutput **table;
+  struct WindowSprite *obj;
+  struct WindowSprite **table;
 
   i = 0;
   table = ((struct EntryIconMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
@@ -34,7 +34,7 @@ void Func_081005e4(s32 originX, s32 originY, s32 phase) {
   } while (i <= 0x1F);
 }
 
-void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
+void Menu_PlaceEntryObjectInGrid(struct WindowSprite *obj, s32 index,
                                  s32 originX, s32 originY, s32 phase) {
   s32 no;
 
@@ -44,7 +44,7 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
   }
   obj->y = no / phase * 0x10 + originY;
   obj->x = no % phase * 0x10 + originX;
-  UiIcon_PrepareObject(obj);
+  Icon_PrepareActor(obj);
 }
 
 struct CategoryItemIcon {
@@ -87,7 +87,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
           icon->y = 48;
           break;
         }
-        UiIcon_PrepareObject(icon);
+        Icon_PrepareActor(icon);
       }
     }
   }
@@ -106,7 +106,7 @@ void ItemMenu_PositionCategory(void) {
     if (icon != 0) {
       icon->x = x;
       icon->y = y;
-      UiIcon_PrepareObject(icon);
+      Icon_PrepareActor(icon);
     }
     remaining--;
   } while (remaining >= 0);

@@ -56,10 +56,10 @@ extern char MsgItemPlainName[], MsgWhoGetsThis[], MsgPackFull[],
     MsgCannotCarryItem[], MsgCannotEquipStillWant[], MsgBuyAnythingElse[],
     MsgBuyNotEnoughMoney[];
 
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWork_FinalizeFar(void *window, s32 mode);
-void RenderOutput_RedrawSavedRectFar(void *window);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Window_CloseFar(void *window, s32 mode);
+void WindowSprite_RedrawSavedRectFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 struct ItemDefinition *Item_Get(s32 item);
 s32 Item_GetEquipmentGroupFar(s32 item);
 s32 Item_IsCompatibleWithOwnerFar(s32 unit, s32 item);
@@ -72,7 +72,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Shop_DrawMsg(void *window, s32 message);
 s32 Shop_SelectBuyCount(s32 unit, s32 item);
 void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_08109188(void);
 void Func_08109068(void *window, s32 selected);
 void Func_081091cc(void *window, s32 item, s32 price, s32 mode);
@@ -116,16 +116,16 @@ s32 Func_08108b70(void) {
   s16 *stockIds;
 
   shop->itemWindow = 0;
-  shop->moneyWindow = UiWindow_CreateFar(18, 7, 12, 4, 2);
+  shop->moneyWindow = Window_CreateFar(18, 7, 12, 4, 2);
   Func_08109188();
-  priceWindow = UiWindow_CreateFar(0, 8, 15, 4, 2);
+  priceWindow = Window_CreateFar(0, 8, 15, 4, 2);
 
 next_page:
   selectionIndex = selected;
-  stockWindow = UiWindow_CreateFar(0, 12, 30, 4, 2);
+  stockWindow = Window_CreateFar(0, 12, 30, 4, 2);
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
-  messageWindow = UiWindow_CreateFar(0, 17, 30, 3, 2);
+  messageWindow = Window_CreateFar(0, 17, 30, 3, 2);
   stockIds = shop->stockItemIds;
   redraw = 1;
 
@@ -138,7 +138,7 @@ next_page:
       shop->mode = 4;
       Func_08109068(stockWindow, selectionIndex);
       Shop_DrawMsg(messageWindow, itemId + (s32)MsgItemPlainName);
-      RenderOutput_RedrawSavedRectFar(priceWindow);
+      WindowSprite_RedrawSavedRectFar(priceWindow);
       Func_081091cc(priceWindow, itemId, stockDefinition->price, 0);
       redraw = 0;
     }
@@ -161,14 +161,14 @@ next_page:
       held = PartyInventory_CountItemFar(itemId);
       stockDefinition = Item_Get(itemId);
       Sound_PlayFar(126);
-      window = UiWindow_CreateFar(13, 3, 17, 10, 2);
+      window = Window_CreateFar(13, 3, 17, 10, 2);
       Func_080f8040(window, itemId, held);
       while (gInput.held & 4)
         WaitFrames(1);
-      UiWork_FinalizeFar(window, 2);
+      Window_CloseFar(window, 2);
       Func_08109068(stockWindow, selectionIndex);
       Func_08109188();
-      RenderOutput_RedrawSavedRectFar(priceWindow);
+      WindowSprite_RedrawSavedRectFar(priceWindow);
       Func_081091cc(priceWindow, itemId, stockDefinition->price, 0);
     } else {
       redraw = Func_08108690(&selectionIndex, stockCount, 7);
@@ -176,8 +176,8 @@ next_page:
     WaitFrames(1);
   }
 
-  UiWork_FinalizeFar(messageWindow, 2);
-  UiWork_FinalizeFar(stockWindow, 2);
+  Window_CloseFar(messageWindow, 2);
+  Window_CloseFar(stockWindow, 2);
   WaitFrames(1);
   if (selectionResult != 0)
     goto close;
@@ -189,11 +189,11 @@ next_page:
   unitId = 0;
   repromptRecipient = 0;
   selectionIndex = 0;
-  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  partyWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
   Func_080f8060(partyWindow, 2, 0);
-  itemWindow = UiWindow_CreateFar(16, 11, 14, 9, 2);
+  itemWindow = Window_CreateFar(16, 11, 14, 9, 2);
   redraw = 2;
 
   while (1) {
@@ -218,12 +218,12 @@ next_page:
     }
     if (gInput.pressed & 1) {
       redraw = 2;
-      RenderOutput_PrepareForRedrawFar(partyWindow);
+      WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         Sound_PlayFar(113);
-        UiText_DrawQuantity(unitId, 1);
-        UiText_DrawQuantity(shop->selectedItem, 2);
+        MessageArgument_PushFar(unitId, 1);
+        MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
           Func_081084f4((s32)MsgPackFull);
         else
@@ -238,7 +238,7 @@ next_page:
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
-        UiText_DrawQuantity(unitId, 1);
+        MessageArgument_PushFar(unitId, 1);
         Func_081084f4((s32)MsgCannotEquipStillWant);
         if (Func_08108630(0) != 0) {
           repromptRecipient = 1;
@@ -267,8 +267,8 @@ next_page:
 
   Func_0810bea8(0);
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(itemWindow, 2);
-  UiWork_FinalizeFar(partyWindow, 2);
+  Window_CloseFar(itemWindow, 2);
+  Window_CloseFar(partyWindow, 2);
   WaitFrames(1);
   if (selectionResult == 0 && shop->partyAction == 2) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
@@ -282,8 +282,8 @@ next_page:
   goto next_page;
 
 close:
-  UiWork_FinalizeFar(priceWindow, 2);
-  UiWork_FinalizeFar(shop->moneyWindow, 2);
+  Window_CloseFar(priceWindow, 2);
+  Window_CloseFar(shop->moneyWindow, 2);
   WaitFrames(1);
   return 0;
 }

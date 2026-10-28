@@ -50,13 +50,13 @@ struct ShopWork {
 
 void *Unit_Get(s32 unitId);
 void Inventory_EquipFar(s32 unitId, s32 slot);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_081084f4(s32 messageId);
 s32 Func_08108630(s32 choice);
 void Shop_DrawItemCount(void *window, s32 item);
-void UiWork_FinalizePendingCoreFar(void);
-void UiText_OpenMessageWindowFar(s32 messageId, s32 x, s32 y, s32 flags);
-s32 UiWork_IsCompleteFar(void);
+void Message_CloseFinishedWindowsFar(void);
+void Message_OpenWindowFar(s32 messageId, s32 x, s32 y, s32 flags);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 frames);
 extern u8 MsgEquipNowPrompt[];
 extern u8 MsgBecameCursed[];
@@ -93,7 +93,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       return 0;
   }
 
-  UiText_DrawQuantity(unitId, 1);
+  MessageArgument_PushFar(unitId, 1);
   Func_081084f4((s32)MsgEquipNowPrompt);
   if (Func_08108630(0) != 0)
     return 0;
@@ -105,7 +105,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   if (info->flags & 1) {
     Sound_PlayFar(103);
-    UiWork_FinalizePendingCoreFar();
+    Message_CloseFinishedWindowsFar();
     {
       s32 x = 8;
       s32 y = 4;
@@ -115,9 +115,9 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
        * message; the plain call loads the message first (one instruction moved,
        * differ 2). */
       asm volatile("" : "+l"(x), "+l"(y), "+l"(flags));
-      UiText_OpenMessageWindowFar((s32)MsgBecameCursed, x, y, flags);
+      Message_OpenWindowFar((s32)MsgBecameCursed, x, y, flags);
     }
-    while (UiWork_IsCompleteFar() == 0)
+    while (Message_AllTypedFar() == 0)
       WaitFrames(1);
   }
 

@@ -30,13 +30,13 @@
 
 struct DjinnMenuWork {
   u8 unk000[0x10];
-  struct UiWindow *statusWindow;
-  struct RenderOutput *cursor;
+  struct Window *statusWindow;
+  struct WindowSprite *cursor;
   u8 unk018[0x28 - 0x18];
   s32 window;
   s32 unknownWindow02c;
   u8 unk030[0x34 - 0x30];
-  struct UiWindow *listWindow;
+  struct Window *listWindow;
   s32 secondWindow;
   u8 unk03c[0xf0 - 0x3c];
   s32 helpWindow;
@@ -51,14 +51,14 @@ struct DjinnMenuWork {
 extern char MsgCurrentStatus[];
 extern u8 gMenu_BackdropBorderTile[];
 
-void RenderOutput_ClearListFar(void *window);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
+void WindowSprite_ClearListFar(void *window);
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
-void UiWindow_CloseIfOpen(void *window, s32 mode);
-void UiWindow_SetTilemapEntryFar(struct UiWindow *window, s32 tile, s32 x,
+void Window_CloseIfOpen(void *window, s32 mode);
+void Window_SetTilemapEntryFar(struct Window *window, s32 tile, s32 x,
                                  s32 y, s32 mode);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
@@ -84,12 +84,12 @@ s32 Func_08104540(void) {
   s32 *leftWindowSlot;
   s32 *rightWindowSlot;
   s32 *helpWindowSlot;
-  struct UiRenderWork *render;
+  struct WindowWork *render;
   u32 pressedKeys;
   u32 repeatedKeys;
   struct DjinnMenuWork *menu;
   struct OwnerActionState *unit;
-  struct UiWindow *window;
+  struct Window *window;
   u16 *listedActions;
   void *saved;
   s32 result;
@@ -108,7 +108,7 @@ s32 Func_08104540(void) {
   selectedPages[1] = selectedPages[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
-  RenderOutput_ClearListFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
   counts = pageCounts;
   counts[1] = counts[0] = 1;
@@ -126,45 +126,45 @@ s32 Func_08104540(void) {
   if (counts[1] == 0)
     counts[1] = 1;
   leftWindowSlot = &menu->window;
-  UiWindow_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
+  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
   rightWindowSlot = &menu->secondWindow;
-  UiWindow_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
+  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
   helpWindowSlot = &menu->helpWindow;
-  RenderOutput_RedrawSavedRectFar(*helpWindowSlot);
-  RenderOutput_RedrawSavedRectFar((s32)menu->statusWindow);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
+  WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
+  WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
+  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
                                   0);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
+  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
                                   0, 16);
   side = 0;
   while (1) {
-    render = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+    render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
     pageCount = &pageCounts[side];
     if (redraw) {
       render->menuBusy = 1;
-      RenderOutput_PrepareForRedrawFar(menu->window);
-      RenderOutput_PrepareForRedrawFar(menu->secondWindow);
+      WindowSprite_PrepareForRedrawFar(menu->window);
+      WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       Func_08103218(menu->window, 0, 0, menu->pairOwner[0], 0, 0, 3, 0, 1);
       Func_08103218(menu->secondWindow, 0, 0, menu->pairOwner[0], 0, 0, 3,
                     selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (counts[side] > 1) {
-      window = (struct UiWindow *)menu->secondWindow;
+      window = (struct Window *)menu->secondWindow;
       for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
         tile = 0xf031 + pageIndex;
         if (pageIndex > 8)
           tile = 0xf03f;
         if (pageIndex == selectedPages[side])
           tile -= 0x1000;
-        UiWindow_SetTilemapEntryFar(
+        Window_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntryFar(window, 0xf128,
+      Window_SetTilemapEntryFar(window, 0xf128,
                                   window->width - counts[side] - 3, -1, 0);
-      UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
+      Window_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
       UiRender_MarkRow(render, (s16)window->y);
     }
     frame++;
@@ -207,16 +207,16 @@ s32 Func_08104540(void) {
     WaitFrames(1);
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
-  ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
-  UiWindow_CloseIfOpen(helpWindowSlot, 1);
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  Window_CloseIfOpen(helpWindowSlot, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
-  UiWindow_CloseIfOpen(leftWindowSlot, 1);
-  UiWindow_CloseIfOpen(rightWindowSlot, 1);
-  RenderOutput_RedrawSavedRectFar((s32)menu->listWindow);
-  RenderOutput_RedrawSavedRectFar(menu->unknownWindow02c);
-  RenderOutput_RedrawSavedRectFar((s32)menu->statusWindow);
-  ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+  Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
+  Window_CloseIfOpen(leftWindowSlot, 1);
+  Window_CloseIfOpen(rightWindowSlot, 1);
+  WindowSprite_RedrawSavedRectFar((s32)menu->listWindow);
+  WindowSprite_RedrawSavedRectFar(menu->unknownWindow02c);
+  WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   WaitFrames(1);
   return result;
 }

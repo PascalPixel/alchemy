@@ -34,8 +34,8 @@ extern char MsgItemWoreOff;
 void Func_080e1024(struct ArcEffectObject *caster);
 void Func_080cb82c(void);
 void Func_080cb8a4(void);
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+void MessageArgument_PushFar(s32 value, s32 slot);
+void FieldMessage_ShowFar(s32 message, s32 flags);
 
 /// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
@@ -69,11 +69,11 @@ void FieldEvent_ShowStatusMessage(void) {
   gAdventure.avoidDistance = 0;
   Func_080cb82c();
   if (gAdventure.avoidByItem == 0) {
-    UiText_DrawQuantity(150, 4);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
+    MessageArgument_PushFar(150, 4);
+    FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, 1);
   } else {
-    UiText_DrawQuantity(236, 2);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemWoreOff, 1);
+    MessageArgument_PushFar(236, 2);
+    FieldMessage_ShowFar((s32)&MsgItemWoreOff, 1);
   }
   Func_080cb8a4();
 }
@@ -190,5 +190,5 @@ void BattleEffect_RunEffect16(void) {
   do {
   } while (0);
   Resource_ResetEntry(scene->arcTileSlot);
-  UiText_ShowPositionedMessageAndWaitFar((s32)&MsgMonstersAttackLess, 1);
+  FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }

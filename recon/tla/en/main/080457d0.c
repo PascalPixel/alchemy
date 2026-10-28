@@ -85,13 +85,13 @@ struct BgScrollPair {
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-extern const u16 gUi_BounceScales[32];
+extern const u16 gWindowSprite_BounceScales[32];
 extern struct BgScrollPair gBgScroll[];
 extern u8 gAdventure[];
 
 s32 VramCache_AllocEntry(s32 size);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Party_CountActiveOwnersFar(void);
 s32 *Djinn_GetRecoveryTableFar(s32 kind);
 void Func_08118130(s32 kind, u8 *counts);
@@ -101,14 +101,14 @@ void Task_Remove(void (*callback)(void));
 void Runtime_SetIrqHandler(s32 irq, s32 line, void (*handler)(void));
 void Graphics_SetBg1Priority3(void);
 void Func_08045780(void);
-void RenderOutput_PrepareForRedraw(void *window);
-void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
+void WindowSprite_PrepareForRedraw(void *window);
+void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 s32 AffineMatrix_BuildForEffect(struct CommandRowAffine *affine);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 Func_0804519c(void);
-void *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
+void *Message_ShowAndWait(s32 message, s32 x, s32 y);
 void Func_08118128(s32 x, s32 y);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void WaitFrames(s32 frames);
@@ -141,9 +141,9 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     selectionUi->paletteSlots[i] = 255;
   selectionUi->paletteCount = 1;
   if (mode == 0)
-    selectionUi->window = UiWindow_Create(20, 17, 10, 3, 6);
+    selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = UiWindow_Create(22, 17, 8, 3, 6);
+    selectionUi->window = Window_Create(22, 17, 8, 3, 6);
   selectionUi->drawnIndex = -1;
   if (mode == 0) {
     selectionUi->commandKinds[0] = 14;
@@ -201,7 +201,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   Runtime_SetIrqHandler(2, 136, Func_08045780);
 
   for (;;) {
-    pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];
+    pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
     gBgScroll[1].x = 0;
@@ -283,8 +283,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       }
     }
     if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
-      RenderOutput_PrepareForRedraw(selectionUi->window);
-      UiText_DrawCharacterAtOffset(
+      WindowSprite_PrepareForRedraw(selectionUi->window);
+      Text_DrawCharacterAtOffset(
           selectionUi->entries[selectionUi->selectedIndex].kind +
               (s32)MsgCommandName,
           selectionUi->window, 0, 0);
@@ -330,15 +330,15 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
             if (navigation->tutorialStep == 1) {
               work->flags05 |= 4;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
-                message = UiText_ShowMessageAndWaitComplete(
+                message = Message_ShowAndWait(
                     Func_0804519c() + 10, 15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                        16)
-                message = UiText_ShowMessageAndWaitComplete(Func_0804519c() + 9,
+                message = Message_ShowAndWait(Func_0804519c() + 9,
                                                             15, 8);
               WINDOW_WORK->flags05 &= ~4;
               Func_08118128(102, 155);
-              UiWork_Finalize(message, 1);
+              Window_Close(message, 1);
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
             } else {
@@ -394,7 +394,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
-  UiWork_Finalize(selectionUi->window, 1);
+  Window_Close(selectionUi->window, 1);
   {
     s32 panel;
 

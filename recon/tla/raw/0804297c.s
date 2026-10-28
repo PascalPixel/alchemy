@@ -153,7 +153,7 @@ PartyStatus_Draw:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_EraseBorderRect
+	bl Window_EraseBorderRect
 	b .L_08042d94
 .L_08042a9e:
 	ldr r2, [sp, #28]
@@ -163,7 +163,7 @@ PartyStatus_Draw:
 	cmp r3, r10
 	bne .L_08042aba
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	mov r0, r9
 	mov r1, r10
 	bl Func_080426e0
@@ -173,9 +173,9 @@ PartyStatus_Draw:
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
 	ldrh r0, [r5, #4]
-	bl UiWindow_EraseBorderRect
+	bl Window_EraseBorderRect
 	mov r0, r10
-	bl UiWindow_BuildLayoutBounds
+	bl PartyStatus_BuildLayoutBounds
 	ldrh r3, [r5, #8]
 	mov r4, r9
 	strh r3, [r4, #8]
@@ -189,7 +189,7 @@ PartyStatus_Draw:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_DrawBorder
+	bl Window_DrawBorder
 	mov r0, r9
 	mov r1, r10
 	bl Func_080426e0
@@ -269,7 +269,7 @@ PartyStatus_Draw:
 	mov r2, r8
 	adds r3, #8
 	adds r0, r5, #0
-	bl UiText_DrawPrefixedNumberAtOffset
+	bl Text_DrawPrefixedNumberAtOffset
 	ldr r1, [sp, #28]
 	movs r3, #15
 	strb r3, [r1, #7]
@@ -277,7 +277,7 @@ PartyStatus_Draw:
 	mov r1, r9
 	adds r0, r6, #0
 	ldr r3, [sp, #16]
-	bl UiText_DrawStringAtOffset
+	bl Text_DrawStringAtOffset
 	movs r0, #15
 	bl Func_08041f70
 	movs r2, #52
@@ -324,7 +324,7 @@ PartyStatus_Draw:
 	str r2, [sp, #0]
 	mov r1, r9
 	mov r2, r8
-	bl UiText_DrawPrefixedNumberAtOffset
+	bl Text_DrawPrefixedNumberAtOffset
 	movs r2, #54
 	ldrsh r1, [r6, r2]
 	cmp r1, #0
@@ -395,7 +395,7 @@ PartyStatus_Draw:
 	movs r2, #0
 	adds r3, r6, #0
 	str r7, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r1, #160
 	lsls r1, r1, #7
 	adds r1, #2
@@ -403,7 +403,7 @@ PartyStatus_Draw:
 	movs r2, #2
 	adds r3, r6, #0
 	str r7, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	adds r2, r6, #1
 	movs r1, #160
 	mov r8, r2
@@ -413,7 +413,7 @@ PartyStatus_Draw:
 	movs r2, #0
 	mov r3, r8
 	str r7, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r1, #160
 	lsls r1, r1, #7
 	mov r3, r8
@@ -421,7 +421,7 @@ PartyStatus_Draw:
 	mov r0, r9
 	movs r2, #2
 	str r7, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r3, [r5]
 	cmp r3, #9
 	bhi .L_08042cd2
@@ -467,7 +467,7 @@ PartyStatus_Draw:
 	mov r0, r9
 	adds r3, r6, #0
 	movs r2, #1
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r3, [r5, #1]
 	cmp r3, #9
 	bls .L_08042d20
@@ -489,7 +489,7 @@ PartyStatus_Draw:
 	mov r0, r9
 	adds r3, r6, #0
 	movs r2, #3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r3, [r5, #2]
 	cmp r3, #9
 	bls .L_08042d4a
@@ -511,7 +511,7 @@ PartyStatus_Draw:
 	mov r0, r9
 	mov r3, r8
 	movs r2, #1
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r3, [r5, #3]
 	cmp r3, #9
 	bls .L_08042d74
@@ -533,7 +533,7 @@ PartyStatus_Draw:
 	mov r0, r9
 	movs r2, #3
 	mov r3, r8
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 .L_08042d8e:
 	ldr r0, [sp, #28]
 	movs r3, #0

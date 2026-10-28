@@ -24,7 +24,7 @@ void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_CommitPositionAndActivate();
 s32 Func_0200207c();
 void ObjectMotion_SetAngleToward();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_WaitFrames();
 void Motion_SetModeAndWaitAnimation();
@@ -80,7 +80,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
     r5_1 = party + 532;
   }
   Call3((void (*)())ObjectMotion_SetAngleToward, 16, FIELD_AT(r5_1, s32, 0), 0);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 16, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 16, 0);
   v0 = Event_AskYesNoWithActorAnimation(4, 0);
   r7_1 = v0;
   if (r7_1 == 0)
@@ -479,7 +479,7 @@ L_02008ff2:
   Call2((void (*)())Func_0200207c, 15, 0x5000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value3((s32 (*)())Func_0200208c, 15, 0x103, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 15, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
   v18 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v18 == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 15);

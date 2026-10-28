@@ -26,7 +26,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Object_SetWideSprite(s32 actor, s32 value);
 s32 Task_Add(void (*callback)(void), s32 priority);

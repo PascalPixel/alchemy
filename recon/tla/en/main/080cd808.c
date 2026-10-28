@@ -31,7 +31,7 @@ extern char MsgSearchStart[];
 extern char MsgSearchEmpty[];
 extern char MsgButFoundNothing[];
 void EventRuntime_PrepareCurrentObject(void);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+void FieldMessage_ShowFar(s32 message, s32 flags);
 struct SceneEvent *Func_080ccd78(s32 kind, s32 target);
 s32 GameFlag_IsConditionActive(s32 condition);
 void GameFlag_SetBit(s32 flag);
@@ -51,8 +51,8 @@ s32 Func_080cd808(s32 id) {
 
     EventRuntime_PrepareCurrentObject();
     message = Data_080eff22[index];
-    UiText_ShowPositionedMessageAndWaitFar(message + (s32)MsgSearchStart, 1);
-    UiText_ShowPositionedMessageAndWaitFar(message + (s32)MsgSearchEmpty, 1);
+    FieldMessage_ShowFar(message + (s32)MsgSearchStart, 1);
+    FieldMessage_ShowFar(message + (s32)MsgSearchEmpty, 1);
     return 0;
   }
   event = Func_080ccd78(3, id);
@@ -61,7 +61,7 @@ s32 Func_080cd808(s32 id) {
     kind = (event->flags >> 4) & 31;
     if (!(*(u16 *)&event->target & 0x400) && kind != 0) {
       EventRuntime_PrepareCurrentObject();
-      UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchStart, 1);
+      FieldMessage_ShowFar(kind + (s32)MsgSearchStart, 1);
       GameFlag_SetBit(0x142);
     } else {
       GameFlag_ClearBit(0x142);
@@ -75,16 +75,16 @@ s32 Func_080cd808(s32 id) {
     if (GameFlag_IsConditionActive(condition))
       ((void (*)(s32))event->result)(gAdventure.currentOwner);
     if (GameFlag_Test(0x142))
-      UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchEmpty, 1);
+      FieldMessage_ShowFar(kind + (s32)MsgSearchEmpty, 1);
     goto done;
   message:
     if (GameFlag_IsConditionActive(condition))
-      UiText_ShowPositionedMessageAndWaitFar((u16)event->result, 1);
+      FieldMessage_ShowFar((u16)event->result, 1);
     else
-      UiText_ShowPositionedMessageAndWaitFar((s32)MsgButFoundNothing, 1);
+      FieldMessage_ShowFar((s32)MsgButFoundNothing, 1);
   } else {
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchStart + 5, 1);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchEmpty + 5, 1);
+    FieldMessage_ShowFar((s32)MsgSearchStart + 5, 1);
+    FieldMessage_ShowFar((s32)MsgSearchEmpty + 5, 1);
   }
 done:
   GameFlag_ClearBit(0x142);

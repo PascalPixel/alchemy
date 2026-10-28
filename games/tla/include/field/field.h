@@ -139,8 +139,8 @@ void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale,
                                  s32 angle, s32 layer);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
-s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
+s32 Message_OpenWindowFar(s32, s32, s32, s32);
 void UiTimedNotice_CloseIfActiveFar(void);
-s32 UiWork_IsIdleFar(s32);
+s32 Window_IsClosedFar(s32);
 
 #endif

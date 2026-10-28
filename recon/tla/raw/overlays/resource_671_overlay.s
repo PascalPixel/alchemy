@@ -1864,7 +1864,7 @@ Func_02002a64:
 	lsls r0, r0, #7
 	movs r1, #0
 	adds r0, #5
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r6]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

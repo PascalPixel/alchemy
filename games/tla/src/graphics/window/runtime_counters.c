@@ -2,7 +2,7 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-s32 UiWork_IsIdle(struct UiWindow *window) {
+s32 Window_IsClosed(struct Window *window) {
   if (window == NULL)
     return 1;
   if (window->flags == 0 && window->duration == 0)
@@ -10,9 +10,9 @@ s32 UiWork_IsIdle(struct UiWindow *window) {
   return 0;
 }
 
-void UiWork_ResetCounters(void) {
-  struct UiRenderWork *state =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void Text_ResetStyle(void) {
+  struct WindowWork *state =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   state->colour = 15;
   state->lineSpacing = 10;

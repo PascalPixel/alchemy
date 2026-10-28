@@ -190,7 +190,7 @@ Func_08039864:
 	str r1, [r3, #28]
 .L_080399fa:
 	adds r0, r6, #0
-	bl UiWork_CheckCancelByModeInput
+	bl Message_CheckCancelByModeInput
 	cmp r0, #0
 	bne .L_08039a40
 	ldr r0, [r6]
@@ -246,7 +246,7 @@ Func_08039864:
 	str r0, [sp, #24]
 	strb r3, [r2]
 	adds r0, r5, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldrh r3, [r6, #36]
 	ldr r4, [sp, #12]
 	cmp r3, #0
@@ -262,7 +262,7 @@ Func_08039864:
 	ldrsh r1, [r5, r2]
 	ldrh r3, [r5, #10]
 	ldrh r2, [r5, #8]
-	bl UiWindow_EraseBorderRect
+	bl Window_EraseBorderRect
 	ldr r4, [sp, #12]
 .L_08039a90:
 	movs r3, #128
@@ -292,7 +292,7 @@ Func_08039864:
 	ldrsh r1, [r5, r3]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_EraseBorderRect
+	bl Window_EraseBorderRect
 	b .L_08039b66
 .L_08039acc:
 	add r0, sp, #48
@@ -317,7 +317,7 @@ Func_08039864:
 	ldr r2, [sp, #20]
 	str r4, [sp, #12]
 	str r7, [sp, #8]
-	bl UiWindow_FitOnScreen
+	bl Window_FitOnScreen
 	ldrh r1, [r5, #22]
 	movs r3, #128
 	ands r3, r1
@@ -364,7 +364,7 @@ Func_08039864:
 	mov r1, r11
 	ldr r2, [sp, #20]
 	ldr r3, [sp, #16]
-	bl UiWindow_FitOnScreen
+	bl Window_FitOnScreen
 .L_08039b56:
 	ldr r3, [sp, #48]
 	strh r3, [r5, #12]
@@ -381,7 +381,7 @@ Func_08039864:
 	ldrsh r1, [r5, r4]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_DrawBorder
+	bl Window_DrawBorder
 .L_08039b76:
 	ldrh r3, [r6, #30]
 	movs r5, #152
@@ -409,7 +409,7 @@ Func_08039864:
 .L_08039ba8:
 	.4byte gAdventure
 .L_08039bac:
-	.4byte gUiText_SpeedSteps
+	.4byte gText_SpeedSteps
 .L_08039bb0:
 	.4byte gLastFrameVBlanks
 .L_08039bb4:
@@ -436,7 +436,7 @@ Func_08039864:
 	str r1, [r3, #28]
 .L_08039bde:
 	adds r0, r6, #0
-	bl UiWork_CheckCancelByModeInput
+	bl Message_CheckCancelByModeInput
 	cmp r0, #0
 	bne .L_08039bea
 	b .L_08039cf0
@@ -464,7 +464,7 @@ Func_08039864:
 	movs r3, #0
 	strh r3, [r2]
 	adds r0, r6, #0
-	bl UiWork_CheckCancelByInput
+	bl Message_CheckCancelByInput
 	b .L_08039cf0
 .L_08039c16:
 	ldrh r3, [r6, #20]
@@ -648,7 +648,7 @@ Func_08039864:
 .L_08039d64:
 	.4byte gAdventure
 .L_08039d68:
-	.4byte gUiText_SpeedCueGaps
+	.4byte gText_SpeedCueGaps
 .L_08039d6c:
 	cmp r0, #223
 	bne .L_08039d7e
@@ -697,7 +697,7 @@ Func_08039864:
 .L_08039dc0:
 	.4byte 0x000001ff
 .L_08039dc4:
-	.4byte gUiText_Glyphs
+	.4byte gFont_Glyphs
 .L_08039dc8:
 	movs r3, #152
 	lsls r3, r3, #5
@@ -771,7 +771,7 @@ Func_08039864:
 .L_08039e54:
 	.4byte gAdventure
 .L_08039e58:
-	.4byte gUiText_SpeedDelays
+	.4byte gText_SpeedDelays
 .L_08039e5c:
 	movs r0, #255
 	lsls r0, r0, #8

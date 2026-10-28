@@ -38,7 +38,7 @@ struct CharacterMenuState {
 
 extern u8 MsgSwitchCharacterHelp[];
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 s32 Party_SumDjinnCountsFar(s32 owner);
 void Func_080f8ab4(s32 x, s32 y);
@@ -46,11 +46,11 @@ s32 GameFlag_Test(s32 flag);
 void *Unit_Get(s32 owner);
 void Func_080ff370(s32 window, s32 ownerId, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert);
-void RenderOutput_ClearListFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 void WaitFrames(s32 frames);
 void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, u8 *entries);
 void Func_080ff2e8(s32 window, s32 selected, s32 hasDjinn);
@@ -58,7 +58,7 @@ void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct CharacterMenuState *menu,
                                            s32 ownerId);
-void RenderOutput_PrepareForRedrawFar(s32 window);
+void WindowSprite_PrepareForRedrawFar(s32 window);
 
 s32 Func_080feec0(void) {
   struct CharacterMenuState *menu;
@@ -80,7 +80,7 @@ s32 Func_080feec0(void) {
   result = 0;
   window = menu->statusWindow;
   pane = 0;
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   helpWindow = menu->helpWindow;
   if (Party_SumDjinnCountsFar(-1) != 0)
     hasDjinn = 1;
@@ -110,13 +110,13 @@ s32 Func_080feec0(void) {
         limit = count;
         pane = (pane + 2) % 2;
         redraw = 0;
-        RenderOutput_RedrawSavedRectFar(helpWindow);
+        WindowSprite_RedrawSavedRectFar(helpWindow);
         if (pane == 0) {
           selected = (selected + limit) % limit;
           if (hasAilments == 0) {
-            UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 1, window,
+            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 1, window,
                                             0, -24);
-            UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 80,
+            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 80,
                                             -24);
           }
         } else {
@@ -126,7 +126,7 @@ s32 Func_080feec0(void) {
             selected = (selected + 7) % 7;
         }
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
-        RenderOutput_ClearListFar(helpWindow);
+        WindowSprite_ClearListFar(helpWindow);
         WaitFrames(1);
         if (pane == 0)
           CharacterMenu_DrawSelectionLabels(helpWindow, selected, entries);
@@ -190,8 +190,8 @@ s32 Func_080feec0(void) {
       }
     }
   }
-  RenderOutput_PrepareForRedrawFar(menu->helpWindow);
-  RenderOutput_RedrawSavedRectFar(window);
+  WindowSprite_PrepareForRedrawFar(menu->helpWindow);
+  WindowSprite_RedrawSavedRectFar(window);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = -16;
   return result;

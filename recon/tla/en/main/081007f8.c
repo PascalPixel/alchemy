@@ -6,7 +6,7 @@
 // the twin of The Broken Seal's function of the same name
 // (games/tbs/src/menu/menu/use.c). ⚓️ takes the whole party's first target
 // from gAdventure.currentOwner and draws the changed Attack or Defense with
-// UiText_DrawQuantity. The result message offset is kept in the menu work;
+// MessageArgument_PushFar. The result message offset is kept in the menu work;
 // -1 reports that nothing changed.
 // Differ 38 of 501 (2026-10-19), instruction order only: the native spills
 // sourceId and effectId before it builds the heap address, and loads the menu
@@ -34,7 +34,7 @@ s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 void Unit_UpdateRatiosFar(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
 u32 Random16(void);
-void UiText_DrawQuantity(s32 slot, s32 digits);
+void MessageArgument_PushFar(s32 slot, s32 digits);
 
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale) {
@@ -149,13 +149,13 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         break;
       case 0x106:
         target->baseAttack += amount + randomAdjust;
-        UiText_DrawQuantity(3, 5);
+        MessageArgument_PushFar(3, 5);
         messageOffset = 0x14;
         changed = 1;
         break;
       case 0x107:
         target->baseDefense += amount + randomAdjust;
-        UiText_DrawQuantity(4, 5);
+        MessageArgument_PushFar(4, 5);
         messageOffset = 0x15;
         changed = 1;
         break;

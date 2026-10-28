@@ -4,7 +4,7 @@
 // an empty asm after `u32 following = (value + 1) % 128;`, and finds nothing
 // closer.
 // Near miss, differ 8 of 144 (four reordered rows), 2026-10-15: The Broken
-// Seal's UiWindow_OverlayTilePattern; this game finds the free tile in a
+// Seal's Window_OverlayTilePattern; this game finds the free tile in a
 // do-while (as a for loop the first pass is peeled). Remaining: the native
 // stores the mirror argument to its stack slot right after sub sp (this
 // after the first two copies) and in the search loop masks the next cursor
@@ -22,7 +22,7 @@ extern char ResourceId_WindowTiles;
 void *Resource_GetTableEntry(s32 id);
 
 void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   u32 slot = *(u8 *)entry;

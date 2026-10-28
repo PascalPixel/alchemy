@@ -22,18 +22,18 @@ struct ScreenWork {
 
 void Func_08040c78(void);
 void Func_08040cb0(void);
-struct UiWindow *Func_08040cc4(void);
+struct Window *Func_08040cc4(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
-void UiWork_Finalize(struct UiWindow *window, s32 release);
+void Window_Close(struct Window *window, s32 release);
 
 s32 Func_08040d70(s32 index) {
   struct ScreenWork *work;
-  struct UiWindow *window;
+  struct Window *window;
   s32 moved;
 
   Func_08040c78();
@@ -77,7 +77,7 @@ s32 Func_08040d70(s32 index) {
     }
   } while (1);
 done:
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Func_08040cb0();
   WaitFrames(1);
   return index;

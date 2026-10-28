@@ -22,15 +22,15 @@ s32 ObjectTable_ReadActiveValue(s32 localId);
 struct ObjectRuntime *ObjectTable_Get(s32 localId);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 s32 Func_080d5bec(s32 objectId, s32 *position);
-void UiText_GetResourceDimensionsAltFar(s32 message, s32 *left, s32 *top,
+void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top,
                                         u32 *width, u32 *height);
-void UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top,
+void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top,
                                      u32 *width, u32 *height);
-s32 Localization_LookupEntryIdFar(s32 sprite);
+s32 Portrait_GetForSpeakerFar(s32 sprite);
 s32 Func_080d1eac(s32 sprite);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 packed);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
-s32 UiWork_IsCompleteFar(void);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 frames);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000
@@ -38,7 +38,7 @@ void WaitFrames(s32 frames);
 #define SPEAKER_WINDOW_ABOVE 0x4000
 #define SPEAKER_WINDOW_BELOW 0x8000
 
-s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
+s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   u8 *win;
   struct EventWork *work;
   s32 sprite;
@@ -116,7 +116,7 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     } else {
       left = 0;
       top = 0;
-      UiText_GetResourceDimensionsAltFar(message, &left, &top, &width,
+      Text_GetMessageSizeAltFar(message, &left, &top, &width,
                                          &height);
       left = x - (s32)width / 2;
       if (flags & SPEAKER_WINDOW_ABOVE)
@@ -148,9 +148,9 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
         column = x - margin - 2;
     }
 
-    found = Localization_LookupEntryIdFar(sprite);
+    found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
-      UiText_GetResourceDimensionsAltFar(message, &left, &top, &width,
+      Text_GetMessageSizeAltFar(message, &left, &top, &width,
                                          &height);
       message = -1;
       if (top > y)
@@ -164,7 +164,7 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
       if (top < portraitTop) {
         s32 lines = height;
 
-        UiText_GetResourceDimensionsFar(message, &left, &top, &width,
+        Text_GetMessageSizeFar(message, &left, &top, &width,
                                         &height);
         message = -1;
         extra = lines - height + 1;
@@ -172,7 +172,7 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     } else if (top < y) {
       s32 lines = height;
 
-      UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
+      Text_GetMessageSizeFar(message, &left, &top, &width, &height);
       extra = lines - height + 1;
       message = found;
     }
@@ -184,25 +184,25 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     if (win[4] != 0) {
       WaitFrames(8);
       if (extra != 0)
-        handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
+        handle = Message_OpenWindowFar(message, left, top + extra - 1,
                                              18);
       else
-        handle = UiText_OpenMessageWindowFar(message, left, top, 2);
+        handle = Message_OpenWindowFar(message, left, top, 2);
     } else {
       s32 voice = Func_080d1eac(sprite);
 
       if (extra != 0)
-        handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
+        handle = Message_OpenWindowFar(message, left, top + extra - 1,
                                              (voice << 16) | 17);
       else
         handle =
-            UiText_OpenMessageWindowFar(message, left, top, (voice << 16) | 1);
+            Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
     if (win[4] != 0)
       portrait = Func_080380f8(sprite, 0, column, portraitTop);
     else
       portrait = Func_080380f8(sprite, 0, column, portraitTop);
-    while (!UiWork_IsCompleteFar())
+    while (!Message_AllTypedFar())
       WaitFrames(1);
   }
   work->objectStatus = handle;

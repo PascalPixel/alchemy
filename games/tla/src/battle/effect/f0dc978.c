@@ -25,7 +25,7 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_AdvanceHueCycle(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-void Ui_FillBank15PaletteGrey(void);
+void Palette_FillNumber15Grey(void);
 void Func_080dcb44(void);
 
 /// Starts the wave effect's work in heap slot WAVE_FX_SLOT: a phase taken
@@ -46,6 +46,6 @@ void Func_080dc978(s32 id, s32 value) {
   BattleEffect_ApplyColorToTargetBuffer(
       (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
   BattleEffect_StartBufferInterpolation(8);
-  Ui_FillBank15PaletteGrey();
+  Palette_FillNumber15Grey();
   Task_Add((TaskFunc)Func_080dcb44, TASK_PASS_VBLANK);
 }

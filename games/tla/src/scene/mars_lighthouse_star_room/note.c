@@ -8,7 +8,7 @@ struct EventNote {
   u16 unk15a;
 };
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Func_020042dc(void);
 void Func_020042e4(void);
 void Func_0200444c(s32 skip);
@@ -18,7 +18,7 @@ void Func_02000e50(void) {
 
   Func_020042dc();
   Func_0200444c(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgMarsStar07, 1);
+  FieldMessage_Show((s32)MsgMarsStar07, 1);
   ((struct EventNote *)work)->unk15a = 1;
   Func_020042e4();
 }

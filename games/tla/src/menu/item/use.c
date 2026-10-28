@@ -22,8 +22,8 @@ extern const u8 MsgItemUseResult[];
 s32 Func_08100738(s32 slot, s32 owner, s32 target);
 void Func_08100d40(s32 item);
 void Sound_PlayFar(s32 cue);
-void RenderOutput_ClearListFar(void *window);
-void RenderOutput_RedrawSavedRectFar(void *window);
+void WindowSprite_ClearListFar(void *window);
+void WindowSprite_RedrawSavedRectFar(void *window);
 void InventoryMenu_ShowModalMessage(const u8 *message, s32 a, s32 b);
 void Unit_CalculateFar(s32 unit);
 
@@ -44,10 +44,10 @@ s32 ItemMenu_Use(void) {
 
   if (result == -1) {
     Sound_PlayFar(114);
-    RenderOutput_ClearListFar(menu->infoWindow);
+    WindowSprite_ClearListFar(menu->infoWindow);
     InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult, result, result);
 #if LANGUAGE == LANGUAGE_JAPANESE
-    RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+    WindowSprite_RedrawSavedRectFar(menu->infoWindow);
 #endif
     menu->completionFlag = 1;
     return result;

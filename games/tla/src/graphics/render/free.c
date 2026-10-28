@@ -11,7 +11,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 void Func_08039754(struct UiChannelSlot *channel);
 
@@ -19,8 +19,8 @@ void Func_08039754(struct UiChannelSlot *channel);
 /// window. A channel that already serves a finished window continues below
 /// its last line (scrolling up once both lines are used) unless keepPosition
 /// is set. Returns the channel, or NULL when all three are busy.
-// As ☀️'s UiText_StartBattleMessage.
-struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
+// As ☀️'s BattleMessage_Continue.
+struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
                                                 s32 entry, s32 keepPosition) {
   struct UiChannelSlot *slot;
   struct UiChannelSlot *selected;
@@ -82,21 +82,21 @@ struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
   return selected;
 }
 
-s32 Ui_ClearVramBlock(void) {
+s32 Vram_ClearWindowBlock(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
 
   return fill((void *)0x06002500, 0xf00, 0);
 }
 
-void Ui_FillVramBlockPattern(void) {
+void Vram_FillWindowBlockPattern(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
 
   fill((void *)0x06002500, 0xf00, 0x44444444);
 }
 
-void UiWork_ResetFreeChannel(void) {
+void Message_ResetIdle(void) {
   struct UiChannelSlot *slot =
-      ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
+      ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 
@@ -108,7 +108,7 @@ void UiWork_ResetFreeChannel(void) {
   }
   if (selection != 0) {
     if (selection->work != 0) {
-      Ui_ClearVramBlock();
+      Vram_ClearWindowBlock();
       selection->y = 0;
     }
     selection->x = 0;

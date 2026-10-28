@@ -8,10 +8,10 @@ struct BattleDisplayFlags {
 
 void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
-void UiText_DrawQuantity(s32 value, s32 kind);
-void UiText_ShowMessageAndWaitCoreFar(u32 message);
+void MessageArgument_PushFar(s32 value, s32 kind);
+void Message_ShowAndWaitCoreFar(u32 message);
 void BattlePresentation_WaitForAdvance(void);
-void UiWork_ClearValueNameTablesFar(void);
+void MessageArgument_ClearAllFar(void);
 void Sound_PlayFar(s32 cue);
 void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
@@ -50,33 +50,33 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleActor_DestroyTemporaryObject(queue->operands[i]);
         break;
       case BATTLE_EVENT_UNIT_NAME:
-        UiText_DrawQuantity(queue->operands[i], 1);
+        MessageArgument_PushFar(queue->operands[i], 1);
         break;
       case BATTLE_EVENT_NUMBER:
-        UiText_DrawQuantity(queue->operands[i], 5);
+        MessageArgument_PushFar(queue->operands[i], 5);
         break;
       case BATTLE_EVENT_ITEM_NAME:
-        UiText_DrawQuantity(queue->operands[i] & 0x1ff, 2);
+        MessageArgument_PushFar(queue->operands[i] & 0x1ff, 2);
         break;
       case BATTLE_EVENT_ABILITY_NAME:
-        UiText_DrawQuantity(queue->operands[i] & 0x3fff, 4);
+        MessageArgument_PushFar(queue->operands[i] & 0x3fff, 4);
         break;
       case BATTLE_EVENT_MARK:
         ((struct BattleDisplayFlags *)Ram_HeapSlots->unk84[4])->marked = 1;
         break;
       case BATTLE_EVENT_CLEAR_ARGUMENTS:
-        UiWork_ClearValueNameTablesFar();
+        MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_MESSAGE:
         if ((s32)queue->operands[i] >= 0)
-          UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
+          Message_ShowAndWaitCoreFar(queue->operands[i]);
         BattlePresentation_WaitForAdvance();
-        UiWork_ClearValueNameTablesFar();
+        MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_MESSAGE_NO_WAIT:
         if ((s32)queue->operands[i] >= 0)
-          UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
-        UiWork_ClearValueNameTablesFar();
+          Message_ShowAndWaitCoreFar(queue->operands[i]);
+        MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)

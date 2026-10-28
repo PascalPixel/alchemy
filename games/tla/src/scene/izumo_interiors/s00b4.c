@@ -39,7 +39,7 @@ void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_OffsetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 s32 PartyInventory_FindOwner(s32 item);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 static inline s32 FlagCheck(s32 flag) {
@@ -214,7 +214,7 @@ void Func_02000400(void) {
   Func_020022bc(0);
   msg = (s32)MsgTheyVeBeen;
   Func_02002244(msg);
-  UiText_OpenMessageAtObject(16, 0);
+  FieldMessage_ShowAtActor(16, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020022dc(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02002244(msg + 1);

@@ -13,7 +13,7 @@
 #include "render_input.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u16 x;
   u16 y;
   s16 targetX;
@@ -41,7 +41,7 @@ struct ShopRuntime {
 
 void Func_08108148(void);
 void Func_0810824c(void);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_080f8060(void *window, s32 a, s32 b);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
@@ -51,11 +51,11 @@ void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
 void Sound_PlayFar(s32 cue);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Func_0810b9c0(s32 unitId);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 void Menu_ReleaseEntryObjectsFar(void);
-void UiWork_FinalizeFar(void *window, s32 style);
+void Window_CloseFar(void *window, s32 style);
 
 s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   struct ShopRuntime *shop;
@@ -64,18 +64,18 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   s32 unitId = 0;
   void *listWindow;
   void *iconWindow;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   s32 slot;
   s32 result;
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
   shop->itemMode = itemMode;
-  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
-  listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
+  listWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->listWindow = listWindow;
-  iconWindow = UiWindow_CreateFar(30, 0, 1, 1, 2);
-  icon = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000,
+  iconWindow = Window_CreateFar(30, 0, 1, 1, 2);
+  icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
                                 (struct RenderInput *)iconWindow, 0, 0);
   icon->active = 4;
   icon->kind = 0;
@@ -102,7 +102,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
         Sound_PlayFar(113);
         continue;
       }
-      RenderOutput_PrepareForRedrawFar(listWindow);
+      WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(112);
       slot = Func_0810b9c0(unitId);
       if (slot == -1) {
@@ -126,9 +126,9 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
     }
   }
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(iconWindow, 2);
-  UiWork_FinalizeFar(listWindow, 2);
-  UiWork_FinalizeFar(shop->itemWindow, 2);
+  Window_CloseFar(iconWindow, 2);
+  Window_CloseFar(listWindow, 2);
+  Window_CloseFar(shop->itemWindow, 2);
   WaitFrames(1);
   Func_0810824c();
   return result;

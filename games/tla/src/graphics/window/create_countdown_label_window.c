@@ -16,22 +16,22 @@
 #include "window.h"
 #include "edition.h"
 
-#define UiText_DrawStringAtOffset                                              \
-  ((void (*)(u8 *, s32, s32, s32))UiText_DrawStringAtOffset)
+#define Text_DrawStringAtOffset                                              \
+  ((void (*)(u8 *, s32, s32, s32))Text_DrawStringAtOffset)
 
-void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
+void Text_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 
 /// Opens a 6x4 window at the upper left, draws its label and returns its
 /// handle.
 s32 Link_CreateCountdownLabelWindow(void) {
-  s32 win = UiWindow_Create(0, 0, 6, 4, 6);
+  s32 win = Window_Create(0, 0, 6, 4, 6);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
     (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
     (LANGUAGE == LANGUAGE_ITALIAN)
-  UiText_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
+  Text_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
 #else
-  UiText_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
+  Text_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
 #endif
   return win;
 }

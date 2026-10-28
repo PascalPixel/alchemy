@@ -22,9 +22,9 @@ struct MenuModeLabelState {
 
 extern u8 MsgPasswordLevel;
 
-void UiWindow_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right,
+void Window_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right,
                                  s32 bottom);
-void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
+void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 
 /// When the selected mode changes, clears the lower window's label area and
 /// writes the mode's lines of text. The area starts at x 8 and ends at
@@ -35,34 +35,34 @@ void Menu_DrawModeLabel(void) {
 
   if (state->previousMode != state->mode) {
     state->previousMode = state->mode;
-    UiWindow_ClearInteriorTiles(state->window, 8, 40, LABEL_RIGHT, 80);
+    Window_ClearInteriorTiles(state->window, 8, 40, LABEL_RIGHT, 80);
 
     switch (state->mode) {
     case 0: {
       s32 text = (s32)&MsgPasswordLevel;
 
-      UiText_DrawCharacterAtOffset(text, state->window, 8, 40);
-      UiText_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
-      UiText_DrawCharacterAtOffset(text + 2, state->window, 8, 56);
-      UiText_DrawCharacterAtOffset(text + 3, state->window, 8, 64);
+      Text_DrawCharacterAtOffset(text, state->window, 8, 40);
+      Text_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
+      Text_DrawCharacterAtOffset(text + 2, state->window, 8, 56);
+      Text_DrawCharacterAtOffset(text + 3, state->window, 8, 64);
       text += 4;
-      UiText_DrawCharacterAtOffset(text, state->window, 8, 72);
+      Text_DrawCharacterAtOffset(text, state->window, 8, 72);
       break;
     }
     case 1: {
       s32 text = (s32)&MsgPasswordLevel;
 
-      UiText_DrawCharacterAtOffset(text, state->window, 8, 40);
-      UiText_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
+      Text_DrawCharacterAtOffset(text, state->window, 8, 40);
+      Text_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
       text += 2;
-      UiText_DrawCharacterAtOffset(text, state->window, 8, 56);
+      Text_DrawCharacterAtOffset(text, state->window, 8, 56);
       break;
     }
     case 2: {
       s32 text = (s32)&MsgPasswordLevel;
 
-      UiText_DrawCharacterAtOffset(text++, state->window, 8, 40);
-      UiText_DrawCharacterAtOffset(text, state->window, 8, 48);
+      Text_DrawCharacterAtOffset(text++, state->window, 8, 40);
+      Text_DrawCharacterAtOffset(text, state->window, 8, 48);
       break;
     }
     }

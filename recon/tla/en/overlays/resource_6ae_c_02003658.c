@@ -61,7 +61,7 @@ s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
 s32 Task_Add();
 s32 Task_RemoveFar();
-s32 UiText_ShowPositionedMessageAndWait();
+s32 FieldMessage_Show();
 s32 VramCache_Load();
 s32 WaitFrames();
 extern u8 Data_02006b68[];
@@ -375,12 +375,12 @@ L_0200bcea:
   Call3((void (*)())Func_020055c4, -1, -1, 0xe666);
   Func_020055cc();
   Call2((void (*)())Func_0200578c, 23, 24);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait,
+  Call2((void (*)())FieldMessage_Show,
         ((s32)MsgTheBeaconIs + 6), 1);
   Func_02005794();
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_0200578c, 23, 24);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait,
+  Call2((void (*)())FieldMessage_Show,
         ((s32)MsgTheBeaconIs + 7), 1);
   Func_02005794();
   t222 = FIELD_AT(0x3000000, s32, 108);
@@ -401,7 +401,7 @@ L_0200bcea:
   Call3((void (*)())Func_020056ec, 0x6000, 0, 10);
   Call2((void (*)())Func_0200578c, 23, 24);
   v_r6 = ((s32)MsgTheBeaconIs + 9);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, v_r6, 1);
+  Call2((void (*)())FieldMessage_Show, v_r6, 1);
   Func_02005794();
   Call1((void (*)())Func_02000640, 3);
   Call2((void (*)())Func_02005704, 0x6003, 0x4000);

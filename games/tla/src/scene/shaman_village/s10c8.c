@@ -31,7 +31,7 @@ void Func_0200113c(void) {
     Func_020049a4(11, 0);
   } else {
     Func_0200498c((s32)MsgShamanMoapaAsksVictorsNames);
-    UiText_OpenMessageAtObject(11, 0);
+    FieldMessage_ShowAtActor(11, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
       Func_020049a4(11, 0);
     } else {
@@ -79,7 +79,7 @@ void Func_0200122c(void) {
       Func_0200498c((s32)MsgShamanFortuneOfferAfterTrial);
     else
       Func_0200498c((s32)MsgShamanFortuneOfferBeforeTrial);
-    UiText_OpenMessageAtObject(17, 0);
+    FieldMessage_ShowAtActor(17, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
       Func_020049a4(17, 0);
     } else {
@@ -188,7 +188,7 @@ void Func_02001644(void) {
   ShamanVillage_CamMove(0xb60000, -1, 0x1300000, 1);
   Func_020049f4();
   Func_0200498c((s32)MsgShamanGiveUpTrialPrompt);
-  UiText_OpenMessageAtObject(15, 0);
+  FieldMessage_ShowAtActor(15, 0);
   Object_SetModeById(gAdventure.currentOwner, 1);
   ShamanVillage_ObjArm(gAdventure.currentOwner, 0xe000, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {

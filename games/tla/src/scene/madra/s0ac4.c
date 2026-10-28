@@ -22,7 +22,7 @@ void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002b28(void);
 void Func_02002b30(void);
@@ -45,7 +45,7 @@ void Func_02002c50(s32 item, s32 a);
 void Func_02002c60(void);
 void Func_02002c90(s32 cue);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
@@ -387,7 +387,7 @@ void Func_02000f80(void) {
   Func_02002be0(34, 0, 10);
   FieldEvent_WaitFrames(20);
   Emote(33, 262, 30);
-  UiText_OpenMessageAtObject(33, 0);
+  FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_02002be0(33, 0, 10);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -481,7 +481,7 @@ void Func_020014fc(void) {
   Motion_SetModeAndWaitAnimation(25, 3);
   ArmCallback(32, 0xb000, 0);
   FieldEvent_WaitFrames(10);
-  UiText_OpenMessageAtObject(25, 0);
+  FieldMessage_ShowAtActor(25, 0);
   ArmCallbackAndRefresh(4, 0xb000);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_WaitFrames(25);
@@ -507,7 +507,7 @@ void Func_020014fc(void) {
     Func_02002bd0(MsgItWasThem);
     ArmCallback(32, 0x8000, 0);
     FieldEvent_WaitFrames(20);
-    UiText_OpenMessageAtObject(32, 0);
+    FieldMessage_ShowAtActor(32, 0);
     ArmCallback(4, 0, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       FieldEvent_WaitFrames(20);
@@ -633,7 +633,7 @@ void Func_020019d8(void) {
   do {
     FieldEvent_WaitFrames(20);
   } while (0);
-  UiText_OpenMessageAtObject(34, 0);
+  FieldMessage_ShowAtActor(34, 0);
   ObjectMotion_SetAngleToward(32, 4, 0);
   ObjectMotion_SetAngleToward(5, 4, 0);
   ObjectMotion_SetAngleToward(7, 4, 0);
@@ -697,13 +697,13 @@ void Func_020019d8(void) {
 
     Func_02002bd0(MsgTheMayorTried);
     Func_02002b10(210, 2);
-    UiText_ShowPositionedMessageAndWait(
+    FieldMessage_Show(
         (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Func_02002be8(34, 0);
     CommitPos(34, 16, 0);
     Func_02002b10(210, 2);
-    UiText_ShowPositionedMessageAndWait(
+    FieldMessage_Show(
         (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, 0x4000);
@@ -780,7 +780,7 @@ void Func_020019d8(void) {
   Func_02002be8(33, 0);
   ObjectMotion_SetAngleToward(33, 4, 0);
   FieldEvent_WaitFrames(20);
-  UiText_OpenMessageAtObject(33, 0);
+  FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Func_02002be8(33, 0);
     Emote(4, 0x102, 30);
@@ -902,7 +902,7 @@ void Func_020019d8(void) {
   SET_MODE(33, 3);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(20);
-  UiText_OpenMessageAtObject(33, 0);
+  FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Emote(33, 0x108, 30);
     Func_02002be0(33, 0, 0);

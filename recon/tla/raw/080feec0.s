@@ -31,7 +31,7 @@ Func_080feec0:
 	movs r3, #30
 	mov r8, r0
 	adds r0, r5, #0
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	movs r0, #1
 	negs r0, r0
 	ldr r5, [r5]
@@ -139,7 +139,7 @@ Func_080feec0:
 	mov r8, r2
 	mov r0, r11
 	mov r10, r4
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r1, r8
 	cmp r1, #0
 	bne .L_080ff00c
@@ -157,12 +157,12 @@ Func_080feec0:
 	ldr r1, [sp, #12]
 	movs r2, #0
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	subs r0, r5, #1
 	ldr r1, [sp, #12]
 	movs r2, #80
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080ff032
 .L_080ff00c:
 	ldr r3, [sp, #16]
@@ -192,7 +192,7 @@ Func_080feec0:
 	mov r0, r8
 	bl CharacterMenu_DrawSelectionCursor
 	mov r0, r11
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #1
 	bl WaitFrames
 	mov r4, r8
@@ -381,9 +381,9 @@ Func_080feec0:
 .L_080ff1b6:
 	ldr r3, [sp, #36]
 	ldr r0, [r3, #48]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r0, [sp, #12]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r1, #128
 	ldr r4, [sp, #36]
 	lsls r1, r1, #2

@@ -5,7 +5,7 @@
 
 extern u8 gData_03001e60[];
 
-void Ui_SetGridColumnParameter(s32 slot, s32 value) {
+void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->unk0c[1];
   s32 offset = (slot & 3) * 4 + 40;
   s32 count = 9;
@@ -19,7 +19,7 @@ void Ui_SetGridColumnParameter(s32 slot, s32 value) {
   } while (count >= 0);
 }
 
-void Ui_SetGridColumnPriority(s32 slot, s32 value) {
+void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->unk0c[1];
   s32 offset = (slot & 3) * 4 + 40;
   s32 count = 9;
@@ -46,7 +46,7 @@ struct UiGridEntry {
   u8 value17;
 };
 
-void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
+void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 index;
   s32 count;
   s32 offset;
@@ -79,7 +79,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
   } while (count <= 9);
 }
 
-void Ui_SetGridColumnNumber(s32 slot, s32 no) {
+void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   u8 *base = Ram_HeapSlots->unk0c[1];
   s32 offset;
   s32 count;

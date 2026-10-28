@@ -8,6 +8,6 @@
 #include "system.h"
 #include "types.h"
 
-s32 Ui_CountIconTableEntries(void) {
-  return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
+s32 Icon_CountItemIcons(void) {
+  return gItemIconsEnd - gItemIcons;
 }

@@ -21,17 +21,17 @@ again:
     return -1;
   if (selection == 0) {
     if (GameFlag_Test(0x17c)) {
-      UiText_ShowPositionedMessageAndWait((s32)MsgCannotSaveHere, 1);
+      FieldMessage_Show((s32)MsgCannotSaveHere, 1);
       goto again;
     }
     if (GameFlag_Test(0x17d)) {
-      UiText_ShowPositionedMessageAndWait((s32)MsgNoPlaceForThat, 1);
+      FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
       goto again;
     }
     if (Func_08043690() == -1)
       goto again;
   } else if (selection == 1) {
-    UiText_ShowPositionedMessageAndWait((s32)MsgSleepMode, 1);
+    FieldMessage_Show((s32)MsgSleepMode, 1);
     gSleepRequested = selection;
   } else if (selection == 2) {
     if (Func_080400e8() == -1)
@@ -40,9 +40,9 @@ again:
   return 0;
 }
 
-void Render_SetTilemapFlagBitRect(const struct UiWindow *object, s32 x, s32 y,
+void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
                                   s32 width, s32 height, u32 field) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;

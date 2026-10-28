@@ -207,9 +207,9 @@ Func_08123648:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_08123818
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	mov r3, r11
 	subs r3, #20
 	ldr r3, [r3]

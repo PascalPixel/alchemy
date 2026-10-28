@@ -42,7 +42,7 @@ struct WorldMapWork {
 
 void *Object_GetById(s32 id);
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
 
 void Func_080ebf94(void) {
@@ -114,7 +114,7 @@ void Func_080ebf94(void) {
   Ram_WorldMapCursorStart[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gResourceTableEntries[work->windowSlot].offset;
-  work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
+  work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
   work->speed = 0x10000;
   *oam++ = 0;

@@ -38,7 +38,7 @@ void ObjectMotion_SetSpeedParameters();
 void Object_GetById();
 void Object_TurnToFaceEachOther();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 #define EVENT_MESSAGE                                                          \
   (((struct {                                                                  \
@@ -111,13 +111,13 @@ void Func_02000a24(void) {
      * call). */
     register s32 flags __asm__("r1") = 0;
 
-    UiText_OpenMessageAtObject(19, flags);
+    FieldMessage_ShowAtActor(19, flags);
   }
   while (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 0, 0) != 0) {
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * SHAMAN_VILLAGE_CAVE_EMOTE. */
     SHAMAN_VILLAGE_CAVE_EMOTE(19, 258, 30)
-    UiText_OpenMessageAtObject(20, 0);
+    FieldMessage_ShowAtActor(20, 0);
     EVENT_MESSAGE--;
   }
   EVENT_MESSAGE++;

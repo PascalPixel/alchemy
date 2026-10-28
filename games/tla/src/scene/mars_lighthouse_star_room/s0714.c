@@ -40,7 +40,7 @@ void Object_SetActionCallbackAndRefreshById();
 void Object_SetModeById();
 void Object_SetPartAttribute();
 void Object_SetPositionAndResetMotion();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void WaitFrames();
 extern u8 MsgMarsStar01[];
 extern u8 gData_0200491c[];
@@ -151,7 +151,7 @@ void Func_02000714(void) {
   Call2(Func_02004394, 13, 0);
   Call3(Func_0200438c, 14, 0, 40);
   Value3((s32 (*)())Func_020043b4, 13, 0x100, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 13, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 13, 0);
   t87 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
   if (t87 != 0)
     goto L_02008a04;

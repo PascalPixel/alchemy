@@ -3,7 +3,7 @@
 #include "window.h"
 
 u32 Func_0803cd08(u32 name, u32 clear) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 index;
   u32 value = 0;
 

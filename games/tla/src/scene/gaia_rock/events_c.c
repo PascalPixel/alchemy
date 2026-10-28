@@ -13,7 +13,7 @@ void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+void FieldMessage_Show(const u8 *message, s32 flags);
 void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000e74(void);
 void Func_02000e7c(void);
@@ -71,7 +71,7 @@ void Func_020002fc(void) {
 void Func_02000314(void) {
   struct ObjectRuntime *object = Object_GetById(64);
 
-  UiText_ShowPositionedMessageAndWait(MsgCheckedTheAltar, 1);
+  FieldMessage_Show(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x != 0) {
     Func_02000edc(0x1040);
   } else if (GameFlag_Test(0xf74) == 0) {
@@ -81,10 +81,10 @@ void Func_02000314(void) {
      * message arguments (one reordered row). */
     do {
     } while (0);
-    UiText_ShowPositionedMessageAndWait(MsgIMSensing, 1);
+    FieldMessage_Show(MsgIMSensing, 1);
     work->unk15a = 1;
   } else {
-    UiText_ShowPositionedMessageAndWait(MsgICanT, 1);
+    FieldMessage_Show(MsgICanT, 1);
   }
 }
 

@@ -37,9 +37,9 @@ extern char MsgPasswordEntryX[];
 
 s32 Func_0804d7fc(s32 mode) {
   struct ResourceMenuWork *work;
-  struct UiWindow *window;
+  struct Window *window;
   s32 msg;
-  struct UiWindow **upper;
+  struct Window **upper;
   s32 result;
 
   mode &= 1;
@@ -57,38 +57,38 @@ s32 Func_0804d7fc(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = UiWindow_Create(8, 0, 14, 4, 2);
+    window = Window_Create(8, 0, 14, 4, 2);
     msg = (s32)MsgPasswordEntryX;
     upper = &work->upperWindow;
     *upper = window;
-    UiText_DrawResource(msg, (s32)window, 0, 4);
-    window = UiWindow_Create(4, 4, 22, 12, 2);
+    Text_DrawMessage(msg, (s32)window, 0, 4);
+    window = Window_Create(4, 4, 22, 12, 2);
     work->lowerWindow = window;
-    UiText_DrawResource(msg + 1, (s32)window, 0, 4);
+    Text_DrawMessage(msg + 1, (s32)window, 0, 4);
     msg += 2;
-    UiText_DrawResource(msg, (s32)work->lowerWindow, 0, 16);
+    Text_DrawMessage(msg, (s32)work->lowerWindow, 0, 16);
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = UiWindow_Create(6, 0, 18, 4, 2);
+    window = Window_Create(6, 0, 18, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
     /* FAKEMATCH: the one-pass block issues the message's pool load ahead
        of the two coordinates, as the native does (differ 6 without). */
     do {
     } while (0);
-    UiText_DrawResource((s32)MsgTransferMethodX, (s32)window, 12, 4);
-    work->lowerWindow = UiWindow_Create(5, 5, 21, 7, 2);
+    Text_DrawMessage((s32)MsgTransferMethodX, (s32)window, 12, 4);
+    work->lowerWindow = Window_Create(5, 5, 21, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != 0)
     Task_Remove(Menu_DrawModeLabel);
   else
     Task_Remove(Menu_DrawModeIndicator);
-  RenderOutput_PrepareForRedraw(*upper);
-  RenderOutput_PrepareForRedraw(work->lowerWindow);
-  UiWork_Finalize(*upper, 2);
-  UiWork_Finalize(work->lowerWindow, 2);
+  WindowSprite_PrepareForRedraw(*upper);
+  WindowSprite_PrepareForRedraw(work->lowerWindow);
+  Window_Close(*upper, 2);
+  Window_Close(work->lowerWindow, 2);
   WaitFrames(1);
   Menu_EndResourceSelection();
   return result;

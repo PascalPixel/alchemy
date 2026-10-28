@@ -6,7 +6,7 @@ void Func_02003658(void);
 void Func_0200567c(s32 id, s32 a1, s32 a2);
 void GameFlag_SetBit(s32 flag);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 void WaitFrames(s32 frames);
 
 void Func_02004bc4(void) {
@@ -39,7 +39,7 @@ void Func_02004c94(void) {
   Func_0200567c(18, 0x2000000, 0xe80000);
   WaitFrames(1);
   Func_020056dc(MsgWillYouCast);
-  UiText_OpenMessageAtObject(18, 0);
+  FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Func_0200567c(18, 0, 0);
     WaitFrames(1);

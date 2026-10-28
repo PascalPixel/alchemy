@@ -61,7 +61,7 @@ void Func_02001d48();
 void Func_02001d50();
 void PartyInventory_GiveItem();
 void Func_02001d30();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void ObjectMotion_EnableActionAndSetCallback();
 void Event_FinishScreenTransition(void);
@@ -282,7 +282,7 @@ void Func_02000184(void) {
   Call2(Object_SetModeById, gAdventure.currentOwner, 1);
   Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x6000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xd000, 40);
-  Value2(UiText_OpenMessageAtObject, 9, 0);
+  Value2(FieldMessage_ShowAtActor, 9, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Call2(Object_SetModeById, 9, 4);
@@ -297,7 +297,7 @@ void Func_02000184(void) {
   Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02001e60, 9, 0);
   Call2(Func_02001e70, 9, 0xd000);
-  Value2(UiText_OpenMessageAtObject, 9, 0);
+  Value2(FieldMessage_ShowAtActor, 9, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Call2(Func_02001e60, 9, 0);

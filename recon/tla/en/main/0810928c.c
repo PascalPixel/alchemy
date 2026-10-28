@@ -28,7 +28,7 @@ struct ShopRuntime {
   s8 partyMemberCount;
 };
 
-void RenderOutput_PrepareForRedrawFar(struct RenderInput *window);
+void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Item_IsCompatibleWithOwnerFar(s32 owner, s32 item);
 
@@ -37,20 +37,20 @@ void Func_0810928c(struct RenderInput *window, s32 selected, s32 itemId) {
   s32 page = selected / 4;
   s32 first = page * 4;
   s32 count = shop->partyMemberCount;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   s32 i;
 
   if (window != 0) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
     if (first != 0) {
-      icon = RenderOutput_CreateFar(shop->previousPageIcon, 0x40000000, window,
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, 0x40000000, window,
                                     88, -12);
       icon->kind = 0;
       icon->active = 17;
       icon->animStep = 0;
     }
     if (first + 4 < count) {
-      icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 88,
+      icon = WindowSprite_CreateFar(shop->nextPageIcon, 0x40000000, window, 88,
                                     0);
       icon->kind = 0;
       icon->active = 15;

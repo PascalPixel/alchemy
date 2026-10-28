@@ -9,7 +9,7 @@
 // interleaved with the gInput address); and in the wait loop the entry
 // pointer is moved to r0 before r1 takes 250 (native: r1 first).
 // A barrier after Sound_PlayFar fixes the second but moves
-// UiWork_PushValueSlot's arguments; four permuter minutes found nothing.
+// MessageArgument_Push's arguments; four permuter minutes found nothing.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -27,28 +27,28 @@
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
-void UiWork_PushValueSlot(s32, s32);
-struct UiChannelSlot *UiText_QueueRenderEntries();
+void Window_DrawDividerLine(struct Window *, s32, s32, s32, s32);
+void MessageArgument_Push(s32, s32);
+struct UiChannelSlot *Message_Start();
 void Sound_PlayFar(s32);
 s32 Func_08044b80(u32 index);
 extern u8 MsgJoinedParty[];
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
+struct Window *Window_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 
 void Func_08044b98(s32 member) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  struct UiWindow *window = NULL;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
   s32 palette, handle;
   s32 *p;
 
-  window = UiWindow_Create(2, 1, 26, 5, 0);
+  window = Window_Create(2, 1, 26, 5, 0);
   if (window != NULL) {
-    UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+    Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
     UiGlyph_LoadEntryWithPalette(
-        UiText_GetSpeakerPortrait(Func_08044b80(member)), 0, &handle, &palette,
+        Portrait_GetForSpeaker(Func_08044b80(member)), 0, &handle, &palette,
         14, 0);
     p = entry;
     *p++ = 0;
@@ -56,15 +56,15 @@ void Func_08044b98(s32 member) {
     *p = palette | 0xe000;
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
-    UiWork_PushValueSlot(member, 1);
-    UiText_QueueRenderEntries(
-        window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+    MessageArgument_Push(member, 1);
+    Message_Start(
+        window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
     Sound_PlayFar(81);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
       WaitFrames(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     WaitFrames(1);
     Resource_ResetEntry(handle);
   }

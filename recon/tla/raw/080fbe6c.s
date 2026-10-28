@@ -34,7 +34,7 @@ Func_080fbe6c:
 	mov r10, r0
 	bl ItemMenu_SetMessageWindowHeight7
 	adds r0, r7, #0
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r2, [sp, #20]
 	mov r8, r11
 	cmp r2, #0
@@ -87,13 +87,13 @@ Func_080fbe6c:
 	adds r2, r7, #0
 	movs r3, #48
 	str r5, [sp, #0]
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	adds r1, r6, #0
 	adds r2, r7, #0
 	ldr r0, [sp, #16]
 	movs r3, #80
 	str r5, [sp, #0]
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	ldrh r1, [r0, #24]
 	ldr r3, .L_080fbf4c
 	lsls r2, r1, #22
@@ -128,12 +128,12 @@ Func_080fbe6c:
 	bl __modsi3
 	mov r8, r0
 	adds r0, r7, #0
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	adds r1, r7, #0
 	ldr r0, .L_080fc01c
 	movs r2, #32
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -174,7 +174,7 @@ Func_080fbe6c:
 	movs r1, #2
 	adds r2, r7, #0
 	str r3, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r3, #182
 	lsls r3, r3, #1
 	add r3, r9
@@ -186,7 +186,7 @@ Func_080fbe6c:
 	movs r2, #16
 	adds r0, r0, r3
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r3, [sp, #4]
 	mov r2, r8
 	subs r0, r3, r2
@@ -196,7 +196,7 @@ Func_080fbe6c:
 	movs r1, #2
 	adds r2, r7, #0
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r3, [sp, #20]
 	cmp r3, #0
 	bne .L_080fc03a
@@ -217,7 +217,7 @@ Func_080fbe6c:
 	adds r2, r7, #0
 	movs r3, #80
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_080fc03a:
 	movs r3, #128
 	lsls r3, r3, #2
@@ -228,7 +228,7 @@ Func_080fbe6c:
 	movs r2, #16
 	adds r1, r7, #0
 	movs r3, #16
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	bne .L_080fc070
@@ -241,7 +241,7 @@ Func_080fbe6c:
 	adds r1, r7, #0
 	movs r2, #80
 	movs r3, #16
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 .L_080fc070:
 	ldr r5, .L_080fc128
 	movs r2, #1
@@ -302,9 +302,9 @@ Func_080fbe6c:
 	b .L_080fbf58
 .L_080fc0e6:
 	adds r0, r7, #0
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	adds r0, r7, #0
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #56
 	bl Runtime_ReleaseHeapBlock
 	movs r3, #134

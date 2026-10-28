@@ -20,10 +20,10 @@ extern char MsgFieldPreparingToReceive[];
 extern char MsgFieldTransferringData[];
 extern char MsgFieldDataTransferWasInterrupted[];
 
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
-void UiText_DrawResource(s32 message, void *window, s32 x, s32 y);
-void UiWork_Finalize(void *window, s32 release);
-void RenderOutput_PrepareForRedraw(void *window);
+void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
+void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
+void Window_Close(void *window, s32 release);
+void WindowSprite_PrepareForRedraw(void *window);
 void WaitFrames(s32 frames);
 s32 Serial_StartReceive(void *destination);
 void Unit_Calculate(s32 id);
@@ -47,10 +47,10 @@ s32 Func_02000b24(void) {
   s32 i, idle, ok, shown;
   s32 message = MSGNO(MsgFieldPreparingToReceive);
 
-  window = UiWindow_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
-  UiText_DrawResource(message, window, 0, 4);
-  UiText_DrawResource(message + 1, window, 0, 16);
-  UiText_DrawResource(message + 3, window, 0, 36);
+  window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
+  Text_DrawMessage(message, window, 0, 4);
+  Text_DrawMessage(message + 1, window, 0, 16);
+  Text_DrawMessage(message + 3, window, 0, 36);
   Func_02002220();
   WaitFrames(10);
 wait:
@@ -81,9 +81,9 @@ receive:
   for (i = 0; i <= 0x927bf; i++) {
     if (!shown && gSerialReceivedSize != 0) {
       shown = 1;
-      UiWork_Finalize(window, 2);
-      window = UiWindow_Create(5, 10, 20, 4, 2);
-      UiText_DrawResource(MSGNO(MsgFieldTransferringData), window, 0, 4);
+      Window_Close(window, 2);
+      window = Window_Create(5, 10, 20, 4, 2);
+      Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
     }
     if (i == 9 && gSerialReceivedSize == 0) {
       gData_02003a74[0] = 0;
@@ -108,20 +108,20 @@ receive:
     WaitFrames(1);
   }
   if (!ok) {
-    RenderOutput_PrepareForRedraw(window);
-    UiText_DrawResource(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0,
+    WindowSprite_PrepareForRedraw(window);
+    Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0,
                         4);
     do
       WaitFrames(1);
     while (!(gInput[1] & 1));
   close:
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     return -1;
   }
   WaitFrames(10);
   Func_02002228();
   WaitFrames(10);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Iwram_CopyWords(gGameFlagBytes, Data_02012f94 + 0xac, 0x214);
   Iwram_CopyWords(gGameFlagBytes + 0x220, Data_02012f94 + 0x2ac, 0xd20);
   Unit_Calculate(0);

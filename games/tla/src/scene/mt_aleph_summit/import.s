@@ -41,7 +41,7 @@ MemFree:
 	.global Func_02001454
 	.thumb_func
 Func_02001454:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Func_0200145c
 	.thumb_func
 Func_0200145c:

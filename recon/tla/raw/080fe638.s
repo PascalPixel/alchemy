@@ -27,20 +27,20 @@ Func_080fe638:
 	str r1, [sp, #24]
 	movs r6, #1
 	ldr r0, [r1]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r2, [sp, #24]
 	ldr r0, .L_080fe6ec
 	ldr r1, [r2]
 	movs r3, #16
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r3, [sp, #24]
 	movs r2, #96
 	ldr r1, [r3]
 	ldr r0, .L_080fe6f0
 	negs r2, r2
 	movs r3, #132
-	bl UiText_DrawResourceFar
+	bl Text_DrawMessageFar
 	ldr r0, [sp, #32]
 	movs r1, #188
 	lsls r1, r1, #1
@@ -100,7 +100,7 @@ Func_080fe638:
 	ldr r3, [r3, #40]
 	mov r8, r3
 	mov r0, r8
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #11
@@ -109,7 +109,7 @@ Func_080fe638:
 	movs r1, #0
 	movs r2, #11
 	movs r3, #28
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 	movs r3, #28
 	str r3, [sp, #0]
 	mov r0, r8
@@ -160,7 +160,7 @@ Func_080fe638:
 	mov r0, r8
 	adds r2, #1
 	adds r3, r5, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldr r0, .L_080fe7fc
 	lsls r3, r7, #3
 	mov r2, r10
@@ -168,7 +168,7 @@ Func_080fe638:
 	adds r3, #8
 	mov r1, r8
 	adds r2, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r4, [sp, #4]
 	b .L_080fe79c
 .L_080fe79a:
@@ -251,10 +251,10 @@ Func_080fe638:
 .L_080fe834:
 	ldr r1, [sp, #32]
 	ldr r0, [r1, #40]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r2, [sp, #24]
 	ldr r0, [r2]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r1, [sp, #32]
 	movs r2, #140
 	ldr r0, .L_080fe854

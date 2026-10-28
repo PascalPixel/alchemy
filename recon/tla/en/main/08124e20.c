@@ -77,17 +77,17 @@ s32 sub_08124af8(s32 id);
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
-    UiText_DrawQuantity(unitId, 1);                                            \
-    UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
+    MessageArgument_PushFar(unitId, 1);                                            \
+    Message_ShowAndWaitCoreFar((s32)&message);                           \
     BattlePresentation_WaitForAdvance();                                       \
   }
 
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
-    UiText_DrawQuantity(unitId, 1);                                            \
+    MessageArgument_PushFar(unitId, 1);                                            \
     BattlePres_SetActorModeAndAction(unitId);                                  \
-    UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
+    Message_ShowAndWaitCoreFar((s32)&message);                           \
     BattlePresentation_WaitForAdvance();                                       \
   }
 
@@ -203,12 +203,12 @@ void Func_08124e20(void) {
               hpAmount = unit->maxHp - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
-            UiText_DrawQuantity(unitId, 1);
-            UiText_DrawQuantity(hpAmount, 5);
+            MessageArgument_PushFar(unitId, 1);
+            MessageArgument_PushFar(hpAmount, 5);
             if (unit->hp == unit->maxHp) {
-              UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpFull);
+              Message_ShowAndWaitCoreFar((s32)&MsgHpFull);
             } else {
-              UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpRecover);
+              Message_ShowAndWaitCoreFar((s32)&MsgHpRecover);
             }
             Sound_PlayFar(175);
             BattlePresentation_WaitForAdvance();
@@ -219,12 +219,12 @@ void Func_08124e20(void) {
               ppAmount = unit->maxPp - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
-            UiText_DrawQuantity(unitId, 1);
-            UiText_DrawQuantity(ppAmount, 5);
+            MessageArgument_PushFar(unitId, 1);
+            MessageArgument_PushFar(ppAmount, 5);
             if (unit->pp == unit->maxPp) {
-              UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpFull);
+              Message_ShowAndWaitCoreFar((s32)&MsgPpFull);
             } else {
-              UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpRecover);
+              Message_ShowAndWaitCoreFar((s32)&MsgPpRecover);
             }
             Sound_PlayFar(175);
             BattlePresentation_WaitForAdvance();

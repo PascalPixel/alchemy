@@ -67,7 +67,7 @@ void EventRuntime_StartScreen(void);
 void EventRuntime_FinishScreen(void);
 void EventRuntime_WaitDelay(void);
 void Task_ResetAll(void);
-void UiWork_InitializeWithResourceCountersFar(void);
+void WindowSystem_InitFieldFar(void);
 void WaitFrames(s32 frames);
 void Func_080ebf94(void);
 void Func_080ece20(void);
@@ -77,8 +77,8 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY);
 void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void FieldMessage_ShowFar(s32 message, s32 mode);
+void WindowSprite_PrepareForRedrawFar(void *window);
 struct WorldMapPlace *FlagEntries_GetTable(void);
 void Func_080ca368(s32 scene, s32 entrance);
 void BattleEffect_CleanupResourcesAndWindow(void);
@@ -134,7 +134,7 @@ full:
   EventRuntime_FinishScreen();
   EventRuntime_WaitDelay();
   Task_ResetAll();
-  UiWork_InitializeWithResourceCountersFar();
+  WindowSystem_InitFieldFar();
   *(u16 *)(objects + 4) = 1;
   WaitFrames(1);
   blend = (s16)REG_BLDALPHA;
@@ -174,7 +174,7 @@ redraw:
   REG_BG1CNT = 0x8682;
   REG_DISPCNT = 0x1340;
   if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
-    UiText_ShowPositionedMessageAndWaitFar(0xe2a, 1);
+    FieldMessage_ShowFar(0xe2a, 1);
     messageShown = 1;
   }
   for (;;) {
@@ -208,7 +208,7 @@ redraw:
     }
     if (gInput.repeat & 4) {
       gWorldMapWork.shown = -1;
-      RenderOutput_PrepareForRedrawFar(gWorldMapWork.window);
+      WindowSprite_PrepareForRedrawFar(gWorldMapWork.window);
       REG_DISPCNT = 64;
       zoomed ^= 1;
       if (Data_0202a644 != 0) {

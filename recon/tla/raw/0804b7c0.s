@@ -53,19 +53,19 @@ Func_0804b7c0:
 	movs r1, #7
 	movs r2, #30
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	mov r10, r0
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 	add r5, sp, #4
 	adds r1, r5, #0
 	movs r2, #52
 	ldr r0, .L_0804b874
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	adds r0, r5, #0
 	mov r1, r10
 	movs r2, #0
 	movs r3, #4
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	movs r5, #192
 	ldr r7, .L_0804b878
 	lsls r5, r5, #18
@@ -85,7 +85,7 @@ Func_0804b7c0:
 .L_0804b85c:
 	mov r0, r10
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 .L_0804b864:
 	mov r0, r8
 	add sp, #132

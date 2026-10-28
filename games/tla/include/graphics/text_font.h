@@ -4,8 +4,8 @@
 #include "edition.h"
 #include "types.h"
 
-extern const u8 gUiText_KanjiGlyphs[];
-extern const u16 gUiText_MarkGlyphCodes[];
+extern const u8 gFont_KanjiGlyphs[];
+extern const u16 gFont_MarkGlyphCodes[];
 
 enum TextMarkGlyph {
   TEXT_MARK_NONE = 0,
@@ -14,7 +14,7 @@ enum TextMarkGlyph {
 };
 
 /// Japanese text carries a kana's mark in the top bits of its code, as its
-/// index in gUiText_MarkGlyphCodes.
+/// index in gFont_MarkGlyphCodes.
 #define TEXT_MARK_SHIFT 14
 
 #endif

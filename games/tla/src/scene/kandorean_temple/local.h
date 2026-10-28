@@ -73,7 +73,7 @@ extern const u8 gData_02005494[];
 extern const u8 gData_020054e4[];
 extern const u8 gData_020054f0[];
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);

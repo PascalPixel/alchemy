@@ -16,7 +16,7 @@ void Func_02000644();
 void Func_0200064c();
 void Event_AskYesNoWithActorAnimation();
 struct ObjectRuntime *Object_GetById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Func_020000f4(void) {
   s32 result0;
@@ -25,7 +25,7 @@ void Func_020000f4(void) {
   ((void (*)())Func_020005c4)();
   Call1((void (*)())Func_0200062c, 0);
   Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors03);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
   result0 = Value0((s32 (*)())Func_02000634);
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
@@ -91,7 +91,7 @@ void Func_020001fc(s32 actor) {
     ((void (*)())Func_020005c4)();
     Call1((void (*)())Func_0200062c, 0);
     Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors17);
-    Value2((s32 (*)())UiText_OpenMessageAtObject, actor, 0);
+    Value2((s32 (*)())FieldMessage_ShowAtActor, actor, 0);
     if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
                Value0((s32 (*)())Func_02000634), 0) == 0) {
       Call1((void (*)())FieldEvent_WaitFrames, 10);

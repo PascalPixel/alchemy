@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "tla_edition.h"
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
+s32 Window_Create(s32, s32, s32, s32, s32);
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h) {
   u8 *state;
@@ -23,7 +23,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h) {
     x = (s32)((u32)x + 3);
   }
 
-  *(s32 *)(state + 120) = UiWindow_Create(x, y, *(s16 *)(state + 144), 3, 2);
+  *(s32 *)(state + 120) = Window_Create(x, y, *(s16 *)(state + 144), 3, 2);
 }
 
 extern s8 gMenu_TopEntryPositionByCommand[];

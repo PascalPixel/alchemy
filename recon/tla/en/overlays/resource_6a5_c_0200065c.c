@@ -50,7 +50,7 @@ s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
 s32 Task_Add();
 s32 Task_RemoveFar();
-s32 UiText_ShowPositionedMessageAndWait();
+s32 FieldMessage_Show();
 s32 VramCache_Load();
 s32 WaitFrames();
 extern u8 Func_020004c8[];
@@ -75,7 +75,7 @@ void Func_0200065c(void) {
 L_0200867c:
   Func_02005814();
   Call1((void (*)())Func_02005984, 0);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgThereSeemsTo,
+  Call2((void (*)())FieldMessage_Show, (s32)MsgThereSeemsTo,
         5);
   t4 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   v_r11 = t4;

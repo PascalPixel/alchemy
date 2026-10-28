@@ -1179,7 +1179,7 @@ Func_02001490:
 	lsls r0, r0, #6
 	movs r1, #0
 	adds r0, #5
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r1, #128
 	movs r0, #4
 	lsls r1, r1, #6
@@ -2972,7 +2972,7 @@ Func_02003878:
 	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #6
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r1, #160
 	movs r0, #9
 	lsls r1, r1, #7
@@ -3813,7 +3813,7 @@ Func_02003878:
 	lsls r0, r0, #6
 	movs r1, #0
 	adds r0, #10
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r1, #192
 	movs r0, #9
 	lsls r1, r1, #6

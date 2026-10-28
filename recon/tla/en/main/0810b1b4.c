@@ -21,7 +21,7 @@
 #include "render_input.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u16 x;
   u16 y;
   s16 targetX;

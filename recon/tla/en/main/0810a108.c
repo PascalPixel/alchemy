@@ -5,7 +5,7 @@
 // Near miss, differ 6 of 167 (2026-10-19; was 8):
 // sells count of a unit's item at slot (count -1
 // sells the whole old item), ☀️'s Shop_SellItem in games/tbs/src/shop/shop.c,
-// rewritten with ⚓️'s calls (Unit_Get, Shop_GetSellPrice, UiText_DrawQuantity,
+// rewritten with ⚓️'s calls (Unit_Get, Shop_GetSellPrice, MessageArgument_PushFar,
 // the shop message and choice routines Func_0810857c and Func_08108630,
 // Inventory_DiscardFar, then Unit_RefreshPsynergyFar and Unit_CalculateFar, which ☀️
 // does not call) and numbered messages, their ☀️ names beside them. Instruction
@@ -37,7 +37,7 @@ extern u8 Msg04711[]; // MsgKeepIt
 
 struct BattleUnit *Unit_Get(s32 unitId);
 s32 Shop_GetSellPrice(s32 item);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 value);
 void Sound_PlayFar(s32 cue);
@@ -72,12 +72,12 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
   }
   total = Shop_GetSellPrice(unit->inventory[slot]) * count;
   if (total == 0) {
-    UiText_DrawQuantity(itemId, 2);
+    MessageArgument_PushFar(itemId, 2);
     Func_0810857c((s32)Msg04701);
     return;
   }
   if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
-    UiText_DrawQuantity(itemId, 2);
+    MessageArgument_PushFar(itemId, 2);
     Func_0810857c((s32)Msg04700);
     return;
   }
@@ -91,8 +91,8 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
     message = (s32)Msg04704;
   else
     message = (s32)Msg04703;
-  UiText_DrawQuantity(itemId, 2);
-  UiText_DrawQuantity(total, 5);
+  MessageArgument_PushFar(itemId, 2);
+  MessageArgument_PushFar(total, 5);
   Func_0810857c(message);
   if (Func_08108630(0) != 0) {
     if (rare || all)

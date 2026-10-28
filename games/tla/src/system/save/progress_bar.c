@@ -4,11 +4,11 @@
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);
-void UiWork_Finalize(void *, s32);
-extern const u8 gUi_ProgressBarRows[];
+void Window_Close(void *, s32);
+extern const u8 gWindow_ProgressBarRows[];
 
 /// The progress bar's serial callback: advances the stored progress by step
-/// and draws row min(progress, 6) of gUi_ProgressBarRows.
+/// and draws row min(progress, 6) of gWindow_ProgressBarRows.
 void Func_08042dc4(s32 step) {
   u8 *save = Ram_HeapSlots->serialWork;
   u32 row;
@@ -22,7 +22,7 @@ void Func_08042dc4(s32 step) {
   if (row > 6)
     row = 6;
   dst = (u16 *)0x06002252;
-  src = gUi_ProgressBarRows + row * 12;
+  src = gWindow_ProgressBarRows + row * 12;
   for (i = 11; i >= 0; i--)
     *dst++ = *src++ + 0xf080;
 }

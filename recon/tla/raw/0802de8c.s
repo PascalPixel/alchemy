@@ -196,21 +196,21 @@ Func_0802de8c:
 	movs r1, #1
 	ldrsb r1, [r7, r1]
 	adds r0, r6, #0
-	bl Ui_SetGridColumnPriority
+	bl SpriteViewer_SetGridColumnPriority
 	b .L_0802e02c
 .L_0802e024:
 	adds r0, r6, #0
 	movs r1, #8
-	bl Ui_SetGridColumnPriority
+	bl SpriteViewer_SetGridColumnPriority
 .L_0802e02c:
 	movs r1, #6
 	ldrsb r1, [r5, r1]
 	adds r0, r6, #0
-	bl Ui_SetGridColumnParameter
+	bl SpriteViewer_SetGridColumnColorMode
 	movs r3, #2
 	ldrsh r1, [r5, r3]
 	adds r0, r6, #0
-	bl Ui_FillGridColumnFromMetadata
+	bl SpriteViewer_StartStaggeredAnimations
 	adds r6, #1
 	movs r0, #8
 	adds r5, #8
@@ -503,21 +503,21 @@ Func_0802de8c:
 .L_0802e254:
 	ldrsh r1, [r1, r6]
 	add r5, r10
-	bl Ui_SetGridColumnNumber
+	bl SpriteViewer_SetGridColumnNumber
 	movs r1, #1
 	ldrsb r1, [r5, r1]
 	mov r0, r8
-	bl Ui_SetGridColumnPriority
+	bl SpriteViewer_SetGridColumnPriority
 	movs r1, #2
 	ldrsb r1, [r5, r1]
 	mov r0, r8
-	bl Ui_SetGridColumnParameter
+	bl SpriteViewer_SetGridColumnColorMode
 	mov r0, r10
 	adds r3, r0, r6
 	movs r2, #2
 	ldrsh r1, [r3, r2]
 	mov r0, r8
-	bl Ui_FillGridColumnFromMetadata
+	bl SpriteViewer_StartStaggeredAnimations
 	b .L_0802e062
 .L_0802e280:
 	.4byte Data_02018000
@@ -651,7 +651,7 @@ Func_0802de8c:
 	movs r1, #2
 	ldrsb r1, [r3, r1]
 	mov r0, r8
-	bl Ui_SetGridColumnParameter
+	bl SpriteViewer_SetGridColumnColorMode
 	b .L_0802e062
 .L_0802e376:
 	ldr r6, .L_0802e434
@@ -679,7 +679,7 @@ Func_0802de8c:
 	movs r2, #2
 	ldrsh r1, [r3, r2]
 	mov r0, r8
-	bl Ui_FillGridColumnFromMetadata
+	bl SpriteViewer_StartStaggeredAnimations
 	mov r3, r8
 	cmp r3, #0
 	beq .L_0802e3b0
@@ -689,7 +689,7 @@ Func_0802de8c:
 	movs r0, #10
 	ldrsh r1, [r2, r0]
 	movs r0, #1
-	bl Ui_FillGridColumnFromMetadata
+	bl SpriteViewer_StartStaggeredAnimations
 	b .L_0802e062
 .L_0802e3be:
 	mov r3, r8
@@ -713,7 +713,7 @@ Func_0802de8c:
 	movs r1, #8
 .L_0802e3e2:
 	mov r0, r8
-	bl Ui_SetGridColumnPriority
+	bl SpriteViewer_SetGridColumnPriority
 	b .L_0802e062
 .L_0802e3ea:
 	ldr r2, [r4, #12]

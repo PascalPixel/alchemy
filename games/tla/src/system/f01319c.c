@@ -12,7 +12,7 @@
 
 extern u8 gData_03001110[];
 void Func_080132d0(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 void Func_08014b70(void);
 void VramCache_Reset(void);
 void Func_0801399c(void);
@@ -38,7 +38,7 @@ void Func_0801319c(void) {
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
   Func_080132d0();
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   REG_DISPCNT = 0x140;
   Runtime_SetIrqHandler(0, 1, Func_0801399c);

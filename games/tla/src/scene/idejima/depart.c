@@ -27,7 +27,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Engine_ActorPlaceAtActor();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 void ObjectMotion_ArmCallback();
 s32 Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
@@ -86,7 +86,7 @@ void Idejima_RunAlexDeparture(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Engine_ActorSetAnimation(8, 4);
-  Value2(UiText_OpenMessageAtObject, 0x2008, 0);
+  Value2(FieldMessage_ShowAtActor, 0x2008, 0);
   ObjectMotion_ArmCallback(6, 0, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
@@ -118,7 +118,7 @@ void Idejima_RunAlexDeparture(void) {
   ObjectMotion_ArmCallback(6, 0, 20);
   Engine_EventShowMessage(6, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
-  Value2(UiText_OpenMessageAtObject, 5, 0);
+  Value2(FieldMessage_ShowAtActor, 5, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, 8, 0) == 0) {
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 20);
     Motion_SetModeAndWaitAnimation(8, 3);
@@ -143,7 +143,7 @@ void Idejima_RunAlexDeparture(void) {
   Engine_EventShowMessage(5, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
   Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 20);
-  Value2(UiText_OpenMessageAtObject, 0x2008, 0);
+  Value2(FieldMessage_ShowAtActor, 0x2008, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Value3(Engine_ActorShowEmote, 6, 0x103, 0);
@@ -217,7 +217,7 @@ void Idejima_RunAlexDeparture(void) {
   Motion_SetModeAndWaitAnimation(8, 3);
   Engine_EventShowMessage(5, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
-  Value2(UiText_OpenMessageAtObject, 5, 0);
+  Value2(FieldMessage_ShowAtActor, 5, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Engine_ActorSetAnimation(5, 3);

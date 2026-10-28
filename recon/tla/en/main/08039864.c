@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Near miss, differ 34 of 697: The Broken Seal's English
-// UiWork_StepChannelScript with ⚓️'s changes: the lag clamps at 3, the
+// Message_StepScript with ⚓️'s changes: the lag clamps at 3, the
 // page and wait codes take their countdown from gData_080aa0df by text speed
 // and clear the pending presses in a window mode, the page arrow is skipped
 // for an empty window, code 176 is a no-op control code, the window effect
@@ -22,36 +22,36 @@
 #include "adventure.h"
 #include "frame.h"
 
-extern const u8 gUiText_SpeedDelays[];
+extern const u8 gText_SpeedDelays[];
 extern const u8 gData_080aa0df[];
-extern const u8 gUiText_SpeedSteps[];
-extern const u8 gUiText_SpeedCueGaps[];
+extern const u8 gText_SpeedSteps[];
+extern const u8 gText_SpeedCueGaps[];
 
 void Func_0803975c(s32 step);
 void Func_08039754(struct UiChannelSlot *channel);
 void Func_0803972c(struct UiChannelSlot *channel);
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel);
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel);
-s32 Func_0803bde4(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
-void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
+s32 Message_CheckCancelByInput(struct UiChannelSlot *channel);
+s32 Message_CheckCancelByModeInput(struct UiChannelSlot *channel);
+s32 Func_0803bde4(struct Window *window, u32 c, s32 x, s32 y, s32 flags);
+void WindowSprite_PrepareForRedraw(struct Window *window);
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                           u16 *spacing, u32 flags);
-void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 s32 Resource_ResetEntry(u32 slot);
 void Sound_PlayFar(s32 cue);
 
 #define TEXT_SPEED gAdventure.eventMode
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
-s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+s32 Message_StepScript(struct UiChannelSlot *channel) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 keys = *(volatile u32 *)&gInput.held;
-  s32 glyphsLeft = gUiText_SpeedSteps[TEXT_SPEED];
+  s32 glyphsLeft = gText_SpeedSteps[TEXT_SPEED];
   s32 lag;
   u32 code;
   u32 nextCode;
-  struct UiWindow *window;
+  struct Window *window;
   s32 x;
   s32 y;
   u32 newWidth;
@@ -116,8 +116,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
-        if (UiWork_CheckCancelByModeInput(channel) == 0) {
-          struct UiWindow *pane = channel->work;
+        if (Message_CheckCancelByModeInput(channel) == 0) {
+          struct Window *pane = channel->work;
 
           if (pane->width == 0 || pane->height == 0 || work->unk1388 != 0)
             break;
@@ -133,18 +133,18 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         oldWidth = window->width;
         oldHeight = window->height;
         work->unk1388 = 0;
-        RenderOutput_PrepareForRedraw(window);
+        WindowSprite_PrepareForRedraw(window);
         if (channel->flags == 0 && (window->width | window->height) != 0)
-          UiWindow_EraseBorderRect((s16)window->x, (s16)window->y,
+          Window_EraseBorderRect((s16)window->x, (s16)window->y,
                                    window->width, window->height);
         entryIndex = (entryIndex + 1) & ENTRY_MASK;
         if (work->entries[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
           if (channel->flags != 0) {
-            UiWindow_EraseBorderRect((s16)window->x, (s16)window->y,
+            Window_EraseBorderRect((s16)window->x, (s16)window->y,
                                      window->width, window->height);
           } else {
-            UiWindow_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
+            Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                  channel->spacing, 0);
             if (window->flags & 0x80) {
               if (oldHeight != newHeight)
@@ -154,7 +154,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
             }
             if (!(window->flags & 0x100)) {
               x += (s32)(oldWidth - newWidth) / 4;
-              UiWindow_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
+              Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                    channel->spacing, 2);
             }
             window->x = x;
@@ -162,7 +162,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
             window->width = newWidth;
             window->height = newHeight;
           }
-          UiWindow_DrawBorder((s16)window->x, (s16)window->y, window->width,
+          Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
                              window->height);
         }
         channel->x = channel->startX;
@@ -182,7 +182,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
-        if (UiWork_CheckCancelByModeInput(channel) != 0)
+        if (Message_CheckCancelByModeInput(channel) != 0)
           return 9;
         break;
 
@@ -190,14 +190,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         if (channel->countdown == 0)
           channel->countdown = 20;
         work->speakerVoiceCountdown = 0;
-        UiWork_CheckCancelByInput(channel);
+        Message_CheckCancelByInput(channel);
         break;
 
       case 6:
         if (channel->countdown == 0)
           channel->countdown = 120;
         work->speakerVoiceCountdown = 0;
-        UiWork_CheckCancelByInput(channel);
+        Message_CheckCancelByInput(channel);
         break;
 
       case 4:
@@ -249,7 +249,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
     } else {
       pixelX = (channel->x + 128) / 256;
       pixelY = (channel->y + 128) / 256;
-      voiceGap = gUiText_SpeedCueGaps[TEXT_SPEED];
+      voiceGap = gText_SpeedCueGaps[TEXT_SPEED];
       nextEntryIndex = channel->entry;
       if (work->mode != 0)
         pixelX += 8;
@@ -263,15 +263,15 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
       if (!(channel->work->flags & 8) && code > 32 && nextCode > 32 &&
-          (u16)(gUiText_Glyphs[code - 32].width +
-                gUiText_Glyphs[nextCode - 32].width) <= 15) {
+          (u16)(gFont_Glyphs[code - 32].width +
+                gFont_Glyphs[nextCode - 32].width) <= 15) {
         code |= nextCode << 8;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
       if (work->textMode != 0 && channel->unk26 != 0)
         pixelY = (channel->y + 128) / 320 - 3;
       glyphWidth = Func_0803bde4(channel->work, code, pixelX, pixelY, 0);
-      channel->glyphDelay = gUiText_SpeedDelays[TEXT_SPEED];
+      channel->glyphDelay = gText_SpeedDelays[TEXT_SPEED];
       if (glyphWidth == 0)
         return 9;
       if (work->speakerVoiceSound != 0) {

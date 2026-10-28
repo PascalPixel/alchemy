@@ -29,7 +29,7 @@ Func_08109cac:
 	movs r1, #8
 	movs r2, #15
 	movs r3, #4
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	str r0, [sp, #16]
 .L_08109ce8:
 	movs r3, #2
@@ -38,7 +38,7 @@ Func_08109cac:
 	movs r3, #3
 	movs r0, #0
 	movs r1, #5
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r3, #128
 	str r0, [sp, #20]
 	lsls r3, r3, #3
@@ -184,7 +184,7 @@ Func_08109cac:
 	movs r2, #16
 	movs r0, #0
 	str r7, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r5, #0
 	adds r7, r0, #0
 	bl ItemMenu_DrawItemDetailsFar
@@ -217,14 +217,14 @@ Func_08109cac:
 	strb r3, [r2]
 	movs r1, #2
 	adds r0, r7, #0
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	bl Func_08109188
 	movs r3, #192
 	lsls r3, r3, #4
 	adds r3, #232
 	add r3, r11
 	ldr r0, [r3]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #1
@@ -336,7 +336,7 @@ Func_08109cac:
 .L_08109f48:
 	ldr r0, [sp, #20]
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl WaitFrames
 	cmp r5, #0
@@ -403,7 +403,7 @@ Func_08109cac:
 .L_08109fd8:
 	ldr r0, [sp, #16]
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	adds r0, r5, #0
 	add sp, #28
 	pop {r3, r5, r6, r7}

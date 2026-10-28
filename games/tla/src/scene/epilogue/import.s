@@ -37,7 +37,7 @@ Func_020007c4:
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -46,30 +46,30 @@ Resource_GetTableEntry:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global UiWork_InitializeWithResourceCounters
+	.global WindowSystem_InitField
 	.thumb_func
-UiWork_InitializeWithResourceCounters:
-	overlay_veneer UiWork_InitializeWithResourceCountersFar
-	.global UiWork_Finalize
+WindowSystem_InitField:
+	overlay_veneer WindowSystem_InitFieldFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_OpenMessageWindow
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiWork_IsComplete
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global Message_AllTyped
 	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
+Message_AllTyped:
+	overlay_veneer Message_AllTypedFar
 	.global Func_02000804
 	.thumb_func
 Func_02000804:
 	overlay_veneer Func_080380f8
-	.global UiText_GetResourceDimensions
+	.global Text_GetMessageSize
 	.thumb_func
-UiText_GetResourceDimensions:
-	overlay_veneer UiText_GetResourceDimensionsFar
+Text_GetMessageSize:
+	overlay_veneer Text_GetMessageSizeFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

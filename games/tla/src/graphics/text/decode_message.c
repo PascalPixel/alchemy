@@ -18,13 +18,13 @@
 extern const u8 Text_DecodeSymbolCode[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-void UiText_LookupMessage(struct TextReader *reader, s32 message);
+void Message_Find(struct TextReader *reader, s32 message);
 
 /// Decodes message into text as a zero-terminated string of 16-bit codes, with
 /// at most capacity entries, keeping style codes with their operands.
 /// capacity includes the terminating halfword.
 // As ☀️'s function of the same name.
-void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;
   s32 (*decode)(struct TextReader *);
@@ -39,7 +39,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
                      Text_DecodeSymbolCodeSize);
   decode = (s32 (*)(struct TextReader *))(
       (void **)Ram_HeapSlots)[TEXT_DECODER_SLOT / 4];
-  UiText_LookupMessage(&reader, message);
+  Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
 #endif

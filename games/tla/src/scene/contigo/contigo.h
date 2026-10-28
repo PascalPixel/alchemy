@@ -30,7 +30,7 @@ void Func_0200415c(s32 actor, s32 angle);
 void Func_0200418c(s32 speed, s32 acceleration);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void Func_0200413c(s32 actor, s32 a, s32 b);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 void Func_020042b4(s32 cue);
 void Func_020040dc(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020040d4(s32 actor, s32 x, s32 z);
@@ -180,7 +180,7 @@ static inline void Contigo_ObjShake(s32 actor, s32 a, s32 b) {
 
 static inline s32 Contigo_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return UiText_OpenMessageAtObject(speaker, flags);
+  return FieldMessage_ShowAtActor(speaker, flags);
 }
 
 static inline void Contigo_Se(s32 cue) {

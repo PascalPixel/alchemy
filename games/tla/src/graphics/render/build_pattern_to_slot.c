@@ -14,29 +14,29 @@
 #include "item.h"
 #include "ram_buffer.h"
 
-s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot) {
+s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
   GlyphTransfer *work;
 
   work = Runtime_AllocateHeapBlock(0x44, sizeof(GlyphTransfer));
-  Ui_PrepareTransferFromTableEntry(no);
+  Icon_DrawMisc(no);
   VramCache_Load(slot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x44);
   return 1;
 }
 
-extern u8 *gUiIcon_ItemIconPointers[];
+extern u8 *gItemIcons[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
-void Ui_PrepareTransferForItem(s32 code) {
+void Icon_DrawItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
   struct ItemDefinition *item = Item_Get(0x1ff & code);
 
   if (code != 0)
-    state->encoded = gUiIcon_ItemIconPointers[item->icon];
+    state->encoded = gItemIcons[item->icon];
   else
-    state->encoded = gUiIcon_ItemIconPointers[0];
+    state->encoded = gItemIcons[0];
   state->width = 2;
   state->height = 2;
   UiGlyph_DecodeWithHeapRoutines(state, 0);

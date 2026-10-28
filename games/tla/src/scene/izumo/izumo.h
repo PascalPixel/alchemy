@@ -31,7 +31,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Camera_FollowActor(s32 id, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);

@@ -122,7 +122,7 @@ Func_02000244:
 	add r1, sp, #24
 	add r3, sp, #16
 	str r4, [sp, #0]
-	bl UiText_GetResourceDimensions
+	bl Text_GetMessageSize
 	ldr r2, [sp, #16]
 	movs r7, #0
 	cmp r2, #24
@@ -235,7 +235,7 @@ Func_02000318:
 	strb r2, [r0]
 	strb r5, [r6]
 	bl Func_02000844
-	bl UiWork_InitializeWithResourceCounters
+	bl WindowSystem_InitField
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #60]
@@ -729,7 +729,7 @@ Func_02000318:
 	strb r2, [r0]
 	strb r5, [r6]
 	bl Func_02000844
-	bl UiWork_InitializeWithResourceCounters
+	bl WindowSystem_InitField
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #60]

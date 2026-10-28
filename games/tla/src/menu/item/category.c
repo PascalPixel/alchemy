@@ -13,7 +13,7 @@
 #include "text/msg_ids.h"
 
 void ItemMenu_HideAllIcons(void);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 
 struct CategoryMenuState {
@@ -27,10 +27,10 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
 
   ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
-  UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 1, window, 0, 32);
-  UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 2, window, 0, 16);
-  UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 3, window, 0, 48);
+  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);
+  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 1, window, 0, 32);
+  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 2, window, 0, 16);
+  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 3, window, 0, 48);
   items = (u8 *)menu->items;
   ItemMenu_DrawEquippedItemNames(window, items);
   if (mode == 0) {

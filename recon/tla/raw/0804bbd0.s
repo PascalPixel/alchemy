@@ -16,13 +16,13 @@ Func_0804bbd0:
 	movs r2, #52
 	subs r5, #8
 	ldr r0, .L_0804bc04
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	ldr r3, [r5]
 	adds r0, r6, #0
 	ldr r1, [r3, #68]
 	movs r2, #0
 	movs r3, #4
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	add sp, #132
 	pop {r3}
 	mov r9, r3

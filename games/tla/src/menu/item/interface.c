@@ -11,8 +11,8 @@
 #include "ram_buffer.h"
 #include "render_input.h"
 
-#define RenderOutput_CreateFromResourceFar                                     \
-  ((void *(*)(s32, s32, s32, s32, s32))RenderOutput_CreateFromResourceFar)
+#define WindowSprite_CreateFromResourceFar                                     \
+  ((void *(*)(s32, s32, s32, s32, s32))WindowSprite_CreateFromResourceFar)
 
 struct IconMenuState {
   u8 padding000[0x24];
@@ -37,7 +37,7 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1) {
   output0 = &state->entries[0];
   do {
     *output0++ =
-        RenderOutput_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
+        WindowSprite_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
     index0++;
   } while (index0 <= 7);
   index1 = 8;
@@ -45,7 +45,7 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1) {
   output1 = &state->entries[8];
   do {
     *output1++ =
-        RenderOutput_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
+        WindowSprite_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
     index1++;
   } while (index1 <= 15);
   index2 = 16;
@@ -53,21 +53,21 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1) {
   output2 = &state->entries[16];
   do {
     *output2++ =
-        RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
+        WindowSprite_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
     index2++;
   } while (index2 <= 31);
 }
 
 void ItemMenu_HideAllIcons(void) {
   s32 hiddenState = 13;
-  struct RenderOutput **icons =
-      (struct RenderOutput **)((struct IconMenuState *)
+  struct WindowSprite **icons =
+      (struct WindowSprite **)((struct IconMenuState *)
                                    Ram_HeapSlots->menuRuntime)
           ->entries;
   s32 slot;
 
   for (slot = 31; slot >= 0; slot--) {
-    struct RenderOutput *icon = *icons++;
+    struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->active = hiddenState;
     }

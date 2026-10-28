@@ -62,22 +62,22 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02000dc4:
 	overlay_veneer Func_08020300
-	.global UiWork_Finalize
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_OpenMessageWindow
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiText_ShowPositionedMessageAndWait
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global UiWork_IsComplete
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
+	.global Message_AllTyped
 	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
+Message_AllTyped:
+	overlay_veneer Message_AllTypedFar
 	.global Func_02000dec
 	.thumb_func
 Func_02000dec:
@@ -85,11 +85,11 @@ Func_02000dec:
 	.global Func_02000df4
 	.thumb_func
 Func_02000df4:
-	overlay_veneer UiText_DrawQuantity
-	.global UiWork_FinalizePendingCore
+	overlay_veneer MessageArgument_PushFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global Func_02000e04
 	.thumb_func
 Func_02000e04:

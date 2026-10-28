@@ -6,14 +6,14 @@
 #include "event_work.h"
 #include "input.h"
 
-s32 UiWork_FinalizeEntityMatchingLocalizedIdFar();
+s32 Window_CloseMatchingIdFar();
 s32 ObjectTable_ReadActiveValue();
 s32 Func_080d1eac(s32 sprite);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 packed);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 void Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
-s32 UiWork_IsCompleteFar(void);
-s32 UiWork_IsIdleFar(s32 window);
-void UiWork_FinalizePendingCoreFar(void);
+s32 Message_AllTypedFar(void);
+s32 Window_IsClosedFar(s32 window);
+void Message_CloseFinishedWindowsFar(void);
 void WaitFrames(s32 frames);
 
 /// If the actor has graphics, ends the window of the speaker its graphics ID
@@ -24,7 +24,7 @@ void ObjectTable_RunIfActive(s32 id) {
 
   no = ObjectTable_ReadActiveValue(id);
   if (no != -1)
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(no);
+    Window_CloseMatchingIdFar(no);
 }
 
 /// The event command "show two messages and wait": two actors speak at once,
@@ -45,20 +45,20 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   s32 secondWindow;
 
   firstWindow =
-      UiText_OpenMessageWindowFar((s16)event->messageId++, firstX, firstY,
+      Message_OpenWindowFar((s16)event->messageId++, firstX, firstY,
                                   Func_080d1eac(firstSprite) << 16);
   Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
-    while (!UiWork_IsCompleteFar())
+    while (!Message_AllTypedFar())
       WaitFrames(delay);
   }
 
   secondWindow =
-      UiText_OpenMessageWindowFar((s16)event->messageId++, secondX, secondY,
+      Message_OpenWindowFar((s16)event->messageId++, secondX, secondY,
                                   Func_080d1eac(secondSprite) << 16);
   Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
 
-  while (!UiWork_IsCompleteFar())
+  while (!Message_AllTypedFar())
     WaitFrames(1);
 
   WaitFrames(1);
@@ -66,14 +66,14 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
     WaitFrames(1);
 
   WaitFrames(1);
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(firstSprite);
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(secondSprite);
-  UiWork_FinalizePendingCoreFar();
+  Window_CloseMatchingIdFar(firstSprite);
+  Window_CloseMatchingIdFar(secondSprite);
+  Message_CloseFinishedWindowsFar();
   WaitFrames(1);
 
-  while (!UiWork_IsIdleFar(firstWindow))
+  while (!Window_IsClosedFar(firstWindow))
     WaitFrames(1);
-  while (!UiWork_IsIdleFar(secondWindow))
+  while (!Window_IsClosedFar(secondWindow))
     WaitFrames(1);
 
   WaitFrames(1);

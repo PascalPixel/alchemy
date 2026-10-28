@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiWindow_DrawBorderFar
+	.global Window_DrawBorderFar
 	.thumb_func
-UiWindow_DrawBorderFar:
-	overlay_veneer UiWindow_DrawBorder
-	.global UiWindow_EraseBorderRectFar
+Window_DrawBorderFar:
+	overlay_veneer Window_DrawBorder
+	.global Window_EraseBorderRectFar
 	.thumb_func
-UiWindow_EraseBorderRectFar:
-	overlay_veneer UiWindow_EraseBorderRect
+Window_EraseBorderRectFar:
+	overlay_veneer Window_EraseBorderRect
 	.global Link_DrawShiftedTilePairFar
 	.thumb_func
 Link_DrawShiftedTilePairFar:

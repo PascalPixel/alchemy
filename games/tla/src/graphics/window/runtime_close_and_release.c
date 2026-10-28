@@ -13,4 +13,4 @@
 #include "system.h"
 
 /// Closes the window in heap slot 16 and releases its block.
-void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
+void Window_CloseAndRelease(void) { PartyStatus_Close(); }

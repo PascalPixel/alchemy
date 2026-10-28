@@ -27,7 +27,7 @@ void GameFlag_Test();
 void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_ArmCallback();
 void Object_LinkObjectAndSetCallback();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -65,7 +65,7 @@ L_02008082:
   goto L_020080f6;
 L_020080ba:
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors05);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, arg0, 0);
   result2 = Value0((s32 (*)())Func_0200291c);
   result3 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result2, 0);
   if (result3 != 0)

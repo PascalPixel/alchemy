@@ -1,11 +1,11 @@
 #include "types.h"
 #include "adventure.h"
 
-void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+void Text_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
+void Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 extern u8 MsgCoinsLabel[];
 
-void UiText_DrawWorkValueWithLabel(s32 work) {
-  UiText_DrawNumberAtOffsetFar(gAdventure.coins, 7, work, 8, 0);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
+void Text_DrawWorkValueWithLabel(s32 work) {
+  Text_DrawNumberAtOffsetFar(gAdventure.coins, 7, work, 8, 0);
+  Text_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
 }

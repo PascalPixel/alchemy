@@ -16,7 +16,7 @@ void ObjectMotion_Launch();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_WaitForAnimationChange();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_WaitFrames();
 void Event_StartScreenTransition();
@@ -90,7 +90,7 @@ void Func_02002c64(void) {
   Task_Wait(1);
   ObjectMotion_Launch(gAdventure.currentOwner, 4, 20);
   Engine_EventSetMessage((s32)MsgIdejimaCheckForInjuries);
-  Value2(UiText_OpenMessageAtObject, 11, 0);
+  Value2(FieldMessage_ShowAtActor, 11, 0);
   Task_Wait(1);
   answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   leader = gAdventure.currentOwner;

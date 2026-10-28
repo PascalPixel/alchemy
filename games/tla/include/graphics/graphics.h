@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 
-struct UiWindow;
+struct Window;
 
 extern u8 gBlendBrighten;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
@@ -27,17 +27,17 @@ extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];
 extern u8 Resource_Decode2CodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
-extern const u8 gUi_PpRowString[];
-extern s32 gUi_FixedTileBlocks[];
-extern const u8 gUi_HpRowString[];
-extern const u8 gUi_HpString[];
-extern const u8 gUi_PpString[];
-extern const u8 gUi_SlashString[];
-extern u8 *gUiIcon_ItemIconPointers[];
-extern u8 *gUiIcon_ItemIconPointersEnd[];
-extern u8 *gUiIcon_MiscIconPointers[];
-extern u8 *gUiIcon_PsynergyIconPointers[];
-extern u8 *gUiIcon_PsynergyIconPointersEnd[];
+extern const u8 gStatusPanel_PpRowString[];
+extern s32 gWindow_FixedTileBlocks[];
+extern const u8 gStatusPanel_HpRowString[];
+extern const u8 gStatusPanel_HpString[];
+extern const u8 gStatusPanel_PpString[];
+extern const u8 gStatusPanel_SlashString[];
+extern u8 *gItemIcons[];
+extern u8 *gItemIconsEnd[];
+extern u8 *gIcon_MiscIconPointers[];
+extern u8 *gPsynergyIcons[];
+extern u8 *gPsynergyIconsEnd[];
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
@@ -45,26 +45,26 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
-s32 Ui_ClearVramBlock(void);
+s32 Vram_ClearWindowBlock(void);
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
-void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
-void Ui_PrepareTransferFromTableEntry(u32 index);
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
+void Portrait_ReloadFar(s32 a, s32 b, s32 c);
+void Icon_DrawMisc(u32 index);
+s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
+void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PartyStatus_Draw(s32 flags);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #ifndef OWN_UiWindow_SetTilemapEntry
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
-                              u32 mode);
+void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
+                            u32 mode);
 #endif
-void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
-void UiWork_ProcessDirectWork(void);
-void UiWork_ProcessRenderChannels(void);
-void UiWork_ClearPortraitSlots(void);
-void UiWork_UploadDirtyBlocks(void);
+void WindowSystem_StartFieldUpdate(void);
+void Window_UpdateZooms(void);
+void Message_UpdateAll(void);
+void Portrait_ClearSlots(void);
+void WindowSystem_UploadTilemap(void);
 
-struct RenderOutput;
+struct WindowSprite;
 
 extern s16 gDisplayScroll_Busy;
 extern s16 gDisplayScroll_LastPosition;
@@ -88,36 +88,34 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(s32, s32);
 void Unit_LearnPsynergyFar(void);
-void RenderOutput_ClearList(void *work);
-void RenderOutput_Release(struct RenderOutput *node);
+void WindowSprite_ClearList(void *work);
+void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #endif
 s32 Resource_LoadByMode(s32 mode, s32 value);
 void Runtime_RemapBytesByTableFar(void *buffer, s32 size);
 void NumberText_FormatDecimal(s32);
-void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                  s32 arg4);
+void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
+                                s32 arg4);
 #ifndef OWN_UiIcon_BuildAbilityIconTiles
-void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
-                                  s32 reuse);
+void Icon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
+                                s32 reuse);
 #endif
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
-void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
-                                  s32 offsetY);
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
+void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
+                                s32 offsetY);
 #ifndef OWN_UiText_DrawStringInWindowFar
-void UiText_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
+void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
-void UiText_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
-void UiWork_AnimateSpriteSlots(void);
-void UiWork_InitializeCountersAndScheduleRefresh(s32 kind);
-s32 UiWork_SetParamNibbleFar(s32 color);
+void Text_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
+void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
+void WindowSprite_UpdateAll(void);
+void WindowSystem_StartBattleUpdate(s32 kind);
+s32 Text_SetColorFar(s32 color);
 void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 
 #endif

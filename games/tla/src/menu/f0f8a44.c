@@ -5,7 +5,7 @@
 struct OwnerMenuState {
   u8 unk000[16];
   struct RenderInput *ownerWindow;
-  struct RenderOutput *ownerCursors[2];
+  struct WindowSprite *ownerCursors[2];
 };
 
 extern u32 gFrameCount;
@@ -19,7 +19,7 @@ extern u8 gUiMenu_CursorBobY[];
 void Func_080f8a44(s32 xOffset, s32 yOffset) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
-  struct RenderOutput *cursor = work->ownerCursors[0];
+  struct WindowSprite *cursor = work->ownerCursors[0];
 
   cursor->oam.x = cursor->x = gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
                               work->ownerWindow->x * 8 + 8;

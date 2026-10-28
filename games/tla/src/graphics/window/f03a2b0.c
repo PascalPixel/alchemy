@@ -3,8 +3,8 @@
 #include "window.h"
 
 void Func_0803a2b0(s32 x, s32 y, u32 width, u32 height, s32 whole) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
   u32 column;

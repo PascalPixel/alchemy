@@ -175,11 +175,11 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       battle->plan.presentationFlags =
           Func_0811d79c(Unit_Get(battle->plan.actorId)->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
-        UiText_DrawQuantity(battle->plan.actorId, 1);
+        MessageArgument_PushFar(battle->plan.actorId, 1);
         if (battle->plan.actorId == battle->plan.targetIds[0])
-          UiText_ShowMessageAndWaitCoreFar((s32)&MsgStopHittingYourself);
+          Message_ShowAndWaitCoreFar((s32)&MsgStopHittingYourself);
         else
-          UiText_ShowMessageAndWaitCoreFar((s32)&MsgAttacksAlly);
+          Message_ShowAndWaitCoreFar((s32)&MsgAttacksAlly);
       }
       Func_0811ea0c(&battle->plan, battle->plan.abilityId == 312 ? 32 : 0);
       swap = battle->plan.actorId;
@@ -193,10 +193,10 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       battle->skipPlayback = 1;
       Func_0811f088(&battle->plan, 1);
       battle->skipPlayback = 0;
-      UiText_ShowMessageAndWaitCoreFar((s32)&MsgDjinnRecoverFaster);
+      Message_ShowAndWaitCoreFar((s32)&MsgDjinnRecoverFaster);
       kept = Func_08124cc4(battle->plan.targetIds[0] > 7);
       if (kept == 0)
-        UiText_ShowMessageAndWaitCoreFar((s32)(&MsgDjinnRecoverFaster + 1));
+        Message_ShowAndWaitCoreFar((s32)(&MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
         BattlePresentation_WaitForAdvance();
       break;

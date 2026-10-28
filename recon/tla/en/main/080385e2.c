@@ -1,12 +1,12 @@
 // Draft, ARM C (game ARM route, GCC 2.95.2), behind the Thumb veneer
-// Func_080385e0 (bx pc): matches. ☀️'s UiText_DrawGlyphArm
+// Func_080385e0 (bx pc): matches. ☀️'s Text_DrawGlyphArm
 // (games/tbs/src/window/glyph_arm.c) as ⚓️ English has it: the kana-mark
 // test of ☀️'s Japanese and English editions, without English's bound on
 // codes above 143, and no FAKEMATCH device. The listing is mixed-mode,
 // which alchemy-devtools diff cannot compare; checked instead by objcopying the
 // --arm draft's .text and the listing's ARM words: the 792 bytes are
-// identical (196 instructions, the two pool words gUiText_GlyphWidths and
-// gUiText_Glyphs at the same places). Its entry is 0x080385e4.
+// identical (196 instructions, the two pool words gFont_GlyphWidths and
+// gFont_Glyphs at the same places). Its entry is 0x080385e4.
 #include "types.h"
 #include "uiwindow.h"
 #include "glyph.h"
@@ -16,9 +16,9 @@
 #define UI_CANVAS_VRAM ((void *)0x06002500)
 #define UI_WINDOW_OUTLINED_TEXT 0x40
 
-extern const u8 gUiText_GlyphWidths[];
+extern const u8 gFont_GlyphWidths[];
 
-static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
+static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
                                              u32 doubledPixelRow, u8 *canvas,
                                              u32 repeatedColor) {
   u16 *pixelHalfword;
@@ -31,7 +31,7 @@ static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
   *pixelHalfword = (*pixelHalfword & ~pixelMask) | (pixelMask & repeatedColor);
 }
 
-s32 Func_080385e4(struct UiWindow *window, u32 character, u32 x, u32 y,
+s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
   u32 glyphWidth;
@@ -56,7 +56,7 @@ s32 Func_080385e4(struct UiWindow *window, u32 character, u32 x, u32 y,
       foregroundColor = 0x1111;
       secondaryColor = 0x3333;
       row = 0;
-      fontWidth = gUiText_GlyphWidths[character - 32];
+      fontWidth = gFont_GlyphWidths[character - 32];
       if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
         u8 *vram;
 
@@ -79,7 +79,7 @@ s32 Func_080385e4(struct UiWindow *window, u32 character, u32 x, u32 y,
               if ((bits & 15) == 1)
                 color = foregroundColor;
               if (((x + column) >> 3) < SCREEN_TILE_COLUMNS)
-                UiText_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
+                Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
                                       vram, color);
             }
             column++;
@@ -94,11 +94,11 @@ s32 Func_080385e4(struct UiWindow *window, u32 character, u32 x, u32 y,
       return fontWidth;
     }
     glyphRows =
-        (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 26);
+        (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
     glyphRows =
-        (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 32);
+        (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;
     glyphRows += 4;
   }
@@ -147,7 +147,7 @@ s32 Func_080385e4(struct UiWindow *window, u32 character, u32 x, u32 y,
         rowLine = ((y + row) & 7) << 1;
         while (1) {
           if ((s32)bits < 0)
-            UiText_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
+            Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
                                   vram, color);
           bits <<= 1;
           if (bits == 0)

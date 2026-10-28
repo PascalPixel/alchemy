@@ -36,7 +36,7 @@ void ObjectMotion_SetVariantCallback();
 struct ObjectRuntime *Object_GetById();
 void Object_TurnToFaceEachOther();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void Func_02001910(void);
 void Func_02001a20(void);
 void FieldEvent_WaitFrames();
@@ -279,7 +279,7 @@ void Func_02001450(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
   Value3((s32 (*)())Func_02001e48, 28, 0x102, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 28, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 28, 0);
   result0 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result0 != 0)
     goto L_02009690;

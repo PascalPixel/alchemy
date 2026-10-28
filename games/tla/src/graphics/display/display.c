@@ -26,7 +26,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   return ret;
 }
 
-void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
                               s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;

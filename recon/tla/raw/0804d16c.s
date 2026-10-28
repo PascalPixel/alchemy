@@ -26,7 +26,7 @@ Menu_RunResourceSelectionLoop:
 .L_0804d194:
 	mov r1, r8
 	ldr r0, [r1, #120]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	mov r3, r11
 	movs r2, #0
 	ldrsh r0, [r3, r2]
@@ -57,7 +57,7 @@ Menu_RunResourceSelectionLoop:
 	ldr r1, [r2, #120]
 	movs r3, #0
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #142
 	ldr r6, .L_0804d288
 	add r3, r8

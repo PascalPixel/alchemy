@@ -2,64 +2,64 @@
 	.section .rodata
 	.balign 4
 	.ifdef TLA_EDITION_ES
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LvString
+gStatusPanel_LvString:
 	.asciz "Nv."
 	.else
 	.ifdef TLA_EDITION_FR
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LvString
+gStatusPanel_LvString:
 	.asciz "Niv"
 	.else
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LvString
+gStatusPanel_LvString:
 	.asciz "Lv"
 	.balign 4, 0
 	.endif
 	.endif
 	.if EDITION_INTERNATIONAL
 	.ifdef TLA_EDITION_DE
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "KP"
 	.else
 	.ifdef TLA_EDITION_ES
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PV"
 	.else
 	.ifdef TLA_EDITION_FR
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PV"
 	.else
 	.ifdef TLA_EDITION_IT
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PS"
 	.else
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "HP"
 	.endif
 	.endif
 	.endif
 	.endif
 	.balign 4, 0
-	.global gUi_SlashString
-gUi_SlashString:
+	.global gStatusPanel_SlashString
+gStatusPanel_SlashString:
 	.asciz "/"
 	.balign 4, 0
-	.global gUi_PpString
-gUi_PpString:
+	.global gStatusPanel_PpString
+gStatusPanel_PpString:
 	.asciz "PP"
 	.balign 4, 0
 	.else
-	.global gUi_HpRowString
-gUi_HpRowString:
+	.global gStatusPanel_HpRowString
+gStatusPanel_HpRowString:
 	.asciz "HP    /"
-	.global gUi_PpRowString
-gUi_PpRowString:
+	.global gStatusPanel_PpRowString
+gStatusPanel_PpRowString:
 	.asciz "EP    /"
 	.endif
 @ The border tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here

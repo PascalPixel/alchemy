@@ -23,28 +23,28 @@ Func_08101d5c:
 	str r2, [sp, #20]
 	str r6, [sp, #12]
 	ldr r0, [r3, #52]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r2, [sp, #24]
 	adds r2, #240
 	str r2, [sp, #8]
 	ldr r0, [r2]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r5, .L_08101ff4
 	ldr r3, [sp, #8]
 	adds r0, r5, #0
 	ldr r1, [r3]
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r2, [sp, #8]
 	adds r5, #1
 	ldr r1, [r2]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r5, #6
 	movs r0, #1
 	movs r1, #1
@@ -66,7 +66,7 @@ Func_08101d5c:
 	movs r3, #10
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r5, #2
 	movs r1, #12
 	movs r2, #22
@@ -74,14 +74,14 @@ Func_08101d5c:
 	mov r8, r0
 	movs r0, #8
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r1, #9
 	str r0, [sp, #32]
 	movs r2, #22
 	movs r3, #3
 	movs r0, #8
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	str r0, [sp, #28]
 	bl Func_08038290
 	ldr r7, .L_08101ff8
@@ -92,7 +92,7 @@ Func_08101d5c:
 	mov r1, r8
 	movs r2, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	cmp r5, #6
 	ble .L_08101e18
 	ldr r7, .L_08101ffc
@@ -102,13 +102,13 @@ Func_08101d5c:
 	mov r10, r3
 .L_08101e34:
 	ldr r0, [sp, #28]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r0, .L_08101ff8
 	ldr r1, [sp, #28]
 	movs r2, #0
 	movs r3, #0
 	adds r0, r6, r0
-	bl UiText_DrawResourceFar
+	bl Text_DrawMessageFar
 	ldr r1, .L_08102000
 	ldr r0, [sp, #32]
 	adds r1, r6, r1
@@ -178,7 +178,7 @@ Func_08101d5c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_08101efa
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	beq .L_08101ef4
 	adds r6, #1
@@ -240,7 +240,7 @@ Func_08101d5c:
 	mov r2, r10
 	strb r2, [r3]
 	ldr r0, [sp, #32]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r2, r9
 	ldr r3, [r2]
 	mov r2, r10
@@ -259,20 +259,20 @@ Func_08101d5c:
 	movs r3, #1
 	strb r3, [r2, #6]
 	ldr r0, [sp, #28]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, [sp, #32]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
 	ldr r0, [sp, #28]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	mov r0, r8
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r1, #1
 	ldr r0, [sp, #32]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	bl Func_08038290
 	ldr r2, [sp, #16]
 	movs r3, #2
@@ -281,13 +281,13 @@ Func_08101d5c:
 	bne .L_08101fd8
 	ldr r2, [sp, #8]
 	ldr r0, [r2]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r3, [sp, #24]
 	ldr r0, [r3, #52]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r2, [sp, #24]
 	ldr r0, [r2, #16]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r2, [r5, #60]
 	movs r3, #0
 	strb r3, [r2, #6]

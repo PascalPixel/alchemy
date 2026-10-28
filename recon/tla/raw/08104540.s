@@ -45,7 +45,7 @@ Func_08104540:
 	bge .L_08104584
 	mov r3, r10
 	ldr r0, [r3, #52]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r0, #1
 	bl WaitFrames
 	mov r0, sp
@@ -114,7 +114,7 @@ Func_08104540:
 	str r5, [sp, #4]
 	str r0, [sp, #52]
 	str r6, [sp, #0]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	mov r1, r10
 	adds r1, #56
 	str r1, [sp, #48]
@@ -124,29 +124,29 @@ Func_08104540:
 	movs r1, #15
 	str r5, [sp, #4]
 	str r6, [sp, #0]
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	mov r2, r10
 	adds r2, #240
 	str r2, [sp, #44]
 	ldr r0, [r2]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r3, r10
 	ldr r0, [r3, #16]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r5, .L_08104904
 	mov r0, r10
 	ldr r1, [r0, #16]
 	movs r2, #0
 	adds r0, r5, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #2
 	mov r2, r10
 	ldr r1, [r2, #16]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r2, #151
 	mov r1, sp
 	lsls r2, r2, #2
@@ -176,10 +176,10 @@ Func_08104540:
 	strb r2, [r3, #6]
 	mov r1, r10
 	ldr r0, [r1, #40]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r2, r10
 	ldr r0, [r2, #56]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r1, [sp, #32]
 	mov r2, r9
 	mov r3, r10
@@ -257,7 +257,7 @@ Func_08104540:
 	negs r3, r3
 	subs r2, #2
 	adds r0, r6, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldr r3, [r7]
 	adds r5, #1
 	cmp r5, r3
@@ -278,7 +278,7 @@ Func_08104540:
 	adds r3, r5, #0
 	subs r2, #3
 	adds r1, #40
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldrh r2, [r6, #8]
 	movs r1, #241
 	mov r3, r9
@@ -288,7 +288,7 @@ Func_08104540:
 	adds r0, r6, #0
 	adds r1, #41
 	adds r3, r5, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	ldrh r3, [r6, #14]
 	movs r2, #2
 	lsls r3, r3, #16
@@ -420,7 +420,7 @@ Func_08104540:
 	strb r3, [r2, #6]
 	ldr r0, [sp, #44]
 	movs r1, #1
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #5
@@ -431,22 +431,22 @@ Func_08104540:
 	movs r3, #17
 	movs r2, #0
 	movs r1, #13
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	movs r1, #1
 	ldr r0, [sp, #52]
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	movs r1, #1
 	ldr r0, [sp, #48]
-	bl UiWindow_CloseIfOpen
+	bl Window_CloseIfOpen
 	mov r1, r10
 	ldr r0, [r1, #52]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r2, r10
 	ldr r0, [r2, #44]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r3, r10
 	ldr r0, [r3, #16]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r3, [r5, #60]
 	movs r6, #0
 	strb r6, [r3, #6]

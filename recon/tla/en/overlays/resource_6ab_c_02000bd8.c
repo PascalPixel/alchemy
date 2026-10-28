@@ -33,7 +33,7 @@ void Func_02004204(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_0200420c(struct ObjectRuntime *object);
 void PartyInventory_Remove(s32 item);
 void Inventory_AddItem(s32 owner, s32 item);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 u8 *Unit_Get(s32 owner);
 void Func_020042c4(s32 owner, s32 slot);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
@@ -76,7 +76,7 @@ void Func_02000bd8(void) {
     Func_0200446c(83);
     PartyInventory_Remove(224);
     Inventory_AddItem(4, 222);
-    UiText_ShowPositionedMessageAndWait((s32)&MsgMarsStar08, 1);
+    FieldMessage_Show((s32)&MsgMarsStar08, 1);
     i = 0;
     offset = 216;
     goto check;

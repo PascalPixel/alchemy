@@ -2,9 +2,9 @@
 #include "ram_buffer.h"
 
 void ItemMenu_RefreshEntry(s32 layout) {
-  struct RenderOutput **slot;
-  struct RenderOutput **scan;
-  struct RenderOutput *object;
+  struct WindowSprite **slot;
+  struct WindowSprite **scan;
+  struct WindowSprite *object;
   s32 index;
   s32 originY;
   s32 base;
@@ -14,7 +14,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   if (layout != 1) {
     originY = 0x28;
   }
-  slot = (struct RenderOutput **)(base + 0x4c);
+  slot = (struct WindowSprite **)(base + 0x4c);
   index = 0;
   scan = slot;
   do {

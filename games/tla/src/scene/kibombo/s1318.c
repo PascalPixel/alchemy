@@ -9,7 +9,7 @@
 s32 Event_AskYesNoWithActorAnimation();
 s32 Func_02005b6c();
 s32 Func_02005b94();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 void Camera_MoveWithinMapBounds();
 void Event_PrepareObjectAndApplyValue();
 void FieldEvent_WaitFrames();
@@ -149,7 +149,7 @@ void Func_02001318(void) {
   Value3(Func_02005b94, 5, 257, 0);
   Value3(Func_02005b94, 6, 257, 40);
   Call3(ObjectMotion_ArmCallback, 26, 0xd000, 0);
-  Value2(UiText_OpenMessageAtObject, 0x101a, 0);
+  Value2(FieldMessage_ShowAtActor, 0x101a, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       1) {
     Call2(Func_02005b64, 0x101a, 0);
@@ -301,7 +301,7 @@ void Func_02001318(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0x4000, 40);
   Call2(Func_02005b64, 0x101a, 0);
   Call3(ObjectMotion_ArmCallback, 26, 0xd000, 0);
-  Value2(UiText_OpenMessageAtObject, 0x101a, 0);
+  Value2(FieldMessage_ShowAtActor, 0x101a, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Value3(Func_02005b94, 26, 264, 20);

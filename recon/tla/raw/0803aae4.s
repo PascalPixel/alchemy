@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_RenderWideStringAtOffset
+	.global Text_DrawWideStringAtOffset
 	.thumb_func
-UiText_RenderWideStringAtOffset:
+Text_DrawWideStringAtOffset:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -111,7 +111,7 @@ UiText_RenderWideStringAtOffset:
 	adds r5, #2
 	b .L_0803ac3a
 .L_0803abdc:
-	bl UiWork_ResetCounters
+	bl Text_ResetStyle
 	b .L_0803ac3a
 .L_0803abe2:
 	movs r2, #15
@@ -181,4 +181,4 @@ UiText_RenderWideStringAtOffset:
 .L_0803ac58:
 	.4byte .L_0803ab4c
 .L_0803ac5c:
-	.4byte gUiText_Glyphs
+	.4byte gFont_Glyphs

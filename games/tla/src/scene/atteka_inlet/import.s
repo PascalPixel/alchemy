@@ -110,10 +110,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02001098:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_020010a8
 	.thumb_func
 Func_020010a8:

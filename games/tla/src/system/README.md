@@ -43,7 +43,7 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Flash_`, `Graphics_`, `Input_`, `IoWriteQueue_`, `ItemIcon_`, `NumberText_`,
 `Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`, `ResourceMetadata_`,
 `ResourceObject_`, `ResourceSlot_`, `Runtime_`, `Save_`, `SceneState_`,
-`Serial_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Ui_` and
+`Serial_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Window_` and
 `VramCache_`. Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |

@@ -25,10 +25,10 @@ void Func_02000e94(s32);
 void Func_02000e9c(s32, s32);
 void Func_02000dac(s32, s32, s32, s32, s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
-void UiWork_FinalizePendingCore(void);
-void UiText_OpenMessageWindow(s32, s32, s32, s32);
-s32 UiWork_IsComplete(void);
-void UiText_ShowPositionedMessageAndWait(s32, s32);
+void Message_CloseFinishedWindows(void);
+void Message_OpenWindow(s32, s32, s32, s32);
+s32 Message_AllTyped(void);
+void FieldMessage_Show(s32, s32);
 void Unit_Calculate(s32);
 s32 Unit_AddPp(s32, s32);
 void GameFlag_SetBit(s32);
@@ -62,9 +62,9 @@ void Func_02000068(void) { Func_02000e04(0); }
 void Func_02000074(void) {}
 
 void Func_02000078(s32 message) {
-  UiWork_FinalizePendingCore();
-  UiText_OpenMessageWindow(message, 5, 0, 0x22);
-  while (UiWork_IsComplete() == 0)
+  Message_CloseFinishedWindows();
+  Message_OpenWindow(message, 5, 0, 0x22);
+  while (Message_AllTyped() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -97,8 +97,8 @@ void Func_020000a4(s32 message, s32 count) {
   next:;
   }
 done:
-  UiWork_FinalizePendingCore();
-  UiWork_Finalize(window, 2);
+  Message_CloseFinishedWindows();
+  Window_Close(window, 2);
 }
 
 void Func_02000140(void) {
@@ -134,7 +134,7 @@ void Func_020001d4(s32 value) { Func_02000f2c(0, value); }
 void Func_020001e0(void) {}
 
 void Func_020001e4(void) {
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouWentUp, 1);
+  FieldMessage_Show((s32)MsgYouWentUp, 1);
   Unit_LevelUpTo(4, ((u8 *)Unit_Get(4))[15] + 10);
   Unit_LevelUpTo(5, ((u8 *)Unit_Get(5))[15] + 10);
   Unit_LevelUpTo(6, ((u8 *)Unit_Get(6))[15] + 10);
@@ -143,7 +143,7 @@ void Func_020001e4(void) {
 void Func_02000224(void) {
   s32 i;
 
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
+  FieldMessage_Show((s32)MsgYouGotTreasure, 1);
   gAdventure.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);
@@ -163,7 +163,7 @@ static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
 void Func_0200026c(void) {
   u8 *state;
 
-  UiText_ShowPositionedMessageAndWait((s32)MsgTheBodyIs, 1);
+  FieldMessage_Show((s32)MsgTheBodyIs, 1);
   Unit_AddHpBy(4, -100);
   Unit_AddHpBy(5, -100);
   Unit_AddHp(6, -33);
@@ -190,7 +190,7 @@ void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate) {
 }
 
 void Func_02000330(void) {
-  UiText_ShowPositionedMessageAndWait((s32)MsgYouGotA, 1);
+  FieldMessage_Show((s32)MsgYouGotA, 1);
   Func_020002f4(4, 0, 0, 1);
   Func_020002f4(4, 0, 1, 1);
   Func_020002f4(4, 0, 2, 1);

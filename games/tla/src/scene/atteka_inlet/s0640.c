@@ -9,7 +9,7 @@ extern u8 MsgAreWeSetting[];
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -46,7 +46,7 @@ void Func_02000640(void) {
   ObjectMotion_SetPositionAndReset(18, 532, 248);
   Func_020010b8(18, 0x3000);
   Func_02001098(MsgAreWeSetting);
-  UiText_OpenMessageAtObject(18, 0);
+  FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Object_SetModeById(18, 3);
     Func_020010a8(18, 0);

@@ -36,7 +36,7 @@ void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
 void Func_0810bdf4(void);
 void Func_0810be3c(void);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 
 void Func_08108130(void) {
   ShopCursor_Advance((u8 *)Ram_HeapSlots->menuRuntime + 0x4dc);
@@ -85,7 +85,7 @@ void Func_0810824c(void) {
   state = Ram_HeapSlots->menuRuntime;
   Func_0810be3c();
   Task_Remove(Func_08108130);
-  UiWork_FinalizePendingCoreFar();
+  Message_CloseFinishedWindowsFar();
   Resource_ResetEntry(state->cursorIcon);
   Resource_ResetEntry(state->previousPageIcon);
   Resource_ResetEntry(state->nextPageIcon);

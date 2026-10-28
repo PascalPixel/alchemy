@@ -12,7 +12,7 @@ struct InventoryMenuState {
   u8 rowCount;
 };
 
-void UiWindow_InitializeWork(s32 unused) {
+void Window_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = Ram_HeapSlots->menuRuntime;
 
   Dma_Fill32(0, work, 0x33b * 4);

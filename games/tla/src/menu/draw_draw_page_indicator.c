@@ -53,17 +53,17 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
 
   x -= pageCount;
   if (pageCount > 1) {
-    UiWindow_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
+        Window_SetTilemapEntryFar(window, tile, x, -1, 2);
       else
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3);
+        Window_SetTilemapEntryFar(window, tile, x, -1, 3);
       tile++;
       x++;
     }
 
-    UiWindow_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
   }
 }

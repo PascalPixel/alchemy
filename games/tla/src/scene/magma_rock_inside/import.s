@@ -150,10 +150,10 @@ Func_02004d18:
 	.thumb_func
 Func_02004d20:
 	overlay_veneer Func_080202f0
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:
@@ -178,10 +178,10 @@ PartyInventory_GiveItem:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global UiText_DrawQuantityPairWithCue
+	.global Party_LearnAbility
 	.thumb_func
-UiText_DrawQuantityPairWithCue:
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+Party_LearnAbility:
+	overlay_veneer Party_LearnAbilityFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -238,10 +238,10 @@ Object_SetPartAttribute:
 	.thumb_func
 Func_02004dd0:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02004de0
 	.thumb_func
 Func_02004de0:

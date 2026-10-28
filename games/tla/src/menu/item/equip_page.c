@@ -38,12 +38,12 @@ struct MenuResult {
 #define EQUIP_SLOT_WIDTH 10
 #endif
 
-void RenderOutput_RedrawSavedRectFar(void *window);
-void RenderOutput_ClearListFar(void *window);
+void WindowSprite_RedrawSavedRectFar(void *window);
+void WindowSprite_ClearListFar(void *window);
 void WaitFrames(s32 frames);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, void *window, s32 x, s32 y);
-void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
+void Text_DrawCharacterAtOffsetFar(u8 *message, void *window, s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
                                  s32 palette);
 void Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                                s32 flag);
@@ -61,18 +61,18 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   state->selectedIndex = base + state->row;
 #if LANGUAGE == LANGUAGE_JAPANESE
   // Japanese clears the name's window and draws the name as a resource.
-  RenderOutput_ClearListFar(menu->infoWindow);
+  WindowSprite_ClearListFar(menu->infoWindow);
   WaitFrames(1);
   if (menu->items[state->selectedIndex] != 0) {
-    UiText_DrawResourceFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
+    Text_DrawMessageFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
                                (s32)MsgItemPlainName,
                            menu->infoWindow, 0, 0);
   }
 #else
-  RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+  WindowSprite_RedrawSavedRectFar(menu->infoWindow);
   WaitFrames(1);
   if (menu->items[state->selectedIndex] != 0) {
-    UiText_DrawCharacterAtOffsetFar(
+    Text_DrawCharacterAtOffsetFar(
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
         menu->infoWindow, 0, 0);
   }
@@ -85,7 +85,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       mask &= entry;
       item = Item_Get(mask);
       if (item->element != 4) {
-        UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
+        Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                     0);
         Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 14);
       } else {
@@ -97,7 +97,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       mask &= entry;
       item = Item_Get(mask);
       if (item->element != 4) {
-        UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
+        Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                     4);
         Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 15);
       } else {

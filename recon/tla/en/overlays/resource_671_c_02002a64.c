@@ -9,7 +9,7 @@
 // finishes one row early (lsls r5 before adds r6); empty asms or one-pass
 // blocks after any one statement do not move either. Tried: call.h Call3, unprototyped, u8, s16 or u16
 // ids, an argument barrier in the wrapper (124) or in a do-while macro (67).
-// UiText_OpenMessageAtObject is unprototyped, as the native's argument order
+// FieldMessage_ShowAtActor is unprototyped, as the native's argument order
 // needs (40 to 38).
 #include "types.h"
 #include "text/msg_ids.h"
@@ -127,7 +127,7 @@ static __inline__ void Func_02005764_(s32 id, s32 value) {
 struct ObjectRuntime *Func_020057bc(void);
 void Event_FinishScreenTransition(void);
 void Func_0200581c(void);
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
@@ -176,7 +176,7 @@ void Func_02002a64(void) {
   Func_02005774_(6, 0x8000);
   Object_SetModeById(6, 3);
   Func_02005764_(0x4006, 0);
-  UiText_OpenMessageAtObject(0x6005, 0);
+  FieldMessage_ShowAtActor(0x6005, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Func_0200578c(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);

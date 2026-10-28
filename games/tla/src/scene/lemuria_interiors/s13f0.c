@@ -42,7 +42,7 @@ void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetVariantCallback();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void WaitFrames();
 
 void Func_020013f0(void) {
@@ -91,7 +91,7 @@ void Func_020013f0(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call3((void (*)())Func_020028bc, 18, 0, 10);
   Value3((s32 (*)())Func_020028dc, 18, 0x108, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 18, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 18, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -255,7 +255,7 @@ void Func_020013f0(void) {
   Call3((void (*)())Func_020028bc, 18, 0, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 5, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 5, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -281,7 +281,7 @@ void Func_020013f0(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 25);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 12, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 12, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {

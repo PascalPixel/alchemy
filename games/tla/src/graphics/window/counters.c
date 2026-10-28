@@ -5,11 +5,11 @@
 #include "task.h"
 #include "uiflow.h"
 
-void UiWork_ProcessAll(void);
+void WindowSystem_Update(void);
 
-void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
-  struct UiRenderWork *state =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void WindowSystem_StartFieldUpdate(void) {
+  struct WindowWork *state =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
@@ -17,15 +17,15 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   state->outline = 0;
   state->colour = 15;
   state->count = 0;
-  Task_Add(UiWork_ProcessAll, TASK_PASS_VBLANK);
+  Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
 }
 
-void UiWork_ProcessAll(void);
-void UiWork_ProcessAllOrChannels(void);
+void WindowSystem_Update(void);
+void WindowSystem_UpdateBattle(void);
 
-void UiWork_InitializeCountersAndScheduleRefresh(s32 initialize) {
-  struct UiRenderWork *state =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void WindowSystem_StartBattleUpdate(s32 initialize) {
+  struct WindowWork *state =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   if (initialize != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
@@ -35,22 +35,22 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 initialize) {
   state->colour = 15;
   state->count = 0;
   if (initialize != 0)
-    Task_Add(UiWork_ProcessAll, TASK_PASS_VBLANK);
+    Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
   else
-    Task_Add(UiWork_ProcessAllOrChannels, TASK_PASS_VBLANK);
+    Task_Add(WindowSystem_UpdateBattle, TASK_PASS_VBLANK);
 }
 
 struct UiMessageSlot {
-  struct UiWindow *window;
+  struct Window *window;
   s32 result;
   s32 cursor;
 };
 
-void UiMessage_Close(void) {
+void Message_Close(void) {
   struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
 
   if (slot->window != NULL) {
-    UiWork_Finalize(slot->window, 1);
+    Window_Close(slot->window, 1);
     slot->window = NULL;
   }
 }

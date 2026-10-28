@@ -67,8 +67,8 @@ extern u8 MsgNoneInStock[];
 extern u8 MsgItemPlainName[];
 
 void Func_080fabe0(void);
-void UiWindow_SetBounds(void *window, s32 x, s32 y, s32 width, s32 height);
-void RenderOutput_RedrawSavedRectFar(void *window);
+void Window_SetBounds(void *window, s32 x, s32 y, s32 width, s32 height);
+void WindowSprite_RedrawSavedRectFar(void *window);
 void *Unit_Get(s32 owner);
 void Task_Add(void (*callback)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
@@ -77,21 +77,21 @@ void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
-void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
-void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
+void Window_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
+void Window_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
                                     s32 height);
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 s32 ItemMenu_CountItems(s32 owner);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
+void Text_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
                                   s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 ItemMenu_IsSpecial(s32 item);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 u8 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
-void UiIcon_PrepareObject(struct TargetMarker *icon);
+void Icon_PrepareActor(struct TargetMarker *icon);
 void Func_080fac58(void);
 
 s32 Func_080fa870(s32 mode) {
@@ -107,8 +107,8 @@ s32 Func_080fa870(s32 mode) {
   s32 labelX;
   struct TargetMarker *marker;
 
-  UiWindow_SetBounds(window, 13, 5, 17, 12);
-  RenderOutput_RedrawSavedRectFar(menu->itemWindow);
+  Window_SetBounds(window, 13, 5, 17, 12);
+  WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   Unit_Get(menu->ownerIds[menu->paneIndex[0]]);
   Task_Add(Func_080fabe0, 0x480);
   redraw = 2;
@@ -126,8 +126,8 @@ s32 Func_080fa870(s32 mode) {
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);
       if (mode == 1) {
         ItemMenu_RefreshOwner(menu->ownerIds[selection], 1);
-        UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
-        UiWindow_ClearInteriorTilesFar(window, 0, 72, 120, 80);
+        Window_DrawDividerLineFar(window, 0, 9, 16, 9);
+        Window_ClearInteriorTilesFar(window, 0, 72, 120, 80);
         if (selection != menu->paneIndex[0]) {
           heldCount = InventoryMenu_GetItemQuantity(
               menu->ownerIds[selection], menu->selectedItems[0] & 0x1ff);
@@ -136,14 +136,14 @@ s32 Func_080fa870(s32 mode) {
             labelX = 0;
             label = (s32)MsgTradeForWhat;
           } else if (heldCount != 0) {
-            UiText_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
+            Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
             labelX = 32;
             label = (s32)MsgInStock;
           } else {
             labelX = 16;
             label = (s32)MsgNoneInStock;
           }
-          UiText_DrawCharacterAtOffsetFar(label, window, labelX, 72);
+          Text_DrawCharacterAtOffsetFar(label, window, labelX, 72);
         }
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
                       menu->ownerIds[selection]);
@@ -156,8 +156,8 @@ s32 Func_080fa870(s32 mode) {
           Func_080f8170(menu->statusWindow, menu->ownerIds[selection],
                         menu->selectedSlots[0], 0);
         if (!GameFlag_Test(0x151) && !descriptionShown) {
-          RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-          UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
+          WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+          Text_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
                                               (s32)MsgItemPlainName,
                                           menu->infoWindow, 0, 0);
           descriptionShown = 1;
@@ -186,7 +186,7 @@ s32 Func_080fa870(s32 mode) {
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   marker = menu->marker;
-  UiIcon_PrepareObject(marker);
+  Icon_PrepareActor(marker);
   marker->state = 13;
   Func_080fac58();
   WaitFrames(1);

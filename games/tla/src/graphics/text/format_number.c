@@ -8,8 +8,8 @@ u32 Math_UnsignedMulHighAdd(u32 a, u32 b, s32 c);
 /// negative; otherwise it is right-aligned in width characters (up to 12) and
 /// unsigned. Each digit divides by 10 through the long-multiply helpers:
 /// 0x1999999a is 2^32 / 10, rounded up.
-// As ☀️'s UiText_FormatNumber.
-u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
+// As ☀️'s String_FormatNumber.
+u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
   s32 negative;

@@ -32,13 +32,13 @@ PartyInventory_GiveItem:
 .L_080d2642:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080d27d8
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	ldr r0, .L_080d27dc
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r3, #8
 	movs r2, #4
 	add r3, sp
@@ -49,7 +49,7 @@ PartyInventory_GiveItem:
 	ldr r7, .L_080d27e0
 	movs r1, #1
 	adds r0, r7, #0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	mov r0, r9
 	mov r1, r10
 	bl Func_08108068
@@ -67,20 +67,20 @@ PartyInventory_GiveItem:
 	beq .L_080d269e
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r7, #4
 	b .L_080d2706
 .L_080d269e:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r7, #1
 	movs r1, #5
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r0, #1
 	bl Func_080d295c
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCoreFar
+	bl Message_CloseFinishedWindowsFar
 	cmp r5, #0
 	bne .L_080d2666
 	movs r1, #1
@@ -88,10 +88,10 @@ PartyInventory_GiveItem:
 	bl Item_AdjustCounterFar
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r7, #2
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080d2772
 .L_080d26d8:
 	ldr r0, [sp, #8]
@@ -107,14 +107,14 @@ PartyInventory_GiveItem:
 	ble .L_080d270e
 	ldr r0, [sp, #8]
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r7, #7
 .L_080d2706:
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080d2666
 .L_080d270e:
 	cmp r5, #0
@@ -145,21 +145,21 @@ PartyInventory_GiveItem:
 	bne .L_080d275a
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080d27d8
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080d2772
 .L_080d275a:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r8
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080d27e8
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080d2772:
 	mov r2, sp
 	movs r3, #226
@@ -174,11 +174,11 @@ PartyInventory_GiveItem:
 	bl Sound_PlayFar
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r5, .L_080d27d8
 	movs r1, #3
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	ldr r3, .L_080d27e4
 	movs r2, #133
 	lsls r2, r2, #2
@@ -188,13 +188,13 @@ PartyInventory_GiveItem:
 	beq .L_080d27c0
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r8
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080d27c0:
 	mov r3, sp
 	ldrh r3, [r3]

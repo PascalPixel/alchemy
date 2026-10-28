@@ -8,11 +8,11 @@
 
 #include "call.h"
 
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(speaker, flags);
+  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 #define CHAMPA_EMOTE(actor, emote, frames)                                     \
@@ -50,7 +50,7 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Func_02002b04();
 s32 ObjectMotion_ArmCallback();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 s32 ObjectMotion_SetVariantCallback();
 s32 Func_02002b24();
@@ -177,7 +177,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(0x19, 0x109, 0x1e)
   Call2(Func_02002af4, 0x2019, 0);
   Call1(FieldEvent_WaitFrames, 5);
-  UiText_OpenMessageAtObject(0x2019, 0);
+  FieldMessage_ShowAtActor(0x2019, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);

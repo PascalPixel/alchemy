@@ -21,7 +21,7 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_02000980
 	.thumb_func
 Func_02000980:
-	overlay_veneer UiText_DrawQuantity
+	overlay_veneer MessageArgument_PushFar
 	.global Func_02000988
 	.thumb_func
 Func_02000988:
@@ -98,10 +98,10 @@ ObjectMotion_SetAngleToward:
 	.thumb_func
 Func_02000a18:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02000a28
 	.thumb_func
 Func_02000a28:

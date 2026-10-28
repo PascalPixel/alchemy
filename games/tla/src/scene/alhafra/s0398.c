@@ -14,7 +14,7 @@ void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001c74(const u8 *message);
 void Func_02001c84(s32 id, s32 a, s32 b);
@@ -37,7 +37,7 @@ void Func_02000398(s32 id) {
     Motion_SetModeAndWaitAnimation(id, 3);
     Func_02001c84(id, 0, 10);
     Motion_SetVarCbAndRefresh(id, 2);
-    UiText_OpenMessageAtObject(id, 0);
+    FieldMessage_ShowAtActor(id, 0);
     FieldEvent_WaitFrames(10);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       GameFlag_SetBit(0x8b6);

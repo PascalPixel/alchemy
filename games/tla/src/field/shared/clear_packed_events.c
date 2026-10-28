@@ -85,15 +85,15 @@ void Party_RemoveOwnerRestored(s32 owner) {
 }
 
 s32 PartyInventory_FindRoomFar(s32 item);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 
 s32 Func_080d25c8(s32 item) {
   Party_CountActiveOwnersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
-    UiText_DrawQuantity(item, 2);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgPartyCannotCarry, 1);
-    UiText_DrawQuantity(item, 2);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgPartyCannotCarry + 1, 1);
+    MessageArgument_PushFar(item, 2);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry, 1);
+    MessageArgument_PushFar(item, 2);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, 1);
     return -1;
   }
   return 0;

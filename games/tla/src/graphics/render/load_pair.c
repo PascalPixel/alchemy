@@ -26,20 +26,20 @@ void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
   }
 }
 
-struct RenderOutput *
+struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
   s32 index;
-  struct RenderOutput *first;
-  struct RenderOutput *second;
+  struct WindowSprite *first;
+  struct WindowSprite *second;
 
   index = Resource_FindFreeEntry();
   if (index > 95)
     return NULL;
 
   RenderResource_LoadPair(group, index);
-  first = RenderOutput_Create(index, 0x80004000, input, x, y);
+  first = WindowSprite_Create(index, 0x80004000, input, x, y);
   first->sentinel = 0xFD;
-  second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
+  second = WindowSprite_Create(index, 0x80004000, input, x + 32, y);
   second->sentinel = 0xFD;
   second->oam.index += 8;
   return first;
@@ -55,20 +55,20 @@ struct BobPairObject {
 
 /// Counted up by every VBlank.
 extern volatile u32 gVBlankCount;
-extern const u8 gUi_PairBobOffsets[];
+extern const u8 gWindow_PairBobOffsets[];
 
 /// Bobs the object and the one after it by the same step of an eight-step
 /// table, advanced every four VBlanks.
 void Func_08045018(struct BobPairObject *object) {
   s32 value;
 
-  value = object->baseY + gUi_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
   /* FAKEMATCH: tying the object to an empty asm loads the next object before
    * the second count is shifted, as native; plainly, 2 instructions differ in
    * tla-en. */
   asm("" : "+r"(object));
   object = object->next;
-  value = object->baseY + gUi_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
 }

@@ -66,10 +66,10 @@ Func_02000e54:
 	.thumb_func
 Func_02000e5c:
 	overlay_veneer ObjectDispatch_SetSpritePriorityFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

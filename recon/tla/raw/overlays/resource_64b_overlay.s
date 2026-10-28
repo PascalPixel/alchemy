@@ -611,7 +611,7 @@ Func_02000be0:
 	bl Func_02004db8
 	ldr r0, .L_02008d0c
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	cmp r5, #0
 	bne .L_02008cba
 	movs r3, #192
@@ -641,7 +641,7 @@ Func_02000be0:
 	ldr r0, .L_02008d14
 	movs r1, #1
 	adds r7, r3, r2
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, [r6, #8]
 	mov r5, sp
 	str r3, [r5]
@@ -717,14 +717,14 @@ Func_02000be0:
 	bl FieldEvent_WaitFrames
 	ldr r0, .L_02008d18
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_02008cfc
 .L_02008cf0:
 	ldr r3, .L_02008d18
 	lsrs r0, r5, #1
 	adds r0, r0, r3
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 .L_02008cfc:
 	bl Func_02004c28
 .L_02008d00:
@@ -1857,7 +1857,7 @@ Func_020012bc:
 	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #20
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -2354,7 +2354,7 @@ Func_02001e34:
 	movs r1, #0
 	str r3, [r6, #72]
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r0, r7, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -2381,7 +2381,7 @@ Func_02001e34:
 	bl Func_02004cd8
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r0, r7, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -2573,7 +2573,7 @@ Func_02001e34:
 	bl ObjectMotion_Launch
 	movs r0, #9
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r6, #0
 .L_0200a20c:
 	adds r0, r7, #0
@@ -2630,7 +2630,7 @@ Func_02001e34:
 	bl Func_02004cd8
 	movs r0, #9
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r6, #1
 	b .L_0200a20c
 .L_0200a292:
@@ -2675,7 +2675,7 @@ Func_02001e34:
 	muls r0, r6
 	movs r1, #3
 	adds r0, r0, r5
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #118
 	adds r0, #255
 	bl GameFlag_Test
@@ -2689,7 +2689,7 @@ Func_02001e34:
 	bl ObjectMotion_Launch
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r0, r7, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -2822,7 +2822,7 @@ Func_02001e34:
 	bl Func_02004cf0
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r0, r7, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -2843,7 +2843,7 @@ Func_02001e34:
 	bl Func_02004cd8
 	movs r1, #0
 	movs r0, #9
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	adds r0, r7, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

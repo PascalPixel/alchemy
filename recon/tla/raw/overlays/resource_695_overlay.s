@@ -496,12 +496,12 @@ Func_0200087c:
 	bl Func_02001160
 	movs r0, #19
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #1
 	bl Func_020011e8
 	cmp r0, #0
 	bne .L_ja_02008950
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	movs r1, #0
 	movs r2, #5
 	movs r0, #20
@@ -517,7 +517,7 @@ Func_0200087c:
 	strh r3, [r2]
 	b .L_ja_02008970
 .L_ja_02008950:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -712,7 +712,7 @@ Func_02000a24:
 	bl Func_02001160
 	movs r1, #0
 	movs r0, #19
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	b .L_ja_02008b44
 .L_ja_02008b1e:
 	movs r1, #129
@@ -722,7 +722,7 @@ Func_02000a24:
 	bl Func_02001160
 	movs r0, #20
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]

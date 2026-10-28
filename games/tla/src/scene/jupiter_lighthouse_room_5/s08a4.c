@@ -28,11 +28,11 @@ void *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(void *object, s32 flags);
 void Object_SetPartAttribute(void *object, s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-s32 UiText_OpenMessageAtObject(s32 actor, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 actor, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -68,7 +68,7 @@ void Func_020008a4(void) {
   Func_02000734();
   FieldEvent_WaitFrames(40);
   Camera_MoveWithinMapBounds(0x440000, -1, 0xf00000, 1);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 22, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Motion_SetModeAndWaitAnimation(22, 4);
     Func_02002938(22, 0, 5);
@@ -94,7 +94,7 @@ void Func_020008a4(void) {
   FieldEvent_WaitFrames(30);
   Func_02000810(22, 4);
   Func_020028a0(1);
-  UiText_ShowPositionedMessageAndWait((s16)EVENT_WORK->message++, 5);
+  FieldMessage_Show((s16)EVENT_WORK->message++, 5);
   FieldEvent_WaitFrames(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_WaitFrames(30);

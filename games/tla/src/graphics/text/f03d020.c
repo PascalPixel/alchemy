@@ -4,14 +4,14 @@
 #include "edition.h"
 #include "text_font.h"
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-void UiText_MeasureEntryDimensions(s32 entry, s32 *width, s32 *height,
+s32 Message_Decode(s32 message, s32 mode);
+void Text_MeasureEntry(s32 entry, s32 *width, s32 *height,
                                    s32 flags);
-void UiWork_ResetCounters(void);
+void Text_ResetStyle(void);
 s32 Func_0803cfd0(u8 *canvas, s32 ch, s32 x, s32 row);
 
 s32 Func_0803d020(s32 message, u8 *canvas) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 x = 0;
   s32 y = 0;
   s32 entry;
@@ -21,8 +21,8 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
   u32 code;
 
   work->count = x;
-  entry = UiText_BuildRenderEntries(message, 0);
-  UiText_MeasureEntryDimensions(entry, &width, &height, 0);
+  entry = Message_Decode(message, 0);
+  Text_MeasureEntry(entry, &width, &height, 0);
   text = &work->entries[entry];
   if (text[0] == '-') {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -61,7 +61,7 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
         text++;
         break;
       case 7:
-        UiWork_ResetCounters();
+        Text_ResetStyle();
         break;
       case 3:
         x = 0;

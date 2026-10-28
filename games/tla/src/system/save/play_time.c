@@ -2,12 +2,12 @@
 /// Clock texts: a frame count written as hours, minutes, seconds and
 /// hundredths, and the save files' play time.
 ///
-/// Each field comes from UiText_FormatNumber; a two-digit field is formatted
+/// Each field comes from String_FormatNumber; a two-digit field is formatted
 /// with 100 added, which gives it a leading zero in its last two digits.
 
 #include "types.h"
 
-u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
+u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 
 // XXX: what shows this clock; the overlays that call Func_08038400 would
 // settle it.
@@ -32,7 +32,7 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   minutes = frames % 60;
   hours = frames / 60;
 
-  digitsCursor = UiText_FormatNumber(digits, hours, 3);
+  digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
   digitsCursor++;
   /* FAKEMATCH(barrier): the hours' first store comes before the cursor's
@@ -50,7 +50,7 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = UiText_FormatNumber(digits, minutes + 100, 2);
+  digitsCursor = String_FormatNumber(digits, minutes + 100, 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -60,7 +60,7 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = UiText_FormatNumber(digits, seconds + 100, 2);
+  digitsCursor = String_FormatNumber(digits, seconds + 100, 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -70,7 +70,7 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = UiText_FormatNumber(digits, hundredths + 100, 2);
+  digitsCursor = String_FormatNumber(digits, hundredths + 100, 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -99,7 +99,7 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   hours = totalMinutes / 60;
   minutes = totalMinutes % 60;
 
-  digitsCursor = UiText_FormatNumber(digits, hours, 3);
+  digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
   digitsCursor++;
   /* FAKEMATCH(barrier): the hours' first store comes before the cursor's
@@ -118,7 +118,7 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = UiText_FormatNumber(digits, minutes, 2);
+  digitsCursor = String_FormatNumber(digits, minutes, 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;

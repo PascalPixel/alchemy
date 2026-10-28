@@ -14,7 +14,7 @@
 #include "resource_menu.h"
 #include "ram_buffer.h"
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
@@ -35,5 +35,5 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
+  menu->window = Window_Create(x, row, menu->width, 3, 2);
 }

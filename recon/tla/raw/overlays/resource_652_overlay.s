@@ -36,16 +36,16 @@ Func_02000878:
 	bl Func_02000ccc
 	ldr r0, .L_02008a3c
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r0, .L_02008a40
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 .L_020088c4:
 	ldr r2, .L_02008a44
 	movs r1, #1
 	mov r8, r2
 	mov r0, r8
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	add r0, sp, #4
 	mov r1, sp
 	bl Func_02000df4
@@ -74,11 +74,11 @@ Func_02000878:
 	mov r0, r8
 	adds r0, #1
 	movs r1, #5
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_02000dbc
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_020088c4
 	adds r0, r6, #0
@@ -87,7 +87,7 @@ Func_02000878:
 	mov r0, r8
 	adds r0, #2
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r3, #226
 	lsls r3, r3, #1
 	add r3, r10
@@ -116,7 +116,7 @@ Func_02000878:
 	adds r0, #7
 .L_02008970:
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_020088c4
 .L_02008978:
 	cmp r5, #0
@@ -150,7 +150,7 @@ Func_02000878:
 	bl Func_02000ccc
 	ldr r0, .L_02008a3c
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_020089dc
 .L_020089c4:
 	adds r0, r6, #0
@@ -161,7 +161,7 @@ Func_02000878:
 	bl Func_02000ccc
 	ldr r0, .L_02008a4c
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 .L_020089dc:
 	movs r3, #226
 	lsls r3, r3, #1
@@ -178,7 +178,7 @@ Func_02000878:
 	ldr r5, .L_02008a3c
 	movs r1, #3
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_02008a48
 	movs r2, #133
 	lsls r2, r2, #2
@@ -194,7 +194,7 @@ Func_02000878:
 	bl Func_02000ccc
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 .L_02008a26:
 	mov r3, r9
 	mov r2, r8

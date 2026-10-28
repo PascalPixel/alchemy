@@ -16,8 +16,8 @@ struct RenderOutputSprite {
   struct RenderOam oam;
 };
 
-void Func_080ec484(struct RenderOutputList *list, s32 dx, s32 dy) {
-  struct RenderOutput *output;
+void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
+  struct WindowSprite *output;
 
   if (list == NULL)
     return;

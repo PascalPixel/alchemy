@@ -20,7 +20,7 @@ struct ItemEntryMenu {
   u8 itemCount;
 };
 
-void UiIcon_PrepareObject(struct ItemEntryIcon *icon);
+void Icon_PrepareActor(struct ItemEntryIcon *icon);
 void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
 void ItemMenu_RefreshEntry(s32 mode);
 
@@ -75,8 +75,8 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
 extern char MsgItemMenuEmpty[];
 
 s32 ItemMenu_CountItems(s32 owner_id);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+s32 Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   struct ItemEntryMenu *menu;
@@ -87,10 +87,10 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   owner = Unit_Get(ownerId);
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
-  RenderOutput_RedrawSavedRectFar(menu->itemWindow);
+  WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_RefreshEntry(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_CountItems(ownerId) == 0)
-    UiText_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8,
+    Text_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8,
                                     24);
 }

@@ -36,8 +36,8 @@ struct ReelEffectWork {
 extern char MsgSlotsBet[];
 extern const u8 gReelGame_TitleLetterWidths[];
 
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -91,9 +91,9 @@ void Func_081b336c(void) {
   work->transferMode = 1;
   work->transferValue = 0;
   REG_BLDCNT = 0;
-  window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+  window = Window_CreateFar(18, 0, 12, 4, 6);
   state->subWindow = window;
   message = (s32)MsgSlotsBet;
-  UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-  UiText_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
+  Text_DrawCharacterAtOffsetFar(message, window, 0, 8);
+  Text_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
 }

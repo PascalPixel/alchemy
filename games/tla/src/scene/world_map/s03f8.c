@@ -12,8 +12,8 @@ extern u8 gData_02006700[];
 extern u8 gData_02006790[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void UiWork_FinalizePendingCore(void);
+void FieldMessage_Show(s32 message, s32 position);
+void Message_CloseFinishedWindows(void);
 void Func_02003bf0(void);
 void Func_020049bc(void);
 void Func_02004b28(void);
@@ -47,7 +47,7 @@ void Func_02000458(void) {
   if (Flag_IsSet(0x147)) {
     Func_02004da8();
     Func_02004ba8(153, 4);
-    UiText_ShowPositionedMessageAndWait((s32)MsgBlank2, 4);
+    FieldMessage_Show((s32)MsgBlank2, 4);
   }
   if (Object_GetById(Func_02004e10()) != NULL)
     Func_02004b28();
@@ -57,7 +57,7 @@ void Func_02000458(void) {
   else
     work[3387] = 1;
   if (Flag_IsSet(0x147)) {
-    UiWork_FinalizePendingCore();
+    Message_CloseFinishedWindows();
     Func_02004db0();
   }
   Func_020049bc();

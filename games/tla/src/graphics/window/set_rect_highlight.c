@@ -18,7 +18,7 @@ struct WindowTiles {
   u16 cells[32][32];
 };
 
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt) {
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
   struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
 
   alt &= 1;
@@ -70,7 +70,7 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   s32 j;
 
   count = BattleParty_ListActorIdsFar(1, 0);
-  Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
+  Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   if (ids[0] != 0xff) {
   next_id:
@@ -81,7 +81,7 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
       }
     }
     if (j != 4)
-      Ui_SetRectHighlight(29 - (count - j) * 6, 0, 7, 5, 14);
+      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, 14);
     if (++i < 4 && ids[i] != 0xff)
       goto next_id;
   }

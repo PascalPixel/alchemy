@@ -1,16 +1,16 @@
 #include "types.h"
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
-void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
-void UiText_DrawStringAtOffset(u8 *s, s32 window, s32 x, s32 y);
+s32 Window_Create(s32, s32, s32, s32, s32);
+void Text_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
+void Text_DrawStringAtOffset(u8 *s, s32 window, s32 x, s32 y);
 extern u8 gLink_TimeLabelString[];
 s32 Link_CreateCountdownLabelWindow(void) {
-  s32 handle = UiWindow_Create(0, 0, 6, 4, 6);
+  s32 handle = Window_Create(0, 0, 6, 4, 6);
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-  UiText_DrawStringAtOffset(gLink_TimeLabelString, handle, 0, 0);
+  Text_DrawStringAtOffset(gLink_TimeLabelString, handle, 0, 0);
 #else
-  UiText_DrawStringInWindow(gLink_TimeLabelString, handle, 0, 0);
+  Text_DrawStringInWindow(gLink_TimeLabelString, handle, 0, 0);
 #endif
   return handle;
 }

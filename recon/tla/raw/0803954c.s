@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global UiText_QueueRenderEntries
+	.global Message_Start
 	.thumb_func
-UiText_QueueRenderEntries:
+Message_Start:
 	push {r5, r6, r7, lr}
 	mov r12, r3
 	movs r3, #192

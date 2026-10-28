@@ -35,7 +35,7 @@ Func_080fc6bc:
 	adds r0, r5, #0
 	movs r2, #3
 	movs r3, #17
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	ldr r5, [r5]
 	movs r1, #0
 	str r5, [sp, #36]
@@ -92,7 +92,7 @@ Func_080fc6bc:
 	lsls r3, r1, #2
 	adds r3, #76
 	ldr r0, [r7, r3]
-	bl UiIcon_PrepareObject
+	bl Icon_PrepareActor
 .L_080fc774:
 	ldr r3, [sp, #28]
 	cmp r3, #0
@@ -110,7 +110,7 @@ Func_080fc6bc:
 	ldr r1, [sp, #36]
 	movs r2, #0
 	movs r3, #88
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_080fc79c:
 	movs r1, #0
 	str r1, [sp, #28]
@@ -457,9 +457,9 @@ Func_080fc6bc:
 	movs r1, #0
 	movs r2, #88
 	movs r3, #120
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	ldr r0, [r7, #72]
-	bl UiIcon_PrepareObject
+	bl Icon_PrepareActor
 	ldr r4, [sp, #8]
 	movs r1, #180
 	lsls r1, r1, #1

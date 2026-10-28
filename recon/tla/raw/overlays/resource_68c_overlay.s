@@ -193,7 +193,7 @@ Func_02000a5c:
 	bl Func_020028dc
 	movs r1, #0
 	movs r0, #10
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -294,7 +294,7 @@ Func_02000a5c:
 	bl Func_020028dc
 	movs r1, #0
 	movs r0, #10
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

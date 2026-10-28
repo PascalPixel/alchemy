@@ -17,9 +17,9 @@ struct ResourceMenuEntry {
 
 struct ResourceMenuWork {
   struct ResourceMenuEntry entries[6];
-  struct UiWindow *window;
-  struct UiWindow *lowerWindow;
-  struct UiWindow *upperWindow;
+  struct Window *window;
+  struct Window *lowerWindow;
+  struct Window *upperWindow;
   u8 resourceIds[8];
   s16 selection;
   s16 count;

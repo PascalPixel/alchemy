@@ -20,19 +20,19 @@ struct ObjectSystemWork {
   u16 suspended;
 };
 
-void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_InitializeWork(s32 mode);
+void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+void Window_InitializeWork(s32 mode);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fa368(s32 a, s32 b, s32 c, s32 d);
 void Palette_LightenHighlight(s32 palette);
 void Link_DrawShiftedTilePairFar(void *tiles);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 void *BattleAction_Get(s32 action);
-void RenderOutput_ClearListFar(void *window);
+void WindowSprite_ClearListFar(void *window);
 void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
 void WaitFrames(s32 frames);
@@ -54,12 +54,12 @@ s32 Func_080fcab8(void) {
 
   screen = Runtime_AllocateHeapBlock(220, 0xcec);
   Ram_HeapSlots->objectSystem->suspended = 1;
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
-  UiWindow_InitializeWork(0);
+  Window_InitializeWork(0);
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
   Func_080fa368(0, 3, 0, 7);
-  screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
+  screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenHighlight(14);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
 
@@ -75,14 +75,14 @@ s32 Func_080fcab8(void) {
     *(u16 *)(event + 0x166) = request;
   }
 
-  RenderOutput_ClearListFar(screen->statusWindow);
+  WindowSprite_ClearListFar(screen->statusWindow);
   Ram_HeapSlots->windowTiles[6] = 1;
   ItemMenu_Close();
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
   WaitFrames(1);
-  UiWindow_EraseBorderRectFar(0, 0, 30, 20);
+  Window_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;
   Event_ClearInvalidPackedValuesFar();
   return result;

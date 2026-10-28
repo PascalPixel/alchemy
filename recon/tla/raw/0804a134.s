@@ -34,7 +34,7 @@ Func_0804a134:
 	movs r2, #30
 	movs r3, #4
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	movs r2, #5
 	str r0, [sp, #44]
 	str r2, [sp, #40]
@@ -52,7 +52,7 @@ Func_0804a134:
 	movs r0, #9
 	movs r1, #9
 	movs r3, #11
-	bl UiWindow_Create
+	bl Window_Create
 	mov r2, sp
 	adds r2, #80
 	str r2, [sp, #20]
@@ -190,8 +190,8 @@ Func_0804a134:
 	adds r1, #1
 	subs r2, #2
 	movs r3, #1
-	bl Ui_SetRectHighlight
-	bl Ui_FillVramBlockPattern
+	bl Window_HighlightRect
+	bl Vram_FillWindowBlockPattern
 	ldr r0, [sp, #68]
 	cmp r0, #0
 	beq .L_0804a2e8
@@ -207,7 +207,7 @@ Func_0804a134:
 	adds r1, r5, #0
 	adds r0, r0, r3
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_0804a2f4
 	.2byte 0x0000
 .L_0804a2e0:
@@ -219,13 +219,13 @@ Func_0804a134:
 	ldr r0, .L_0804a3ac
 	adds r1, r5, #0
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_0804a2f4:
 	movs r2, #0
 	movs r3, #4
 	adds r0, r5, #0
 	ldr r1, [sp, #44]
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	ldr r3, [sp, #60]
 	mov r2, r8
 	str r2, [sp, #56]
@@ -234,7 +234,7 @@ Func_0804a134:
 	b .L_0804a45c
 .L_0804a30c:
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r1, [sp, #72]
 	mov r0, r11
 	lsls r3, r0, #1
@@ -260,7 +260,7 @@ Func_0804a134:
 	adds r1, #31
 	movs r2, #11
 	mov r10, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r1, #0
 	str r1, [sp, #0]
 	movs r1, #240
@@ -269,7 +269,7 @@ Func_0804a134:
 	adds r1, #30
 	movs r2, #12
 	mov r3, r10
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r3, [sp, #16]
 	movs r0, #252
 	lsls r0, r0, #6
@@ -341,13 +341,13 @@ Func_0804a134:
 	lsls r5, r7, #4
 	movs r2, #16
 	adds r3, r5, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldrb r0, [r6, #9]
 	movs r1, #2
 	movs r3, #104
 	mov r2, r9
 	str r5, [sp, #0]
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 	movs r0, #15
 	bl Func_08041f70
 	ldr r1, [sp, #64]
@@ -366,7 +366,7 @@ Func_0804a134:
 	mov r0, r9
 	movs r2, #15
 	mov r3, r10
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 .L_0804a426:
 	ldrb r3, [r6, #8]
 	cmp r3, #255
@@ -382,7 +382,7 @@ Func_0804a134:
 	mov r0, r9
 	mov r2, r10
 	adds r7, #1
-	bl UiWindow_DrawThreeTileColumn
+	bl Window_DrawThreeTileColumn
 	cmp r7, #4
 	bgt .L_0804a456
 	mov r1, r11
@@ -431,7 +431,7 @@ Func_0804a134:
 	mov r0, r9
 	adds r1, r6, #0
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	adds r7, #1
 .L_0804a4a2:
 	mov r0, r10
@@ -456,7 +456,7 @@ Func_0804a134:
 	str r3, [sp, #0]
 	subs r2, #2
 	movs r3, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	ldr r0, [sp, #64]
 	movs r3, #1
 	movs r1, #0
@@ -509,7 +509,7 @@ Func_0804a134:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	adds r7, #1
 .L_0804a53e:
 	mov r0, r10
@@ -530,7 +530,7 @@ Func_0804a134:
 	mov r0, r9
 	subs r2, #3
 	adds r1, #52
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	mov r1, r9
 	ldrh r2, [r1, #8]
 	movs r1, #243
@@ -541,7 +541,7 @@ Func_0804a134:
 	mov r0, r9
 	adds r1, #53
 	adds r3, r5, #0
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	mov r1, r9
 	movs r0, #14
 	ldrsh r3, [r1, r0]
@@ -887,10 +887,10 @@ Func_0804a134:
 .L_0804a816:
 	ldr r0, [sp, #44]
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	bl WaitFrames
 	ldr r5, [sp, #16]

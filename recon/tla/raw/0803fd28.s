@@ -22,68 +22,68 @@ Func_0803fd28:
 	movs r3, #14
 	movs r0, #1
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r1, #0
 	movs r2, #2
 	movs r3, #26
 	str r5, [sp, #0]
 	mov r11, r0
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r3, #4
 	str r3, [sp, #0]
 	mov r0, r11
 	movs r1, #0
 	movs r2, #4
 	movs r3, #26
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r3, #7
 	str r3, [sp, #0]
 	mov r0, r11
 	movs r1, #0
 	movs r2, #7
 	movs r3, #26
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r3, #10
 	str r3, [sp, #0]
 	mov r0, r11
 	movs r1, #0
 	movs r2, #10
 	movs r3, #26
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	ldr r5, .L_080400b8
 	mov r1, r11
 	adds r0, r5, #0
 	movs r2, #8
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r5, #0
 	mov r1, r11
 	movs r2, #8
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r5, .L_080400bc
 	mov r1, r11
 	adds r0, r5, #0
 	movs r2, #8
 	movs r3, #32
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r5, #0
 	mov r1, r11
 	movs r2, #32
 	movs r3, #40
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r0, .L_080400c0
 	mov r1, r11
 	movs r2, #8
 	movs r3, #64
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	mov r1, r11
 	movs r2, #8
 	movs r3, #88
 	ldr r0, .L_080400c4
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #0
 	str r1, [sp, #0]
@@ -91,7 +91,7 @@ Func_0803fd28:
 	mov r2, r11
 	lsls r1, r1, #23
 	movs r3, #0
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	movs r0, #160
 	lsls r0, r0, #3
@@ -137,7 +137,7 @@ Func_0803fd28:
 	movs r3, #134
 	adds r0, r6, #0
 	str r7, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrb r2, [r4, #25]
 	movs r5, #15
@@ -153,7 +153,7 @@ Func_0803fd28:
 	movs r3, #166
 	adds r0, r6, #0
 	str r7, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrh r1, [r4, #24]
 	movs r3, #192
@@ -178,7 +178,7 @@ Func_0803fd28:
 	movs r3, #134
 	adds r0, r6, #0
 	str r7, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrb r3, [r4, #25]
 	movs r5, #240
@@ -189,7 +189,7 @@ Func_0803fd28:
 	movs r3, #166
 	adds r0, r6, #0
 	str r7, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrh r2, [r4, #24]
 	movs r1, #192
@@ -224,7 +224,7 @@ Func_0803fd28:
 	adds r0, r6, #0
 	mov r2, r11
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrb r3, [r4, #21]
 	movs r5, #160
@@ -283,7 +283,7 @@ Func_0803fd28:
 	adds r0, r6, #0
 	mov r2, r11
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r4, r0, #0
 	ldrb r3, [r4, #21]
 	movs r5, #160

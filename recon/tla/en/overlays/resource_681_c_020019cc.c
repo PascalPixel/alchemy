@@ -11,7 +11,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02004e5c(void);
 void Func_02004fcc(s32 mode);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Func_02004f2c(s32 id, s32 animation, s32 frames);
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId);
@@ -28,7 +28,7 @@ void WaitFrames(s32 frames);
 void Func_020015d0(s32 a, s32 b);
 void Func_02004dd4(void);
 void Func_02004ebc(s32 id, s32 x, s32 z);
-void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability);
+void Party_LearnAbility(s32 unit, s32 ability);
 void GameFlag_SetBit(s32 flag);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
@@ -43,7 +43,7 @@ s32 Func_020019cc(void) {
 
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, message, 1);
+  Call2((void (*)())FieldMessage_Show, message, 1);
   Call3((void (*)())Func_02004f2c, gAdventure.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
     Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
@@ -77,7 +77,7 @@ s32 Func_020019cc(void) {
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
         gAdventure.currentOwner, 0x1d2, 0x156);
   ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, message + 2, 1);
+  Call2((void (*)())FieldMessage_Show, message + 2, 1);
   Call3((void (*)())Func_02004e24, 0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
   Func_02004e2c();
@@ -106,7 +106,7 @@ s32 Func_020019cc(void) {
   }
   Func_02004dd4();
   Call3((void (*)())Func_02004ebc, 12, 0, 0);
-  Call2((void (*)())UiText_DrawQuantityPairWithCue, 4, 139);
+  Call2((void (*)())Party_LearnAbility, 4, 139);
   Call1((void (*)())GameFlag_SetBit, 0x9ba);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 11, 2);

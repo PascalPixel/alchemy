@@ -20,8 +20,8 @@ void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
-struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-void UiWork_Finalize(struct Work *work, s32 release);
+struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
+void Window_Close(struct Work *work, s32 release);
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub,
                                  s16 *mode);
@@ -41,7 +41,7 @@ s16 Menu_RunSelection(void) {
   mode = 0;
   primary = gAdventure.primary;
   secondary = gAdventure.secondary;
-  work = UiWindow_Create(0, 7, 30, 5, 2);
+  work = Window_Create(0, 7, 30, 5, 2);
   Menu_DrawSelectionRow(work, primary, &secondary);
   UiTextResource_Initialize(&object, &resource);
 
@@ -53,13 +53,13 @@ s16 Menu_RunSelection(void) {
         (s16)Menu_HandleSelectionRowInput(work, primary, &secondary, &mode);
     if (result == -1) {
       UiTextResource_Release(resource);
-      UiWork_Finalize(work, 2);
+      Window_Close(work, 2);
       Event_SetDestinationFar(primary, secondary);
       return result;
     }
     if (result == -2) {
       UiTextResource_Release(resource);
-      UiWork_Finalize(work, 2);
+      Window_Close(work, 2);
       return result;
     }
 

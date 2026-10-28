@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 
 void *Unit_Get(s32 owner);
-void UiWork_ClearValueNameTablesFar(void);
+void MessageArgument_ClearAllFar(void);
 extern u8 gData_03001ae8[];
 s32 BattlePres_ShowDefendMessage(s16 *);
 s32 Func_0811ca54(s16 *);
@@ -37,11 +37,11 @@ s32 BattlePres_RunAction(s16 *action) {
     battleMode = 0x2000;
   transition->targetYaw = battleMode;
   transition->frames = 60;
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
 
   switch (action[3]) {
   case 99:
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
+    Message_ShowAndWaitCoreFar((s32)&MsgPartyFlees);
     if (BattleEscape_PlayRun((struct BattleActionRecord *)action) != 0)
       return 1;
     break;
@@ -66,7 +66,7 @@ s32 BattlePres_RunAction(s16 *action) {
     break;
   }
 
-  UiWork_ResetFreeChannelFar();
+  Message_ResetIdleFar();
   return 0;
 }
 

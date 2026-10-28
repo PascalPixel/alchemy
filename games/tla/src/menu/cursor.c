@@ -69,8 +69,8 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     if (entries[index] != 0) {
       if (selected == count) {
         s32 message = (s32)(MsgStatusAdvice + index * 2);
-        UiText_DrawResourceFar(message, target, 0, -1);
-        UiText_DrawResourceFar(message + 1, target, 0, 15);
+        Text_DrawMessageFar(message, target, 0, -1);
+        Text_DrawMessageFar(message + 1, target, 0, 15);
       }
       count++;
     }
@@ -78,5 +78,5 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
   } while (index <= 4);
 
   if (count == 0)
-    UiText_DrawResourceFar((s32)MsgStatusNormal, target, 0, 0);
+    Text_DrawMessageFar((s32)MsgStatusNormal, target, 0, 0);
 }

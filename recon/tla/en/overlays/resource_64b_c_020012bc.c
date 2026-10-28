@@ -37,7 +37,7 @@ void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Object_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
 void Camera_FollowActor(s32 id, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void UiText_OpenMessageAtObject(s32 id, s32 mode);
+void FieldMessage_ShowAtActor(s32 id, s32 mode);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
@@ -252,7 +252,7 @@ void Func_020012bc(s32 entrance) {
     Func_02004d08(20, 0x102, 40);
     Call2((void (*)())Func_02004d00, 20, eastB);
     FieldEvent_WaitFrames(20);
-    UiText_OpenMessageAtObject(20, 0);
+    FieldMessage_ShowAtActor(20, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Call3((void (*)())Func_02004d08, 20, 0x109, 30);
       Call3((void (*)())Func_02004ce8, 20, 0, 5);

@@ -4,19 +4,19 @@
 #include "edition.h"
 #include "text_render_runtime.h"
 
-s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
+s32 Func_0803c274(struct Window *window, u32 c, s32 x, s32 y, s32 flags);
 
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in UiRenderWork.entries. The window's position is read signed.
+/// in WindowWork.entries. The window's position is read signed.
 // As ☀️'s function of the same name, which passes the VRAM base where this
 // one passes offsetX & 7.
-void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                        const struct UiWindow *work,
+void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
+                                        const struct Window *work,
                                         s32 offsetX, s32 offsetY) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 cell;
 
   if (buffer == NULL) {
@@ -47,20 +47,20 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
     dst = 0x06002000 + cell;
     src = (s32)canvas->tilemap + cell;
 
-    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);
+    Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);
   }
 }
 
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 /// skipping the control codes and their arguments; code 3 starts a new line.
 /// With no text, the render work's own entries are drawn, closed with a 0.
-void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
+void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                      s32 y) {
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u16 c;
   s16 start;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   start = x;
   if (text == NULL) {
     text = work->entries;

@@ -15,7 +15,7 @@ void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_020014b8(void);
 void Func_020014c0(void);
@@ -31,7 +31,7 @@ void Func_0200006c(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor02;
 
   Func_02001538(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001538(msg + 1);
@@ -48,7 +48,7 @@ void Func_020000b8(s32 actor) {
   Func_020014b8();
   Func_020015b8(0);
   Func_02001538(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     FieldEvent_WaitFrames(20);
     Object_LinkObjectAndSetCallback(actor, gAdventure.currentOwner);
@@ -68,7 +68,7 @@ void Func_02000150(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor14;
 
   Func_02001538(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001538(msg + 1);
@@ -170,7 +170,7 @@ void Func_02000370(void) {
   Func_02001548(9, 0, 10);
   Motion_SetVarCbAndRefresh(9, 2);
   FieldEvent_WaitFrames(10);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_WaitFrames(20);
     Func_02001548(9, 0, 10);

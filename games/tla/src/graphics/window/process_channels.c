@@ -11,11 +11,11 @@
 
 struct Work;
 
-void UiWork_Finalize(struct Work *, s32);
+void Window_Close(struct Work *, s32);
 s32 Func_08039864(void *);
 void Func_0803cbf8(void *);
 
-void UiWork_ProcessRenderChannels(void) {
+void Message_UpdateAll(void) {
   u8 *channel = (u8 *)Ram_HeapSlots->windowTiles + 0x6b8;
   s32 channelNo = 0;
   s32 one = 1;
@@ -43,7 +43,7 @@ void UiWork_ProcessRenderChannels(void) {
           case 9: {
             u8 *entity = *(u8 **)channel;
 
-            UiWork_Finalize((struct Work *)entity,
+            Window_Close((struct Work *)entity,
                             (u16)(*(u16 *)(entity + 0x16) & 2));
             *(u16 *)(channel + 0x04) = pending;
             *(u16 *)(channel + 0x06) = pending;

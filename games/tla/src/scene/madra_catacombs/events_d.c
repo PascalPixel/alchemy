@@ -29,7 +29,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -147,7 +147,7 @@ void Func_020007a0(void) {
   } else {
     Func_0200110c();
     Func_020011ac(0);
-    UiText_ShowPositionedMessageAndWait((s32)&MsgFieldEyesOfTruth, 1);
+    FieldMessage_Show((s32)&MsgFieldEyesOfTruth, 1);
     Func_02001114();
   }
 }

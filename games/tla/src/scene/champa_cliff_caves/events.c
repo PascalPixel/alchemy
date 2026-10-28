@@ -7,7 +7,7 @@ void Func_02000304(s32 actor) {
   s32 msg = (s32)MsgWhatYouWant;
 
   Func_0200350c(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020035f4(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_0200350c(msg + 1);

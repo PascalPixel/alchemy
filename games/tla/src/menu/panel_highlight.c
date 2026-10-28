@@ -29,7 +29,7 @@ void DjinnMenu_DrawFirstPage(struct UiPanel *panel) {
 
 void UiPanel_SetRectHighlight(struct UiPanel *panel, s32 x, s32 y, s32 width,
                               s32 height, s32 style) {
-  Ui_SetRectHighlightFar(panel->x + x + 1, panel->y + y + 1, width, height,
+  Window_HighlightRectFar(panel->x + x + 1, panel->y + y + 1, width, height,
                          style);
 }
 

@@ -51,12 +51,12 @@ extern char MsgUseItemQuestion;
 
 s32 Party_CountActiveOwnersFar(void);
 struct ItemUnit *Unit_Get(s32 owner);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+void FieldMessage_ShowFar(s32 message, s32 flags);
 struct ItemTrigger *Event_FindFacingTrigger(s32 item);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 s32 EventRuntime_GetControlledOwner(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
 void EventRuntime_Start(void);
@@ -65,7 +65,7 @@ void EventRuntime_ShowMessageAndWait(s32 actor, s32 flags);
 void EventRuntime_End(void);
 struct ItemDefinitionView *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
 void BattleEffect_Run(void);
 void BattleEffect_CleanupSceneObjects(void);
@@ -117,7 +117,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
     }
 
     if (best == 0) {
-      UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+      FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
       return -1;
     }
   }
@@ -127,9 +127,9 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
     GameFlag_ClearBit(0x143);
     GameFlag_ClearBit(0x142);
     if (!(event->trigger & 0x400)) {
-      UiText_DrawQuantity(actor, 1);
-      UiText_DrawQuantity(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
+      MessageArgument_PushFar(actor, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
       s32 objref = Field_FindNearbyTalkTarget(EventRuntime_GetControlledOwner());
@@ -155,10 +155,10 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
       GameFlag_ClearBit(0x142);
 
       if (actionId == 149 && !GameFlag_Test(0x144)) {
-        UiText_DrawQuantity(itemId, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseItemQuestion, 13);
+        MessageArgument_PushFar(itemId, 2);
+        FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = Func_080d295c(1);
-        UiWork_FinalizePendingCoreFar();
+        Message_CloseFinishedWindowsFar();
         if (i != 0)
           return 0;
 
@@ -167,9 +167,9 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
         runtime->exit = 999;
       }
 
-      UiText_DrawQuantity(actor, 1);
-      UiText_DrawQuantity(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
+      MessageArgument_PushFar(actor, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
       BattleEffect_LoadActionEffectResources(actionId, 0);
       runtime->resolvingAction = 1;
       BattleEffect_Run();
@@ -182,7 +182,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
   }
 
   if (GameFlag_Test(0x142))
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+    FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
   if (GameFlag_Test(0x143))
     Inventory_RemoveFar(actor, slot);
   return result;

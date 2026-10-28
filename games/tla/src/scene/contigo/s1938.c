@@ -26,7 +26,7 @@ void Func_02001938(s32 spoken) {
     }
     Func_0200412c(message + 2);
     Func_0200403c(tickets, 5);
-    UiText_OpenMessageAtObject(18, 0);
+    FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
       Func_02004144(18, 0);
       return;
@@ -34,10 +34,10 @@ void Func_02001938(s32 spoken) {
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       Func_0200412c(message + 4);
-      UiText_OpenMessageAtObject(18, 0);
+      FieldMessage_ShowAtActor(18, 0);
     } else if (room <= 6) {
       Func_0200412c(message + 5);
-      UiText_OpenMessageAtObject(18, 0);
+      FieldMessage_ShowAtActor(18, 0);
     }
     if (room <= 6 &&
         Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
@@ -52,7 +52,7 @@ void Func_02001938(s32 spoken) {
       return;
     }
     Func_0200412c((s32)MsgContigo19);
-    UiText_OpenMessageAtObject(18, 0);
+    FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Func_0200412c((s32)MsgContigo17);
       Func_02004144(18, 0);

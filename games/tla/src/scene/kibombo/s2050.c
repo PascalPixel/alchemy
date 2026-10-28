@@ -35,7 +35,7 @@ void Object_LinkObjectAndSetCallback();
 void ObjectMotion_EnableActionAndResetMotion();
 void Motion_SetModeAndWaitAnimation();
 struct ObjectRuntime *Object_GetById(u32 id);
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void GameFlag_SetBit();
 void Func_0200384c(void);
@@ -158,7 +158,7 @@ void Func_02002050(void) {
   Call3(ObjectMotion_SetPositionAndReset, 26, 238, 188);
   Call1(FieldEvent_WaitFrames, 1);
   Object_GetById(26)->actionFlags |= 1;
-  Value2(UiText_OpenMessageAtObject, 26, 0);
+  Value2(FieldMessage_ShowAtActor, 26, 0);
   Value3(Func_02005b94, gAdventure.currentOwner, 257, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
@@ -169,7 +169,7 @@ ask:
   } else {
     Call2(Func_02005b64, 26, 0);
     *(s16 *)(EVENT_WORK + 0x1c4) -= 2;
-    Value2(UiText_OpenMessageAtObject, 26, 0);
+    Value2(FieldMessage_ShowAtActor, 26, 0);
     goto ask;
   }
   Call1(GameFlag_SetBit, 545);

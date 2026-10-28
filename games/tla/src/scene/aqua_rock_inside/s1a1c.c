@@ -31,8 +31,8 @@ void ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 void Object_TurnToFaceEachOther();
 void Object_SetModeById();
-void UiText_DrawQuantityPairWithCue();
-void UiText_ShowPositionedMessageAndWait();
+void Party_LearnAbility();
+void FieldMessage_Show();
 extern u8 MsgCheckedTheTabletIt[];
 extern u8 MsgWhatWentWrong[];
 
@@ -41,7 +41,7 @@ void Func_02001a1c(void) {
 
   Func_02003d7c();
   Call1(Func_02003eac, 0);
-  Call2(UiText_ShowPositionedMessageAndWait, (s32)&MsgCheckedTheTabletIt, 1);
+  Call2(FieldMessage_Show, (s32)&MsgCheckedTheTabletIt, 1);
   t4 = Value1(GameFlag_Test, 0x9ae);
   if (t4 == 0)
     goto L_02009a46;
@@ -78,10 +78,10 @@ L_02009a46:
   Call3(ObjectMotion_SetPositionAndReset, 7, 0x108, 168);
   Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
   Call1(FieldEvent_WaitFrames, 20);
-  Call2(UiText_ShowPositionedMessageAndWait, ((s32)&MsgCheckedTheTabletIt + 2),
+  Call2(FieldMessage_Show, ((s32)&MsgCheckedTheTabletIt + 2),
         1);
   Call2(Func_02001620, 14, 7);
-  Call2(UiText_DrawQuantityPairWithCue, 7, 138);
+  Call2(Party_LearnAbility, 7, 138);
   Call1(GameFlag_SetBit, 0x9ae);
   Call1(Func_02003ef4, 107);
   Call1(FieldEvent_WaitFrames, 30);

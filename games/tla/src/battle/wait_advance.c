@@ -35,7 +35,7 @@ struct AdvanceDisplay {
 extern u32 gFrameCount;
 extern u8 Data_0812996c[];
 
-s32 UiWork_IsCompleteFar(void);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 frames);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 slot, s32 source);
@@ -61,7 +61,7 @@ void BattlePresentation_WaitForAdvance(void) {
   struct AdvanceWindow *window;
   struct AdvanceOffset *offset;
 
-  while (!UiWork_IsCompleteFar())
+  while (!Message_AllTypedFar())
     WaitFrames(1);
   prompt = &promptStorage;
   /* FAKEMATCH(temporary): the arrow sheet's address held in a local, so the

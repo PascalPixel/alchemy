@@ -12,7 +12,7 @@
 #include "mem.h"
 #include "io_reg.h"
 
-void UiText_LookupMessage(struct TextReader *reader, s32 message) {
+void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
   u32 size;
 

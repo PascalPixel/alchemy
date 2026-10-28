@@ -23,10 +23,10 @@ void Func_020005b4(s32 id) {
   if (!GameFlag_Test(flag)) {
     Func_02005880();
     Func_020059e8(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadChestBlocked, 1);
+    FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
     Func_02005888();
   } else {
-    UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadPlaceItemPrompt, 13);
+    FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 1) == 0)
       ((struct EventWork15a *)Ram_HeapSlots->eventWork)->value = 1;
   }

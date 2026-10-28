@@ -17,11 +17,11 @@
 #include "ram_buffer.h"
 
 /// Clears the eight-entry table of values substituted into messages.
-void UiWork_ClearValueNameTables(void) {
+void MessageArgument_ClearAll(void) {
   s32 no;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   /* FAKEMATCH: the barrier keeps the work-pointer load before the table
    * offsets. */
   __asm__("");
@@ -36,8 +36,8 @@ void UiWork_ClearValueNameTables(void) {
 
 /// Inserts value of type kind in a free entry; does nothing if the table is
 /// full.
-void UiWork_PushValueSlot(u32 value, u32 kind) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void MessageArgument_Push(u32 value, u32 kind) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 no = 0;
   u32 limit = 8;
 

@@ -1,10 +1,10 @@
 // Misfiled draft (tla-en, 2026-10-18): the listing at 0x0803b094 is
-// UiText_BuildRenderEntries (831 instructions), which this file only
-// declares. It holds the text writers after it instead: UiText_DrawResource,
-// UiText_DrawString (since adopted, games/tla/src/graphics/text/draw_string.c),
-// UiText_DrawStringAtOffset, UiText_DrawStringInWindow and the number writers
+// Message_Decode (831 instructions), which this file only
+// declares. It holds the text writers after it instead: Text_DrawMessage,
+// Text_DrawString (since adopted, games/tla/src/graphics/text/draw_string.c),
+// Text_DrawStringAtOffset, Text_DrawStringInWindow and the number writers
 // (adopted, games/tla/src/graphics/text/render.c), and
-// UiText_DrawPrefixedNumberAtOffset (listing 0x08042274). alchemy-devtools diff
+// Text_DrawPrefixedNumberAtOffset (listing 0x08042274). alchemy-devtools diff
 // against the listing reports differ 1071, which measures nothing.
 
 #include "mem.h"
@@ -12,27 +12,27 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
+s32 Message_Decode(s32 character, s32 count);
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
-void UiText_DrawWideString(void *text, s32 work, s32 x, s32 y);
-void UiText_DrawWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
-s32 UiText_RenderTileRow(void *text, s32 source, s32 destination, s32 phase);
+void Text_DrawWideString(void *text, s32 work, s32 x, s32 y);
+void Text_DrawWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
+s32 Text_DrawTileRow(void *text, s32 source, s32 destination, s32 phase);
 
-void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   u8 *base = (u8 *)Ram_HeapSlots->windowTiles;
-  u16 *counter = (u16 *)(base + offsetof(struct UiRenderWork, count));
+  u16 *counter = (u16 *)(base + offsetof(struct WindowWork, count));
   s32 offset;
   s32 zero = 0;
 
   *counter = zero;
-  UiText_BuildRenderEntries(arg0, 1);
-  offset = *counter * 2 + offsetof(struct UiRenderWork, entries);
+  Message_Decode(arg0, 1);
+  offset = *counter * 2 + offsetof(struct WindowWork, entries);
   *(u16 *)(base + offset) = zero;
   *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  UiText_DrawWideString(base + offsetof(struct UiRenderWork, entries), arg1, arg2, arg3);
+  Text_DrawWideString(base + offsetof(struct WindowWork, entries), arg1, arg2, arg3);
 }
 
-void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
+void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
   s16 *buffer;
   s16 *output;
   u8 *input;
@@ -48,11 +48,11 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
     } while (*input != 0);
   }
   *output = 0;
-  UiText_DrawWideString(buffer, arg1, arg2, arg3);
+  Text_DrawWideString(buffer, arg1, arg2, arg3);
   Runtime_ReleaseAlternatePool(buffer);
 }
 
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
+void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                                s32 offsetY) {
   s16 *buffer;
   s16 *output;
@@ -83,12 +83,12 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
     dst = vram + cell;
     src = (s32)base + cell + 8;
     phase = offsetX & 7;
-    UiText_RenderTileRow(buffer, src, dst, phase);
+    Text_DrawTileRow(buffer, src, dst, phase);
     Runtime_ReleaseAlternatePool(buffer);
   }
 }
 
-void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
+void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
   u16 *output = buffer;
 
@@ -100,33 +100,33 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   *output = 0;
   x >>= 3;
   y >>= 3;
-  UiText_DrawWideStringInWindow(buffer, arg1, x, y);
+  Text_DrawWideStringInWindow(buffer, arg1, x, y);
   Runtime_ReleaseAlternatePool(buffer);
 }
 
-void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void Text_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
   u8 data[16];
 
-  UiText_DrawString(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
+  Text_DrawString(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
-void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2,
+void Text_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2,
                                s32 arg3, s32 arg4) {
   u8 data[16];
 
-  UiText_DrawStringAtOffset(Text_FormatNumber(data, arg0, arg1), arg2, arg3,
+  Text_DrawStringAtOffset(Text_FormatNumber(data, arg0, arg1), arg2, arg3,
                             arg4);
 }
 
-void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+void Text_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
                                s32 arg4) {
   u8 data[16];
 
-  UiText_DrawStringInWindow(Text_FormatNumber(data, arg0, arg1), arg2, arg3,
+  Text_DrawStringInWindow(Text_FormatNumber(data, arg0, arg1), arg2, arg3,
                             arg4);
 }
 
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[16];
   s16 output[8];
@@ -160,6 +160,6 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
     dst = vram + cell;
     src = (s32)base + cell + 8;
     phase = offsetX & 7;
-    UiText_RenderTileRow(output, src, dst, phase);
+    Text_DrawTileRow(output, src, dst, phase);
   }
 }

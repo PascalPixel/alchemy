@@ -87,7 +87,7 @@ Func_0200039c:
 	bl WaitFrames
 	ldr r0, .L_de_02008474
 	mov r1, sp
-	bl Ui_AdjustValueWithoutLimit
+	bl Message_DecodeRawUnbounded
 	movs r1, #0
 	mov r2, sp
 	ldrh r3, [r2, r1]
@@ -312,7 +312,7 @@ Func_0200039c:
 	bl WaitFrames
 	ldr r0, .L_02008534
 	mov r1, sp
-	bl Ui_AdjustValueWithoutLimit
+	bl Message_DecodeRawUnbounded
 	movs r1, #0
 	mov r2, sp
 	ldrh r3, [r2, r1]
@@ -833,7 +833,7 @@ Func_02000864:
 	movs r1, #5
 	movs r2, #4
 	movs r3, #1
-	bl UiText_OpenMessageWindow
+	bl Message_OpenWindow
 	adds r7, r0, #0
 	b .L_0200896e
 .L_02008922:
@@ -884,7 +884,7 @@ Func_02000864:
 	beq .L_02008984
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 .L_02008984:
 	movs r0, #5
 	bl WaitFrames
@@ -925,7 +925,7 @@ Func_02000864:
 	bl Func_02001a64
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #45
 	bl WaitFrames
 	movs r1, #128
@@ -1175,7 +1175,7 @@ Func_02000fbc:
 	movs r0, #12
 	movs r1, #8
 	movs r3, #3
-	bl UiWindow_Create
+	bl Window_Create
 	movs r2, #1
 	negs r2, r2
 	adds r7, r0, #0
@@ -1184,13 +1184,13 @@ Func_02000fbc:
 	cmp r5, r10
 	beq .L_02009042
 	adds r0, r7, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	movs r3, #0
 	adds r0, r5, #0
 	movs r1, #3
 	adds r2, r7, #0
 	str r3, [sp, #0]
-	bl UiText_DrawNumber
+	bl Text_DrawNumber
 	mov r10, r5
 .L_02009042:
 	ldr r1, .L_02009120
@@ -1262,7 +1262,7 @@ Func_02000fbc:
 .L_020090be:
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	cmp r5, #0
 	blt .L_020090dc
 	ldr r3, .L_02009124
@@ -1477,7 +1477,7 @@ Func_0200145c:
 	bl Func_02001a64
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -1520,7 +1520,7 @@ Func_0200145c:
 	bl Func_02001a64
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	bl Func_02001400
 	b .L_02009638
 .L_0200962a:
@@ -1528,7 +1528,7 @@ Func_0200145c:
 	bl Func_02001a64
 	movs r0, #8
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 .L_02009638:
 	movs r0, #0
 	bl LinkLobby_WriteSlotValue
@@ -1576,7 +1576,7 @@ Func_0200145c:
 	bl Func_02001a64
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	bl Func_02001400
 	b .L_020096bc
 .L_020096ae:
@@ -1584,7 +1584,7 @@ Func_0200145c:
 	bl Func_02001a64
 	movs r0, #8
 	movs r1, #0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 .L_020096bc:
 	ldr r3, .L_020097f4
 	movs r1, #128

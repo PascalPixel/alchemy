@@ -21,7 +21,7 @@ void GameFlag_SetBit();
 void Func_02000724();
 struct FieldActor *Object_GetById();
 void PartyInventory_Remove();
-void UiText_ShowPositionedMessageAndWait();
+void FieldMessage_Show();
 u8 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
 s32 GameFlag_Test();
 
@@ -112,7 +112,7 @@ void Func_020001fc(s32 item) {
 
 void Func_0200021c(void) {
   ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
-  UiText_ShowPositionedMessageAndWait(MsgFieldDoorLocked, 1);
+  FieldMessage_Show(MsgFieldDoorLocked, 1);
 }
 
 const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }

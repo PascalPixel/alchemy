@@ -24,11 +24,11 @@ void Func_02001a64(s32 message);
 s32 Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-s32 UiWindow_Create();
-void RenderOutput_PrepareForRedraw();
-void UiText_DrawNumber();
+s32 Window_Create();
+void WindowSprite_PrepareForRedraw();
+void Text_DrawNumber();
 s32 DebugParty_LoadPreset();
-void UiWork_ClearValueNameTables(void);
+void MessageArgument_ClearAll(void);
 
 s32 Func_02000da0(s32 actor) {
   u32 facing = ((struct ObjectRuntime *)Object_GetById(4))->angle;
@@ -51,7 +51,7 @@ s32 Func_02000da0(s32 actor) {
     if (*count == 0)
       goto none;
   }
-  UiWork_ClearValueNameTables();
+  MessageArgument_ClearAll();
   Func_020019e4(*count, 5);
   Func_02001a64(base + 1);
   return Func_02001a74(actor, 0);

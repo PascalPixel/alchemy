@@ -36,11 +36,11 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 BattleEffect_GetResourceId(s32 id);
-void UiText_GetResourceDimensions(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
-void UiText_OpenMessageWindow(s32 id, s32 x, s32 y, u32 flags);
-s32 UiWork_IsComplete(void);
-void UiWork_Finalize(s32 work, s32 mode);
-void UiWork_FinalizePendingCore(void);
+void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
+void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
+s32 Message_AllTyped(void);
+void Window_Close(s32 work, s32 mode);
+void Message_CloseFinishedWindows(void);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
 void Func_0200055c(void);
 void Func_02000564(void);
@@ -94,19 +94,19 @@ void Func_02000310(s32 kind, s32 frames) {
   if (kind == 7) {
     width = 10;
     height = 10;
-    UiText_GetResourceDimensions(work->message, &width, &height, &a, &b);
+    Text_GetMessageSize(work->message, &width, &height, &a, &b);
     x = width + a - 5;
   } else {
     width = 5;
     height = 10;
     x = 5;
   }
-  UiText_OpenMessageWindow(work->message++, width, height,
+  Message_OpenWindow(work->message++, width, height,
                            (resource << 16) | 2);
   x = Func_0200053c(id, 0, x, 5);
-  while (UiWork_IsComplete() == 0)
+  while (Message_AllTyped() == 0)
     WaitFrames(1);
   FieldEvent_WaitFrames(frames);
-  UiWork_Finalize(x, 2);
-  UiWork_FinalizePendingCore();
+  Window_Close(x, 2);
+  Message_CloseFinishedWindows();
 }

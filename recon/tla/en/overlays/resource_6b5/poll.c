@@ -129,7 +129,7 @@ s32 Func_020002d8(void) {
   Func_02001a14();
   Func_02001ab4(0);
   Func_02001a64((s32)MsgIfYouWantToParticipate);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   WaitFrames(5);
   GameFlag_SetBit(0x200);
   Func_02001a1c();
@@ -145,7 +145,7 @@ s32 Func_02000344(void) {
   Func_02001ab4(0);
   work->raisedTrigger = 0;
   Func_02001a64((s32)MsgTheLinkWas);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   GameFlag_ClearBit(0x205);
   Func_02001a1c();
 }

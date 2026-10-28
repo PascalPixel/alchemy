@@ -42,6 +42,6 @@ NameEntry_KeyboardTilemap3:
 	.endif
 	.endif
 	.balign 4, 0
-	.global gUi_FixedTileBlocks
-gUi_FixedTileBlocks:
+	.global gWindow_FixedTileBlocks
+gWindow_FixedTileBlocks:
 	.4byte gResource_FixedBlockBTiles

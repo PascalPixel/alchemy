@@ -26,7 +26,7 @@ Func_0803c274:
 	ldr r2, [sp, #24]
 	cmp r2, #1
 	bne .L_0803c344
-	bl RenderOutput_AcquireFree
+	bl WindowSprite_AcquireFree
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0803c36c
@@ -105,7 +105,7 @@ Func_0803c274:
 .L_0803c33a:
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl RenderOutput_AppendToList
+	bl WindowSprite_AppendToList
 	b .L_0803c36c
 .L_0803c344:
 	cmp r1, #255

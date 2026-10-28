@@ -763,13 +763,13 @@ Func_0804bc08:
 	movs r2, #11
 	movs r3, #3
 	movs r0, #11
-	bl UiWindow_Create
+	bl Window_Create
 	mov r11, r0
 	mov r1, r11
 	ldr r0, .L_0804c278
 	movs r2, #16
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r4, [sp, #36]
 	ldr r3, .L_0804c27c
 	ldr r1, [r4]
@@ -788,7 +788,7 @@ Func_0804bc08:
 	movs r1, #1
 	adds r6, r0, #0
 	mov r0, r11
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	negs r0, r0
 	cmp r6, r0
@@ -934,7 +934,7 @@ Func_0804bc08:
 	movs r2, #18
 	movs r3, #3
 	movs r0, #8
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r4, [sp, #36]
 	mov r11, r0
 	ldr r0, [r4]
@@ -1025,14 +1025,14 @@ Func_0804bc08:
 	adds r0, r3, r0
 	movs r2, #16
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r5, #0
 	ldrb r0, [r6, #9]
 	movs r1, #2
 	mov r2, r11
 	movs r3, #104
 	str r5, [sp, #0]
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 	movs r3, #15
 	strb r3, [r7, #7]
 	movs r0, #15
@@ -1044,7 +1044,7 @@ Func_0804bc08:
 	movs r2, #11
 	movs r3, #0
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r1, #240
 	lsls r1, r1, #8
 	movs r3, #0
@@ -1052,7 +1052,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r2, #12
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r3, [r6, #2]
 	cmp r3, #4
 	beq .L_0804c48e
@@ -1065,7 +1065,7 @@ Func_0804bc08:
 	movs r2, #15
 	movs r3, #0
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 .L_0804c48e:
 	ldr r1, [sp, #76]
 	mov r0, r8
@@ -1089,7 +1089,7 @@ Func_0804bc08:
 	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #1
 	negs r3, r3
 	cmp r6, r3
@@ -1176,7 +1176,7 @@ Func_0804bc08:
 	movs r2, #17
 	movs r3, #3
 	movs r0, #10
-	bl UiWindow_Create
+	bl Window_Create
 	mov r11, r0
 	ldr r0, [sp, #36]
 	ldr r4, [sp, #24]
@@ -1300,7 +1300,7 @@ Func_0804bc08:
 	adds r0, r0, r3
 	mov r1, r11
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r2, #0
 	lsls r3, r2, #1
 	ldr r4, [sp, #4]
@@ -1324,7 +1324,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r3, #0
 	str r4, [sp, #4]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldrb r1, [r6]
 	mov r3, r8
 	adds r2, r5, #1
@@ -1371,7 +1371,7 @@ Func_0804bc08:
 	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	negs r0, r0
 	cmp r6, r0
@@ -1506,7 +1506,7 @@ Func_0804bc08:
 	movs r2, #10
 	movs r3, #3
 	movs r0, #11
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r2, [sp, #36]
 	mov r3, r10
 	ldr r1, [r2]
@@ -1525,7 +1525,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r2, #0
 	movs r3, #0
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	lsls r0, r7, #2
 	ldr r4, [sp, #4]
 	ldr r3, .L_0804c860
@@ -1536,7 +1536,7 @@ Func_0804bc08:
 	adds r0, r0, r3
 	mov r1, r11
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r1, [sp, #76]
 	movs r0, #1
 	strh r6, [r1, #12]
@@ -1567,19 +1567,19 @@ Func_0804bc08:
 	movs r1, #15
 	adds r0, #14
 	movs r2, #8
-	bl UiText_ShowMessageAndWaitComplete
+	bl Message_ShowAndWait
 	adds r5, r0, #0
 	b .L_0804c8a2
 .L_0804c89c:
 	movs r0, #1
 	bl WaitFrames
 .L_0804c8a2:
-	bl UiWork_IsComplete
+	bl Message_AllTyped
 	cmp r0, #0
 	beq .L_0804c89c
 	movs r1, #1
 	adds r0, r5, #0
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r3, [sp, #36]
 	ldr r1, [r3]
 	adds r2, r1, #0
@@ -1593,7 +1593,7 @@ Func_0804bc08:
 .L_0804c8c6:
 	mov r0, r11
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r4, #1
 	negs r4, r4
 	cmp r6, r4
@@ -1609,7 +1609,7 @@ Func_0804bc08:
 	movs r3, #3
 	movs r0, #11
 	str r4, [sp, #4]
-	bl UiWindow_Create
+	bl Window_Create
 	mov r11, r0
 	ldr r0, [sp, #36]
 	mov r3, r10
@@ -1629,7 +1629,7 @@ Func_0804bc08:
 	movs r2, #0
 	movs r3, #0
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	lsls r0, r7, #2
 	ldr r4, [sp, #4]
 	ldr r3, .L_0804c93c
@@ -1640,7 +1640,7 @@ Func_0804bc08:
 	movs r2, #16
 	adds r0, r0, r3
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #15
 	bl Func_08041f70
 	b .L_0804c940
@@ -1664,7 +1664,7 @@ Func_0804bc08:
 	movs r1, #1
 	adds r6, r0, #0
 	mov r0, r11
-	bl UiWork_Finalize
+	bl Window_Close
 	cmp r6, r9
 	bne .L_0804c96e
 	b .L_0804c776
@@ -1825,7 +1825,7 @@ Func_0804bc08:
 	movs r2, #16
 	movs r3, #3
 	movs r0, #9
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r1, [sp, #36]
 	mov r11, r0
 	ldr r0, [r1]
@@ -1895,7 +1895,7 @@ Func_0804bc08:
 	mov r1, r11
 	adds r0, r0, r3
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, [sp, #76]
 	mov r2, r10
 	strh r2, [r3, #12]
@@ -1928,7 +1928,7 @@ Func_0804bc08:
 	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	cmp r6, r7
 	bne .L_0804cb88
 	b .L_0804c986
@@ -2039,7 +2039,7 @@ Func_0804bc08:
 	cmp r0, #0
 	beq .L_0804cc58
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 .L_0804cc58:
 	ldr r0, [sp, #48]
 	bl Resource_ResetEntry
@@ -2084,11 +2084,11 @@ Func_0804bc08:
 	movs r2, #30
 	movs r3, #4
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r4, [sp, #36]
 	ldr r3, [r4]
 	str r0, [r3, #68]
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 	add r0, sp, #108
 	mov r9, r0
 	bl Func_0804bbd0
@@ -2186,7 +2186,7 @@ Func_0804bc08:
 	cmp r0, #0
 	beq .L_0804cd78
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 .L_0804cd78:
 	movs r0, #0
 	bl Camera_ConfigureSceneFar

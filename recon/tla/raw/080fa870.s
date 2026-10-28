@@ -37,9 +37,9 @@ Func_080fa870:
 	movs r3, #17
 	mov r10, r0
 	mov r0, r8
-	bl UiWindow_SetBounds
+	bl Window_SetBounds
 	ldr r0, [r6, #36]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r3, #28
 	ldrsb r3, [r6, r3]
 	movs r1, #129
@@ -135,14 +135,14 @@ Func_080fa870:
 	movs r1, #0
 	movs r2, #9
 	movs r3, #16
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 	movs r3, #80
 	str r3, [sp, #0]
 	movs r2, #72
 	movs r3, #120
 	mov r0, r8
 	movs r1, #0
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	movs r3, #28
 	ldrsb r3, [r6, r3]
 	ldr r2, [sp, #12]
@@ -185,7 +185,7 @@ Func_080fa870:
 	movs r1, #2
 	mov r2, r8
 	movs r3, #8
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r2, #32
 	ldr r0, .L_080fabd0
 	b .L_080fa9f6
@@ -195,7 +195,7 @@ Func_080fa870:
 .L_080fa9f6:
 	mov r1, r8
 	movs r3, #72
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r2, [sp, #12]
 .L_080faa00:
 	movs r1, #128
@@ -263,7 +263,7 @@ Func_080fa870:
 	cmp r3, #0
 	bne .L_080faaaa
 	ldr r0, [r6, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r1, #182
 	lsls r1, r1, #1
 	adds r3, r6, r1
@@ -275,7 +275,7 @@ Func_080fa870:
 	adds r0, r0, r3
 	ldr r1, [r6, #48]
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r2, #1
 	str r2, [sp, #4]
 	b .L_080faab2
@@ -360,7 +360,7 @@ Func_080fa870:
 	ldr r5, [r6, #24]
 	movs r7, #13
 	adds r0, r5, #0
-	bl UiIcon_PrepareObject
+	bl Icon_PrepareActor
 	strb r7, [r5, #5]
 	bl Func_080fac58
 	movs r0, #1

@@ -36,8 +36,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   Unit_Get(work.actor);
   Unit_Get(work.actors[0]);
   Random16();
-  UiText_DrawQuantity(work.actor, 1);
-  UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
+  MessageArgument_PushFar(work.actor, 1);
+  Message_ShowAndWaitCoreFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
       (struct DispatchObject *)BattleObject_Get(work.actor)->object, 16);

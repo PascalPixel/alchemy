@@ -34,9 +34,9 @@ struct OptionScreen {
   u8 cursor[0x10];
   u8 marker[2][0x10];
   u8 unk5d4[0x18];
-  struct RenderOutput *icons0[3];
-  struct RenderOutput *icons1[2];
-  struct RenderOutput *icons2[2];
+  struct WindowSprite *icons0[3];
+  struct WindowSprite *icons1[2];
+  struct WindowSprite *icons2[2];
 };
 
 extern u8 MsgOptionA[], MsgOptionB[], MsgOptionC[], MsgOptionD[], MsgOptionE[];
@@ -49,24 +49,24 @@ void Func_0803fc38(void);
 void Func_0803fd14(void);
 struct RenderInput *Func_0803fd28(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
-struct RenderOutput *
+struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
-void Func_08045018(struct RenderOutput *pair);
-void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
+void Func_08045018(struct WindowSprite *pair);
+void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
-void UiWindow_ClearInteriorTiles(struct RenderInput *window, s32 x0, s32 y0,
+void Window_Close(struct RenderInput *window, s32 release);
+void Window_ClearInteriorTiles(struct RenderInput *window, s32 x0, s32 y0,
                                  s32 x1, s32 y1);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
+void Text_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
                                   u32 offsetX, u32 offsetY);
-void RenderOutput_ClearList(struct RenderInput *window);
-void UiText_DrawResource(s32 message, struct RenderInput *window, s32 x, s32 y);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void WindowSprite_ClearList(struct RenderInput *window);
+void Text_DrawMessage(s32 message, struct RenderInput *window, s32 x, s32 y);
+void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
@@ -74,7 +74,7 @@ s32 Func_080400e8(void) {
   struct OptionScreen *work;
   struct RenderInput *settingsWindow;
   struct RenderInput *helpWindow;
-  struct RenderOutput *pair;
+  struct WindowSprite *pair;
   s8 *hue;
   s8 *brightness;
   s32 redraw;
@@ -85,13 +85,13 @@ s32 Func_080400e8(void) {
   s32 x;
   s32 y;
   s32 result;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
 
   redraw = 1;
   selectedOption = 0;
   Func_0803fc38();
   work = Ram_HeapSlots->unkd0[0];
-  helpWindow = UiWindow_Create(1, 2, 28, 3, 2);
+  helpWindow = Window_Create(1, 2, 28, 3, 2);
   settingsWindow = Func_0803fd28();
   pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
   WaitFrames(1);
@@ -112,7 +112,7 @@ s32 Func_080400e8(void) {
       for (i = 0; i <= 2; i++) {
         icon = work->icons0[i];
         icon->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(icon);
+        Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->icons0[i]->index;
         dimmed = 0;
         if (i != work->option[2])
@@ -123,7 +123,7 @@ s32 Func_080400e8(void) {
       for (i = 0; i <= 1; i++) {
         icon = work->icons1[i];
         icon->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(icon);
+        Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->icons1[i]->index;
         dimmed = 0;
         if (i != work->option[3])
@@ -134,7 +134,7 @@ s32 Func_080400e8(void) {
       for (i = 0; i <= 1; i++) {
         icon = work->icons2[i];
         icon->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(icon);
+        Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->icons2[i]->index;
         dimmed = 0;
         if (i != work->option[4])
@@ -153,14 +153,14 @@ s32 Func_080400e8(void) {
       Func_08108040(work->marker[1], x, y, 1);
 
       x = work->option[2] + (s32)MsgOptionA;
-      UiWindow_ClearInteriorTiles(settingsWindow, 160, 40, 200, 48);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, 160, 40);
+      Window_ClearInteriorTiles(settingsWindow, 160, 40, 200, 48);
+      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 40);
       x = work->option[3] + (s32)MsgOptionB;
-      UiWindow_ClearInteriorTiles(settingsWindow, 160, 64, 184, 72);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, 160, 64);
+      Window_ClearInteriorTiles(settingsWindow, 160, 64, 184, 72);
+      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 64);
       x = work->option[4] + (s32)MsgOptionC;
-      UiWindow_ClearInteriorTiles(settingsWindow, 160, 88, 184, 96);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, 160, 88);
+      Window_ClearInteriorTiles(settingsWindow, 160, 88, 184, 96);
+      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 88);
       Func_0803f9c0(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
@@ -168,8 +168,8 @@ s32 Func_080400e8(void) {
       if (selectedOption == 0)
         y += 8;
       Func_08108040(work->cursor, x, y, 3);
-      RenderOutput_ClearList(helpWindow);
-      UiText_DrawResource(selectedOption + (s32)MsgOptionD, helpWindow, 0, 0);
+      WindowSprite_ClearList(helpWindow);
+      Text_DrawMessage(selectedOption + (s32)MsgOptionD, helpWindow, 0, 0);
     }
     Func_08045018(pair);
     WaitFrames(1);
@@ -216,11 +216,11 @@ s32 Func_080400e8(void) {
     }
   }
 
-  UiWork_Finalize(helpWindow, 2);
-  UiWork_Finalize(settingsWindow, 2);
+  Window_Close(helpWindow, 2);
+  Window_Close(settingsWindow, 2);
   if (result == 0) {
     if (gAdventure.unk244[6] == 0 && work->option[4] == 1)
-      UiText_ShowPositionedMessageAndWait((s32)MsgOptionE, 1);
+      FieldMessage_Show((s32)MsgOptionE, 1);
   }
   if (result == 0) {
     gAdventure.paletteGlow[0] = work->option[0];

@@ -153,10 +153,10 @@ AffineMatrix_BuildForEffectFar:
 	.thumb_func
 Oam_AddSpriteAtDepthFar:
 	overlay_veneer Func_080140d8
-	.global Ui_LoadWindowGraphicsFar
+	.global Window_LoadGraphicsFar
 	.thumb_func
-Ui_LoadWindowGraphicsFar:
-	overlay_veneer Ui_LoadWindowGraphics
+Window_LoadGraphicsFar:
+	overlay_veneer Window_LoadGraphics
 	.global Palette_LoadBasicObjColorsFar
 	.thumb_func
 Palette_LoadBasicObjColorsFar:

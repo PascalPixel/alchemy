@@ -8,7 +8,7 @@ void Func_020004b0(void) {
 
   Func_020039d8();
   Func_02003b08(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgFieldStatueLikeDailaShrine, 1);
+  FieldMessage_Show((s32)MsgFieldStatueLikeDailaShrine, 1);
   work->unk15a = 1;
   Func_020039e0();
 }

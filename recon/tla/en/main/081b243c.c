@@ -83,11 +83,11 @@ s32 Trig_Sin(s32 angle);
 void Sound_PlayFar(s32 cue);
 s32 PartyInventory_CountItemFar(s32 item);
 void PartyInventory_RemoveFar(s32 item);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiWork_FinalizeFar(s32 window, s32 mode);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_CloseFar(s32 window, s32 mode);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 extern char MsgSlotsBet[];
 extern char MsgSlotsStopReels[];
@@ -144,15 +144,15 @@ void Func_081b243c(void) {
   if (gDebugPaused == 0) {
     if (work->state == 0) {
       tickets = PartyInventory_CountItemFar(228);
-      UiText_DrawNumberInWindowFar(tickets - work->bet, 2, work->subWindow, 64,
+      Text_DrawNumberInWindowFar(tickets - work->bet, 2, work->subWindow, 64,
                                    0);
-      UiText_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
+      Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)Data_0200024c;
 
         work->state = 10;
         save->wonPrizes[0] = -2;
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       } else {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
@@ -175,10 +175,10 @@ void Func_081b243c(void) {
         if (work->pressed & KEY_A) {
           work->state = 1;
           fx->frame = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(228);
-          UiWork_FinalizeFar(work->subWindow, 1);
+          Window_CloseFar(work->subWindow, 1);
           Sound_PlayFar(304);
         }
       }
@@ -228,39 +228,39 @@ void Func_081b243c(void) {
         if (work->cursor == 5) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
-              UiWork_FinalizeFar(work->window, 1);
-              work->window = UiWindow_CreateFar(11, 0, 19, 4, 6);
-              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
+              Window_CloseFar(work->window, 1);
+              work->window = Window_CreateFar(11, 0, 19, 4, 6);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
               work->phase = 1;
             } else if (work->phase == 1) {
-              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsCannotPull, work->window, 0, 8);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsCannotPull, work->window, 0, 8);
               work->phase = 2;
             }
           } else {
             if (work->phase != 3) {
-              UiWork_FinalizeFar(work->window, 1);
-              work->window = UiWindow_CreateFar(16, 0, 14, 3, 6);
-              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+              Window_CloseFar(work->window, 1);
+              work->window = Window_CreateFar(16, 0, 14, 3, 6);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
             }
             work->phase = 3;
           }
         } else if (work->reels[work->cursor].held == 0) {
           if (work->phase != 4) {
-            UiWork_FinalizeFar(work->window, 1);
-            work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
-            UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+            Window_CloseFar(work->window, 1);
+            work->window = Window_CreateFar(23, 0, 7, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
-            UiWork_FinalizeFar(work->window, 1);
-            work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
-            UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+            Window_CloseFar(work->window, 1);
+            work->window = Window_CreateFar(23, 0, 7, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
           }
           work->phase = 5;
         }
       } else {
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       }
     } else if (work->state == 2) {
       work->timer++;
@@ -284,13 +284,13 @@ void Func_081b243c(void) {
     } else if (work->state == 11) {
       if (work->phase == 0) {
         work->phase = 1;
-        UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
+        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
       }
       if (work->pressed & KEY_A) {
         work->state = 5;
         work->phase = 0;
         Sound_PlayFar(112);
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       }
     } else if (work->state == 20) {
       work->timer++;
@@ -298,8 +298,8 @@ void Func_081b243c(void) {
         work->state = 10;
     } else if (work->state != 10) {
       if (work->timer == 4) {
-        work->window = UiWindow_CreateFar(18, 17, 12, 3, 6);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
+        work->window = Window_CreateFar(18, 17, 12, 3, 6);
+        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
         Sound_PlayFar(306);
@@ -379,18 +379,18 @@ void Func_081b243c(void) {
           fx->transferMode = 1;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
         } else {
           work->state = 11;
           work->phase = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
           if (work->spins <= 3) {
             s32 message;
 
-            work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
+            work->window = Window_CreateFar(3, 16, 24, 4, 6);
             message = (s32)MsgSlotsChooseHeld;
-            UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
-            UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
+            Text_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
+            Text_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
           }
           if (work->spins == 4) {
             s32 left = PartyInventory_CountItemFar(228);
@@ -412,11 +412,11 @@ void Func_081b243c(void) {
             fx->transferMode = 1;
             fx->transferValue = 0;
             REG_BLDCNT = 0;
-            window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+            window = Window_CreateFar(18, 0, 12, 4, 6);
             work->subWindow = window;
             message = (s32)MsgSlotsBet;
-            UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-            UiText_DrawCharacterAtOffsetFar(message - 1, work->subWindow, 0, 0);
+            Text_DrawCharacterAtOffsetFar(message, window, 0, 8);
+            Text_DrawCharacterAtOffsetFar(message - 1, work->subWindow, 0, 0);
           }
         }
       }

@@ -18,13 +18,13 @@ void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 s32 Sound_LoadPresetParameters(s32 preset);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
-void RenderOutput_RedrawSavedRect(struct RenderInput *window);
-void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x1, s32 y1,
+void Window_Close(struct RenderInput *window, s32 release);
+void WindowSprite_RedrawSavedRect(struct RenderInput *window);
+void Window_DrawDividerLine(struct RenderInput *window, s32 x1, s32 y1,
                               s32 x2, s32 y2);
-void UiText_DrawStringInWindow(const u8 *text, struct RenderInput *window,
+void Text_DrawStringInWindow(const u8 *text, struct RenderInput *window,
                                s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 digits,
+void Text_DrawNumberInWindow(s32 value, s32 digits,
                                struct RenderInput *window, s32 x, s32 y);
 
 /// The debug sound test. Four values (music, jingle, sound effect, sound
@@ -52,15 +52,15 @@ s32 Func_08040a48(void) {
       redraw = 0;
       cursor = (cursor + rows) % rows;
       test.values[3] = (test.values[3] + 5) % 5;
-      RenderOutput_RedrawSavedRect(window);
+      WindowSprite_RedrawSavedRect(window);
       for (i = 0, y = 2; i < 3; i++, y += 2)
-        UiWindow_DrawDividerLine(window, 0, y, 14, y);
+        Window_DrawDividerLine(window, 0, y, 14, y);
       for (i = 0, value = test.values; i < 4; i++)
-        UiText_DrawNumberInWindow(*value++, 0, window, 72, i * 16);
-      UiText_DrawStringInWindow(SoundTest_MusicString, window, 8, 0);
-      UiText_DrawStringInWindow(SoundTest_JingleString, window, 8, 16);
-      UiText_DrawStringInWindow(SoundTest_SeString, window, 8, 32);
-      UiText_DrawStringInWindow(SoundTest_FxString, window, 8, 48);
+        Text_DrawNumberInWindow(*value++, 0, window, 72, i * 16);
+      Text_DrawStringInWindow(SoundTest_MusicString, window, 8, 0);
+      Text_DrawStringInWindow(SoundTest_JingleString, window, 8, 16);
+      Text_DrawStringInWindow(SoundTest_SeString, window, 8, 32);
+      Text_DrawStringInWindow(SoundTest_FxString, window, 8, 48);
       Func_08108040(work + 0x5a4, ((s16)window->x << 3) - 4,
                     ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
@@ -102,7 +102,7 @@ s32 Func_08040a48(void) {
       redraw = 1;
     }
   } while (1);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Func_080409dc();
   WaitFrames(1);
   return 0;

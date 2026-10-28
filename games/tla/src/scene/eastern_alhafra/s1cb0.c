@@ -18,7 +18,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test();
 s32 Event_AskYesNoWithActorAnimation();
 void Func_02004b6c(s32 actor, s32 a, s32 b);
-void UiText_OpenMessageAtObject(s32 actor, s32 flags);
+void FieldMessage_ShowAtActor(s32 actor, s32 flags);
 void WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -77,12 +77,12 @@ static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   Func_02004b6c(actor, second, third);
 }
 
-static __inline__ void UiText_OpenMessageAtObject_(s32 actor, s32 flags) {
+static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
   /* FAKEMATCH: pinned, the flags load before the actor, as the native does (one
    * reordered row without). */
   register s32 f asm("r1") = flags;
 
-  UiText_OpenMessageAtObject(actor, f);
+  FieldMessage_ShowAtActor(actor, f);
 }
 
 /// The scene that opens with MsgHeyThatBlock: either answer to the prompt
@@ -148,7 +148,7 @@ void Func_02001cb0(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 0x14);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 0x17, -0x10, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 0x14);
-  UiText_OpenMessageAtObject_(0x17, 0);
+  FieldMessage_ShowAtActor_(0x17, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 0x14);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x17, 3);
@@ -408,7 +408,7 @@ void Func_02002048(void) {
   Call3((void (*)())Func_02004b4c, 0x19, 0, 0xa);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x19, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 0xa);
-  UiText_OpenMessageAtObject_(0x19, 0);
+  FieldMessage_ShowAtActor_(0x19, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) != 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 0x28);
     Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0x8000, 0);
@@ -989,7 +989,7 @@ void Func_02003274(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 0x14);
-  UiText_OpenMessageAtObject_(0x1a, 0);
+  FieldMessage_ShowAtActor_(0x1a, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 0x14);
     Call3((void (*)())Func_02004b4c, 0x1a, 0, 0xa);
@@ -1011,7 +1011,7 @@ void Func_02003274(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 0x14);
-  UiText_OpenMessageAtObject_(0x1a, 0);
+  FieldMessage_ShowAtActor_(0x1a, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) != 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 0x28);
     Call3((void (*)())Func_02004b4c, 0x1a, 0, 0xa);

@@ -291,7 +291,7 @@ loop2:
   if (GameFlag_Test(7))
     Call3((void (*)())ObjectMotion_ArmCallback, 7, 0xb000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x2005, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x2005, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x2000, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 30);

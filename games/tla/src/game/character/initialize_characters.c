@@ -23,7 +23,7 @@ extern s32 gData_080b2340[];
 s32 Inventory_AddItem(s32 owner, s32 item);
 void Inventory_Equip(s32 owner, s32 slot);
 struct OwnerStart *Character_GetDefinition(s32 index);
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void Message_DecodeRawUnboundedFar(s32, u16 *);
 void Unit_Calculate(s32 owner);
 
 void Func_080af7ac(void) {
@@ -38,7 +38,7 @@ void Func_080af7ac(void) {
 
   for (owner = 0; owner <= 7; owner++) {
     state = Unit_Get(owner);
-    Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, nameBuf);
+    Message_DecodeRawUnboundedFar(owner + (s32)MsgCharacterName, nameBuf);
     name = ((struct OwnerName *)state)->name;
     name[0] = nameBuf[0];
     i = 0;

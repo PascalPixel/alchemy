@@ -13,7 +13,7 @@ extern u8 gSceneState[];
 
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 mode);
 void Field_SetDestination(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
@@ -34,12 +34,12 @@ void Func_02001abc(void) {
   Func_02004204(0);
   if ((u32)gAdventure.coins < price) {
     Func_0200412c((s32)MsgContigo03);
-    UiText_OpenMessageAtObject(14, 0);
+    FieldMessage_ShowAtActor(14, 0);
     return;
   }
   Func_0200412c((s32)MsgContigo01);
   Func_0200403c(price, 5);
-  UiText_OpenMessageAtObject(14, 0);
+  FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
      * the coins; as a plain store, 6 instructions differ in tla-en. */
@@ -68,11 +68,11 @@ void Func_02001b84(void) {
   Func_02004204(0);
   if ((u32)gAdventure.coins < price) {
     Func_0200412c((s32)MsgContigo34);
-    UiText_OpenMessageAtObject(14, 0);
+    FieldMessage_ShowAtActor(14, 0);
     return;
   }
   Func_0200412c((s32)MsgContigo23);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
      * the coins; as a plain store, 6 instructions differ in tla-en. */

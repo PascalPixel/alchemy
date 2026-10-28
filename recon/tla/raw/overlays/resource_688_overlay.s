@@ -208,7 +208,7 @@ Func_02000310:
 	add r3, sp, #8
 	add r1, sp, #16
 	str r4, [sp, #0]
-	bl UiText_GetResourceDimensions
+	bl Text_GetMessageSize
 	ldr r3, [sp, #16]
 	ldr r2, [sp, #8]
 	adds r3, r3, r2
@@ -235,7 +235,7 @@ Func_02000310:
 	ldr r1, [sp, #16]
 	ldr r2, [sp, #12]
 	asrs r0, r0, #16
-	bl UiText_OpenMessageWindow
+	bl Message_OpenWindow
 	adds r2, r5, #0
 	adds r0, r6, #0
 	movs r1, #0
@@ -247,15 +247,15 @@ Func_02000310:
 	movs r0, #1
 	bl WaitFrames
 .L_020083a6:
-	bl UiWork_IsComplete
+	bl Message_AllTyped
 	cmp r0, #0
 	beq .L_020083a0
 	mov r0, r10
 	bl FieldEvent_WaitFrames
 	adds r0, r5, #0
 	movs r1, #2
-	bl UiWork_Finalize
-	bl UiWork_FinalizePendingCore
+	bl Window_Close
+	bl Message_CloseFinishedWindows
 	add sp, #20
 	pop {r3, r5}
 	mov r8, r3

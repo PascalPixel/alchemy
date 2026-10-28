@@ -14,13 +14,13 @@
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 flags);
 
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 
-// The sprite cell at RenderOutput.unk10: a link, then the OAM words.
+// The sprite cell at WindowSprite.unk10: a link, then the OAM words.
 struct ArrowSprite {
   struct ArrowSprite *next;
   u32 attr01;
@@ -38,9 +38,9 @@ struct ArrowOam {
 };
 
 // Stand-in for the parent, Func_080464dc, which compares a unit's stats.
-void Func_080464dc(struct UiWindow *window) {
+void Func_080464dc(struct Window *window) {
   void Func_08046414(s32 x, s32 y, s32 up) {
-    struct RenderOutput *output = RenderOutput_AcquireFree();
+    struct WindowSprite *output = WindowSprite_AcquireFree();
     struct ArrowOam *sprite;
     s32 entry;
 
@@ -60,9 +60,9 @@ void Func_080464dc(struct UiWindow *window) {
     sprite->y = (s16)window->y * 8 + y;
     sprite->tile = VramCache_Reload((u8)output->index, up ? gDjinnMenu_ArrowUpTiles
                                                       : gDjinnMenu_ArrowDownTiles);
-    RenderOutput_AppendToList(&window->output, output);
+    WindowSprite_AppendToList(&window->output, output);
   }
 
-  window = UiWindow_Create(0, 8, 20, 11, 6);
+  window = Window_Create(0, 8, 20, 11, 6);
   Func_08046414(80, 14, 1);
 }

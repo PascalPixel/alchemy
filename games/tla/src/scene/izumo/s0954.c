@@ -12,7 +12,7 @@ void Func_02000954(void) {
     /* FAKEMATCH: the native schedules this call as a value-returning one (the
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
-    ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(32, 0);
+    ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
     if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
       Func_02000814();
     } else {

@@ -1,26 +1,26 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global RenderOutput_CreateFar
+	.global WindowSprite_CreateFar
 	.thumb_func
-RenderOutput_CreateFar:
-	overlay_veneer RenderOutput_Create
-	.global RenderOutput_CreateFromResourceFar
+WindowSprite_CreateFar:
+	overlay_veneer WindowSprite_Create
+	.global WindowSprite_CreateFromResourceFar
 	.thumb_func
-RenderOutput_CreateFromResourceFar:
-	overlay_veneer RenderOutput_CreateFromResource
+WindowSprite_CreateFromResourceFar:
+	overlay_veneer WindowSprite_CreateFromResource
 	.global SideObject_CreateFar
 	.thumb_func
 SideObject_CreateFar:
 	overlay_veneer CreateSideObject
-	.global Ui_LoadCharacterEntryForSlotFar
+	.global Portrait_ReloadFar
 	.thumb_func
-Ui_LoadCharacterEntryForSlotFar:
-	overlay_veneer Ui_LoadCharacterEntryForSlot
-	.global RenderOutput_SetAnimationFar
+Portrait_ReloadFar:
+	overlay_veneer Portrait_Reload
+	.global WindowSprite_SetMotionFar
 	.thumb_func
-RenderOutput_SetAnimationFar:
-	overlay_veneer RenderOutput_SetAnimation
+WindowSprite_SetMotionFar:
+	overlay_veneer WindowSprite_SetMotion
 	.global Func_080380f0
 	.thumb_func
 Func_080380f0:

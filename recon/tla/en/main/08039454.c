@@ -4,7 +4,7 @@
 // one-pass blocks (device search).
 // Draft, differ 8 of 69 (2026-10-24): a one-pass block around x = left >> 3
 // takes six rows off. Left: instruction order only.
-// Near miss, differ 14 of 69: The Broken Seal's UiWindow_ClearInteriorTiles,
+// Near miss, differ 14 of 69: The Broken Seal's Window_ClearInteriorTiles,
 // reading the window's position signed (ldrsh) and loading it before the
 // rounding, as the native orders it. Left: sub sp, #4 is scheduled before
 // the heap slot base (native after it), the second ldrsh one slot late, the
@@ -15,16 +15,16 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 // Clears an area of a window's interior to the window fill. left, top, right
 // and bottom are pixels inside the window, and the area covers every tile
 // they touch.
-void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
+void Window_ClearInteriorTiles(const struct Window *window, u32 left,
                                  u32 top, u32 right, u32 bottom) {
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 x;
   u32 y;
   u32 width;
@@ -53,7 +53,7 @@ void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
   top = y + 1;
   width = right - x;
   height = bottom - y;
-  UiWindow_ClearTileAttributesInRect(left, top, width, height);
+  Window_ClearTextTilesInRect(left, top, width, height);
   tiles = work->tilemap[0] + top * 32 + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)

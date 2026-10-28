@@ -23,17 +23,17 @@ struct ItemSummary {
   u16 icon;
 };
 
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void RenderOutput_PrepareForRedraw(void *window);
-void UiText_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x,
+void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void WindowSprite_PrepareForRedraw(void *window);
+void Text_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
+void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x,
                                s32 y);
-void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
-void UiText_DrawResource(s32 message, void *window, s32 x, s32 y);
+void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
+void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
-void UiWork_Finalize(void *window, s32 release);
+void Window_Close(void *window, s32 release);
 void WaitFrames(s32 frames);
 struct ItemSummary *Func_02000d48(s32 item);
 void Func_02000e78(s32 cue);
@@ -48,8 +48,8 @@ void Func_02000848(void) {
   s8 step;
 
   step = 0;
-  window = UiWindow_Create(0, 0, 30, 7, 2);
-  details = UiWindow_Create(0, 8, 13, 10, 2);
+  window = Window_Create(0, 0, 30, 7, 2);
+  details = Window_Create(0, 8, 13, 10, 2);
   item = 1;
   redraw = 1;
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
@@ -60,17 +60,17 @@ loop:
   {
     if (redraw) {
       redraw = 0;
-      RenderOutput_PrepareForRedraw(window);
-      RenderOutput_PrepareForRedraw(details);
-      UiText_DrawStringInWindow(gData_02000e84, window, 0, 0);
-      UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
+      WindowSprite_PrepareForRedraw(window);
+      WindowSprite_PrepareForRedraw(details);
+      Text_DrawStringInWindow(gData_02000e84, window, 0, 0);
+      Text_DrawNumberAtOffset(item, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        UiText_DrawStringInWindow(gData_02000e90, window, 0, 32);
-        UiText_DrawCharacterAtOffset((s32)(item + MsgItemName), window, 120, 0);
-        UiText_DrawResource((s32)(item + MsgItemPlainName), window, 0, 16);
+        Text_DrawStringInWindow(gData_02000e90, window, 0, 32);
+        Text_DrawCharacterAtOffset((s32)(item + MsgItemName), window, 120, 0);
+        Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {
-        UiText_DrawStringInWindow(gData_02000ea8, window, 0, 32);
+        Text_DrawStringInWindow(gData_02000ea8, window, 0, 32);
       }
     }
     WaitFrames(1);
@@ -143,6 +143,6 @@ loop:
     goto loop;
   }
 done:
-  UiWork_Finalize(window, 2);
-  UiWork_Finalize(details, 2);
+  Window_Close(window, 2);
+  Window_Close(details, 2);
 }

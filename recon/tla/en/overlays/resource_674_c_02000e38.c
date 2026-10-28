@@ -36,7 +36,7 @@ void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 void WaitFrames(s32 frames);
 void Func_02003fc4(void);
 void Func_02003fbc(void);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
+void FieldMessage_Show(const u8 *message, s32 a);
 void PartyInventory_Remove(s32 item);
 void PartyInventory_GiveItem(s32 item, s32 a);
 void Func_02003dfc(struct ObjectRuntime *object);
@@ -123,7 +123,7 @@ void Func_02000e38(void) {
     STEP(11, 280, 856);
     trader->update = 0;
     Func_02003fc4();
-    UiText_ShowPositionedMessageAndWait(MsgTradedHisMilk, 1);
+    FieldMessage_Show(MsgTradedHisMilk, 1);
     PartyInventory_Remove(454);
     PartyInventory_GiveItem(455, 0);
     Func_02003fbc();

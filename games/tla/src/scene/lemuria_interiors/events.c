@@ -19,21 +19,21 @@ void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_ArmCallback();
 void ObjectMotion_SetAngleToward();
 struct ObjectRuntime *Object_GetById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void FieldEvent_WaitFrames();
 void Func_020028ac();
 void Func_020028c4();
 void Func_0200291c();
 void Event_AskYesNoWithActorAnimation();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Func_02000154(s32 arg0) {
   s32 result0;
   s32 result1;
 
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors13);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, arg0, 0);
   result0 = Value0((s32 (*)())Func_0200291c);
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
@@ -54,7 +54,7 @@ void Func_020001a0(s32 arg0) {
   s32 result1;
 
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors18);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, arg0, 0);
   result0 = Value0((s32 (*)())Func_0200291c);
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
@@ -84,7 +84,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   Value3((s32 (*)())Func_020028dc, arg1, 0x101, 30);
   Call3((void (*)())ObjectMotion_SetAngleToward, arg1, 4, 20);
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors19);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, arg1, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, arg1, 0);
   result2 = Value0((s32 (*)())Func_0200291c);
   result3 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result2, 0);
   if (result3 != 0)

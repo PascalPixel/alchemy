@@ -104,11 +104,11 @@ void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Func_08104e38(s32 first, s32 second);
-void RenderOutput_ClearListFar(s32 window);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void UiWindow_CloseIfOpen(void *window, s32 mode);
-s32 UiWindow_UpdateOrCreate(void *handle, s32 x, s32 y, s32 width, s32 height,
+void WindowSprite_ClearListFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void Window_CloseIfOpen(void *window, s32 mode);
+s32 Window_UpdateOrCreate(void *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *buffer);
@@ -118,17 +118,17 @@ void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 void Unit_CalculateFar(s32 owner);
 s32 Func_08101860(u16 *before, u16 *after, u16 *out, s32 *gained, s32 *lost);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
-s32 UiWork_SetParamNibbleFar(s32 color);
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+s32 Text_SetColorFar(s32 color);
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
+void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
-void UiText_DrawQuantity(s32 value, s32 kind);
+void MessageArgument_PushFar(s32 value, s32 kind);
 s32 Menu_GetDjinnGiveMessage(void);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 style);
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizeFar(s32 window, s32 style);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
+s32 Message_AllTypedFar(void);
+void Window_CloseFar(s32 window, s32 style);
 void Func_08038290(void);
 void Func_080f8a44(s32 x, s32 y);
 void Func_080f8ab4(s32 x, s32 y);
@@ -205,10 +205,10 @@ s32 Func_081039fc(u32 mode) {
     menu->memberX[1] = 120;
     menu->memberY[1] = 32;
   }
-  RenderOutput_ClearListFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_CloseIfOpen(&menu->helpWindow, 1);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   pageCounts[0] = 1;
   pageCounts[1] = 1;
   if (mode <= 1) {
@@ -302,21 +302,21 @@ s32 Func_081039fc(u32 mode) {
   pageCounts[1] = (pageCounts[1] - 1) / 5 + 1;
   if (pageCounts[1] == 0)
     pageCounts[1] = 1;
-  UiWindow_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
-  UiWindow_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar(help);
+  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
+  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
+  WindowSprite_RedrawSavedRectFar(help);
   if (mode == 2) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, help, 96, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, help, 96, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 3) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, help, 96, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, help, 96, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 0) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, help, 128, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, help, 128, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   } else {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, help, 128, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, help, 128, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   }
   row = 0;
   entry0 = menu->pairEntries[0];
@@ -324,17 +324,17 @@ s32 Func_081039fc(u32 mode) {
   if (mode == 1)
     row = 1;
   if ((entry0 & 0x8000) == 0)
-    UiWork_SetParamNibbleFar(2);
+    Text_SetColorFar(2);
   Func_08101a54(help, 40, row * 8, entry0);
   if (mode == 0) {
     if ((entry1 & 0x8000) == 0)
-      UiWork_SetParamNibbleFar(2);
+      Text_SetColorFar(2);
     Func_08101a54(help, 40, 16, entry1);
   } else if (mode - 2 <= 1) {
     if ((entry0 & 0x8000) != 0)
-      UiWork_SetParamNibbleFar(2);
+      Text_SetColorFar(2);
     Func_08101a54(help, 40, 16, entry0);
-    UiWindow_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
+    Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
   }
 
   for (;;) {
@@ -370,7 +370,7 @@ s32 Func_081039fc(u32 mode) {
           s32 window;
 
           Iwram_CopyWords(saved, work->tilemap, size);
-          window = UiText_OpenMessageWindowFar(Menu_GetDjinnGiveMessage() + 3,
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3,
                                                8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
            * Broken Seal's twin has it; as a plain statement (both cases), 46 of
@@ -380,9 +380,9 @@ s32 Func_081039fc(u32 mode) {
           } while (0);
           Func_080f8ab4(2, 96);
           gAdventure.eventMode = 1;
-          while (UiWork_IsCompleteFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
-          UiWork_FinalizeFar(window, 1);
+          Window_CloseFar(window, 1);
           Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
@@ -402,7 +402,7 @@ s32 Func_081039fc(u32 mode) {
           s32 window;
 
           Iwram_CopyWords(saved, work->tilemap, size);
-          window = UiText_OpenMessageWindowFar(Menu_GetDjinnGiveMessage() + 2,
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2,
                                                8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
            * Broken Seal's twin has it; as a plain statement (both cases), 46 of
@@ -412,9 +412,9 @@ s32 Func_081039fc(u32 mode) {
           } while (0);
           Func_080f8ab4(106, 56);
           gAdventure.eventMode = 1;
-          while (UiWork_IsCompleteFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
-          UiWork_FinalizeFar(window, 1);
+          Window_CloseFar(window, 1);
           Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
@@ -437,18 +437,18 @@ s32 Func_081039fc(u32 mode) {
     if (redraw != 0) {
       addPairSlot = 1;
       if (mode <= 1) {
-        UiWindow_ClearInteriorTilesFar(help, 128, 16, 224, 24);
+        Window_ClearInteriorTilesFar(help, 128, 16, 224, 24);
         if (page == 1) {
-          UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, help, 128,
+          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, help, 128,
                                           16);
         } else {
-          UiText_DrawQuantity(menu->shownMember[page != 2], 1);
-          UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, help, 128, 16);
+          MessageArgument_PushFar(menu->shownMember[page != 2], 1);
+          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
       work->holdTilemapUpload = 1;
-      RenderOutput_PrepareForRedrawFar(menu->window);
-      RenderOutput_PrepareForRedrawFar((s32)menu->secondWindow);
+      WindowSprite_PrepareForRedrawFar(menu->window);
+      WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       if ((redraw >> 1) != 0)
         WaitFrames(1);
       if (mode == 3) {
@@ -497,13 +497,13 @@ s32 Func_081039fc(u32 mode) {
             tile = 0xf03f;
           if (index == selectedPages[page])
             tile -= 0x1000;
-          UiWindow_SetTilemapEntryFar(
+          Window_SetTilemapEntryFar(
               (s32)list, tile, list->width - pageCounts[page] + index - 2, -1,
               0);
         }
-        UiWindow_SetTilemapEntryFar((s32)list, 0xf128,
+        Window_SetTilemapEntryFar((s32)list, 0xf128,
                                     list->width - pageCounts[page] - 3, -1, 0);
-        UiWindow_SetTilemapEntryFar((s32)list, 0xf129, list->width - 2, -1, 0);
+        Window_SetTilemapEntryFar((s32)list, 0xf129, list->width - 2, -1, 0);
         UiRender_MarkRow(work, list->y);
       }
     }
@@ -594,14 +594,14 @@ s32 Func_081039fc(u32 mode) {
   Func_08105350(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
+  Window_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
-  UiWindow_CloseIfOpen(&menu->window, 1);
-  UiWindow_CloseIfOpen(&menu->secondWindow, 1);
-  RenderOutput_RedrawSavedRectFar(menu->listWindow);
-  RenderOutput_RedrawSavedRectFar(menu->unopenedWindow);
-  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_CloseIfOpen(&menu->window, 1);
+  Window_CloseIfOpen(&menu->secondWindow, 1);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
+  WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
   WaitFrames(1);
   return result;

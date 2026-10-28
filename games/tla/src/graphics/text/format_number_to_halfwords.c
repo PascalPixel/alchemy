@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
+s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *dst;
   s32 n;
   u8 *src;

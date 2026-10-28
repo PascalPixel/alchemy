@@ -25,7 +25,7 @@ struct Record_080b06c0 {
 
 struct ShopRuntime {
   u8 unk000[0x4dc];
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u8 unk4e0[0x1a];
   u16 keeperResource;
   u8 unk4fc[0xa];
@@ -33,8 +33,8 @@ struct ShopRuntime {
 };
 
 void WaitFrames(s32);
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizePendingCoreFar(void);
+s32 Message_AllTypedFar(void);
+void Message_CloseFinishedWindowsFar(void);
 
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns) {
   s32 changed = 0;

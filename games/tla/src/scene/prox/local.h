@@ -13,14 +13,14 @@
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Func_0200455c();
 
 static inline void Prox_MessageOpen(s32 actor, s32 flags) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; through
    * Call2 the actor is finished after the flags (differ 4 in Func_02001cf0, 2
    * in Func_02000dac). */
-  UiText_OpenMessageAtObject(actor, flags);
+  FieldMessage_ShowAtActor(actor, flags);
 }
 
 static inline void Prox_Jump(s32 actor, s32 height, s32 frames) {

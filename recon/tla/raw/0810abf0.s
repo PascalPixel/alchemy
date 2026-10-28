@@ -37,7 +37,7 @@ Func_0810abf0:
 	movs r3, #3
 	movs r0, #1
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	mov r11, r0
 	movs r0, #128
 	lsls r0, r0, #3
@@ -61,7 +61,7 @@ Func_0810abf0:
 	movs r2, #23
 	movs r3, #3
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	mov r8, r6
 	str r0, [sp, #8]
 	str r6, [sp, #12]
@@ -212,13 +212,13 @@ Func_0810abf0:
 	b .L_0810acac
 .L_0810ad98:
 	mov r0, r11
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r0, r8
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r5, #0
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r6, .L_0810ae9c
 	adds r0, r6, #0
 	bl Func_0810a9ac
@@ -246,10 +246,10 @@ Func_0810abf0:
 .L_0810ade6:
 	movs r1, #1
 	mov r0, r8
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r6, #3
 	bl Func_0810a9ac
-	bl UiWork_FinalizePendingCoreFar
+	bl Message_CloseFinishedWindowsFar
 	mov r0, r8
 	mov r1, r10
 	bl BattleUnit_ResetStateByMode
@@ -268,7 +268,7 @@ Func_0810abf0:
 	bl Func_08109188
 	mov r0, r8
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r6, #4
 	bl Func_0810a9ac
 	bl Shop_CountUnits
@@ -304,10 +304,10 @@ Func_0810abf0:
 	bl Menu_ReleaseEntryObjectsFar
 	movs r1, #2
 	ldr r0, [sp, #8]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	mov r0, r11
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0

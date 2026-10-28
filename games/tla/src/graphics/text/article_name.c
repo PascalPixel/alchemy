@@ -6,12 +6,12 @@ struct ArticleTable {
   u8 *text[8];
 };
 
-extern const struct ArticleTable gUiText_ArticleTable;
+extern const struct ArticleTable gText_ArticleTable;
 
 /// Copies a name into the decoded text at pos, with its English article in
 /// front when no is 1 (or 3 with plural clear) and a plural ending after it
 /// when no is 2 (or 3 with plural set); mode wraps the name in line breaks.
-/// The Broken Seal's UiText_AppendArticleName (window.c) is its twin.
+/// The Broken Seal's Message_AppendArticleName (window.c) is its twin.
 /// Returns the next position in the 512-entry ring.
 u32 Func_0803aed8(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
                   s32 *suffix) {
@@ -36,7 +36,7 @@ u32 Func_0803aed8(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
   }
   if (no == 1 || (no == 3 && plural == 0)) {
     kind = 0;
-    table = gUiText_ArticleTable;
+    table = gText_ArticleTable;
     head = name[0];
     if (head == 29) {
       kind = name[1] - 1;

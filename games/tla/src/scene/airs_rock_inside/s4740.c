@@ -22,7 +22,7 @@ s32 Func_02005e6c();
 s32 Func_02005dcc();
 s32 Func_02005dd4();
 s32 Func_02004138();
-s32 UiText_DrawQuantityPairWithCue();
+s32 Party_LearnAbility();
 s32 Object_TurnToFaceEachOther();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
@@ -39,7 +39,7 @@ void Func_02004534(void) {
 
   Func_02005e14();
   Call1(Func_02005f2c, 0);
-  UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
+  FieldMessage_Show(MsgCheckedTheTablet, 1);
   if (Value1(GameFlag_Test, 0x8d4) != 0) {
     Func_02005e1c();
   } else {
@@ -75,7 +75,7 @@ void Func_02004534(void) {
     Call3(ObjectMotion_SetPositionAndReset, 6, 0x108, 0x89);
     Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet + 2, 1);
+    FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
     /* FAKEMATCH(wrapper): the call through Call0's pointer; called directly,
@@ -83,7 +83,7 @@ void Func_02004534(void) {
      * instructions differ in tla-en. */
     Call0(Func_02005dd4);
     Call2(Func_02004138, 8, 6);
-    Call2(UiText_DrawQuantityPairWithCue, 6, 0x90);
+    Call2(Party_LearnAbility, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
     Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 6, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
@@ -107,7 +107,7 @@ void Func_02004740(void) {
   if (GameFlag_Test(0x8d4)) {
     Func_02005e14();
     Func_02005f2c(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
+    FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 107);
@@ -123,7 +123,7 @@ void Func_020047b0(void) {
   if (GameFlag_Test(0x8d4)) {
     Func_02005e14();
     Func_02005f2c(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
+    FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 280, 136);
@@ -138,7 +138,7 @@ void Func_02004818(void) {
   if (GameFlag_Test(0x8d4)) {
     Func_02005e14();
     Func_02005f2c(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
+    FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 136);

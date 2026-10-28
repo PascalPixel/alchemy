@@ -188,7 +188,7 @@ Func_0803bb58:
 	str r0, [sp, #8]
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl UiWork_ResetCounters
+	bl Text_ResetStyle
 	ldr r3, .L_0803bd9c
 	ldr r0, [sp, #8]
 	mov r12, r3
@@ -289,7 +289,7 @@ Func_0803bb58:
 .L_0803bd9c:
 	.4byte .L_0803bc08
 .L_0803bda0:
-	.4byte gUiText_Glyphs
+	.4byte gFont_Glyphs
 .L_0803bda4:
 	ldr r2, [sp, #12]
 	ldrh r3, [r5, r2]
@@ -316,7 +316,7 @@ Func_0803bb58:
 	cmp r6, r2
 	bls .L_0803bd86
 .L_0803bdd2:
-	bl UiWork_ResetCounters
+	bl Text_ResetStyle
 	add sp, #108
 	pop {r3, r5, r6, r7}
 	mov r8, r3

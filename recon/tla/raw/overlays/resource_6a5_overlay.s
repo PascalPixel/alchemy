@@ -445,7 +445,7 @@ Func_0200065c:
 	movs r1, #5
 	mov r8, r2
 	mov r0, r8
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -1418,7 +1418,7 @@ Func_02000cd0:
 	lsls r0, r0, #5
 	movs r1, #0
 	adds r0, #28
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -1545,7 +1545,7 @@ Func_02000cd0:
 	lsls r0, r0, #16
 	strh r2, [r3]
 	asrs r0, r0, #16
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #224
 	bl PartyInventory_Add
 	movs r5, #0
@@ -1681,7 +1681,7 @@ Func_02000cd0:
 	bl ObjectMotion_ArmCallback
 	movs r1, #0
 	movs r0, #28
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -4441,7 +4441,7 @@ Func_02002ae4:
 	bl Motion_SetVarCbAndRefresh
 	movs r1, #0
 	movs r0, #28
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r1, #192
 	movs r2, #0
 	movs r0, #6

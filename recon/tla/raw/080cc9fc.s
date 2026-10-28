@@ -369,7 +369,7 @@ Func_080cc9fc:
 	ldr r4, [sp, #0]
 	b .L_080ccad6
 .L_080ccca2:
-	bl Ui_LoadWindowGraphics
+	bl Window_LoadGraphics
 	bl Func_08014b70
 	add sp, #12
 	pop {r3, r5, r6, r7}

@@ -40,7 +40,7 @@ void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_OffsetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 s32 PartyInventory_FindOwner(s32 item);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 static inline s32 FlagCheck(s32 flag) {
@@ -333,7 +333,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Func_02002254, 0x800f, 0);
   ActorAnimate(20, 0x101, 30);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 0x8014, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x8014, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 1) {
     Call1((void (*)())Func_02002244, (s32)MsgIThoughtSo);
@@ -600,7 +600,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Object_SetModeById, 23, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 90);
   Call2((void (*)())Object_SetModeById, 15, 3);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 15, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Call1((void (*)())Func_02002244, (s32)MsgRegardlessOfYour);
@@ -647,7 +647,7 @@ void Func_0200061c(s32 mode) {
   owner = (s32)&gAdventure;
   owner = owner + 532;
   Call3((void (*)())ObjectMotion_SetAngleToward, 6, *(s32 *)owner, 0);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 6, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 6, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 5, *(s32 *)owner, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 6, *(s32 *)owner, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 7, *(s32 *)owner, 0);
@@ -689,7 +689,7 @@ void Func_0200061c(s32 mode) {
   Call3((void (*)())ObjectMotion_SetAngleToward, 15, *(s32 *)owner, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 23, *(s32 *)owner, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 23, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 23, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Call1((void (*)())Func_02002244, message + 4);

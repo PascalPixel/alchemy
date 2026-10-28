@@ -198,10 +198,10 @@ Func_02004c80:
 	.thumb_func
 Func_02004c88:
 	overlay_veneer Func_08020390
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

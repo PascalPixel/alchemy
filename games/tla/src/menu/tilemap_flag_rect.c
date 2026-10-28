@@ -4,9 +4,9 @@
 #include "dma.h"
 #include "io_reg.h"
 
-void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
+void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                s32 width, s32 height, u32 field) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
   y += (s16)object->y + 1;

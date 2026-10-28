@@ -166,14 +166,14 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02005848:
 	overlay_veneer Func_080202f0
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02005858
 	.thumb_func
 Func_02005858:
-	overlay_veneer UiText_DrawQuantity
+	overlay_veneer MessageArgument_PushFar
 	.global Func_02005860
 	.thumb_func
 Func_02005860:

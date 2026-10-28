@@ -6,9 +6,9 @@
 // earlier, loads the window's x before it builds 0xfffe, and moves the
 // window argument after the stores of y and next (the lane's load-earlier
 // near misses). The RAM routine's size is a linker constant in the listing
-// (0x31c): UiText_DrawGlyphCodeSize stands for it.
-// ☀️'s UiText_DrawGlyph (the international form) on this game's
-// UiRenderWork: a text canvas window draws the glyph with the routine copied
+// (0x31c): Text_DrawGlyphCodeSize stands for it.
+// ☀️'s Text_DrawGlyph (the international form) on this game's
+// WindowWork: a text canvas window draws the glyph with the routine copied
 // to RAM, other windows show it as a sprite.
 #include "types.h"
 #include "dma.h"
@@ -33,19 +33,19 @@ struct GlyphCell {
   u16 size : 2;
 };
 
-typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
+typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
 extern const u8 Data_080385e0[];
-extern u8 UiText_DrawGlyphCodeSize[];
+extern u8 Text_DrawGlyphCodeSize[];
 extern char ResourceId_WindowTiles;
 
 s32 Func_0803a8fc(s32 character, u32 *tiles);
 
 #define SPRITE_CELL(output) ((struct GlyphCell *)(output)->unk10)
 
-s32 Func_0803bde4(struct UiWindow *window, s32 character, s32 x, s32 y,
+s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
                   s32 mode) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 spacingX = work->glyphSpacing;
   s32 width;
   u32 spacingY = work->lineSpacing;
@@ -55,7 +55,7 @@ s32 Func_0803bde4(struct UiWindow *window, s32 character, s32 x, s32 y,
     GlyphRoutine draw;
     s32 result;
 
-    if (**(struct UiWindow ***)&((void **)Ram_HeapSlots)[37] == window) {
+    if (**(struct Window ***)&((void **)Ram_HeapSlots)[37] == window) {
       Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
       width = 3;
       if (character == ' ')
@@ -64,7 +64,7 @@ s32 Func_0803bde4(struct UiWindow *window, s32 character, s32 x, s32 y,
     font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     width = 4;
     if (character != ' ') {
-      RamCode_Load(draw, Data_080385e0, UiText_DrawGlyphCodeSize);
+      RamCode_Load(draw, Data_080385e0, Text_DrawGlyphCodeSize);
       result = draw(window, character, x, y, font);
       MemFree(draw);
       return result;
@@ -73,11 +73,11 @@ s32 Func_0803bde4(struct UiWindow *window, s32 character, s32 x, s32 y,
     width = 5;
   } else {
     u32 tiles[32];
-    struct RenderOutput *output;
+    struct WindowSprite *output;
     struct GlyphCell *sprite;
     s32 index;
 
-    output = RenderOutput_AcquireFree();
+    output = WindowSprite_AcquireFree();
     if (output == NULL)
       return 0;
     index = (output - work->outputs) * 4;
@@ -143,7 +143,7 @@ s32 Func_0803bde4(struct UiWindow *window, s32 character, s32 x, s32 y,
     output->next = NULL;
     output->y = sprite->y;
     output->index = index;
-    RenderOutput_AppendToList(&window->output, output);
+    WindowSprite_AppendToList(&window->output, output);
   }
 done:
   return width;

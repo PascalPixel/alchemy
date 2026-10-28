@@ -54,22 +54,22 @@ Func_02002a0c:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global UiText_OpenMessageWindow
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiWork_IsComplete
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global Message_AllTyped
 	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
+Message_AllTyped:
+	overlay_veneer Message_AllTypedFar
 	.global Func_02002a2c
 	.thumb_func
 Func_02002a2c:
 	overlay_veneer Func_080380f8
-	.global UiWork_FinalizeEntityMatchingLocalizedId
+	.global Window_CloseMatchingId
 	.thumb_func
-UiWork_FinalizeEntityMatchingLocalizedId:
-	overlay_veneer UiWork_FinalizeEntityMatchingLocalizedIdFar
+Window_CloseMatchingId:
+	overlay_veneer Window_CloseMatchingIdFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:
@@ -154,10 +154,10 @@ Object_TurnToFaceEachOther:
 	.thumb_func
 Func_02002adc:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02002aec
 	.thumb_func
 Func_02002aec:

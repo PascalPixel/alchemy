@@ -56,7 +56,7 @@ void Camera_FollowActor(s32 id, s32 mode);
 void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
 static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -182,7 +182,7 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_ArmCallback(6, 0xb000, 0);
   I_Func_020048cc(7, 0x101, 30);
   I_ObjectMotion_ArmCallback(5, 0xd000, 0);
-  UiText_OpenMessageAtObject(7, 0);
+  FieldMessage_ShowAtActor(7, 0);
   I_ObjectMotion_ArmCallback(4, 0, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Object_SetModeById(28, 3);

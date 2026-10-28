@@ -17,7 +17,7 @@ Func_08046414:
 	mov r8, r0
 	mov r10, r1
 	mov r11, r2
-	bl RenderOutput_AcquireFree
+	bl WindowSprite_AcquireFree
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080464cc
@@ -84,7 +84,7 @@ Func_08046414:
 	orrs r3, r0
 	strh r3, [r7, #8]
 	ldr r0, [r5]
-	bl RenderOutput_AppendToList
+	bl WindowSprite_AppendToList
 	b .L_080464cc
 	.2byte 0x0000
 .L_080464c0:

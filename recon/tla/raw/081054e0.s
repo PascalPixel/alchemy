@@ -48,7 +48,7 @@ Func_081054e0:
 	adds r3, r6, #0
 	adds r0, r5, r0
 	mov r1, r8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r2, #1
 	adds r6, #16
 	adds r7, #16
@@ -70,7 +70,7 @@ Func_081054e0:
 	mov r1, r8
 	mov r2, r10
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_0810556a:
 	add sp, #8
 	pop {r3, r5, r6, r7}

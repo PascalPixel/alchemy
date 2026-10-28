@@ -40,6 +40,6 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);
 void Owner_UpdateClassActions(s32 owner_id);
 void *Resource_FarCall005(s32);
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void Message_DecodeRawUnboundedFar(s32, u16 *);
 
 #endif

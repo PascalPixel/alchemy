@@ -14,12 +14,12 @@ void Func_020010d0(struct ObjectRuntime *object) {
 void Func_020010ec(void) {
   Func_02003d7c();
   Func_02003eac(0);
-  UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy, 1);
+  FieldMessage_Show(MsgCheckedThePsynergy, 1);
   Func_02003ef4(126);
   Func_02003eb4(999, 0);
   FieldEvent_WaitFrames(10);
   GameFlag_ClearBit(0x142);
-  UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy + 1, 1);
+  FieldMessage_Show(MsgCheckedThePsynergy + 1, 1);
   Func_02003d84();
 }
 

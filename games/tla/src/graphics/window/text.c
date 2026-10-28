@@ -24,13 +24,13 @@ struct NumberRow {
 
 /// Draws four two-digit numbers 24 pixels apart at y = 16.
 /// win: destination; nothing is drawn if zero.
-void UiText_DrawFourNumbersInRow(struct RenderInput *win,
+void FileList_DrawDjinnCounts(struct RenderInput *win,
                                  struct NumberRow *row) {
   s32 i;
 
   if (win != 0) {
     for (i = 0; i < 4; i++)
-      UiText_DrawNumberAtOffset(row->values[i], 2, win, i * 24, 16);
+      Text_DrawNumberAtOffset(row->values[i], 2, win, i * 24, 16);
   }
 }
 
@@ -42,17 +42,17 @@ void UiText_DrawFourNumbersInRow(struct RenderInput *win,
 
 //--------------------------------------------------------------------------
 
-#define UiText_DrawStringAtOffset                                              \
-  ((void (*)(void *, s32, s32, s32))UiText_DrawStringAtOffset)
-#define UiText_DrawNumberAtOffset                                              \
-  ((void (*)(s32, s32, s32, s32, s32))UiText_DrawNumberAtOffset)
-#define UiText_DrawCharacterAtOffset                                           \
-  ((void (*)(s32, s32, s32, s32))UiText_DrawCharacterAtOffset)
+#define Text_DrawStringAtOffset                                              \
+  ((void (*)(void *, s32, s32, s32))Text_DrawStringAtOffset)
+#define Text_DrawNumberAtOffset                                              \
+  ((void (*)(s32, s32, s32, s32, s32))Text_DrawNumberAtOffset)
+#define Text_DrawCharacterAtOffset                                           \
+  ((void (*)(s32, s32, s32, s32))Text_DrawCharacterAtOffset)
 
-void RenderOutput_PrepareForRedraw(void);
-void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
-void UiText_DrawStringInWindow(s32, s32, s32, s32);
-void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
+void WindowSprite_PrepareForRedraw(void);
+void Window_DrawDividerLine(s32, s32, s32, s32, s32);
+void Text_DrawStringInWindow(s32, s32, s32, s32);
+void Text_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
 // Edition-specific x positions of the level and coin labels, in pixels.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_SPANISH)
@@ -75,40 +75,40 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
   s32 y;
 
   if (win != 0) {
-    RenderOutput_PrepareForRedraw();
-    UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
-    UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
+    WindowSprite_PrepareForRedraw();
+    Window_DrawDividerLine(win, 0, 4, 13, 4);
+    Text_DrawStringAtOffset(rec + 16, win, 0, 0);
     y = 0;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
     (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
-    UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, win,
+    Text_DrawStringAtOffset(gStatusMenu_LevelLetterString, win,
                               SUMMARY_LEVEL_X, 0);
 #else
-    UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, win, 72, 0);
+    Text_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, win, 72, 0);
 #endif
-    UiText_DrawNumberAtOffset(rec[28], 2, win, 80, y);
-    UiText_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
+    Text_DrawNumberAtOffset(rec[28], 2, win, 80, y);
+    Text_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     y = 32;
-    UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
-    UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
-    UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
-    UiText_DrawStringInWindow(
+    Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
+    Text_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
+    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
+    Text_DrawStringInWindow(
         (s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 48);
 #else
-    UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
-    UiText_DrawStringInWindow(
+    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
+    Text_DrawStringInWindow(
         (s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
     y = 48;
-    UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
+    Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_FRENCH)
     // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
-      UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+      Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
     else
-      UiText_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
+      Text_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-    UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+    Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
   }

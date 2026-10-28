@@ -173,7 +173,7 @@ Func_080cf78c:
 	adds r4, r7, r3
 	adds r0, r4, #4
 	str r4, [sp, #0]
-	bl UiWindow_FillFromSceneFar
+	bl Window_FillFromSceneFar
 	movs r1, #165
 	lsls r1, r1, #3
 	adds r3, r7, r1

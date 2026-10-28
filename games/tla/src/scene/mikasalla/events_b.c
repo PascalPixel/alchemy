@@ -8,7 +8,7 @@ void Func_02000188(void) {
   Func_020006d0(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Func_02000698(msg);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020006e8(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000698(msg + 1);

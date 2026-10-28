@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Near miss, differ 8 of 170 (four reordered pairs), 2026-10-15: The
-// Broken Seal's UiWindow_DrawStatusBarTiles, the window's x and y read as
+// Broken Seal's Window_DrawStatusBarTiles, the window's x and y read as
 // signed halfwords. Remaining: the native stores x to its stack slot right
 // after sub sp, loads the work's mode byte before it copies the y argument,
 // copies the light mask to r8 one row later, and stores the row's result
@@ -23,8 +23,8 @@ s32 Palette_GetBasicObjColors(void);
 
 s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value) {
   s32 i;
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 filled = value;
   s32 row;
   s32 col;

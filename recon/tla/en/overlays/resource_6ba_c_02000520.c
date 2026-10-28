@@ -7,7 +7,7 @@
 
 extern const u8 MsgTheBodyIs[];
 
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
+void FieldMessage_Show(const u8 *message, s32 mode);
 s32 Unit_AddHp(s32 owner, s32 amount);
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
@@ -25,7 +25,7 @@ void Func_02000520(void) {
   u8 *item;
   s32 i;
 
-  UiText_ShowPositionedMessageAndWait(MsgTheBodyIs, 1);
+  FieldMessage_Show(MsgTheBodyIs, 1);
   AddHp(4, -100);
   AddHp(5, -100);
   AddHp(6, -33);

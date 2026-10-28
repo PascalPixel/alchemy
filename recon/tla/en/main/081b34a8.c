@@ -91,7 +91,7 @@ void Task_Remove(void (*callback)(void));
 u8 *Resource_GetTableEntry(s32 id);
 void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
-void UiWork_InitializeWithResourceCountersFar(void);
+void WindowSystem_InitFieldFar(void);
 void Func_081b336c(void);
 void Func_081b243c(void);
 void Func_081b3294(void);
@@ -105,8 +105,8 @@ s32 Trig_Cos(s32 angle);
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
                           s32 count);
 s32 PartyInventory_CountItemFar(s32 item);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 
 extern char ResourceId_FarCall00C;
@@ -240,7 +240,7 @@ void ReelGame_Run(void) {
     entry += 32;
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)0x06016e00, 0x84000480, REG_DMA3);
-    UiWork_InitializeWithResourceCountersFar();
+    WindowSystem_InitFieldFar();
     Func_081b336c();
 
     for (i = 0; i != 5; i++) {
@@ -285,18 +285,18 @@ void ReelGame_Run(void) {
     Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
-      s32 window = UiWindow_CreateFar(2, 16, 26, 4, 6);
+      s32 window = Window_CreateFar(2, 16, 26, 4, 6);
 
       state->window = window;
-      UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
     } else {
-      s32 window = UiWindow_CreateFar(2, 16, 26, 4, 6);
+      s32 window = Window_CreateFar(2, 16, 26, 4, 6);
       s32 message;
 
       state->window = window;
       message = (s32)MsgSlotsChangeBet;
-      UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
-      UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
+      Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
     Task_Add(Func_081b243c, 0x480);

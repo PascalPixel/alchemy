@@ -20,9 +20,9 @@ void PaletteGlow_Stop(void) {
   Task_Remove((u32)((s32)PaletteGlow_UpdateSine));
 }
 
-void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
+void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                               s32 height) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 sum;
 
   sum = x + (s16)window->x;

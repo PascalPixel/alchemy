@@ -114,11 +114,11 @@ Func_081197f0:
 	cmp r0, #0
 	beq .L_081198f2
 	movs r0, #1
-	bl UiWork_InitializeFar
+	bl WindowSystem_InitBattleFar
 	b .L_081198f8
 .L_081198f2:
 	movs r0, #0
-	bl UiWork_InitializeFar
+	bl WindowSystem_InitBattleFar
 .L_081198f8:
 	mov r5, r9
 	bl BattleCamera_Create
@@ -270,7 +270,7 @@ Func_081197f0:
 	bl Func_081185c4
 .L_08119a30:
 	movs r0, #9
-	bl UiWindow_CreateWithLayoutBoundsFar
+	bl PartyStatus_CreateWindowFar
 	bl Camera_InitializeDefaultTransform
 	bl BattleObject_Put
 	bl Func_081263c4
@@ -794,19 +794,19 @@ Func_081197f0:
 	adds r0, #7
 	movs r2, #4
 	movs r3, #1
-	bl UiText_OpenMessageWindowFar
+	bl Message_OpenWindowFar
 	adds r5, r0, #0
 	b .L_08119e72
 .L_08119e6c:
 	movs r0, #1
 	bl WaitFrames
 .L_08119e72:
-	bl UiWork_IsCompleteFar
+	bl Message_AllTypedFar
 	cmp r0, #0
 	beq .L_08119e6c
 	movs r1, #1
 	adds r0, r5, #0
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl WaitFrames
 	bl Tutorial_GetDjinnGiveMessage
@@ -814,14 +814,14 @@ Func_081197f0:
 	movs r3, #1
 	movs r1, #10
 	adds r0, #8
-	bl UiText_OpenMessageWindowFar
+	bl Message_OpenWindowFar
 	movs r1, #24
 	adds r5, r0, #0
 	movs r0, #44
 	bl Func_08120060
 	adds r0, r5, #0
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl WaitFrames
 .L_08119eb0:
@@ -870,15 +870,15 @@ Func_081197f0:
 	ldrh r1, [r1, r3]
 	movs r0, #128
 	bl BattleUnit_SetFar
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	movs r0, #128
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r2, r9
 	ldrh r0, [r2, #62]
 	ldr r3, .L_08119f74
 	adds r0, r0, r3
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_08119f2a:
 	bl Func_081284c0
@@ -933,17 +933,17 @@ Func_081197f0:
 	beq .L_08119fba
 	movs r0, #59
 	bl Sound_PlayFar
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	movs r0, #0
 	bl BattleParty_PrepareActiveOwners
 	cmp r0, #1
 	bne .L_08119fb0
 	ldr r0, .L_0811a028
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	b .L_08119fb6
 .L_08119fb0:
 	ldr r0, .L_0811a02c
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 .L_08119fb6:
 	bl BattlePresentation_WaitForAdvance
 .L_08119fba:

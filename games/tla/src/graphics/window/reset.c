@@ -14,7 +14,7 @@
 
 s32 Func_0803dc1c();
 
-void Ui_ClearWorkStateAndWaitFrame(void) {
+void SelectionMenu_CreateEmpty(void) {
   Func_0803dc1c();
   Resource_ClearOwnerListAndCounters();
   WaitFrames(1);

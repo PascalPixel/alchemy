@@ -1,11 +1,11 @@
 	.include "games/tla/include/game/ed_asm.h"
 	.section .rodata
-	.global gUiText_GlyphWidths
-gUiText_GlyphWidths:
+	.global gFont_GlyphWidths
+gFont_GlyphWidths:
 	.include "games/tla/src/graphics/window/glyph_widths.inc"
 @ {background, foreground} pens of the eight text colours
-	.global gUiText_ColourPens
-gUiText_ColourPens:
+	.global gText_ColourPens
+gText_ColourPens:
 	.byte 0, 3
 	.byte 13, 13
 	.byte 14, 15
@@ -14,8 +14,8 @@ gUiText_ColourPens:
 	.byte 1, 13
 	.byte 13, 2
 	.byte 2, 1
-	.global gUiWindow_PartyColumnOffsets
-gUiWindow_PartyColumnOffsets:
+	.global gWindow_PartyColumnOffsets
+gWindow_PartyColumnOffsets:
 	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1
 	.ifndef TLA_EDITION_FR
 	.ifdef TLA_EDITION_ES
@@ -29,11 +29,11 @@ gUiWindow_PartyColumnOffsets:
 	.endif
 	.endif
 @ The progress bar's eight tiles, then its seven rows of twelve, by step
-	.global gUi_ProgressBarTiles
-gUi_ProgressBarTiles:
+	.global gWindow_ProgressBarTiles
+gWindow_ProgressBarTiles:
 	.incbin "games/tla/src/graphics/window/progress.4bpp.lz"
-	.global gUi_ProgressBarRows
-gUi_ProgressBarRows:
+	.global gWindow_ProgressBarRows
+gWindow_ProgressBarRows:
 	.byte 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2
 	.byte 3, 5, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2
 	.byte 3, 5, 5, 5, 4, 1, 1, 1, 1, 1, 1, 2
@@ -110,8 +110,8 @@ Data_0805f676:
 	.2byte 0x192, 0x18a, 0x19c, 0x182, 0x194, 0, 0, 0
 	.byte 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3
 	.byte 0, 2, 3, 1, 2, 0, 3, 1, 2, 1, 3, 0, 2, 0, 0, 0
-	.global gUi_PairBobOffsets
-gUi_PairBobOffsets:
+	.global gWindow_PairBobOffsets
+gWindow_PairBobOffsets:
 	.ifdef TLA_EDITION_ES
 	.byte 0, 0, 1, 2, 3, 3, 2, 1
 	.else
@@ -122,8 +122,8 @@ gUi_PairBobOffsets:
 	.endif
 	.endif
 	.balign 4
-	.global gUi_ObjectPulseScales
-gUi_ObjectPulseScales:
+	.global gWindowSprite_PulseScales
+gWindowSprite_PulseScales:
 	.4byte 0x11999, 0x12147, 0x128f5, 0x130a3
 	.4byte 0x13851, 0x130a3, 0x128f5, 0x12147
 @ 4bpp rows in colour 5 that grow by one pixel at a time

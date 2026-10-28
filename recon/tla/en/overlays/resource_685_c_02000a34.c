@@ -34,7 +34,7 @@ void Func_0200067c(s32 mode);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02003534(s32 id, s32 angle);
 void FieldEvent_WaitFrames(s32 frames);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 follow);
@@ -103,7 +103,7 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Func_02003534, 8, 0x8000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call2((void (*)())UiText_OpenMessageAtObject, 8, 0);
+  Call2((void (*)())FieldMessage_ShowAtActor, 8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call3((void (*)())Func_0200351c, 8, 0, 5);

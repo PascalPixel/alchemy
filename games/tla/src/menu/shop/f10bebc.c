@@ -26,7 +26,7 @@ void Func_0810bebc(u16 *items, s32 count, s32 mode) {
       if (entry <= 95) {
         u32 *attr;
 
-        UiIcon_CopyResourceToSlotFar(items[i], mode, entry);
+        Icon_CopyResourceToSlotFar(items[i], mode, entry);
         attr = (u32 *)&sprite->attr;
         *attr++ = 0x40000000;
         *attr = 0;

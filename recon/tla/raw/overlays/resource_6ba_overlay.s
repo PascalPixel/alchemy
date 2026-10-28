@@ -32,12 +32,12 @@ Func_02000054:
 	adds r0, #64
 	movs r1, #5
 	bl Func_02000d08
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	movs r2, #0
 	movs r3, #34
 	adds r0, r6, #0
 	movs r1, #5
-	bl UiText_OpenMessageWindow
+	bl Message_OpenWindow
 	ldr r3, .L_02008128
 	movs r2, #3
 	ldr r3, [r3]
@@ -66,7 +66,7 @@ Func_02000054:
 	str r3, [r1, #12]
 	bl WaitFrames
 .L_020080d6:
-	bl UiWork_IsComplete
+	bl Message_AllTyped
 	ldr r1, .L_02008128
 	cmp r0, #0
 	beq .L_020080c8
@@ -99,10 +99,10 @@ Func_02000054:
 	cmp r7, r8
 	blt .L_02008074
 .L_02008114:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5
@@ -116,7 +116,7 @@ Func_02000520:
 	push {r5, r6, r7, lr}
 	ldr r0, .L_020085f8
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r1, #100
 	negs r1, r1
 	movs r0, #4
@@ -268,14 +268,14 @@ Func_02000848:
 	movs r3, #7
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r1, #8
 	adds r7, r0, #0
 	movs r2, #13
 	movs r3, #10
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r3, #128
 	movs r2, #128
 	movs r6, #1
@@ -307,21 +307,21 @@ Func_02000848:
 	movs r2, #0
 	adds r0, r7, #0
 	mov r10, r2
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	mov r0, r9
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, .L_02008a94
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	mov r3, r10
 	str r3, [sp, #0]
 	adds r0, r6, #0
 	movs r1, #0
 	adds r2, r7, #0
 	movs r3, #80
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 	bl PartyInventory_HasSpace
 	cmp r0, #0
 	beq .L_02008918
@@ -329,19 +329,19 @@ Func_02000848:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02008a9c
 	adds r1, r7, #0
 	adds r0, r6, r0
 	movs r2, #120
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r0, .L_02008aa0
 	adds r1, r7, #0
 	adds r0, r6, r0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	mov r0, r9
 	adds r1, r6, #0
 	bl ItemMenu_DrawItemDetails
@@ -351,7 +351,7 @@ Func_02000848:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 .L_02008924:
 	movs r0, #1
 	bl WaitFrames
@@ -521,10 +521,10 @@ Func_02000848:
 .L_02008a6c:
 	adds r0, r7, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	add sp, #4
 	pop {r3, r5, r6}
 	mov r8, r3

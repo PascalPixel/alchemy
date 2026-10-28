@@ -50,8 +50,8 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void UiWork_FinalizePendingCore(void);
+void FieldMessage_Show(s32 message, s32 position);
+void Message_CloseFinishedWindows(void);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 s32 Menu_SelectSaveSlotAction(void);
 void Party_AddActiveOwner(s32 id);
@@ -90,12 +90,12 @@ s32 Func_02000328(void) {
   Event_WaitTransitionFrames();
   if (gAdventure.entrance == 2) {
     do {
-      UiText_ShowPositionedMessageAndWait(8, 5);
+      FieldMessage_Show(8, 5);
       choice = Func_020023d8(1);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (choice != 0)
         break;
-      UiText_ShowPositionedMessageAndWait(9, 1);
+      FieldMessage_Show(9, 1);
       PARTY_BYTE(0x22f) = 1;
       Party_AddActiveOwner(5);
       Party_AddActiveOwner(6);
@@ -147,9 +147,9 @@ top:
     if (++i < limit)
       goto open;
   ask:
-    UiText_ShowPositionedMessageAndWait(0x24, 13);
+    FieldMessage_Show(0x24, 13);
     choice = Menu_RunConfirmSelection(1, 0, 0, 0);
-    UiWork_FinalizePendingCore();
+    Message_CloseFinishedWindows();
     if (choice == 0) {
     enter:
       result = Func_020022b0(0);
@@ -192,12 +192,12 @@ top:
       goto close;
     if (gData_02003860 != 0) {
     save:
-      UiText_ShowPositionedMessageAndWait(0x25, 13);
+      FieldMessage_Show(0x25, 13);
       choice = Menu_RunConfirmSelection(1, 0x29, 8, 0);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (choice == 0) {
         if (gData_02003860 == 0) {
-          UiText_ShowPositionedMessageAndWait(0x26, 1);
+          FieldMessage_Show(0x26, 1);
         } else {
           SAVE_CELLS();
           if (Func_020022d8(5) != 0)
@@ -209,17 +209,17 @@ top:
           goto leave;
         }
       }
-      UiText_ShowPositionedMessageAndWait(0x27, 13);
+      FieldMessage_Show(0x27, 13);
       choice = Menu_RunConfirmSelection(1, 0x29, 8, 0);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (choice == 0) {
         GameFlag_SetBit(46);
         PARTY_BYTE(0x287) = 2;
         goto leave;
       }
-      UiText_ShowPositionedMessageAndWait(0x28, 13);
+      FieldMessage_Show(0x28, 13);
       choice = Menu_RunConfirmSelection(1, 0x29, 8, 0);
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (choice != 0)
         goto save;
     }
@@ -245,17 +245,17 @@ top:
       GameFlag_SetBit(0x13e);
     } else if (PARTY_WORD(4) != gData_02001000) {
       message = 5;
-      UiText_ShowPositionedMessageAndWait(message, 9);
-      UiText_ShowPositionedMessageAndWait(message + 1, 13);
+      FieldMessage_Show(message, 9);
+      FieldMessage_Show(message + 1, 13);
       if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
-        UiWork_FinalizePendingCore();
+        Message_CloseFinishedWindows();
         goto top;
       }
-      UiWork_FinalizePendingCore();
+      Message_CloseFinishedWindows();
       if (Func_020002e0()) {
         message += 2;
       refuse:
-        UiText_ShowPositionedMessageAndWait(message, 9);
+        FieldMessage_Show(message, 9);
         goto top;
       }
       RETURN_TO_SAVED()

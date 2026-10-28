@@ -34,7 +34,7 @@ Func_081093a4:
 	b .L_0810959a
 .L_081093e2:
 	mov r0, r10
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	mov r1, r9
 	ldr r0, [sp, #20]
 	bl Item_CanOwnerEquip
@@ -44,7 +44,7 @@ Func_081093a4:
 	mov r1, r10
 	movs r2, #8
 	movs r3, #24
-	bl UiText_DrawResourceFar
+	bl Text_DrawMessageFar
 	b .L_0810959a
 .L_08109402:
 	ldrb r1, [r5, #2]
@@ -195,7 +195,7 @@ Func_081093a4:
 	lsls r1, r1, #23
 	movs r3, #56
 	mov r2, r10
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	movs r3, #0
 	adds r6, r7, #0
 	strb r3, [r0, #4]
@@ -210,7 +210,7 @@ Func_081093a4:
 	movs r1, #3
 	movs r3, #32
 	str r7, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	mov r2, r8
 	add r0, sp, #40
 	mov r1, r11
@@ -222,20 +222,20 @@ Func_081093a4:
 	mov r2, r10
 	movs r3, #72
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_08109554:
 	ldr r0, .L_081095a8
 	mov r1, r10
 	adds r0, r5, r0
 	movs r2, #0
 	adds r3, r6, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r2, [sp, #4]
 	mov r0, r10
 	movs r3, #13
 	movs r1, #0
 	str r2, [sp, #0]
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 	ldr r3, [sp, #4]
 	movs r0, #4
 	adds r3, #2
@@ -255,7 +255,7 @@ Func_081093a4:
 	adds r0, r1, r0
 	movs r3, #48
 	mov r1, r10
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_0810959a:
 	add sp, #56
 	pop {r3, r5, r6, r7}

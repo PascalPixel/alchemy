@@ -14,7 +14,7 @@ struct PasswordWork {
   u8 unk1c2[26];
 };
 
-struct UiWindow {
+struct Window {
   u8 unk00[12];
   s16 x;
   s16 y;
@@ -39,25 +39,25 @@ extern char MsgFieldInvalidPassword[];
 #define MSGNO(name) ((s32)(name))
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
-void UiWindow_DrawDividerLine(struct UiWindow *window, s32 x, s32 y, s32 length,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
+void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                               s32 mode);
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 tile, s32 x, s32 y,
+void Window_SetTilemapEntry(struct Window *window, s32 tile, s32 x, s32 y,
                               s32 mode);
-void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, s32 x,
+void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
                                s32 y);
-void UiText_DrawCharacterAtOffset(s32 message, struct UiWindow *window, s32 x,
+void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
                                   s32 y);
-void UiWork_Finalize(struct UiWindow *window, s32 release);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-u8 *RenderOutput_Create(s32 entry, s32 address, struct UiWindow *window,
+void Window_Close(struct Window *window, s32 release);
+void WindowSprite_RedrawSavedRect(struct Window *window);
+u8 *WindowSprite_Create(s32 entry, s32 address, struct Window *window,
                         s32 mode);
 s32 Resource_FindFreeEntry(void);
 void Party_RemoveActiveOwner(s32 id);
 void Party_AddActiveOwner(s32 id);
 void WaitFrames(s32 frames);
 void Func_02000a70(s32 code, u16 *glyph);
-void Func_02000db4(struct UiWindow *window, s32 column, s32 row, s32 mode,
+void Func_02000db4(struct Window *window, s32 column, s32 row, s32 mode,
                    s32 a, s32 b);
 s32 Func_0200217c(s32 length, u8 *data);
 void Func_020018e0(s32 mode, u8 *data);
@@ -70,7 +70,7 @@ void Func_02002308(void);
 void Func_02002310(s32 hue, s32 brightness);
 void Func_02002320(void *vram);
 void Func_02002328(s32 glyph, void *cell);
-void *Func_02002330(struct UiWindow *window, void *glyph, s32 x, s32 y);
+void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
 void Func_02002350(void);
 void Func_020023e8(void);
 void Func_020023f0(u8 **sprite);
@@ -83,20 +83,20 @@ void Func_02002408(s32 cue);
   {                                                                            \
     s32 message = MSGNO(MsgFieldSpace);                                        \
                                                                                \
-    UiText_DrawStringInWindow(gData_02002440, window, 0, 0);                   \
-    UiText_DrawStringInWindow(gData_02002454, window, 0, 8);                   \
-    UiText_DrawStringInWindow(gData_02002468, window, 0, 16);                  \
-    UiText_DrawStringInWindow(gData_0200247c, window, 0, 24);                  \
-    UiWindow_DrawDividerLine(window, 20, 0, 20, 5);                            \
-    UiText_DrawCharacterAtOffset(message++, window, 160, 0);                   \
-    UiText_DrawCharacterAtOffset(message++, window, 160, 8);                   \
-    UiText_DrawCharacterAtOffset(message, window, 160, 24);                    \
+    Text_DrawStringInWindow(gData_02002440, window, 0, 0);                   \
+    Text_DrawStringInWindow(gData_02002454, window, 0, 8);                   \
+    Text_DrawStringInWindow(gData_02002468, window, 0, 16);                  \
+    Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                  \
+    Window_DrawDividerLine(window, 20, 0, 20, 5);                            \
+    Text_DrawCharacterAtOffset(message++, window, 160, 0);                   \
+    Text_DrawCharacterAtOffset(message++, window, 160, 8);                   \
+    Text_DrawCharacterAtOffset(message, window, 160, 24);                    \
   }
 
 s32 Func_02000e44(void) {
   u8 *sprite[2][4];
   struct PasswordWork *work;
-  struct UiWindow *window, *grid, *box;
+  struct Window *window, *grid, *box;
   s32 mode, length, pages, page, cursor = 0, column = 0, row = 0;
   s32 advance = 0, state, action, drawColumn, drawRow, drawMode;
   s32 cursorX, cursorY, i, entry, x, y, count;
@@ -120,9 +120,9 @@ s32 Func_02000e44(void) {
       length = 16;
   }
   pages = length / 50 + 1;
-  window = UiWindow_Create(1, 13, 29, 6, 2);
+  window = Window_Create(1, 13, 29, 6, 2);
   DRAW_TITLE(window)
-  grid = UiWindow_Create(5, 1, 20, 12, 2);
+  grid = Window_Create(5, 1, 20, 12, 2);
   for (i = 0; i != 26; i++)
     work->unk1c2[i] = 0;
   for (i = 0; i != 260; i++)
@@ -141,13 +141,13 @@ s32 Func_02000e44(void) {
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002300();
-    sprite[1][0] = RenderOutput_Create(entry, 0x20000000, window, 0);
+    sprite[1][0] = WindowSprite_Create(entry, 0x20000000, window, 0);
     Func_02002400(sprite[1][0], window->x * 8 - 2, window->y * 8 + 12);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002308();
-    sprite[0][0] = RenderOutput_Create(entry, 0x20000000, window, 0);
+    sprite[0][0] = WindowSprite_Create(entry, 0x20000000, window, 0);
     sprite[0][0][15] = 255;
     sprite[0][0][25] &= ~12;
     Func_02002400(sprite[0][0], grid->x * 8 - 4, grid->y * 8 + 12);
@@ -277,10 +277,10 @@ s32 Func_02000e44(void) {
           s32 check = Func_0200217c(size - 2, Data_0200288a);
 
           state = 0;
-          box = UiWindow_Create(5, 12, 20, 3, 2);
+          box = Window_Create(5, 12, 20, 3, 2);
           if (Data_0200288a[size - 2] == (u8)((u16)check >> 8) &&
               Data_0200288a[size - 1] == (u8)check) {
-            UiText_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box,
+            Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box,
                                          0, 0);
             Func_02002408(112);
             do
@@ -298,9 +298,9 @@ s32 Func_02000e44(void) {
             Party_AddActiveOwner(2);
             Party_AddActiveOwner(3);
             Func_020018e0(mode, Data_0200288a);
-            UiWork_Finalize(box, 2);
-            UiWork_Finalize(grid, 2);
-            UiWork_Finalize(window, 2);
+            Window_Close(box, 2);
+            Window_Close(grid, 2);
+            Window_Close(window, 2);
             Func_02002310(gAdventure.paletteGlow[0],
                           gAdventure.paletteGlow[1]);
             Func_02002408(74);
@@ -311,13 +311,13 @@ s32 Func_02000e44(void) {
             return 0;
           }
           Func_02002408(113);
-          UiText_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
+          Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
                                        0);
           do
             WaitFrames(1);
           while (!(gInput[1] & 1) && !(gInput[1] & 2));
-          UiWork_Finalize(box, 2);
-          RenderOutput_RedrawSavedRect(window);
+          Window_Close(box, 2);
+          WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)
         } else if (gInput[3] & 512 || action == 2) {
           if (cursor > 0) {
@@ -335,8 +335,8 @@ s32 Func_02000e44(void) {
             cursor--;
           } else {
             Func_02002408(113);
-            UiWork_Finalize(grid, 2);
-            UiWork_Finalize(window, 2);
+            Window_Close(grid, 2);
+            Window_Close(window, 2);
             Func_02002408(74);
             return -1;
           }
@@ -344,15 +344,15 @@ s32 Func_02000e44(void) {
       }
     }
     page = cursor / 50;
-    RenderOutput_RedrawSavedRect(grid);
+    WindowSprite_RedrawSavedRect(grid);
     for (i = 0, y = 2; i != 4; i++, y += 2)
-      UiWindow_DrawDividerLine(grid, 0, y, 18, y);
+      Window_DrawDividerLine(grid, 0, y, 18, y);
     for (i = 0, x = 18 - pages; i != pages; i++, x++) {
       s32 tile = i + 0xf301;
 
       if (i == page)
         tile = i + 0xf30b;
-      UiWindow_SetTilemapEntry(grid, tile, x, 10, 0);
+      Window_SetTilemapEntry(grid, tile, x, 10, 0);
     }
     count = length;
     if (length > 49) {

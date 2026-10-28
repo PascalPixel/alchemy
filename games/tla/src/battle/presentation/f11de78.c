@@ -14,7 +14,7 @@ extern u8 MsgNoEscape[];
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattlePresentation_WaitForAdvance(void);
-void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
+void Message_ShowAndWaitCoreFar(s32 messageId);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 void BattleMotion_SetupEscapeObject(s32 objectId);
 void WaitFrames(s32 frames);
@@ -49,7 +49,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
       partyMode = 1;
 
     if (!partyMode) {
-      UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
+      Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
       BattlePresentation_WaitForAdvance();
     } else {
       s16 unitIds[14];
@@ -76,7 +76,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     BattleActor_RemoveFromLists(plan->actorId);
     BattleObject_MarkForRelease(plan->actorId);
   } else {
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
+    Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
     BattlePresentation_WaitForAdvance();
   }
 

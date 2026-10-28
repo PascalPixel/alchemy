@@ -107,7 +107,7 @@ Func_08040d70:
 .L_08040e42:
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	bl Func_08040cb0
 	movs r0, #1
 	bl WaitFrames

@@ -69,7 +69,7 @@ Func_02004ad0:
 	.global Func_02004ad8
 	.thumb_func
 Func_02004ad8:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:
@@ -166,18 +166,18 @@ Func_02004b90:
 	.thumb_func
 GetWorldMapCollision:
 	overlay_veneer GetWorldMapCollisionFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02004ba8
 	.thumb_func
 Func_02004ba8:
-	overlay_veneer UiText_DrawQuantity
-	.global UiWork_FinalizePendingCore
+	overlay_veneer MessageArgument_PushFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global Func_02004bb8
 	.thumb_func
 Func_02004bb8:
@@ -326,10 +326,10 @@ Object_SetPartAttribute:
 	.thumb_func
 Func_02004cd8:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02004ce8
 	.thumb_func
 Func_02004ce8:

@@ -3,7 +3,7 @@
 // from the counts (strb; movs r0, #1; ldrb and strb; lsls r3; ldrsb), this
 // loads at once. The second pair sits inside the sign extension's shift
 // pair, where no barrier fits. The same one-instruction wait after a store
-// shows in BattleEffect_AdvanceHueCycle and UiText_DrawResource. A cut-down twin of The
+// shows in BattleEffect_AdvanceHueCycle and Text_DrawMessage. A cut-down twin of The
 // Broken Seal's Djinn_CheckTurnBalance.
 #include "types.h"
 

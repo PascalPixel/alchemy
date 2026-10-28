@@ -113,32 +113,32 @@ extern const u8 gResource_FixedBlockBTiles[];
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct DjinnMenuWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct DjinnMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                         s32 flags);
-void UiWork_SetAltFlagAndClearTable(s32 on);
+void Text_UseExtraTiles(s32 on);
 struct DjinnMenuUnit *Unit_Get(s32 member);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 side);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void UiWork_Finalize(void *window, s32 mode);
-void Ui_FillVramBlockPattern(void);
-void UiWork_ClearValueNameTables(void);
-void UiWork_PushValueSlot(s32 value, s32 kind);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
+void Window_Close(void *window, s32 mode);
+void Vram_FillWindowBlockPattern(void);
+void MessageArgument_ClearAll(void);
+void MessageArgument_Push(s32 value, s32 kind);
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 struct DjinnMenuWindow *Func_080464dc(struct DjinnMenuWindow *window,
                                       s32 member, s32 encodedDjinn, s32 page,
                                       s32 *pageCount);
-void UiText_RenderWideStringAtOffset(u16 *text, struct DjinnMenuWindow *window,
+void Text_DrawWideStringAtOffset(u16 *text, struct DjinnMenuWindow *window,
                                      s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(struct DjinnMenuWindow *window);
-void UiWindow_SetTilemapEntry(struct DjinnMenuWindow *window, s32 entry, s32 x,
+void WindowSprite_RedrawSavedRect(struct DjinnMenuWindow *window);
+void Window_SetTilemapEntry(struct DjinnMenuWindow *window, s32 entry, s32 x,
                               s32 y, s32 flags);
 void Func_08041f70(s32 color);
-void UiText_DrawCharacterAtOffset(s32 message, struct DjinnMenuWindow *window,
+void Text_DrawCharacterAtOffset(s32 message, struct DjinnMenuWindow *window,
                                   s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits,
+void Text_DrawNumberAtOffset(s32 value, s32 digits,
                                struct DjinnMenuWindow *window, s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
-void RenderOutput_ClearList(struct DjinnMenuWindow *window);
+void WindowSprite_ClearList(struct DjinnMenuWindow *window);
 void Input_ResetKeyRepeat(void);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Resource_ResetEntry(s32 slot);
@@ -201,9 +201,9 @@ s32 Func_0804868c(s32 member) {
   redraw = 0;
   alreadySelected = 0;
   redrawList = 0;
-  messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
-  UiWork_SetAltFlagAndClearTable(1);
-  listWindow = UiWindow_Create(20, 9, 10, 11, 6);
+  messageWindow = Window_Create(0, 4, 30, 4, 42);
+  Text_UseExtraTiles(1);
+  listWindow = Window_Create(20, 9, 10, 11, 6);
   navigation = NAVIGATION;
   firstEntry = navigation->page;
   selectedRow = navigation->row;
@@ -251,19 +251,19 @@ s32 Func_0804868c(s32 member) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
+      Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                           listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
-        UiWork_Finalize(messageWindow, 1);
-        messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
-        Ui_FillVramBlockPattern();
+        Window_Close(messageWindow, 1);
+        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        Vram_FillWindowBlockPattern();
       }
       redraw = 0;
       if (djinnCount != 0) {
         s32 k;
         u32 selected;
 
-        UiWork_ClearValueNameTables();
+        MessageArgument_ClearAll();
         alreadySelected = 0;
         selected = NAVIGATION->chosenDjinn[redraw];
         for (k = redraw; k == redraw;) {
@@ -284,67 +284,67 @@ s32 Func_0804868c(s32 member) {
           }
         }
         if (alreadySelected != 0) {
-          UiText_CopyMessageString((s32)Msg_0d50, messageText, 52);
+          Message_CopyExpanded((s32)Msg_0d50, messageText, 52);
           if (previewWindow != NULL) {
-            UiWork_Finalize(previewWindow, 1);
+            Window_Close(previewWindow, 1);
             previewWindow = NULL;
             previewPage = 0;
           }
         } else if (selectedDjinn & DJINN_ENTRY_STANDBY) {
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            UiWork_PushValueSlot((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
+            MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  5);
-            UiText_CopyMessageString(((selectedDjinn & 0xf00) >> 8) * 20 +
+            Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
                                          (selectedDjinn & 0xff) + (s32)Msg_09b1,
                                      messageText, 52);
             if (previewWindow != NULL) {
-              UiWork_Finalize(previewWindow, 1);
+              Window_Close(previewWindow, 1);
               previewWindow = NULL;
               previewPage = 0;
             }
           } else {
             previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                           previewPage, &previewPages);
-            UiText_CopyMessageString((s32)Msg_0cf9, messageText, 52);
+            Message_CopyExpanded((s32)Msg_0cf9, messageText, 52);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
           previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                         previewPage, &previewPages);
-          UiText_CopyMessageString(((selectedDjinn & 0xf00) >> 8) * 20 +
+          Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
                                        (selectedDjinn & 0xff) + (s32)Msg_09b1,
                                    messageText, 52);
         }
       } else {
-        UiText_CopyMessageString((s32)Msg_0d4e, messageText, 52);
+        Message_CopyExpanded((s32)Msg_0d4e, messageText, 52);
       }
       work->holdTilemapUpload = 0;
       if (previewPage == 0) {
         work->holdTilemapUpload = 1;
-        UiWork_Finalize(messageWindow, 1);
-        messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
+        Window_Close(messageWindow, 1);
+        messageWindow = Window_Create(0, 4, 30, 4, 42);
         work->holdTilemapUpload = previewPage;
       }
-      UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+      Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry || redrawList == 1) {
-        RenderOutput_RedrawSavedRect(listWindow);
+        WindowSprite_RedrawSavedRect(listWindow);
         j = 0;
         while ((encodedDjinn = djinnEntries[firstEntry + j]) !=
                DJINN_ENTRY_END) {
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               listWindow, ((encodedDjinn & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Func_08041f70(4);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Func_08041f70(2);
-          UiText_DrawCharacterAtOffset(((encodedDjinn & 0xf00) >> 8) * 20 +
+          Text_DrawCharacterAtOffset(((encodedDjinn & 0xf00) >> 8) * 20 +
                                            (encodedDjinn & 0xff) +
                                            (s32)MsgDjinnName,
                                        listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
-            UiText_DrawNumberAtOffset(
+            Text_DrawNumberAtOffset(
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                     DJINN_ENTRY_RECOVERY_SHIFT,
                 2, listWindow, 48, j * 16);
@@ -364,11 +364,11 @@ s32 Func_0804868c(s32 member) {
 
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               listWindow, tile, listWindow->width - listPages + j - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(listWindow->x + 1,
+      Window_HighlightRect(listWindow->x + 1,
                           listWindow->y + selectedRow * 2 + 1,
                           listWindow->width - 2, 1, 14);
       work->dirty = 1;
@@ -383,21 +383,21 @@ s32 Func_0804868c(s32 member) {
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
         }
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             listWindow, tile, listWindow->width - (djinnCount + 4) / 5 + j - 2,
             -1, 0);
       }
       if ((gInput.held & 0x100) == 0) {
-        UiWindow_SetTilemapEntry(listWindow, 0xf334,
+        Window_SetTilemapEntry(listWindow, 0xf334,
                                  listWindow->width - (djinnCount + 4) / 5 - 3,
                                  -1, 0);
-        UiWindow_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
+        Window_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
                                  0);
       } else {
-        UiWindow_SetTilemapEntry(listWindow, 0xf011,
+        Window_SetTilemapEntry(listWindow, 0xf011,
                                  listWindow->width - (djinnCount + 4) / 5 - 3,
                                  -1, 0);
-        UiWindow_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
+        Window_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
                                  0);
       }
       work->dirty |= 2 << ((u32)(listWindow->y - 1) >> 2);
@@ -439,13 +439,13 @@ s32 Func_0804868c(s32 member) {
             break;
           }
         } else if (alreadySelected == 0) {
-          Ui_FillVramBlockPattern();
-          UiWork_ClearValueNameTables();
-          UiWork_PushValueSlot((turns & DJINN_ENTRY_RECOVERY_MASK) >>
+          Vram_FillWindowBlockPattern();
+          MessageArgument_ClearAll();
+          MessageArgument_Push((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,
                                5);
-          UiText_CopyMessageString((s32)Msg_0cf8, messageText, 52);
-          UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+          Message_CopyExpanded((s32)Msg_0cf8, messageText, 52);
+          Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
         Sound_PlayFar(114);
       } else {
@@ -478,20 +478,20 @@ s32 Func_0804868c(s32 member) {
 
             if ((gFrameCount & 15) <= 11 && i == previewPage - 1)
               tile = previewPage + 0xf30a;
-            UiWindow_SetTilemapEntry(
+            Window_SetTilemapEntry(
                 previewWindow, tile,
                 previewWindow->width - previewPages + i - 2, -1, 0);
           }
-          UiWindow_SetTilemapEntry(previewWindow, 0xf334,
+          Window_SetTilemapEntry(previewWindow, 0xf334,
                                    previewWindow->width - previewPages - 3, -1,
                                    0);
-          UiWindow_SetTilemapEntry(previewWindow, 0xf335,
+          Window_SetTilemapEntry(previewWindow, 0xf335,
                                    previewWindow->width - 2, -1, 0);
           work->dirty |= 2 << (previewWindow->y >> 2);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != NULL)
-            RenderOutput_ClearList(previewWindow);
+            WindowSprite_ClearList(previewWindow);
           previewPage = 1;
           redraw = 1;
         } else {
@@ -515,7 +515,7 @@ s32 Func_0804868c(s32 member) {
         }
       } else if (previewPage != 0) {
         if (previewWindow != NULL)
-          RenderOutput_ClearList(previewWindow);
+          WindowSprite_ClearList(previewWindow);
         previewPage = 0;
         redraw = 1;
         redrawList = 1;
@@ -583,7 +583,7 @@ s32 Func_0804868c(s32 member) {
 
         if (((1 << i) & standbyElements) == 0)
           palette = 15;
-        Ui_SetRectHighlight(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
+        Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
                             iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
                             2, 2, palette);
       }
@@ -600,14 +600,14 @@ s32 Func_0804868c(s32 member) {
 
   partyStatus = Ram_HeapSlots->windowLayout;
   if (partyStatus->flags & 2)
-    Ui_SetRectHighlight(partyStatus->window->x + 1, partyStatus->window->y + 1,
+    Window_HighlightRect(partyStatus->window->x + 1, partyStatus->window->y + 1,
                         4, 4, 15);
   Resource_ResetEntry(cursorSlot);
-  UiWork_Finalize(messageWindow, 1);
-  UiWork_Finalize(previewWindow, 1);
-  UiWork_Finalize(listWindow, 1);
+  Window_Close(messageWindow, 1);
+  Window_Close(previewWindow, 1);
+  Window_Close(listWindow, 1);
   Func_08041b68();
-  UiWork_SetAltFlagAndClearTable(0);
+  Text_UseExtraTiles(0);
   MemFree(djinnEntries);
   WaitFrames(1);
   return encodedDjinn;

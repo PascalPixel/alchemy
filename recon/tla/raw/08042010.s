@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_DrawCharacterAtOffset
+	.global Text_DrawCharacterAtOffset
 	.thumb_func
-UiText_DrawCharacterAtOffset:
+Text_DrawCharacterAtOffset:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -23,7 +23,7 @@ UiText_DrawCharacterAtOffset:
 	mov r3, r8
 	movs r1, #1
 	strh r3, [r5]
-	bl UiText_BuildRenderEntries
+	bl Message_Decode
 	ldrh r3, [r5]
 	movs r4, #244
 	lsls r4, r4, #4
@@ -72,7 +72,7 @@ UiText_DrawCharacterAtOffset:
 	mov r4, r9
 	adds r1, #8
 	ands r3, r4
-	bl UiText_RenderStringTiles
+	bl Text_DrawStringAsTiles
 .L_0804209e:
 	pop {r3, r5, r6}
 	mov r8, r3

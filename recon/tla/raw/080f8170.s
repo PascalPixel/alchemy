@@ -51,7 +51,7 @@ Func_080f8170:
 	movs r1, #0
 	movs r2, #5
 	movs r3, #13
-	bl UiWindow_UpdateOrCreate
+	bl Window_UpdateOrCreate
 	str r0, [sp, #16]
 .L_080f81da:
 	mov r3, r9
@@ -70,13 +70,13 @@ Func_080f8170:
 	str r3, [sp, #0]
 	movs r2, #0
 	movs r3, #88
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 .L_080f8200:
 	movs r3, #0
 	mov r0, r10
 	adds r1, r7, #0
 	movs r2, #32
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	add r6, sp, #28
 	adds r0, r6, #0
 	movs r1, #1
@@ -90,7 +90,7 @@ Func_080f8170:
 	adds r1, r7, #0
 	movs r2, #32
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r5, #1
 .L_080f822e:
 	ldrb r3, [r6, #2]
@@ -101,7 +101,7 @@ Func_080f8170:
 	adds r3, #8
 	adds r1, r7, #0
 	movs r2, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #1
 .L_080f8244:
 	ldrb r3, [r6, #3]
@@ -112,7 +112,7 @@ Func_080f8170:
 	adds r3, #8
 	adds r1, r7, #0
 	movs r2, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #1
 .L_080f825a:
 	ldrb r3, [r6, #4]
@@ -123,7 +123,7 @@ Func_080f8170:
 	adds r3, #8
 	adds r1, r7, #0
 	movs r2, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r5, #1
 .L_080f8270:
 	cmp r5, #1
@@ -134,14 +134,14 @@ Func_080f8170:
 	adds r1, r7, #0
 	movs r2, #40
 	movs r3, #16
-	bl UiText_DrawStringAtOffsetFar
+	bl Text_DrawStringAtOffsetFar
 	movs r3, #16
 	str r3, [sp, #0]
 	adds r0, r6, #0
 	movs r1, #4
 	adds r2, r7, #0
 	movs r3, #56
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_080f8294:
 	ldr r5, [sp, #16]
 	cmp r5, #0
@@ -155,10 +155,10 @@ Func_080f8170:
 	str r3, [sp, #0]
 	movs r2, #32
 	movs r3, #88
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 .L_080f82b2:
 	adds r0, r7, #0
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r5, [sp, #20]
 	movs r3, #128
 	lsls r3, r3, #1
@@ -235,7 +235,7 @@ Func_080f8170:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r0, r11
 	mov r1, r8
 	bl Item_CanOwnerEquip
@@ -292,7 +292,7 @@ Func_080f8170:
 	adds r0, r7, #0
 	movs r2, #3
 	movs r3, #5
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	movs r3, #42
 	adds r3, #255
 	add r3, r10
@@ -303,7 +303,7 @@ Func_080f8170:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080f84c6
 .L_080f83f0:
 	movs r3, #42
@@ -316,10 +316,10 @@ Func_080f8170:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r0, r10
 	adds r1, r7, #0
-	bl Ui_DrawValuePairRows
+	bl StatusPanel_DrawHpPp
 	movs r3, #146
 	lsls r3, r3, #1
 	add r3, r10
@@ -328,14 +328,14 @@ Func_080f8170:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #64
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #72
 	str r3, [sp, #0]
 	adds r0, r6, #0
 	movs r1, #8
 	adds r2, r7, #0
 	movs r3, #24
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	b .L_080f85fe
 .L_080f8436:
 	movs r3, #42
@@ -348,10 +348,10 @@ Func_080f8170:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #32
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r0, r10
 	adds r1, r7, #0
-	bl Ui_DrawValuePairRows
+	bl StatusPanel_DrawHpPp
 	b .L_080f85fe
 .L_080f8458:
 	mov r0, r11
@@ -364,7 +364,7 @@ Func_080f8170:
 	movs r2, #0
 .L_080f846a:
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080f85fe
 .L_080f8472:
 	movs r5, #166
@@ -406,7 +406,7 @@ Func_080f8170:
 	mov r0, r10
 	mov r1, r8
 	adds r2, r7, #0
-	bl UiText_DrawStatComparison
+	bl Text_DrawStatComparison
 .L_080f84c6:
 	movs r2, #166
 	ldr r3, .L_080f8564
@@ -455,7 +455,7 @@ Func_080f8170:
 	adds r0, r4, r0
 	movs r2, #0
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_080f8570
 	b .L_080f8536
 .L_080f8526:
@@ -464,13 +464,13 @@ Func_080f8170:
 	adds r0, r4, r0
 	movs r2, #0
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, .L_080f8574
 .L_080f8536:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #56
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080f85fe
 	.2byte 0x0000
 .L_080f8544:
@@ -482,7 +482,7 @@ Func_080f8170:
 .L_080f8550:
 	.4byte 0x0000110a
 .L_080f8554:
-	.4byte gUi_LvString
+	.4byte gStatusPanel_LvString
 .L_080f8558:
 	.4byte .L_080f82f0
 .L_080f855c:
@@ -505,7 +505,7 @@ Func_080f8170:
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #40
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r2, r10
 	ldrh r6, [r2, #60]
 	movs r3, #40
@@ -514,12 +514,12 @@ Func_080f8170:
 	movs r1, #3
 	adds r2, r7, #0
 	movs r3, #64
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	adds r0, r5, #1
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #48
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r10
 	ldrh r6, [r3, #62]
 	movs r3, #48
@@ -528,12 +528,12 @@ Func_080f8170:
 	movs r1, #3
 	adds r2, r7, #0
 	movs r3, #64
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	adds r0, r5, #4
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #56
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r10
 	adds r3, #64
 	ldrh r6, [r3]
@@ -544,12 +544,12 @@ Func_080f8170:
 	adds r2, r7, #0
 	movs r3, #64
 	adds r5, #3
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	adds r0, r5, #0
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #64
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r3, r10
 	adds r3, #66
 	ldrb r6, [r3]
@@ -558,7 +558,7 @@ Func_080f8170:
 	adds r0, r6, #0
 	adds r2, r7, #0
 	str r3, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_080f85fe:
 	add sp, #36
 	pop {r3, r5, r6, r7}

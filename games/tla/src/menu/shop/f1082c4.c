@@ -7,7 +7,7 @@
 #include "render_input.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
 };
 
 struct ShopRuntime {
@@ -35,7 +35,7 @@ void EventTable_ApplyRowAbilities(s32 row);
 void Func_08108148(void);
 void *Object_GetByIdFar(s32 id);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
-struct RenderInput *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
+struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
@@ -45,13 +45,13 @@ void Func_08108b70(void);
 void Func_08109ad8(void);
 s32 Func_081080a8(void);
 void Func_0810a2c8(void);
-void UiWork_FinalizeFar(struct RenderInput *window, s32 mode);
+void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Func_0810824c(void);
 void WaitFrames(s32 frames);
 
 s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   struct RenderInput *window;
   s32 action = 0;
 
@@ -65,8 +65,8 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
       **(u16 **)(*(u8 **)((u8 *)Object_GetByIdFar(keeperId) + 80) + 40);
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (window == 0)
-    window = UiWindow_CreateFar(30, 0, 2, 2, 2);
-  anchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
+    window = Window_CreateFar(30, 0, 2, 2, 2);
+  anchor = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   anchor->sentinel = 255;
   anchor->active = 1;
   anchor->kind = 0;
@@ -101,7 +101,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
     Func_081084f4((s32)MsgAnythingElse);
   }
   Func_081084f4((s32)MsgShopFarewell);
-  UiWork_FinalizeFar(window, 2);
+  Window_CloseFar(window, 2);
   Func_0810824c();
   return 0;
 }

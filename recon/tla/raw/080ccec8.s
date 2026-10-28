@@ -135,7 +135,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd160
 	movs r1, #1
 	adds r0, r5, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080ccfcc:
 	ldr r3, .L_080cd164
 	movs r1, #240
@@ -155,10 +155,10 @@ Func_080ccec8:
 	bne .L_080ccffe
 	adds r0, r7, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080cd16c
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080ccffe:
 	mov r0, r9
 	bl GameFlag_IsConditionActive
@@ -197,18 +197,18 @@ Func_080ccec8:
 	bl Sound_PlayFar
 	adds r0, r7, #0
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r6, .L_080cd174
 	movs r1, #3
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r0, #218
 	lsls r0, r0, #3
 	movs r1, #0
 	adds r0, #255
 	bl BattleParty_ApplyDrain
 	movs r0, #1
-	bl UiWindow_CreateWithLayoutBoundsFar
+	bl PartyStatus_CreateWindowFar
 	movs r0, #126
 	bl Sound_PlayFar
 	bl Party_CountActiveOwnersFar
@@ -216,12 +216,12 @@ Func_080ccec8:
 	bne .L_080cd086
 	adds r0, r6, #6
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd08e
 .L_080cd086:
 	adds r0, r6, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cd08e:
 	bl PartyStatus_CloseFar
 	movs r3, #0
@@ -235,7 +235,7 @@ Func_080ccec8:
 	bl EventRuntime_Wait
 	ldr r0, .L_080cd178
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	mov r0, r10
 	bl ObjectEvent_Remove
 	movs r3, #1
@@ -358,7 +358,7 @@ Func_080ccec8:
 	bl Sound_PlayFar
 	ldr r0, .L_080cd4a0
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd39e
 .L_080cd1bc:
 	mov r3, r8
@@ -366,7 +366,7 @@ Func_080ccec8:
 	bne .L_080cd1ca
 	ldr r0, .L_080cd4a4
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cd1ca:
 	mov r0, r10
 	bl Object_GetSpriteShape
@@ -374,7 +374,7 @@ Func_080ccec8:
 	beq .L_080cd1fe
 	movs r1, #1
 	ldr r0, .L_080cd4a8
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r0, #136
 	bl Party_FindOwnerWithActionFar
 	movs r1, #1
@@ -430,10 +430,10 @@ Func_080ccec8:
 	ands r7, r3
 	adds r0, r7, #0
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r1, #3
 	ldr r0, .L_080cd4b0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	adds r0, r7, #0
 	bl Party_AdjustCoinsFar
 	movs r1, #1
@@ -495,15 +495,15 @@ Func_080ccec8:
 	bne .L_080cd30e
 	adds r0, r7, #0
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r5, .L_080cd4b4
 	movs r1, #1
 	adds r0, r5, #0
 	adds r5, #4
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	adds r0, r5, #0
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	mov r3, r8
 	cmp r3, #131
 	beq .L_080cd300
@@ -529,7 +529,7 @@ Func_080ccec8:
 	bl Sound_PlayFar
 	movs r1, #2
 	adds r0, r7, #0
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r3, .L_080cd49c
 	movs r1, #133
 	lsls r1, r1, #2
@@ -539,15 +539,15 @@ Func_080ccec8:
 	bne .L_080cd346
 	ldr r0, .L_080cd4b8
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd356
 .L_080cd346:
 	adds r0, r5, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080cd4bc
 	movs r1, #3
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cd356:
 	movs r2, #1
 	negs r2, r2
@@ -584,7 +584,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd4c0
 	movs r1, #1
 	adds r0, r5, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cd39e:
 	ldr r1, [sp, #0]
 	movs r3, #0
@@ -704,7 +704,7 @@ Func_080ccec8:
 	cmp r3, r1
 	bge .L_080cd4c8
 	ldr r0, [sp, #12]
-	bl UiWork_SetBusyFlagsFar
+	bl Window_SetBusyFlagsFar
 	ldr r1, [r6, #8]
 	mov r0, r11
 	bl EventRuntime_RunMessage

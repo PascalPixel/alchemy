@@ -26,7 +26,7 @@ void ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 void Object_SetModeById();
 s32 Random16Far();
-void UiText_ShowPositionedMessageAndWait();
+void FieldMessage_Show();
 void WaitFrames();
 extern u8 MsgGaiaRockInside01[];
 
@@ -42,7 +42,7 @@ void Func_02002020(void) {
   v_r10 = t3;
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait,
+  Call2((void (*)())FieldMessage_Show,
         (s32)&MsgGaiaRockInside01, 1);
   Call1((void (*)())Func_02005014, 193);
   Call2((void (*)())Func_02004e3c, v_r10, 1);

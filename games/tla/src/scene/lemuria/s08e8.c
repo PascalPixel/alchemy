@@ -13,7 +13,7 @@
        ->v)
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void Func_02001d7c(s32 value);
 void Func_02001bb4(s32 value);
 
@@ -23,7 +23,7 @@ void FieldEvent_WaitFrames();
 void ObjectMotion_SetAngleToward();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Motion_SetModeAndWaitAnimation();
 void Func_02001bcc(void);
@@ -43,7 +43,7 @@ void Func_020008e8(void) {
   do {
   } while (0);
   if (y < 0x5a0000) {
-    UiText_ShowPositionedMessageAndWait((s32)MsgAndTheOthers, 1);
+    FieldMessage_Show((s32)MsgAndTheOthers, 1);
     Func_02001d7c(126);
     Func_02001bb4(1);
   } else {
@@ -69,7 +69,7 @@ void Func_02000934(void) {
   Call3(ObjectMotion_SetAngleToward, 30, gAdventure.currentOwner, 0);
   Call1((void (*)())Object_RefreshSelectorById, 30);
   Call1(FieldEvent_WaitFrames, 5);
-  Value2(UiText_OpenMessageAtObject, 30, 0);
+  Value2(FieldMessage_ShowAtActor, 30, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, 4, 0)) {
     Call1(FieldEvent_WaitFrames, 30);
     Call3(Func_02001c7c, 30, 0, 0);

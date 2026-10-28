@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = Ram_HeapSlots->windowTiles;
-  u16 *cursor = &((struct UiRenderWork *)base)->tilemap[y][x];
-  u32 alternate = ((struct UiRenderWork *)base)->alt;
+  u16 *cursor = &((struct WindowWork *)base)->tilemap[y][x];
+  u32 alternate = ((struct WindowWork *)base)->alt;
   u32 row;
 
   for (row = 0; row < height; row++) {
@@ -18,7 +18,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
-        ((struct UiRenderWork *)base)->tileAttributes[index] &= 0xfc;
+        ((struct WindowWork *)base)->tileAttributes[index] &= 0xfc;
       }
     }
     cursor += 32 - width;
@@ -27,8 +27,8 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
 
 void Func_08041b68(void) {
   u8 *base = Ram_HeapSlots->windowTiles;
-  u32 alternate = ((struct UiRenderWork *)base)->alt;
-  u16 *cursor = ((struct UiRenderWork *)base)->tilemap[0];
+  u32 alternate = ((struct WindowWork *)base)->alt;
+  u16 *cursor = ((struct WindowWork *)base)->tilemap[0];
   s32 width = 30;
   s32 row;
   s32 x;
@@ -41,13 +41,13 @@ void Func_08041b68(void) {
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
-        ((struct UiRenderWork *)base)->tileAttributes[index] |= 2;
+        ((struct WindowWork *)base)->tileAttributes[index] |= 2;
       }
     }
   }
 
   for (row = 0; row < 256; row++, base++) {
-    if (((struct UiRenderWork *)base)->tileAttributes[0] == 1)
-      ((struct UiRenderWork *)base)->tileAttributes[0] = 0;
+    if (((struct WindowWork *)base)->tileAttributes[0] == 1)
+      ((struct WindowWork *)base)->tileAttributes[0] = 0;
   }
 }

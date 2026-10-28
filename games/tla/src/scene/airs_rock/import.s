@@ -53,7 +53,7 @@ Func_02003af8:
 	.global Func_02003b00
 	.thumb_func
 Func_02003b00:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -138,10 +138,10 @@ Func_02003ba0:
 	.thumb_func
 Func_02003ba8:
 	overlay_veneer Func_080202f8
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02003bb8
 	.thumb_func
 Func_02003bb8:

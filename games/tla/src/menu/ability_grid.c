@@ -14,7 +14,7 @@ void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
+void Window_Close(struct RenderInput *window, s32 release);
 s32 Party_FindOwnerWithActionFar(s32 action);
 void *Unit_Get(s32 owner);
 
@@ -111,7 +111,7 @@ s32 Func_08041350(void) {
     }
   } while (1);
 done:
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Func_08041254();
   WaitFrames(1);
   if (result != -1) {

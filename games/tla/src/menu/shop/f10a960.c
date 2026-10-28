@@ -30,14 +30,14 @@ s32 Shop_MsgByMode(s32 value) {
 }
 
 s32 BattleEffect_GetResourceIdFar(u16 id);
-void UiWork_FinalizePendingCoreFar(void);
-void UiText_OpenMessageWindowFar(s32 message, s32 a, s32 b, s32 c);
-s32 UiWork_IsCompleteFar(void);
+void Message_CloseFinishedWindowsFar(void);
+void Message_OpenWindowFar(s32 message, s32 a, s32 b, s32 c);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 frames);
 
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
-// The Broken Seal's UiMessage_ShowResolvedAndWait.
+// The Broken Seal's Message_ShowResolvedAndWait.
 void Func_0810a9ac(s32 value) {
   u8 *shop;
   s32 portrait;
@@ -50,10 +50,10 @@ void Func_0810a9ac(s32 value) {
   asm volatile("");
   message = value;
   portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
-  UiWork_FinalizePendingCoreFar();
+  Message_CloseFinishedWindowsFar();
   message = Shop_MsgByMode(message);
-  UiText_OpenMessageWindowFar(message, 5, 0, (portrait << 16) | 0x22);
-  while (UiWork_IsCompleteFar() == 0)
+  Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -67,7 +67,7 @@ struct ShopRuntime {
 
 /// As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
 /// message shows and restored after.
-// The Broken Seal's UiMessage_ShowResolvedAndRestoreState.
+// The Broken Seal's Message_ShowResolvedAndRestoreState.
 void Func_0810a9fc(s32 message) {
   struct ShopRuntime *shop;
   u8 **anchor;
@@ -80,9 +80,9 @@ void Func_0810a9fc(s32 message) {
   portrait = BattleEffect_GetResourceIdFar(shop->keeperResource);
   message = Shop_MsgByMode(message);
   (*anchor)[5] = 13;
-  UiWork_FinalizePendingCoreFar();
-  UiText_OpenMessageWindowFar(message, 5, 0, (portrait << 16) | 0x22);
-  while (UiWork_IsCompleteFar() == 0)
+  Message_CloseFinishedWindowsFar();
+  Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
   shop->cursorAnchor[5] = saved;

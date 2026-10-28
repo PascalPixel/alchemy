@@ -8,4 +8,4 @@
 	.global Field_ClockDigits
 Field_ClockDigits:
 	.incbin "games/tla/src/graphics/field/clock_digits.4bpp.lz"
-	.byte 0x00, 0x1e, 0x21	@ PACKER: left in the buffer by UiText_SmallFont+0xbd
+	.byte 0x00, 0x1e, 0x21	@ PACKER: left in the buffer by Text_SmallFont+0xbd

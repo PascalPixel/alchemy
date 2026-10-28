@@ -18,7 +18,7 @@ extern u8 Tile_BuildCellPicturesCodeSize[];
 
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.
-void UiWindow_FillFromScene(void *dst) {
+void Window_FillFromScene(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 
   if (scene == 0) {
@@ -40,7 +40,7 @@ void UiWindow_FillFromScene(void *dst) {
   }
 }
 
-void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
+void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width,
                                   u32 height, s32 value) {
   u32 row = 0;
   s16 *dst = (s16 *)0x06002000;
@@ -70,9 +70,9 @@ struct UiWindowBounds {
   u16 flags;
 };
 
-s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
-void UiWindow_BuildLayoutBounds(s32 flags) {
+void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
   u8 *base = Ram_HeapSlots->windowTiles;
   s32 height = 4;
@@ -107,7 +107,7 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
   state->flags = flags;
 }
 
-void UiWindow_CreateWithLayoutBounds(s32 flags) {
+void PartyStatus_CreateWindow(s32 flags) {
   s32 zero;
   struct UiWindowBounds *window;
   u8 *tiles;
@@ -116,8 +116,8 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   tiles = Ram_HeapSlots->windowTiles;
   zero = 0;
   tiles[6] = 1;
-  UiWindow_BuildLayoutBounds(flags);
-  window->handle = UiWindow_Create(window->left, window->top, window->right,
+  PartyStatus_BuildLayoutBounds(flags);
+  window->handle = Window_Create(window->left, window->top, window->right,
                                    window->height, 6);
   PartyStatus_Draw(flags);
   tiles[6] = zero;

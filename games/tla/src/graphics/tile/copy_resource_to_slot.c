@@ -12,7 +12,7 @@
 #include "types.h"
 #include "glyph.h"
 
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
+s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
   GlyphTransfer *work;
 
   work = Runtime_AllocateHeapBlock(0x44, sizeof(GlyphTransfer));

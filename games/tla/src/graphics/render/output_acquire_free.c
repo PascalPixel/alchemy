@@ -1,18 +1,18 @@
 /// @file
-/// Display: free list of sprite outputs (RenderOutput).
+/// Display: free list of sprite outputs (WindowSprite).
 
 #include "types.h"
 #include "edition.h"
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 /// Removes and returns the first entry of the free list, or NULL if it is
 /// empty.
-struct RenderOutput *RenderOutput_AcquireFree(void) {
-  struct UiRenderWork *work = UI_WORK;
-  struct RenderOutput *out = work->freeOutputs.head;
+struct WindowSprite *WindowSprite_AcquireFree(void) {
+  struct WindowWork *work = UI_WORK;
+  struct WindowSprite *out = work->freeOutputs.head;
 
   if (out != NULL) {
     if (out->next == NULL)
@@ -25,12 +25,12 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
 
 /// Puts an entry back at the free list's tail; entries outside outputs[] are
 /// ignored.
-void RenderOutput_ReleaseFree(struct RenderOutput *out) {
-  struct UiRenderWork *work = UI_WORK;
+void WindowSprite_ReleaseFree(struct WindowSprite *out) {
+  struct WindowWork *work = UI_WORK;
 
   if ((u32)out >= (u32)work->outputs &&
       (u32)out < (u32)&work->freeOutputs.head) {
-    struct RenderOutput **tail = work->freeOutputs.tailLink;
+    struct WindowSprite **tail = work->freeOutputs.tailLink;
 
     work->freeOutputs.tailLink = &out->next;
     *tail = out;
@@ -39,11 +39,11 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 }
 
 /// Link all 64 outputs[] entries into the free list.
-void UiWork_InitializeFreeList(void) {
+void WindowSprite_InitializeFreeList(void) {
   s32 n;
-  struct UiRenderWork *work;
-  struct RenderOutput *out;
-  struct RenderOutput *next;
+  struct WindowWork *work;
+  struct WindowSprite *out;
+  struct WindowSprite *next;
 
   work = UI_WORK;
   out = work->outputs;

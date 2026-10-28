@@ -1,7 +1,7 @@
 #include "contigo.h"
 #include "edition.h"
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 
 void Func_02000fc8(void) {
   Func_0200406c();
@@ -16,12 +16,12 @@ void Func_02000fe0(void) {
   Func_0200406c();
   Func_02004204(0);
   msg = (s32)MsgContigo20;
-  UiText_ShowPositionedMessageAndWait(msg, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 1, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 2, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 3, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 4, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 5, 1);
+  FieldMessage_Show(msg, 1);
+  FieldMessage_Show(msg + 1, 1);
+  FieldMessage_Show(msg + 2, 1);
+  FieldMessage_Show(msg + 3, 1);
+  FieldMessage_Show(msg + 4, 1);
+  FieldMessage_Show(msg + 5, 1);
   Func_02004074();
 }
 
@@ -31,13 +31,13 @@ void Func_0200102c(void) {
   Func_0200406c();
   Func_02004204(0);
   msg = (s32)MsgContigo21;
-  UiText_ShowPositionedMessageAndWait(msg, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 1, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 2, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 3, 1);
+  FieldMessage_Show(msg, 1);
+  FieldMessage_Show(msg + 1, 1);
+  FieldMessage_Show(msg + 2, 1);
+  FieldMessage_Show(msg + 3, 1);
 #if (LANGUAGE != LANGUAGE_SPANISH) /* The Spanish edition ends after four messages.  \
                               */
-  UiText_ShowPositionedMessageAndWait(msg + 4, 1);
+  FieldMessage_Show(msg + 4, 1);
 #endif
   Func_02004074();
 }

@@ -17,7 +17,7 @@
 #include "render_input.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u16 x;
   u16 y;
   s16 targetX;
@@ -56,11 +56,11 @@ void *Func_080380f8(s32 portrait, s32 a, s32 b, s32 c);
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
 s32 Func_0810b6bc(void);
-void UiWork_FinalizeFar(void *window, s32 mode);
+void Window_CloseFar(void *window, s32 mode);
 
 s32 Func_0810b5c4(s32 objectId) {
   struct ShopRuntime *shop;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   void *window;
   s32 message;
   s32 result;
@@ -72,7 +72,7 @@ s32 Func_0810b5c4(s32 objectId) {
   shop->partyAction = 4;
   shop->portrait = *Object_GetByIdFar(objectId)->sprite->portrait;
   window = Func_080380f8(shop->portrait, 0, 0, 0);
-  icon = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
+  icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
   icon->active = 1;
   icon->kind = 0;
@@ -85,7 +85,7 @@ s32 Func_0810b5c4(s32 objectId) {
   Func_08108aa8(&shop->cursor, -32, 112);
   if (result == -1)
     Func_081084f4(message + 2);
-  UiWork_FinalizeFar(window, 2);
+  Window_CloseFar(window, 2);
   Func_0810824c();
   return 0;
 }

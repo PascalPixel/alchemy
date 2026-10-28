@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiIcon_PrepareObjectFar
+	.global Icon_PrepareActorFar
 	.thumb_func
-UiIcon_PrepareObjectFar:
-	overlay_veneer UiIcon_PrepareObject
+Icon_PrepareActorFar:
+	overlay_veneer Icon_PrepareActor
 	.global DjinnMenu_Open
 	.thumb_func
 DjinnMenu_Open:

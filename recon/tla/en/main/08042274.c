@@ -5,7 +5,7 @@
 // consttable_2 writes one). Adopted in en and de it compared 2 bytes short
 // of the ROM there. Without the temporary the constant is built in three
 // instructions (differ 6); as s16, differ 2 with the same pool word.
-// The Broken Seal's UiText_DrawPrefixedNumberAtOffset in the form of its
+// The Broken Seal's Text_DrawPrefixedNumberAtOffset in the form of its
 // English edition (its Spanish, French and Italian ones set both halfwords
 // in the branches; this game's Japanese edition has another layout),
 // reading the window's x and y as signed halfwords, with a barrier after
@@ -18,24 +18,24 @@
 #include "render_input.h"
 #include "text_render_runtime.h"
 
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
+u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[16];
   u16 output[8];
   u8 *text;
   s32 index;
   u32 cell;
-  struct UiRenderWork *canvas;
+  struct WindowWork *canvas;
   s32 vram;
   s32 src;
   s32 dst;
   s32 phase;
   u16 second;
 
-  canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  text = UiText_FormatNumber(formatted, value, 4);
+  canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  text = String_FormatNumber(formatted, value, 4);
   if (variant == 0) {
     output[0] = 0xf01d;
   } else {
@@ -56,6 +56,6 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;
     phase = offsetX & 7;
-    UiText_RenderStringTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
+    Text_DrawStringAsTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
   }
 }

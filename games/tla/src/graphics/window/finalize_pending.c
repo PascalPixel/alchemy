@@ -9,8 +9,8 @@ s32 Sound_GetBgmRestoreDelayFar(void);
 
 /// Ends a message wait (clearing the channel's countdown and returning 1) when
 /// the window's voice has finished or A, B or a shoulder button is held.
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
   /* FAKEMATCH: the native keeps the address of the held keys and reads them
    * twice; a plain read is shared. */
@@ -34,14 +34,14 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   return 0;
 }
 
-/// As UiWork_CheckCancelByInput, but on newly pressed A, B or shoulder buttons
+/// As Message_CheckCancelByInput, but on newly pressed A, B or shoulder buttons
 /// (the pending presses in a window mode); while B is held the wait ends only
 /// at countdown 1, and otherwise the countdown is set to 2.
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
+s32 Message_CheckCancelByModeInput(struct UiChannelSlot *ch) {
   /* FAKEMATCH: the work is pinned to the r6 the native keeps it in; with the
    * barrier below and no pin it takes r5 and the channel r6 (differ 14). */
-  register struct UiRenderWork *work asm("r6") =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  register struct WindowWork *work asm("r6") =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
   u32 keys;
 
@@ -76,18 +76,18 @@ struct UiWindowState {
   s32 pendingValue;
 };
 
-void UiWork_FinalizePendingCore(void) {
+void Message_CloseFinishedWindows(void) {
   s32 slotIndex;
   struct UiChannelSlot *slot;
   struct UiWindowState *work;
 
-  slot = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
+  slot = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
   slotIndex = 0;
   do {
     work = (struct UiWindowState *)slot->work;
     if (work != NULL && work->pendingValue == 0 && work->flags != 0 &&
         work->state != 0) {
-      UiWork_Finalize((struct UiWindow *)work, work->flags & 2);
+      Window_Close((struct Window *)work, work->flags & 2);
     }
     slotIndex++;
     slot++;

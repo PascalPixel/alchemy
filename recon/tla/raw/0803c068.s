@@ -29,7 +29,7 @@ Func_0803c068:
 	ldrh r3, [r3]
 	mov r11, r0
 	mov r8, r3
-	bl RenderOutput_AcquireFree
+	bl WindowSprite_AcquireFree
 	adds r7, r0, #0
 	movs r0, #0
 	cmp r7, #0
@@ -112,7 +112,7 @@ Func_0803c068:
 	movs r3, #0
 	strb r2, [r7, #14]
 	str r3, [r7]
-	bl RenderOutput_AppendToList
+	bl WindowSprite_AppendToList
 	mov r0, r10
 	b .L_0803c160
 	.2byte 0x0000

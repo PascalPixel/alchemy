@@ -140,7 +140,7 @@ s32 Func_0200145c(void) {
     }
     ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
     Func_02001a64((s32)MsgNotBadWould + msg);
-    UiText_OpenMessageAtObject(8, 0);
+    FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       if (wins > 90)
         wins = 90;
@@ -156,11 +156,11 @@ s32 Func_0200145c(void) {
       if (gAdventure.linkTallies[2] < score) {
         gAdventure.linkTallies[2] = score;
         Func_02001a64((s32)MsgYouWonBattle);
-        UiText_OpenMessageAtObject(8, 0);
+        FieldMessage_ShowAtActor(8, 0);
         Func_02001400();
       } else {
         Func_02001a64((s32)MsgYouWonBattlePlease);
-        UiText_OpenMessageAtObject(8, 0);
+        FieldMessage_ShowAtActor(8, 0);
       }
       LinkLobby_WriteSlotValue(0);
     }
@@ -181,11 +181,11 @@ s32 Func_0200145c(void) {
     if (gAdventure.linkTallies[2] < score) {
       gAdventure.linkTallies[2] = score;
       Func_02001a64((s32)MsgYouWonBattle);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       Func_02001400();
     } else {
       Func_02001a64((s32)MsgYouWonBattleI);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
     }
     gAdventure.linkTallies[3] = 0;
     Flag_Clear(0x173);

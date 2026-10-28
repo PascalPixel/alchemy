@@ -48,7 +48,7 @@ void Func_02000730(void) {
     Func_02000da4(Object_GetById(9), 3);
     Func_02000dfc(83);
     Func_02000ccc(item, 2);
-    UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 1);
+    FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Func_02000d4c(9, 0, 0);
     Func_02000d4c(13, 232 << 16, 194 << 16);

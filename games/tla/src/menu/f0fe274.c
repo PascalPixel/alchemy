@@ -23,22 +23,22 @@ struct OwnerMenuState {
   u16 page;
 };
 
-void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
-void UiWindow_InitializeWork(s32 unused);
+void Window_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 a, s32 b, s32 c, s32 d);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Func_080fe49c(void);
-void RenderOutput_ClearListFar(void *window);
+void WindowSprite_ClearListFar(void *window);
 void ItemMenu_Close(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
 void Menu_SuspendFieldTasks(void);
 void Menu_ResumeFieldTasks(void);
 void Palette_LightenHighlight(s32 paletteNumber);
-void UiWork_SetAltFlagAndClearTableFar(s32 flag);
+void Text_UseExtraTilesFar(s32 flag);
 s32 Party_SumDjinnCountsFar(s32 owner);
 void Func_081051a8(void);
 void Func_081053a8(void);
@@ -71,12 +71,12 @@ s32 Func_080fe274(void) {
   heap = Ram_HeapSlots;
   transition = heap->screenTransition;
   heap->objectSystem->suspended = 1;
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   saved = *(u16 *)&transition->active;
   transition->active = 17;
   Menu_SuspendFieldTasks();
-  UiWindow_InitializeWork(0);
+  Window_InitializeWork(0);
   page = &state->page;
   *page = 0;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
@@ -88,8 +88,8 @@ s32 Func_080fe274(void) {
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
-  UiWork_SetAltFlagAndClearTableFar(1);
-  state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  Text_UseExtraTilesFar(1);
+  state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   if (Party_SumDjinnCountsFar(result) != 0)
     Func_081051a8();
   Link_DrawShiftedTilePairFar(0x06002500);
@@ -101,25 +101,25 @@ s32 Func_080fe274(void) {
 
   Menu_EnsureCancelSound();
   MenuIcon_ReleaseSlots();
-  RenderOutput_ClearListFar(state->statusWindow);
+  WindowSprite_ClearListFar(state->statusWindow);
   MenuIcon_ReleaseObjects();
   Menu_ResumeFieldTasks();
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Func_08038290();
-  UiWork_SetAltFlagAndClearTableFar(0);
+  Text_UseExtraTilesFar(0);
   CopyWords_((void *)0x05000000, palette, 64);
   CopyWords_((void *)0x06004000, tiles, 0x2800);
   MemFree(tiles);
   MemFree(palette);
-  ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 1;
+  ((struct WindowWork *)heap->windowTiles)->menuBusy = 1;
   ItemMenu_Close();
-  UiWindow_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(220);
   heap->objectSystem->suspended = 0;
   transition->active = saved;
   WaitFrames(1);
-  UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 0;
+  Window_EraseBorderRectFar(0, 0, 30, 20);
+  ((struct WindowWork *)heap->windowTiles)->menuBusy = 0;
   return result;
 }

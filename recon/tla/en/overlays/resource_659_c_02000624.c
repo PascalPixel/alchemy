@@ -62,7 +62,7 @@ void Object_LinkObjectAndSetCallback();
 void Object_TurnToFaceEachOther();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02001e80(s32 value);

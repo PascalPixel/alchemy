@@ -26,7 +26,7 @@ void Task_Add(void (*callback)(void), s32 priority);
 void Task_RemoveFar(void (*callback)(void));
 s32 Math_Cosine(s32 angle);
 
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);

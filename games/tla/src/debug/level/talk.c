@@ -10,14 +10,14 @@ extern const u8 gData_02000744[];
 
 u8 *Unit_Get(s32 owner);
 void Unit_Calculate(s32 owner);
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawResource(s32 msg, void *window, s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(void *window);
-void UiText_DrawStringAtOffset(const u8 *text, void *window, s32 x, s32 y);
-void UiText_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
+void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRect(void *window);
+void Text_DrawStringAtOffset(const u8 *text, void *window, s32 x, s32 y);
+void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
+void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
                                s32 y);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 void WaitFrames(s32 frames);
 void Func_0200017c(s32 delta);
 void Func_0200073c(s32 cue);
@@ -42,22 +42,22 @@ void Func_020001a8(void) {
   s32 msg;
 
   record = Unit_Get(gAdventure.currentOwner);
-  win = UiWindow_Create(0, 0, 30, 9, 2);
+  win = Window_Create(0, 0, 30, 9, 2);
 
   msg = (s32)MsgRaiseEveryoneS;
-  UiText_DrawResource(msg, win, 0, 0);
-  UiText_DrawResource(msg + 1, win, 0, 16);
+  Text_DrawMessage(msg, win, 0, 0);
+  Text_DrawMessage(msg + 1, win, 0, 16);
   msg += 2;
   flag = 1;
-  UiText_DrawResource(msg, win, 0, 32);
+  Text_DrawMessage(msg, win, 0, 32);
 
   for (;;) {
     if (flag != 0) {
-      RenderOutput_RedrawSavedRect(win);
-      UiText_DrawStringAtOffset(record, win, 0, 48);
-      UiText_DrawStringInWindow(gData_02000744, win, 48, 48);
+      WindowSprite_RedrawSavedRect(win);
+      Text_DrawStringAtOffset(record, win, 0, 48);
+      Text_DrawStringInWindow(gData_02000744, win, 48, 48);
       flag = 0;
-      UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
+      Text_DrawNumberInWindow(record[15], 0, win, 72, 48);
     }
 
     /* FAKEMATCH: the pressed keys are read through a volatile view
@@ -77,9 +77,9 @@ void Func_020001a8(void) {
 
     if ((KEYS_PRESSED & 2) != 0) {
       Func_0200073c(113);
-      RenderOutput_RedrawSavedRect(win);
+      WindowSprite_RedrawSavedRect(win);
       WaitFrames(1);
-      UiWork_Finalize(win, 1);
+      Window_Close(win, 1);
 
       Unit_Calculate(0);
       Unit_Calculate(1);

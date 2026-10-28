@@ -148,7 +148,7 @@ void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02001e20(s32 actor, s32 target);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_02001e88(s32 actor, s32 emote, s32 frames);
 void Func_02001e90(s32 actor, s32 emote);
@@ -226,7 +226,7 @@ static inline void GabombaStatueChamber_MessagePut(s32 speaker, s32 flags) {
 
 static inline void GabombaStatueChamber_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(speaker, flags);
+  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 // ---- this overlay

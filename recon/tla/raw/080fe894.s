@@ -101,13 +101,13 @@ Func_080fe894:
 	adds r5, r7, #0
 	adds r5, #240
 	ldr r0, [r5]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r6, .L_080feb4c
 	ldr r1, [r5]
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #55
 	bl GameFlag_Test
 	cmp r0, #0
@@ -116,13 +116,13 @@ Func_080fe894:
 	ldr r0, .L_080feb50
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_080fe97e:
 	movs r2, #0
 	movs r3, #8
 	ldr r1, [r5]
 	subs r0, r6, #3
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, [sp, #4]
 	mov r1, r8
 	add r0, r8

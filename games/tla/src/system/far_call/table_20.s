@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Ui_GetTableWordZeroFar
+	.global WindowSprite_GetPointerTilesFar
 	.thumb_func
-Ui_GetTableWordZeroFar:
-	overlay_veneer Ui_GetTableWordZero
+WindowSprite_GetPointerTilesFar:
+	overlay_veneer WindowSprite_GetPointerTiles
 	.global Func_080383d8
 	.thumb_func
 Func_080383d8:
-	overlay_veneer UiText_OpenEntryMessage
+	overlay_veneer Message_OpenDecoded
 	.global Func_080383e0
 	.thumb_func
 Func_080383e0:

@@ -19,7 +19,7 @@ Func_080f8010:
 	.thumb_func
 Func_080f8018:
 	overlay_veneer Func_080fe184
-	.global UiIcon_CreateWithResourceVariantFar
+	.global Icon_CreateWithResourceVariantFar
 	.thumb_func
-UiIcon_CreateWithResourceVariantFar:
-	overlay_veneer UiIcon_CreateWithResourceVariant
+Icon_CreateWithResourceVariantFar:
+	overlay_veneer Icon_CreateWithResourceVariant

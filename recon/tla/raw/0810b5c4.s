@@ -61,7 +61,7 @@ Func_0810b5c4:
 	mov r3, r9
 	mov r2, r11
 	str r3, [sp, #0]
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	movs r3, #255
 	adds r5, r0, #0
 	strb r3, [r5, #15]
@@ -105,7 +105,7 @@ Func_0810b5c4:
 .L_0810b69c:
 	mov r0, r11
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	bl Func_0810824c
 	movs r0, #0
 	add sp, #4

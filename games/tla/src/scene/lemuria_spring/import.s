@@ -50,34 +50,34 @@ ObjectDispatch_SetAnimationSpeed:
 	.thumb_func
 Func_020012f8:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global UiWindow_Create
+	.global Window_Create
 	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
+Window_Create:
+	overlay_veneer Window_CreateFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_ShowPositionedMessageAndWait
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global UiText_DrawCharacterAtOffset
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
+	.global Text_DrawCharacterAtOffset
 	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
-	.global UiText_DrawNumberInWindow
+Text_DrawCharacterAtOffset:
+	overlay_veneer Text_DrawCharacterAtOffsetFar
+	.global Text_DrawNumberInWindow
 	.thumb_func
-UiText_DrawNumberInWindow:
-	overlay_veneer UiText_DrawNumberInWindowFar
+Text_DrawNumberInWindow:
+	overlay_veneer Text_DrawNumberInWindowFar
 	.global Func_02001328
 	.thumb_func
 Func_02001328:
-	overlay_veneer UiText_DrawQuantity
-	.global UiWork_FinalizePendingCore
+	overlay_veneer MessageArgument_PushFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global Func_02001338
 	.thumb_func
 Func_02001338:
@@ -154,10 +154,10 @@ Object_SetModeById:
 	.thumb_func
 Func_020013c8:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_020013d8
 	.thumb_func
 Func_020013d8:

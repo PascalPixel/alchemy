@@ -55,13 +55,13 @@ struct InventoryMenuState {
 extern u8 MsgSwitchCharacterHelp[];
 
 void *Unit_Get(s32 owner);
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
 s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
 void InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
@@ -74,8 +74,8 @@ void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct InventoryMenuState *menu,
                                            s32 ownerId);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 
 s32 Func_0810021c(void) {
   struct InventoryMenuState *menu;
@@ -96,22 +96,22 @@ s32 Func_0810021c(void) {
   refresh = 2;
   listNeedsRedraw = 1;
   owner = Unit_Get(menu->paneOwner);
-  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
+  Window_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
-  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
+  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
       if (refresh == 2) {
         owner = Unit_Get(menu->paneOwner);
         menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
-        RenderOutput_RedrawSavedRectFar(window);
+        WindowSprite_RedrawSavedRectFar(window);
         for (i = 0; i <= 14; i++)
           savedInventory[i] = owner->inventory[i];
         InventoryMenu_SortByListOrder(menu->items, 0);
         Func_080ff7b4(&state, 0);
         ItemMenu_DrawIcons(menu->items, 0);
-        RenderOutput_RedrawSavedRectFar(menu->equipWindow);
+        WindowSprite_RedrawSavedRectFar(menu->equipWindow);
         ItemMenu_DrawCategory(menu->equipWindow, menu->paneOwner, 1);
         listNeedsRedraw = 1;
         WaitFrames(1);
@@ -121,9 +121,9 @@ s32 Func_0810021c(void) {
         Func_081000e0(window, 0, &state);
       }
       ItemMenu_DrawEquipPage(window, 0, &state);
-      UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0,
+      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0,
                                       -24);
-      UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
       refresh = 0;
     }
     WaitFrames(1);
@@ -166,8 +166,8 @@ s32 Func_0810021c(void) {
       refresh = 2;
     }
   }
-  RenderOutput_PrepareForRedrawFar(menu->infoWindow);
-  RenderOutput_RedrawSavedRectFar(window);
-  RenderOutput_ClearListFar(menu->messageWindow);
+  WindowSprite_PrepareForRedrawFar(menu->infoWindow);
+  WindowSprite_RedrawSavedRectFar(window);
+  WindowSprite_ClearListFar(menu->messageWindow);
   return result;
 }

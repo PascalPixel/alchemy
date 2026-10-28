@@ -35,7 +35,7 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `AffineEffect_`, `Audio_`, `BattleEffect_`, `BattleUnit_`, `CharacterMenu_`,
 `Debug_`, `DjinnMenu_`, `Graphics_`, `Inn_`, `InventoryMenu_`, `Item_`,
 `ItemMenu_`, `LinkLobby_`, `Menu_`, `NodeChain_`, `Palette_`, `PsynergyMenu_`,
-`Render_`, `Resource_`, `Shop_`, `Title_`, `UiPalette_` and `UiWindow_`. Those
+`Render_`, `Resource_`, `Shop_`, `Title_`, `UiPalette_` and `Window_`. Those
 only The Lost Age's code has so far:
 
 | Prefix | What it acts on |

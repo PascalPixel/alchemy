@@ -1,5 +1,5 @@
 // Sets the message voice from the object `key` names (The Broken Seal's
-// Ui_SetMessageVoiceFromActor): the voice sound from its value and the
+// Message_SetVoiceFromActor): the voice sound from its value and the
 // countdown from the event mode's table; 0x80000000 clears both.
 #include "types.h"
 #include "adventure.h"
@@ -11,7 +11,7 @@ s32 Func_080d1eac(s32 id);
 extern const u8 gData_080f330c[];
 
 void Func_080d4330(s32 key) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u8 value;
   s32 id;
 

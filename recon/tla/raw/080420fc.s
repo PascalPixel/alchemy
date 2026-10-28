@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_DrawStringAtOffset
+	.global Text_DrawStringAtOffset
 	.thumb_func
-UiText_DrawStringAtOffset:
+Text_DrawStringAtOffset:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -65,7 +65,7 @@ UiText_DrawStringAtOffset:
 .L_08042170:
 	.4byte 0x06002000
 .L_08042174:
-	bl UiText_RenderStringTiles
+	bl Text_DrawStringAsTiles
 	adds r0, r6, #0
 	bl MemFree
 .L_0804217e:

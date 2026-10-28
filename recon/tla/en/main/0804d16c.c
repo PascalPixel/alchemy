@@ -21,8 +21,8 @@
 #include "text/msg_ids.h"
 
 void Sound_PlayFar(u32);
-void RenderOutput_PrepareForRedraw(struct UiWindow *);
-void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
+void WindowSprite_PrepareForRedraw(struct Window *);
+void Text_DrawCharacterAtOffset(s32, struct Window *, s32, s32);
 
 #define INPUT ((volatile struct InputState *)&gInput)
 
@@ -33,12 +33,12 @@ s32 Menu_RunResourceSelectionLoop(s32 initial) {
   work->selection = initial;
   asm("");
 redraw:
-  RenderOutput_PrepareForRedraw(work->window);
+  WindowSprite_PrepareForRedraw(work->window);
   if (work->resourceBase != 0)
     resource = work->resourceBase + work->selection;
   else
     resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
-  UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
+  Text_DrawCharacterAtOffset(resource, work->window, 0, 0);
   for (;;) {
     WaitFrames(1);
     if (INPUT->pressed & KEY_A) {

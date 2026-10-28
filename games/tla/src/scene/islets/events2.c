@@ -33,7 +33,7 @@ void ObjectDispatch_SetSingleChildFlags();
 void PartyInventory_FindOwner();
 void PartyInventory_GiveItem();
 void PartyInventory_Remove();
-void UiText_ShowPositionedMessageAndWait();
+void FieldMessage_Show();
 
 void Func_02000210(void) {
   s32 result0;
@@ -279,7 +279,7 @@ void Func_02000568(void) {
     }
     Call1((void (*)())FieldEvent_WaitFrames, 10);
     ((void (*)())Func_02003fc4)();
-    Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgOhMyThat + 1,
+    Call2((void (*)())FieldMessage_Show, (s32)MsgOhMyThat + 1,
           1);
     Call1((void (*)())PartyInventory_Remove, 0x1c4);
     Value2((s32 (*)())PartyInventory_GiveItem, 0x1c5, 0);

@@ -19,7 +19,7 @@ Func_08044b98:
 	movs r2, #26
 	movs r3, #5
 	add r7, sp, #16
-	bl UiWindow_Create
+	bl Window_Create
 	movs r6, #0
 	mov r8, r0
 	cmp r0, #0
@@ -28,12 +28,12 @@ Func_08044b98:
 	movs r2, #0
 	movs r3, #4
 	str r3, [sp, #0]
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r3, #1
 	strb r3, [r5, #3]
 	mov r0, r10
 	bl Func_08044b80
-	bl UiText_GetSpeakerPortrait
+	bl Portrait_GetForSpeaker
 	movs r1, #14
 	add r2, sp, #12
 	add r3, sp, #8
@@ -59,15 +59,15 @@ Func_08044b98:
 	strh r6, [r3]
 	movs r1, #1
 	mov r0, r10
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r0, .L_08044c78
-	bl UiText_BuildRenderEntriesMode1
+	bl Message_DecodeMode1
 	movs r2, #36
 	adds r1, r0, #0
 	movs r3, #2
 	mov r0, r8
 	str r6, [sp, #0]
-	bl UiText_QueueRenderEntries
+	bl Message_Start
 	movs r0, #81
 	bl Sound_PlayFar
 	movs r5, #129
@@ -90,7 +90,7 @@ Func_08044b98:
 .L_08044c56:
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #12]

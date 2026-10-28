@@ -27,7 +27,7 @@ PsynergyMenu_DrawRangePage:
 	str r3, [r1, #24]
 	ldr r0, [r2, #48]
 	sub sp, #8
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r0, #1
 	bl WaitFrames
 	mov r1, r11
@@ -51,7 +51,7 @@ PsynergyMenu_DrawRangePage:
 	ldr r1, [r1, #48]
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r2, r11
 	ldr r3, [r2, #24]
 	movs r1, #226
@@ -70,7 +70,7 @@ PsynergyMenu_DrawRangePage:
 	movs r3, #224
 	movs r1, #0
 	movs r2, #96
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	movs r3, #0
 	mov r10, r3
 	ldrb r3, [r5, #6]
@@ -111,7 +111,7 @@ PsynergyMenu_DrawRangePage:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #96
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080ffa3a
 .L_080ffa28:
 	mov r2, r10
@@ -121,7 +121,7 @@ PsynergyMenu_DrawRangePage:
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #96
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_080ffa3a:
 	mov r3, r11
 	ldr r2, [r3, #8]
@@ -161,7 +161,7 @@ PsynergyMenu_DrawRangePage:
 	adds r0, r7, #0
 	movs r2, #24
 	adds r3, r6, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	mov r2, r9
 	movs r3, #14
 	str r2, [sp, #0]
@@ -206,7 +206,7 @@ PsynergyMenu_DrawRangePage:
 	adds r0, r7, #0
 	movs r2, #24
 	adds r3, r6, #0
-	bl UiWindow_SetTilemapEntryFar
+	bl Window_SetTilemapEntryFar
 	mov r3, r9
 	movs r1, #15
 	str r3, [sp, #0]

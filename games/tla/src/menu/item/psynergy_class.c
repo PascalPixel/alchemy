@@ -90,8 +90,8 @@ s16 Unit_AddPpFar(s32 unit, s32 amount);
 void ItemMenu_DrawMessage(s32 window, s32 message);
 void ItemMenu_PositionCategory(void);
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
-void RenderOutput_ClearListFar(void *window);
-void RenderOutput_RedrawSavedRectFar(void *window);
+void WindowSprite_ClearListFar(void *window);
+void WindowSprite_RedrawSavedRectFar(void *window);
 void Party_SetPackedEvent(s32 member, s32 action, s32 shortcut);
 s32 BattleEffect_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 void Func_080f8170(void *window, s32 member, s32 mode, s32 kind);
@@ -147,7 +147,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         done = 1;
         useResult = cancelled;
       }
-      RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+      WindowSprite_RedrawSavedRectFar(menu->infoWindow);
       step = PSYNERGY_STEP_LIST;
       break;
     }
@@ -192,15 +192,15 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
             if (menu->mode == PSYNERGY_MODE_SET_L) {
               Party_SetPackedEvent(menu->memberIds[0], chosenAction,
                                    PSYNERGY_SHORTCUT_L);
-              RenderOutput_ClearListFar(menu->infoWindow);
+              WindowSprite_ClearListFar(menu->infoWindow);
               InventoryMenu_ShowModalMessage((s32)MsgShortcutSetL, -1, -1);
-              RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+              WindowSprite_RedrawSavedRectFar(menu->infoWindow);
             } else {
               Party_SetPackedEvent(menu->memberIds[0], chosenAction,
                                    PSYNERGY_SHORTCUT_R);
-              RenderOutput_ClearListFar(menu->infoWindow);
+              WindowSprite_ClearListFar(menu->infoWindow);
               InventoryMenu_ShowModalMessage((s32)MsgShortcutSetR, -1, -1);
-              RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+              WindowSprite_RedrawSavedRectFar(menu->infoWindow);
             }
             step = PSYNERGY_STEP_MEMBER;
           }
@@ -283,12 +283,12 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           mask &= entry;
           Func_08100d58(mask);
         }
-        RenderOutput_ClearListFar(menu->infoWindow);
+        WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
                                        0, -1);
       } else {
         Sound_PlayFar(114);
-        RenderOutput_ClearListFar(menu->infoWindow);
+        WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
                                        useResult, useResult);
       }

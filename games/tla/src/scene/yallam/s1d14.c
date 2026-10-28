@@ -24,7 +24,7 @@ void Func_020025a0();
 void ObjectMotion_ArmCallback();
 void ObjectMotion_Launch();
 s32 Object_GetById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void WaitFrames();
 extern u8 MsgIfYouWant[];
 
@@ -89,7 +89,7 @@ L_02009de8:
   Call3(ObjectMotion_ArmCallback, 10, 0xd000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xd000, 0);
   Call2(Func_02002548, 11, 0xd000);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 8, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
   t33 = Value2(Event_AskYesNoWithActorAnimation, FIELD_AT(v5, s32, 0), 0);
   if (t33 != 0)
     goto L_02009e90;

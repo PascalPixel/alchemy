@@ -46,7 +46,7 @@ void Func_02000804(s32 actor) {
   /* FAKEMATCH: called as returning a value, which the native's argument order
    * shows (r1 before r0); scene_call.h declares it void for the scenes that
    * match so. */
-  ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(8, 0);
+  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_WaitFrames(20);
     Func_0200351c(8, 0, 5);

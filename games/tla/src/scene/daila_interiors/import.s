@@ -38,18 +38,18 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 Func_02000cbc:
 	overlay_veneer Func_08020300
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02000ccc
 	.thumb_func
 Func_02000ccc:
-	overlay_veneer UiText_DrawQuantity
-	.global UiWork_FinalizePendingCore
+	overlay_veneer MessageArgument_PushFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global Unit_Calculate
 	.thumb_func
 Unit_Calculate:
@@ -126,10 +126,10 @@ ObjectMotion_SetAngleToward:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:

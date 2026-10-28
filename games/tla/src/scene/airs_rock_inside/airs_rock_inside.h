@@ -45,7 +45,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
+void FieldMessage_Show(const u8 *message, s32 mode);
 void Func_02005d5c(struct FieldActor *object, s32 value);
 void Func_02005d6c(struct FieldActor *object, const u8 *data);
 void Func_02005d9c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

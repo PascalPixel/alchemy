@@ -17,10 +17,10 @@
 #include "edition.h"
 #include "far_runtime.h"
 
-s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+s32 Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-void RenderOutput_ClearListFar();
-#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+void WindowSprite_ClearListFar();
+#define WindowSprite_ClearListFar ((void (*)(s32))WindowSprite_ClearListFar)
 #endif
 
 /// Redraws win and writes message from the top left; does nothing if win is
@@ -29,12 +29,12 @@ void RenderOutput_ClearListFar();
 void Shop_DrawMsg(s32 win, s32 message) {
   if (win != 0) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    RenderOutput_RedrawSavedRectFar(win);
-    UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
+    WindowSprite_RedrawSavedRectFar(win);
+    Text_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
-    RenderOutput_ClearListFar(win);
+    WindowSprite_ClearListFar(win);
     WaitFrames(1);
-    UiText_DrawResourceFar(message, win, 0, 0);
+    Text_DrawMessageFar(message, win, 0, 0);
 #endif
   }
 }

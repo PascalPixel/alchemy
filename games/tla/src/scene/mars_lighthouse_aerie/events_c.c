@@ -24,7 +24,7 @@ void ObjectMotion_SetPositionAndCommit();
 void Object_SetModeById();
 void Object_SetPositionAndResetMotion();
 void Party_RemoveOwnerRestored();
-void UiText_OpenMessageAtObject(s32 actor, s32 flags);
+void FieldMessage_ShowAtActor(s32 actor, s32 flags);
 void WaitFrames();
 extern u8 gData_02006b70[];
 extern u8 gData_02006c20[];
@@ -204,7 +204,7 @@ void Func_020029ac(void) {
      * without). */
     register s32 flags asm("r1") = 0;
 
-    UiText_OpenMessageAtObject(0x8000, flags);
+    FieldMessage_ShowAtActor(0x8000, flags);
   }
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
              gAdventure.currentOwner, 0) == 0) {

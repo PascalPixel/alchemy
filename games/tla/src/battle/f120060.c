@@ -26,8 +26,8 @@ struct MenuPoint {
 
 extern u32 gFrameCount;
 
-s32 Ui_GetTableWordZeroFar(s32 index);
-s32 UiWork_IsCompleteFar(void);
+s32 WindowSprite_GetPointerTilesFar(s32 index);
+s32 Message_AllTypedFar(void);
 void WaitFrames(s32 frames);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 slot, s32 source);
@@ -45,10 +45,10 @@ s32 Func_08120060(s32 x, s32 y) {
   struct CursorSprite *prompt;
   s32 tileSlot;
 
-  pointerTiles = Ui_GetTableWordZeroFar(0);
+  pointerTiles = WindowSprite_GetPointerTilesFar(0);
   position.x = x;
   position.y = y;
-  while (!UiWork_IsCompleteFar())
+  while (!Message_AllTypedFar())
     WaitFrames(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);

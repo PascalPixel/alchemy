@@ -21,7 +21,7 @@ Func_08109ad8:
 	str r0, [sp, #4]
 	str r5, [sp, #0]
 	mov r8, r0
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	str r0, [r6, #12]
 	bl Func_08109188
 	movs r1, #12
@@ -29,14 +29,14 @@ Func_08109ad8:
 	movs r3, #8
 	movs r0, #16
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r1, #14
 	str r0, [r6, #36]
 	movs r2, #13
 	movs r3, #3
 	movs r0, #0
 	str r5, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r1, #192
 	lsls r1, r1, #4
 	movs r2, #128
@@ -133,7 +133,7 @@ Func_08109ad8:
 	b .L_08109b5e
 .L_08109be8:
 	mov r0, r10
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	movs r0, #112
 	bl Sound_PlayFar
 	movs r0, #129
@@ -204,13 +204,13 @@ Func_08109ad8:
 	bl Menu_ReleaseEntryObjectsFar
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	ldr r0, [r6, #36]
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	ldr r0, [r6, #12]
 	movs r1, #2
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #1
 	bl WaitFrames
 	adds r0, r5, #0

@@ -277,7 +277,7 @@ Func_08043cd8:
 	movs r2, #28
 	movs r0, #1
 	movs r3, #7
-	bl UiWindow_Create
+	bl Window_Create
 	movs r1, #192
 	lsls r1, r1, #6
 	adds r1, #60
@@ -358,7 +358,7 @@ Func_08043cd8:
 	movs r2, #12
 	adds r3, r5, #0
 	str r4, [sp, #4]
-	bl UiText_DrawString
+	bl Text_DrawString
 	ldr r3, .L_08044224
 	ldrh r0, [r6, #2]
 	mov r1, r9
@@ -366,7 +366,7 @@ Func_08043cd8:
 	movs r2, #72
 	adds r3, r5, #0
 .L_08043f7e:
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	ldr r4, [sp, #4]
 	ldr r2, [sp, #20]
 	movs r1, #16
@@ -438,7 +438,7 @@ Func_08043cd8:
 	movs r1, #10
 	movs r2, #14
 	movs r3, #9
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #32]
 .L_0804401c:
 	movs r2, #192
@@ -460,7 +460,7 @@ Func_08043cd8:
 	movs r1, #10
 	movs r2, #13
 	movs r3, #3
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #28]
 .L_0804404c:
 	bl Menu_ClearFirstObjectRowAndScheduleUpdate
@@ -500,12 +500,12 @@ Func_08043cd8:
 	movs r1, #14
 	movs r2, #13
 	movs r3, #5
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #24]
 .L_080440a2:
 	ldr r0, [sp, #24]
 	adds r1, r6, #0
-	bl UiText_DrawFourNumbersInRow
+	bl FileList_DrawDjinnCounts
 	movs r0, #1
 	bl Func_080f8080
 	b .L_0804410a
@@ -514,7 +514,7 @@ Func_08043cd8:
 	bl Func_080f8080
 	movs r1, #2
 	ldr r0, [sp, #24]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #0
 	str r1, [sp, #24]
 	b .L_0804410a
@@ -536,34 +536,34 @@ Func_08043cd8:
 	bl Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs r1, #2
 	ldr r0, [sp, #24]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #28]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #32]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #0
 	str r1, [sp, #24]
 	str r1, [sp, #28]
 	str r1, [sp, #32]
 .L_0804410a:
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	mov r2, r11
 	str r2, [sp, #0]
 	mov r0, r9
 	movs r1, #0
 	movs r2, #2
 	movs r3, #27
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	movs r3, #4
 	str r3, [sp, #0]
 	mov r0, r9
 	movs r1, #0
 	movs r2, #4
 	movs r3, #27
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	mov r3, r8
 	lsls r2, r3, #1
 	movs r3, #1
@@ -571,7 +571,7 @@ Func_08043cd8:
 	mov r0, r9
 	movs r1, #0
 	movs r3, #26
-	bl UiWindow_FillTilemapRect
+	bl Window_FillTilemapRect
 .L_08044142:
 	ldr r0, [sp, #16]
 	bl Func_08045018
@@ -793,16 +793,16 @@ Func_08043cd8:
 	bl Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs r1, #2
 	ldr r0, [sp, #24]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #28]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #32]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	mov r0, r9
-	bl UiWork_Finalize
+	bl Window_Close
 	bl PaletteGlow_Stop
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock

@@ -12,7 +12,7 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiWork_ClearValueNameTables(void);
+void MessageArgument_ClearAll(void);
 void Func_020019e4(s32 value, s32 digits);
 void Func_02001a14(void);
 void Func_02001a64(s32 message);
@@ -33,7 +33,7 @@ s32 Func_02000da0(s32 actor) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gAdventure.linkTallies[4];
     if (*count != 0) {
-      UiWork_ClearValueNameTables();
+      MessageArgument_ClearAll();
       Func_020019e4(*count, 5);
       Func_02001a64(base + 1);
       Func_02001a74(actor, 0);
@@ -45,7 +45,7 @@ s32 Func_02000da0(s32 actor) {
     base = (s32)MsgItLooksLikeThisIsYour;
     count = &gAdventure.linkTallies[7];
     if (*count != 0) {
-      UiWork_ClearValueNameTables();
+      MessageArgument_ClearAll();
       Func_020019e4(*count, 5);
       Func_02001a64(base + 1);
       Func_02001a74(actor, 0);

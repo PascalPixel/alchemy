@@ -20,16 +20,16 @@
 
 struct Work;
 
-s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3,
+s32 Text_GetMessageSize(s32 no, s32 arg1, s32 arg2, s32 arg3,
                                  s32 arg4);
-struct Work *UiText_OpenMessageWindow(s32 no, s32 x, s32 y, s32 flags);
+struct Work *Message_OpenWindow(s32 no, s32 x, s32 y, s32 flags);
 s32 EventRuntime_GetControlledOwnerFar(void);
 s32 Func_080c82a8(s32 object, s32 *out);
-s32 UiWork_IsComplete(void);
-void UiWork_Finalize(struct Work *work, s32 release);
-s32 UiWork_IsIdle(struct Work *work);
+s32 Message_AllTyped(void);
+void Window_Close(struct Work *work, s32 release);
+s32 Window_IsClosed(struct Work *work);
 
-void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
+void FieldMessage_Show(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowTiles;
   s32 release;
   s32 pos[2] = {0, 0};
@@ -49,7 +49,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
     *(u8 *)(base + TEXT_WORK_TAIL + 5) = 1;
   }
 
-  UiText_GetResourceDimensions(no, (s32)&x, (s32)&y, (s32)&width, (s32)&height);
+  Text_GetMessageSize(no, (s32)&x, (s32)&y, (s32)&width, (s32)&height);
 
   margin = 30 - width;
   /* FAKEMATCH: the one-pass block ends the scheduling block: the native reads
@@ -77,10 +77,10 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
     }
   }
 
-  work = UiText_OpenMessageWindow(no, x, y, release);
+  work = Message_OpenWindow(no, x, y, release);
 
   if (work != NULL) {
-    while (UiWork_IsComplete() == 0) {
+    while (Message_AllTyped() == 0) {
       WaitFrames(1);
     }
 
@@ -89,8 +89,8 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
     }
 
     if (!(flags & 4)) {
-      UiWork_Finalize(work, release);
-      while (UiWork_IsIdle(work) == 0) {
+      Window_Close(work, release);
+      while (Window_IsClosed(work) == 0) {
         WaitFrames(1);
       }
     }
@@ -103,18 +103,18 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   WaitFrames(3);
 }
 
-void UiWork_ProcessAll(void) {
-  UiWork_ProcessDirectWork();
-  UiWork_ProcessRenderChannels();
-  UiWork_AnimateSpriteSlots();
+void WindowSystem_Update(void) {
+  Window_UpdateZooms();
+  Message_UpdateAll();
+  WindowSprite_UpdateAll();
 }
 
-void UiWork_ProcessAllOrChannels(void) {
+void WindowSystem_UpdateBattle(void) {
   if (Ram_HeapSlots->unke4[0] != 0) {
-    UiWork_ProcessDirectWork();
-    UiWork_ProcessRenderChannels();
-    UiWork_AnimateSpriteSlots();
+    Window_UpdateZooms();
+    Message_UpdateAll();
+    WindowSprite_UpdateAll();
   } else {
-    UiWork_ProcessRenderChannels();
+    Message_UpdateAll();
   }
 }

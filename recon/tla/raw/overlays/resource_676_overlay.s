@@ -2105,7 +2105,7 @@ Func_02001944:
 	bl Func_02002548
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r5]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

@@ -42,7 +42,7 @@ void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -141,7 +141,7 @@ s32 Math_Cosine(s32 angle);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
+void FieldMessage_Show(const u8 *message, s32 mode);
 s32 PartyInventory_FindOwner(s32 item);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02003c7c(const void *source, void *destination);
@@ -328,9 +328,9 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
-static __inline__ void UiText_OpenMessageAtObject_(s32 id, s32 flags) {
+static __inline__ void FieldMessage_ShowAtActor_(s32 id, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(id, flags);
+  FieldMessage_ShowAtActor(id, flags);
 }
 
 static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {

@@ -154,14 +154,14 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02003d54:
 	overlay_veneer Func_08020378
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02003d64
 	.thumb_func
 Func_02003d64:
-	overlay_veneer UiText_DrawQuantity
+	overlay_veneer MessageArgument_PushFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:
@@ -178,10 +178,10 @@ Func_02003d7c:
 	.thumb_func
 Func_02003d84:
 	overlay_veneer EventRuntime_EndFar
-	.global UiText_DrawQuantityPairWithCue
+	.global Party_LearnAbility
 	.thumb_func
-UiText_DrawQuantityPairWithCue:
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+Party_LearnAbility:
+	overlay_veneer Party_LearnAbilityFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

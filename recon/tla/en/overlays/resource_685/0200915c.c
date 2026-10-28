@@ -110,10 +110,10 @@ static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
   ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
-static __inline__ void UiText_OpenMessageAtObject_(s32 speaker, s32 flags) {
+static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(speaker, flags);
+  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags);
 }
 
 void Func_0200115c(void) {
@@ -221,7 +221,7 @@ void Func_0200115c(void) {
   WORD_AT(Object_GetById(12), 24) = 0x13333;
   WORD_AT(Object_GetById(12), 28) = 0x13333;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
-  UiText_OpenMessageAtObject_(0x2008, 0);
+  FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020035bc();
     FieldEvent_WaitFrames(15);

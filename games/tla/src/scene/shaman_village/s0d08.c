@@ -3,21 +3,21 @@
 void Func_02000d08(void) {
   Func_020048c4();
   Func_02004a24(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgShamanEntranceLocked, 1);
+  FieldMessage_Show((s32)MsgShamanEntranceLocked, 1);
   Func_020048cc();
 }
 
 void Func_02000d28(void) {
   Func_020048c4();
   Func_02004a24(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgShamanEntranceClosed, 1);
+  FieldMessage_Show((s32)MsgShamanEntranceClosed, 1);
   Func_020048cc();
 }
 
 void Func_02000d48(void) {
   Func_020048c4();
   Func_02004a24(0);
-  UiText_ShowPositionedMessageAndWait((s32)MsgShamanTrialRoadPermissionSign, 1);
+  FieldMessage_Show((s32)MsgShamanTrialRoadPermissionSign, 1);
   Func_020048cc();
 }
 
@@ -25,7 +25,7 @@ void Func_02000d68(void) {
   Func_020048c4();
   Func_02004a24(0);
   Func_0200498c((s32)MsgShamanGuardRepeatRulesBeforeTrial);
-  UiText_OpenMessageAtObject(17, 0);
+  FieldMessage_ShowAtActor(17, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
@@ -49,7 +49,7 @@ void Func_02000e3c(void) {
   Func_020048c4();
   Func_02004a24(0);
   Func_0200498c((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
-  UiText_OpenMessageAtObject(16, 0);
+  FieldMessage_ShowAtActor(16, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);

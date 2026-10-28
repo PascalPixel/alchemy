@@ -49,7 +49,7 @@ Func_02005d2c:
 	.global Func_02005d34
 	.thumb_func
 Func_02005d34:
-	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -146,10 +146,10 @@ Func_02005dec:
 	.thumb_func
 Func_02005df4:
 	overlay_veneer Func_08020360
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02005e04
 	.thumb_func
 Func_02005e04:
@@ -166,10 +166,10 @@ Func_02005e14:
 	.thumb_func
 Func_02005e1c:
 	overlay_veneer EventRuntime_EndFar
-	.global UiText_DrawQuantityPairWithCue
+	.global Party_LearnAbility
 	.thumb_func
-UiText_DrawQuantityPairWithCue:
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+Party_LearnAbility:
+	overlay_veneer Party_LearnAbilityFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

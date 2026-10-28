@@ -5,8 +5,8 @@
 
 /// A window: a bordered rectangle of the tilemap with its sprite outputs, its
 /// opening or closing animation and the rectangle it last drew.
-struct UiWindow {
-  struct RenderOutputList output; ///< the sprites the window carries
+struct Window {
+  struct WindowSpriteList output; ///< the sprites the window carries
   u16 width;                      ///< tiles
   u16 height;                     ///< tiles
   u16 x;                          ///< tiles
@@ -28,17 +28,17 @@ struct UiWindow {
   u16 previousHeight; ///< tiles
 };
 
-STATIC_ASSERT(sizeof(struct UiWindow) == 0x24);
-STATIC_ASSERT(offsetof(struct UiWindow, width) == 8);
-STATIC_ASSERT(offsetof(struct UiWindow, frame) == 0x18);
-STATIC_ASSERT(offsetof(struct UiWindow, previousHeight) == 0x22);
+STATIC_ASSERT(sizeof(struct Window) == 0x24);
+STATIC_ASSERT(offsetof(struct Window, width) == 8);
+STATIC_ASSERT(offsetof(struct Window, frame) == 0x18);
+STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
 /// A text channel, one of three, which types decoded text into a window a few
 /// characters a frame and runs its control codes.
 struct UiChannelSlot {
-  struct UiWindow *work; ///< the window typed into; NULL when free
-  u16 x;                 ///< pen, 8.8 fixed-point pixels
-  u16 y;                 ///< pen, 8.8 fixed-point pixels
+  struct Window *work; ///< the window typed into; NULL when free
+  u16 x;               ///< pen, 8.8 fixed-point pixels
+  u16 y;               ///< pen, 8.8 fixed-point pixels
   u16 spacing[4];
   u16 line;
   u16 entry;
@@ -51,7 +51,7 @@ struct UiChannelSlot {
   u16 ended;
   u16 glyphDelay;
   u16 flags;
-  /// Copied from spacing[3] when queued; with UiRenderWork.textMode set it
+  /// Copied from spacing[3] when queued; with WindowWork.textMode set it
   /// places the glyphs by y / 320.
   u16 unk26;
 };

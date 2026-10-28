@@ -22,9 +22,9 @@ struct ChampaEventWork {
 
 s32 ObjectTable_ReadActiveValue(s32 id);
 s32 BattleEffect_GetResourceId(s32 object);
-void UiText_OpenMessageWindow(s16 message, s32 x, s32 y, s32 resource);
+void Message_OpenWindow(s16 message, s32 x, s32 y, s32 resource);
 void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
-s32 UiWork_IsComplete(void);
+s32 Message_AllTyped(void);
 void WaitFrames(s32 frames);
 
 void Func_02000d4c(
@@ -38,7 +38,7 @@ void Func_02000d4c(
   s32 first = ObjectTable_ReadActiveValue(firstId);
   s32 second = ObjectTable_ReadActiveValue(secondId);
 
-  UiText_OpenMessageWindow(work->message++, firstX, firstY,
+  Message_OpenWindow(work->message++, firstX, firstY,
                            BattleEffect_GetResourceId(first) << 16);
   Func_02002a2c(first, 0, firstA, firstB);
   /* FAKEMATCH: naming the frames as memory keeps them in their stack slot, read
@@ -46,13 +46,13 @@ void Func_02000d4c(
    * moves to r11 (differ 46). */
   __asm__("" : : "m"(frames));
   if (frames != 0) {
-    while (!UiWork_IsComplete())
+    while (!Message_AllTyped())
       WaitFrames(frames);
   }
-  UiText_OpenMessageWindow(work->message++, secondX, secondY,
+  Message_OpenWindow(work->message++, secondX, secondY,
                            BattleEffect_GetResourceId(second) << 16);
   Func_02002a2c(second, 0, secondA, secondB);
-  while (!UiWork_IsComplete())
+  while (!Message_AllTyped())
     WaitFrames(1);
   WaitFrames(1);
 }

@@ -74,7 +74,7 @@ struct PsynergyMenuState {
 
 extern u8 MsgShortcutHelp[], MsgChangeCharacterHelp[];
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 s32 GameFlag_Test(s32 flag);
 struct BattleUnit *Unit_Get(s32 owner);
@@ -82,7 +82,7 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 Func_080fd80c(struct MenuResult *result, s32 index);
 void Func_080f8a44(s32 x, s32 y);
-void UiIcon_PrepareObject(struct MenuIcon *icon);
+void Icon_PrepareActor(struct MenuIcon *icon);
 void WaitFrames(s32 frames);
 s32 Func_080fd968(s32 window, s32 unused, struct MenuResult *state);
 s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
@@ -90,9 +90,9 @@ void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 struct BattleAct *BattleAction_Get(s32 action);
 void Sound_PlayFar(s32 cue);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 void Func_08104ef8(s32 first);
 void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
@@ -126,7 +126,7 @@ s32 Func_080fdad4(s32 paneIndex) {
   result = 0;
   previous = 0;
   shortcutHelp = 0;
-  UiWindow_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
 
@@ -148,7 +148,7 @@ s32 Func_080fdad4(s32 paneIndex) {
       if (changed != 0) {
         changed = 0;
         if (menu->psynergies[previous] != 0)
-          UiIcon_PrepareObject(menu->entryIcons[previous]);
+          Icon_PrepareActor(menu->entryIcons[previous]);
         if (redraw != 0) {
           redraw = 0;
           WaitFrames(1);
@@ -193,15 +193,15 @@ s32 Func_080fdad4(s32 paneIndex) {
             Sound_PlayFar(174);
             shortcutHelp = 1;
             menu->flags |= 2;
-            UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-            UiText_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
+            Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
+            Text_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
           }
         }
         if ((gInput.held & 4) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
-          UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-          UiText_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window, 0,
+          Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
+          Text_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window, 0,
                                           88);
         }
       }
@@ -304,7 +304,7 @@ s32 Func_080fdad4(s32 paneIndex) {
   }
 
   menu->flags &= ~2;
-  UiIcon_PrepareObject(menu->entryGridCursor);
+  Icon_PrepareActor(menu->entryGridCursor);
   menu->paneRow[paneIndex] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->ownerIds[paneIndex]] = state.selectedIndex;
   menu->paneAction[paneIndex] = result;

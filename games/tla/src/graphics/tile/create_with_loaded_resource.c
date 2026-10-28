@@ -50,7 +50,7 @@ void Menu_ResetTwoResourceEntries(void) {
   Resource_ResetEntry((u16)state->resourceSlots[1]);
 }
 
-s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
+s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
   s32 buffer;
@@ -64,23 +64,23 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   return buffer;
 }
 
-s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
                                     s32 resourceId) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
   if (slot != 0x60) {
-    UiIcon_LoadResourceIntoSlot(resourceId, slot);
-    RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+    Icon_LoadResourceIntoSlot(resourceId, slot);
+    WindowSprite_CreateFar(slot, 0x40000000, window, x, y);
   }
 }
 
 /// Creates the stat change arrow from the up or down arrow resource the
 /// menu loaded.
-// The Broken Seal's UiIcon_CreateStatChangeArrow.
-s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+// The Broken Seal's Icon_CreateStatChangeArrow.
+s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                  s32 variant) {
-  struct RenderOutput *object;
+  struct WindowSprite *object;
   u32 resource;
   s32 v = variant;
   struct RenderInput *w = window;
@@ -91,7 +91,7 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
-  object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+  object = WindowSprite_CreateFar(resource, 0x40000000, w, xx, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
      * through CSE, as in The Broken Seal; a plain return -1 gives other
@@ -107,11 +107,11 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
-/// As UiIcon_CreateStatChangeArrow, with the arrow raised three pixels for
+/// As Icon_CreateStatChangeArrow, with the arrow raised three pixels for
 /// the first variant and four for the second.
-// The Broken Seal's UiIcon_DrawVariantWithTileOffset.
+// The Broken Seal's Icon_DrawVariantWithTileOffset.
 s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
-  struct RenderOutput *object;
+  struct WindowSprite *object;
   u32 resource;
   s32 v = variant;
   struct RenderInput *w = window;
@@ -125,7 +125,7 @@ s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
     resource = (u16)data->resourceSlots[1];
     y -= 4;
   }
-  object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+  object = WindowSprite_CreateFar(resource, 0x40000000, w, xx, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
      * through CSE, as in The Broken Seal; a plain return -1 gives other

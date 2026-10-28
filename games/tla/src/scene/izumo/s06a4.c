@@ -28,7 +28,7 @@ void Func_020006a4(void) {
   Func_02000d70(32, 0);
   Object_SetModeById(32, 3);
   FieldEvent_WaitFrames(15);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 32, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
     FieldEvent_WaitFrames(90);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 32, 0x6666, 0x3333);

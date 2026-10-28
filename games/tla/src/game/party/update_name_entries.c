@@ -40,7 +40,7 @@ s32 LinkBattle_ReceiveParty(void) {
       named_count += 1;
     }
     WaitFrames(2);
-    Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
+    Message_DecodeRawUnboundedFar((s32)MsgEnemyLabel, name_text);
     i = 0;
     if (name_text[i] != 0) {
       do {

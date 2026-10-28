@@ -13,12 +13,12 @@ Menu_DrawFlagBitTable:
 	mov r10, r0
 	sub sp, #36
 	adds r5, r1, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	mov r1, r10
 	movs r2, #48
 	movs r3, #0
 	ldr r0, .L_0804df5c
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	add r2, sp, #8
 	mov r8, r2
 	mov r2, sp
@@ -49,12 +49,12 @@ Menu_DrawFlagBitTable:
 	mov r1, r10
 	movs r2, #0
 	mov r3, r9
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_0804df60
 	mov r1, r10
 	movs r2, #32
 	mov r3, r9
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	mov r6, r8
 	mov r5, r8
 	adds r6, #15
@@ -78,7 +78,7 @@ Menu_DrawFlagBitTable:
 	mov r3, r9
 	mov r1, r10
 	movs r2, #48
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r1, [sp, #4]
 	movs r3, #8
 	adds r1, #1

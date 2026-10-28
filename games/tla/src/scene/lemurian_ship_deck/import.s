@@ -86,10 +86,10 @@ Func_02001f34:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02001f4c
 	.thumb_func
 Func_02001f4c:
@@ -198,10 +198,10 @@ Object_TurnToFaceEachOther:
 	.thumb_func
 Func_0200201c:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_0200202c
 	.thumb_func
 Func_0200202c:

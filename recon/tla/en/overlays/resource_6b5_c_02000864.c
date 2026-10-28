@@ -34,7 +34,7 @@ struct LobbyEventWork {
   s16 raisedTrigger;
 };
 
-struct UiWindow;
+struct Window;
 
 s32 Func_02000134(void);
 s32 Func_0200006c(s32 slot);
@@ -51,7 +51,7 @@ void Func_02001ab4(s32 skip);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Task_RemoveFar(void *callback);
-struct UiWindow *UiText_OpenMessageWindow(const u8 *message, s32 x, s32 y,
+struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y,
                                           s32 flags);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -71,7 +71,7 @@ static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
 s32 Func_02000864(void) {
   struct LobbyEventWork *work;
   s32 failed;
-  struct UiWindow *window;
+  struct Window *window;
   s32 cnt;
   s32 stop;
   u8 *buf;
@@ -98,7 +98,7 @@ s32 Func_02000864(void) {
     Flag_Set(0x203);
     LinkLobby_WriteSlotValue(2);
     if (!Func_0200006c(2))
-      window = UiText_OpenMessageWindow(MsgAwaitingYourOpponent, 5, 4, 1);
+      window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
     while (!Func_0200006c(2)) {
       WaitFrames(1);
       stop = 0;
@@ -124,7 +124,7 @@ s32 Func_02000864(void) {
       }
     }
     if (window)
-      UiWork_Finalize(window, 1);
+      Window_Close(window, 1);
     WaitFrames(5);
   }
   if (!failed) {
@@ -136,7 +136,7 @@ s32 Func_02000864(void) {
     if (Flag_IsSet(0x173)) {
       ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgGoodLuck2);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       WaitFrames(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
       ObjectMotion_ResetAndSetPositionInMode2(4, 216, 184);

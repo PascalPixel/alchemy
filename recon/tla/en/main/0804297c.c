@@ -3,8 +3,8 @@
 // Draft, differ 22 of 495 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 20
-// with `struct UiRenderWork *work = (struct UiRenderWork
-// *)Ram_HeapSlots->windowTiles;` moved after `struct UiWindow *window =
+// with `struct WindowWork *work = (struct WindowWork
+// *)Ram_HeapSlots->windowTiles;` moved after `struct Window *window =
 // layout->window;`, and finds nothing closer.
 // Near miss, differ 26 of 495: The Broken Seal's PartyStatus_Draw on this
 // game's work: at most four party members outside battle, the Djinn counts
@@ -25,7 +25,7 @@
 #include "io_reg.h"
 
 struct PartyStatusWindow {
-  struct UiWindow *window;
+  struct Window *window;
   u16 x;
   u16 y;
   u16 width;
@@ -53,18 +53,18 @@ extern const u8 Data_080aa1b8[];
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 s32 Party_CountActiveOwnersFar(void);
 s32 Func_08118130(s32 a, u8 *counts);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void Func_080426e0(struct UiWindow *window, u32 flags);
-void UiWindow_BuildLayoutBounds(s32 flags);
-void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+void WindowSprite_RedrawSavedRect(struct Window *window);
+void Func_080426e0(struct Window *window, u32 flags);
+void PartyStatus_BuildLayoutBounds(s32 flags);
+void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 struct StatusUnit *Unit_Get(s32 owner);
 void Func_08041f70(s32 nibble);
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct UiWindow *window,
+void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *window,
                                        s32 x, s32 y, s32 kind);
-void UiText_DrawStringAtOffset(u8 *text, struct UiWindow *window, s32 x, s32 y);
-s32 Func_08042808(struct UiWindow *window, s32 x, s32 y, s32 value);
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
+void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 x, s32 y);
+s32 Func_08042808(struct Window *window, s32 x, s32 y, s32 value);
+void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                               s32 flags);
 
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
@@ -72,8 +72,8 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->windowLayout;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  struct UiWindow *window = layout->window;
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct Window *window = layout->window;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 x = 0;
   u32 count;
   s32 y = 0;
@@ -106,23 +106,23 @@ void PartyStatus_Draw(s32 flags) {
   if (work->menuState == 0 || Func_08118130(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
-    UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
+    Window_EraseBorderRect(layout->x, layout->y, layout->width,
                              layout->height);
     return;
   }
 
   work->menuBusy = 1;
   if (layout->flags == flags) {
-    RenderOutput_RedrawSavedRect(window);
+    WindowSprite_RedrawSavedRect(window);
     Func_080426e0(window, flags);
   } else {
-    UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
+    Window_EraseBorderRect(layout->x, layout->y, layout->width,
                              layout->height);
-    UiWindow_BuildLayoutBounds(flags);
+    PartyStatus_BuildLayoutBounds(flags);
     window->width = layout->width;
     window->height = layout->height;
     window->x = layout->x;
-    UiWindow_DrawBorder(layout->x, layout->y, layout->width, layout->height);
+    Window_DrawBorder(layout->x, layout->y, layout->width, layout->height);
     Func_080426e0(window, flags);
   }
 
@@ -144,10 +144,10 @@ void PartyStatus_Draw(s32 flags) {
     work->level = 14;
     if (work->menuState != 0)
       work->level = 5;
-    UiText_DrawPrefixedNumberAtOffset(
+    Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
     work->level = 15;
-    UiText_DrawStringAtOffset(unit->name, window,
+    Text_DrawStringAtOffset(unit->name, window,
                               (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Func_08041f70(15);
     if (unit->maxHp != 0) {
@@ -162,7 +162,7 @@ void PartyStatus_Draw(s32 flags) {
       work->level = 14;
       if (work->menuState != 0)
         work->level = 5;
-      UiText_DrawPrefixedNumberAtOffset(unit->pp, window,
+      Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                         (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                         y * 8 + 16, 1);
       if (unit->maxPp != 0) {
@@ -183,20 +183,20 @@ void PartyStatus_Draw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     Func_08118130(0, standbyDjinn);
-    UiWindow_SetTilemapEntry(window, 0x5001, 0, row, 0);
-    UiWindow_SetTilemapEntry(window, 0x5002, 2, row, 0);
-    UiWindow_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
-    UiWindow_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
+    Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
+    Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
+    Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
+    Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
       Dma_Set(Data_080aa1b8, (void *)0x06003400, 0x84000048, REG_DMA3);
-    UiWindow_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row,
+    Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row,
                              0);
-    UiWindow_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[1]), 3, row,
+    Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[1]), 3, row,
                              0);
-    UiWindow_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[2]), 1,
+    Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[2]), 1,
                              row + 1, 0);
-    UiWindow_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[3]), 3,
+    Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[3]), 3,
                              row + 1, 0);
   }
   work->menuBusy = 0;

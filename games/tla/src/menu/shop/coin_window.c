@@ -11,8 +11,8 @@ struct ShopWork_08109188 {
 
 extern char MsgYourCoins[];
 
-void RenderOutput_PrepareForRedrawFar(void *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void WindowSprite_PrepareForRedrawFar(void *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 
 void Func_08109188(void) {
   void *window =
@@ -22,17 +22,17 @@ void Func_08109188(void) {
 #endif
 
   if (window != NULL) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
 #if LANGUAGE == LANGUAGE_JAPANESE
     // "Coins" (MsgCoins) after the count, two messages before MsgYourCoins.
     message = (s32)MsgYourCoins;
-    UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
+    Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
     message -= 2;
-    UiText_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 0, 8);
-    UiText_DrawCharacterAtOffsetFar(message, window, 48, 8);
+    Text_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 0, 8);
+    Text_DrawCharacterAtOffsetFar(message, window, 48, 8);
 #else
-    UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
-    UiText_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 32, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
+    Text_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 32, 8);
 #endif
   }
 }

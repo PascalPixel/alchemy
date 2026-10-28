@@ -220,10 +220,10 @@ Func_0803a8fc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803aa94:
-	.4byte gUiText_Glyphs
+	.4byte gFont_Glyphs
 .L_0803aa98:
 	.4byte IwramClearWords
 .L_0803aa9c:
 	.4byte IwramFillWords + 0xb4
 .L_0803aaa0:
-	.4byte gUiText_Glyphs - 0x400
+	.4byte gFont_Glyphs - 0x400

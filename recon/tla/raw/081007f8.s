@@ -262,7 +262,7 @@ BattleEffect_ApplyToTargets:
 	strh r3, [r5, #24]
 	movs r0, #3
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r2, #1
 	movs r7, #20
 	mov r9, r2
@@ -274,7 +274,7 @@ BattleEffect_ApplyToTargets:
 	strh r3, [r5, #26]
 	movs r0, #4
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r3, #1
 	movs r7, #21
 	mov r9, r3

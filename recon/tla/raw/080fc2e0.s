@@ -68,24 +68,24 @@ Func_080fc2e0:
 	movs r2, #96
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r0, r5, #0
 	adds r1, r7, #0
 	movs r2, #96
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #24
 	str r3, [sp, #0]
 	adds r0, r7, #0
 	movs r1, #16
 	movs r2, #16
 	movs r3, #96
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	adds r1, r7, #0
 	ldr r0, .L_080fc478
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #184
 	movs r1, #5
 	bl Func_080f8ab4

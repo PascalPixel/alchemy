@@ -16,11 +16,11 @@
 #include "uiwindow.h"
 #include "battle_summon.h"
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 flags);
-void UiWork_PushValueSlot(s32 value, s32 kind);
-s32 UiText_BuildRenderEntriesMode1(s32 message);
-s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entries, s32 x,
+void MessageArgument_Push(s32 value, s32 kind);
+s32 Message_DecodeMode1(s32 message);
+s32 Message_Start(struct Window *window, s32 entries, s32 x,
                               s32 y, s32 flags);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -34,8 +34,8 @@ extern u8 Msg_0033[];
 extern u8 Msg_0034[];
 
 void Func_08044dc8(s32 summon) {
-  struct UiRenderWork *work = Ram_HeapSlots->windowTiles;
-  struct UiWindow *window;
+  struct WindowWork *work = Ram_HeapSlots->windowTiles;
+  struct Window *window;
   s32 entries;
   u32 resource;
   s32 counts[11];
@@ -43,27 +43,27 @@ void Func_08044dc8(s32 summon) {
   s32 i;
   s32 n;
 
-  window = UiWindow_Create(4, 1, 22, 5, 0);
+  window = Window_Create(4, 1, 22, 5, 0);
   if (window == NULL)
     return;
   work->dirty = 1;
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
-  UiWork_PushValueSlot(Data_0805f676[summon & 31], 4);
-  entries = UiText_BuildRenderEntriesMode1((s32)Msg_0032);
-  UiText_QueueRenderEntries(window, entries, 0, 2, 0);
+  MessageArgument_Push(Data_0805f676[summon & 31], 4);
+  entries = Message_DecodeMode1((s32)Msg_0032);
+  Message_Start(window, entries, 0, 2, 0);
   Sound_PlayFar(81);
   do
     WaitFrames(1);
   while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   WaitFrames(1);
 
-  window = UiWindow_Create(3, 1, 24, 7, 0);
+  window = Window_Create(3, 1, 24, 7, 0);
   if (window == NULL)
     return;
-  UiWork_PushValueSlot(Data_0805f676[summon & 31], 4);
-  entries = UiText_BuildRenderEntriesMode1((s32)Msg_0033);
+  MessageArgument_Push(Data_0805f676[summon & 31], 4);
+  entries = Message_DecodeMode1((s32)Msg_0033);
   djinn = (const u8 *)SummonDefinition_Get(summon) + 4;
   for (i = 0; i < 4; i++)
     counts[i] = djinn[i];
@@ -77,16 +77,16 @@ void Func_08044dc8(s32 summon) {
         most = counts[i];
       }
     }
-    UiWork_PushValueSlot(most, 5);
+    MessageArgument_Push(most, 5);
     Func_0803cf6c((s32)Msg_0034 + best);
     counts[best] = 0;
   }
   Func_0803cf6c((s32)Msg_0034 + 4);
-  UiText_QueueRenderEntries(window, entries, 4, 2, 0);
+  Message_Start(window, entries, 4, 2, 0);
   do
     WaitFrames(1);
   while ((gInput.pressed & 0x303) == 0);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   WaitFrames(1);
   Resource_ResetEntry(resource);
 }

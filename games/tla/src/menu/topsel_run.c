@@ -2,15 +2,15 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-void UiWindow_CreateWithLayoutBounds(s32 flags);
+void PartyStatus_CreateWindow(s32 flags);
 s32 Menu_SelectTopEntry(s32);
-s32 UiWork_CloseAndRelease(void);
+s32 Window_CloseAndRelease(void);
 s32 DjinnMenu_Open(void);
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 Func_080f8000(void);
 s32 Func_080f8010(void);
-void UiWindow_OpenMode1AndWaitFrame(void);
+void PartyStatus_OpenAndWait(void);
 
 s32 Menu_RunTopSelection(void) {
   s32 ret;
@@ -21,9 +21,9 @@ s32 Menu_RunTopSelection(void) {
   selection = 0;
 
 loop:
-  UiWindow_OpenMode1AndWaitFrame();
+  PartyStatus_OpenAndWait();
   selection = Menu_SelectTopEntry(selection);
-  ret = UiWork_CloseAndRelease();
+  ret = Window_CloseAndRelease();
 
   switch (selection) {
   case 0:
@@ -59,7 +59,7 @@ loop:
   return ret;
 }
 
-void UiWindow_OpenMode1AndWaitFrame(void) {
-  UiWindow_CreateWithLayoutBounds(1);
+void PartyStatus_OpenAndWait(void) {
+  PartyStatus_CreateWindow(1);
   WaitFrames(1);
 }

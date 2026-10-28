@@ -45,17 +45,17 @@ Func_0804868c:
 	str r6, [sp, #28]
 	str r6, [sp, #24]
 	str r6, [sp, #20]
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #44]
 	movs r0, #1
-	bl UiWork_SetAltFlagAndClearTable
+	bl Text_UseExtraTiles
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #9
 	movs r2, #10
 	movs r3, #11
 	movs r0, #20
-	bl UiWindow_Create
+	bl Window_Create
 	mov r9, r0
 	adds r5, #228
 	ldr r3, [r5]
@@ -234,22 +234,22 @@ Func_0804868c:
 	adds r1, #1
 	subs r2, #2
 	movs r3, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	ldr r0, [sp, #32]
 	cmp r0, #0
 	beq .L_08048878
 	ldr r0, [sp, #44]
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #42
 	str r3, [sp, #0]
 	movs r0, #0
 	movs r1, #4
 	movs r2, #30
 	movs r3, #4
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #44]
-	bl Ui_FillVramBlockPattern
+	bl Vram_FillWindowBlockPattern
 .L_08048878:
 	ldr r2, [sp, #52]
 	movs r1, #0
@@ -258,7 +258,7 @@ Func_0804868c:
 	bne .L_08048884
 	b .L_080489a0
 .L_08048884:
-	bl UiWork_ClearValueNameTables
+	bl MessageArgument_ClearAll
 	movs r3, #0
 	str r3, [sp, #24]
 	movs r3, #192
@@ -296,13 +296,13 @@ Func_0804868c:
 	ldr r0, .L_08048bf4
 	adds r1, r6, #0
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	ldr r3, [sp, #68]
 	cmp r3, #0
 	beq .L_080489ac
 	adds r0, r3, #0
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #0
 	str r0, [sp, #68]
 	str r0, [sp, #32]
@@ -320,7 +320,7 @@ Func_0804868c:
 	beq .L_0804893c
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	movs r3, #240
 	lsls r3, r3, #4
 	ands r3, r5
@@ -336,13 +336,13 @@ Func_0804868c:
 	adds r1, r6, #0
 	adds r0, r0, r3
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	ldr r1, [sp, #68]
 	cmp r1, #0
 	beq .L_080489ac
 	adds r0, r1, #0
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #0
 	str r2, [sp, #68]
 	str r2, [sp, #32]
@@ -360,7 +360,7 @@ Func_0804868c:
 	adds r1, r6, #0
 	ldr r0, .L_08048bfc
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	movs r3, #240
 	lsls r3, r3, #4
 	ands r5, r3
@@ -393,14 +393,14 @@ Func_0804868c:
 	adds r0, r0, r3
 	adds r1, r6, #0
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	b .L_080489ac
 .L_080489a0:
 	ldr r6, [sp, #8]
 	ldr r0, .L_08048c00
 	adds r1, r6, #0
 	movs r2, #52
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 .L_080489ac:
 	ldr r2, [sp, #72]
 	movs r1, #0
@@ -412,14 +412,14 @@ Func_0804868c:
 	strb r3, [r2, #6]
 	ldr r0, [sp, #44]
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #42
 	str r3, [sp, #0]
 	movs r1, #4
 	movs r0, #0
 	movs r2, #30
 	movs r3, #4
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #44]
 	add r0, sp, #32
 	ldrb r0, [r0]
@@ -430,7 +430,7 @@ Func_0804868c:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r3, #4
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	ldr r2, [sp, #48]
 	mov r1, r10
 	str r1, [sp, #64]
@@ -441,7 +441,7 @@ Func_0804868c:
 	bne .L_08048aba
 .L_080489fa:
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r1, [sp, #56]
 	mov r0, r11
 	lsls r3, r0, #2
@@ -467,7 +467,7 @@ Func_0804868c:
 	movs r2, #0
 	mov r0, r9
 	str r2, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	movs r3, #248
 	lsls r3, r3, #14
 	ands r3, r6
@@ -502,7 +502,7 @@ Func_0804868c:
 	mov r1, r9
 	movs r2, #8
 	adds r3, r5, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #248
 	lsls r0, r0, #14
 	ands r0, r6
@@ -513,7 +513,7 @@ Func_0804868c:
 	mov r2, r9
 	movs r3, #48
 	str r5, [sp, #0]
-	bl UiText_DrawNumberAtOffset
+	bl Text_DrawNumberAtOffset
 .L_08048a94:
 	movs r0, #15
 	adds r7, #1
@@ -567,7 +567,7 @@ Func_0804868c:
 	subs r2, #2
 	adds r1, r6, #0
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	adds r7, #1
 .L_08048afe:
 	mov r0, r8
@@ -593,7 +593,7 @@ Func_0804868c:
 	str r3, [sp, #0]
 	subs r2, #2
 	movs r3, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	ldr r0, [sp, #72]
 	movs r3, #1
 	movs r1, #0
@@ -653,7 +653,7 @@ Func_0804868c:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	adds r7, #1
 .L_08048ba6:
 	mov r0, r8
@@ -679,7 +679,7 @@ Func_0804868c:
 	adds r1, #52
 	negs r3, r3
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	mov r0, r9
 	ldrh r2, [r0, #8]
 	movs r1, #243
@@ -689,7 +689,7 @@ Func_0804868c:
 	adds r1, #53
 	negs r3, r3
 	str r5, [sp, #0]
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	b .L_08048c42
 	.2byte 0x0000
 .L_08048bf4:
@@ -718,7 +718,7 @@ Func_0804868c:
 	mov r0, r9
 	adds r1, #17
 	subs r3, #1
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	mov r0, r9
 	ldrh r2, [r0, #8]
 	movs r1, #0
@@ -729,7 +729,7 @@ Func_0804868c:
 	subs r2, #2
 	adds r1, #18
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 .L_08048c42:
 	mov r0, r9
 	movs r2, #14
@@ -825,20 +825,20 @@ Func_0804868c:
 	cmp r0, #0
 	bne .L_08048d1a
 	ands r5, r6
-	bl Ui_FillVramBlockPattern
-	bl UiWork_ClearValueNameTables
+	bl Vram_FillWindowBlockPattern
+	bl MessageArgument_ClearAll
 	lsrs r0, r5, #17
 	movs r1, #5
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	movs r2, #52
 	ldr r1, [sp, #8]
 	ldr r0, .L_08048f54
-	bl UiText_CopyMessageString
+	bl Message_CopyExpanded
 	movs r2, #0
 	ldr r0, [sp, #8]
 	ldr r1, [sp, #44]
 	movs r3, #4
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 .L_08048d1a:
 	movs r0, #114
 	bl Sound_PlayFar
@@ -957,7 +957,7 @@ Func_0804868c:
 	movs r3, #1
 	subs r2, #2
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r0, [sp, #80]
 	adds r5, #1
 	cmp r5, r0
@@ -974,7 +974,7 @@ Func_0804868c:
 	subs r2, #3
 	adds r1, #52
 	subs r3, #1
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r0, [sp, #68]
 	movs r1, #0
 	ldrh r2, [r0, #8]
@@ -985,7 +985,7 @@ Func_0804868c:
 	subs r2, #2
 	adds r1, #53
 	negs r3, r3
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r2, [sp, #68]
 	ldrh r3, [r2, #14]
 	ldr r0, [sp, #72]
@@ -1007,7 +1007,7 @@ Func_0804868c:
 	cmp r2, #0
 	beq .L_08048e5c
 	adds r0, r2, #0
-	bl RenderOutput_ClearList
+	bl WindowSprite_ClearList
 .L_08048e5c:
 	movs r3, #1
 	str r3, [sp, #32]
@@ -1071,7 +1071,7 @@ Func_0804868c:
 	cmp r3, #0
 	beq .L_08048ed0
 	adds r0, r3, #0
-	bl RenderOutput_ClearList
+	bl WindowSprite_ClearList
 .L_08048ed0:
 	movs r1, #1
 	movs r0, #0
@@ -1284,7 +1284,7 @@ Func_0804868c:
 	movs r2, #2
 	movs r3, #1
 	adds r5, #1
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 	cmp r5, #3
 	ble .L_08049038
 .L_0804907a:
@@ -1344,22 +1344,22 @@ Func_0804868c:
 	adds r1, #1
 	movs r2, #4
 	movs r3, #4
-	bl Ui_SetRectHighlight
+	bl Window_HighlightRect
 .L_080490ec:
 	ldr r0, [sp, #60]
 	bl Resource_ResetEntry
 	movs r1, #1
 	ldr r0, [sp, #44]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #1
 	ldr r0, [sp, #68]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #1
 	mov r0, r9
-	bl UiWork_Finalize
+	bl Window_Close
 	bl Func_08041b68
 	movs r0, #0
-	bl UiWork_SetAltFlagAndClearTable
+	bl Text_UseExtraTiles
 	ldr r0, [sp, #56]
 	bl MemFree
 	movs r0, #1

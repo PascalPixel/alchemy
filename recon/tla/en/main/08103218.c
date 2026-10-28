@@ -41,18 +41,18 @@ struct BattleAct *BattleAction_Get(s32 actionId);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
+void Text_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
                                  s32 height);
-void UiIcon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 action);
+void Icon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 action);
 void Func_08104ba8(s32 window, s32 x, s32 y, s32 variant);
-s32 UiWork_SetParamNibbleFar(s32 colour);
+s32 Text_SetColorFar(s32 colour);
 void SideObject_CreateFar(s32 owner, s32 a, s32 side, s32 window, s32 b, s32 c);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *firstCount, s32 *secondCount);
@@ -85,24 +85,24 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
   if (page == 0) {
     if (previewMode == 3) {
-      UiText_DrawNumberInWindowFar(unit->maxHp, 4, window, x * 8 + 72,
+      Text_DrawNumberInWindowFar(unit->maxHp, 4, window, x * 8 + 72,
                                    y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->maxPp, 4, window, x * 8 + 72,
+      Text_DrawNumberInWindowFar(unit->maxPp, 4, window, x * 8 + 72,
                                    y * 8 + 64);
-      UiText_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
-      UiText_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
+      Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
+      Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
+      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
                                    x * 8 + 64, y * 8 + 56);
-      UiText_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
+      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
                                    x * 8 + 64, y * 8 + 64);
     } else {
-      UiText_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
+      Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
+      Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
     }
-    UiText_DrawNumberInWindowFar(unit->atk, 3, window, x * 8 + 48, y * 8 + 72);
-    UiText_DrawNumberInWindowFar(unit->def, 3, window, x * 8 + 48, y * 8 + 80);
-    UiText_DrawNumberInWindowFar(unit->agi, 3, window, x * 8 + 48, y * 8 + 88);
-    UiText_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 56, y * 8 + 96);
+    Text_DrawNumberInWindowFar(unit->atk, 3, window, x * 8 + 48, y * 8 + 72);
+    Text_DrawNumberInWindowFar(unit->def, 3, window, x * 8 + 48, y * 8 + 80);
+    Text_DrawNumberInWindowFar(unit->agi, 3, window, x * 8 + 48, y * 8 + 88);
+    Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 56, y * 8 + 96);
   }
 
   switch (previewMode) {
@@ -136,19 +136,19 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   if (page == 0) {
     s32 label;
 
-    UiText_DrawStringAtOffsetFar((s32)unit->name, window, x * 8 + 40, y * 8);
-    UiText_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
+    Text_DrawStringAtOffsetFar((s32)unit->name, window, x * 8 + 40, y * 8);
+    Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
                                  y * 8 + 16);
-    UiText_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88,
+    Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88,
                                  y * 8 + 16);
     label = (s32)MsgPreviewStatLabel;
-    UiText_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
-    UiText_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
-    UiText_DrawCharacterAtOffsetFar(label + 2, window, x * 8, y * 8 + 72);
-    UiText_DrawCharacterAtOffsetFar(label + 3, window, x * 8, y * 8 + 80);
-    UiText_DrawCharacterAtOffsetFar(label + 4, window, x * 8, y * 8 + 88);
-    UiText_DrawCharacterAtOffsetFar(label + 5, window, x * 8, y * 8 + 96);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgClassName +
+    Text_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
+    Text_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
+    Text_DrawCharacterAtOffsetFar(label + 2, window, x * 8, y * 8 + 72);
+    Text_DrawCharacterAtOffsetFar(label + 3, window, x * 8, y * 8 + 80);
+    Text_DrawCharacterAtOffsetFar(label + 4, window, x * 8, y * 8 + 88);
+    Text_DrawCharacterAtOffsetFar(label + 5, window, x * 8, y * 8 + 96);
+    Text_DrawCharacterAtOffsetFar((s32)MsgClassName +
                                         originalUnit->classIndex,
                                     window, x * 8, y * 8 + 32);
   }
@@ -160,21 +160,21 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       s32 column;
 
       if (originalUnit->classIndex != unit->classIndex) {
-        UiText_DrawCharacterAtOffsetFar((s32)MsgClassName + unit->classIndex,
+        Text_DrawCharacterAtOffsetFar((s32)MsgClassName + unit->classIndex,
                                         window, x * 8, y * 8 + 48);
-        UiWindow_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
+        Window_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classIndex != unit->classIndex)
         column += 5;
       for (i = 0; i < 4; i++) {
-        UiWindow_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5,
+        Window_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5,
                                     0);
-        UiWindow_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
+        Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
                                     column + i * 2 + 1, y + 5, 0);
       }
       if (unit->hp != originalUnit->hp) {
-        UiText_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
                                      y * 8 + 56);
         if (unit->hp > originalUnit->hp)
           Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 0);
@@ -182,7 +182,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
           Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 1);
       }
       if (unit->pp != originalUnit->pp) {
-        UiText_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
                                      y * 8 + 64);
         if (unit->pp > originalUnit->pp)
           Func_08104ba8(window, x * 8 + 62, y * 8 + 64, 0);
@@ -190,7 +190,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
           Func_08104ba8(window, x * 8 + 62, y * 8 + 64, 1);
       }
       if (unit->atk != originalUnit->atk) {
-        UiText_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
                                      y * 8 + 72);
         if (unit->atk > originalUnit->atk)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 72, 0);
@@ -198,7 +198,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
           Func_08104ba8(window, x * 8 + 70, y * 8 + 72, 1);
       }
       if (unit->def != originalUnit->def) {
-        UiText_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
                                      y * 8 + 80);
         if (unit->def > originalUnit->def)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 80, 0);
@@ -206,7 +206,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
           Func_08104ba8(window, x * 8 + 70, y * 8 + 80, 1);
       }
       if (unit->agi != originalUnit->agi) {
-        UiText_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
+        Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
                                      y * 8 + 88);
         if (unit->agi > originalUnit->agi)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 88, 0);
@@ -214,7 +214,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
           Func_08104ba8(window, x * 8 + 70, y * 8 + 88, 1);
       }
       if (unit->luck != originalUnit->luck) {
-        UiText_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
+        Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
                                      y * 8 + 96);
         if (unit->luck > originalUnit->luck)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 96, 0);
@@ -237,47 +237,47 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                                   actions, &gained, &lost);
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
-      UiIcon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
+      Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                       actions[first] & 0x3fff);
       if (actions[first] & 0x8000)
-        UiWork_SetParamNibbleFar(4);
+        Text_SetColorFar(4);
       else if (actions[first] & 0x4000)
-        UiWork_SetParamNibbleFar(2);
+        Text_SetColorFar(2);
       else
-        UiWork_SetParamNibbleFar(15);
-      UiText_DrawCharacterAtOffsetFar(
+        Text_SetColorFar(15);
+      Text_DrawCharacterAtOffsetFar(
           (s32)MsgAbilityName + (actions[first] & 0x3fff), window, x * 8 + 16,
           (y + line * 2) * 8 + 8);
-      UiText_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
+      Text_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    UiWork_SetParamNibbleFar(15);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + 88,
+    Text_SetColorFar(15);
+    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + 88,
                                     y * 8);
     if (previewMode != 3) {
       s32 lines;
 
       lines = 0;
       if (gained) {
-        UiWork_SetParamNibbleFar(4);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyGained, window, x * 8,
+        Text_SetColorFar(4);
+        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyGained, window, x * 8,
                                         y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        UiWork_SetParamNibbleFar(2);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyLost, window, x * 8,
+        Text_SetColorFar(2);
+        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyLost, window, x * 8,
                                         (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyUnchanged, window,
+        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyUnchanged, window,
                                         x * 8, y * 8 + 88);
-      UiWork_SetParamNibbleFar(15);
-      UiWindow_DrawDividerLineFar(window, 0, 11, 13, 11);
+      Text_SetColorFar(15);
+      Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
-    ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
+    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
   }
 
   if (page == 0)

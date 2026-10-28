@@ -215,47 +215,47 @@ void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count);
 void BattleActor_CommitPlacementFar(void);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
-struct SummaryWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct SummaryWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                       s32 flags);
 void Func_08041b68(void);
 void Func_0804537c(u32 address);
 void Func_08045528(s32 member, s32 slot);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 member);
 void Func_08118148(u16 *list, s32 count, s32 mode);
 void **GetBattleObjectSlotFar(s32 member);
 struct SummaryUnit *Unit_Get(s32 member);
-void Ui_FillVramBlockPattern(void);
+void Vram_FillWindowBlockPattern(void);
 void *Item_Get(s32 item);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-void RenderOutput_RedrawSavedRect(struct SummaryWindow *window);
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void WindowSprite_RedrawSavedRect(struct SummaryWindow *window);
 void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void UiText_RenderWideStringAtOffset(u16 *text, struct SummaryWindow *window,
+void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window,
                                      s32 x, s32 y);
-void UiWindow_DrawDividerLine(struct SummaryWindow *window, s32 x, s32 y,
+void Window_DrawDividerLine(struct SummaryWindow *window, s32 x, s32 y,
                               s32 width, s32 height);
 void Func_08041f70(s32 color);
-void UiText_DrawCharacterAtOffset(s32 message, struct SummaryWindow *window,
+void Text_DrawCharacterAtOffset(s32 message, struct SummaryWindow *window,
                                   s32 x, s32 y);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-void UiWindow_SetTilemapEntry(struct SummaryWindow *window, s32 entry, s32 x,
+void Window_SetTilemapEntry(struct SummaryWindow *window, s32 entry, s32 x,
                               s32 y, s32 flags);
 struct SummaryAbility *BattleAction_Get(s32 id);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits,
+void Text_DrawNumberAtOffset(s32 value, s32 digits,
                                struct SummaryWindow *window, s32 x, s32 y);
-void UiWindow_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
+void Window_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
                                   s32 pattern, s32 flags);
 struct SummaryRecovery *Djinn_GetRecoveryTableFar(s32 kind);
-void UiWork_ClearValueNameTables(void);
-void UiWork_PushValueSlot(s32 value, s32 kind);
-void UiText_DrawStringAtOffset(const u8 *text, struct SummaryWindow *window,
+void MessageArgument_ClearAll(void);
+void MessageArgument_Push(s32 value, s32 kind);
+void Text_DrawStringAtOffset(const u8 *text, struct SummaryWindow *window,
                                s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 digits,
+void Text_DrawNumberInWindow(s32 value, s32 digits,
                                struct SummaryWindow *window, s32 x, s32 y);
 s32 Unit_GetElementLevelFar(s32 member, s32 element);
 void Resource_LoadTableEntryToBuffer(s32 entry, s32 slot);
@@ -278,13 +278,13 @@ void PartyStatus_Draw(s32 flags);
                                                                                \
       if (mark == (rowBase) / 4)                                               \
         tile = 0xf30b + mark;                                                  \
-      UiWindow_SetTilemapEntry(                                                \
+      Window_SetTilemapEntry(                                                \
           window, tile, (window)->width - ((count) + 3) / 4 + mark - 10, 7,    \
           0);                                                                  \
     }                                                                          \
-    UiWindow_SetTilemapEntry(window, 0xf336,                                   \
+    Window_SetTilemapEntry(window, 0xf336,                                   \
                              (window)->width - ((count) + 3) / 4 - 11, 7, 0);  \
-    UiWindow_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);      \
+    Window_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);      \
   }
 
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
@@ -345,7 +345,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   navigation = NAVIGATION;
   navigation->timerHidden = redraw;
   if (navigation->timerWindow != NULL) {
-    UiWork_Finalize(navigation->timerWindow, 1);
+    Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = (void *)page;
   }
   Sound_PlayFar(112);
@@ -378,8 +378,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   }
   cursorX = 0;
   cursorY = 0;
-  statusWindow = UiWindow_Create(0, 0, 30, 20, 6);
-  helpWindow = UiWindow_Create(0, 14, 30, 6, 10);
+  statusWindow = Window_Create(0, 0, 30, 20, 6);
+  helpWindow = Window_Create(0, 14, 30, 6, 10);
   Func_08041b68();
 
   for (;;) {
@@ -425,7 +425,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursor.groupSize = itemCount;
       break;
     }
-    Ui_SetRectHighlight(statusWindow->x, statusWindow->y, statusWindow->width,
+    Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
                         statusWindow->height, 15);
 
     // A turns the page; each list page starts its own group at the top.
@@ -597,7 +597,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursor.helpEntry = stop->entry;
       cursor.column = stop->column;
       cursor.row = stop->row;
-      Ui_SetRectHighlight(statusWindow->x + stop->highlightColumn + 1,
+      Window_HighlightRect(statusWindow->x + stop->highlightColumn + 1,
                           statusWindow->y + stop->highlightRow + 1,
                           stop->highlightWidth, 1, 14);
     } else if (cursor.group == 1) {
@@ -615,10 +615,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursor.column = stop->column;
       cursor.row = stop->row;
       if (statusKinds[0] == 0)
-        Ui_SetRectHighlight(statusWindow->x + 15, statusWindow->y + 1, 10, 1,
+        Window_HighlightRect(statusWindow->x + 15, statusWindow->y + 1, 10, 1,
                             14);
       else
-        Ui_SetRectHighlight(statusWindow->x + stop->column + 1,
+        Window_HighlightRect(statusWindow->x + stop->column + 1,
                             statusWindow->y + stop->row + 1, 2, 2, 14);
     } else if (cursor.group == 3 || cursor.group == 5) {
       s8 position = cursor.groupPositions[cursor.group];
@@ -628,14 +628,14 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         cursor.column = -2;
       else
         cursor.column = -1;
-      Ui_SetRectHighlight(statusWindow->x + 1, statusWindow->y + cursor.row + 1,
+      Window_HighlightRect(statusWindow->x + 1, statusWindow->y + cursor.row + 1,
                           20, 1, 14);
     } else {
       s32 position = cursor.groupPositions[4];
 
       cursor.row = (s8)(position % 3) * 2 + 9;
       cursor.column = (s8)(position / 3) * 7 - 2;
-      Ui_SetRectHighlight(statusWindow->x + cursor.column + 3,
+      Window_HighlightRect(statusWindow->x + cursor.column + 3,
                           statusWindow->y + cursor.row + 1, 7, 1, 14);
     }
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
@@ -693,7 +693,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
     unit = Unit_Get(member);
     if (page == 0)
-      Ui_FillVramBlockPattern();
+      Vram_FillWindowBlockPattern();
 
     if (page == 3) {
       // Items: those the member can use in battle first.
@@ -723,20 +723,20 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         u16 *entry = &entries[rowBase + row];
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
-          UiText_CopyMessageString((s32)Msg_0d4f, itemText, 32);
+          Message_CopyExpanded((s32)Msg_0d4f, itemText, 32);
         else
-          UiText_CopyMessageString((*entry & 0x1ff) + (s32)MsgItemPlainName,
+          Message_CopyExpanded((*entry & 0x1ff) + (s32)MsgItemPlainName,
                                    itemText, 32);
       } else {
-        UiText_CopyMessageString((s32)Msg_0d46, itemText, 32);
+        Message_CopyExpanded((s32)Msg_0d46, itemText, 32);
       }
-      RenderOutput_RedrawSavedRect(statusWindow);
+      WindowSprite_RedrawSavedRect(statusWindow);
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                     helpWindow->height, 0);
-      Ui_FillVramBlockPattern();
-      UiText_RenderWideStringAtOffset(itemText, helpWindow, 0, 20);
+      Vram_FillWindowBlockPattern();
+      Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
       if (rowBase != -1) {
-        UiWindow_DrawDividerLine(statusWindow, 0, 16, 29, 16);
+        Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
         for (j = 0; j <= 3 && entries[rowBase + j] != 0; j++) {
           s32 item = entries[rowBase + j];
 
@@ -746,7 +746,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             Func_08041f70(4);
           else if (item & 0x400)
             Func_08041f70(2);
-          UiText_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
+          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
                                        statusWindow, 32, 64 + j * 16);
           Func_08041f70(15);
           iconSprites[j].tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
@@ -765,7 +765,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
       entries = NAVIGATION->list;
       rowBase = -1;
-      RenderOutput_RedrawSavedRect(statusWindow);
+      WindowSprite_RedrawSavedRect(statusWindow);
       for (i = 0; i < 32; i++) {
         s32 id = unit->psynergy[i] & 0x3fff;
 
@@ -783,30 +783,30 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       row = (s8)(position - rowBase);
       if (rowBase != -1 || row != -1) {
         work->holdTilemapUpload = 1;
-        Ui_FillVramBlockPattern();
+        Vram_FillWindowBlockPattern();
         if (count != 0)
-          UiText_CopyMessageString((entries[rowBase + row] & 0x3fff) +
+          Message_CopyExpanded((entries[rowBase + row] & 0x3fff) +
                                        (s32)Msg_0885,
                                    psynergyText, 52);
         else
-          UiText_CopyMessageString((s32)Msg_0d48, psynergyText, 52);
-        RenderOutput_RedrawSavedRect(statusWindow);
+          Message_CopyExpanded((s32)Msg_0d48, psynergyText, 52);
+        WindowSprite_RedrawSavedRect(statusWindow);
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                       helpWindow->height, 0);
-        UiText_RenderWideStringAtOffset(psynergyText, helpWindow, 0, 20);
+        Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
         if (rowBase != -1) {
           s32 y = 64;
           s32 tileRow = 8;
 
-          UiWindow_DrawDividerLine(statusWindow, 0, 16, 29, 16);
+          Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
           for (j = 0; j <= 3 && entries[rowBase + j] != 0;
                j++, y += 16, tileRow += 2) {
             s32 id = entries[rowBase + j];
             struct SummaryAbility *ability = BattleAction_Get(id);
             s32 range;
 
-            UiWindow_SetTilemapEntry(statusWindow, 0xf01f, 11, tileRow, 0);
-            UiWindow_SetTilemapEntry(statusWindow, 0xf01e, 12, tileRow, 0);
+            Window_SetTilemapEntry(statusWindow, 0xf01f, 11, tileRow, 0);
+            Window_SetTilemapEntry(statusWindow, 0xf01e, 12, tileRow, 0);
             iconSprites[j].tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
             if (!(ability->flags & 0x80))
@@ -816,20 +816,20 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             else if (unit->psySeal != 0)
               Func_08041f70(9);
             work->textColor = 5;
-            UiText_DrawCharacterAtOffset(id + (s32)MsgAbilityNothing,
+            Text_DrawCharacterAtOffset(id + (s32)MsgAbilityNothing,
                                          statusWindow, 16, y);
-            UiText_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104, y);
+            Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104, y);
             Func_08041f70(15);
             work->textColor = 15;
             if (ability->element != 4)
-              UiWindow_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
+              Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
                                        15, tileRow, 0);
             range = ability->range;
             if (range == 255)
               range = 11;
             else
               range--;
-            UiWindow_DrawThreeTileColumn(statusWindow, 16, tileRow, range, 0);
+            Window_DrawThreeTileColumn(statusWindow, 16, tileRow, range, 0);
           }
           for (; j <= 3; j++)
             iconSprites[j].tile =
@@ -846,10 +846,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       s32 element;
       s32 entry;
 
-      RenderOutput_RedrawSavedRect(statusWindow);
+      WindowSprite_RedrawSavedRect(statusWindow);
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                     helpWindow->height, 0);
-      UiWindow_DrawDividerLine(statusWindow, 0, 16, 29, 16);
+      Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
         s32 *out = &djinnList[djinnCount];
@@ -885,22 +885,22 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       entry = djinnList[cursor.groupPositions[4]];
       work->holdTilemapUpload = 1;
       if (djinnCount != 0) {
-        UiWork_ClearValueNameTables();
+        MessageArgument_ClearAll();
         if ((entry & 0x10000) && !(entry & 0x3e0000)) {
-          UiText_CopyMessageString((s32)Msg_0cf9, psynergyText, 32);
+          Message_CopyExpanded((s32)Msg_0cf9, psynergyText, 32);
         } else {
           if (entry & 0x10000)
-            UiWork_PushValueSlot((entry & 0x3e0000) >> 17, 5);
-          UiText_CopyMessageString(((entry & 0xf00) >> 8) * 20 +
+            MessageArgument_Push((entry & 0x3e0000) >> 17, 5);
+          Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 +
                                        (entry & 0xff) + (s32)Msg_09b1,
                                    psynergyText, 32);
         }
       } else {
-        UiText_CopyMessageString((s32)Msg_0d4e, psynergyText, 32);
+        Message_CopyExpanded((s32)Msg_0d4e, psynergyText, 32);
       }
       work->holdTilemapUpload = 0;
-      Ui_FillVramBlockPattern();
-      UiText_RenderWideStringAtOffset(psynergyText, helpWindow, 0, 20);
+      Vram_FillWindowBlockPattern();
+      Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
       {
         s32 *next = djinnList;
 
@@ -911,18 +911,18 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           entry = *next++;
           if (entry == (s32)0x80000000)
             break;
-          UiWindow_SetTilemapEntry(statusWindow,
+          Window_SetTilemapEntry(statusWindow,
                                    ((entry & 0xf00) >> 8) + 0x5001, column,
                                    tileRow, 0);
           if (entry & 0x3e0000)
             Func_08041f70(4);
           else if (entry & 0x10000)
             Func_08041f70(2);
-          UiText_DrawCharacterAtOffset(
+          Text_DrawCharacterAtOffset(
               ((entry & 0xf00) >> 8) * 20 + (entry & 0xff) + (s32)MsgDjinnName,
               statusWindow, column * 8 + 8, tileRow * 8);
           if (entry & 0x3e0000)
-            UiText_DrawNumberAtOffset((entry & 0x3e0000) >> 17, 2, statusWindow,
+            Text_DrawNumberAtOffset((entry & 0x3e0000) >> 17, 2, statusWindow,
                                       column * 8 + 40, tileRow * 8);
           Func_08041f70(15);
         }
@@ -935,62 +935,62 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       s8 *kind;
 
       if (page == 0) {
-        RenderOutput_RedrawSavedRect(statusWindow);
+        WindowSprite_RedrawSavedRect(statusWindow);
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                       helpWindow->height, page);
-        UiWindow_DrawDividerLine(statusWindow, 0, 14, 29, 14);
+        Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
       }
-      UiText_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
+      Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
       if (memberIndex > 3)
-        UiText_DrawCharacterAtOffset((s32)Msg_0d1f, statusWindow, 40, 16);
-      UiText_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
-      UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
-      UiText_DrawCharacterAtOffset((s32)Msg_0d1a, statusWindow, 0, 8);
-      UiText_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
-      UiText_DrawStringAtOffset(gOwnerStatus_HpString, statusWindow, 40, 24);
-      UiText_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
-      UiText_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 24);
-      UiText_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
-      UiText_DrawStringAtOffset(gOwnerStatus_PpString, statusWindow, 40, 32);
-      UiText_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
-      UiText_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
-      UiText_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
-      UiText_DrawCharacterAtOffset((s32)Msg_0d10, statusWindow, 136, 16);
-      UiText_DrawNumberInWindow(unit->atk, 3, statusWindow, 184, 16);
-      UiText_DrawCharacterAtOffset((s32)Msg_0d11, statusWindow, 136, 24);
-      UiText_DrawNumberInWindow(unit->def, 3, statusWindow, 184, 24);
-      UiText_DrawCharacterAtOffset((s32)Msg_0d12, statusWindow, 136, 32);
-      UiText_DrawNumberInWindow(unit->agi, 3, statusWindow, 184, 32);
-      UiText_DrawCharacterAtOffset((s32)Msg_0d13, statusWindow, 136, 40);
-      UiText_DrawNumberInWindow(unit->luck, 3, statusWindow, 184, 40);
-      UiText_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
+        Text_DrawCharacterAtOffset((s32)Msg_0d1f, statusWindow, 40, 16);
+      Text_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
+      Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+      Text_DrawCharacterAtOffset((s32)Msg_0d1a, statusWindow, 0, 8);
+      Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
+      Text_DrawStringAtOffset(gOwnerStatus_HpString, statusWindow, 40, 24);
+      Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
+      Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 24);
+      Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
+      Text_DrawStringAtOffset(gOwnerStatus_PpString, statusWindow, 40, 32);
+      Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
+      Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
+      Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
+      Text_DrawCharacterAtOffset((s32)Msg_0d10, statusWindow, 136, 16);
+      Text_DrawNumberInWindow(unit->atk, 3, statusWindow, 184, 16);
+      Text_DrawCharacterAtOffset((s32)Msg_0d11, statusWindow, 136, 24);
+      Text_DrawNumberInWindow(unit->def, 3, statusWindow, 184, 24);
+      Text_DrawCharacterAtOffset((s32)Msg_0d12, statusWindow, 136, 32);
+      Text_DrawNumberInWindow(unit->agi, 3, statusWindow, 184, 32);
+      Text_DrawCharacterAtOffset((s32)Msg_0d13, statusWindow, 136, 40);
+      Text_DrawNumberInWindow(unit->luck, 3, statusWindow, 184, 40);
+      Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
                                    statusWindow, 0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
-          UiText_DrawCharacterAtOffset((s32)Msg_0d19, statusWindow, 0, 72);
-        UiText_DrawCharacterAtOffset((s32)Msg_0d15, statusWindow, 0, 80);
-        UiText_DrawCharacterAtOffset((s32)Msg_0d16, statusWindow, 0, 88);
-        UiText_DrawCharacterAtOffset((s32)Msg_0d17, statusWindow, 0, 96);
+          Text_DrawCharacterAtOffset((s32)Msg_0d19, statusWindow, 0, 72);
+        Text_DrawCharacterAtOffset((s32)Msg_0d15, statusWindow, 0, 80);
+        Text_DrawCharacterAtOffset((s32)Msg_0d16, statusWindow, 0, 88);
+        Text_DrawCharacterAtOffset((s32)Msg_0d17, statusWindow, 0, 96);
         for (j = 0; j <= 3; j++) {
           s32 pal = 1;
 
           if (hasDjinn != 0)
             pal = 0;
-          UiWindow_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
+          Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
                                    0);
           if (hasDjinn != 0) {
-            UiText_DrawNumberInWindow(unit->djinnSetCount[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnSetCount[j], 1, statusWindow,
                                       40 + j * 32, 72);
-            UiText_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow,
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow,
                                       48 + j * 32, 72);
-            UiText_DrawNumberInWindow(unit->djinnHeld[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnHeld[j], 1, statusWindow,
                                       48 + j * 32 + 8, 72);
           }
-          UiText_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,
+          Text_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,
                                     statusWindow, 48 + j * 32, 80);
-          UiText_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
+          Text_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
                                     40 + j * 32, 88);
-          UiText_DrawNumberInWindow(unit->element[j].resist, 3, statusWindow,
+          Text_DrawNumberInWindow(unit->element[j].resist, 3, statusWindow,
                                     40 + j * 32, 96);
         }
       }
@@ -1114,7 +1114,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       statusCount = i;
       if (statusKinds[0] == 0)
-        UiText_DrawCharacterAtOffset(unit->hp != 0 ? (s32)Msg_0d1d
+        Text_DrawCharacterAtOffset(unit->hp != 0 ? (s32)Msg_0d1d
                                                    : (s32)Msg_0d1e,
                                      statusWindow, 112, 0);
     }
@@ -1176,19 +1176,19 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             helpValue = -helpValue;
           break;
         }
-        UiWork_PushValueSlot(helpValue, 5);
-        UiText_CopyMessageString(statusKind + (s32)Msg_0d33, helpText, 128);
+        MessageArgument_Push(helpValue, 5);
+        Message_CopyExpanded(statusKind + (s32)Msg_0d33, helpText, 128);
       } else if (cursor.helpEntry == 2 && unit->level <= 98) {
-        UiWork_PushValueSlot(
+        MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
             5);
-        UiText_CopyMessageString((s32)Msg_0d20, helpText, 128);
+        Message_CopyExpanded((s32)Msg_0d20, helpText, 128);
       } else {
-        UiText_CopyMessageString(cursor.helpEntry + (s32)Msg_0d21, helpText,
+        Message_CopyExpanded(cursor.helpEntry + (s32)Msg_0d21, helpText,
                                  128);
       }
-      UiText_RenderWideStringAtOffset(helpText, helpWindow, 0, 4);
+      Text_DrawWideStringAtOffset(helpText, helpWindow, 0, 4);
       MemFree(helpText);
     }
     redraw = 0;
@@ -1247,8 +1247,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   Resource_ResetEntry(cursorSlot);
   WaitFrames(1);
   Func_08041b68();
-  UiWork_Finalize(statusWindow, 1);
-  UiWork_Finalize(helpWindow, 1);
+  Window_Close(statusWindow, 1);
+  Window_Close(helpWindow, 1);
   PartyStatus_Draw(((u8 *)Ram_HeapSlots->battleWork)[0x41]);
   NAVIGATION->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);

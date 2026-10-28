@@ -107,13 +107,13 @@ Func_0804e1d8:
 	movs r1, #2
 	mov r9, r0
 	mov r0, r10
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #12
 	movs r0, #10
 	movs r1, #0
 	movs r2, #18
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	mov r3, r9
 	mov r10, r0
 	cmp r3, #0
@@ -129,27 +129,27 @@ Func_0804e1d8:
 	mov r1, r10
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	b .L_0804e2dc
 .L_0804e2d0:
 	ldr r0, .L_0804e3e8
 	mov r1, r10
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 .L_0804e2dc:
 	ldr r0, .L_0804e3ec
 	mov r1, r10
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	movs r3, #8
 	str r3, [sp, #0]
 	mov r0, r11
 	movs r1, #0
 	mov r2, r10
 	movs r3, #40
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	mov r2, r11
 	lsls r2, r2, #5
 	mov r8, r2
@@ -159,12 +159,12 @@ Func_0804e1d8:
 	movs r1, #3
 	mov r2, r10
 	movs r3, #64
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	ldr r0, .L_0804e3f0
 	mov r1, r10
 	movs r2, #88
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	movs r2, #8
 	mov r0, r8
 	str r2, [sp, #0]
@@ -172,7 +172,7 @@ Func_0804e1d8:
 	movs r1, #3
 	mov r2, r10
 	movs r3, #96
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	movs r5, #0
 .L_0804e32e:
 	movs r3, #1
@@ -199,7 +199,7 @@ Func_0804e1d8:
 	movs r1, #1
 	add r2, sp, #12
 	add r3, sp, #8
-	bl UiIcon_BuildItemIconTiles
+	bl Icon_BuildItemIconTiles
 	b .L_0804e37a
 .L_0804e362:
 	mov r3, r9
@@ -212,7 +212,7 @@ Func_0804e1d8:
 	movs r1, #1
 	add r2, sp, #12
 	add r3, sp, #8
-	bl UiIcon_BuildAbilityIconTiles
+	bl Icon_BuildAbilityIconTiles
 .L_0804e37a:
 	movs r1, #128
 	ldr r0, [sp, #12]
@@ -220,7 +220,7 @@ Func_0804e1d8:
 	mov r2, r10
 	adds r3, r7, #0
 	str r6, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	b .L_0804e3ac
 .L_0804e38c:
 	bl Resource_FindFreeEntry
@@ -228,14 +228,14 @@ Func_0804e1d8:
 	adds r2, r0, #0
 	adds r0, r5, #0
 	str r2, [sp, #12]
-	bl Ui_BuildPatternToSlot
+	bl Icon_BuildMiscIconTiles
 	movs r1, #128
 	ldr r0, [sp, #12]
 	lsls r1, r1, #23
 	mov r2, r10
 	adds r3, r7, #0
 	str r6, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 .L_0804e3ac:
 	adds r5, #1
 	cmp r5, #31
@@ -247,7 +247,7 @@ Func_0804e1d8:
 .L_0804e3ba:
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #24]

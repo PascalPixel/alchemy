@@ -30,9 +30,9 @@ struct ListNode {
   struct Object_0801c0dc obj;
 };
 
-void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
+void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                   s32 arg4);
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
+void Icon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                                s32 *result, s32 reuseSource);
 void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
@@ -51,13 +51,13 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
   case 6:
     if (reuse != 0)
       src = node->src;
-    Ui_BuildPairedPatternsToSlot(base, 0, &src, &tile, reuse);
+    Icon_BuildCommandIconTiles(base, 0, &src, &tile, reuse);
     node->end = base + (s32)&MsgCommandName;
     break;
   case 2:
     if (reuse != 0)
       src = node->src;
-    UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
+    Icon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
     node->end = base + (s32)&MsgItemName;
     break;
   case 4:

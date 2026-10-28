@@ -9,14 +9,14 @@ Menu_RunConfirmSelectionAtFar:
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlotFar:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
-	.global UiText_MeasureResourceEntriesFar
+	.global Text_MeasureMessageFar
 	.thumb_func
-UiText_MeasureResourceEntriesFar:
-	overlay_veneer UiText_MeasureResourceEntries
-	.global Ui_SetRectHighlightFar
+Text_MeasureMessageFar:
+	overlay_veneer Text_MeasureMessage
+	.global Window_HighlightRectFar
 	.thumb_func
-Ui_SetRectHighlightFar:
-	overlay_veneer Ui_SetRectHighlight
+Window_HighlightRectFar:
+	overlay_veneer Window_HighlightRect
 	.global Ability_LoadGlyphFar
 	.thumb_func
 Ability_LoadGlyphFar:
@@ -25,10 +25,10 @@ Ability_LoadGlyphFar:
 	.thumb_func
 Graphics_ExpandVramTilesByColorTableFar:
 	overlay_veneer Graphics_ExpandVramTilesByColorTable
-	.global UiWork_SetAltFlagAndClearTableFar
+	.global Text_UseExtraTilesFar
 	.thumb_func
-UiWork_SetAltFlagAndClearTableFar:
-	overlay_veneer UiWork_SetAltFlagAndClearTable
+Text_UseExtraTilesFar:
+	overlay_veneer Text_UseExtraTiles
 	.global Menu_AnimateSelectionToEntryFar
 	.thumb_func
 Menu_AnimateSelectionToEntryFar:

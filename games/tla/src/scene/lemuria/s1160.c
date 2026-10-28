@@ -41,7 +41,7 @@ void ObjectMotion_SetVariantCallback();
 void Camera_FollowActor();
 void Object_LinkObjectAndSetCallback();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Func_02001160(void) {
   struct ObjectRuntime *leader;
@@ -202,7 +202,7 @@ void Func_02001160(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xc000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 7, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 30);

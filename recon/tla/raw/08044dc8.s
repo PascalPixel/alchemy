@@ -21,7 +21,7 @@ Func_08044dc8:
 	movs r1, #1
 	movs r2, #22
 	movs r3, #5
-	bl UiWindow_Create
+	bl Window_Create
 	movs r6, #0
 	mov r9, r0
 	cmp r0, #0
@@ -44,16 +44,16 @@ Func_08044dc8:
 	lsls r3, r3, #1
 	ldrh r0, [r2, r3]
 	movs r1, #4
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r0, .L_08044f3c
-	bl UiText_BuildRenderEntriesMode1
+	bl Message_DecodeMode1
 	mov r10, r0
 	mov r1, r10
 	movs r2, #0
 	movs r3, #2
 	mov r0, r9
 	str r6, [sp, #0]
-	bl UiText_QueueRenderEntries
+	bl Message_Start
 	movs r0, #81
 	bl Sound_PlayFar
 	movs r5, #129
@@ -73,7 +73,7 @@ Func_08044dc8:
 .L_08044e58:
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #0
@@ -82,7 +82,7 @@ Func_08044dc8:
 	movs r1, #1
 	movs r2, #24
 	movs r3, #7
-	bl UiWindow_Create
+	bl Window_Create
 	mov r9, r0
 	cmp r0, #0
 	beq .L_08044f28
@@ -92,9 +92,9 @@ Func_08044dc8:
 	lsls r3, r3, #1
 	ldrh r0, [r2, r3]
 	movs r1, #4
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r0, .L_08044f44
-	bl UiText_BuildRenderEntriesMode1
+	bl Message_DecodeMode1
 	mov r10, r0
 	adds r0, r7, #0
 	bl SummonDefinition_Get
@@ -128,7 +128,7 @@ Func_08044dc8:
 	cmp r1, #3
 	ble .L_08044ebc
 	movs r1, #5
-	bl UiWork_PushValueSlot
+	bl MessageArgument_Push
 	ldr r6, .L_08044f48
 	adds r0, r5, r6
 	bl Func_0803cf6c
@@ -147,7 +147,7 @@ Func_08044dc8:
 	movs r2, #4
 	movs r3, #2
 	str r5, [sp, #0]
-	bl UiText_QueueRenderEntries
+	bl Message_Start
 	movs r5, #129
 	ldr r6, .L_08044f40
 	lsls r5, r5, #2
@@ -161,7 +161,7 @@ Func_08044dc8:
 	beq .L_08044f06
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #4]

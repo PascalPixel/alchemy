@@ -120,21 +120,21 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
 	movs r2, #17
 	movs r3, #4
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_ja_020084a4
 	adds r7, r0, #0
 	adds r1, r7, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #0
 	str r3, [sp, #0]
 	mov r0, fp
@@ -142,36 +142,36 @@ Func_020001e4:
 	adds r2, r7, #0
 	movs r3, #56
 	adds r6, r5, #2
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r6, #0
 	adds r1, r7, #0
 	movs r2, #104
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r5, #1
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #8
 	str r3, [sp, #0]
 	mov r0, r9
 	movs r1, #6
 	adds r2, r7, #0
 	movs r3, #56
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	movs r3, #8
 	movs r2, #104
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	mov r0, r8
 	bl Menu_SelectCoinsOrMedals
 	movs r1, #2
 	mov r8, r0
 	adds r0, r7, #0
-	bl UiWork_Finalize
-	bl UiWork_FinalizePendingCore
+	bl Window_Close
+	bl Message_CloseFinishedWindows
 	movs r3, #1
 	negs r3, r3
 	cmp r8, r3
@@ -227,7 +227,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -241,19 +241,19 @@ Func_020001e4:
 	movs r2, #7
 	movs r3, #4
 	movs r0, #22
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_ja_020084a8
 	adds r7, r0, #0
 	adds r1, r7, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r5, #1
 	adds r1, r7, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #5
 	bl WaitFrames
 	movs r0, #116
@@ -281,7 +281,7 @@ Func_020001e4:
 .L_ja_02008382:
 	adds r0, r7, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #1
 	negs r2, r2
 	cmp r5, r2
@@ -456,7 +456,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
@@ -467,14 +467,14 @@ Func_020001e4:
 	.endif
 	movs r3, #4
 	movs r0, #0
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_02008484
 	adds r6, r0, #0
 	adds r1, r6, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #0
 	str r3, [sp, #0]
 	mov r0, r9
@@ -485,12 +485,12 @@ Func_020001e4:
 	.else
 	movs r3, #72
 	.endif
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r5, #1
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #8
 	str r3, [sp, #0]
 	adds r2, r6, #0
@@ -501,14 +501,14 @@ Func_020001e4:
 	.endif
 	movs r1, #6
 	mov r0, r10
-	bl UiText_DrawNumberInWindow
+	bl Text_DrawNumberInWindow
 	adds r0, r7, #0
 	bl Menu_SelectCoinsOrMedals
 	movs r1, #2
 	adds r7, r0, #0
 	adds r0, r6, #0
-	bl UiWork_Finalize
-	bl UiWork_FinalizePendingCore
+	bl Window_Close
+	bl Message_CloseFinishedWindows
 	movs r2, #1
 	negs r2, r2
 	cmp r7, r2
@@ -555,7 +555,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #0
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -569,19 +569,19 @@ Func_020001e4:
 	movs r2, #9
 	movs r3, #4
 	movs r0, #20
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_02008488
 	adds r6, r0, #0
 	adds r1, r6, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r5, #1
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #5
 	bl WaitFrames
 	movs r0, #116
@@ -609,7 +609,7 @@ Func_020001e4:
 .L_0200834e:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #1
 	negs r2, r2
 	cmp r5, r2

@@ -19,11 +19,11 @@
 extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_Decompress4bppCodeSize[];
 
-/// Returns gUi_FixedTileBlocks[0], whatever no is.
-s32 Ui_GetTableWordZero(s32 no) {
+/// Returns gWindow_FixedTileBlocks[0], whatever no is.
+s32 WindowSprite_GetPointerTiles(s32 no) {
   if (no != 0)
     no = 0;
-  return gUi_FixedTileBlocks[no];
+  return gWindow_FixedTileBlocks[no];
 }
 
 /// Copies the 4bpp decompression routine to RAM and runs it on the stream

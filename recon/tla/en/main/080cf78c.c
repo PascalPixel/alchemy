@@ -45,7 +45,7 @@ extern u32 gFrameCount;
 
 void Task_Remove(void (*callback)(void));
 void BattleEffect_StartWindowHBlankDma(void);
-void UiWindow_FillFromSceneFar(u16 *pairs);
+void Window_FillFromSceneFar(u16 *pairs);
 s32 EventRuntime_GetControlledOwner(void);
 u32 Random16(void);
 
@@ -104,7 +104,7 @@ void Func_080cf78c(void) {
   }
 
   scanlineData = state->pages[1 ^ state->page];
-  UiWindow_FillFromSceneFar(scanlineData + 2);
+  Window_FillFromSceneFar(scanlineData + 2);
 
   switch (state->mode) {
   case 0:

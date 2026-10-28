@@ -53,7 +53,7 @@ struct SelectionScreen {
   struct AffineTransform transform;
   struct SelectionNode *head; ///< the first icon of the row
   struct SelectionNode *path; ///< the icons chosen so far
-  struct UiWindow *window;    ///< the window naming the chosen entry
+  struct Window *window;      ///< the window naming the chosen entry
   /// The listed entries, up to 16.
   ///@{
   u16 kinds[16];

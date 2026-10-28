@@ -48,8 +48,8 @@ s32 Object_SetModeById();
 s32 PartyInventory_Add();
 s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
-s32 UiText_OpenMessageAtObject();
-s32 UiText_ShowPositionedMessageAndWait();
+s32 FieldMessage_ShowAtActor();
+s32 FieldMessage_Show();
 s32 Unit_Get();
 s32 WaitFrames();
 extern u8 MsgWeHaveIgnited[];
@@ -140,7 +140,7 @@ void Func_02000cd0(void) {
   Func_020058fc(7, 0x102, 30);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 28, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
-  Call2((void (*)())UiText_OpenMessageAtObject, 0x101c, 0);
+  Call2((void (*)())FieldMessage_ShowAtActor, 0x101c, 0);
   t75 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   v_r7 = 0x3000000;
   if (t75 != 0)
@@ -181,7 +181,7 @@ L_02008fe0:
   t101 = FIELD_AT(0x3000000, s32, 108);
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, ((t102 << 16) >> 16),
+  Call2((void (*)())FieldMessage_Show, ((t102 << 16) >> 16),
         5);
   Call1((void (*)())PartyInventory_Add, 224);
   v_r6 = 216;
@@ -229,7 +229,7 @@ L_020090f8:
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Func_020058fc(28, 0x108, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 28, 0xb000, 0);
-  UiText_OpenMessageAtObject(28, 0);
+  FieldMessage_ShowAtActor(28, 0);
   t135 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (t135 != 0)
     goto L_02009236;

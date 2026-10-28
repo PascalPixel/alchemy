@@ -138,10 +138,10 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02001e28:
 	overlay_veneer Func_08020360
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:

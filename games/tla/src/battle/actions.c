@@ -102,7 +102,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   GameFlag_SetBit(363);
   mode = &work->encounterMode;
   Camera_ConfigureScene(0);
-  UiWork_FinalizeSharedSlotFar();
+  Window_CloseSharedFar();
 
   // Ally commands (unavailable when enemies strike first).
   if (*mode != 2) {

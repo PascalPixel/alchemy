@@ -5,7 +5,7 @@
 struct OwnerMenuState {
   u8 unk000[16];
   struct RenderInput *ownerWindow;
-  struct RenderOutput *ownerCursors[2];
+  struct WindowSprite *ownerCursors[2];
   s8 ownerIndex[2];
   u8 unk01e[0x1fe];
   u16 page;
@@ -18,7 +18,7 @@ void WaitFrames(s32 frames);
 void Func_080f8ab4(s32 x, s32 y) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
-  struct RenderOutput *cursor;
+  struct WindowSprite *cursor;
   s32 steps;
   s32 startX;
   s32 startY;

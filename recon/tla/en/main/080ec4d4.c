@@ -94,10 +94,10 @@ u32 Func_080ec298(struct WorldMapPlace *place);
 s32 GameFlag_Test(s32 flag);
 void Func_080140d8(void *entry, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
-void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
+void Text_MeasureMessageFar(s32 message, s32 *width, s32 *height);
+void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
 void Func_080ec484(void *window, s32 dx, s32 dy);
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
@@ -318,7 +318,7 @@ void Func_080ec4d4(void) {
 
   if (gWorldMapWork.shown != nearest) {
     if (Data_0202a654 == 0) {
-      RenderOutput_PrepareForRedrawFar(gWorldMapWork.window);
+      WindowSprite_PrepareForRedrawFar(gWorldMapWork.window);
       Data_0202a654 = 1;
       Data_0202a656 = 6;
     } else if (--Data_0202a656 <= 0) {
@@ -332,7 +332,7 @@ void Func_080ec4d4(void) {
         else
           nearestName =
               Scene_GetAreaNameIndex(nearestName, nearestEntrance) + 0xe58;
-        UiText_MeasureResourceEntriesFar(nearestName, &width, &height);
+        Text_MeasureMessageFar(nearestName, &width, &height);
         if (Data_0202a640 == 0) {
           cursorX = nearestX - 1 - (scrollX >> 16);
           cursorY = nearestY - 11 - (scrollY >> 16);
@@ -346,7 +346,7 @@ void Func_080ec4d4(void) {
         }
         if (cursorY < 0)
           cursorY = 0;
-        UiText_DrawResourceFar(nearestName, gWorldMapWork.window, cursorX,
+        Text_DrawMessageFar(nearestName, gWorldMapWork.window, cursorX,
                                cursorY);
         Data_0202a63c = width;
         Data_0202a63e = height;

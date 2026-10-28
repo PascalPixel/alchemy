@@ -18,7 +18,7 @@ void GameFlag_Test();
 void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_SetAngleToward();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 void Func_020004dc(void);
 
 void Func_020004b0(void) {
@@ -51,7 +51,7 @@ void Func_020004dc(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 15);
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 18, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 18, 0);
   result0 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
                    gAdventure.currentOwner, 0);
   if (result0 != 0)

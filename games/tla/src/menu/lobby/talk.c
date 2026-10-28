@@ -29,7 +29,7 @@ void Func_02001a7c(s32 actor, s32 animation, s32 flags);
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+void FieldMessage_Show(const u8 *message, s32 flags);
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -118,7 +118,7 @@ s32 Func_0200122c(s32 actor) {
     GameFlag_SetBit(0x206);
   }
   Func_02001a64(message);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   FieldEvent_WaitFrames(1);
   if (message == (s32)MsgYouLookA) {
     ObjectMotion_SetVariantCallback(14, 1);
@@ -126,7 +126,7 @@ s32 Func_0200122c(s32 actor) {
     FieldEvent_WaitFrames(15);
     ObjectMotion_SetAngleToward(14, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(5);
-    UiText_OpenMessageAtObject(14, 0);
+    FieldMessage_ShowAtActor(14, 0);
   }
   Func_02001a1c();
 }
@@ -150,7 +150,7 @@ s32 Func_02001304(s32 actor) {
     GameFlag_ClearBit(0x204);
   }
   Func_02001a64(message);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   Func_02001a1c();
 }
 
@@ -167,6 +167,6 @@ s32 Func_02001388(s32 id) {
   } else {
     Func_02001a64((s32)MsgICanTWaitTo);
   }
-  UiText_OpenMessageAtObject(id, 0);
+  FieldMessage_ShowAtActor(id, 0);
   Func_02001a1c();
 }

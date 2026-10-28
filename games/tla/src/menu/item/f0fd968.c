@@ -32,16 +32,16 @@ struct PsynergyMenuState {
   u8 ownerIds[2];
 };
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
                                  s32 style);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x,
                        s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
                             s32 style);
-s32 UiWork_SetParamNibbleFar(s32 color);
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
+s32 Text_SetColorFar(s32 color);
+void Text_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
 struct BattleUnit *Unit_Get(s32 owner);
 struct BattleAct *BattleAction_Get(s32 action);
@@ -64,13 +64,13 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
 
   (void)unused;
 
-  RenderOutput_RedrawSavedRectFar(window);
-  UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
+  WindowSprite_RedrawSavedRectFar(window);
+  Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 1, window, 0, 88);
+    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window,
+    Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window,
                                     HELP_X, 88);
   }
 
@@ -82,7 +82,7 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
 
   Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
   Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
+  Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
                                   HEADING_X, 0);
 
   row = 0;
@@ -93,21 +93,21 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
       ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
-        UiWork_SetParamNibbleFar(2);
+        Text_SetColorFar(2);
       } else if (PsynergyMenu_IsActionRestricted(
                      0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
-        UiWork_SetParamNibbleFar(4);
+        Text_SetColorFar(4);
       } else {
-        UiWork_SetParamNibbleFar(15);
+        Text_SetColorFar(15);
       }
 
-      UiText_DrawCharacterAtOffsetFar(
+      Text_DrawCharacterAtOffsetFar(
           (0x3fff & *(const u16 *)(cursor + (s32)menu)) +
               (s32)MsgAbilityNothing,
           window, NAME_X, row * 16 + 8);
-      UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
+      Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
-      UiWork_SetParamNibbleFar(15);
+      Text_SetColorFar(15);
 
       row++;
       cursor += 2;

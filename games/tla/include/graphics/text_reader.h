@@ -15,6 +15,6 @@ STATIC_ASSERT(sizeof(struct TextReader) == 0x0c);
 STATIC_ASSERT(offsetof(struct TextReader, words) == 4);
 STATIC_ASSERT(offsetof(struct TextReader, bits) == 8);
 
-void UiText_LookupMessage(struct TextReader *reader, s32 message);
+void Message_Find(struct TextReader *reader, s32 message);
 
 #endif

@@ -15,7 +15,7 @@ Func_080409f0:
 	movs r2, #15
 	movs r3, #9
 	movs r0, #7
-	bl UiWindow_Create
+	bl Window_Create
 	adds r5, r0, #0
 	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
@@ -23,7 +23,7 @@ Func_080409f0:
 	adds r2, r5, #0
 	lsls r1, r1, #23
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #164

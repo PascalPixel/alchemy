@@ -11,9 +11,9 @@
 #include "mem.h"
 #include "text_render_runtime.h"
 
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
+u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
-void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
+void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
   u16 *output = buffer;
 
@@ -27,37 +27,37 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   *output = 0;
   y >>= 3;
-  UiText_RenderWideStringInWindow(buffer, arg1, x, y);
+  Text_RenderWideStringInWindow(buffer, arg1, x, y);
   MemFree(buffer);
 }
 
 /// The number writers format the value in a 16-byte buffer and draw it with
 /// the matching string writer.
-void UiText_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
+void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
   /* FAKEMATCH: the value is pinned to the r4 it takes, so the fifth argument
    * loads from the stack before the first is copied; as the plain parameter,
    * 2 instructions differ in tla-en. */
   register s32 pinned asm("r4") = value;
 
-  UiText_DrawString(UiText_FormatNumber(data, pinned, width), output, x, y);
+  Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
 }
 
-void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
+void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
                                s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: pinned to r4 as in UiText_DrawNumber (differ 2 without). */
+  /* FAKEMATCH: pinned to r4 as in Text_DrawNumber (differ 2 without). */
   register s32 pinned asm("r4") = value;
 
-  UiText_DrawStringAtOffset(UiText_FormatNumber(data, pinned, width), work, x,
+  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x,
                             y);
 }
 
-void UiText_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
+void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: pinned to r4 as in UiText_DrawNumber (differ 2 without). */
+  /* FAKEMATCH: pinned to r4 as in Text_DrawNumber (differ 2 without). */
   register s32 pinned asm("r4") = value;
 
-  UiText_DrawStringInWindow(UiText_FormatNumber(data, pinned, width), output, x,
+  Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,
                             y);
 }

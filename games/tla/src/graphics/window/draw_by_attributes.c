@@ -4,9 +4,9 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 mode);
 
 static inline void FillWords(void *destination, s32 size, u32 value) {
@@ -16,13 +16,13 @@ static inline void FillWords(void *destination, s32 size, u32 value) {
 /// Draws a window as its flags ask: with flag 8 its inside is filled (with
 /// colour 4 under flag 0x20, which also draws the border, else cleared), and
 /// without it only the border is drawn. Clears the window's duration.
-void UiWork_DrawByAttributes(struct UiWindow *window) {
+void Window_DrawOpened(struct Window *window) {
   u32 flags;
   s32 x;
   s32 y;
   u32 width;
   u32 height;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
 
   work = UI_WORK;
   x = (s16)window->x;
@@ -33,14 +33,14 @@ void UiWork_DrawByAttributes(struct UiWindow *window) {
   window->duration = 0;
   if (8 & flags) {
     if (0x20 & flags) {
-      UiWindow_DrawBorder(x, y, width, height);
+      Window_DrawBorder(x, y, width, height);
       FillWords((void *)0x06002500, 0xF00, 0x44444444);
     } else {
       FillWords((void *)0x06002500, 0xF00, 0);
     }
     Func_0803a2b0(x, y, width, height, 0);
   } else {
-    UiWindow_DrawBorder(x, y, width, height);
+    Window_DrawBorder(x, y, width, height);
   }
   work->dirty = 1;
 }

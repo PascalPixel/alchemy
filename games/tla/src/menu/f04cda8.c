@@ -20,7 +20,7 @@ struct AffineTransform {
 
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
-extern const u16 gUi_BounceScales[];
+extern const u16 gWindowSprite_BounceScales[];
 
 struct WindowLine {
   u16 left;
@@ -53,7 +53,7 @@ void Func_0804cda8(void) {
 
   work = Ram_HeapSlots->menuSelectWork;
   sprite = work->entries;
-  scale = gUi_BounceScales[(gFrameCount * 2) & 31];
+  scale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   buffers = Ram_HeapSlots->screenTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;

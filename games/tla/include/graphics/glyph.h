@@ -27,7 +27,7 @@ struct FontGlyph {
 STATIC_ASSERT(offsetof(struct FontGlyph, rows) == 2);
 STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 
-extern const struct FontGlyph gUiText_Glyphs[];
+extern const struct FontGlyph gFont_Glyphs[];
 
 typedef struct {
   u8 input[0x400];

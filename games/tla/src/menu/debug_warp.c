@@ -23,19 +23,19 @@ extern const struct DebugWarpPreset gDebugWarp_Presets[];
 
 void Func_0804101c(void);
 void Func_08041054(void);
-struct UiWindow *Func_08041068(void);
+struct Window *Func_08041068(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-void UiWork_Finalize(struct UiWindow *window, s32 release);
+void Window_Close(struct Window *window, s32 release);
 
 /// Shows the nine debug warp presets with the cursor on row index, lets Up
 /// and Down move it (wrapping), and returns the row A chooses after running
 /// its handler, or -1 for B.
 s32 DebugWarp_Run(s32 index) {
   struct ScreenWork *work;
-  struct UiWindow *window;
+  struct Window *window;
   s32 moved;
   u32 down;
 
@@ -84,7 +84,7 @@ s32 DebugWarp_Run(s32 index) {
     }
   } while (1);
 done:
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Func_08041054();
   WaitFrames(1);
   /* FAKEMATCH(signature): the handlers are typed as returning s32, which

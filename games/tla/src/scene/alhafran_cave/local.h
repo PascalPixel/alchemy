@@ -57,7 +57,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void ObjectGroup_ApplyRandomChildValues(void);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 a, s32 b);
 void Func_020013f0(struct ObjectRuntime *object, s32 mode);
 void Func_02001400(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

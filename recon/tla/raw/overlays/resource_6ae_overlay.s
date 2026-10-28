@@ -1710,7 +1710,7 @@ Func_0200065c:
 	movs r0, #128
 	movs r1, #0
 	lsls r0, r0, #7
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r5]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -1906,7 +1906,7 @@ Func_0200065c:
 	movs r0, #128
 	movs r1, #0
 	lsls r0, r0, #7
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r5]
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -5196,7 +5196,7 @@ Func_02003658:
 	bl Func_0200578c
 	adds r0, r6, #6
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	bl Func_02005794
 	movs r0, #20
 	bl FieldEvent_WaitFrames
@@ -5205,7 +5205,7 @@ Func_02003658:
 	bl Func_0200578c
 	adds r0, r6, #7
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	bl Func_02005794
 	movs r3, #192
 	lsls r3, r3, #18
@@ -5261,7 +5261,7 @@ Func_02003658:
 	bl Func_0200578c
 	adds r0, r6, #0
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	bl Func_02005794
 	movs r0, #3
 	bl Func_02000640
@@ -5879,7 +5879,7 @@ Func_02003ff4:
 	bl Func_02005714
 	movs r1, #0
 	movs r0, #2
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	ldr r0, [r6]
 	movs r1, #0
 	bl Func_02005704

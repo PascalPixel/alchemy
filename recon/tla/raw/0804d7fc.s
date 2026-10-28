@@ -59,7 +59,7 @@ Func_0804d7fc:
 	movs r2, #14
 	movs r3, #4
 	movs r0, #8
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_0804d95c
 	adds r6, r7, #0
 	adds r1, r0, #0
@@ -68,26 +68,26 @@ Func_0804d7fc:
 	str r1, [r6]
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	mov r2, r10
 	str r2, [sp, #0]
 	movs r1, #4
 	movs r2, #22
 	movs r3, #12
 	movs r0, #4
-	bl UiWindow_Create
+	bl Window_Create
 	adds r1, r0, #0
 	str r1, [r7, #124]
 	adds r0, r5, #1
 	movs r2, #0
 	movs r3, #4
 	adds r5, #2
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	ldr r1, [r7, #124]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	b .L_0804d908
 .L_0804d8be:
 	movs r1, #128
@@ -107,7 +107,7 @@ Func_0804d7fc:
 	movs r3, #4
 	movs r0, #6
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	adds r6, r7, #0
 	adds r1, r0, #0
 	adds r6, #128
@@ -115,13 +115,13 @@ Func_0804d7fc:
 	ldr r0, .L_0804d964
 	movs r2, #12
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	movs r0, #5
 	movs r1, #5
 	movs r2, #21
 	movs r3, #7
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [r7, #124]
 .L_0804d908:
 	movs r0, #0
@@ -138,15 +138,15 @@ Func_0804d7fc:
 	bl Task_Remove
 .L_0804d924:
 	ldr r0, [r6]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, [r7, #124]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, [r6]
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [r7, #124]
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	bl WaitFrames
 	bl Menu_EndResourceSelection

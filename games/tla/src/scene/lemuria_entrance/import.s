@@ -22,30 +22,30 @@ GameFlag_ClearBit:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global UiWork_Finalize
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_OpenMessageWindow
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiWork_IsComplete
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global Message_AllTyped
 	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
+Message_AllTyped:
+	overlay_veneer Message_AllTypedFar
 	.global Func_0200053c
 	.thumb_func
 Func_0200053c:
 	overlay_veneer Func_080380f8
-	.global UiText_GetResourceDimensions
+	.global Text_GetMessageSize
 	.thumb_func
-UiText_GetResourceDimensions:
-	overlay_veneer UiText_GetResourceDimensionsFar
-	.global UiWork_FinalizePendingCore
+Text_GetMessageSize:
+	overlay_veneer Text_GetMessageSizeFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

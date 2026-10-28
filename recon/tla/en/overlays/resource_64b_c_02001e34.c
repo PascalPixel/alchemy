@@ -39,8 +39,8 @@ void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
-void UiText_OpenMessageAtObject(s32 id, s32 mode);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void FieldMessage_ShowAtActor(s32 id, s32 mode);
+void FieldMessage_Show(s32 message, s32 mode);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void Func_020011fc(void);
@@ -134,12 +134,12 @@ void Func_02001e34(void) {
     djinni->update = 0;
     Animation_ApplyChildValues(djinni, 0);
     djinni->gravity = 0x10000;
-    UiText_OpenMessageAtObject(9, 0);
+    FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
       ObjectMotion_Launch(9, 2, 20);
       ObjectMotion_Launch(9, 2, 20);
       Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren));
-      UiText_OpenMessageAtObject(9, 0);
+      FieldMessage_ShowAtActor(9, 0);
       if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
         Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren + 1));
       else
@@ -184,7 +184,7 @@ void Func_02001e34(void) {
     Motion_SetVarCbAndRefresh(9, 2);
     Func_02004cf0(9, 0);
     ObjectMotion_Launch(9, 2, 30);
-    UiText_OpenMessageAtObject(9, 0);
+    FieldMessage_ShowAtActor(9, 0);
     i = 0;
   plead:
     {
@@ -202,7 +202,7 @@ void Func_02001e34(void) {
         ObjectMotion_Launch(9, 2, 20);
         ObjectMotion_Launch(9, 2, 20);
         Func_02004cd8(i + TUTORIAL_MESSAGE(MsgOhComeOn));
-        UiText_OpenMessageAtObject(9, 0);
+        FieldMessage_ShowAtActor(9, 0);
         i++;
         goto plead;
       }
@@ -215,10 +215,10 @@ void Func_02001e34(void) {
   joined:
     Func_02004ba8(0x133, 4);
     Func_02004e30(81);
-    UiText_ShowPositionedMessageAndWait(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
+    FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
     ObjectMotion_Launch(9, 2, 20);
-    UiText_OpenMessageAtObject(9, 0);
+    FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Flag_IsSet(0x175))
@@ -256,13 +256,13 @@ void Func_02001e34(void) {
   Func_02004cf0(9, 0);
   ObjectMotion_SetAngleToward(9, owner, 0);
   Func_02004cf0(9, 0);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
   Object_SetModeById(owner, 22);
   Motion_SetVarCbAndRefresh(9, 2);
   Func_02004cd8(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
   Func_02004cf0(9, 0);

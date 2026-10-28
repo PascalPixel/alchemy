@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 
 void Func_08041f70(s32 param) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   work->colour = param & 15;
 }

@@ -47,7 +47,7 @@ void Func_02000208(void) {
   Func_02003534(8, 0x8000);
   msg = (s32)MsgHasMyGrandson;
   Func_0200350c(msg);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020035f4(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_0200350c(msg + 1);

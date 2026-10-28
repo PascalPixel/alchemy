@@ -18,7 +18,7 @@ struct InventoryMenuState {
 
 void *Func_080f88d0(struct InventoryMenuState *work);
 void Menu_PlaceOwnerEntryObjects(void *window, s32 originX, s32 originY);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 /// Sets up the item menu's first screen, the twin of The Broken Seal's
 /// ItemMenu_Initialize: the cursor window with the party's figures
@@ -39,7 +39,7 @@ void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns) {
     menu->helpWindow = NULL;
     menu->statusWindow = NULL;
     style = 2;
-    menu->infoWindow = UiWindow_CreateFar(0, 17, 30, 3, style);
+    menu->infoWindow = Window_CreateFar(0, 17, 30, 3, style);
     menu->itemWindow = 0;
     menu->selectedColumn = zero;
     menu->selectedRow = zero;

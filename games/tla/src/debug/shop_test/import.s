@@ -34,54 +34,54 @@ Func_02000c90:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global UiWindow_Create
+	.global Window_Create
 	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
+Window_Create:
+	overlay_veneer Window_CreateFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_OpenMessageWindow
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiText_ShowPositionedMessageAndWait
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global UiWork_IsComplete
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
+	.global Message_AllTyped
 	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
-	.global RenderOutput_PrepareForRedraw
+Message_AllTyped:
+	overlay_veneer Message_AllTypedFar
+	.global WindowSprite_PrepareForRedraw
 	.thumb_func
-RenderOutput_PrepareForRedraw:
-	overlay_veneer RenderOutput_PrepareForRedrawFar
-	.global UiText_DrawResource
+WindowSprite_PrepareForRedraw:
+	overlay_veneer WindowSprite_PrepareForRedrawFar
+	.global Text_DrawMessage
 	.thumb_func
-UiText_DrawResource:
-	overlay_veneer UiText_DrawResourceFar
-	.global UiText_DrawCharacterAtOffset
+Text_DrawMessage:
+	overlay_veneer Text_DrawMessageFar
+	.global Text_DrawCharacterAtOffset
 	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
-	.global UiText_DrawStringAtOffset
+Text_DrawCharacterAtOffset:
+	overlay_veneer Text_DrawCharacterAtOffsetFar
+	.global Text_DrawStringAtOffset
 	.thumb_func
-UiText_DrawStringAtOffset:
-	overlay_veneer UiText_DrawStringAtOffsetFar
-	.global UiText_DrawStringInWindow
+Text_DrawStringAtOffset:
+	overlay_veneer Text_DrawStringAtOffsetFar
+	.global Text_DrawStringInWindow
 	.thumb_func
-UiText_DrawStringInWindow:
-	overlay_veneer UiText_DrawStringInWindowFar
-	.global UiText_DrawNumberAtOffset
+Text_DrawStringInWindow:
+	overlay_veneer Text_DrawStringInWindowFar
+	.global Text_DrawNumberAtOffset
 	.thumb_func
-UiText_DrawNumberAtOffset:
-	overlay_veneer UiText_DrawNumberAtOffsetFar
-	.global UiText_DrawNumberInWindow
+Text_DrawNumberAtOffset:
+	overlay_veneer Text_DrawNumberAtOffsetFar
+	.global Text_DrawNumberInWindow
 	.thumb_func
-UiText_DrawNumberInWindow:
-	overlay_veneer UiText_DrawNumberInWindowFar
+Text_DrawNumberInWindow:
+	overlay_veneer Text_DrawNumberInWindowFar
 	.global Func_02000d00
 	.thumb_func
 Func_02000d00:
@@ -89,15 +89,15 @@ Func_02000d00:
 	.global Func_02000d08
 	.thumb_func
 Func_02000d08:
-	overlay_veneer UiText_DrawQuantity
-	.global UiWork_FinalizePendingCore
+	overlay_veneer MessageArgument_PushFar
+	.global Message_CloseFinishedWindows
 	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global RenderOutput_RedrawSavedRect
+Message_CloseFinishedWindows:
+	overlay_veneer Message_CloseFinishedWindowsFar
+	.global WindowSprite_RedrawSavedRect
 	.thumb_func
-RenderOutput_RedrawSavedRect:
-	overlay_veneer RenderOutput_RedrawSavedRectFar
+WindowSprite_RedrawSavedRect:
+	overlay_veneer WindowSprite_RedrawSavedRectFar
 	.global Func_02000d20
 	.thumb_func
 Func_02000d20:
@@ -220,10 +220,10 @@ Object_SetModeById:
 	.thumb_func
 Func_02000e08:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02000e18
 	.thumb_func
 Func_02000e18:

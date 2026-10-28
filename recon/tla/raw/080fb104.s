@@ -35,20 +35,20 @@ Func_080fb104:
 	beq .L_080fb178
 	bl ItemMenu_HideAllIcons
 	ldr r0, [r6, #56]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	adds r3, r6, #0
 	adds r3, #240
 	ldr r5, [r3]
 	bl ItemMenu_SetMessageWindowHeight7
 	adds r0, r5, #0
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r3, #3
 	str r3, [sp, #0]
 	adds r0, r5, #0
 	movs r1, #0
 	movs r2, #3
 	movs r3, #16
-	bl UiWindow_DrawDividerLineFar
+	bl Window_DrawDividerLineFar
 	bl Func_080fc12c
 	mov r0, r11
 	adds r1, r5, #0

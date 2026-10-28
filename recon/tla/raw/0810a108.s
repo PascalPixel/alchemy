@@ -60,7 +60,7 @@ Func_0810a108:
 	bne .L_0810a18a
 	mov r0, r9
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0810a280
 	bl Func_0810857c
 	b .L_0810a270
@@ -79,7 +79,7 @@ Func_0810a108:
 	beq .L_0810a1b2
 	mov r0, r9
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0810a284
 	bl Func_0810857c
 	b .L_0810a270
@@ -116,10 +116,10 @@ Func_0810a108:
 .L_0810a1e4:
 	mov r0, r9
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r10
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r5, #0
 	bl Func_0810857c
 	movs r0, #0

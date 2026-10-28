@@ -93,7 +93,7 @@ Engine_EventSetMessage:
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:

@@ -25,7 +25,7 @@ s32 Forge_RollResult(s32 item);
 void Forge_SetItem(s32 item);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 value);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 s32 Inventory_RemoveFar(s32 unitId, s32 slot);
 void Shop_DrawItemCount(void *window, s32 unitId);
 
@@ -51,7 +51,7 @@ s32 Func_0810b6cc(s32 unitId, s32 slot) {
   if (Forge_GetMaterialChance(item) == 0) {
     Func_0810857c((s32)MsgNoThatSNoGood);
   } else {
-    UiText_DrawQuantity(item, 2);
+    MessageArgument_PushFar(item, 2);
     Func_0810857c(chance == 1 ? (s32)MsgItSOkIfIWork
                               : (s32)MsgYouWantItToShine);
     if (Func_08108630(0) != 0) {

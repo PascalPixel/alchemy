@@ -17,5 +17,5 @@
 /// menu: calling menu (unused).
 /// unit: character ID.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
-  Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
+  Portrait_ReloadFar(0, unit, 0);
 }

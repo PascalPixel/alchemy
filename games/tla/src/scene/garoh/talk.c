@@ -10,7 +10,7 @@ void Func_02000580(s32 actor) {
   s32 msg = (s32)MsgGaroh02;
 
   Func_0200524c(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_0200524c(msg + 1);
@@ -25,7 +25,7 @@ void Func_020005cc(s32 actor) {
   s32 msg = (s32)MsgGaroh06;
 
   Func_0200524c(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_0200524c(msg + 1);
@@ -40,7 +40,7 @@ void Func_02000618(s32 actor) {
   s32 msg = (s32)MsgGaroh18;
 
   Func_0200524c(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_0200524c(msg + 1);

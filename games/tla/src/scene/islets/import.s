@@ -90,10 +90,10 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 Func_02003e3c:
 	overlay_veneer Func_08020300
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:

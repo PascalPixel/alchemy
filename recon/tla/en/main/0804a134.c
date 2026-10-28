@@ -78,33 +78,33 @@ extern const u8 gResource_FixedBlockBTiles[];
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 struct PsynergyMenuUnit *Unit_Get(s32 member);
-struct PsynergyMenuWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct PsynergyMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                            s32 flags);
 void Func_08049a04(u32 sourceTile, u32 destinationTile);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Ui_FillVramBlockPattern(void);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-void UiText_RenderWideStringAtOffset(u16 *text,
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
+void Vram_FillWindowBlockPattern(void);
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Text_DrawWideStringAtOffset(u16 *text,
                                      struct PsynergyMenuWindow *window, s32 x,
                                      s32 y);
-void RenderOutput_RedrawSavedRect(struct PsynergyMenuWindow *window);
+void WindowSprite_RedrawSavedRect(struct PsynergyMenuWindow *window);
 struct PsynergyAbility *BattleAction_Get(s32 id);
-void UiWindow_SetTilemapEntry(struct PsynergyMenuWindow *window, s32 entry,
+void Window_SetTilemapEntry(struct PsynergyMenuWindow *window, s32 entry,
                               s32 x, s32 y, s32 flags);
 void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
 void Func_08041f70(s32 color);
-void UiText_DrawCharacterAtOffset(s32 message,
+void Text_DrawCharacterAtOffset(s32 message,
                                   struct PsynergyMenuWindow *window, s32 x,
                                   s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits,
+void Text_DrawNumberAtOffset(s32 value, s32 digits,
                                struct PsynergyMenuWindow *window, s32 x, s32 y);
-void UiWindow_DrawThreeTileColumn(struct PsynergyMenuWindow *window, s32 x,
+void Window_DrawThreeTileColumn(struct PsynergyMenuWindow *window, s32 x,
                                   s32 y, s32 pattern, s32 flags);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 void Resource_ResetEntry(s32 slot);
 
 s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
@@ -138,13 +138,13 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
   unit = Unit_Get(unitId);
-  messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4, 42);
   iconCount = 5;
   navigation = NAVIGATION;
   firstEntry = navigation->page;
   selectedRow = navigation->row;
   preferredRow = navigation->preferredRow;
-  window = UiWindow_Create(9, 9, 21, 11, 6);
+  window = Window_Create(9, 9, 21, 11, 6);
 
   for (i = 0; i < 5; i++) {
     s32 y = i * 2;
@@ -167,19 +167,19 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Vram_FillWindowBlockPattern();
       if (count != 0)
-        UiText_CopyMessageString((actions[firstEntry + selectedRow] & 0x3fff) +
+        Message_CopyExpanded((actions[firstEntry + selectedRow] & 0x3fff) +
                                      (s32)Msg_0885,
                                  messageText, 52);
       else
-        UiText_CopyMessageString((s32)Msg_0d48, messageText, 52);
-      UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+        Message_CopyExpanded((s32)Msg_0d48, messageText, 52);
+      Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
-        RenderOutput_RedrawSavedRect(window);
+        WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < 5; i++) {
           struct PsynergyAbility *action;
 
@@ -187,8 +187,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           if (encodedAction == 0)
             break;
           action = BattleAction_Get(encodedAction);
-          UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
-          UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
+          Window_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
+          Window_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
           Ability_LoadGlyph(encodedAction & 0x3fff, 0, &iconSlots[i], &glyph,
                             1);
           sprites[i].tile = glyph;
@@ -199,20 +199,20 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           else if (unit->psySeal != 0)
             Func_08041f70(9);
           work->textPalette = 5;
-          UiText_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
+          Text_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
                                        window, 16, i * 16);
-          UiText_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
+          Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
           Func_08041f70(15);
           work->textPalette = 15;
           if (action->element != 4)
-            UiWindow_SetTilemapEntry(window, action->element + 0x5001, 15,
+            Window_SetTilemapEntry(window, action->element + 0x5001, 15,
                                      i * 2, 0);
           rangePattern = action->range;
           if (rangePattern == 255)
             rangePattern = 11;
           else
             rangePattern--;
-          UiWindow_DrawThreeTileColumn(window, 16, i * 2, rangePattern, 0);
+          Window_DrawThreeTileColumn(window, 16, i * 2, rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;
@@ -222,11 +222,11 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           iconTile = i + 0xf301;
           if (i == firstEntry / 5)
             iconTile = i + 0xf30b;
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -239,12 +239,12 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           if (i == firstEntry / 5)
             iconTile = i + 0xf30b;
         }
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, 0xf334,
                                window->width - (count + 4) / 5 - 3, -1, 0);
-      UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
+      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
       work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
     }
 
@@ -334,8 +334,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
     WaitFrames(1);
   }
 
-  UiWork_Finalize(messageWindow, 1);
-  UiWork_Finalize(window, 1);
+  Window_Close(messageWindow, 1);
+  Window_Close(window, 1);
   WaitFrames(1);
   for (i = 0; i < 5; i++)
     Resource_ResetEntry(iconSlots[i]);

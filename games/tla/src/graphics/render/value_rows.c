@@ -46,7 +46,7 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 /// allows 8 pixels for each digit, at least two digits wide.
 ///
 /// The international editions draw a character's HP and PP with it
-/// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+/// (StatusPanel_DrawHpPp). The Japanese editions draw those figures in
 /// four-character fields padded with spaces, which keeps the digits in line
 /// because the Japanese font's space is as wide as a digit (7 pixels). The
 /// Latin font's space is 5 pixels, so here each figure gets a field as wide
@@ -62,14 +62,14 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 ///         s32, as its callers hold it
 /// x:      the field's right edge, in pixels within the window
 /// y:      the pixel row of the text, within the window
-void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
+void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
 
   // Step x back to the field's left edge; the number writer right-aligns the
   // number in a field of width characters. x changes in place: a separate
   // left-edge local changes the registers.
   x -= width * FIELD_PIXELS_PER_DIGIT;
-  UiText_DrawNumberAtOffsetFar(number, width, window, x, y);
+  Text_DrawNumberAtOffsetFar(number, width, window, x, y);
 }
 
 #endif
@@ -82,7 +82,7 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 /// unit:   the character whose figures are drawn
 /// window: the window to draw in, its struct RenderInput pointer held as an
 ///         s32
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
+void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -91,47 +91,47 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.
-  UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
+  Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
   value = unit->maxHp;
-  UiText_DrawNumberRightAligned(value, window, 88, 40);
+  Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(4);
+    Text_SetColorFar(4);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(2);
+    Text_SetColorFar(2);
   }
-  UiText_DrawNumberRightAligned(value, window, 48, 40);
-  UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
+  Text_DrawNumberRightAligned(value, window, 48, 40);
+  Text_SetColorFar(15);
+  Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
-  UiText_DrawNumberRightAligned(value, window, 48, 48);
+  Text_DrawNumberRightAligned(value, window, 48, 48);
   value = unit->maxPp;
-  UiText_DrawNumberRightAligned(value, window, 88, 48);
+  Text_DrawNumberRightAligned(value, window, 88, 48);
 #else
   // Each row string ("HP    /" and "EP    /") holds the label and the slash,
   // one character to an 8-pixel cell, the slash in the cell at 48. Each
   // figure is four characters padded with spaces: the current one drawn
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
-  UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
   value = unit->maxHp;
-  UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
+  Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(4);
+    Text_SetColorFar(4);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(2);
+    Text_SetColorFar(2);
   }
-  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
+  Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
+  Text_SetColorFar(15);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
-  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
+  Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
   value = unit->maxPp;
-  UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
+  Text_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }

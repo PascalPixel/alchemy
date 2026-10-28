@@ -32,10 +32,10 @@ struct InventoryMenuState {
 
 extern char MsgItemName[];
 
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
                                  s32 style);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
                             s32 style);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x,
@@ -51,8 +51,8 @@ s32 Func_080fc608(s32 window, s32 unused, const struct MenuResult *state) {
   u8 row;
   const u16 *itemId;
 
-  RenderOutput_RedrawSavedRectFar(window);
-  UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
+  WindowSprite_RedrawSavedRectFar(window);
+  Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   page = state->page;
   firstEntry = page * 5;
@@ -68,7 +68,7 @@ s32 Func_080fc608(s32 window, s32 unused, const struct MenuResult *state) {
   if (visibleCount > row) {
     itemId = &menu->items[firstEntry];
     do {
-      UiText_DrawCharacterAtOffsetFar((itemId[0] & 0x1ff) + (s32)MsgItemName,
+      Text_DrawCharacterAtOffsetFar((itemId[0] & 0x1ff) + (s32)MsgItemName,
                                       menu->itemWindow, ENTRY_X, row * 16 + 8);
       row++;
       itemId++;

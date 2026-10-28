@@ -2,7 +2,7 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Near miss, differ 2 of 203: The Broken Seal's international
-// UiText_RenderGlyphPair. ⚓️ reads the first glyph's width before it clears
+// Text_DrawGlyphPair. ⚓️ reads the first glyph's width before it clears
 // the pixels, the second glyph's width signed, and sets the shadow colour
 // before the text colour. Iwram_ExpandBitRuns is the resident routine at
 // 0x03000314 (the listing's IwramFillWords + 0xb4), which ⚓️'s
@@ -20,9 +20,9 @@
 #define Iwram_ExpandBitRuns                                                    \
   ((s32 (*)(const void *bits, void *destination, s32 value))0x03000314)
 
-s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
+s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   u8 pixels[384];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   const u8 *glyph;
   s32 width;
   s32 colour;
@@ -41,11 +41,11 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
    * load, as in ☀️'s Japanese twin (differ 4 without it). */
   do {
   } while (0);
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   secondIndex = (code << 8) >> 16;
   code &= 255;
   firstIndex = code - 32;
-  glyph = (const u8 *)gUiText_Glyphs + firstIndex * sizeof(struct FontGlyph);
+  glyph = (const u8 *)gFont_Glyphs + firstIndex * sizeof(struct FontGlyph);
   width = ((const struct FontGlyph *)glyph)->width;
   Iwram_ClearWords(pixels, 384);
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
@@ -67,7 +67,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
   }
   if ((u16)secondIndex != 0) {
-    glyph = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);
     secondWidth = *(const s16 *)glyph;
     glyph += 2;
     if (work->outline == 1) {

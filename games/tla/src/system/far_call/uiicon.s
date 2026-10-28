@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiIcon_CopyResourceToSlotFar
+	.global Icon_CopyResourceToSlotFar
 	.thumb_func
-UiIcon_CopyResourceToSlotFar:
-	overlay_veneer UiIcon_CopyResourceToSlot
+Icon_CopyResourceToSlotFar:
+	overlay_veneer Icon_CopyResourceToSlot
 	.global Func_08038418
 	.thumb_func
 Func_08038418:

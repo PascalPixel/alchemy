@@ -3,10 +3,10 @@
 #include "text/msg_ids.h"
 
 s32 BattleEnemy_List(s16 *unit_ids);
-void UiWork_ClearValueNameTablesFar(void);
-void UiWork_FinalizeSharedSlotFar(void);
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiText_ShowMessageAndWaitCoreFar(s32 message);
+void MessageArgument_ClearAllFar(void);
+void Window_CloseSharedFar(void);
+void MessageArgument_PushFar(s32 value, s32 slot);
+void Message_ShowAndWaitCoreFar(s32 message);
 void BattlePresentation_WaitForAdvance(void);
 
 /// Announces each enemy that appears, then who strikes first. The Broken
@@ -18,31 +18,31 @@ void Func_08118bcc(s32 enemyCount) {
   s32 announced;
 
   battle = Ram_HeapSlots->battleWork;
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
   BattleEnemy_List(enemies);
 
   announced = 0;
   if (enemyCount != 0) {
     enemy = enemies;
     do {
-      UiText_DrawQuantity((u16)*enemy++, 1);
+      MessageArgument_PushFar((u16)*enemy++, 1);
       if (announced == enemyCount - 1)
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+        Message_ShowAndWaitCoreFar((s32)MsgLastEnemyAppeared);
       else
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
+        Message_ShowAndWaitCoreFar((s32)MsgEnemyAppeared);
       announced++;
       BattlePresentation_WaitForAdvance();
     } while (announced != enemyCount);
   }
 
-  UiWork_FinalizeSharedSlotFar();
+  Window_CloseSharedFar();
   if (battle->encounterMode == 1) {
-    UiWork_ClearValueNameTablesFar();
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+    MessageArgument_ClearAllFar();
+    Message_ShowAndWaitCoreFar((s32)MsgPartyStrikesFirst);
     BattlePresentation_WaitForAdvance();
   } else if (battle->encounterMode == 2) {
-    UiWork_ClearValueNameTablesFar();
-    UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
+    MessageArgument_ClearAllFar();
+    Message_ShowAndWaitCoreFar((s32)MsgPartySurprised);
     BattlePresentation_WaitForAdvance();
   }
 }

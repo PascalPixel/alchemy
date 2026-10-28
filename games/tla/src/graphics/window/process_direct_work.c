@@ -3,17 +3,17 @@
 #include "window.h"
 #include "uiwindow.h"
 
-void Func_08039f94(struct UiWindow *window, s32 save_position);
-void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWindow_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
+void Func_08039f94(struct Window *window, s32 save_position);
+void Window_DrawOpened(struct Window *window);
+void Window_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
 
 /// Steps each window's open or close animation: an open window moves toward
 /// its geometry and is drawn when it arrives; a closing one is erased frame
 /// by frame and cleared when its duration is reached.
-void UiWork_ProcessDirectWork(void) {
-  struct UiRenderWork *state =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  struct UiWindow *work = state->windows;
+void Window_UpdateZooms(void) {
+  struct WindowWork *state =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct Window *work = state->windows;
   s32 index = 0;
   u8 dirty;
 
@@ -23,11 +23,11 @@ void UiWork_ProcessDirectWork(void) {
         Func_08039f94(work, 0);
         work->frame = (s16)work->frame - 1;
       } else if (work->duration != 0) {
-        UiWork_DrawByAttributes(work);
+        Window_DrawOpened(work);
       }
     } else if (work->duration != 0) {
       if ((s16)work->frame != work->duration) {
-        UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+        Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                  (s16)work->previousWidth,
                                  (s16)work->previousHeight);
         Func_08039f94(work, 1);
@@ -35,7 +35,7 @@ void UiWork_ProcessDirectWork(void) {
         dirty = 1;
         state->dirty = dirty;
       } else {
-        UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+        Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                  (s16)work->previousWidth,
                                  (s16)work->previousHeight);
         work->output.head = NULL;

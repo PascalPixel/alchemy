@@ -14,8 +14,8 @@ void Func_02002318(void) {
 
 extern const u8 MsgBlazeStoneEmber[];
 
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
-s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_Show(const u8 *message, s32 mode);
+s32 FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 s32 PartyInventory_FindOwner(s32 item);
@@ -31,9 +31,9 @@ void Func_02002364(void) {
   Func_02004d40();
   Func_02004e90(0);
   message = MsgBlazeStoneEmber;
-  UiText_ShowPositionedMessageAndWait(message, 1);
+  FieldMessage_Show(message, 1);
   Func_02004dd0(message + 1);
-  UiText_OpenMessageAtObject(12, 0);
+  FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Value2((s32 (*)())PartyInventory_GiveItem, 460, 0);
     if (Value1((s32 (*)())PartyInventory_FindOwner, 460) == -1) {

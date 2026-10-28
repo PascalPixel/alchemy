@@ -30,7 +30,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , gResource_Data012
 	resource WindowTiles, Ui_WindowTiles
-	resource , UiText_SmallFont
+	resource , Text_SmallFont
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC

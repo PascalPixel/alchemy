@@ -39,8 +39,8 @@ struct OwnerPageState {
 extern u8 MsgChooseCharacter[];
 
 void *Unit_Get(s32 owner);
-void RenderOutput_RedrawSavedRectFar(void *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(void *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Menu_CreateWindowAndEntryObjects(s32 owner, s32 page);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 s32 Func_080fd6f0(void *unit, u16 *list, s32 mode);
@@ -64,10 +64,10 @@ s32 Func_080feb58(void) {
   s32 result;
 
   Unit_Get(menu->ownerIds[selection]);
-  RenderOutput_RedrawSavedRectFar(menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->messageWindow,
+  WindowSprite_RedrawSavedRectFar(menu->messageWindow);
+  Text_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->messageWindow,
                                   0, 0);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1,
+  Text_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1,
                                   menu->messageWindow, 0, 16);
   while (1) {
     // PERM

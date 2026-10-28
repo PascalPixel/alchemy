@@ -43,7 +43,7 @@ void ObjectMotion_SetVariantCallback();
 struct ObjectRuntime *Object_GetById(u32 id);
 void Object_LinkObjectAndSetCallback();
 void Object_SetModeById();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 
 /// Walks actor `id` to the controlled character's cell, when it has one.
 #define WALK_TO_LEADER(id)                                                     \
@@ -379,7 +379,7 @@ void Func_02000658(void) {
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call3(ObjectMotion_ArmCallback, 13, 0x5000, 0);
   Call1(FieldEvent_WaitFrames, 20);
-  Value2(UiText_OpenMessageAtObject, 0x2005, 0);
+  Value2(FieldMessage_ShowAtActor, 0x2005, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Func_020015f0();
     Call1(FieldEvent_WaitFrames, 30);

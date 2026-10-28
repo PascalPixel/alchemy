@@ -18,7 +18,7 @@ extern u8 gData_03001110;
 extern u16 Data_02000436;
 
 void Func_080ad090(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 void Func_08014b70(void);
 void Task_ResetAll(void);
 void Runtime_InitializeHeap(void);
@@ -40,7 +40,7 @@ void DebugBattle_RunMenu(void) {
 
   Func_080ad090();
 restart:
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   Task_ResetAll();
   Runtime_InitializeHeap();
@@ -91,7 +91,7 @@ restart:
         gAdventure.battleRule24b = 5;
       Func_081197f0(encounter);
       gData_03001110 = 1;
-      Ui_LoadWindowGraphics();
+      Window_LoadGraphics();
       Func_08014b70();
       Task_ResetAll();
       Runtime_InitializeHeap();

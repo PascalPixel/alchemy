@@ -21,7 +21,7 @@ Func_08118958:
 .L_08118976:
 	movs r5, #181
 	lsls r5, r5, #1
-	bl Ui_LoadWindowGraphics
+	bl Window_LoadGraphics
 	bl Func_08014b70
 	bl Task_ResetAll
 	bl Runtime_InitializeHeap
@@ -168,7 +168,7 @@ Func_08118958:
 	ldr r3, .L_08118ad8
 	mov r2, r10
 	strb r2, [r3]
-	bl Ui_LoadWindowGraphics
+	bl Window_LoadGraphics
 	bl Func_08014b70
 	bl Task_ResetAll
 	bl Runtime_InitializeHeap

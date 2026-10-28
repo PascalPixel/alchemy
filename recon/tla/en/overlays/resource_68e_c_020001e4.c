@@ -22,13 +22,13 @@ void Func_02001380();
 void Func_020013f8();
 s32 PartyInventory_CountItem();
 void Func_020013c8();
-void UiText_OpenMessageAtObject();
-s32 UiWindow_Create();
-void UiText_DrawCharacterAtOffset();
-void UiText_DrawNumberInWindow();
+void FieldMessage_ShowAtActor();
+s32 Window_Create();
+void Text_DrawCharacterAtOffset();
+void Text_DrawNumberInWindow();
 s32 Menu_SelectCoinsOrMedals();
-void UiWork_Finalize();
-void UiWork_FinalizePendingCore();
+void Window_Close();
+void Message_CloseFinishedWindows();
 s32 Func_020013d8();
 void WaitFrames();
 void Func_02001408();
@@ -60,18 +60,18 @@ L_020081fc:
   r10 = v0;
   r8 = (s32)MsgWhatWillYou;
   Func_020013c8(r8);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, -1, 0);
-  v1 = UiWindow_Create(0, 0, 17, 4, 2);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, -1, 0);
+  v1 = Window_Create(0, 0, 17, 4, 2);
   r5 = (s32)MsgCoins2;
   r6 = v1;
-  Call4((void (*)())UiText_DrawCharacterAtOffset, r5, r6, 0, 0);
-  UiText_DrawNumberInWindow(r9, 6, r6, 72, 0);
-  Call4((void (*)())UiText_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
-  UiText_DrawNumberInWindow(r10, 6, r6, 72, 8);
+  Call4((void (*)())Text_DrawCharacterAtOffset, r5, r6, 0, 0);
+  Text_DrawNumberInWindow(r9, 6, r6, 72, 0);
+  Call4((void (*)())Text_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
+  Text_DrawNumberInWindow(r10, 6, r6, 72, 8);
   v2 = Menu_SelectCoinsOrMedals(r7);
   r7 = v2;
-  Call2((void (*)())UiWork_Finalize, r6, 2);
-  UiWork_FinalizePendingCore();
+  Call2((void (*)())Window_Close, r6, 2);
+  Message_CloseFinishedWindows();
   r2 = -1;
   r0 = v3;
   if (r7 != -1)
@@ -104,18 +104,18 @@ L_020082c6:
   if (v4 != 0)
     goto L_020082ee;
   Func_020013c8(r8 + 4);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, -1, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, -1, 0);
   v5 = Event_AskYesNoWithActorAnimation(0, 0);
   r0 = v5;
   if (v5 == 0)
     goto L_020082ee;
   goto L_02008468;
 L_020082ee:
-  v6 = UiWindow_Create(20, 15, 9, 4, 2);
+  v6 = Window_Create(20, 15, 9, 4, 2);
   r5 = (s32)MsgToss2;
   r6 = v6;
-  Call4((void (*)())UiText_DrawCharacterAtOffset, r5, r6, 0, 0);
-  Call4((void (*)())UiText_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
+  Call4((void (*)())Text_DrawCharacterAtOffset, r5, r6, 0, 0);
+  Call4((void (*)())Text_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
   Call1((void (*)())WaitFrames, 5);
   Value1((s32 (*)())Func_02001408, 116);
   goto L_0200832e;
@@ -135,7 +135,7 @@ L_0200832e:
   r5 = 1;
   r5 = -r5;
 L_0200834e:
-  Call2((void (*)())UiWork_Finalize, r6, 2);
+  Call2((void (*)())Window_Close, r6, 2);
   r2 = -1;
   r0 = v7;
   if (r5 != -1)

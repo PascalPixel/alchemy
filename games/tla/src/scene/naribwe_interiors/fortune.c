@@ -18,10 +18,10 @@ void Func_02000304(void) {
   Func_02001180(0);
   message = MsgIAmA;
   Func_02001138((s32)message);
-  UiText_OpenMessageAtObject(10, 0);
+  FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) == 0) {
     Func_02001138((s32)(message + 2));
-    UiText_OpenMessageAtObject(10, 0);
+    FieldMessage_ShowAtActor(10, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) == 0) {
       if ((u32)gAdventure.coins > 19) {
         Func_02000390();

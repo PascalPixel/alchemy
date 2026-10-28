@@ -29,7 +29,7 @@ Func_0803c198:
 	sub sp, #128
 	adds r6, r0, #0
 	mov r8, r3
-	bl RenderOutput_AcquireFree
+	bl WindowSprite_AcquireFree
 	adds r7, r0, #0
 	movs r0, #0
 	cmp r7, #0
@@ -93,7 +93,7 @@ Func_0803c198:
 	strb r1, [r7, #14]
 	strh r3, [r7, #8]
 	adds r1, r7, #0
-	bl RenderOutput_AppendToList
+	bl WindowSprite_AppendToList
 	adds r0, r5, #0
 	b .L_0803c264
 .L_0803c254:

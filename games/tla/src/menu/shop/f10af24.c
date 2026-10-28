@@ -21,7 +21,7 @@ struct ShopRuntime {
   s8 partyAction;
 };
 
-void RenderOutput_PrepareForRedrawFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 void Animation_ApplyChildArgumentFar(void *group, s32 argument);
 s32 Shop_CanServe(s32 unitId, s32 serviceKind);
 
@@ -30,13 +30,13 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
   s32 serviceKind = shop->partyAction;
   s32 first = selected / 4 * 4;
   s32 count = shop->partyMemberCount;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   s32 i;
 
   if (window != 0) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
     if (first != 0) {
-      icon = RenderOutput_CreateFar(shop->previousPageIcon, 0x40000000, window,
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, 0x40000000, window,
                                     88, -12);
       icon->kind = 0;
       icon->active = 17;
@@ -44,7 +44,7 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
     }
     if (first + 4 < count) {
       icon =
-          RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 88, 0);
+          WindowSprite_CreateFar(shop->nextPageIcon, 0x40000000, window, 88, 0);
       icon->kind = 0;
       icon->active = 15;
       icon->animStep = 0;

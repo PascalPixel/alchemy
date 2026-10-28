@@ -11,9 +11,9 @@ struct ShopRuntime {
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
 s32 Shop_CanServe(s32 unitId, s32 serviceKind);
 s32 Shop_MsgByMode(s32 message);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void MessageArgument_PushFar(s32 value, s32 slot);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 /// Shows the selected member's service price, or that no treatment is needed.
 // As ☀️'s Shop_DrawSelectMsg. The service kind's variable takes the message
@@ -31,13 +31,13 @@ void Shop_DrawSelectMsg(s32 window, s32 unitId) {
   kindOrMessage = shop->partyAction;
   price = Shop_ServicePrice(unitId, kindOrMessage);
   if (window != 0) {
-    RenderOutput_PrepareForRedrawFar(window);
+    WindowSprite_PrepareForRedrawFar(window);
     if (Shop_CanServe(unitId, kindOrMessage) != 0)
       kindOrMessage = (s32)MsgReviveCost;
     else
       kindOrMessage = (s32)MsgNoHealingNeeded;
     kindOrMessage = Shop_MsgByMode(kindOrMessage);
-    UiText_DrawQuantity(price, 5);
-    UiText_DrawResourceFar(kindOrMessage, window, 0, 0);
+    MessageArgument_PushFar(price, 5);
+    Text_DrawMessageFar(kindOrMessage, window, 0, 0);
   }
 }

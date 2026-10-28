@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Localization_LookupEntryIdFar
+	.global Portrait_GetForSpeakerFar
 	.thumb_func
-Localization_LookupEntryIdFar:
-	overlay_veneer UiText_GetSpeakerPortrait
+Portrait_GetForSpeakerFar:
+	overlay_veneer Portrait_GetForSpeaker
 	.global Menu_RunTopSelectionFar
 	.thumb_func
 Menu_RunTopSelectionFar:

@@ -2,14 +2,14 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
-// Near miss, differ 10 of 124 (14 before UiText_QueueRenderEntries was
+// Near miss, differ 10 of 124 (14 before Message_Start was
 // declared returning s32, as msgwait.c defines it), 2026-10-25: The Broken Seal's
 // Djinn_ShowJoinedMessage on this game's window tiles, its window at x 2 and
 // width 26, the element's "found the Djinni" message (MsgFoundVenusDjinni,
 // message 46 in the English catalog, still unnamed there) and gInput's
 // pressed keys. Five reordered pairs remain, most a load the native issues
 // one row earlier: the element table's pool load, the palette's stack
-// reload, the key table and the arguments of UiText_QueueRenderEntries,
+// reload, the key table and the arguments of Message_Start,
 // which the native sets in the order r3, r2, r0. A device search found
 // nothing; it needs message 46 named in all six catalogs before it can link.
 
@@ -24,26 +24,26 @@
 extern const s16 gData_0805f65e[];
 extern u8 MsgFoundVenusDjinni[];
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
-void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
+void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
                               u32 y2);
-s32 UiText_GetSpeakerPortrait(s32 key);
+s32 Portrait_GetForSpeaker(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
-void UiWork_PushValueSlot(u32 value, u32 kind);
-s32 UiText_BuildRenderEntriesMode1(s32 arg0);
-s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
+void MessageArgument_Push(u32 value, u32 kind);
+s32 Message_DecodeMode1(s32 arg0);
+s32 Message_Start(struct Window *, s32, s32, s32, s32);
 void Sound_PlayFar(u32);
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
-void UiWork_Finalize(struct UiWindow *work, s32 release);
+void Window_Close(struct Window *work, s32 release);
 s32 Resource_ResetEntry(u32 slot);
 
 void Func_08044a58(s32 pc, s32 element, s32 djinn) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 name;
-  struct UiWindow *window;
+  struct Window *window;
   s32 sprite[3];
   s32 *entry;
   s32 palette, handle;
@@ -56,14 +56,14 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
   zero = 0;
   name = gData_0805f65e[element & 3];
   entry = sprite;
-  window = UiWindow_Create(2, 1, 26, 5, 0);
+  window = Window_Create(2, 1, 26, 5, 0);
 
   if (window != NULL) {
-    UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+    Window_DrawDividerLine(window, 4, 0, 4, 4);
 
     work->dirty = 1;
 
-    id = UiText_GetSpeakerPortrait(name);
+    id = Portrait_GetForSpeaker(name);
     UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
 
     p = entry;
@@ -74,12 +74,12 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
-    UiWork_PushValueSlot(pc, 1);
-    UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
+    MessageArgument_Push(pc, 1);
+    MessageArgument_Push(element * 20 + djinn + 300, 4);
 
-    text = UiText_BuildRenderEntriesMode1(element + (s32)MsgFoundVenusDjinni);
+    text = Message_DecodeMode1(element + (s32)MsgFoundVenusDjinni);
 
-    UiText_QueueRenderEntries(window, text, 36, 2, zero);
+    Message_Start(window, text, 36, 2, zero);
 
     Sound_PlayFar(81);
 
@@ -89,7 +89,7 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | 0x300)) == 0);
 
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     WaitFrames(1);
     Resource_ResetEntry(handle);
   }

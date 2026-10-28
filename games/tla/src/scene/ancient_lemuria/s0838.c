@@ -41,8 +41,8 @@ void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetVariantCallback();
 void Camera_FollowActor();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
-void UiWork_FinalizePendingCore();
+void FieldMessage_ShowAtActor();
+void Message_CloseFinishedWindows();
 
 void Func_02000838(void) {
   struct ObjectRuntime *leader;
@@ -89,7 +89,7 @@ void Func_02000838(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())FieldEvent_WaitFrames, 30);
@@ -153,10 +153,10 @@ void Func_02000838(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
   Value3((s32 (*)())Func_020019c4, 9, 0x100, 0);
   Value3((s32 (*)())Func_020019c4, 10, 0x100, 30);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_020019a4, 0x800a, 0, 0);
-  UiWork_FinalizePendingCore();
+  Message_CloseFinishedWindows();
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value3((s32 (*)())Func_020019c4, 7, 0x108, 40);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, -8, 8);
@@ -349,7 +349,7 @@ void Func_02000838(void) {
   Call3((void (*)())Func_020019a4, 10, 0, 10);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   if ((s8)gAdventure.counter274 <= 4) {
     result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
     if (result == 0) {

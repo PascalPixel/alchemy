@@ -6,7 +6,7 @@
 
 /// Sets active to mode and resets the animation step (animStep) to zero.
 /// out: sprite output; nothing happens if NULL.
-void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
+void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
     out->active = mode;
     out->animStep = 0;

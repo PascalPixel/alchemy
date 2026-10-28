@@ -43,7 +43,7 @@ s32 ObjectMotion_SetPositionAndCommit();
 s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 Object_SetModeById();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 WaitFrames();
 extern u8 Func_02000064[];
 extern u8 MsgShipSafeFiringDistance[];
@@ -102,7 +102,7 @@ L_0200820c:
   Call3((void (*)())Func_02000ad0, 0x2007, 0, 5);
 L_020082ea:
   Call1((void (*)())Func_02000ac0, (v_r10 + 1));
-  UiText_OpenMessageAtObject(11, 0);
+  FieldMessage_ShowAtActor(11, 0);
   t31 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (t31 == 0)
     goto L_0200832c;

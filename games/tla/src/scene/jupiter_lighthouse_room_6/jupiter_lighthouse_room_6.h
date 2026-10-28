@@ -130,7 +130,7 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_02001b84(s32 actor, s32 emote);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
@@ -190,7 +190,7 @@ static inline void JupiterLighthouseRoom6_TaskAdd(void (*callback)(void), s32 pr
 
 static inline void JupiterLighthouseRoom6_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(speaker, flags);
+  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 void Func_02001b0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

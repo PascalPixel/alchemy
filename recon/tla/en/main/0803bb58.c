@@ -3,7 +3,7 @@
 // line in r9 and the line-count array in r11, this the widest line in r8, the
 // array in r9 and spacing in r11; a scheduling pair at the start. Six minutes
 // of permuter and a loop-local copy of spacing (96) found nothing better.
-// ☀️'s UiText_MeasureAllPages on this game's UiRenderWork: code 176
+// ☀️'s Text_MeasureAllPages on this game's WindowWork: code 176
 // is skipped as a control code, a page break resets the text style, and the
 // line gaps are not clamped.
 #include "types.h"
@@ -11,14 +11,14 @@
 #include "window.h"
 #include "glyph.h"
 
-void UiWork_ResetCounters(void);
+void Text_ResetStyle(void);
 
 void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                    u16 *spacing) {
   u32 pageHeights[16];
   u16 lineSpacingCounts[4];
   u16 lineWidths[4];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 maxWidth;
   u32 line;
   u32 width;
@@ -31,7 +31,7 @@ void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 lineIndex;
   s32 gap;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   pageHeights[0] = 15;
   pageHeights[1] = 15;
   pageHeights[2] = 15;
@@ -61,7 +61,7 @@ void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         width += 5;
         count++;
       } else {
-        glyph = gUiText_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - 32].width;
         outline = work->outline;
         if (outline == 1 || outline == 5)
           glyph++;
@@ -94,7 +94,7 @@ void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       if (page == 0 && maxWidth < width)
         maxWidth = width;
       page++;
-      UiWork_ResetCounters();
+      Text_ResetStyle();
       break;
     case 14:
     case 28:
@@ -136,5 +136,5 @@ done:
       spacing++;
     }
   }
-  UiWork_ResetCounters();
+  Text_ResetStyle();
 }

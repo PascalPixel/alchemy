@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiWindow_ClearInteriorTiles
+	.global Window_ClearInteriorTiles
 	.thumb_func
-UiWindow_ClearInteriorTiles:
+Window_ClearInteriorTiles:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -37,7 +37,7 @@ UiWindow_ClearInteriorTiles:
 	adds r2, r6, #0
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl UiWindow_ClearTileAttributesInRect
+	bl Window_ClearTextTilesInRect
 	lsls r3, r7, #6
 	add r3, r8
 	lsls r2, r5, #1

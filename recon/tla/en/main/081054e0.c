@@ -20,7 +20,7 @@ extern char MsgStatusNameNormal[];
 extern char MsgStatusNameDown[];
 
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 
 // Lists usable entries with icons and names, or "none" when no entries qualify.
 void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
@@ -32,7 +32,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, icon_x, icon_y);
-      UiText_DrawCharacterAtOffsetFar((s32)MsgStatusNameDown + i, panel, x + 16,
+      Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameDown + i, panel, x + 16,
                                       y);
       y += 16;
       icon_y += 16;
@@ -42,5 +42,5 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
     }
   }
   if (count == 0)
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatusNameNormal, panel, x, y);
+    Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameNormal, panel, x, y);
 }

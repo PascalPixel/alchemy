@@ -64,7 +64,7 @@ s32 Resource_FindFreeEntry();
 s32 Resource_GetTableEntry();
 s32 Resource_ResetEntry();
 s32 Runtime_BumpAllocateAlternatePool();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 VramCache_Load();
 s32 WaitFrames();
 extern u8 Field_Palette685[];
@@ -367,7 +367,7 @@ L_020088f0:
   Call2(Func_020013b8, 0x1cccc, 0x3999);
   Call4(Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x15e0000, 1);
   Func_020013c8();
-  UiText_OpenMessageAtObject(17, 0);
+  FieldMessage_ShowAtActor(17, 0);
   t186 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t186 != 0)
     goto L_02008992;

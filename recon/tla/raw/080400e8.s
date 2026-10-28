@@ -26,7 +26,7 @@ Func_080400e8:
 	movs r2, #28
 	movs r3, #3
 	movs r0, #1
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #16]
 	bl Func_0803fd28
 	movs r3, #48
@@ -105,7 +105,7 @@ Func_080400e8:
 	ldr r0, [r6, r7]
 	movs r3, #251
 	strb r3, [r0, #15]
-	bl UiIcon_PrepareObjectFar
+	bl Icon_PrepareActorFar
 	ldr r3, [r6, r7]
 	movs r0, #160
 	lsls r0, r0, #3
@@ -134,7 +134,7 @@ Func_080400e8:
 	ldr r0, [r6, r7]
 	movs r3, #251
 	strb r3, [r0, #15]
-	bl UiIcon_PrepareObjectFar
+	bl Icon_PrepareActorFar
 	ldr r3, [r6, r7]
 	movs r0, #147
 	lsls r0, r0, #3
@@ -164,7 +164,7 @@ Func_080400e8:
 	ldr r0, [r6, r7]
 	movs r3, #251
 	strb r3, [r0, #15]
-	bl UiIcon_PrepareObjectFar
+	bl Icon_PrepareActorFar
 	ldr r3, [r6, r7]
 	movs r2, #0
 	ldrb r1, [r3, #14]
@@ -265,12 +265,12 @@ Func_080400e8:
 	movs r1, #160
 	movs r2, #40
 	movs r3, #200
-	bl UiWindow_ClearInteriorTiles
+	bl Window_ClearInteriorTiles
 	adds r0, r5, #0
 	mov r1, r8
 	movs r2, #160
 	movs r3, #40
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r1, #147
 	lsls r1, r1, #3
 	adds r1, #255
@@ -285,12 +285,12 @@ Func_080400e8:
 	movs r1, #160
 	movs r2, #64
 	movs r3, #184
-	bl UiWindow_ClearInteriorTiles
+	bl Window_ClearInteriorTiles
 	adds r0, r5, #0
 	mov r1, r8
 	movs r2, #160
 	movs r3, #64
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	mov r3, r10
 	movs r2, #0
 	ldrsb r2, [r3, r2]
@@ -302,12 +302,12 @@ Func_080400e8:
 	movs r1, #160
 	movs r2, #88
 	movs r3, #184
-	bl UiWindow_ClearInteriorTiles
+	bl Window_ClearInteriorTiles
 	adds r0, r5, #0
 	movs r3, #88
 	mov r1, r8
 	movs r2, #160
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r1, [sp, #8]
 	ldr r2, [sp, #4]
 	movs r0, #0
@@ -339,13 +339,13 @@ Func_080400e8:
 	adds r1, r5, #0
 	bl Func_08108040
 	ldr r0, [sp, #16]
-	bl RenderOutput_ClearList
+	bl WindowSprite_ClearList
 	ldr r0, .L_08040558
 	ldr r1, [sp, #16]
 	add r0, r9
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_080403b8:
 	ldr r0, [sp, #12]
 	bl Func_08045018
@@ -467,10 +467,10 @@ Func_080400e8:
 .L_080404a0:
 	ldr r0, [sp, #16]
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	cmp r6, #0
 	bne .L_08040574
 	ldr r5, .L_08040568
@@ -491,7 +491,7 @@ Func_080400e8:
 	bne .L_080404dc
 	ldr r0, .L_0804056c
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 .L_080404dc:
 	cmp r6, #0
 	bne .L_08040576

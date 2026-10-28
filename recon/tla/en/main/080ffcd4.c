@@ -51,10 +51,10 @@ struct PsynergyMenuState {
 
 extern u8 MsgSwitchCharacterHelp[];
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080ff850(void);
 s32 GameFlag_Test(s32 flag);
 void *Unit_Get(s32 owner);
@@ -71,9 +71,9 @@ void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
+void WindowSprite_PrepareForRedrawFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 
 s32 Func_080ffcd4(void) {
   struct PsynergyMenuState *menu;
@@ -90,10 +90,10 @@ s32 Func_080ffcd4(void) {
   result = 0;
   refresh = 2;
   listNeedsRedraw = 1;
-  UiWindow_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
-  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
+  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
   Func_080ff850();
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
@@ -151,8 +151,8 @@ s32 Func_080ffcd4(void) {
       refresh = 2;
     }
   }
-  RenderOutput_PrepareForRedrawFar(menu->infoWindow);
-  RenderOutput_RedrawSavedRectFar(window);
-  RenderOutput_ClearListFar(menu->messageWindow);
+  WindowSprite_PrepareForRedrawFar(menu->infoWindow);
+  WindowSprite_RedrawSavedRectFar(window);
+  WindowSprite_ClearListFar(menu->messageWindow);
   return result;
 }

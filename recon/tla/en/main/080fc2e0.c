@@ -37,8 +37,8 @@ extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
 void *Unit_Get(s32 unit);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void Func_080f8ab4(s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
@@ -72,10 +72,10 @@ s32 Func_080fc2e0(s32 unused) {
             2) <= 1) {
     selection = 1;
   } else {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgYes, window, 96, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgYes + 1, window, 96, 16);
-    UiWindow_ClearInteriorTilesFar(window, 16, 16, 96, 24);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipThisItem, window, 0, 16);
+    Text_DrawCharacterAtOffsetFar((s32)MsgYes, window, 96, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgYes + 1, window, 96, 16);
+    Window_ClearInteriorTilesFar(window, 16, 16, 96, 24);
+    Text_DrawCharacterAtOffsetFar((s32)MsgEquipThisItem, window, 0, 16);
     Func_080f8ab4(184, 5);
     for (;;) {
       if (GameFlag_Test(336))

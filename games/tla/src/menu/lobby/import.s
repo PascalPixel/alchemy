@@ -110,42 +110,42 @@ Func_02001994:
 	.thumb_func
 Func_0200199c:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global UiWindow_Create
+	.global Window_Create
 	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
+Window_Create:
+	overlay_veneer Window_CreateFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global Ui_AdjustValueWithoutLimit
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Message_DecodeRawUnbounded
 	.thumb_func
-Ui_AdjustValueWithoutLimit:
-	overlay_veneer Ui_AdjustValueWithoutLimitFar
-	.global UiText_OpenMessageWindow
+Message_DecodeRawUnbounded:
+	overlay_veneer Message_DecodeRawUnboundedFar
+	.global Message_OpenWindow
 	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiText_ShowPositionedMessageAndWait
+Message_OpenWindow:
+	overlay_veneer Message_OpenWindowFar
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global RenderOutput_PrepareForRedraw
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
+	.global WindowSprite_PrepareForRedraw
 	.thumb_func
-RenderOutput_PrepareForRedraw:
-	overlay_veneer RenderOutput_PrepareForRedrawFar
-	.global UiText_DrawNumber
+WindowSprite_PrepareForRedraw:
+	overlay_veneer WindowSprite_PrepareForRedrawFar
+	.global Text_DrawNumber
 	.thumb_func
-UiText_DrawNumber:
-	overlay_veneer UiText_DrawNumberFar
-	.global UiWork_ClearValueNameTables
+Text_DrawNumber:
+	overlay_veneer Text_DrawNumberFar
+	.global MessageArgument_ClearAll
 	.thumb_func
-UiWork_ClearValueNameTables:
-	overlay_veneer UiWork_ClearValueNameTablesFar
+MessageArgument_ClearAll:
+	overlay_veneer MessageArgument_ClearAllFar
 	.global Func_020019e4
 	.thumb_func
 Func_020019e4:
-	overlay_veneer UiText_DrawQuantity
+	overlay_veneer MessageArgument_PushFar
 	.global Func_020019ec
 	.thumb_func
 Func_020019ec:
@@ -210,10 +210,10 @@ ObjectMotion_SetAngleToward:
 	.thumb_func
 Func_02001a64:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02001a74
 	.thumb_func
 Func_02001a74:

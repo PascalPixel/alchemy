@@ -5,7 +5,7 @@
 // Resource_GetTableEntry((s32)&ResourceId_WindowTiles);`, and finds nothing
 // closer.
 // Near miss, differ 26 of 428, 2026-10-15: The Broken Seal's
-// UiText_RenderStringTiles in the form of its English edition (the German
+// Text_DrawStringAsTiles in the form of its English edition (the German
 // one is the same size; Spanish, French and Italian are 12 bytes longer and
 // Japanese 32, as in The Broken Seal's edition branches). The IWRAM clear
 // and fill go through inline wrappers, as The Broken Seal's call layer
@@ -24,8 +24,8 @@
 #include "iwram_call.h"
 
 extern char ResourceId_WindowTiles;
-extern const u8 gUiText_ColourPens[];
-extern const u8 gUiText_GlyphWidths[];
+extern const u8 gText_ColourPens[];
+extern const u8 gFont_GlyphWidths[];
 void *Resource_GetTableEntry(s32 id);
 
 static inline s32 ClearWords(void *destination, s32 size) {
@@ -36,11 +36,11 @@ static inline s32 FillWords(void *destination, s32 size, u32 value) {
   return Iwram_FillWordsEntry(destination, size, value);
 }
 
-s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
+s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH: an unread 32-byte reserve, the native stack frame's extra bytes. */
   u32 reserve[8];
   u8 pens[16];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u8 *canvas;
   u8 *glyphs;
   u32 attr;
@@ -54,13 +54,13 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   s32 j;
   u32 bits;
 
-  work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   canvas = MemAlloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
   ClearWords(pens, 16);
   if (attr == 0xF000) {
-    pens[1] = gUiText_ColourPens[work->colour & 15];
+    pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;
     FillWords(canvas, 0x800, 0x04040404);
   } else {
@@ -78,16 +78,16 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         switch (c) {
         case 8:
           work->colour = *script++;
-          pens[1] = gUiText_ColourPens[work->colour & 15];
+          pens[1] = gText_ColourPens[work->colour & 15];
           break;
         case 7:
         case 9:
         case 10:
           work->colour = 15;
-          pens[1] = gUiText_ColourPens[work->colour];
+          pens[1] = gText_ColourPens[work->colour];
           break;
         case 3:
-          x += gUiText_GlyphWidths[0];
+          x += gFont_GlyphWidths[0];
           break;
         case 14:
         case 15:
@@ -127,7 +127,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           x += 3;
         else {
           if (c > 31)
-            w = gUiText_GlyphWidths[c - 32];
+            w = gFont_GlyphWidths[c - 32];
           else
             w = 1;
           x += w;

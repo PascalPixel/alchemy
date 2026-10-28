@@ -55,7 +55,7 @@ s32 Object_SetModeById();
 s32 Object_SetPartAttribute();
 s32 Object_SetPositionAndResetMotion();
 s32 Task_RemoveFar();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 WaitFrames();
 extern u8 Func_020004a4[];
 extern u8 MsgWhatCouldHe[];
@@ -251,7 +251,7 @@ L_0200c4a0:
   Call2(Func_020056f4, 7, 0);
   Call2(Func_02005704, 2, 0x8000);
   Func_02005714(2, 0x109, 40);
-  UiText_OpenMessageAtObject(2, 0);
+  FieldMessage_ShowAtActor(2, 0);
   t156 = *(s32 *)v_r6;
   Call2(Func_02005704, t156, 0);
   t158 = *(s32 *)v_r6;

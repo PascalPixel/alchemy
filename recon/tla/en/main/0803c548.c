@@ -9,7 +9,7 @@
 // lane's near misses), and the branch offsets they move: the native
 // function is four bytes longer, its page-arrow case placing its literal pool
 // after the VBlank count's load, where this places it before.
-// ☀️'s UiWork_AnimateSpriteSlots with this game's sprite modes (no
+// ☀️'s WindowSprite_UpdateAll with this game's sprite modes (no
 // pulse; four hops; an off-screen test for mode 19).
 #include "types.h"
 #include "ram_buffer.h"
@@ -66,9 +66,9 @@ s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 void Func_0803c40c(struct AnimOutput *output);
 
-void UiWork_AnimateSpriteSlots(void) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-  struct UiWindow *window = work->windows;
+void WindowSprite_UpdateAll(void) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct Window *window = work->windows;
   s32 no;
   union {
     struct AffineTransform plain;

@@ -71,8 +71,8 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
 void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *object,
                                          s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
-void UiWork_ClearValueNameTablesFar(void);
-void UiWork_FinalizeSharedSlotFar(void);
+void MessageArgument_ClearAllFar(void);
+void Window_CloseSharedFar(void);
 void UpdateRisingParticleBurst(void *object);
 
 struct AnimationObject;
@@ -162,8 +162,8 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
 void SummonEffect_RunCanvasEffect(void *action, s32 mode);
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
-void UiText_DrawQuantity(s32, s32);
-void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
+void MessageArgument_PushFar(s32, s32);
+void Message_ShowAndWaitCoreFar(s32 messageId);
 void PartyStatus_DrawFar(s32 mode);
 
 /// The battle sprites' animations (AnimationObject_SelectAnimation numbers)

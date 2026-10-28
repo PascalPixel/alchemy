@@ -52,7 +52,7 @@ s32 Func_02003f54(s32 actor, s32 emote, s32 frames);
 void PartyInventory_Remove(s32 item);
 void PartyInventory_GiveItem(s32 item, s32 a);
 void Func_02003dfc(struct ObjectRuntime *object);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
+void FieldMessage_Show(const u8 *message, s32 a);
 
 #define STEP(actor, x, z)                                                      \
   (Object_GetById(actor)->actionFlags &= ~1,                                   \
@@ -166,7 +166,7 @@ void Func_020006f4(void) {
       FieldEvent_WaitFrames(10);
       Func_02003fc4();
       Func_02003f3c(gAdventure.currentOwner, 0x4000);
-      UiText_ShowPositionedMessageAndWait(MsgOhThatRed + 2, 1);
+      FieldMessage_Show(MsgOhThatRed + 2, 1);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003fbc();
       ObjectMotion_Launch(10, 6, 10);

@@ -2,17 +2,17 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-s32 UiText_BuildRenderEntries(s32 key, s32 mode);
-void UiWindow_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height,
+s32 Message_Decode(s32 key, s32 mode);
+void Window_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height,
                           u16 *bounds, s32 mode);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs);
-s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y,
+s32 Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 
-struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y,
                                           u32 packed) {
   s32 entry;
   u32 height;
@@ -20,8 +20,8 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
   u16 bounds[4];
   s32 flags;
   u16 *out;
-  struct UiWindow *window;
-  struct UiRenderWork *work;
+  struct Window *window;
+  struct WindowWork *work;
 
   work = UI_WORK;
   work->speakerVoiceSound = (packed << 4) >> 20;
@@ -29,10 +29,10 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
   work->speakerVoiceCountdown = 0;
   packed &= 0xffff;
   flags = 0;
-  entry = UiText_BuildRenderEntries(message, 1);
+  entry = Message_Decode(message, 1);
   if (work->entries[entry] == 0)
     return NULL;
-  UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
+  Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
   if (!(packed & 1))
@@ -43,11 +43,11 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
     flags |= 128;
   if (packed & 32)
     flags |= 256;
-  window = UiWindow_Create(x, y, width, height, flags);
+  window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
     return NULL;
-  if (UiText_QueueRenderEntries(window, entry, 0, 0, out, 0) == 0) {
-    UiWork_Finalize(window, 1);
+  if (Message_Start(window, entry, 0, 0, out, 0) == 0) {
+    Window_Close(window, 1);
     return NULL;
   }
   work->unk138a[0] = 0;

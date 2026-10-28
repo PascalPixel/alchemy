@@ -10,9 +10,9 @@
 #define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
-void UiWork_UpdateListTail(struct RenderOutputList *list) {
-  struct RenderOutput *node = list->head;
-  struct RenderOutput **tail = &list->head;
+void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
+  struct WindowSprite *node = list->head;
+  struct WindowSprite **tail = &list->head;
 
   while (node != NULL) {
     tail = &node->next;
@@ -21,18 +21,18 @@ void UiWork_UpdateListTail(struct RenderOutputList *list) {
   list->tailLink = tail;
 }
 
-void RenderOutput_AppendToList(struct RenderOutputList *list,
-                               struct RenderOutput *node) {
+void WindowSprite_AppendToList(struct WindowSpriteList *list,
+                               struct WindowSprite *node) {
   /* FAKEMATCH: the first-word tail pointer access preserves the two-store
    * order. */
   if (list != NULL) {
     *list->tailLink = node;
-    *(struct RenderOutput **)&list->tailLink = node;
+    *(struct WindowSprite **)&list->tailLink = node;
   }
 }
 
-void RenderOutput_Release(struct RenderOutput *entry) {
-  RenderOutput_ReleaseFree(entry);
+void WindowSprite_Release(struct WindowSprite *entry) {
+  WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {
     Resource_ResetEntry((u8)entry->index);
     if ((u8)entry->kind == 2) {

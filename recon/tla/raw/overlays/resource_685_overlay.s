@@ -353,7 +353,7 @@ Func_02000a34:
 	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation
@@ -1392,7 +1392,7 @@ Func_0200115c:
 	lsls r0, r0, #6
 	movs r1, #0
 	adds r0, #8
-	bl UiText_OpenMessageAtObject
+	bl FieldMessage_ShowAtActor
 	movs r0, #4
 	movs r1, #0
 	bl Event_AskYesNoWithActorAnimation

@@ -173,19 +173,19 @@ void Func_08118130(s32 kind, u8 *counts);
 struct PartyCommandUnit *Unit_Get(s32 unit);
 s32 Func_08045528(s32 portrait, s32 slot);
 void Func_08041b68(void);
-struct PartyCommandWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct PartyCommandWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                            s32 flags);
-void UiText_DrawCharacterAtOffset(s32 message,
+void Text_DrawCharacterAtOffset(s32 message,
                                   struct PartyCommandWindow *window, s32 x,
                                   s32 y);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 struct PartyCommandAbility *BattleAction_Get(s32 id);
 s32 Func_0804a134(s32 unit, u16 *actions, s32 count);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Func_08041f70(s32 color);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits,
+void Text_DrawNumberAtOffset(s32 value, s32 digits,
                                struct PartyCommandWindow *window, s32 x, s32 y);
-void UiWindow_SetTilemapEntry(struct PartyCommandWindow *window, s32 entry,
+void Window_SetTilemapEntry(struct PartyCommandWindow *window, s32 entry,
                               s32 x, s32 y, s32 flags);
 s32 Battle_ClassifyEntryKind(struct PartyCommandAbility *ability);
 void Resource_ResetEntry(s32 slot);
@@ -197,16 +197,16 @@ s32 Func_0804868c(s32 member, s32 unused);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Func_0804519c(void);
-void *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
-s32 UiWork_IsComplete(void);
+void *Message_ShowAndWait(s32 message, s32 x, s32 y);
+s32 Message_AllTyped(void);
 s32 Func_08049a30(s32 member, u16 *entries, s32 count);
 u16 *Item_Get(s32 item);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
-void Ui_FillVramBlockPattern(void);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-void UiText_RenderWideStringAtOffset(u16 *text,
+void Vram_FillWindowBlockPattern(void);
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Text_DrawWideStringAtOffset(u16 *text,
                                      struct PartyCommandWindow *window, s32 x,
                                      s32 y);
 void Camera_ConfigureSceneFar(s32 mode);
@@ -243,8 +243,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   void Func_0804bbd0(void) {
     u16 text[64];
 
-    UiText_CopyMessageString((s32)Msg_0c59, text, 52);
-    UiText_RenderWideStringAtOffset(text, state->timerWindow, 0, 4);
+    Message_CopyExpanded((s32)Msg_0c59, text, 52);
+    Text_DrawWideStringAtOffset(text, state->timerWindow, 0, 4);
   }
 
   target = 256;
@@ -499,12 +499,12 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
       switch (mode) {
       case 0:
-        commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
-        UiText_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow, 16, 0);
+        commandWindow = Window_Create(11, 17, 11, 3, 6);
+        Text_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow, 16, 0);
         COMMAND_ICON_X(state) = 64;
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 1, 1, 0);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1)
           goto mark_visible;
         commandKind = 0;
@@ -559,7 +559,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
         work = (struct PartyCommandWork *)Ram_HeapSlots->windowTiles;
-        commandWindow = UiWindow_Create(8, 17, 18, 3, 6);
+        commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = 40;
         ((struct CommandIconWords *)iconSprite)->attr01 = 0x40000400;
         ((struct CommandIconWords *)iconSprite)->attr23 = 0;
@@ -572,15 +572,15 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           Func_08041f70(2);
         else if (((u8 *)unit)[0x13d] != 0)
           Func_08041f70(9);
-        UiText_DrawCharacterAtOffset(parameter + (s32)MsgAbilityNothing,
+        Text_DrawCharacterAtOffset(parameter + (s32)MsgAbilityNothing,
                                      commandWindow, 16, 0);
-        UiText_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
+        Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->textPalette = 15;
         Func_08041f70(15);
-        UiWindow_SetTilemapEntry(commandWindow, 0xf01f, 11, 0, 0);
-        UiWindow_SetTilemapEntry(commandWindow, 0xf01e, 12, 0, 0);
+        Window_SetTilemapEntry(commandWindow, 0xf01f, 11, 0, 0);
+        Window_SetTilemapEntry(commandWindow, 0xf01e, 12, 0, 0);
         if (ability->element != 4)
-          UiWindow_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
+          Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
                                    0, 0);
         command->range = cost;
         Sound_PlayFar(112);
@@ -588,7 +588,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                              Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1)
           goto psynergy_menu;
         commandKind = 1;
@@ -623,7 +623,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = BattleAction_Get(summon->abilityId);
         handle = VramCache_AllocEntry(128);
-        commandWindow = UiWindow_Create(10, 17, 17, 3, commandKind);
+        commandWindow = Window_Create(10, 17, 17, 3, commandKind);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
@@ -640,12 +640,12 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         state->iconShown[1] = 1;
         if (ok == 0)
           Func_08041f70(2);
-        UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->abilityId +
+        Text_DrawCharacterAtOffset(SummonDefinition_Get(mode)->abilityId +
                                          (s32)MsgAbilityNothing,
                                      commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            UiWindow_SetTilemapEntry(commandWindow, j + 0x5001, n * 2 + 11, 0,
+            Window_SetTilemapEntry(commandWindow, j + 0x5001, n * 2 + 11, 0,
                                      0);
             Func_0803c274(commandWindow, summon->djinnRequired[j] + '0',
                           n * 2 + 12, 0, 0);
@@ -661,7 +661,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         command->range = ability->range;
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1)
           goto summon_menu;
         for (j = 0; j <= 3; j++) {
@@ -701,10 +701,10 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           ability =
               BattleAction_Get(Djinn_GetDefinitionHeaderFar(element, index));
           cost = ability->range;
-          commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
+          commandWindow = Window_Create(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
-          UiWindow_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-          UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
+          Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
+          Text_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
                                        commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
@@ -713,32 +713,32 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                                Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
             void *hint =
-                UiText_ShowMessageAndWaitComplete(Func_0804519c() + 14, 15, 8);
+                Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
 
-            while (UiWork_IsComplete() == 0)
+            while (Message_AllTyped() == 0)
               WaitFrames(1);
-            UiWork_Finalize(hint, 1);
+            Window_Close(hint, 1);
             state->tutorialStep++;
             state->tutorialDelay = 45;
           }
-          UiWork_Finalize(commandWindow, 1);
+          Window_Close(commandWindow, 1);
           if (mode == -1)
             goto djinn_menu;
           target = mode;
           break;
         }
-        commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
+        commandWindow = Window_Create(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
         Func_08041f70(2);
-        UiWindow_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-        UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
+        Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
+        Text_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
                                      commandWindow, 16, 0);
         Func_08041f70(15);
         command->range = 1;
         WaitFrames(1);
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 4, 0, 7);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1)
           goto djinn_menu;
         target = mode;
@@ -806,7 +806,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = UiWindow_Create(9, 17, 16, 3, 6);
+        commandWindow = Window_Create(9, 17, 16, 3, 6);
         COMMAND_ICON_X(state) = 48;
         ((struct CommandIconWords *)iconSprite)->attr01 = 0x40000400;
         ((struct CommandIconWords *)iconSprite)->attr23 = 0;
@@ -815,7 +815,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->tile =
             ItemIcon_LoadIntoSlot(unit->items[selection], handle);
         state->iconShown[1] = 1;
-        UiText_DrawCharacterAtOffset((unit->items[selection] & 0x1ff) +
+        Text_DrawCharacterAtOffset((unit->items[selection] & 0x1ff) +
                                          (s32)MsgItemName,
                                      commandWindow, 24, 0);
         command->range = cost;
@@ -824,7 +824,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                              Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1)
           goto item_menu;
         commandKind = 2;
@@ -871,7 +871,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     gData_02003a74[7] = 'S';
   }
   if (state->timerWindow != NULL)
-    UiWork_Finalize(state->timerWindow, 1);
+    Window_Close(state->timerWindow, 1);
   Resource_ResetEntry(smallIconSlot);
   Resource_ResetEntry(largeIconSlot);
   Task_Remove(UpdateLinkSessionCountdown);
@@ -880,8 +880,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
     mode = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
-      state->timerWindow = UiWindow_Create(0, 16, 30, 4, 42);
-      Ui_FillVramBlockPattern();
+      state->timerWindow = Window_Create(0, 16, 30, 4, 42);
+      Vram_FillWindowBlockPattern();
       Func_0804bbd0();
     } else {
       state->timerWindow = NULL;
@@ -911,7 +911,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       WaitFrames(1);
     }
     if (state->timerWindow != NULL)
-      UiWork_Finalize(state->timerWindow, 1);
+      Window_Close(state->timerWindow, 1);
   }
   Camera_ConfigureSceneFar(0);
   Runtime_ReleaseHeapBlock(228);

@@ -65,7 +65,7 @@ s32 Object_SetPartAttribute();
 s32 Object_SetPositionAndResetMotion();
 s32 Party_SetFields1eeAnd1f0();
 s32 Random16Far();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 WaitFrames();
 extern u8 Func_02000038[];
 extern u8 Func_02000068[];
@@ -541,7 +541,7 @@ L_02009084:
   Call3(ObjectMotion_ArmCallback, 1, 0x8000, 20);
   Call2(Func_02005704, 0, 0x8000);
   Call2(Object_SetModeById, 0, 4);
-  UiText_OpenMessageAtObject(0x4000, 0);
+  FieldMessage_ShowAtActor(0x4000, 0);
   t414 = party->currentOwner;
   t415 = Value2(Event_AskYesNoWithActorAnimation, t414, 0);
   if (t415 != 0)
@@ -595,7 +595,7 @@ L_02009490:
   Call2(Func_02005704, 1, 0x8000);
   Call2(Func_020056f4, 0x4001, 0);
   Call2(Func_02005704, 0, 0x8000);
-  UiText_OpenMessageAtObject(0x4000, 0);
+  FieldMessage_ShowAtActor(0x4000, 0);
   t461 = party->currentOwner;
   t462 = Value2(Event_AskYesNoWithActorAnimation, t461, 0);
   if (t462 != 0)

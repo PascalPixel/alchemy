@@ -68,7 +68,7 @@ Func_080dc6d8:
 	bl ObjectGroup_SetActionForOthers
 	mov r0, r9
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r2, #224
 	lsls r2, r2, #3
 	adds r2, #18
@@ -76,7 +76,7 @@ Func_080dc6d8:
 	movs r1, #0
 	ldrsb r1, [r3, r1]
 	ldr r0, .L_080dc7c8
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #16

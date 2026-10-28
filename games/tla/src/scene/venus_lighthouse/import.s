@@ -69,7 +69,7 @@ Animation_SetStateFlags:
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer FieldMessage_ShowFar
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:

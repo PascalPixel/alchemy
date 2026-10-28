@@ -8,17 +8,17 @@
 // shift written first in the sum is differ 10; the shift as a temporary
 // behind an empty asm barrier changes the high-register copies (differ 29);
 // four minutes of permuter found nothing better. Twin of The Broken Seal's
-// UiText_DrawStringAtOffset with this game's loop barrier.
+// Text_DrawStringAtOffset with this game's loop barrier.
 #include "mem.h"
 #include "text_render_runtime.h"
 #include "window.h"
 #include "ram_buffer.h"
 
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
+void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                                s32 offsetY) {
   u16 *buffer;
   u16 *output;
-  struct UiRenderWork *canvas;
+  struct WindowWork *canvas;
   u32 cell;
   s32 vram;
   s32 src;
@@ -26,7 +26,7 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   s32 phase;
 
   buffer = Runtime_BumpAllocateAlternatePool(0x200);
-  canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   output = buffer;
   while (*text != 0) {
     *output = *text;
@@ -45,7 +45,7 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;
     phase = offsetX & 7;
-    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, phase);
+    Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, phase);
     MemFree(buffer);
   }
 }

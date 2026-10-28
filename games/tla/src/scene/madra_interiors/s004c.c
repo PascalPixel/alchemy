@@ -18,7 +18,7 @@ void Func_020000a4(void) {
   Func_02001eb8(0);
   msg = (s32)MsgMadraInteriors06;
   Func_02001e18(msg);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02001e18(msg + 1);
@@ -53,7 +53,7 @@ void Func_020000fc(void) {
         s32 msg = (s32)MsgMadraInteriors155;
 
         Func_02001e18(msg);
-        UiText_OpenMessageAtObject(22, 0);
+        FieldMessage_ShowAtActor(22, 0);
         if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
           FieldEvent_WaitFrames(10);
           Func_02001e18(msg + 1);

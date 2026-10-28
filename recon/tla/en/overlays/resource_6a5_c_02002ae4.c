@@ -29,7 +29,7 @@ s32 Func_020058d4();
 s32 Func_020058ec();
 s32 Motion_SetVarCbAndRefresh();
 s32 ObjectMotion_ArmCallback();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 s32 Func_020059f4();
 s32 Func_02005924();
@@ -189,7 +189,7 @@ void Func_02002ae4(void) {
   Call2(Func_020058ec, 6, 0x6000);
   Call1(FieldEvent_WaitFrames, 0x1e);
   Call2(Motion_SetVarCbAndRefresh, 0x1c, 2);
-  UiText_OpenMessageAtObject(0x1c, 0);
+  FieldMessage_ShowAtActor(0x1c, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x6000, 0);
   Call2(Func_020058ec, 5, 0x8000);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);

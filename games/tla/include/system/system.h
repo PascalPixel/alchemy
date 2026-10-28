@@ -45,7 +45,7 @@ extern u8 gLink_TimeLabelString[];
 extern void *Resource_DirectoryTable[];
 extern u8 Resource_PatchThumbBranchCodeSize[];
 extern u8 gResourceSlot_ConversionTables[][256];
-extern const u16 gUi_WindowPalette[];
+extern const u16 gWindow_Palette[];
 s32 Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);

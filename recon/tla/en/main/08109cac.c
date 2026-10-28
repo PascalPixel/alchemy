@@ -49,7 +49,7 @@ struct ShopUnit {
 extern u8 Msg04699[], Msg04723[], Msg04862[];
 
 struct ShopUnit *Unit_Get(s32 unitId);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 s32 Inventory_CountFar(s32 unitId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 s32 Shop_GetSellPrice(s32 item);
@@ -60,9 +60,9 @@ void Shop_DrawMsg(void *window, s32 message);
 void Sound_PlayFar(s32 cue);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
 void WaitFrames(s32 frames);
-void UiWork_FinalizeFar(void *window, s32 style);
+void Window_CloseFar(void *window, s32 style);
 void Func_08109188(void);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Func_0810a03c(s32 unitId, s32 slot);
 void Func_0810a108(s32 unitId, s32 slot, s32 count);
 void Func_0810a2d8(s32 unitId, s32 slot);
@@ -90,9 +90,9 @@ s32 Func_08109cac(s32 unitId) {
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
-  priceWindow = UiWindow_CreateFar(15, 8, 15, 4, 2);
+  priceWindow = Window_CreateFar(15, 8, 15, 4, 2);
   do {
-    nameWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
     shop->cursorAnchor->active = 18;
     shop->mode = 12;
     redraw = 1;
@@ -130,7 +130,7 @@ s32 Func_08109cac(s32 unitId) {
         u32 item = unit->inventory[slot];
 
         Sound_PlayFar(126);
-        window = UiWindow_CreateFar(0, 9, 16, 10, 2);
+        window = Window_CreateFar(0, 9, 16, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         shop->detailsHidden = 0;
         /* FAKEMATCH(barrier): the input's address reloads after the store;
@@ -139,9 +139,9 @@ s32 Func_08109cac(s32 unitId) {
         while (gInput.held & 4)
           WaitFrames(1);
         shop->detailsHidden = 1;
-        UiWork_FinalizeFar(window, 2);
+        Window_CloseFar(window, 2);
         Func_08109188();
-        RenderOutput_PrepareForRedrawFar(shop->listWindow);
+        WindowSprite_PrepareForRedrawFar(shop->listWindow);
         WaitFrames(1);
         redraw = 1;
         continue;
@@ -178,7 +178,7 @@ s32 Func_08109cac(s32 unitId) {
       }
       WaitFrames(1);
     }
-    UiWork_FinalizeFar(nameWindow, 2);
+    Window_CloseFar(nameWindow, 2);
     WaitFrames(1);
     if (result != 0)
       break;
@@ -197,6 +197,6 @@ s32 Func_08109cac(s32 unitId) {
       Func_081084f4((s32)Msg04862);
     }
   } while (Inventory_CountFar(unitId) != 0);
-  UiWork_FinalizeFar(priceWindow, 2);
+  Window_CloseFar(priceWindow, 2);
   return result;
 }

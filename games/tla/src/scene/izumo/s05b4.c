@@ -21,7 +21,7 @@ void Func_020004bc(s32 actor) {
     const u8 *message = MsgSeeThisRing;
 
     Func_02000d60(message);
-    UiText_OpenMessageAtObject(actor, 0);
+    FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02000d60(message + 1);
@@ -44,7 +44,7 @@ void Func_02000538(s32 actor) {
     const u8 *message = MsgSeeThisRingOf;
 
     Func_02000d60(message);
-    UiText_OpenMessageAtObject(actor, 0);
+    FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02000d60(message + 1);
@@ -64,7 +64,7 @@ void Func_020005b4(s32 actor) {
   Func_02000dd0(0);
   message = MsgLadyUzumeAnd;
   Func_02000d60(message);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000d60(message + 1);

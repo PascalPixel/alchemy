@@ -38,16 +38,16 @@ Func_02000328:
 	ldr r5, .L_ja_020086b0
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_ja_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_ja_020086ac
 	movs r2, #152
 	lsls r2, r2, #1
@@ -190,14 +190,14 @@ Func_02000328:
 .L_ja_020084b6:
 	ldr r0, .L_ja_020086d4
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_ja_02008570
 .L_ja_020084d4:
@@ -315,14 +315,14 @@ Func_02000328:
 	ldr r5, .L_ja_020086ec
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_ja_020086f0
 	movs r0, #1
 	movs r2, #6
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_ja_02008648
 	ldr r3, .L_ja_020086e8
@@ -332,7 +332,7 @@ Func_02000328:
 	bne .L_ja_020085e6
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_ja_02008648
 .L_ja_020085e6:
 	ldr r6, .L_ja_020086d8
@@ -384,7 +384,7 @@ Func_02000328:
 .L_ja_02008648:
 	ldr r0, .L_ja_020086f4
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_ja_020086f0
 	movs r0, #1
 	adds r1, r5, #0
@@ -392,7 +392,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_ja_0200867e
 	movs r0, #46
@@ -408,14 +408,14 @@ Func_02000328:
 .L_ja_0200867e:
 	ldr r0, .L_ja_020086f8
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #6
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_ja_020085b2
 .L_ja_0200869c:
@@ -571,10 +571,10 @@ Func_02000328:
 	ldr r6, .L_ja_02008a40
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -582,17 +582,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_ja_020087f8
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_ja_020083f4
 .L_ja_020087f8:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_ja_0200880e
 	adds r0, r6, #2
 .L_ja_02008806:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_ja_020083f4
 .L_ja_0200880e:
 	movs r1, #242
@@ -922,16 +922,16 @@ Func_02000328:
 	ldr r5, .L_fr_020086a8
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_fr_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_fr_020086a4
 	movs r2, #152
 	lsls r2, r2, #1
@@ -1074,14 +1074,14 @@ Func_02000328:
 .L_fr_020084b6:
 	ldr r0, .L_fr_020086cc
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_fr_0200856a
 .L_fr_020084d4:
@@ -1196,14 +1196,14 @@ Func_02000328:
 	ldr r5, .L_fr_020086e4
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_fr_020086e8
 	movs r0, #1
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_fr_02008642
 	ldr r3, .L_fr_020086e0
@@ -1213,7 +1213,7 @@ Func_02000328:
 	bne .L_fr_020085e0
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_fr_02008642
 .L_fr_020085e0:
 	ldr r6, .L_fr_020086d0
@@ -1265,7 +1265,7 @@ Func_02000328:
 .L_fr_02008642:
 	ldr r0, .L_fr_020086ec
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_fr_020086e8
 	movs r0, #1
 	adds r1, r5, #0
@@ -1273,7 +1273,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_fr_02008678
 	movs r0, #46
@@ -1289,14 +1289,14 @@ Func_02000328:
 .L_fr_02008678:
 	ldr r0, .L_fr_020086f0
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_fr_020085ac
 .L_fr_02008696:
@@ -1451,10 +1451,10 @@ Func_02000328:
 	ldr r6, .L_fr_02008a40
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -1462,17 +1462,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_fr_020087f0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_fr_020083f4
 .L_fr_020087f0:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_fr_02008806
 	adds r0, r6, #2
 .L_fr_020087fe:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_fr_020083f4
 .L_fr_02008806:
 	movs r1, #242
@@ -1806,16 +1806,16 @@ Func_02000328:
 	ldr r5, .L_de_020086a8
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_de_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_de_020086a4
 	movs r2, #152
 	lsls r2, r2, #1
@@ -1958,14 +1958,14 @@ Func_02000328:
 .L_de_020084b6:
 	ldr r0, .L_de_020086cc
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_de_0200856a
 .L_de_020084d4:
@@ -2080,14 +2080,14 @@ Func_02000328:
 	ldr r5, .L_de_020086e4
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_de_020086e8
 	movs r0, #1
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_de_02008642
 	ldr r3, .L_de_020086e0
@@ -2097,7 +2097,7 @@ Func_02000328:
 	bne .L_de_020085e0
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_de_02008642
 .L_de_020085e0:
 	ldr r6, .L_de_020086d0
@@ -2149,7 +2149,7 @@ Func_02000328:
 .L_de_02008642:
 	ldr r0, .L_de_020086ec
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_de_020086e8
 	movs r0, #1
 	adds r1, r5, #0
@@ -2157,7 +2157,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_de_02008678
 	movs r0, #46
@@ -2173,14 +2173,14 @@ Func_02000328:
 .L_de_02008678:
 	ldr r0, .L_de_020086f0
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_de_020085ac
 .L_de_02008696:
@@ -2335,10 +2335,10 @@ Func_02000328:
 	ldr r6, .L_de_02008a40
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -2346,17 +2346,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_de_020087f0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_de_020083f4
 .L_de_020087f0:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_de_02008806
 	adds r0, r6, #2
 .L_de_020087fe:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_de_020083f4
 .L_de_02008806:
 	movs r1, #242
@@ -2687,16 +2687,16 @@ Func_02000328:
 	ldr r5, .L_es_020086a8
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_es_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_es_020086a4
 	movs r2, #152
 	lsls r2, r2, #1
@@ -2839,14 +2839,14 @@ Func_02000328:
 .L_es_020084b6:
 	ldr r0, .L_es_020086cc
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_es_0200856a
 .L_es_020084d4:
@@ -2961,14 +2961,14 @@ Func_02000328:
 	ldr r5, .L_es_020086e4
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_es_020086e8
 	movs r0, #1
 	movs r2, #10
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_es_02008642
 	ldr r3, .L_es_020086e0
@@ -2978,7 +2978,7 @@ Func_02000328:
 	bne .L_es_020085e0
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_es_02008642
 .L_es_020085e0:
 	ldr r6, .L_es_020086d0
@@ -3030,7 +3030,7 @@ Func_02000328:
 .L_es_02008642:
 	ldr r0, .L_es_020086ec
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_es_020086e8
 	movs r0, #1
 	adds r1, r5, #0
@@ -3038,7 +3038,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_es_02008678
 	movs r0, #46
@@ -3054,14 +3054,14 @@ Func_02000328:
 .L_es_02008678:
 	ldr r0, .L_es_020086f0
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #10
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_es_020085ac
 .L_es_02008696:
@@ -3216,10 +3216,10 @@ Func_02000328:
 	ldr r6, .L_es_02008a40
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -3227,17 +3227,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_es_020087f0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_es_020083f4
 .L_es_020087f0:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_es_02008806
 	adds r0, r6, #2
 .L_es_020087fe:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_es_020083f4
 .L_es_02008806:
 	movs r1, #242
@@ -3568,16 +3568,16 @@ Func_02000328:
 	ldr r5, .L_it_020086a8
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_it_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_it_020086a4
 	movs r2, #152
 	lsls r2, r2, #1
@@ -3720,14 +3720,14 @@ Func_02000328:
 .L_it_020084b6:
 	ldr r0, .L_it_020086cc
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_it_0200856a
 .L_it_020084d4:
@@ -3842,14 +3842,14 @@ Func_02000328:
 	ldr r5, .L_it_020086e4
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_it_020086e8
 	movs r0, #1
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_it_02008642
 	ldr r3, .L_it_020086e0
@@ -3859,7 +3859,7 @@ Func_02000328:
 	bne .L_it_020085e0
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_it_02008642
 .L_it_020085e0:
 	ldr r6, .L_it_020086d0
@@ -3911,7 +3911,7 @@ Func_02000328:
 .L_it_02008642:
 	ldr r0, .L_it_020086ec
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_it_020086e8
 	movs r0, #1
 	adds r1, r5, #0
@@ -3919,7 +3919,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_it_02008678
 	movs r0, #46
@@ -3935,14 +3935,14 @@ Func_02000328:
 .L_it_02008678:
 	ldr r0, .L_it_020086f0
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_it_020085ac
 .L_it_02008696:
@@ -4097,10 +4097,10 @@ Func_02000328:
 	ldr r6, .L_it_02008a40
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -4108,17 +4108,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_it_020087f0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_it_020083f4
 .L_it_020087f0:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_it_02008806
 	adds r0, r6, #2
 .L_it_020087fe:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_it_020083f4
 .L_it_02008806:
 	movs r1, #242
@@ -4448,16 +4448,16 @@ Func_02000328:
 	ldr r5, .L_020086b0
 	movs r1, #5
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	bl Func_020023d8
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_020083cc
 	movs r1, #1
 	adds r0, r5, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r3, .L_020086ac
 	movs r2, #152
 	lsls r2, r2, #1
@@ -4600,14 +4600,14 @@ Func_02000328:
 .L_020084b6:
 	ldr r0, .L_020086d4
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r5, #0
 	bne .L_02008570
 .L_020084d4:
@@ -4725,14 +4725,14 @@ Func_02000328:
 	ldr r5, .L_020086ec
 	movs r1, #13
 	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r1, .L_020086f0
 	movs r0, #1
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_02008648
 	ldr r3, .L_020086e8
@@ -4742,7 +4742,7 @@ Func_02000328:
 	bne .L_020085e6
 	adds r0, r5, #1
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_02008648
 .L_020085e6:
 	ldr r6, .L_020086d8
@@ -4794,7 +4794,7 @@ Func_02000328:
 .L_02008648:
 	ldr r0, .L_020086f4
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	ldr r5, .L_020086f0
 	movs r0, #1
 	adds r1, r5, #0
@@ -4802,7 +4802,7 @@ Func_02000328:
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_0200867e
 	movs r0, #46
@@ -4818,14 +4818,14 @@ Func_02000328:
 .L_0200867e:
 	ldr r0, .L_020086f8
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #8
 	movs r3, #0
 	bl Menu_RunConfirmSelection
 	adds r6, r0, #0
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	cmp r6, #0
 	bne .L_020085b2
 .L_0200869c:
@@ -4981,10 +4981,10 @@ Func_02000328:
 	ldr r6, .L_02008a48
 	movs r1, #9
 	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	adds r0, r6, #1
 	movs r1, #13
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -4992,17 +4992,17 @@ Func_02000328:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_020087f8
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	b .L_020083f4
 .L_020087f8:
-	bl UiWork_FinalizePendingCore
+	bl Message_CloseFinishedWindows
 	bl Func_020002e0
 	cmp r0, #0
 	beq .L_0200880e
 	adds r0, r6, #2
 .L_02008806:
 	movs r1, #9
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	b .L_020083f4
 .L_0200880e:
 	movs r1, #242
@@ -5320,25 +5320,25 @@ Func_02000b24:
 	movs r2, #26
 	movs r3, #8
 	movs r0, #2
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_fr_02008be8
 	adds r6, r0, #0
 	adds r1, r6, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #1
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #16
 	adds r5, #3
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #0
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #36
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
 	bl WaitFrames
@@ -5445,20 +5445,20 @@ Func_02000b24:
 	adds r0, r6, #0
 	movs r1, #2
 	mov r8, r2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #10
 	movs r2, #26
 	movs r3, #4
 	movs r0, #2
-	bl UiWindow_Create
+	bl Window_Create
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_fr_02008d7c
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_fr_02008c5a:
 	cmp r5, #9
 	bne .L_fr_02008c86
@@ -5509,12 +5509,12 @@ Func_02000b24:
 	cmp r2, #0
 	bne .L_fr_02008cee
 	adds r0, r6, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, .L_fr_02008d90
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_fr_02008cce:
 	movs r0, #1
 	bl WaitFrames
@@ -5527,7 +5527,7 @@ Func_02000b24:
 .L_fr_02008ce0:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	negs r0, r0
 	b .L_fr_02008d66
@@ -5539,7 +5539,7 @@ Func_02000b24:
 	bl WaitFrames
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r5, .L_fr_02008d98
 	movs r2, #133
 	ldr r6, .L_fr_02008d9c
@@ -5636,25 +5636,25 @@ Func_02000b24:
 	movs r2, #20
 	movs r3, #8
 	movs r0, #5
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_es_02008be4
 	adds r6, r0, #0
 	adds r1, r6, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #1
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #16
 	adds r5, #3
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #0
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #36
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
 	bl WaitFrames
@@ -5759,20 +5759,20 @@ Func_02000b24:
 	adds r0, r6, #0
 	movs r1, #2
 	mov r8, r2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #10
 	movs r2, #20
 	movs r3, #4
 	movs r0, #5
-	bl UiWindow_Create
+	bl Window_Create
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_es_02008d78
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_es_02008c56:
 	cmp r5, #9
 	bne .L_es_02008c82
@@ -5823,12 +5823,12 @@ Func_02000b24:
 	cmp r2, #0
 	bne .L_es_02008cea
 	adds r0, r6, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, .L_es_02008d8c
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_es_02008cca:
 	movs r0, #1
 	bl WaitFrames
@@ -5841,7 +5841,7 @@ Func_02000b24:
 .L_es_02008cdc:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	negs r0, r0
 	b .L_es_02008d62
@@ -5853,7 +5853,7 @@ Func_02000b24:
 	bl WaitFrames
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r5, .L_es_02008d94
 	movs r2, #133
 	ldr r6, .L_es_02008d98
@@ -5954,25 +5954,25 @@ Func_02000b24:
 	.else
 	movs r0, #6
 	.endif
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r5, .L_02008bf0
 	adds r6, r0, #0
 	adds r1, r6, #0
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #1
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #16
 	adds r5, #3
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #0
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #36
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	bl Func_02002220
 	movs r0, #10
 	bl WaitFrames
@@ -6079,20 +6079,20 @@ Func_02000b24:
 	adds r0, r6, #0
 	movs r1, #2
 	mov r8, r2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #10
 	movs r2, #20
 	movs r3, #4
 	movs r0, #5
-	bl UiWindow_Create
+	bl Window_Create
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_02008d84
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_02008c62:
 	cmp r5, #9
 	bne .L_02008c8e
@@ -6143,12 +6143,12 @@ Func_02000b24:
 	cmp r2, #0
 	bne .L_02008cf6
 	adds r0, r6, #0
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, .L_02008d98
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #4
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_02008cd6:
 	movs r0, #1
 	bl WaitFrames
@@ -6161,7 +6161,7 @@ Func_02000b24:
 .L_02008ce8:
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #1
 	negs r0, r0
 	b .L_02008d6e
@@ -6173,7 +6173,7 @@ Func_02000b24:
 	bl WaitFrames
 	adds r0, r6, #0
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r5, .L_02008da0
 	movs r2, #133
 	ldr r6, .L_02008da4
@@ -6439,7 +6439,7 @@ Func_02000e44:
 	movs r3, #6
 	movs r0, #1
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	ldr r6, .L_ja_02009190
 	mov r10, r0
 	mov r1, r10
@@ -6447,84 +6447,84 @@ Func_02000e44:
 	movs r2, #0
 	adds r6, #1
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #144
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #144
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #5
 	str r3, [sp, #0]
 	adds r6, #1
@@ -6532,30 +6532,30 @@ Func_02000e44:
 	movs r1, #24
 	movs r2, #0
 	movs r3, #24
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #192
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #192
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #192
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #5
 	movs r1, #1
 	movs r2, #20
 	movs r3, #12
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #56]
 	movs r6, #0
 .L_ja_02008fe2:
@@ -6645,7 +6645,7 @@ Func_02000e44:
 	mov r2, r10
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #108
 	str r1, [r0]
@@ -6671,7 +6671,7 @@ Func_02000e44:
 	mov r2, r10
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #92
 	str r1, [r0]
@@ -7168,7 +7168,7 @@ Func_02000e44:
 	movs r3, #3
 	movs r0, #8
 	movs r2, #14
-	bl UiWindow_Create
+	bl Window_Create
 	lsls r5, r5, #16
 	asrs r5, r5, #16
 	ldrb r3, [r7, r6]
@@ -7189,7 +7189,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #112
 	bl Func_02002408
 .L_ja_020094c6:
@@ -7231,13 +7231,13 @@ Func_02000e44:
 	bl Func_020018e0
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #147
 	lsls r2, r2, #1
 	adds r2, #255
@@ -7272,7 +7272,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_ja_02009590:
 	movs r0, #1
 	bl WaitFrames
@@ -7290,93 +7290,93 @@ Func_02000e44:
 .L_ja_020095ac:
 	movs r1, #2
 	mov r0, r8
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r10
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r6, .L_ja_020097f0
 	mov r1, r10
 	adds r0, r6, #0
 	movs r2, #0
 	adds r6, #1
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #48
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #96
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #144
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #144
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r3, #5
 	str r3, [sp, #0]
 	adds r6, #1
@@ -7384,24 +7384,24 @@ Func_02000e44:
 	movs r1, #24
 	movs r2, #0
 	movs r3, #24
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r10
 	adds r6, #1
 	movs r2, #192
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #192
 	movs r3, #8
 	adds r6, #1
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r10
 	movs r2, #192
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	b .L_ja_0200974a
 .L_ja_020096ba:
 	ldr r3, [r1, #12]
@@ -7465,10 +7465,10 @@ Func_02000e44:
 	bl Func_02002408
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #1
@@ -7480,7 +7480,7 @@ Func_02000e44:
 	bl __divsi3
 	mov r11, r0
 	ldr r0, [sp, #56]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	movs r6, #0
 	movs r5, #2
 .L_ja_0200975e:
@@ -7490,7 +7490,7 @@ Func_02000e44:
 	movs r3, #18
 	adds r6, #1
 	str r5, [sp, #0]
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r5, #2
 	cmp r6, #4
 	bne .L_ja_0200975e
@@ -7518,7 +7518,7 @@ Func_02000e44:
 	adds r2, r5, #0
 	ldr r0, [sp, #56]
 	movs r3, #10
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r1, [sp, #40]
 	adds r6, #1
 	adds r5, #1
@@ -7758,28 +7758,28 @@ Func_02000e44:
 	movs r3, #6
 	movs r0, #1
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	mov r9, r0
 	mov r1, r9
 	ldr r0, .L_fr_02009158
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_0200915c
 	mov r1, r9
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_02009160
 	mov r1, r9
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_02009164
 	mov r1, r9
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r6, .L_fr_02009168
 	movs r3, #5
 	str r3, [sp, #0]
@@ -7787,30 +7787,30 @@ Func_02000e44:
 	movs r1, #20
 	movs r2, #0
 	movs r3, #20
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #5
 	movs r1, #1
 	movs r2, #20
 	movs r3, #12
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #56]
 	movs r6, #0
 .L_fr_02008f86:
@@ -7900,7 +7900,7 @@ Func_02000e44:
 	mov r2, r9
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #108
 	str r1, [r0]
@@ -7926,7 +7926,7 @@ Func_02000e44:
 	mov r2, r9
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #92
 	str r1, [r0]
@@ -8449,7 +8449,7 @@ Func_02000e44:
 	movs r3, #3
 	movs r0, #5
 	movs r2, #20
-	bl UiWindow_Create
+	bl Window_Create
 	lsls r5, r5, #16
 	asrs r5, r5, #16
 	ldrb r3, [r7, r6]
@@ -8470,7 +8470,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #112
 	bl Func_02002408
 .L_fr_0200949a:
@@ -8512,13 +8512,13 @@ Func_02000e44:
 	bl Func_020018e0
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #147
 	lsls r2, r2, #1
 	adds r2, #255
@@ -8553,7 +8553,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_fr_02009564:
 	movs r0, #1
 	bl WaitFrames
@@ -8571,29 +8571,29 @@ Func_02000e44:
 .L_fr_02009580:
 	movs r1, #2
 	mov r0, r8
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r0, .L_fr_02009774
 	mov r1, r9
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_02009778
 	mov r1, r9
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_0200977c
 	mov r1, r9
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_fr_02009780
 	mov r1, r9
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r6, .L_fr_02009784
 	movs r3, #5
 	str r3, [sp, #0]
@@ -8601,24 +8601,24 @@ Func_02000e44:
 	movs r1, #20
 	movs r2, #0
 	movs r3, #20
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #8
 	adds r6, #1
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	b .L_fr_0200968a
 .L_fr_020095fa:
 	ldr r3, [r1, #12]
@@ -8682,10 +8682,10 @@ Func_02000e44:
 	bl Func_02002408
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #1
@@ -8697,7 +8697,7 @@ Func_02000e44:
 	bl __divsi3
 	mov r11, r0
 	ldr r0, [sp, #56]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	movs r6, #0
 	movs r5, #2
 .L_fr_0200969e:
@@ -8707,7 +8707,7 @@ Func_02000e44:
 	movs r3, #18
 	adds r6, #1
 	str r5, [sp, #0]
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r5, #2
 	cmp r6, #4
 	bne .L_fr_0200969e
@@ -8735,7 +8735,7 @@ Func_02000e44:
 	adds r2, r5, #0
 	ldr r0, [sp, #56]
 	movs r3, #10
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r1, [sp, #40]
 	adds r6, #1
 	adds r5, #1
@@ -8982,28 +8982,28 @@ Func_02000e44:
 	movs r3, #6
 	movs r0, #1
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	mov r9, r0
 	mov r1, r9
 	ldr r0, .L_02009160
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02009164
 	mov r1, r9
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02009168
 	mov r1, r9
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_0200916c
 	mov r1, r9
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r6, .L_02009170
 	movs r3, #5
 	str r3, [sp, #0]
@@ -9011,30 +9011,30 @@ Func_02000e44:
 	movs r1, #20
 	movs r2, #0
 	movs r3, #20
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #5
 	movs r1, #1
 	movs r2, #20
 	movs r3, #12
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	str r0, [sp, #56]
 	movs r6, #0
 .L_02008f8e:
@@ -9124,7 +9124,7 @@ Func_02000e44:
 	mov r2, r9
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #108
 	str r1, [r0]
@@ -9150,7 +9150,7 @@ Func_02000e44:
 	mov r2, r9
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	adds r1, r0, #0
 	add r0, sp, #92
 	str r1, [r0]
@@ -9673,7 +9673,7 @@ Func_02000e44:
 	movs r3, #3
 	movs r0, #5
 	movs r2, #20
-	bl UiWindow_Create
+	bl Window_Create
 	lsls r5, r5, #16
 	asrs r5, r5, #16
 	ldrb r3, [r7, r6]
@@ -9694,7 +9694,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	movs r0, #112
 	bl Func_02002408
 .L_020094a2:
@@ -9736,13 +9736,13 @@ Func_02000e44:
 	bl Func_020018e0
 	mov r0, r8
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r2, #147
 	lsls r2, r2, #1
 	adds r2, #255
@@ -9777,7 +9777,7 @@ Func_02000e44:
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 .L_0200956c:
 	movs r0, #1
 	bl WaitFrames
@@ -9795,29 +9795,29 @@ Func_02000e44:
 .L_02009588:
 	movs r1, #2
 	mov r0, r8
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	ldr r0, .L_0200977c
 	mov r1, r9
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02009780
 	mov r1, r9
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02009784
 	mov r1, r9
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r0, .L_02009788
 	mov r1, r9
 	movs r2, #0
 	movs r3, #24
-	bl UiText_DrawStringInWindow
+	bl Text_DrawStringInWindow
 	ldr r6, .L_0200978c
 	movs r3, #5
 	str r3, [sp, #0]
@@ -9825,24 +9825,24 @@ Func_02000e44:
 	movs r1, #20
 	movs r2, #0
 	movs r3, #20
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r0, r6, #0
 	mov r1, r9
 	adds r6, #1
 	movs r2, #160
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #8
 	adds r6, #1
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	adds r0, r6, #0
 	mov r1, r9
 	movs r2, #160
 	movs r3, #24
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	b .L_02009692
 .L_02009602:
 	ldr r3, [r1, #12]
@@ -9906,10 +9906,10 @@ Func_02000e44:
 	bl Func_02002408
 	movs r1, #2
 	ldr r0, [sp, #56]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r0, r9
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r0, #74
 	bl Func_02002408
 	movs r0, #1
@@ -9921,7 +9921,7 @@ Func_02000e44:
 	bl __divsi3
 	mov r11, r0
 	ldr r0, [sp, #56]
-	bl RenderOutput_RedrawSavedRect
+	bl WindowSprite_RedrawSavedRect
 	movs r6, #0
 	movs r5, #2
 .L_020096a6:
@@ -9931,7 +9931,7 @@ Func_02000e44:
 	movs r3, #18
 	adds r6, #1
 	str r5, [sp, #0]
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r5, #2
 	cmp r6, #4
 	bne .L_020096a6
@@ -9959,7 +9959,7 @@ Func_02000e44:
 	adds r2, r5, #0
 	ldr r0, [sp, #56]
 	movs r3, #10
-	bl UiWindow_SetTilemapEntry
+	bl Window_SetTilemapEntry
 	ldr r1, [sp, #40]
 	adds r6, #1
 	adds r5, #1

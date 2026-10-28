@@ -100,21 +100,21 @@ extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-struct SummonMenuWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct SummonMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                          s32 flags);
 s32 Summon_ListLearnedFar(u8 *summons);
 const struct SummonDefinition *SummonDefinition_Get(s32 summon);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Ui_FillVramBlockPattern(void);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-void UiText_RenderWideStringAtOffset(u16 *text, struct SummonMenuWindow *window,
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
+void Vram_FillWindowBlockPattern(void);
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Text_DrawWideStringAtOffset(u16 *text, struct SummonMenuWindow *window,
                                      s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(struct SummonMenuWindow *window);
-void UiWindow_SetTilemapEntry(struct SummonMenuWindow *window, s32 entry, s32 x,
+void WindowSprite_RedrawSavedRect(struct SummonMenuWindow *window);
+void Window_SetTilemapEntry(struct SummonMenuWindow *window, s32 entry, s32 x,
                               s32 y, s32 flags);
 void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
 void Func_08041f70(s32 color);
-void UiText_DrawCharacterAtOffset(s32 message, struct SummonMenuWindow *window,
+void Text_DrawCharacterAtOffset(s32 message, struct SummonMenuWindow *window,
                                   s32 x, s32 y);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
@@ -123,7 +123,7 @@ void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;
@@ -164,15 +164,15 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);
-  description = UiWindow_Create(0, 4, 30, 4, 42);
-  counts = UiWindow_Create(20, 8, 10, 3, 6);
+  description = Window_Create(0, 4, 30, 4, 42);
+  counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
   do {
     firstEntry = NAVIGATION->page;
     selectedRow = NAVIGATION->row;
     preferredRow = NAVIGATION->preferredRow;
   } while (0);
-  window = UiWindow_Create(13, 11, 17, 9, 6);
+  window = Window_Create(13, 11, 17, 9, 6);
 
   for (index = 0; index < 4; index++) {
     s32 y = index * 2;
@@ -233,18 +233,18 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Vram_FillWindowBlockPattern();
       {
         const struct SummonDefinition *definition;
         s32 element;
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        UiText_CopyMessageString(definition->abilityId + (s32)Msg_0885, text,
+        Message_CopyExpanded(definition->abilityId + (s32)Msg_0885, text,
                                  52);
-        UiText_RenderWideStringAtOffset(text, description, 0, 4);
+        Text_DrawWideStringAtOffset(text, description, 0, 4);
         mask = 0;
         drawnRow = selectedRow;
         for (element = 0; element <= 3; element++) {
@@ -254,18 +254,18 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       }
 
       if (firstEntry != drawnFirstEntry) {
-        RenderOutput_RedrawSavedRect(window);
+        WindowSprite_RedrawSavedRect(window);
         {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            UiWindow_SetTilemapEntry(counts, element + 0x5001, element * 2, 0,
+            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0,
                                      0);
             if (standby[element] > 9)
               tile = standby[element] + 0xf196;
             else
               tile = (standby[element] + '0') | 0xf000;
-            UiWindow_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
+            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
           }
         }
         {
@@ -288,13 +288,13 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
               Func_08041f70(2);
-            UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
+            Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
                                              (s32)MsgAbilityNothing,
                                          window, 16, index * 16);
             col = 0;
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                UiWindow_SetTilemapEntry(window, element + 0x5001, col * 2 + 11,
+                Window_SetTilemapEntry(window, element + 0x5001, col * 2 + 11,
                                          y, 0);
                 Func_0803c274(window, summon->djinnRequired[element] + '0',
                               col * 2 + 12, y, 0);
@@ -318,11 +318,11 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
           tile = index + 0xf301;
           if (index == firstEntry / 4)
             tile = index + 0xf30b;
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -353,7 +353,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         tile = 15 - (blink != 0);
         if ((1 << element & mask) == 0)
           tile = 15;
-        Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
+        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
                             tile);
       }
     }
@@ -363,12 +363,12 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         tile = index + 0xf301;
         if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
           tile = index + 0xf30b;
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, 0xf334,
                                window->width - (count + 3) / 4 - 3, -1, 0);
-      UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
+      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
       do {
         work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
       } while (0);
@@ -458,9 +458,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   for (index = 0; index < 4; index++)
     Resource_ResetEntry(iconSlots[index]);
   Resource_ResetEntry((u16)cursorHandle);
-  UiWork_Finalize(counts, 1);
-  UiWork_Finalize(description, 1);
-  UiWork_Finalize(window, 1);
+  Window_Close(counts, 1);
+  Window_Close(description, 1);
+  Window_Close(window, 1);
   WaitFrames(1);
   return result;
 }

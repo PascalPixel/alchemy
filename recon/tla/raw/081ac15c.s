@@ -340,7 +340,7 @@ LuckyDice_Run:
 	str r3, [r0, #28]
 	str r1, [r0, #32]
 	str r2, [r0, #36]
-	bl UiWork_InitializeWithResourceCountersFar
+	bl WindowSystem_InitFieldFar
 	movs r1, #6
 	str r1, [sp, #0]
 	mov r8, r1
@@ -348,7 +348,7 @@ LuckyDice_Run:
 	movs r1, #0
 	movs r3, #3
 	movs r0, #18
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r3, #128
 	ldr r2, [sp, #108]
 	ldr r5, .L_081ac71c
@@ -360,21 +360,21 @@ LuckyDice_Run:
 	adds r0, r5, #0
 	movs r2, #48
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r3, .L_081ac720
 	ldr r2, [r6]
 	ldr r0, [r3, #16]
 	movs r1, #6
 	movs r3, #0
 	str r3, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	mov r4, r8
 	movs r1, #16
 	movs r2, #8
 	movs r3, #4
 	movs r0, #22
 	str r4, [sp, #0]
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	ldr r7, [sp, #108]
 	movs r0, #128
@@ -387,12 +387,12 @@ LuckyDice_Run:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #11
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	movs r2, #0
 	adds r0, r5, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r2, [sp, #104]
 	movs r1, #0
 	adds r2, #12
@@ -650,7 +650,7 @@ LuckyDice_Run:
 	adds r2, #13
 	movs r1, #16
 	movs r3, #3
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	ldr r6, [sp, #108]
 	movs r7, #153
 	lsls r7, r7, #3
@@ -661,21 +661,21 @@ LuckyDice_Run:
 	adds r0, r6, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r0, [sp, #72]
 	ldr r1, [r5]
 	lsls r2, r0, #3
 	adds r2, #56
 	subs r0, r6, #1
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #0
 	ldr r2, [r5]
 	ldr r0, [sp, #80]
 	str r1, [sp, #0]
 	movs r3, #56
 	ldr r1, [sp, #72]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_081ac6d0:
 	ldr r2, [sp, #76]
 	cmp r2, #0
@@ -765,7 +765,7 @@ LuckyDice_Run:
 	ldr r1, [sp, #72]
 	movs r3, #56
 	str r4, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r7, #128
 	ldr r3, .L_081aca44
 	ldr r1, [sp, #80]
@@ -777,7 +777,7 @@ LuckyDice_Run:
 	str r1, [sp, #0]
 	movs r3, #0
 	movs r1, #6
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 .L_081ac798:
 	ldr r2, [sp, #76]
 	cmp r2, #15
@@ -790,14 +790,14 @@ LuckyDice_Run:
 	adds r3, r4, r5
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #16
 	movs r2, #8
 	movs r3, #4
 	movs r0, #22
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	ldr r7, [sp, #108]
 	movs r0, #128
@@ -809,12 +809,12 @@ LuckyDice_Run:
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #1
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #1
 	mov r8, r1
 .L_081ac7ec:
@@ -924,7 +924,7 @@ LuckyDice_Run:
 .L_081ac8aa:
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	bl .L_081ad2d2
 .L_081ac8b6:
 	ldr r3, [r6, #12]
@@ -942,7 +942,7 @@ LuckyDice_Run:
 	adds r3, r2, r4
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r6, #1
 	str r6, [sp, #96]
 	bl Party_GetAverageLevelFar
@@ -969,7 +969,7 @@ LuckyDice_Run:
 	movs r1, #6
 	movs r3, #0
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r7, [sp, #44]
 	ldr r6, [sp, #112]
 	movs r5, #0
@@ -1976,7 +1976,7 @@ LuckyDice_Run:
 	movs r1, #6
 	movs r3, #0
 	str r3, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r0, #93
 	bl Sound_PlayFar
 	b .L_081ad1ce
@@ -2052,7 +2052,7 @@ LuckyDice_Run:
 	movs r1, #6
 	movs r3, #0
 	str r6, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	movs r7, #3
 	str r7, [sp, #84]
 .L_081ad148:
@@ -2074,7 +2074,7 @@ LuckyDice_Run:
 	movs r3, #0
 	movs r5, #0
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	bl Random16
 	movs r3, #1
 	ldr r6, [sp, #56]
@@ -2106,7 +2106,7 @@ LuckyDice_Run:
 	movs r3, #0
 	movs r5, #0
 	str r5, [sp, #0]
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	bl Random16
 	movs r3, #1
 	ldr r6, [sp, #56]

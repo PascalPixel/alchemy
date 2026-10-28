@@ -38,19 +38,19 @@ Func_080feb58:
 	ldrh r0, [r7, r2]
 	bl Unit_Get
 	ldr r0, [r6]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r5, .L_080fecf4
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r1, #226
 	lsls r1, r1, #1
 	mov r6, r8

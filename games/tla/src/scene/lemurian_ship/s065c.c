@@ -27,7 +27,7 @@ void Func_0200065c(void) {
       LemurianShip_FlagSet(0x207);
     }
   } else {
-    UiText_ShowPositionedMessageAndWait((s32)MsgLemurianShip02, 1);
+    FieldMessage_Show((s32)MsgLemurianShip02, 1);
   }
   Func_02002c70();
 }

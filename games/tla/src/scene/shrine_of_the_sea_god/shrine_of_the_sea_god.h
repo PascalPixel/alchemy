@@ -67,7 +67,7 @@ void FieldEvent_WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 void ObjectMotion_SetActionVariant(s32 actor, s32 variant);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);

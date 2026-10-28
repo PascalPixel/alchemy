@@ -32,7 +32,7 @@ void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
 void FieldEvent_WaitFrames();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
@@ -84,21 +84,21 @@ void Func_02000730(void) {
   Call3((void (*)())Func_02004b4c, 22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
   FieldEvent_WaitFrames(10);
-  UiText_OpenMessageAtObject(22, 0);
+  FieldMessage_ShowAtActor(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     FieldEvent_WaitFrames(30);
     Call3((void (*)())Func_02004b4c, 22, 0, 0);
   } else {
     FieldEvent_WaitFrames(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    UiText_OpenMessageAtObject(22, 0);
+    FieldMessage_ShowAtActor(22, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
       FieldEvent_WaitFrames(30);
       Call3((void (*)())Func_02004b4c, 22, 0, 0);
     } else {
       FieldEvent_WaitFrames(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-      UiText_OpenMessageAtObject(22, 0);
+      FieldMessage_ShowAtActor(22, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
         FieldEvent_WaitFrames(30);
         Call3((void (*)())Func_02004b4c, 22, 0, 0);

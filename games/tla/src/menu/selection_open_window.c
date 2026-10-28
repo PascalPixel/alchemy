@@ -16,17 +16,17 @@
 #include "select.h"
 #include "text/msg_ids.h"
 
-struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
+struct Window *Window_Create(s32, s32, s32, s32, s32);
 
 struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *, u32);
-void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
-void RenderOutput_PrepareForRedraw(struct UiWindow *);
+void Text_DrawCharacterAtOffset(s32, struct Window *, s32, s32);
+void WindowSprite_PrepareForRedraw(struct Window *);
 
 void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
-  struct UiWindow **slot;
-  struct UiWindow *window;
+  struct Window **slot;
+  struct Window *window;
 
   screen = Ram_HeapSlots->menuWork;
   node = NodeChain_GetNodeAtCount(screen, count);
@@ -35,33 +35,33 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   if (window == 0) {
     if (mode == 6) {
       if (screen->locked != 0) {
-        *slot = UiWindow_Create(17, 17, 5, 3, mode);
+        *slot = Window_Create(17, 17, 5, 3, mode);
       } else {
-        *slot = UiWindow_Create(17, 0, 5, 3, mode);
+        *slot = Window_Create(17, 0, 5, 3, mode);
       }
       screen->verticalScroll = 0;
       screen->locked = 999;
     } else {
-      *slot = UiWindow_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
     }
-    RenderOutput_PrepareForRedraw(screen->window);
+    WindowSprite_PrepareForRedraw(screen->window);
   } else {
     if (count != 0 && window->width != count + 2) {
-      UiWork_Finalize(window, 2);
-      *slot = UiWindow_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+      Window_Close(window, 2);
+      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
     }
-    RenderOutput_PrepareForRedraw(screen->window);
+    WindowSprite_PrepareForRedraw(screen->window);
   }
   if (screen->count != 0) {
-    UiText_DrawCharacterAtOffset(node->message, screen->window, 0, 0);
+    Text_DrawCharacterAtOffset(node->message, screen->window, 0, 0);
   } else {
     switch (mode) {
     case 4:
-      UiText_DrawCharacterAtOffset((s32)MsgAbilityNotKnown, screen->window, 0,
+      Text_DrawCharacterAtOffset((s32)MsgAbilityNotKnown, screen->window, 0,
                                    0);
       break;
     case 2:
-      UiText_DrawCharacterAtOffset((s32)MsgItemNotHeld, screen->window, 0, 0);
+      Text_DrawCharacterAtOffset((s32)MsgItemNotHeld, screen->window, 0, 0);
       break;
     }
   }
@@ -72,7 +72,7 @@ void Resource_ResetOwnerEntries(void) {
   struct SelectionNode *node;
 
   Resource_ScheduleOwnerReset();
-  UiWork_Finalize(state->window, 2);
+  Window_Close(state->window, 2);
   WaitFrames(1);
   node = state->head;
   while (node != 0) {

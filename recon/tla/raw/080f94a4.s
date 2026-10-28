@@ -34,11 +34,11 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl UiWindow_DrawBorderFar
+	bl Window_DrawBorderFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0
-	bl UiWindow_InitializeWork
+	bl Window_InitializeWork
 	movs r1, #129
 	lsls r1, r1, #2
 	adds r0, r5, r1
@@ -69,7 +69,7 @@ Func_080f94a4:
 	movs r2, #17
 	movs r3, #3
 	movs r0, #13
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r3, r5, #0
 	adds r3, #240
 	str r0, [r3]
@@ -88,7 +88,7 @@ Func_080f94a4:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #1
-	bl UiWork_SetAltFlagAndClearTableFar
+	bl Text_UseExtraTilesFar
 	bl Menu_CancelSoundReset
 	add r1, sp, #8
 	add r0, sp, #12
@@ -118,7 +118,7 @@ Func_080f94a4:
 	strh r3, [r2]
 .L_080f95a4:
 	ldr r0, [r5, #40]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r2, [r7, #60]
 	ldr r3, .L_080f95ec
 	strb r3, [r2, #6]
@@ -127,7 +127,7 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl UiWindow_DrawBorderFar
+	bl Window_DrawBorderFar
 	bl Menu_ResetTwoResourceEntries
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
@@ -136,7 +136,7 @@ Func_080f94a4:
 	strh r3, [r2, #4]
 	bl Func_08038290
 	movs r0, #0
-	bl UiWork_SetAltFlagAndClearTableFar
+	bl Text_UseExtraTilesFar
 	adds r1, r6, #0
 	mov r2, r10
 	ldr r0, .L_080f95f8
@@ -171,7 +171,7 @@ Func_080f94a4:
 	movs r2, #30
 	movs r1, #0
 	movs r3, #20
-	bl UiWindow_EraseBorderRectFar
+	bl Window_EraseBorderRectFar
 	ldr r3, [r7, #60]
 	mov r1, r11
 	strb r1, [r3, #6]

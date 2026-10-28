@@ -8,11 +8,11 @@
 
 /// Returns 0 if any of the three channels has a window still writing (state
 /// is zero), else 1.
-s32 UiWork_IsComplete(void) {
+s32 Message_AllTyped(void) {
   struct UiChannelSlot *ch;
   s32 i;
 
-  ch = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
+  ch = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->channels;
   for (i = 0; i != 3; i++, ch++) {
     if (ch->work != NULL && ch->work->state == 0)
       return 0;

@@ -106,20 +106,20 @@ void MenuIcon_SetPicture(s32 index, s32 frame);
 void Func_08105350(s32 index, s32 scale);
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation);
 void *Unit_Get(s32 owner);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
+void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawQuantity(s32 value, s32 kind);
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+void MessageArgument_PushFar(s32 value, s32 kind);
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
+void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 s32 Menu_GetDjinnGiveMessage(void);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 style);
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizeFar(s32 window, s32 style);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
+s32 Message_AllTypedFar(void);
+void Window_CloseFar(s32 window, s32 style);
 void DjinnRecovery_CountDownFar(void);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
@@ -135,10 +135,10 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
 // Shows one tutorial message and waits for its text to finish.
 #define DJINN_TUTORIAL_MESSAGE(window, offset)                                 \
   do {                                                                         \
-    (window) = UiText_OpenMessageWindowFar(                                    \
+    (window) = Message_OpenWindowFar(                                    \
         Menu_GetDjinnGiveMessage() + (offset), 9, 9, 1);                       \
     gAdventure.eventMode = 1;                                                 \
-    while (UiWork_IsCompleteFar() == 0)                                        \
+    while (Message_AllTypedFar() == 0)                                        \
       WaitFrames(1);                                                           \
   } while (0)
 
@@ -249,7 +249,7 @@ s32 Func_08102008(s32 mode) {
               } else {
                 message = (s32)MsgDjinnTradeAction;
               }
-              UiText_DrawCharacterAtOffsetFar(message, listWindow, x, 8);
+              Text_DrawCharacterAtOffsetFar(message, listWindow, x, 8);
             }
           }
         }
@@ -292,29 +292,29 @@ s32 Func_08102008(s32 mode) {
       }
       window = menu->statusWindow;
       unit = Unit_Get(menu->owners[memberColumn]);
-      RenderOutput_RedrawSavedRectFar(window);
-      UiText_DrawStringAtOffsetFar(unit->name, window, 0, 0);
-      UiText_DrawCharacterAtOffsetFar(unit->classIndex + (s32)MsgClassName,
+      WindowSprite_RedrawSavedRectFar(window);
+      Text_DrawStringAtOffsetFar(unit->name, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar(unit->classIndex + (s32)MsgClassName,
                                       window, 0, 8);
-      UiText_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, 48, 0);
-      UiText_DrawNumberInWindowFar(unit->level, 2, window, 72, 0);
+      Text_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, 48, 0);
+      Text_DrawNumberInWindowFar(unit->level, 2, window, 72, 0);
       if (mode == 0)
-        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCharacterStatus, window, 0,
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCharacterStatus, window, 0,
                                         16);
-      RenderOutput_RedrawSavedRectFar(helpWindow);
+      WindowSprite_RedrawSavedRectFar(helpWindow);
       if (mode == 0 && selectedRow != -1) {
         if (groupMode) {
           if (setAll == 0)
-            UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnSetAll, helpWindow, 0,
+            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnSetAll, helpWindow, 0,
                                             0);
           else
-            UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnAllStandby, helpWindow,
+            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnAllStandby, helpWindow,
                                             0, 0);
           if (state == 2)
-            UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnRecovering, helpWindow,
+            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnRecovering, helpWindow,
                                             0, 16);
         } else {
-          UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnChoose, helpWindow, 0,
+          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnChoose, helpWindow, 0,
                                           0);
           switch (state) {
           case 0:
@@ -327,29 +327,29 @@ s32 Func_08102008(s32 mode) {
             message = (s32)MsgDjinnRecovering;
             break;
           }
-          UiText_DrawCharacterAtOffsetFar(message, helpWindow, 0, 16);
+          Text_DrawCharacterAtOffsetFar(message, helpWindow, 0, 16);
         }
       }
       WaitFrames(1);
       if (mode == 1) {
-        UiText_DrawQuantity(menu->shownMember[0], 1);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
+        MessageArgument_PushFar(menu->shownMember[0], 1);
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
                                         0);
-        UiText_DrawQuantity(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
+        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                 DJINN_NUMBER(menu->pairEntries[0]) + 300,
                             4);
-        UiWindow_SetTilemapEntryFar(
+        Window_SetTilemapEntryFar(
             helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6, 0, 0);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 1, helpWindow,
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 1, helpWindow,
                                         56, 0);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
                                         0, 8);
       }
       WaitFrames(1);
-      RenderOutput_ClearListFar(listWindow);
+      WindowSprite_ClearListFar(listWindow);
       if (selectedRow != -1) {
-        UiWindow_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
-        UiText_DrawCharacterAtOffsetFar(
+        Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
+        Text_DrawCharacterAtOffsetFar(
             element * 20 + number + (s32)MsgDjinnEffect, listWindow, 0, 96);
       }
       ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
@@ -380,11 +380,11 @@ s32 Func_08102008(s32 mode) {
       case 27:
         if (backdrop->tutorialTimer == 60) {
           DJINN_TUTORIAL_MESSAGE(messageWindow, 12);
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           WaitFrames(1);
           DJINN_TUTORIAL_MESSAGE(messageWindow, 13);
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           backdrop->tutorialTimer = 0;
           DjinnRecovery_CountDownFar();
@@ -400,7 +400,7 @@ s32 Func_08102008(s32 mode) {
       case 1:
         if (backdrop->tutorialTimer == 60) {
           DJINN_TUTORIAL_MESSAGE(messageWindow, 0);
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 2;
@@ -430,7 +430,7 @@ s32 Func_08102008(s32 mode) {
       case 7:
         if (backdrop->tutorialTimer == 60) {
           DJINN_TUTORIAL_MESSAGE(messageWindow, 1);
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 8;
@@ -455,38 +455,38 @@ s32 Func_08102008(s32 mode) {
       case 15:
         if (backdrop->tutorialTimer == 60) {
           gAdventure.eventMode = 1;
-          messageWindow = UiText_OpenMessageWindowFar(
+          messageWindow = Message_OpenWindowFar(
               Menu_GetDjinnGiveMessage() + 4, 9, 9, 1);
           Func_080f8ab4(2, 146);
-          while (UiWork_IsCompleteFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           WaitFrames(1);
-          messageWindow = UiText_OpenMessageWindowFar(
+          messageWindow = Message_OpenWindowFar(
               Menu_GetDjinnGiveMessage() + 5, 9, 9, 1);
-          while (UiWork_IsCompleteFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           WaitFrames(1);
-          messageWindow = UiText_OpenMessageWindowFar(
+          messageWindow = Message_OpenWindowFar(
               Menu_GetDjinnGiveMessage() + 6, 9, 9, 1);
-          while (UiWork_IsCompleteFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(messageWindow, 1);
+          Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
           WaitFrames(1);
           backdrop->tutorialTimer = 0;
@@ -556,9 +556,9 @@ s32 Func_08102008(s32 mode) {
     if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
       if (selectedRow != -1 && state == 2) {
         Sound_PlayFar(114);
-        RenderOutput_ClearListFar(listWindow);
-        UiWindow_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnNowRecovering, listWindow,
+        WindowSprite_ClearListFar(listWindow);
+        Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnNowRecovering, listWindow,
                                         0, 96);
         continue;
       }

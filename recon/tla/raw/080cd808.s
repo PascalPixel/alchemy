@@ -15,11 +15,11 @@ Func_080cd808:
 	ldrb r5, [r3, r6]
 	movs r1, #1
 	adds r0, r5, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	ldr r0, .L_080cd904
 	movs r1, #1
 	adds r0, r5, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd8f8
 .L_080cd832:
 	adds r1, r5, #0
@@ -46,7 +46,7 @@ Func_080cd808:
 	ldr r0, .L_080cd900
 	movs r1, #1
 	adds r0, r6, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r0, #161
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
@@ -91,7 +91,7 @@ Func_080cd808:
 	ldr r0, .L_080cd904
 	movs r1, #1
 	adds r0, r6, r0
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd8f0
 .L_080cd8c8:
 	adds r0, r7, #0
@@ -104,15 +104,15 @@ Func_080cd808:
 	ldr r0, .L_080cd910
 .L_080cd8d8:
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080cd8f0
 .L_080cd8e0:
 	ldr r0, .L_080cd914
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	ldr r0, .L_080cd918
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cd8f0:
 	movs r0, #161
 	lsls r0, r0, #1

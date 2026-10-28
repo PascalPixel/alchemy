@@ -49,14 +49,14 @@ Func_0810a490:
 	strh r3, [r7]
 	movs r1, #2
 	movs r0, #228
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r5, .L_0810a654
 	adds r0, r5, #0
 	bl Func_0810857c
 	adds r5, #1
 	ldrh r0, [r7]
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	adds r0, r5, #0
 	bl Func_0810857c
 	movs r7, #2
@@ -139,10 +139,10 @@ Func_0810a490:
 	bl Sound_PlayFar
 	mov r0, r8
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldrh r0, [r5]
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r8
 	bl Inventory_CountFar
 	cmp r0, #15

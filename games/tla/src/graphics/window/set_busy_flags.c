@@ -2,7 +2,7 @@
 #include "tla_edition.h"
 #include "ram_buffer.h"
 
-void UiWork_SetBusyFlags(u32 flags) {
+void Window_SetBusyFlags(u32 flags) {
   u8 *work;
 
   work = Ram_HeapSlots->windowTiles;

@@ -50,10 +50,10 @@ extern volatile struct InputState gInput;
 extern const u8 gShop_QuantityTiles[];
 extern u8 MsgCoins[];
 
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Shop_FillSelector(s32 count, s32 selector, u8 *base);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiWork_FinalizeFar(s32 window, s32 style);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Window_CloseFar(s32 window, s32 style);
 
 struct UiSprite {
   u8 unk00[24];
@@ -80,14 +80,14 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   result = -1;
   count = 0;
   window =
-      UiWindow_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
+      Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
   if (window != 0) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
       VramCache_Load(slot, 0x100, 0);
-      RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0,
+      WindowSprite_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0,
                              0);
-      sprite = (struct UiSprite *)RenderOutput_CreateFar(
+      sprite = (struct UiSprite *)WindowSprite_CreateFar(
           slot, 0x40004000, (struct RenderInput *)window, 32, 0);
       sprite->tile += 4;
       for (;;) {
@@ -125,16 +125,16 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
           Shop_FillSelector(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);
           result = selected;
-          UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_COUNT_X, 0);
-          UiText_DrawNumberInWindowFar(price * result, 6, window,
+          Text_DrawNumberInWindowFar(result, 2, window, QUANTITY_COUNT_X, 0);
+          Text_DrawNumberInWindowFar(price * result, 6, window,
                                        QUANTITY_PRICE_X, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window,
+          Text_DrawCharacterAtOffsetFar((s32)MsgCoins, window,
                                           QUANTITY_COINS_X, 0);
         }
         WaitFrames(1);
       }
       WaitFrames(1);
-      UiWork_FinalizeFar(window, 2);
+      Window_CloseFar(window, 2);
     }
   }
   Runtime_ReleaseHeapBlock(56);

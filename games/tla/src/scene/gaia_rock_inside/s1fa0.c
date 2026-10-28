@@ -19,7 +19,7 @@ struct GaiaRockInsideEventWork {
 
 extern const u8 MsgCheckedTheAltar[];
 
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 position);
+void FieldMessage_Show(const u8 *message, s32 position);
 s32 PartyInventory_FindOwner(s32 item);
 
 void Func_02001fa0(void) {
@@ -40,7 +40,7 @@ void Func_02001fd8(void) {
   const u8 *next;
   s32 owner;
 
-  UiText_ShowPositionedMessageAndWait(message, 1);
+  FieldMessage_Show(message, 1);
   owner = PartyInventory_FindOwner(451);
   next = message + 2;
   if (owner != -1) {
@@ -51,9 +51,9 @@ void Func_02001fd8(void) {
      * instruction, differ 2). */
     do {
     } while (0);
-    UiText_ShowPositionedMessageAndWait(next, 1);
+    FieldMessage_Show(next, 1);
     work->unk15a = 1;
   } else {
-    UiText_ShowPositionedMessageAndWait(next, 1);
+    FieldMessage_Show(next, 1);
   }
 }

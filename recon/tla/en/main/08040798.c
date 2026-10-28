@@ -19,7 +19,7 @@ struct WorkspaceScreen {
   u16 page;
   u8 unk576[0x2e];
   u8 cursor[0x6c];
-  struct RenderOutput *icons[6];
+  struct WindowSprite *icons[6];
 };
 
 extern const s8 gMenu_WorkspaceIcons[];
@@ -28,24 +28,24 @@ s32 GameFlag_Test(s32 flag);
 void Func_080405dc(void);
 void Func_08040614(void);
 struct RenderInput *Func_08040628(void);
-struct RenderOutput *RenderResource_CreatePair(s32 group,
+struct WindowSprite *RenderResource_CreatePair(s32 group,
                                                struct RenderInput *input,
                                                s32 x, s32 y);
-void Func_08045018(struct RenderOutput *pair);
-void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
+void Func_08045018(struct WindowSprite *pair);
+void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
+void Window_Close(struct RenderInput *window, s32 release);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
 s32 Func_08040798(s32 selected) {
   struct RenderInput *window;
   s32 redraw;
-  struct RenderOutput *pair;
+  struct WindowSprite *pair;
   s32 first;
   s32 i;
   s32 j;
@@ -53,7 +53,7 @@ s32 Func_08040798(s32 selected) {
   s32 settingsOnly;
   s32 dimmed;
   s32 result;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   struct WorkspaceScreen *work;
   const s8 *pauseIcons;
   s32 resourceIndex;
@@ -87,7 +87,7 @@ s32 Func_08040798(s32 selected) {
         do {
           icon = work->icons[i];
           icon->sentinel = 251;
-          UiIcon_PrepareObjectFar(icon);
+          Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
           if (i != work->page)
@@ -145,7 +145,7 @@ s32 Func_08040798(s32 selected) {
       }
     }
   }
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   Func_08040614();
   WaitFrames(1);
   if (result >= 0)

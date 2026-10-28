@@ -43,7 +43,7 @@ void Func_02000158(void) {
     Func_02000504_(8, 0x100, 30);
   }
   Func_020004dc((s32)MsgAreWeSetting);
-  UiText_OpenMessageAtObject(8, 0);
+  FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(Func_0200053c(), 0) == 0) {
     FieldEvent_WaitFrames(15);
     Func_020004ec(8, 0);

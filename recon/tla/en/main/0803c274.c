@@ -2,8 +2,8 @@
 // and a barrier after the x copy (without it, 16). Left: the active store
 // and the slot's store after Resource_FindFreeEntry each come a row after
 // the native's, and the y byte's load a row before the index store.
-// ☀️'s UiWindow_PutGlyph (the international form) on this game's
-// UiRenderWork, the tilemap address taken up front.
+// ☀️'s Window_PutGlyph (the international form) on this game's
+// WindowWork, the tilemap address taken up front.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -37,9 +37,9 @@ struct GlyphOutput {
   struct GlyphCell attr;
 };
 
-void Func_0803c274(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
-  struct UiRenderWork *base =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void Func_0803c274(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
+  struct WindowWork *base =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   void *work = base->tilemap;
   struct GlyphOutput *out;
   s32 idx;
@@ -54,11 +54,11 @@ void Func_0803c274(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     return;
   if (mode == 1) {
     s32 column;
-    work = RenderOutput_AcquireFree();
+    work = WindowSprite_AcquireFree();
     if (work == NULL)
       return;
     out = work;
-    idx = ((struct RenderOutput *)out - base->outputs) * 4;
+    idx = ((struct WindowSprite *)out - base->outputs) * 4;
     out->active = 2;
     attr = &out->attr;
     slot = &base->glyphResource;
@@ -75,7 +75,7 @@ void Func_0803c274(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     out->next = NULL;
     if (out->active == 0)
       out->active = mode;
-    RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
+    WindowSprite_AppendToList(&win->output, (struct WindowSprite *)out);
   } else if (tile <= 0xff) {
     x++;
     y++;

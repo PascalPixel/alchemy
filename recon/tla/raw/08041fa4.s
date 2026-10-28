@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global UiText_DrawResource
+	.global Text_DrawMessage
 	.thumb_func
-UiText_DrawResource:
+Text_DrawMessage:
 	push {r5, r6, lr}
 	mov r6, r11
 	mov r5, r10
@@ -26,7 +26,7 @@ UiText_DrawResource:
 	mov r10, r1
 	strh r2, [r6]
 	movs r1, #1
-	bl UiText_BuildRenderEntries
+	bl Message_Decode
 	ldrh r3, [r6]
 	movs r1, #244
 	lsls r1, r1, #4
@@ -44,7 +44,7 @@ UiText_DrawResource:
 	mov r1, r10
 	mov r2, r9
 	mov r3, r11
-	bl UiText_RenderWideStringAtOffset
+	bl Text_DrawWideStringAtOffset
 	b .L_08042000
 .L_08041ffc:
 	.4byte 0x000001ff

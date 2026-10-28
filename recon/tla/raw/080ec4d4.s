@@ -888,7 +888,7 @@ Func_080ec4d4:
 	cmp r3, #0
 	bne .L_080ecb9a
 	ldr r0, [r4, #28]
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	ldr r2, .L_080ecdf0
 	movs r3, #1
 	strh r3, [r5]
@@ -943,7 +943,7 @@ Func_080ec4d4:
 	add r1, sp, #60
 	add r2, sp, #56
 	ldr r0, [sp, #20]
-	bl UiText_MeasureResourceEntriesFar
+	bl Text_MeasureMessageFar
 	ldr r3, .L_080ece04
 	movs r4, #0
 	ldrsh r3, [r3, r4]
@@ -1008,7 +1008,7 @@ Func_080ec4d4:
 	ldr r1, [r5, #28]
 	mov r2, r10
 	mov r3, r8
-	bl UiText_DrawResourceFar
+	bl Text_DrawMessageFar
 	ldr r3, .L_080ece08
 	ldr r2, [sp, #60]
 	mov r0, r10

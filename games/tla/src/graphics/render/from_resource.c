@@ -15,15 +15,15 @@
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's
 /// list. Releases the resource slot and returns NULL when no output is free.
-// As ☀️'s RenderOutput_Create.
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
+// As ☀️'s WindowSprite_Create.
+struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY) {
   s32 x;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   s32 y;
 
-  output = RenderOutput_AcquireFree();
+  output = WindowSprite_AcquireFree();
   if (output == NULL) {
     Resource_ResetEntry((u32)slot);
     return NULL;
@@ -41,7 +41,7 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
   output->index = (s8)slot;
   output->kind = 1;
   output->active = 1;
-  RenderOutput_AppendToList((struct RenderOutputList *)input, output);
+  WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
   /* FAKEMATCH: the barrier after the call keeps the list argument's copy
    * (mov r0, r8) after the last stores; without it the copy comes three
    * stores earlier (differ 2). */
@@ -49,7 +49,7 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
   return output;
 }
 
-struct RenderOutput *RenderOutput_CreateFromResource(s32 arg0, s32 arg1,
+struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
                                                      struct RenderInput *arg2,
                                                      s32 arg3, s32 arg4) {
   s32 no;
@@ -58,5 +58,5 @@ struct RenderOutput *RenderOutput_CreateFromResource(s32 arg0, s32 arg1,
   if (no < 0) {
     return NULL;
   }
-  return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
+  return WindowSprite_Create(no, 0x40000000, arg2, arg3, arg4);
 }

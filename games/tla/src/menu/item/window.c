@@ -10,14 +10,14 @@
 #include "m7_interfaces.h"
 #include "ram_buffer.h"
 
-#define UiText_DrawStringInWindowFar                                           \
-  ((void (*)(u8 *, s32, s32, s32))UiText_DrawStringInWindowFar)
+#define Text_DrawStringInWindowFar                                           \
+  ((void (*)(u8 *, s32, s32, s32))Text_DrawStringInWindowFar)
 
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   s32 digits;
   s32 magnitude;
 
-  UiText_DrawNumberInWindowFar(delta, 3, window, x, y);
+  Text_DrawNumberInWindowFar(delta, 3, window, x, y);
   digits = 1;
   magnitude = delta;
   if (delta < 0) {
@@ -34,10 +34,10 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
     digits = 3;
   }
   if (delta > 0) {
-    UiText_DrawStringInWindowFar(&gMenu_PlusSignString, window,
+    Text_DrawStringInWindowFar(&gMenu_PlusSignString, window,
                                  x - digits * 8 + 16, y);
   } else {
-    UiText_DrawStringInWindowFar(&gMenu_MinusSignString, window,
+    Text_DrawStringInWindowFar(&gMenu_MinusSignString, window,
                                  x - digits * 8 + 16, y);
   }
 }
@@ -52,25 +52,25 @@ struct ItemMenuWindows {
 #define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menuRuntime)
 
 void ItemMenu_SetItemWindowRow5(void) {
-  UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
+  Window_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
 }
 
 void ItemMenu_SetItemWindowRow3(void) {
-  UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
+  Window_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
 }
 
 void ItemMenu_SetMessageWindowHeight5(void) {
-  UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 5);
+  Window_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 5);
 }
 
 void ItemMenu_SetMessageWindowHeight6(void) {
-  UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 6);
+  Window_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 6);
 }
 
 void ItemMenu_SetMessageWindowHeight7(void) {
-  UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 7);
+  Window_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 7);
 }
 
 void ItemMenu_SetMessageWindowHeight3(void) {
-  UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 3);
+  Window_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 3);
 }

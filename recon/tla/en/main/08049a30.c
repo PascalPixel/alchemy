@@ -105,28 +105,28 @@ extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-struct ItemMenuWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct ItemMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                        s32 flags);
 void Func_08049a04(u32 sourceTile, u32 destinationTile);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Ui_FillVramBlockPattern(void);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
+void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void *Item_Get(s32 item);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-void UiText_RenderWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Text_DrawWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
                                      s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(struct ItemMenuWindow *window);
+void WindowSprite_RedrawSavedRect(struct ItemMenuWindow *window);
 void Func_08041f70(s32 color);
-void UiText_DrawCharacterAtOffset(s32 message, struct ItemMenuWindow *window,
+void Text_DrawCharacterAtOffset(s32 message, struct ItemMenuWindow *window,
                                   s32 x, s32 y);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-void UiWindow_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
+void Window_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
                               s32 y, s32 flags);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
-void UiWork_Finalize(void *window, s32 mode);
+void Window_Close(void *window, s32 mode);
 void Resource_ResetEntry(s32 slot);
 
 s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
@@ -159,14 +159,14 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4, 42);
   iconCount = 0;
   do {
     firstEntry = NAVIGATION->page;
     selectedRow = NAVIGATION->row;
     preferredRow = NAVIGATION->preferredRow;
   } while (0);
-  window = UiWindow_Create(15, 9, 15, 11, 6);
+  window = Window_Create(15, 9, 15, 11, 6);
 
   for (i = 0; i < 5; i++) {
     s32 y = i * 2;
@@ -188,25 +188,25 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Vram_FillWindowBlockPattern();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          UiText_CopyMessageString((s32)Msg_0d4f, messageText, 52);
+          Message_CopyExpanded((s32)Msg_0d4f, messageText, 52);
         else
-          UiText_CopyMessageString((entries[firstEntry + selectedRow] & 0x1ff) +
+          Message_CopyExpanded((entries[firstEntry + selectedRow] & 0x1ff) +
                                        (s32)MsgItemPlainName,
                                    messageText, 52);
         sprite = &cursorStorage;
       } else {
-        UiText_CopyMessageString((s32)Msg_0d46, messageText, 52);
+        Message_CopyExpanded((s32)Msg_0d46, messageText, 52);
       }
-      UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+      Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
-        RenderOutput_RedrawSavedRect(window);
+        WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < 5; i++) {
           item = entries[firstEntry + i];
           if (item == 0)
@@ -217,7 +217,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
             Func_08041f70(4);
           else if (item & ITEM_BROKEN)
             Func_08041f70(2);
-          UiText_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
+          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
                                        window, 16, i * 16);
           Func_08041f70(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
@@ -230,11 +230,11 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           iconTile = i + 0xf301;
           if (i == firstEntry / 5)
             iconTile = i + 0xf30b;
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
@@ -247,13 +247,13 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           if (i == firstEntry / 5)
             iconTile = i + 0xf30b;
         }
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
       pageTile = -1;
-      UiWindow_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, 0xf334,
                                window->width - (count + 4) / 5 - 3, pageTile, 0);
-      UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
+      Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
       do {
         work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
       } while (0);
@@ -295,13 +295,13 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(114);
         if (unusableReason == 2)
-          UiText_CopyMessageString((s32)Msg_0d4f, messageText, 32);
+          Message_CopyExpanded((s32)Msg_0d4f, messageText, 32);
         else if (entries[result] & ITEM_BROKEN)
-          UiText_CopyMessageString((s32)Msg_0d4d, messageText, 32);
+          Message_CopyExpanded((s32)Msg_0d4d, messageText, 32);
         else
-          UiText_CopyMessageString((s32)Msg_0d4c, messageText, 32);
-        Ui_FillVramBlockPattern();
-        UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+          Message_CopyExpanded((s32)Msg_0d4c, messageText, 32);
+        Vram_FillWindowBlockPattern();
+        Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
         result = -1;
         break;
@@ -366,8 +366,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     WaitFrames(1);
   }
 
-  UiWork_Finalize(messageWindow, 1);
-  UiWork_Finalize(window, 1);
+  Window_Close(messageWindow, 1);
+  Window_Close(window, 1);
   WaitFrames(1);
   Resource_ResetEntry(cursorHandle);
   for (i = 0; i < 5; i++)

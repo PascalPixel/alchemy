@@ -83,12 +83,12 @@ void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
 void Menu_HighlightPageEntry(struct MenuWindow *window, s32 selection, s32 count);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
-void UiIcon_PrepareObject(struct MenuIcon *icon);
+void Icon_PrepareActor(struct MenuIcon *icon);
 
 s32 Func_080fd2e8(s32 browseOnly) {
   struct PsynergyMenuState *menu;
@@ -123,8 +123,8 @@ s32 Func_080fd2e8(s32 browseOnly) {
         }
         Menu_HighlightPageEntry(menu->rowWindow, selection, count);
         if (!GameFlag_Test(0x151) && !shown) {
-          RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-          UiText_DrawCharacterAtOffsetFar((menu->infoMessage & 0x3fff) +
+          WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+          Text_DrawCharacterAtOffsetFar((menu->infoMessage & 0x3fff) +
                                               MsgAbilityDescription,
                                           menu->infoWindow, 0, 0);
           shown = 1;
@@ -148,7 +148,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   icon = menu->rowCursor;
-  UiIcon_PrepareObject(icon);
+  Icon_PrepareActor(icon);
   icon->active = 13;
   WaitFrames(1);
   menu->tabIndex[1] = selection;

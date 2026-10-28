@@ -22,12 +22,12 @@ struct InventoryMenuState {
 };
 
 extern char MsgItemPlainName[];
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 flag);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 
 /// Draws the selected item-list row's name and highlights only that row; the
@@ -49,9 +49,9 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
   // The Japanese release clears the info window and draws the name as a
   // resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-  RenderOutput_ClearListFar(window);
+  WindowSprite_ClearListFar(window);
 #else
-  RenderOutput_RedrawSavedRectFar(window);
+  WindowSprite_RedrawSavedRectFar(window);
 #endif
   WaitFrames(1);
 
@@ -60,9 +60,9 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
     s32 masked = (menu->items[combined] & 0x1ff) + (s32)MsgItemPlainName;
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-    UiText_DrawResourceFar(masked, menu->infoWindow, 0, 0);
+    Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
 #else
-    UiText_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+    Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
 #endif
   }
 

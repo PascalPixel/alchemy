@@ -37,7 +37,7 @@ s32 Func_02000bb0(void) {
     Func_02000044();
     if (!Flag_IsSet(0x173)) {
       Func_02001a64(msg + 5);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       answer = Event_AskYesNoWithActorAnimation(4, 0);
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
@@ -62,7 +62,7 @@ s32 Func_02000bb0(void) {
     if (Flag_IsSet(0x173)) {
       LinkLobby_WriteSlotValue(0);
       Func_02001a64((s32)MsgYourOpponentHas);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       Flag_Clear(0x202);
       Flag_Clear(0x173);
     }
@@ -74,10 +74,10 @@ s32 Func_02000bb0(void) {
     message:
       Func_02001a64(line);
     open_message:
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
     } else if (!Flag_IsSet(0x201) && !Flag_IsSet(0x300)) {
       Func_02001a64(msg);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       Flag_Set(0x300);
     } else {
       Flag_Set(0x300);
@@ -85,7 +85,7 @@ s32 Func_02000bb0(void) {
         Func_02001a64(msg + 2);
       else
         Func_02001a64(msg + 1);
-      UiText_OpenMessageAtObject(8, 0);
+      FieldMessage_ShowAtActor(8, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
         if (Func_0200006c(0)) {
           Flag_Set(0x16c);
@@ -102,7 +102,7 @@ s32 Func_02000bb0(void) {
         }
       } else {
         Func_02001a64(msg);
-        UiText_OpenMessageAtObject(8, 0);
+        FieldMessage_ShowAtActor(8, 0);
       }
     }
   }

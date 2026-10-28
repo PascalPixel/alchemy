@@ -361,7 +361,7 @@ Func_0810106c:
 	movs r3, #13
 	strb r3, [r2, #5]
 	ldr r0, [r7, #52]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r1, #192
 	lsls r1, r1, #1
 	adds r3, r7, r1
@@ -655,7 +655,7 @@ Func_0810106c:
 	movs r3, #13
 	strb r3, [r2, #5]
 	ldr r0, [r7, #52]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r2, [r7, #20]
 	movs r3, #1
 	strb r3, [r2, #5]

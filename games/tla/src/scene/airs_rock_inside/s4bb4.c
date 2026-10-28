@@ -18,12 +18,12 @@ void Func_02004bb4(void) {
   Func_02005e14();
   Func_02005f2c(0);
   message = MsgCheckedThePsynergy;
-  UiText_ShowPositionedMessageAndWait(message, 1);
+  FieldMessage_Show(message, 1);
   Func_02005f94(126);
   Func_02005f34(999, 0);
   FieldEvent_WaitFrames(10);
   GameFlag_ClearBit(322);
-  UiText_ShowPositionedMessageAndWait(message + 1, 1);
+  FieldMessage_Show(message + 1, 1);
   Func_02005e1c();
 }
 

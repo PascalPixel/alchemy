@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global UiText_DrawPrefixedNumberAtOffset
+	.global Text_DrawPrefixedNumberAtOffset
 	.thumb_func
-UiText_DrawPrefixedNumberAtOffset:
+Text_DrawPrefixedNumberAtOffset:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -21,7 +21,7 @@ UiText_DrawPrefixedNumberAtOffset:
 	adds r1, r4, #0
 	movs r2, #4
 	mov r10, r3
-	bl UiText_FormatNumber
+	bl String_FormatNumber
 	cmp r5, #0
 	bne .L_080422a8
 	movs r3, #240
@@ -75,7 +75,7 @@ UiText_DrawPrefixedNumberAtOffset:
 	adds r1, #8
 	ands r3, r7
 	adds r0, r4, #0
-	bl UiText_RenderStringTiles
+	bl Text_DrawStringAsTiles
 .L_08042302:
 	add sp, #32
 	pop {r3, r5}

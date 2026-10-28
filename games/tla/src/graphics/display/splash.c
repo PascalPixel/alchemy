@@ -16,7 +16,7 @@ void Fade_ToBlack(s32 vblanks);
 void Fade_FromBlack(s32 vblanks);
 void Fade_Wait(void);
 void Func_08014b70(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
@@ -110,7 +110,7 @@ col:
   }
   Dma_Set(gBgScroll, (void *)0x04000010, (DMA_ENABLE | DMA_32BIT) << 16 | 4,
           REG_DMA3);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;

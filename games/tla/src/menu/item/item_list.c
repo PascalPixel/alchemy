@@ -4,11 +4,11 @@
 
 struct ItemListMenu {
   u8 unk000[0xf0];
-  struct RenderOutput *messageWindow;
+  struct WindowSprite *messageWindow;
 };
 
-void RenderOutput_RedrawSavedRectFar(struct RenderOutput *window);
-s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(struct WindowSprite *window);
+s32 Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 s32 ItemMenu_IsSpecial(s32 item_id) {
   s32 result;
@@ -32,6 +32,6 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct ItemListMenu *menu;
 
   menu = Ram_HeapSlots->menuRuntime;
-  RenderOutput_RedrawSavedRectFar(menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
+  WindowSprite_RedrawSavedRectFar(menu->messageWindow);
+  Text_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
 }

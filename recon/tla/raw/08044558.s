@@ -31,7 +31,7 @@ Func_08044558:
 	str r3, [sp, #20]
 	str r2, [sp, #16]
 	mov r11, r2
-	bl Ui_LoadWindowGraphics
+	bl Window_LoadGraphics
 	ldr r3, .L_080446f4
 	movs r0, #147
 	movs r1, #128
@@ -50,14 +50,14 @@ Func_08044558:
 	movs r3, #9
 	movs r0, #3
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r1, #3
 	mov r10, r0
 	movs r2, #8
 	movs r3, #3
 	movs r0, #8
 	str r5, [sp, #0]
-	bl UiWindow_Create
+	bl Window_Create
 	movs r2, #3
 	str r0, [sp, #44]
 	movs r3, #1
@@ -73,7 +73,7 @@ Func_08044558:
 	movs r1, #18
 	movs r2, #0
 	movs r3, #18
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	add r2, sp, #16
 	ldr r3, [sp, #20]
 	ldrb r2, [r2]
@@ -106,7 +106,7 @@ Func_08044558:
 	strb r3, [r0, #14]
 	ldr r1, [sp, #24]
 	ldr r0, [sp, #44]
-	bl UiText_DrawPaddedLabel
+	bl Text_DrawPaddedLabel
 	movs r1, #5
 	mov r8, r1
 	bl Resource_FindFreeEntry
@@ -123,7 +123,7 @@ Func_08044558:
 	adds r0, r5, #0
 	mov r2, r10
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	mov r2, sp
 	adds r2, #68
 	adds r5, r0, #0
@@ -159,7 +159,7 @@ Func_08044558:
 	adds r0, r5, #0
 	mov r2, r10
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	movs r1, #52
 	adds r5, r0, #0
 	add r1, sp
@@ -173,7 +173,7 @@ Func_08044558:
 	strb r3, [r5, #25]
 	ldr r0, [sp, #28]
 	mov r9, r1
-	bl UiText_SetRenderString
+	bl Text_SetString
 	adds r1, r0, #0
 	adds r1, #70
 	mov r0, r9
@@ -186,10 +186,10 @@ Func_08044558:
 	movs r3, #13
 	strb r3, [r2, #5]
 	ldr r0, [sp, #44]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #24]
-	bl UiText_DrawPaddedLabel
+	bl Text_DrawPaddedLabel
 	movs r0, #10
 	bl WaitFrames
 	b .L_08044a0c
@@ -253,7 +253,7 @@ Func_08044558:
 	mov r2, r8
 	adds r3, r5, #0
 	mov r0, r10
-	bl UiWindow_SetTilemapFlagRect
+	bl Window_SetTilemapFlagRect
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #1
@@ -264,7 +264,7 @@ Func_08044558:
 	adds r3, r5, #0
 	adds r1, r7, #0
 	mov r2, r8
-	bl UiWindow_SetTilemapFlagRect
+	bl Window_SetTilemapFlagRect
 	mov r3, r11
 	cmp r3, #0
 	beq .L_080447a6
@@ -291,7 +291,7 @@ Func_08044558:
 	movs r2, #0
 	ldr r0, [sp, #28]
 	str r2, [sp, #16]
-	bl UiText_SetRenderString
+	bl Text_SetString
 	adds r1, r0, #0
 	adds r1, #70
 	mov r0, r9
@@ -512,10 +512,10 @@ Func_08044558:
 	str r2, [sp, #32]
 	strb r3, [r0]
 	ldr r0, [sp, #44]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r1, [sp, #28]
 	ldr r0, [sp, #44]
-	bl UiText_DrawPaddedLabel
+	bl Text_DrawPaddedLabel
 	movs r1, #1
 	str r1, [sp, #16]
 	b .L_0804472a
@@ -600,20 +600,20 @@ Func_08044558:
 	mov r11, r2
 .L_080449f8:
 	ldr r0, [sp, #44]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #28]
-	bl UiText_DrawPaddedLabel
+	bl Text_DrawPaddedLabel
 	movs r3, #1
 	str r3, [sp, #16]
 	b .L_0804472a
 .L_08044a0c:
 	mov r0, r10
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r1, #2
 	ldr r0, [sp, #44]
-	bl UiWork_Finalize
+	bl Window_Close
 	ldr r0, [sp, #48]
 	bl Func_0803d450
 	movs r0, #1

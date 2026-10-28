@@ -16,14 +16,14 @@
 /// Places item i (or 0 if above 15) in a grid with cols columns of
 /// 24x16-pixel cells.
 /// x0, y0: top left of the grid.
-void ItemMenu_PlaceIcon(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
+void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
                        s32 cols) {
-  struct RenderOutput *obj;
+  struct WindowSprite *obj;
 
   if (i > 15)
     i = 0;
   obj = *slot;
   obj->y = i / cols * 16 + y0;
   obj->x = i % cols * 24 + x0;
-  UiIcon_PrepareObject(obj);
+  Icon_PrepareActor(obj);
 }

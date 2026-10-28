@@ -61,7 +61,7 @@ Event_AskYesNoWithActorAnimationFar:
 	.thumb_func
 Func_080c8078:
 	overlay_veneer Func_080d296c
-	.global UiText_DrawQuantityPairWithCueFar
+	.global Party_LearnAbilityFar
 	.thumb_func
-UiText_DrawQuantityPairWithCueFar:
-	overlay_veneer UiText_DrawQuantityPairWithCue
+Party_LearnAbilityFar:
+	overlay_veneer Party_LearnAbility

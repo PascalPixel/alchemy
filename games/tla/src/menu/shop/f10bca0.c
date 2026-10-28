@@ -17,9 +17,9 @@ extern u8 MsgCannotRemove[];
 extern u8 MsgPriceHeading[];
 
 struct ShopUnit *Unit_Get(s32 unitId);
-void RenderOutput_RedrawSavedRectFar(void *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
+void WindowSprite_RedrawSavedRectFar(void *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
                                   s32 y);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
@@ -42,22 +42,22 @@ void Func_0810bca0(void *window, s32 unitId, s32 slot) {
 
   if (window == 0)
     return;
-  RenderOutput_RedrawSavedRectFar(window);
-  UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
+  WindowSprite_RedrawSavedRectFar(window);
+  Text_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
   if (shop->dropMode == 0)
     flags = Func_080ad268(unitId, slot);
   else
     flags = Func_080ad270(unitId, slot);
   if (flags & 2) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
   } else if (flags & 1) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
   } else if (shop->dropMode == 0) {
     price = Shop_GetSellPrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
-    UiText_DrawCharacterAtOffsetFar(message, window, 8, 8);
-    UiText_DrawNumberInWindowFar(price, 5, window, 40, 8);
+    Text_DrawCharacterAtOffsetFar(message, window, 8, 8);
+    Text_DrawNumberInWindowFar(price, 5, window, 40, 8);
     // Five messages before the price heading: MsgCoins.
-    UiText_DrawCharacterAtOffsetFar(message - 5, window, 80, 8);
+    Text_DrawCharacterAtOffsetFar(message - 5, window, 80, 8);
   }
 }

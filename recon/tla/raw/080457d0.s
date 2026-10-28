@@ -63,7 +63,7 @@ Func_080457d0:
 	movs r1, #17
 	movs r2, #8
 .L_08045846:
-	bl UiWindow_Create
+	bl Window_Create
 	movs r3, #214
 	lsls r3, r3, #1
 	add r3, r9
@@ -428,7 +428,7 @@ Func_080457d0:
 .L_08045b04:
 	.4byte gFrameCount
 .L_08045b08:
-	.4byte gUi_BounceScales
+	.4byte gWindowSprite_BounceScales
 .L_08045b0c:
 	.4byte 0xffffff00
 .L_08045b10:
@@ -729,7 +729,7 @@ Func_080457d0:
 	lsls r5, r5, #1
 	add r5, r9
 	ldr r0, [r5]
-	bl RenderOutput_PrepareForRedraw
+	bl WindowSprite_PrepareForRedraw
 	ldr r2, [r6]
 	movs r0, #142
 	lsls r3, r2, #3
@@ -744,7 +744,7 @@ Func_080457d0:
 	adds r0, r0, r3
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffset
+	bl Text_DrawCharacterAtOffset
 	ldr r3, [r6]
 	movs r2, #228
 	str r3, [r7]
@@ -971,7 +971,7 @@ Func_080457d0:
 	adds r0, #9
 .L_08045f14:
 	movs r2, #8
-	bl UiText_ShowMessageAndWaitComplete
+	bl Message_ShowAndWait
 	str r0, [sp, #20]
 .L_08045f1c:
 	movs r3, #192
@@ -986,7 +986,7 @@ Func_080457d0:
 	bl Func_08118128
 	movs r1, #1
 	ldr r0, [sp, #20]
-	bl UiWork_Finalize
+	bl Window_Close
 	mov r2, r8
 	ldr r3, [r2]
 	adds r3, #1
@@ -1145,7 +1145,7 @@ Func_080457d0:
 	add r3, r9
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_Finalize
+	bl Window_Close
 	movs r3, #240
 	movs r7, #128
 	lsls r3, r3, #8

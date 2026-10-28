@@ -35,7 +35,7 @@ struct Window_0803cbf8 {
   u16 timer;
 };
 
-void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 
 void Func_0803cbf8(struct Window_0803cbf8 *window) {
   if (window->rect->state == 4) {
@@ -52,7 +52,7 @@ void Func_0803cbf8(struct Window_0803cbf8 *window) {
     if (window->timer == 2) {
       struct Rect_0803cba8 *rect = window->rect;
 
-      UiWindow_DrawBorder(rect->x, rect->y, rect->width, rect->height);
+      Window_DrawBorder(rect->x, rect->y, rect->width, rect->height);
     }
     window->timer--;
     if (window->timer == 0) {

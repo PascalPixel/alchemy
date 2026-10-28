@@ -570,7 +570,7 @@ Func_02000bd8:
 	bl Inventory_AddItem
 	ldr r0, .L_02008c90
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r5, #0
 	movs r6, #216
 	b .L_02008c98
@@ -710,7 +710,7 @@ Func_02000e80:
 	bl Func_0200444c
 	movs r1, #1
 	ldr r0, .L_ja_020091e8
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #78
 	bl Func_0200446c
 	movs r0, #1
@@ -1120,7 +1120,7 @@ Func_02000e80:
 	bl Func_0200444c
 	movs r1, #1
 	ldr r0, .L_0200904c
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #78
 	bl Func_0200446c
 	movs r0, #1
@@ -1319,7 +1319,7 @@ Func_02000e80:
 	bl Func_0200444c
 	movs r1, #1
 	ldr r0, .L_020093c0
-	bl UiText_ShowPositionedMessageAndWait
+	bl FieldMessage_Show
 	movs r0, #78
 	bl Func_0200446c
 	movs r0, #1

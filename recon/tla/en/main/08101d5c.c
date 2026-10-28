@@ -32,24 +32,24 @@ struct DjinnMenuWork {
   struct UiPanel *helpWindow;
 };
 
-void RenderOutput_ClearListFar(void *window);
-void RenderOutput_PrepareForRedrawFar(void *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
+void WindowSprite_ClearListFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
 void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
                             s32 height, s32 palette);
 void UiPanel_SetRectHighlight(struct UiPanel *panel, s32 x, s32 y, s32 width,
                               s32 height, s32 palette);
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Func_08038290(void);
 struct UiChannelSlot *Func_080383d8(void *window, s32 message);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void Sound_PlayFar(s32 cue);
-s32 UiWork_IsCompleteFar(void);
+s32 Message_AllTypedFar(void);
 void Func_080f8a44(s32 x, s32 y);
 s32 Resource_ResetEntry(u32 entry);
-void UiWork_FinalizeFar(void *window, s32 mode);
+void Window_CloseFar(void *window, s32 mode);
 void Task_Add(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
@@ -59,7 +59,7 @@ s32 Func_08101d5c(void) {
   struct UiPanel *helpWindow;
   struct UiPanel *statusWindow;
   struct DjinnMenuWork *menu;
-  struct UiRenderWork *render;
+  struct WindowWork *render;
   s32 result;
   s32 previous;
   s32 selection;
@@ -75,33 +75,33 @@ s32 Func_08101d5c(void) {
 
   menu = Ram_HeapSlots->menuRuntime;
   selection = 0;
-  render = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   result = 0;
   previous = 0;
-  RenderOutput_ClearListFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
-  RenderOutput_PrepareForRedrawFar(menu->helpWindow);
+  WindowSprite_PrepareForRedrawFar(menu->helpWindow);
   message = (s32)MsgDjinnInfoPrompt;
-  UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
+  Text_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
   message++;
-  UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 16);
+  Text_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 16);
   Func_08101c7c(1, 1, 11, 3, 6);
   UiPanel_SetRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
-  list = UiWindow_CreateFar(0, 9, 8, 10, 6);
-  helpWindow = UiWindow_CreateFar(8, 12, 22, 7, 2);
-  statusWindow = UiWindow_CreateFar(8, 9, 22, 3, 2);
+  list = Window_CreateFar(0, 9, 8, 10, 6);
+  helpWindow = Window_CreateFar(8, 12, 22, 7, 2);
+  statusWindow = Window_CreateFar(8, 9, 22, 3, 2);
   Func_08038290();
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
   do {
-    UiText_DrawCharacterAtOffsetFar(helpIndex + listMessage, list, 0,
+    Text_DrawCharacterAtOffsetFar(helpIndex + listMessage, list, 0,
                                     helpIndex * 8);
     helpIndex++;
   } while (helpIndex <= 6);
   input = &gInput;
   do {
-    RenderOutput_PrepareForRedrawFar(statusWindow);
-    UiText_DrawResourceFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0,
+    WindowSprite_PrepareForRedrawFar(statusWindow);
+    Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0,
                            0);
     channel = Func_080383d8(helpWindow, selection + (s32)MsgDjinnInfoText);
     UiPanel_SetRectHighlight(list, 0, previous, 6, 1, 15);
@@ -130,7 +130,7 @@ s32 Func_08101d5c(void) {
         result = -1;
         break;
       } else if (input->pressed & 1) {
-        if (UiWork_IsCompleteFar()) {
+        if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
           Sound_PlayFar(112);
@@ -143,10 +143,10 @@ s32 Func_08101d5c(void) {
       Resource_ResetEntry(render->glyphResource);
       render->glyphResource = 99;
     }
-    ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->unk1388 = 0;
-    RenderOutput_PrepareForRedrawFar(helpWindow);
+    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->unk1388 = 0;
+    WindowSprite_PrepareForRedrawFar(helpWindow);
     {
-      struct UiWindow *window = channel->work;
+      struct Window *window = channel->work;
 
       window->frame = 0;
       window->duration = 0;
@@ -154,19 +154,19 @@ s32 Func_08101d5c(void) {
     }
     channel->work = 0;
   } while (result == 0);
-  ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
-  RenderOutput_ClearListFar(statusWindow);
-  RenderOutput_ClearListFar(helpWindow);
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  WindowSprite_ClearListFar(statusWindow);
+  WindowSprite_ClearListFar(helpWindow);
   WaitFrames(1);
-  UiWork_FinalizeFar(statusWindow, 1);
-  UiWork_FinalizeFar(list, 1);
-  UiWork_FinalizeFar(helpWindow, 1);
+  Window_CloseFar(statusWindow, 1);
+  Window_CloseFar(list, 1);
+  Window_CloseFar(helpWindow, 1);
   Func_08038290();
   if (result == -2) {
-    RenderOutput_PrepareForRedrawFar(menu->helpWindow);
-    RenderOutput_PrepareForRedrawFar(menu->listWindow);
-    RenderOutput_PrepareForRedrawFar(menu->statusWindow);
-    ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+    WindowSprite_PrepareForRedrawFar(menu->helpWindow);
+    WindowSprite_PrepareForRedrawFar(menu->listWindow);
+    WindowSprite_PrepareForRedrawFar(menu->statusWindow);
+    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   return result;

@@ -27,12 +27,12 @@ extern u8 MsgItemCannotCarry;
 extern u8 MsgItemDropPrompt;
 
 s32 PartyInventory_AddFar(s32 item);
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void MessageArgument_PushFar(s32 value, s32 slot);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 s32 Func_08108068(s32 *member, s32 *slot);
 struct ItemHead *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 void Item_AdjustCounterFar(s32 item, s32 delta);
 void *Unit_Get(s32 owner);
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
@@ -54,37 +54,37 @@ s32 PartyInventory_GiveItem(s32 item) {
 
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
-    UiText_DrawQuantity(item, 2);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 1);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemCannotCarry, 1);
+    MessageArgument_PushFar(item, 2);
+    FieldMessage_ShowFar((s32)&MsgItemReceived, 1);
+    FieldMessage_ShowFar((s32)&MsgItemCannotCarry, 1);
   retry:
     {
-      UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt, 1);
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
       result = Func_08108068(&member, &slot);
       if (result == -1) {
         if (Item_Get(item)->flags & 8) {
-          UiText_DrawQuantity(item, 2);
-          UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt + 4,
+          MessageArgument_PushFar(item, 2);
+          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4,
                                                  1);
           goto retry;
         }
-        UiText_DrawQuantity(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt + 1, 5);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
         result = Func_080d295c(1);
-        UiWork_FinalizePendingCoreFar();
+        Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
         Item_AdjustCounterFar(item, 1);
-        UiText_DrawQuantity(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt + 2, 1);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, 1);
         goto done;
       }
       Unit_Get(member);
       count = Inventory_GetQuantityFar(member, slot);
       if (Inventory_CountItemFar(member, item) > 29) {
-        UiText_DrawQuantity(member, 1);
-        UiText_DrawQuantity(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemDropPrompt + 7, 1);
+        MessageArgument_PushFar(member, 1);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, 1);
         goto retry;
       }
       for (i = 0; i < count; i++)
@@ -94,12 +94,12 @@ s32 PartyInventory_GiveItem(s32 item) {
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(83);
       if (owner == gAdventure.currentOwner) {
-        UiText_DrawQuantity(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
-        UiText_DrawQuantity(item, 2);
-        UiText_DrawQuantity(owner, 1);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemGiven, 3);
+        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(owner, 1);
+        FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
       }
     }
   done:
@@ -107,12 +107,12 @@ s32 PartyInventory_GiveItem(s32 item) {
     return owner;
   }
   Sound_PlayFar(83);
-  UiText_DrawQuantity(item, 2);
-  UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
+  MessageArgument_PushFar(item, 2);
+  FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
   if (owner != gAdventure.currentOwner) {
-    UiText_DrawQuantity(item, 2);
-    UiText_DrawQuantity(owner, 1);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived + 1, 1);
+    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(owner, 1);
+    FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
   }
   work->messageId = saved;
   return owner;

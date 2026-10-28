@@ -110,14 +110,14 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_0200402c:
 	overlay_veneer ObjectDispatch_SetSpritePriorityFar
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_0200403c
 	.thumb_func
 Func_0200403c:
-	overlay_veneer UiText_DrawQuantity
+	overlay_veneer MessageArgument_PushFar
 	.global Func_02004044
 	.thumb_func
 Func_02004044:
@@ -238,10 +238,10 @@ Object_SetPartAttribute:
 	.thumb_func
 Func_0200412c:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_0200413c
 	.thumb_func
 Func_0200413c:

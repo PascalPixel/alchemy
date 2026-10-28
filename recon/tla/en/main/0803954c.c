@@ -4,7 +4,7 @@
 // one-pass blocks (device search).
 // Draft, differ 4 of 84 (2026-10-24): an empty asm after found->unk26 = 0
 // takes one reordered pair off. Left: instruction order only.
-// Near miss, differ 6 of 84: ☀️'s UiText_QueueRenderEntries. The native
+// Near miss, differ 6 of 84: ☀️'s Message_Start. The native
 // starts the text-mode offset 0x138c (movs r1, #152) before the channel
 // stores and finishes it (lsls, adds) after them; agscc builds it whole
 // before them. The zero pinned to r2 behind a barrier loads from the pool
@@ -32,11 +32,11 @@
 #define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
+struct UiChannelSlot *Message_Start(struct Window *window,
                                                 s32 entry, s32 x, s32 y,
                                                 u16 *spacing, s32 flags) {
   u8 *work = (u8 *)Ram_HeapSlots->windowTiles;
-  struct UiChannelSlot *render = ((struct UiRenderWork *)work)->channels;
+  struct UiChannelSlot *render = ((struct WindowWork *)work)->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
 

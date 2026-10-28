@@ -12,7 +12,7 @@
 void *Unit_Get(s32 owner);
 void *Djinn_GetRecoveryTable(s32 which);
 s32 Func_0200193c(void);
-void Ui_AdjustValueWithoutLimit(s32 message, u16 *buffer);
+void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
 void WaitFrames(s32 frames);
 
 extern const u8 MsgEnemyLabel[];
@@ -60,7 +60,7 @@ testRecord:
     result++;
   }
   WaitFrames(2);
-  Ui_AdjustValueWithoutLimit((s32)MsgEnemyLabel, namePrefix);
+  Message_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
   nameIndex = 0;
   if (namePrefix[nameIndex] != 0) {
   scan:

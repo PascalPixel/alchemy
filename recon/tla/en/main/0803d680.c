@@ -14,10 +14,10 @@
 #include "ram_buffer.h"
 #include "item.h"
 
-extern u8 *gUiIcon_BasePointerTable[];
-extern u8 *gUiIcon_ItemIconPointers[];
-extern u8 *gUiIcon_MarkPointers[];
-extern u8 *gUiIcon_DigitPointers[];
+extern u8 *gIcon_BasePointerTable[];
+extern u8 *gItemIcons[];
+extern u8 *gIcon_MarkPointers[];
+extern u8 *gIcon_DigitPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 
@@ -41,31 +41,31 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   if (work == NULL)
     return -1;
   if (layers & ICON_BASE) {
-    work->encoded = gUiIcon_BasePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);
     overlay = 1;
   }
-  work->encoded = gUiIcon_ItemIconPointers[item->icon];
+  work->encoded = gItemIcons[item->icon];
   work->width = 2;
   work->height = 2;
   UiGlyph_DecodeWithHeapRoutines(work, overlay);
   if ((layers & ICON_EQUIPPED) && (code & 0x400)) {
-    work->encoded = gUiIcon_MarkPointers[1];
+    work->encoded = gIcon_MarkPointers[1];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
   }
   if ((layers & ICON_BROKEN) && (code & 0x200)) {
-    work->encoded = gUiIcon_MarkPointers[0];
+    work->encoded = gIcon_MarkPointers[0];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
   }
   if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) &&
       (item->flags & 2)) {
-    work->encoded = gUiIcon_MarkPointers[2];
+    work->encoded = gIcon_MarkPointers[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
@@ -83,12 +83,12 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   if (count != 0 && count <= 30) {
     s32 ones = count % 10;
 
-    work->encoded = gUiIcon_DigitPointers[ones];
+    work->encoded = gIcon_DigitPointers[ones];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
     if (count / 10 != 0) {
-      work->encoded = gUiIcon_DigitPointers[count / 10 + 9];
+      work->encoded = gIcon_DigitPointers[count / 10 + 9];
       work->width = 2;
       work->height = 2;
       UiGlyph_DecodeWithHeapRoutines(work, 1);

@@ -107,7 +107,7 @@ void Func_08020110(void);
 void Func_08020108(void);
 void Func_080c9e48(s32 mode);
 void Func_080e2718(void);
-void UiWork_InitializeWithResourceCountersFar(void);
+void WindowSystem_InitFieldFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void BattleEffect_ResetCounters(void);
 void BattleMap_ApplySceneEntranceView(void);
@@ -145,8 +145,8 @@ s32 Func_080d25c8(s32 item);
 void PartyInventory_GiveItem(s32 item, s32 mode);
 struct ObjectRuntime *Func_080cb8e8(void);
 void EventRuntime_PrepareCurrentObject(void);
-void UiText_DrawQuantity(s32 value, s32 kind);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void MessageArgument_PushFar(s32 value, s32 kind);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 void Sound_PlayFar(s32 cue);
 struct FieldUnit *Unit_Get(s32 unitId);
 void Func_080ca3f4(s32 scene, s32 entrance);
@@ -230,7 +230,7 @@ s32 SceneSequence_Run(void) {
     gData_02001000[0x194c] = 0;
   else
     Func_080e2718();
-  UiWork_InitializeWithResourceCountersFar();
+  WindowSystem_InitFieldFar();
   ObjectSystem_InitializeFar(mode);
   BattleEffect_ResetCounters();
   work->events = (const void *)OVERLAY_CALL(9);
@@ -366,8 +366,8 @@ s32 SceneSequence_Run(void) {
           Func_080cb82c();
           for (i = 0; i < work->fallenCount; i++) {
             Object_SetMode(leader, 22);
-            UiText_DrawQuantity(work->fallenOwners[i], 1);
-            UiText_ShowPositionedMessageAndWaitFar(0xd92, 1);
+            MessageArgument_PushFar(work->fallenOwners[i], 1);
+            FieldMessage_ShowFar(0xd92, 1);
           }
           if (work->survivorCount == 0) {
             if (Data_02000454 == 4)
@@ -375,7 +375,7 @@ s32 SceneSequence_Run(void) {
             else
               Object_SetMode(leader, 19);
             Sound_PlayFar(59);
-            UiText_ShowPositionedMessageAndWaitFar(0xd93, 1);
+            FieldMessage_ShowFar(0xd93, 1);
             unit = Unit_Get(Data_02000454);
             unit->hp = 1;
             gauge = (unit->hp << 14) / unit->maxHp;
@@ -572,7 +572,7 @@ s32 SceneSequence_Run(void) {
             Func_08038358(0);
             *(u16 *)(objects + 4) = 0;
           } else {
-            UiText_ShowPositionedMessageAndWaitFar(0x1167, 1);
+            FieldMessage_ShowFar(0x1167, 1);
           }
         }
         Func_080cb8a4();

@@ -57,7 +57,7 @@ void Object_LinkObjectAndSetCallback();
 void Object_TurnToFaceEachOther();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -283,7 +283,7 @@ void Func_020007dc(void) {
   Call3((void (*)())Object_TurnToFaceEachOther, 11, 4, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 11, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 11, 0);
   result13 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result13 != 0)
     goto L_02008e40;

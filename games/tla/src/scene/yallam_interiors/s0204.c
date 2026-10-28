@@ -17,7 +17,7 @@ void Func_02000244(void) {
   Func_02000a50(0);
   msg = (s32)MsgYallamInteriors10;
   Func_02000a18(msg);
-  UiText_OpenMessageAtObject(9, 0);
+  FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000a18(msg + 1);
@@ -128,7 +128,7 @@ void Func_02000480(void) {
   ObjectMotion_SetVariantCallback(14, 2);
   msg = (s32)MsgYallamInteriors31;
   Func_02000a18(msg);
-  UiText_OpenMessageAtObject(14, 0);
+  FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02000a18(msg + 1);

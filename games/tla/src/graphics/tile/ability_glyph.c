@@ -18,18 +18,18 @@ struct BattleActionGlyph {
   u16 icon;
 };
 
-extern u8 *gUiIcon_BasePointerTable[];
-extern u8 *gUiIcon_PsynergyIconPointers[];
+extern u8 *gIcon_BasePointerTable[];
+extern u8 *gPsynergyIcons[];
 
 struct BattleActionGlyph *BattleAction_Get(s32 action);
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
+void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse);
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
-s32 Ui_CountSecondTableEntries(void);
+s32 Icon_CountPsynergyIcons(void);
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
-  UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->icon, with_base, slot,
+  Icon_BuildAbilityIconTiles(BattleAction_Get(action)->icon, with_base, slot,
                                tile, reuse);
 }
 
@@ -37,7 +37,7 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 /// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
 /// in *tileOut.
 // As ☀️'s function of the same name.
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
+void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
   s32 overlay;
@@ -45,24 +45,24 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
   overlay = 0;
 
-  if (glyph >= Ui_CountSecondTableEntries())
+  if (glyph >= Icon_CountPsynergyIcons())
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gUiIcon_BasePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);
     overlay = 1;
   }
 
-  // Plainly, work->encoded = gUiIcon_PsynergyIconPointers[glyph] differs in 2
-  // of 83 instructions in tla-en, as in UiIcon_BuildItemIconTiles: ⚓️ loads
+  // Plainly, work->encoded = gPsynergyIcons[glyph] differs in 2
+  // of 83 instructions in tla-en, as in Icon_BuildItemIconTiles: ⚓️ loads
   // the table's address between the two instructions of encoded's split
   // offset 0x604, where agscc finishes the shift first.
   {
     u32 offset = 192;
-    u8 **table = gUiIcon_PsynergyIconPointers;
+    u8 **table = gPsynergyIcons;
     /* FAKEMATCH(pin): the field's address held in r1, as the native keeps it;
      * as a plain local, 12 of 83 instructions differ in tla-en. */
     register u8 **field asm("r1");

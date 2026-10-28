@@ -29,7 +29,7 @@ s32 Object_GetById();
 void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void PartyInventory_Remove();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 extern u8 MsgAgainYouHave[];
 extern u8 MsgAhCouldIt[];
 
@@ -43,7 +43,7 @@ void Func_02001dd0(void) {
   Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Call1(FieldEvent_WaitFrames, 15);
   Value3((s32 (*)())Func_0200226c, 15, 0x100, 60);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 15, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
   t9 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
   if (t9 != 0)
     goto L_02009e3a;

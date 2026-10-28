@@ -24,8 +24,8 @@ void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 
 #endif

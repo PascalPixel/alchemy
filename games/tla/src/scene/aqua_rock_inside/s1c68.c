@@ -4,7 +4,7 @@ void Func_02001c68(void) {
   if (GameFlag_Test(0x9ae)) {
     Func_02003d7c();
     Func_02003eac(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTabletIt, 1);
+    FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 152);
@@ -20,7 +20,7 @@ void Func_02001cd8(void) {
   if (GameFlag_Test(0x9ae)) {
     Func_02003d7c();
     Func_02003eac(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTabletIt, 1);
+    FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 280, 184);
@@ -35,7 +35,7 @@ void Func_02001d40(void) {
   if (GameFlag_Test(0x9ae)) {
     Func_02003d7c();
     Func_02003eac(0);
-    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTabletIt, 1);
+    FieldMessage_Show(MsgCheckedTheTabletIt, 1);
     Func_02003d84();
   } else {
     ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 184);

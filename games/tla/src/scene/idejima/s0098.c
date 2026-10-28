@@ -49,8 +49,8 @@ void Func_02003190();
 void Func_02003228();
 void Func_02003298();
 void Motion_SetVarCbAndRefresh();
-void UiText_ShowPositionedMessageAndWait();
-s32 UiText_OpenMessageAtObject();
+void FieldMessage_Show();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_PrepareObjectAndApplyValue();
 void Motion_SetModeAndWaitAnimation();
@@ -108,7 +108,7 @@ void Func_020000f0(void) {
                                      ((s16 *)&leader->z)[1]);
   ObjectMotion_CommitCurrentPositionAndActivate(8);
   Call3(Func_02003228, 8, 0, 0);
-  UiText_ShowPositionedMessageAndWait(message + 8, 1);
+  FieldMessage_Show(message + 8, 1);
   Call1(GameFlag_SetBit, 0x863);
   Engine_EventEnd();
 }
@@ -152,7 +152,7 @@ void Func_020002b4(void) {
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   FieldEvent_WaitFrames(40);
   Value3(Engine_ActorShowEmote, 5, 0x101, 0);
-  Value2(UiText_OpenMessageAtObject, 5, 0);
+  Value2(FieldMessage_ShowAtActor, 5, 0);
   if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Engine_ActorSetAnimation(5, 3);
     Engine_EventShowMessage(5, 0);

@@ -125,7 +125,7 @@ Func_081b243c:
 	movs r1, #2
 	str r3, [sp, #0]
 	movs r3, #64
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldr r1, [sp, #12]
 	movs r3, #8
 	ldr r0, [r1]
@@ -133,7 +133,7 @@ Func_081b243c:
 	movs r1, #2
 	str r3, [sp, #0]
 	movs r3, #64
-	bl UiText_DrawNumberInWindowFar
+	bl Text_DrawNumberInWindowFar
 	ldrh r2, [r6]
 	movs r3, #2
 	ands r3, r2
@@ -153,7 +153,7 @@ Func_081b243c:
 	adds r3, r7, r2
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #148
 	adds r3, r3, r7
 	mov r10, r3
@@ -236,7 +236,7 @@ Func_081b243c:
 	adds r3, r7, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	mov r2, r8
 	ldr r3, [r2]
 	movs r5, #0
@@ -257,7 +257,7 @@ Func_081b243c:
 	adds r3, r7, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r0, #152
 	lsls r0, r0, #1
 	bl Sound_PlayFar
@@ -460,20 +460,20 @@ Func_081b243c:
 	adds r5, r7, r2
 	ldr r0, [r5]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #0
 	movs r2, #19
 	movs r3, #4
 	movs r0, #11
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	movs r3, #0
 	str r1, [r5]
 	ldr r0, .L_081b2960
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r3, #1
 	str r3, [r6]
 	b .L_081b2dd2
@@ -489,7 +489,7 @@ Func_081b243c:
 	movs r2, #0
 	movs r3, #8
 	ldr r0, .L_081b2964
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r2, r7, #0
 	movs r3, #2
 	adds r2, #152
@@ -508,20 +508,20 @@ Func_081b243c:
 	adds r5, r7, r0
 	ldr r0, [r5]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #0
 	movs r2, #14
 	movs r3, #3
 	movs r0, #16
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	str r1, [r5]
 	ldr r0, .L_081b2968
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b2842:
 	adds r1, r7, #0
 	movs r3, #3
@@ -548,20 +548,20 @@ Func_081b243c:
 	adds r5, r7, r3
 	ldr r0, [r5]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #0
 	movs r2, #7
 	movs r3, #3
 	movs r0, #23
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	str r1, [r5]
 	ldr r0, .L_081b296c
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b2894:
 	adds r0, r7, #0
 	movs r3, #4
@@ -578,20 +578,20 @@ Func_081b243c:
 	adds r5, r7, r2
 	ldr r0, [r5]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #0
 	movs r2, #7
 	movs r3, #3
 	movs r0, #23
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	adds r1, r0, #0
 	str r1, [r5]
 	ldr r0, .L_081b2970
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b28d2:
 	adds r0, r7, #0
 	mov r3, r8
@@ -606,7 +606,7 @@ Func_081b243c:
 	adds r3, r7, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	adds r2, r7, #0
 	adds r2, #152
 	str r2, [sp, #12]
@@ -716,7 +716,7 @@ Func_081b243c:
 	ldr r0, .L_081b2cac
 	movs r2, #0
 	movs r3, #8
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 .L_081b29c4:
 	ldrh r2, [r6]
 	movs r3, #1
@@ -737,7 +737,7 @@ Func_081b243c:
 	adds r3, r7, r0
 	movs r1, #1
 	ldr r0, [r3]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 .L_081b29ee:
 	adds r1, r7, #0
 	movs r2, #148
@@ -792,7 +792,7 @@ Func_081b243c:
 	movs r2, #12
 	movs r3, #3
 	movs r0, #18
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r2, #153
 	lsls r2, r2, #3
 	adds r1, r0, #0
@@ -801,7 +801,7 @@ Func_081b243c:
 	ldr r0, .L_081b2cb0
 	movs r3, #0
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r0, r8
 	ldr r3, [r0]
 .L_081b2a6e:
@@ -1049,7 +1049,7 @@ Func_081b243c:
 	adds r3, r7, r0
 	movs r1, #1
 	ldr r0, [r3]
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r1, #148
 	b .L_081b2d56
 .L_081b2c38:
@@ -1066,7 +1066,7 @@ Func_081b243c:
 	str r1, [r3]
 	ldr r0, [r6]
 	movs r1, #1
-	bl UiWork_FinalizeFar
+	bl Window_CloseFar
 	movs r3, #148
 	adds r3, r3, r7
 	mov r10, r3
@@ -1080,7 +1080,7 @@ Func_081b243c:
 	movs r2, #24
 	movs r3, #4
 	movs r0, #3
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	ldr r5, .L_081b2cbc
 	adds r1, r0, #0
 	str r1, [r6]
@@ -1088,12 +1088,12 @@ Func_081b243c:
 	movs r2, #0
 	movs r3, #0
 	adds r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	adds r0, r5, #0
 	movs r3, #8
 	ldr r1, [r6]
 	movs r2, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	mov r0, r10
 	ldr r3, [r0]
 .L_081b2c96:
@@ -1170,7 +1170,7 @@ Func_081b243c:
 	movs r2, #12
 	movs r3, #4
 	movs r0, #18
-	bl UiWindow_CreateFar
+	bl Window_CreateFar
 	movs r3, #128
 	ldr r5, .L_081b3050
 	lsls r3, r3, #3
@@ -1182,12 +1182,12 @@ Func_081b243c:
 	movs r2, #0
 	movs r3, #8
 	subs r5, #1
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	ldr r1, [r6]
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_081b2d5a
 .L_081b2d4e:
 	adds r0, r7, #0

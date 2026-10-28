@@ -38,7 +38,7 @@ void GameFlag_SetBit();
 void GameFlag_Test();
 void Func_02004b5c();
 void Event_AskYesNoWithActorAnimation();
-void UiText_OpenMessageAtObject();
+void FieldMessage_ShowAtActor();
 
 void Func_0200112c(void) {
   struct ObjectRuntime *object0;
@@ -314,7 +314,7 @@ L_02009850:
   Value1((s32 (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 26, 2);
   Value1((s32 (*)())FieldEvent_WaitFrames, 10);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 26, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 26, 0);
   result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result1 != 0)
     goto L_020098ea;

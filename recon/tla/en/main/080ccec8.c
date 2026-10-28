@@ -52,8 +52,8 @@ struct ContainerRow *Func_080ceba8(void);
 void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void EventRuntime_PrepareCurrentObject(void);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void UiText_DrawQuantity(s32 value, s32 kind);
+void FieldMessage_ShowFar(s32 message, s32 mode);
+void MessageArgument_PushFar(s32 value, s32 kind);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -67,7 +67,7 @@ void ObjectEvent_Spring(s32 id);
 void Func_080cf350(struct ObjectRuntime *object);
 void Sound_PlayFar(s32 cue);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
-void UiWindow_CreateWithLayoutBoundsFar(s32 layout);
+void PartyStatus_CreateWindowFar(s32 layout);
 s32 Party_CountActiveOwnersFar(void);
 void PartyStatus_CloseFar(void);
 void EventRuntime_Wait(s32 frames);
@@ -94,7 +94,7 @@ void EventRuntime_RunMessage(s32 actor, s32 message);
 void ObjectDispatch_SetAnimationSpeedFar(struct ObjectRuntime *object,
                                          s32 value);
 void Object_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
-void UiWork_SetBusyFlagsFar(s32 flags);
+void Window_SetBusyFlagsFar(s32 flags);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const void *script);
 void BattleEffect_ResumeObject(s32 id);
@@ -165,12 +165,12 @@ s32 Func_080ccec8(s32 id) {
       busy = &((u8 *)object)[91];
       *busy = 1;
       if (silent == 0)
-        UiText_ShowPositionedMessageAndWaitFar(
+        FieldMessage_ShowFar(
             found + (s32)&MsgCheckedContainer, 1);
       if (gAdventure.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
           !GameFlag_Test(flag)) {
-        UiText_DrawQuantity(contents, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerHint, 1);
+        MessageArgument_PushFar(contents, 2);
+        FieldMessage_ShowFar((s32)&MsgContainerHint, 1);
       }
       if (!GameFlag_IsConditionActive(flag))
         goto empty;
@@ -187,21 +187,21 @@ s32 Func_080ccec8(s32 id) {
         shown->update = Marker_MoveLeaderAwayFromEmitter;
         Func_080cf350(shown);
         Sound_PlayFar(83);
-        UiText_DrawQuantity(contents, 5);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrap, 3);
+        MessageArgument_PushFar(contents, 5);
+        FieldMessage_ShowFar((s32)&MsgContainerTrap, 3);
         BattleParty_ApplyDrain(1999, 0);
-        UiWindow_CreateWithLayoutBoundsFar(1);
+        PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
         if (Party_CountActiveOwnersFar() == 1)
-          UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrap + 6, 1);
+          FieldMessage_ShowFar((s32)&MsgContainerTrap + 6, 1);
         else
-          UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrap + 1, 1);
+          FieldMessage_ShowFar((s32)&MsgContainerTrap + 1, 1);
         PartyStatus_CloseFar();
         shown->update = NULL;
         Object_SetMode(shown, 2);
         Sound_PlayFar(246);
         EventRuntime_Wait(30);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrapEnd, 1);
+        FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_SetBit(flag);
@@ -232,13 +232,13 @@ s32 Func_080ccec8(s32 id) {
         gAdventure.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gAdventure.sceneCue);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerMonster, 1);
+        FieldMessage_ShowFar((s32)&MsgContainerMonster, 1);
         goto done;
       }
       if (type == 133)
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgSarcophagus, 1);
+        FieldMessage_ShowFar((s32)&MsgSarcophagus, 1);
       if (Object_GetSpriteShape(index)) {
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerShape, 1);
+        FieldMessage_ShowFar((s32)&MsgContainerShape, 1);
         if (Party_FindOwnerWithActionFar(136) != -1)
           *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 346) = 1;
         goto done;
@@ -256,8 +256,8 @@ s32 Func_080ccec8(s32 id) {
         Func_080cf350(shown);
         Sound_PlayFar(83);
         contents &= 0x7fff;
-        UiText_DrawQuantity(contents, 5);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundCoins, 3);
+        MessageArgument_PushFar(contents, 5);
+        FieldMessage_ShowFar((s32)&MsgFoundCoins, 3);
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
           GameFlag_SetBit(flag);
@@ -283,9 +283,9 @@ s32 Func_080ccec8(s32 id) {
       }
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {
-        UiText_DrawQuantity(contents, 2);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgInventoryFull, 1);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgInventoryFull + 4, 1);
+        MessageArgument_PushFar(contents, 2);
+        FieldMessage_ShowFar((s32)&MsgInventoryFull, 1);
+        FieldMessage_ShowFar((s32)&MsgInventoryFull + 4, 1);
         if (type != 131)
           Object_DestroyIfPresent(shown);
         if (type == 128)
@@ -296,12 +296,12 @@ s32 Func_080ccec8(s32 id) {
         ObjectEvent_SetMode2(index);
       Func_080cf350(shown);
       Sound_PlayFar(83);
-      UiText_DrawQuantity(contents, 2);
+      MessageArgument_PushFar(contents, 2);
       if (slot == gAdventure.currentOwner) {
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundItem, 3);
+        FieldMessage_ShowFar((s32)&MsgFoundItem, 3);
       } else {
-        UiText_DrawQuantity(slot, 1);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundItemFor, 3);
+        MessageArgument_PushFar(slot, 1);
+        FieldMessage_ShowFar((s32)&MsgFoundItemFor, 3);
       }
       if (flag != -1)
         GameFlag_SetBit(flag);
@@ -316,7 +316,7 @@ s32 Func_080ccec8(s32 id) {
       result = 0;
       goto done;
     empty:
-      UiText_ShowPositionedMessageAndWaitFar(found + (s32)&MsgContainerEmpty,
+      FieldMessage_ShowFar(found + (s32)&MsgContainerEmpty,
                                              1);
     done:
       *busy = 0;
@@ -361,7 +361,7 @@ s32 Func_080ccec8(s32 id) {
     }
   }
   if (talk->script < 0x10000) {
-    UiWork_SetBusyFlagsFar(busyFlags);
+    Window_SetBusyFlagsFar(busyFlags);
     EventRuntime_RunMessage(id, talk->script);
   } else {
     EventRuntime_PrepareCurrentObject();

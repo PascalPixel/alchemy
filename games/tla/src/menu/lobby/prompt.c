@@ -19,11 +19,11 @@ void Func_02001a64(s32 message);
 s32 Func_02001a74(s32 actor, s32 flags);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-s32 UiWindow_Create();
-void RenderOutput_PrepareForRedraw();
-void UiText_DrawNumber();
+s32 Window_Create();
+void WindowSprite_PrepareForRedraw();
+void Text_DrawNumber();
 s32 DebugParty_LoadPreset();
-void UiWork_ClearValueNameTables(void);
+void MessageArgument_ClearAll(void);
 
 s32 Func_02000e4c(s32 id) {
   s32 window;
@@ -35,13 +35,13 @@ s32 Func_02000e4c(s32 id) {
   ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
   Func_02001a64((s32)MsgChooseYourParameters);
   Func_02001a74(id, 0);
-  window = UiWindow_Create(0, 0, 6, 4, 2);
+  window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
   shown = -1;
   for (;;) {
     if (choice != shown) {
-      RenderOutput_PrepareForRedraw(window);
-      UiText_DrawNumber(choice, 3, window, 0, 0);
+      WindowSprite_PrepareForRedraw(window);
+      Text_DrawNumber(choice, 3, window, 0, 0);
       shown = choice;
     }
     if (gInput.repeat & 0x20) {
@@ -62,7 +62,7 @@ s32 Func_02000e4c(s32 id) {
     }
     WaitFrames(1);
   }
-  UiWork_Finalize(window, 1);
+  Window_Close(window, 1);
   {
     s32 ok;
     s32 message;

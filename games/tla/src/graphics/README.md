@@ -21,7 +21,7 @@ page says only what differs here.
 - **Assets.** ⚓️'s copies of pictures ☀️ also has are its own files under its
   own resource numbers, so a ☀️ resource id does not name a ⚓️ picture.
 - **Names.** A function that does what its ☀️ twin does takes its name
-  (`UiText_BuildRenderEntries`), so ☀️'s guides apply to it as written.
+  (`Message_Decode`), so ☀️'s guides apply to it as written.
 
 ## Status
 
@@ -32,11 +32,11 @@ Functions not yet matched are drafts under `recon/tla/en/main`, by address.
 
 Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `Ability_`, `AffineMatrix_`, `Battle_`, `BattleEffect_`, `BattleLayout_`,
-`DisplayBlend_`, `DisplayScroll_`, `Fade_`, `Graphics_`,
-`GraphicsPalette_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`,
-`ObjectSystem_`, `PaletteFade_`, `PaletteQueue_`, `Projection_`, `Render_`,
-`RenderOutput_`, `RenderResource_`, `Resource_`, `Runtime_`, `SceneTransform_`, `ScreenTransition_`,
-`StatusMenu_`, `Task_`, `Text_`, `Tile_`, `Title_`, `Transform_`, `Ui_`,
-`UiGlyph_`, `UiIcon_`, `UiMessage_`, `UiText_`, `UiTextResource_`,
-`UiTimedNotice_`, `UiWindow_` and `UiWork_`, with `AnimationObject_` here and
-in `battle/effect`.
+`DisplayBlend_`, `DisplayScroll_`, `Fade_`, `Graphics_`, `GraphicsPalette_`,
+`Icon_`, `Item_`, `Link_`, `Map_`, `Memory_`, `Menu_`, `Message_`,
+`MessageArgument_`, `ObjectSystem_`, `PaletteFade_`, `PaletteQueue_`,
+`Portrait_`, `Projection_`, `Render_`, `RenderResource_`, `Resource_`,
+`Runtime_`, `SceneTransform_`, `ScreenTransition_`, `StatusMenu_`, `Task_`,
+`Text_`, `Tile_`, `Title_`, `Transform_`, `UiGlyph_`, `UiTextResource_`,
+`UiTimedNotice_`, `Window_`, `WindowSprite_` and `WindowSystem_`, with
+`AnimationObject_` here and in `battle/effect`.

@@ -21,7 +21,7 @@ void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02000618(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000620(s32 a);
@@ -84,9 +84,9 @@ ObjectDispatch_SetSingleChildFlags_(struct ObjectRuntime *object, s32 flags) {
   ObjectDispatch_SetSingleChildFlags(object, flags);
 }
 
-static __inline__ void UiText_OpenMessageAtObject_(s32 id, s32 flags) {
+static __inline__ void FieldMessage_ShowAtActor_(s32 id, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(id, flags);
+  FieldMessage_ShowAtActor(id, flags);
 }
 
 static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {

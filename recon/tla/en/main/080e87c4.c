@@ -50,7 +50,7 @@ struct BurstEvent {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 u32 Random16(void);
@@ -82,7 +82,7 @@ void Func_080e87c4(void) {
   WaitFrames(1);
   Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   {
     /* FAKEMATCH: ⚓️ builds the control word with a shift; stored as a
      * halfword constant it loads from the pool, which also places the pool

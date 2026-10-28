@@ -51,10 +51,10 @@ struct PsynergyMenuState {
 };
 
 void *Unit_Get(s32 owner);
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
+s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                             s32 frame);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
-struct MenuIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 id,
+struct MenuIcon *WindowSprite_CreateFromResourceFar(s32 kind, s32 id,
                                                     s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -66,9 +66,9 @@ void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
 void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
-void RenderOutput_ClearListFar(s32 window);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawWorkValueWithLabel(s32 window);
+void WindowSprite_ClearListFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawWorkValueWithLabel(s32 window);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void *MemAlloc(s32 size);
@@ -97,10 +97,10 @@ s32 Func_080fd000(u16 *ownerIds) {
   shown = 0;
   menu->mode = result;
   unit = Unit_Get(ownerIds[selection]);
-  if (UiWindow_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10, 2))
+  if (Window_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10, 2))
     Menu_SpawnIconEntries(menu, menu->psynergyWindow);
-  if (UiWindow_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
-    menu->cursorIcon = RenderOutput_CreateFromResourceFar(
+  if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
+    menu->cursorIcon = WindowSprite_CreateFromResourceFar(
         2, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = 13;
   }
@@ -118,9 +118,9 @@ s32 Func_080fd000(u16 *ownerIds) {
       }
       Menu_HighlightPageEntry(menu->rowWindow, selection, count);
       if (!GameFlag_Test(0x151) && !shown) {
-        RenderOutput_ClearListFar(menu->infoWindow);
-        RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-        UiText_DrawWorkValueWithLabel(menu->infoWindow);
+        WindowSprite_ClearListFar(menu->infoWindow);
+        WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+        Text_DrawWorkValueWithLabel(menu->infoWindow);
         shown = 1;
       } else {
         GameFlag_ClearBit(0x151);

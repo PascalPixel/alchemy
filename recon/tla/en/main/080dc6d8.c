@@ -38,8 +38,8 @@ s32 GameFlag_Test(s32 flag);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
-void UiText_DrawQuantity(s32, s32);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+void MessageArgument_PushFar(s32, s32);
+void FieldMessage_ShowFar(s32 message, s32 flags);
 void EffectRuntime_StopCurrentObject(void);
 
 void Func_080dc6d8(void) {
@@ -65,8 +65,8 @@ void Func_080dc6d8(void) {
   if (work->showQuantity != 0) {
     work->messageShown = 1;
     ObjectGroup_SetActionForOthers(object, 1, 0);
-    UiText_DrawQuantity(quantity, 4);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgBlank2, work->messageRow);
+    MessageArgument_PushFar(quantity, 4);
+    FieldMessage_ShowFar((s32)&MsgBlank2, work->messageRow);
     ObjectGroup_SetActionForOthers(object, 0, 16);
     work->messageShown = 0;
   }

@@ -11,7 +11,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "scene.h"
-void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
+void Window_SetTilemapEntry(s32, s32, s32, s32, s32);
 
 struct Effect {
   unsigned x : 16;
@@ -36,16 +36,16 @@ struct Object {
 };
 
 extern u32 gVBlankCount;
-extern s32 gUi_ObjectPulseScales[];
+extern s32 gWindowSprite_PulseScales[];
 s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 
-void Ui_ApplyTableScaleToObject(struct Object *obj) {
+void WindowSprite_ApplyTableScale(struct Object *obj) {
   s32 v;
   u32 *vblankCount = &gVBlankCount;
   u32 source;
   struct Effect effect;
 
-  v = (s32)gUi_ObjectPulseScales;
+  v = (s32)gWindowSprite_PulseScales;
   /* FAKEMATCH: the empty asm holds both addresses: the native loads the
    * count's address and the table before it reads the count and builds the mask
    * 7 (two reordered rows). */

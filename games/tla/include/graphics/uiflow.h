@@ -4,6 +4,6 @@
 #include "edition.h"
 #include "uiwindow.h"
 
-void UiWork_Finalize(struct UiWindow *window, s32 release);
+void Window_Close(struct Window *window, s32 release);
 
 #endif

@@ -17,7 +17,7 @@ void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 flags);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001f5c(void);
 void Func_02001f64(void);
@@ -94,7 +94,7 @@ void Func_02000ce0(void) {
   Call2((void (*)())Func_02002034, 6, 0);
   Call2((void (*)())Func_02002044, 9, 0xb000);
   Value3(Func_0200204c, 9, 0x101, 0);
-  Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);

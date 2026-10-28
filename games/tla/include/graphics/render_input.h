@@ -6,9 +6,9 @@
 #include "edition.h"
 
 /// A window as the render functions take it: its fields sit where a
-/// UiWindow keeps its width, height and place.
+/// Window keeps its width, height and place.
 struct RenderInput {
-  u8 unk00[8]; ///< not named by ⚓️ code; a UiWindow's output list here
+  u8 unk00[8]; ///< not named by ⚓️ code; a Window's output list here
   u16 width;   ///< tiles
   u16 height;  ///< tiles
   u16 x;       ///< tiles
@@ -19,12 +19,12 @@ STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
 STATIC_ASSERT(offsetof(struct RenderInput, width) == 8);
 STATIC_ASSERT(offsetof(struct RenderInput, x) == 12);
 
-void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
-                                const void *source);
-void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
-                                   s32 y, s32 width, s32 height, u32 field);
-s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *window, s32 x, s32 y,
-                                    s32 resource);
+void Window_CopyTilemapRegion(const struct RenderInput *window,
+                              const void *source);
+void Window_SetTileAttributeRect(const struct RenderInput *window, s32 x, s32 y,
+                                 s32 width, s32 height, u32 field);
+s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *window, s32 x,
+                                        s32 y, s32 resource);
 
 /// A sprite's OAM attribute 2 (tile index, priority and palette) and the
 /// halfword after it, as one word or as fields.
@@ -59,10 +59,10 @@ struct RenderOam {
   u16 high;
 };
 
-/// A render output: a sprite in a window's output list (a character, an icon
+/// A window sprite: a sprite in a window's output list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
-struct RenderOutput {
-  struct RenderOutput *next; ///< the next output in its list
+struct WindowSprite {
+  struct WindowSprite *next; ///< the next output in its list
   /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
   /// and 2 (a portrait) also its palette slot.
   s8 kind;
@@ -77,27 +77,27 @@ struct RenderOutput {
   struct RenderOam oam;
 };
 
-/// A list of render outputs: its first output and the link to append after.
-struct RenderOutputList {
-  struct RenderOutput *head;
-  struct RenderOutput **tailLink;
+/// A list of window sprites: its first output and the link to append after.
+struct WindowSpriteList {
+  struct WindowSprite *head;
+  struct WindowSprite **tailLink;
 };
 
-STATIC_ASSERT(sizeof(struct RenderOutputList) == 8);
-STATIC_ASSERT(offsetof(struct RenderOutputList, tailLink) == 4);
+STATIC_ASSERT(sizeof(struct WindowSpriteList) == 8);
+STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 
-struct RenderOutput *RenderOutput_Create(s32 no, s32 flags,
+struct WindowSprite *WindowSprite_Create(s32 no, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY);
 
-struct RenderOutput *RenderOutput_CreateFar(s32 resource, s32 flags,
+struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
                                             struct RenderInput *window, s32 x,
                                             s32 y);
 
-STATIC_ASSERT(offsetof(struct RenderOutput, animStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct WindowSprite, animStep) == 0x0c);
 
-STATIC_ASSERT(offsetof(struct RenderOutput, sentinel) == 0x0f);
-STATIC_ASSERT(offsetof(struct RenderOutput, oam) == 0x14);
-STATIC_ASSERT(sizeof(struct RenderOutput) == 0x1c);
+STATIC_ASSERT(offsetof(struct WindowSprite, sentinel) == 0x0f);
+STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 0x14);
+STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
 
 #endif

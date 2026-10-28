@@ -8,7 +8,7 @@
 
 #include "call.h"
 s32 ObjectTable_ReadActiveValue();
-s32 UiWork_FinalizeEntityMatchingLocalizedId();
+s32 Window_CloseMatchingId();
 
 void Func_02000e04(s32 a0, s32 a1) {
   s32 t0;
@@ -16,6 +16,6 @@ void Func_02000e04(s32 a0, s32 a1) {
 
   t0 = ObjectTable_ReadActiveValue();
   t1 = Value1(ObjectTable_ReadActiveValue, a1);
-  Call1(UiWork_FinalizeEntityMatchingLocalizedId, t0);
-  Call1(UiWork_FinalizeEntityMatchingLocalizedId, t1);
+  Call1(Window_CloseMatchingId, t0);
+  Call1(Window_CloseMatchingId, t1);
 }

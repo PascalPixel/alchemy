@@ -18,7 +18,7 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   u32 size;
 
   /* FAKEMATCH: the wrapper keeps the size load after the parameter copies, as
-   * in UiText_LookupMessage. */
+   * in Message_Find. */
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);

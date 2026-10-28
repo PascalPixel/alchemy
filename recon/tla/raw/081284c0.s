@@ -22,9 +22,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_081284f4
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_08128790
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_081284f4:
 	mov r2, sp
@@ -88,24 +88,24 @@ Func_081284c0:
 .L_0812856a:
 	movs r0, #89
 	bl Sound_PlayFar
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	movs r3, #42
 	adds r3, #255
 	add r3, r10
 	ldrb r0, [r3]
 	movs r1, #3
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r2, [sp, #0]
 	ldr r3, [sp, #16]
 	movs r1, #1
 	ldrh r0, [r2, r3]
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r2, r10
 	ldrb r0, [r2, #15]
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_08128794
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 	movs r3, #252
 	lsls r3, r3, #6
@@ -143,25 +143,25 @@ Func_081284c0:
 .L_081285e0:
 	cmp r1, #32
 	bne .L_0812861a
-	bl UiWork_ClearValueNameTablesFar
+	bl MessageArgument_ClearAllFar
 	movs r3, #42
 	adds r3, #255
 	add r3, r10
 	ldrb r0, [r3]
 	movs r1, #3
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r1, #1
 	ldr r0, [sp, #4]
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r3, r9
 	ands r5, r3
 	movs r1, #4
 	adds r0, r5, #0
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r0, #154
 	bl Sound_PlayFar
 	ldr r0, .L_08128798
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_0812861a:
 	subs r7, #1
@@ -173,9 +173,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_0812863a
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_0812879c
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_0812863a:
 	mov r3, r8
@@ -184,9 +184,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_08128654
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287a0
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_08128654:
 	mov r3, r8
@@ -195,9 +195,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_0812866e
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287a4
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_0812866e:
 	mov r3, r8
@@ -206,9 +206,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_08128688
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287a8
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_08128688:
 	mov r3, r8
@@ -217,9 +217,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_081286a2
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287ac
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_081286a2:
 	mov r3, r8
@@ -228,9 +228,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_081286bc
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287b0
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_081286bc:
 	movs r2, #166
@@ -265,9 +265,9 @@ Func_081284c0:
 	cmp r0, #0
 	beq .L_08128712
 	movs r1, #5
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287b8
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	ldr r3, [sp, #24]
 	ldr r0, [r3]
 	bl Party_AdjustCoinsFar
@@ -307,9 +307,9 @@ Func_081284c0:
 	adds r5, #12
 	ldrh r0, [r3, r5]
 	movs r1, #2
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_081287c0
-	bl UiText_ShowMessageAndWaitCoreFar
+	bl Message_ShowAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 	ldr r2, [sp, #24]
 	ldrh r0, [r2, r5]

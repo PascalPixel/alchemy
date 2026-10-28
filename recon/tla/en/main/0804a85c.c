@@ -121,24 +121,24 @@ struct TargetUnit *Unit_Get(s32 unit);
 s32 GameFlag_Test(s32 flag);
 void BattleMotion_ProjectConditionalPositionFar(s32 unit,
                                                 struct TargetPoint *point);
-struct TargetWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                      s32 flags);
 s32 Trig_Sin(s32 angle);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
 void BattlePres_SetActorModesFar(u16 *units, s32 mode);
-void UiWork_Finalize(void *window, s32 mode);
-void UiText_DrawStringAtOffset(const u8 *text, struct TargetWindow *window,
+void Window_Close(void *window, s32 mode);
+void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window,
                                s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 digits,
+void Text_DrawNumberInWindow(s32 value, s32 digits,
                                struct TargetWindow *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 message, struct TargetWindow *window,
+void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window,
                                   s32 x, s32 y);
 void Func_08041f70(s32 color);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 capacity);
-s32 UiText_GetWideStringWidth(u16 *text);
-void Ui_ClearVramBlock(void);
-void UiText_RenderWideStringAtOffset(u16 *text, struct TargetWindow *window,
+void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+s32 Text_GetWideStringWidth(u16 *text);
+void Vram_ClearWindowBlock(void);
+void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window,
                                      s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
@@ -281,7 +281,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 0x80;
   }
-  window = UiWindow_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
     s32 y;
@@ -372,48 +372,48 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                      &selectedPosition);
           if (conditionWindow != NULL)
-            UiWork_Finalize(conditionWindow, 1);
+            Window_Close(conditionWindow, 1);
           switch (kind) {
           case 7:
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 4, 4, 22), 8, 9, 3, 6);
             Func_08041f70(2);
-            UiText_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
             Func_08041f70(15);
             break;
           case 1:
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 6, 17), 8, 13, 3, 6);
-            UiText_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+            Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
                                       0);
-            UiText_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+            Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                       48, 0);
-            UiText_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case 2:
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 6, 17), 8, 13, 3, 6);
-            UiText_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
+            Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
                                       0);
-            UiText_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+            Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                       48, 0);
-            UiText_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case 5:
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset((s32)Msg_0d0b, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)Msg_0d0b, conditionWindow, 0, 0);
             break;
           case 3:
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0, 0);
             break;
           case 4: {
             s32 helpRow;
@@ -434,32 +434,32 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 9, 14), helpRow, 16,
                 count + 2, 6);
             count = 0;
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
                                            0);
               count = 1;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
                                            count * 8);
               count++;
             }
@@ -492,42 +492,42 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            conditionWindow = UiWindow_Create(
+            conditionWindow = Window_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 9, 14), helpRow, 16,
                 count + 2, 6);
             count = 0;
             if (unit->poison != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0,
                                            0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              UiText_DrawCharacterAtOffset((s32)Msg_0d0a, conditionWindow, 0,
+              Text_DrawCharacterAtOffset((s32)Msg_0d0a, conditionWindow, 0,
                                            count * 8);
               count++;
             }
@@ -536,7 +536,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           no_condition:
             Func_08041f70(2);
-            UiText_DrawCharacterAtOffset((s32)Msg_0d03, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)Msg_0d03, conditionWindow, 0, 0);
             Func_08041f70(15);
             break;
           }
@@ -552,7 +552,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           width = (s32)Msg_0c5a;
           if (target->enemyKind == 355)
             width++;
-          UiText_CopyMessageString(width, targetName, 14);
+          Message_CopyExpanded(width, targetName, 14);
         } else {
           for (i = 0; i <= 13; i++) {
             targetName[i] = n = target->name[i];
@@ -561,15 +561,15 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           targetName[i] = 0;
         }
-        width = UiText_GetWideStringWidth(targetName);
+        width = Text_GetWideStringWidth(targetName);
         namePosition.x -= width / 2;
         namePosition.x -= 8;
         if (namePosition.x + width > 224)
           namePosition.x = 224 - width;
         if (namePosition.x < 0)
           namePosition.x = 0;
-        Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(targetName, window, namePosition.x, 4);
+        Vram_ClearWindowBlock();
+        Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
       redraw &= ~1;
     }
@@ -676,8 +676,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   WaitFrames(1);
   Resource_ResetEntry(cursorSlot);
   if (conditionWindow != NULL)
-    UiWork_Finalize(conditionWindow, 1);
-  UiWork_Finalize(window, 1);
+    Window_Close(conditionWindow, 1);
+  Window_Close(window, 1);
   BattlePres_SetActorModesFar(candidateIds, 0);
   NAVIGATION->targetViewOffset = 0;
   WaitFrames(1);

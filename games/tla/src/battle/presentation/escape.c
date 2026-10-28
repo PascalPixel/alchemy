@@ -37,7 +37,7 @@ s32 BattleEscape_PlayRun(void *action) {
     WaitFrames(22);
     return 1;
   }
-  UiText_ShowMessageAndWaitCoreFar((s32)MsgCannotEscape);
+  Message_ShowAndWaitCoreFar((s32)MsgCannotEscape);
   return 0;
 }
 
@@ -55,8 +55,8 @@ s32 BattlePres_ShowDefendMessage(s16 *script) {
   if (unit->hp <= 0) {
     return result;
   }
-  UiWork_ClearValueNameTablesFar();
-  UiText_DrawQuantity(objectId, 1);
-  UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
+  MessageArgument_ClearAllFar();
+  MessageArgument_PushFar(objectId, 1);
+  Message_ShowAndWaitCoreFar((s32)MsgActorDefends);
   return 0;
 }

@@ -87,13 +87,13 @@ s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-void UiWork_InitializeWithResourceCountersFar(void);
-struct RenderInput *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
+void WindowSystem_InitFieldFar(void);
+struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 mode);
-void UiWork_FinalizeFar(struct RenderInput *window, s32 mode);
-void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void Window_CloseFar(struct RenderInput *window, s32 mode);
+void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                      s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 width,
+void Text_DrawNumberInWindowFar(s32 value, s32 width,
                                   struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
@@ -316,24 +316,24 @@ void Func_081b83c4(void) {
     die++;
   }
 
-  UiWork_InitializeWithResourceCountersFar();
-  window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+  WindowSystem_InitFieldFar();
+  window = Window_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+  Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                0);
-  window = UiWindow_CreateFar(18, 3, 12, 3, 6);
+  window = Window_CreateFar(18, 3, 12, 3, 6);
   sprites->betWindow = window;
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
-  window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
+  window = Window_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-  UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                   sprites->helpWindow, 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
   if ((u32)bet > (u32)gAdventure.coins)
     bet = gAdventure.coins;
-  UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+  Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
   Sound_PlayFar(1);
 
   frame = 0;
@@ -351,31 +351,31 @@ void Func_081b83c4(void) {
     if (state == 0) {
       if (frame > 17) {
         if ((u32)gAdventure.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
+          Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
         if (gInput.repeat & 2) {
           Sound_PlayFar(113);
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
+          Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
         if (gInput.repeat & 1) {
           Sound_PlayFar(302);
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
+          Window_CloseFar(sprites->helpWindow, 1);
           Sound_PlayFar(302);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gAdventure.coins)
             bet = gAdventure.coins;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+          Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           state = 2;
           timer = 0;
           slide = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
         }
       }
     } else if (state == 1) {
@@ -391,11 +391,11 @@ void Func_081b83c4(void) {
         if (round > 0) {
           Sound_PlayFar(114);
         } else {
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
-          window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+          Window_CloseFar(sprites->helpWindow, 1);
+          window = Window_CreateFar(22, 16, 8, 4, 6);
           sprites->helpWindow = window;
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                           sprites->helpWindow, 0, 8);
           Sound_PlayFar(113);
           state = 0;
@@ -403,14 +403,14 @@ void Func_081b83c4(void) {
       } else if (gInput.repeat & state) {
         Sound_PlayFar(112);
         timer = 1;
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Window_CloseFar(sprites->helpWindow, 1);
         if (round == 0) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gAdventure.coins)
             bet = gAdventure.coins;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+          Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, round);
         }
       } else {
@@ -438,8 +438,8 @@ void Func_081b83c4(void) {
           }
         }
         if (message != -1) {
-          UiText_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
+          Text_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
                                           sprites->helpWindow, 0, 8);
         }
       }
@@ -607,7 +607,7 @@ void Func_081b83c4(void) {
             bet *= multiplier;
           else
             bet <<= 1;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           multiplier <<= 1;
           if (round == 5) {
             target = 14;
@@ -618,9 +618,9 @@ void Func_081b83c4(void) {
             state = 5;
             paletteRequest = 5;
             cashOut = 0;
-            window = UiWindow_CreateFar(4, 16, 20, 4, 6);
+            window = Window_CreateFar(4, 16, 20, 4, 6);
             sprites->helpWindow = window;
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameDoubleUp, window,
+            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameDoubleUp, window,
                                             0, 0);
           }
           timer = 0;
@@ -629,14 +629,14 @@ void Func_081b83c4(void) {
           target = 14;
           round = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           multiplier = 0;
           Sound_PlayFar(1);
           state = 0;
-          window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+          window = Window_CreateFar(22, 16, 8, 4, 6);
           sprites->helpWindow = window;
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                           sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
@@ -656,46 +656,46 @@ void Func_081b83c4(void) {
         else
           digits = 5;
         window =
-            UiWindow_CreateFar(9 - ((u32)digits >> 1), 16, digits + 12, 3, 6);
+            Window_CreateFar(9 - ((u32)digits >> 1), 16, digits + 12, 3, 6);
         sprites->helpWindow = window;
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
                                         0);
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                         sprites->helpWindow, digits * 8 + 48,
                                         0);
-        UiText_DrawNumberInWindowFar(winnings, digits, sprites->helpWindow, 48,
+        Text_DrawNumberInWindowFar(winnings, digits, sprites->helpWindow, 48,
                                      0);
       }
       if (timer > 19) {
         if (gInput.repeat & 1) {
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
+          Window_CloseFar(sprites->helpWindow, 1);
           Sound_PlayFar(1);
           Sound_PlayFar(112);
           state = 0;
-          window = UiWindow_CreateFar(22, 16, 8, 4, 6);
+          window = Window_CreateFar(22, 16, 8, 4, 6);
           sprites->helpWindow = window;
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                           sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
           paletteRequest = 1;
           bet = Party_GetAverageLevelFar() * 10;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           if (winnings > 0) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
-            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Sound_PlayFar(105);
           Party_AdjustCoinsFar(1);
-          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
+          Text_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           bet--;
-          UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
         }
       }
     } else if (state == 5) {
@@ -705,23 +705,23 @@ void Func_081b83c4(void) {
         slide++;
       } else if (timer > 0) {
         if (++timer == 16) {
-          UiWork_FinalizeFar(sprites->helpWindow, 1);
+          Window_CloseFar(sprites->helpWindow, 1);
           if (cashOut == 0) {
             round++;
             state = 1;
             target = total;
-            window = UiWindow_CreateFar(4, 16, 21, 4, 6);
+            window = Window_CreateFar(4, 16, 21, 4, 6);
             sprites->helpWindow = window;
             if (total == 24) {
               lower = 1;
-              UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameLowerAgain,
+              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameLowerAgain,
                                               window, 0, 0);
             } else {
               lower = 0;
-              UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameHigherAgain,
+              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameHigherAgain,
                                               window, 0, 0);
             }
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
+            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
                                             sprites->helpWindow, 0, 8);
             slide = 0;
             paletteRequest = 1;

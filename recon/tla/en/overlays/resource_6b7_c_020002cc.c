@@ -24,15 +24,15 @@ extern const u8 gData_02000754[];
 extern const u8 gData_0200076c[];
 extern char MsgItemName[];
 
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawResource(s32 msg, void *window, s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(void *window);
-void RenderOutput_ClearList(void *window);
-void UiText_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x,
+void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRect(void *window);
+void WindowSprite_ClearList(void *window);
+void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
+void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x,
                                s32 y);
-void UiText_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
-void UiWork_Finalize(void *window, s32 mode);
+void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
+void Window_Close(void *window, s32 mode);
 void WaitFrames(s32 frames);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
@@ -61,11 +61,11 @@ void Func_020002cc(void) {
   Func_0200073c(112);
   item = 1;
   redraw = 1;
-  window = UiWindow_Create(0, 0, 30, 7, 2);
+  window = Window_Create(0, 0, 30, 7, 2);
 #if !EDITION_INTERNATIONAL
-  details = UiWindow_Create(0, 8, 13, 10, 2);
+  details = Window_Create(0, 8, 13, 10, 2);
 #else
-  details = UiWindow_Create(0, 9, 18, 10, 2);
+  details = Window_Create(0, 9, 18, 10, 2);
 #endif
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
           (volatile u32 *)0x040000d4);
@@ -76,20 +76,20 @@ void Func_020002cc(void) {
     if (redraw) {
       redraw = 0;
       item = (item + ITEM_COUNT) % count;
-      RenderOutput_RedrawSavedRect(window);
-      RenderOutput_ClearList(window);
-      UiText_DrawStringInWindow(gData_02000748, window, 0, 0);
-      UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
+      WindowSprite_RedrawSavedRect(window);
+      WindowSprite_ClearList(window);
+      Text_DrawStringInWindow(gData_02000748, window, 0, 0);
+      Text_DrawNumberAtOffset(item, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        UiText_DrawStringInWindow(gData_02000754, window, 0, 32);
+        Text_DrawStringInWindow(gData_02000754, window, 0, 32);
         index = item & 0x1ff;
         Func_020006bc(index);
-        UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
-        UiText_DrawResource(index + (s32)MsgItemPlainName, window, 0, 16);
-        RenderOutput_RedrawSavedRect(details);
+        Text_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
+        Text_DrawMessage(index + (s32)MsgItemPlainName, window, 0, 16);
+        WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, item);
       } else {
-        UiText_DrawStringInWindow(gData_0200076c, window, 0, 32);
+        Text_DrawStringInWindow(gData_0200076c, window, 0, 32);
       }
     }
     if (Input_PressedFenced(1)) {
@@ -160,8 +160,8 @@ void Func_020002cc(void) {
     step = 0;
     WaitFrames(1);
   }
-  RenderOutput_RedrawSavedRect(window);
+  WindowSprite_RedrawSavedRect(window);
   WaitFrames(1);
-  UiWork_Finalize(window, 1);
-  UiWork_Finalize(details, 1);
+  Window_Close(window, 1);
+  Window_Close(details, 1);
 }

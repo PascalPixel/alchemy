@@ -22,7 +22,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002ae8(const void *data, s32 a, s32 b);
 void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -102,7 +102,7 @@ static __inline__ void Walk(s32 id, s32 a, s32 b) {
 
 static __inline__ void OpenAt(s32 id, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(id, flags);
+  FieldMessage_ShowAtActor(id, flags);
 }
 
 static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
@@ -164,7 +164,7 @@ void Func_0200083c(s32 actor) {
   Func_02002c58(0);
   msg = (s32)&MsgWasIJust;
   Func_02002bd0(msg);
-  UiText_OpenMessageAtObject(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
     FieldEvent_WaitFrames(10);
     Func_02002bd0(msg + 1);
@@ -184,7 +184,7 @@ void Func_02000894(void) {
   if (GameFlag_Test(0x8ab)) {
     msg = (s32)&MsgHeyMisterAre;
     Func_02002bd0(msg);
-    UiText_OpenMessageAtObject(8, 0);
+    FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
@@ -198,7 +198,7 @@ void Func_02000894(void) {
       ObjectMotion_SetAngleToward(14, 4, 0);
     msg = (s32)&MsgDidYouCome;
     Func_02002bd0(msg);
-    UiText_OpenMessageAtObject(8, 0);
+    FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
@@ -221,7 +221,7 @@ void Func_02000968(void) {
   if (GameFlag_Test(0x8ab)) {
     msg = (s32)&MsgHeyMisterAre;
     Func_02002bd0(msg);
-    UiText_OpenMessageAtObject(8, 0);
+    FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
@@ -241,7 +241,7 @@ void Func_02000968(void) {
     }
     msg = (s32)&MsgDidYouCome;
     Func_02002bd0(msg);
-    UiText_OpenMessageAtObject(8, 0);
+    FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
       FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
@@ -266,7 +266,7 @@ void Func_02000a48(void) {
   flags = 0;
   /* FAKEMATCH: the native loads the flags before the actor id. */
   __asm__ volatile("" : "+r"(flags));
-  UiText_OpenMessageAtObject(11, flags);
+  FieldMessage_ShowAtActor(11, flags);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     GameFlag_SetBit(0x301);
     Func_02002be8(11, 0);

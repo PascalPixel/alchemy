@@ -3,19 +3,19 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-void UiWork_ResetCounters(s32 x);
-void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWork_WaitWindowDuration(void *work);
+void Text_ResetStyle(s32 x);
+void Window_DrawOpened(struct Window *window);
+void Window_WaitZoom(void *work);
 
 /// Opens the first free window at x, y with width and height; attrs bits 8,
 /// 32, 64, 128 and 0x100 become window flags, and bit 2 draws it at once
 /// instead of waiting for it to open.
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs) {
-  struct UiWindow *slot;
-  struct UiWindow *found;
+  struct Window *slot;
+  struct Window *found;
   s32 i;
 
   slot = UI_WORK->windows;
@@ -36,7 +36,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
     found->output.tailLink = &slot->output.head;
     found->unk10 = 1;
     found->flags = 1;
-    UiWork_ResetCounters(x);
+    Text_ResetStyle(x);
     if (attrs & 8) {
       found->flags |= 8;
     }
@@ -56,22 +56,22 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
       found->flags |= 2;
       found->frame = 0;
       found->duration = 1;
-      UiWork_DrawByAttributes(found);
+      Window_DrawOpened(found);
     } else {
       found->duration = 8;
       found->frame = 7;
-      UiWork_WaitWindowDuration(found);
+      Window_WaitZoom(found);
       WaitFrames(1);
     }
   }
   return found;
 }
 
-void UiWork_WaitWindowDuration(void *work) {
-  if (!(2 & ((struct UiWindow *)work)->flags) &&
-      (((struct UiWindow *)work)->duration != 0)) {
+void Window_WaitZoom(void *work) {
+  if (!(2 & ((struct Window *)work)->flags) &&
+      (((struct Window *)work)->duration != 0)) {
     do {
       WaitFrames(1);
-    } while (((struct UiWindow *)work)->duration != 0);
+    } while (((struct Window *)work)->duration != 0);
   }
 }

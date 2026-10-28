@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_RenderStringTiles
+	.global Text_DrawStringAsTiles
 	.thumb_func
-UiText_RenderStringTiles:
+Text_DrawStringAsTiles:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -395,7 +395,7 @@ UiText_RenderStringTiles:
 .L_080419d0:
 	.4byte IwramClearWords
 .L_080419d4:
-	.4byte gUiText_ColourPens
+	.4byte gText_ColourPens
 .L_080419d8:
 	.4byte IwramFillWords
 .L_080419dc:
@@ -405,7 +405,7 @@ UiText_RenderStringTiles:
 .L_080419e4:
 	.4byte .L_08041788
 .L_080419e8:
-	.4byte gUiText_GlyphWidths
+	.4byte gFont_GlyphWidths
 .L_080419ec:
 	.4byte 0x0ff00ff0
 .L_080419f0:

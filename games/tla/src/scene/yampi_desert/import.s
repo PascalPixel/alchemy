@@ -146,10 +146,10 @@ Map_DisableUpdateCallback:
 	.thumb_func
 Func_02004020:
 	overlay_veneer Func_080202f0
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_02004030
 	.thumb_func
 Func_02004030:

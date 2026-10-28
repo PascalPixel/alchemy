@@ -23,10 +23,10 @@ void Func_02001ab4(s32 skip);
 void Func_02001ad4(s32 song);
 s32 Func_02001adc(s32 song);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void RenderOutput_PrepareForRedraw(s32 window);
-void UiText_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void UiWork_Finalize(s32 window, s32 release);
+s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void WindowSprite_PrepareForRedraw(s32 window);
+void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
+void Window_Close(s32 window, s32 release);
 void WaitFrames(s32 frames);
 
 void Func_02000fbc(s32 actor) {
@@ -47,12 +47,12 @@ void Func_02000fbc(s32 actor) {
     all = 1;
   Func_02001ad4(78);
 open:
-  window = UiWindow_Create(12, 8, 6, 3, 2);
+  window = Window_Create(12, 8, 6, 3, 2);
   shown = -1;
 redraw:
   if (song != shown) {
-    RenderOutput_PrepareForRedraw(window);
-    UiText_DrawNumber(song, 3, window, 0, 0);
+    WindowSprite_PrepareForRedraw(window);
+    Text_DrawNumber(song, 3, window, 0, 0);
     shown = song;
   }
   step = 0;
@@ -82,7 +82,7 @@ keys:
   WaitFrames(1);
   goto redraw;
 chosen:
-  UiWork_Finalize(window, 1);
+  Window_Close(window, 1);
   if (song < 0)
     goto done;
   Func_02001ad4(gData_02001b02[song]);

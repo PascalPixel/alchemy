@@ -8,7 +8,7 @@
 // (refusing other kinds, undamaged items, cursed equipped items and a price
 // over the party's coins), then offers to equip it. ☀️'s Shop_RepairItem in
 // games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (Unit_Get,
-// Shop_GetItemPrice, UiText_DrawQuantity, the shop message and choice routines
+// Shop_GetItemPrice, MessageArgument_PushFar, the shop message and choice routines
 // Func_0810857c and Func_08108630, Inventory_RepairFar, Func_08109188 for the
 // coins) and numbered messages, their ☀️ names beside them. Instruction order
 // only, the same pattern as Shop_SellItem (0810a108): the work pointer's
@@ -38,10 +38,10 @@ extern u8 Msg04719[]; // MsgShopRepairConfirm, then its three replies
 struct BattleUnit *Unit_Get(s32 unitId);
 s32 Inventory_FindEquippedFar(s32 unitId, u8 kind);
 u32 Shop_GetItemPrice(s32 item);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 value);
-void UiWork_FinalizePendingCoreFar(void);
+void Message_CloseFinishedWindowsFar(void);
 void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Inventory_RepairFar(s32 unitId, s32 slot);
@@ -71,17 +71,17 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   price = Shop_GetItemPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
-    UiText_DrawQuantity(itemId, 2);
+    MessageArgument_PushFar(itemId, 2);
     Func_0810857c((s32)Msg04715);
     return;
   }
   if (!(unit->inventory[slot] & 0x400)) {
-    UiText_DrawQuantity(itemId, 2);
+    MessageArgument_PushFar(itemId, 2);
     Func_0810857c((s32)Msg04716);
     return;
   }
   if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
-    UiText_DrawQuantity(itemId, 2);
+    MessageArgument_PushFar(itemId, 2);
     Func_0810857c((s32)Msg04717);
     return;
   }
@@ -89,8 +89,8 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
     Func_0810857c((s32)Msg04718);
     return;
   }
-  UiText_DrawQuantity(itemId, 2);
-  UiText_DrawQuantity(price, 5);
+  MessageArgument_PushFar(itemId, 2);
+  MessageArgument_PushFar(price, 5);
   message = (s32)Msg04719;
   Func_0810857c(message);
   if (Func_08108630(0) != 0) {
@@ -100,9 +100,9 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   saved = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawItemCount(shop->itemWindow, unitId);
-  UiText_DrawQuantity(itemId, 2);
+  MessageArgument_PushFar(itemId, 2);
   Func_0810857c(message + 2);
-  UiWork_FinalizePendingCoreFar();
+  Message_CloseFinishedWindowsFar();
   WaitFrames(10);
   Sound_PlayFar(100);
   WaitFrames(110);
@@ -117,7 +117,7 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   Party_AdjustCoinsFar(-price);
   Func_08109188();
   Shop_DrawItemCount(shop->itemWindow, unitId);
-  UiText_DrawQuantity(itemId, 2);
+  MessageArgument_PushFar(itemId, 2);
   Func_0810857c(message + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

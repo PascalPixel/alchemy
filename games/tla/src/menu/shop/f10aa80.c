@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 
 struct ShopCursor {
-  struct RenderOutput *anchor;
+  struct WindowSprite *anchor;
   u16 x;
   u16 y;
   s16 targetX;
@@ -48,14 +48,14 @@ extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
 void Func_08108148(void);
 void *Object_GetByIdFar(s32 unitId);
 s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 void Func_08108aa8(struct ShopCursor *cursor, s32 targetX, s32 targetY);
 void Func_0810a9ac(s32 message);
 s32 Shop_CountUnits(void);
 void Func_0810abf0(void);
 s32 Menu_SelectSanctumServiceFar(s32 prev);
-void UiWork_FinalizeFar(s32 window, s32 style);
+void Window_CloseFar(s32 window, s32 style);
 void Func_0810824c(void);
 
 s32 Shop_ConfirmAct(s32 unitId) {
@@ -77,22 +77,22 @@ s32 Shop_ConfirmAct(s32 unitId) {
 
   listWindow = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
-    listWindow = UiWindow_CreateFar(-5, 0, 5, 5, 2);
+    listWindow = Window_CreateFar(-5, 0, 5, 5, 2);
     if (listWindow == 0) {
-      listWindow = UiWindow_CreateFar(0, 0, 5, 5, 2);
+      listWindow = Window_CreateFar(0, 0, 5, 5, 2);
       SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
     }
   }
 
-  cursorAnchor = (struct ShopCursorAnchor *)RenderOutput_CreateFar(
+  cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
       shop->cursorResource, 0x40000000, (struct RenderInput *)listWindow, 0, 0);
   cursorAnchor->kind = 1;
   cursorAnchor->unk00[4] = 0;
   Func_08108aa8(&shop->cursor, -32, 112);
-  shop->cursor.anchor = (struct RenderOutput *)cursorAnchor;
+  shop->cursor.anchor = (struct WindowSprite *)cursorAnchor;
   Func_0810a9ac((s32)MsgWelcomeWearyWanderers);
 
-  shop->moneyWindow = UiWindow_CreateFar(16, 11, SHOP_COIN_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow = Window_CreateFar(16, 11, SHOP_COIN_WINDOW_WIDTH, 4, 2);
   Func_08109188();
 
   for (;;) {
@@ -113,8 +113,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   }
 
   Func_0810a9ac((s32)MsgSanctumFarewell);
-  UiWork_FinalizeFar(shop->moneyWindow, 2);
-  UiWork_FinalizeFar(listWindow, 2);
+  Window_CloseFar(shop->moneyWindow, 2);
+  Window_CloseFar(listWindow, 2);
   Func_0810824c();
   return 0;
 }

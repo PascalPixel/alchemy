@@ -67,19 +67,19 @@ struct DjinnMenuWork {
 extern u8 gMenu_BackdropBorderTile[];
 extern char ResourceId_ShopGemTiles;
 
-s32 UiWindow_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
+s32 Window_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
                             s32 height, s32 frame);
 void WaitFrames(s32 frames);
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 void *Palette_GetBasicObjColors(void);
 void Graphics_AdjustPalettes(s32 bank);
 void Func_081019a4(void *list);
-void RenderOutput_ClearListFar(struct MenuWindow *window);
-struct MenuIcon *UiIcon_CreateWithResourceVariant(struct MenuWindow *window,
+void WindowSprite_ClearListFar(struct MenuWindow *window);
+struct MenuIcon *Icon_CreateWithResourceVariant(struct MenuWindow *window,
                                                   s32 x, s32 y);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 entry, s32 size, s32 resource);
-struct MenuIcon *RenderOutput_CreateFar(s32 entry, s32 attributes,
+struct MenuIcon *WindowSprite_CreateFar(s32 entry, s32 attributes,
                                         struct MenuWindow *window, s32 x,
                                         s32 y);
 
@@ -105,7 +105,7 @@ void Func_08101638(void) {
   s32 x;
   s32 y;
 
-  UiWindow_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   WaitFrames(1);
   CopyWords_(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   CopyWords_(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
@@ -124,18 +124,18 @@ void Func_08101638(void) {
   Func_081019a4(backdrop);
 
   window = menu->pageWindow;
-  RenderOutput_ClearListFar(window);
-  icon = UiIcon_CreateWithResourceVariant(window, -8, 11);
+  WindowSprite_ClearListFar(window);
+  icon = Icon_CreateWithResourceVariant(window, -8, 11);
   icon->active = 13;
   menu->cursor = icon;
   entry = Resource_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
-    icon = RenderOutput_CreateFar(entry, 0x40000000, window, 0, 0);
+    icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = 13;
     menu->arrows[0] = icon;
     icon->oam.affineIndex |= 8;
-    icon = RenderOutput_CreateFar(entry, 0x40000000, window, 0, 0);
+    icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = 13;
     menu->arrows[1] = icon;
   }

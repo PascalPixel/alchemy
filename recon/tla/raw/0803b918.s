@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiText_MeasureEntryDimensions
+	.global Text_MeasureEntry
 	.thumb_func
-UiText_MeasureEntryDimensions:
+Text_MeasureEntry:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -138,7 +138,7 @@ UiText_MeasureEntryDimensions:
 .L_0803ba48:
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl UiWork_ResetCounters
+	bl Text_ResetStyle
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]
 	b .L_0803ba90
@@ -212,7 +212,7 @@ UiText_MeasureEntryDimensions:
 .L_0803bad0:
 	.4byte .L_0803b9a4
 .L_0803bad4:
-	.4byte gUiText_Glyphs
+	.4byte gFont_Glyphs
 .L_0803bad8:
 	ldr r3, .L_0803bb08
 	strh r3, [r7, #6]
@@ -275,7 +275,7 @@ UiText_MeasureEntryDimensions:
 	cmp r6, r11
 	bls .L_0803bafa
 .L_0803bb44:
-	bl UiWork_ResetCounters
+	bl Text_ResetStyle
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3

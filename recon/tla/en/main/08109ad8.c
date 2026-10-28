@@ -35,7 +35,7 @@ struct ShopRuntime {
   void *listWindow;
 };
 
-void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_08109188(void);
 void Func_080f8060(void *window, s32 a, s32 b);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
@@ -45,14 +45,14 @@ void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
 void Sound_PlayFar(s32 cue);
-void RenderOutput_PrepareForRedrawFar(void *window);
+void WindowSprite_PrepareForRedrawFar(void *window);
 void Func_08109cac(s32 unitId);
 void Func_0810a2d0(s32 unitId);
 s32 Func_0810b6c4(s32 unitId);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 void Func_0810bea8(s32 active);
 void Menu_ReleaseEntryObjectsFar(void);
-void UiWork_FinalizeFar(void *window, s32 style);
+void Window_CloseFar(void *window, s32 style);
 
 s32 Func_08109ad8(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -62,10 +62,10 @@ s32 Func_08109ad8(void) {
   void *listWindow;
   s32 redraw;
 
-  shop->moneyWindow = UiWindow_CreateFar(0, 9, 12, 4, result);
+  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, result);
   Func_08109188();
-  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, result);
-  listWindow = UiWindow_CreateFar(0, 14, 13, 3, result);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, result);
+  listWindow = Window_CreateFar(0, 14, 13, 3, result);
   shop->listWindow = listWindow;
   shop->cursorAnchor->active = 4;
   shop->mode = 12;
@@ -93,7 +93,7 @@ s32 Func_08109ad8(void) {
         Sound_PlayFar(113);
         continue;
       }
-      RenderOutput_PrepareForRedrawFar(listWindow);
+      WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(112);
       if (shop->partyAction == 1) {
         Func_08109cac(unitId);
@@ -118,9 +118,9 @@ s32 Func_08109ad8(void) {
   }
   Func_0810bea8(0);
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(listWindow, 2);
-  UiWork_FinalizeFar(shop->itemWindow, 2);
-  UiWork_FinalizeFar(shop->moneyWindow, 2);
+  Window_CloseFar(listWindow, 2);
+  Window_CloseFar(shop->itemWindow, 2);
+  Window_CloseFar(shop->moneyWindow, 2);
   WaitFrames(1);
   return result;
 }

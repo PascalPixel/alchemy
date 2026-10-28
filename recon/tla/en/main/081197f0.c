@@ -87,7 +87,7 @@ s32 GameFlag_GetByte(s32 flag);
 void Render_ResetTransformState(void);
 s32 Event_GetSpecialValueFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
-void UiWork_InitializeFar(s32 mode);
+void WindowSystem_InitBattleFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
 void WaitFrames(s32 frames);
@@ -103,7 +103,7 @@ void Func_08118eb0(void);
 void Func_08118f6c(void);
 u16 *Djinn_GetRecoveryTableFar(s32 owner);
 void Func_081185c4(void);
-void UiWindow_CreateWithLayoutBoundsFar(s32 layout);
+void PartyStatus_CreateWindowFar(s32 layout);
 void Camera_InitializeDefaultTransform(void);
 void BattleObject_Put(void);
 void Func_081263c4(void);
@@ -136,15 +136,15 @@ void Func_08124cc0(void);
 void Func_08124e20(void);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 Tutorial_GetDjinnGiveMessage(void);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
-s32 UiWork_IsCompleteFar(void);
-void UiWork_FinalizeFar(s32 window, s32 mode);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
+s32 Message_AllTypedFar(void);
+void Window_CloseFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
 void BattlePres_ClearLinkPayload(void);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-void UiWork_ClearValueNameTablesFar(void);
-void UiText_DrawQuantity(s32 slot, s32 kind);
-void UiText_ShowMessageAndWaitCoreFar(s32 message);
+void MessageArgument_ClearAllFar(void);
+void MessageArgument_PushFar(s32 slot, s32 kind);
+void Message_ShowAndWaitCoreFar(s32 message);
 void BattlePresentation_WaitForAdvance(void);
 void Func_081284c0(void);
 void Fade_ToBlack(s32 vblanks);
@@ -201,9 +201,9 @@ s32 Func_081197f0(s32 enemyGroup) {
   Runtime_AllocateBlock(12, 0x600);
   ObjectSystem_InitializeFar(4);
   if (GameFlag_Test(0x16e) != 0)
-    UiWork_InitializeFar(1);
+    WindowSystem_InitBattleFar(1);
   else
-    UiWork_InitializeFar(0);
+    WindowSystem_InitBattleFar(0);
 
   BattleCamera_Create();
   enemyCount = Func_08127cd4(battle->enemyGroup);
@@ -255,7 +255,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     battle->partyStatus = 1;
   if (enemyGroup == 75 || enemyGroup == 76)
     Func_081185c4();
-  UiWindow_CreateWithLayoutBoundsFar(9);
+  PartyStatus_CreateWindowFar(9);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
   Func_081263c4();
@@ -385,16 +385,16 @@ s32 Func_081197f0(s32 enemyGroup) {
     if (GameFlag_Test(0x16e) == 0)
       continue;
 
-    window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
+    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
                                          0, 4, 1);
-    while (UiWork_IsCompleteFar() == 0)
+    while (Message_AllTypedFar() == 0)
       WaitFrames(1);
-    UiWork_FinalizeFar(window, 1);
+    Window_CloseFar(window, 1);
     WaitFrames(1);
-    window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
+    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
                                          10, 4, 1);
     Func_08120060(44, 24);
-    UiWork_FinalizeFar(window, 1);
+    Window_CloseFar(window, 1);
     WaitFrames(1);
   }
 
@@ -411,9 +411,9 @@ won_scripted:
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                            26);
-          UiWork_ClearValueNameTablesFar();
-          UiText_DrawQuantity(128, 1);
-          UiText_ShowMessageAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
+          MessageArgument_ClearAllFar();
+          MessageArgument_PushFar(128, 1);
+          Message_ShowAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
           BattlePresentation_WaitForAdvance();
         }
       }
@@ -442,11 +442,11 @@ party_lost:
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
       Sound_PlayFar(59);
-      UiWork_ClearValueNameTablesFar();
+      MessageArgument_ClearAllFar();
       if (BattleParty_PrepareActiveOwners(0) == 1)
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDownInDefeat);
+        Message_ShowAndWaitCoreFar((s32)MsgGoesDownInDefeat);
       else
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyDefeated);
+        Message_ShowAndWaitCoreFar((s32)MsgPartyDefeated);
       BattlePresentation_WaitForAdvance();
     }
     Sound_PlayFar(78);

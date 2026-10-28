@@ -13,11 +13,10 @@ extern u8 MsgErasing;
 extern u8 MsgCopying;
 extern u8 MsgDoNotTurnThePower;
 
-extern const u8 gUi_ProgressBarTiles[];
+extern const u8 gWindow_ProgressBarTiles[];
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 style);
-void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Text_DrawMessage(s32 resource, struct Window *window, s32 x, s32 y);
 void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
 void Sound_PlayFar(s32 cue);
 void Func_080c8698(void);
@@ -34,29 +33,29 @@ void Func_080c8698(void);
 #endif
 
 /// Opens the progress screen: 0 saves, 1 erases, 2 copies.
-struct UiWindow *SaveProgress_Open(u32 kind) {
-  struct UiWindow *window;
+struct Window *SaveProgress_Open(u32 kind) {
+  struct Window *window;
   void *tiles;
   s32 message;
 
-  window = UiWindow_Create(0, 0, 30, 20, 0);
+  window = Window_Create(0, 0, 30, 20, 0);
   tiles = Runtime_BumpAllocateAlternatePool(0x100);
-  Resource_DecodeType01(gUi_ProgressBarTiles, tiles);
+  Resource_DecodeType01(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)0x06001000, 0x84000040, REG_DMA3);
   switch (kind) {
   case 0:
-    UiText_DrawResource((s32)&MsgSaving, window, SAVING_X, 40);
+    Text_DrawMessage((s32)&MsgSaving, window, SAVING_X, 40);
     break;
   case 1:
-    UiText_DrawResource((s32)&MsgErasing, window, ERASING_X, 40);
+    Text_DrawMessage((s32)&MsgErasing, window, ERASING_X, 40);
     break;
   case 2:
-    UiText_DrawResource((s32)&MsgCopying, window, COPYING_X, 40);
+    Text_DrawMessage((s32)&MsgCopying, window, COPYING_X, 40);
     break;
   }
   message = (s32)&MsgDoNotTurnThePower;
-  UiText_DrawResource(message, window, 40, 88);
-  UiText_DrawResource(message + 1, window, 40, 104);
+  Text_DrawMessage(message, window, 40, 88);
+  Text_DrawMessage(message + 1, window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
   Sound_PlayFar(298);
   WaitFrames(10);
@@ -65,10 +64,10 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
 }
 
 /// Closes the progress screen.
-struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
+struct Window *SaveProgress_Close(struct Window *window) {
   WaitFrames(10);
   Func_080c8698();
   Sound_SetBgmVolumeTargetFar(0x100, 30);
-  UiWork_Finalize(window, 0);
+  Window_Close(window, 0);
   return window;
 }

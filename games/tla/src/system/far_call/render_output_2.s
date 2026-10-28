@@ -4,27 +4,27 @@
 	.global Func_08038248
 	.thumb_func
 Func_08038248:
-	overlay_veneer Ui_PrepareTransferForItem
-	.global UiText_RenderWideStringAtOffsetFar
+	overlay_veneer Icon_DrawItem
+	.global Text_DrawWideStringAtOffsetFar
 	.thumb_func
-UiText_RenderWideStringAtOffsetFar:
-	overlay_veneer UiText_RenderWideStringAtOffset
-	.global UiWindow_FillFromSceneFar
+Text_DrawWideStringAtOffsetFar:
+	overlay_veneer Text_DrawWideStringAtOffset
+	.global Window_FillFromSceneFar
 	.thumb_func
-UiWindow_FillFromSceneFar:
-	overlay_veneer UiWindow_FillFromScene
-	.global RenderOutput_RedrawSavedRectFar
+Window_FillFromSceneFar:
+	overlay_veneer Window_FillFromScene
+	.global WindowSprite_RedrawSavedRectFar
 	.thumb_func
-RenderOutput_RedrawSavedRectFar:
-	overlay_veneer RenderOutput_RedrawSavedRect
-	.global RenderOutput_ClearListFar
+WindowSprite_RedrawSavedRectFar:
+	overlay_veneer WindowSprite_RedrawSavedRect
+	.global WindowSprite_ClearListFar
 	.thumb_func
-RenderOutput_ClearListFar:
-	overlay_veneer RenderOutput_ClearList
-	.global UiWindow_SetTilemapEntryFar
+WindowSprite_ClearListFar:
+	overlay_veneer WindowSprite_ClearList
+	.global Window_SetTilemapEntryFar
 	.thumb_func
-UiWindow_SetTilemapEntryFar:
-	overlay_veneer UiWindow_SetTilemapEntry
+Window_SetTilemapEntryFar:
+	overlay_veneer Window_SetTilemapEntry
 	.global Menu_RunSelectionFar
 	.thumb_func
 Menu_RunSelectionFar:

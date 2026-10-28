@@ -1,17 +1,17 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiText_DrawNumberAtOffsetFar
+	.global Text_DrawNumberAtOffsetFar
 	.thumb_func
-UiText_DrawNumberAtOffsetFar:
-	overlay_veneer UiText_DrawNumberAtOffset
-	.global UiText_DrawNumberInWindowFar
+Text_DrawNumberAtOffsetFar:
+	overlay_veneer Text_DrawNumberAtOffset
+	.global Text_DrawNumberInWindowFar
 	.thumb_func
-UiText_DrawNumberInWindowFar:
-	overlay_veneer UiText_DrawNumberInWindow
-	.global UiWork_SetParamNibbleFar
+Text_DrawNumberInWindowFar:
+	overlay_veneer Text_DrawNumberInWindow
+	.global Text_SetColorFar
 	.thumb_func
-UiWork_SetParamNibbleFar:
+Text_SetColorFar:
 	overlay_veneer Func_08041f70
 	.global Func_080380c0
 	.thumb_func

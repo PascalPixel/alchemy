@@ -32,7 +32,7 @@ s32 Func_081a6154(s32 step);
 s32 Func_081a6638(void);
 s32 Func_081a6724(void);
 void Func_081a6ea0(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 
 /// Runs the intro's pictures in turn (Func_081a6154's steps
 /// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
@@ -72,7 +72,7 @@ s32 Func_081a71c8(void) {
   for (result = 0; result < 4; result++)
     gBgScroll[result].x = gBgScroll[result].y = 0;
   REG_DISPCNT = 0;
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   PaletteFade_Initialize();
   gCpuLoadDisplayEnabled = cpuLoad;
@@ -199,7 +199,7 @@ column:
     gBgScroll[i].x = gBgScroll[i].y = 0;
   Dma_Set(gBgScroll, (void *)0x04000010, (DMA_ENABLE | DMA_32BIT) << 16 | 4,
           REG_DMA3);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   Func_08014b70();
   if (prompt != 0) {
     u8 *buffer = Runtime_AllocateBlock(56, 0x400);

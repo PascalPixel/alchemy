@@ -24,26 +24,26 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
   return fill(dst, size, value);
 }
 
-void UiWork_InitializeWithResourceCounters(void) {
-  struct UiRenderWork *work;
+void WindowSystem_InitField(void) {
+  struct WindowWork *work;
 
-  work = (struct UiRenderWork *)Runtime_AllocateBlock(
-      60, sizeof(struct UiRenderWork));
-  Iwram_ClearWords(work, sizeof(struct UiRenderWork));
+  work = (struct WindowWork *)Runtime_AllocateBlock(
+      60, sizeof(struct WindowWork));
+  Iwram_ClearWords(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
   work->level = 15;
   FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
-  UiWork_InitializeFreeList();
-  UiWork_ClearPortraitSlots();
-  Task_Add((s32)UiWork_UploadDirtyBlocks, TASK_PASS_FRAME);
-  UiWork_InitializeCountersWithResourceAndScheduleRefresh();
+  WindowSprite_InitializeFreeList();
+  Portrait_ClearSlots();
+  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
+  WindowSystem_StartFieldUpdate();
 }
 
-void UiWork_Initialize(s32 kind) {
-  struct UiRenderWork *work;
+void WindowSystem_InitBattle(s32 kind) {
+  struct WindowWork *work;
   s32 i;
-  s32 UiWork_CopyTileTail(u32 src, u32 dst) {
+  s32 WindowSystem_CopyTileLowerRows(u32 src, u32 dst) {
     src &= 0x3ff;
     dst &= 0x3ff;
     Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
@@ -51,20 +51,20 @@ void UiWork_Initialize(s32 kind) {
     return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
   }
 
-  work = (struct UiRenderWork *)Runtime_AllocateBlock(
-      60, sizeof(struct UiRenderWork));
-  Iwram_ClearWords(work, sizeof(struct UiRenderWork));
+  work = (struct WindowWork *)Runtime_AllocateBlock(
+      60, sizeof(struct WindowWork));
+  Iwram_ClearWords(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
   work->menuState = 1;
   work->level = 15;
   Iwram_FillWords(work->tilemap, sizeof(work->tilemap), 0xf000f000);
-  UiWork_InitializeFreeList();
-  Task_Add((s32)UiWork_UploadDirtyBlocks, TASK_PASS_FRAME);
-  UiWork_InitializeCountersAndScheduleRefresh(kind);
-  UiWork_CopyTileTail(0xf013, 128);
-  UiWork_CopyTileTail(0xf014, 129);
-  UiWork_CopyTileTail(0xf015, 130);
+  WindowSprite_InitializeFreeList();
+  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
+  WindowSystem_StartBattleUpdate(kind);
+  WindowSystem_CopyTileLowerRows(0xf013, 128);
+  WindowSystem_CopyTileLowerRows(0xf014, 129);
+  WindowSystem_CopyTileLowerRows(0xf015, 130);
   {
     u8 mode = 4;
 

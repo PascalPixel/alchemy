@@ -22,7 +22,7 @@ struct MenuIcon {
   u8 active;
 };
 
-struct UiRenderWork {
+struct WindowWork {
   u8 unk00[3];
   u8 menuBusy;
 };
@@ -48,20 +48,20 @@ struct DjinnMenuWork {
 extern u8 Msg01046[], Msg01047[], MsgDjinnName[];
 
 void Sound_PlayFar(s32 cue);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
-void UiText_DrawResourceFar(u8 *message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawMessageFar(u8 *message, s32 window, s32 x, s32 y);
 void MenuIcon_SetActive(s32 active);
 void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
-void UiWindow_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
+void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
                             s32 style);
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
                                  s32 palette);
 void Link_DrawShiftedTilePairFar(void *tiles);
 void Input_ResetKeyRepeat(void);
-void RenderOutput_ClearListFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 
 void Func_080fe638(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
@@ -78,9 +78,9 @@ void Func_080fe638(void) {
   pages = 2;
   Sound_PlayFar(112);
   redraw = 1;
-  RenderOutput_RedrawSavedRectFar(menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar(Msg01046, menu->messageWindow, 0, 16);
-  UiText_DrawResourceFar(Msg01047, menu->messageWindow, -96, 132);
+  WindowSprite_RedrawSavedRectFar(menu->messageWindow);
+  Text_DrawCharacterAtOffsetFar(Msg01046, menu->messageWindow, 0, 16);
+  Text_DrawMessageFar(Msg01047, menu->messageWindow, -96, 132);
   menu->arrows[0]->active = 13;
   menu->arrows[1]->active = 13;
   MenuIcon_SetActive(0);
@@ -95,22 +95,22 @@ void Func_080fe638(void) {
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
       window = menu->listWindow;
-      RenderOutput_RedrawSavedRectFar(window);
+      WindowSprite_RedrawSavedRectFar(window);
       WaitFrames(1);
-      UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
+      Window_DrawDividerLineFar(window, 0, 11, 28, 11);
       Menu_DrawPageIndicator(window, pages, 1, page, 28);
       for (element = 0; element < 4; element++) {
         for (row = 0; row <= 8; row++) {
           djinn = element * 20 + (row + (page * 8 + page) + 7) % 18;
           if (GameFlag_Test(djinn + 48)) {
-            UiWindow_SetTilemapEntryFar(window, element + 0x1001,
+            Window_SetTilemapEntryFar(window, element + 0x1001,
                                         element * 7 + 1, row + 1, 0);
-            UiText_DrawCharacterAtOffsetFar(djinn + MsgDjinnName, window,
+            Text_DrawCharacterAtOffsetFar(djinn + MsgDjinnName, window,
                                             element * 56 + 16, row * 8 + 8);
           }
         }
       }
-      ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+      ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
       redraw = 0;
     }
     Link_DrawShiftedTilePairFar((void *)0x06002500);
@@ -128,8 +128,8 @@ void Func_080fe638(void) {
       redraw = 1;
     }
   }
-  RenderOutput_RedrawSavedRectFar(menu->listWindow);
-  RenderOutput_ClearListFar(menu->messageWindow);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->messageWindow);
   for (i = 0; i < 4; i++) {
     menu->rowX[i] = 130 + i * 32;
     menu->rowY[i] = 128;

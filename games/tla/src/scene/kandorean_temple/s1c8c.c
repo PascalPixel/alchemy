@@ -35,14 +35,14 @@ void Func_02001cc4(void) {
 void Func_02001d00(void) {
   Func_020051c0();
   Func_02005370(0);
-  UiText_ShowPositionedMessageAndWait((s32)&MsgKandoreanTemple10, 1);
+  FieldMessage_Show((s32)&MsgKandoreanTemple10, 1);
   Func_020051c8();
 }
 
 void Func_02001d20(void) {
   Func_020051c0();
   Func_02005370(0);
-  UiText_ShowPositionedMessageAndWait((s32)&MsgKandoreanTemple01, 1);
+  FieldMessage_Show((s32)&MsgKandoreanTemple01, 1);
   Func_020051c8();
 }
 

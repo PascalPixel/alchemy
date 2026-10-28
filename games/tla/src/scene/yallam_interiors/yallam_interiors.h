@@ -123,7 +123,7 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -178,7 +178,7 @@ static inline void YallamInteriors_MessagePut(s32 speaker, s32 flags) {
 
 static inline void YallamInteriors_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  UiText_OpenMessageAtObject(speaker, flags);
+  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 s32 Func_02000a58(void);

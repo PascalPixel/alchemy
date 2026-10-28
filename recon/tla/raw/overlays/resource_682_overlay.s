@@ -35,7 +35,7 @@ Func_02000d4c:
 	asrs r0, r0, #16
 	mov r1, r8
 	mov r2, r10
-	bl UiText_OpenMessageWindow
+	bl Message_OpenWindow
 	adds r0, r6, #0
 	ldr r3, [sp, #28]
 	movs r1, #0
@@ -49,7 +49,7 @@ Func_02000d4c:
 	ldr r0, [sp, #52]
 	bl WaitFrames
 .L_02008dae:
-	bl UiWork_IsComplete
+	bl Message_AllTyped
 	cmp r0, #0
 	beq .L_02008da8
 .L_02008db6:
@@ -67,7 +67,7 @@ Func_02000d4c:
 	ldr r1, [sp, #36]
 	ldr r2, [sp, #40]
 	asrs r0, r0, #16
-	bl UiText_OpenMessageWindow
+	bl Message_OpenWindow
 	adds r0, r5, #0
 	movs r1, #0
 	ldr r2, [sp, #44]
@@ -78,7 +78,7 @@ Func_02000d4c:
 	movs r0, #1
 	bl WaitFrames
 .L_02008dec:
-	bl UiWork_IsComplete
+	bl Message_AllTyped
 	cmp r0, #0
 	beq .L_02008de6
 	movs r0, #1

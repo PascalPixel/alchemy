@@ -14,9 +14,9 @@ extern char MsgPsynergyMenuEmpty[];
 void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(void *owner, u16 *out, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void WindowSprite_RedrawSavedRectFar(s32 window);
 void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 count);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 /// Collects the owner's Psynergy and redraws the list, saying when it is
 /// empty.
@@ -29,11 +29,11 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   owner = Unit_Get(ownerId);
   psynergies = menu->psynergies;
   menu->psynergyCount = Func_080fd6f0(owner, psynergies, 2);
-  RenderOutput_RedrawSavedRectFar(menu->psynergyWindow);
+  WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
   PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyMenuEmpty,
+    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyMenuEmpty,
                                     menu->psynergyWindow, 0, 0x18);
   }
 }

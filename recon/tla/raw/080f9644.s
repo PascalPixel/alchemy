@@ -68,10 +68,10 @@ Func_080f9644:
 	bl ItemMenu_DrawMessage
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl UiText_DrawWorkValueWithLabel
+	bl Text_DrawWorkValueWithLabel
 	movs r0, #0
 	bl ItemMenu_SelectMember
 	movs r3, #1
@@ -87,7 +87,7 @@ Func_080f9644:
 .L_080f9708:
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	bl ItemMenu_HideAllIcons
 	bl .L_080fa276
 .L_080f9718:
@@ -211,7 +211,7 @@ Func_080f9644:
 	bl ItemMenu_Use
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #94
@@ -307,13 +307,13 @@ Func_080f9644:
 	bl ItemMenu_SetMessageWindowHeight5
 	bl ItemMenu_SetItemWindowRow5
 	ldr r0, [r5]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	bl Func_080fc12c
 	ldr r1, [r5]
 	ldr r0, .L_080f9a10
 	movs r2, #16
 	movs r3, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #0
 	bl Func_080fa870
 	movs r5, #1
@@ -350,7 +350,7 @@ Func_080f9644:
 	beq .L_080f9968
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #94
@@ -402,13 +402,13 @@ Func_080f9644:
 	bl ItemMenu_SetMessageWindowHeight5
 	bl ItemMenu_SetItemWindowRow5
 	ldr r0, [r5]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	bl Func_080fc12c
 	ldr r1, [r5]
 	movs r3, #16
 	ldr r0, .L_080f9a14
 	movs r2, #16
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	movs r0, #1
 	bl Func_080fa870
 	movs r1, #1
@@ -521,7 +521,7 @@ Func_080f9644:
 	ldr r2, [r5]
 	strh r3, [r2, #8]
 	ldr r0, [r5]
-	bl UiIcon_PrepareObject
+	bl Icon_PrepareActor
 	mov r3, r9
 	ldr r0, [r3, #56]
 	movs r3, #96
@@ -529,11 +529,11 @@ Func_080f9644:
 	movs r1, #0
 	movs r2, #72
 	movs r3, #120
-	bl UiWindow_ClearInteriorTilesFar
+	bl Window_ClearInteriorTilesFar
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldr r0, [sp, #20]
 	bl Func_080fc1ac
 	cmp r0, #0
@@ -594,7 +594,7 @@ Func_080f9644:
 	bl WaitFrames
 	mov r2, r9
 	ldr r0, [r2, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r2, #13
 	ldr r0, .L_080f9e58
 	movs r1, #15
@@ -827,7 +827,7 @@ Func_080f9644:
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	bl Func_080fc12c
 	movs r0, #0
 	bl Func_080fc2e0
@@ -854,13 +854,13 @@ Func_080f9644:
 	bne .L_080f9d6e
 	mov r2, r9
 	ldr r0, [r2, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, .L_080f9e5c
 	b .L_080f9d7c
 .L_080f9d6e:
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	cmp r6, #1
 	bne .L_080f9d86
 	ldr r0, .L_080f9e60
@@ -899,7 +899,7 @@ Func_080f9644:
 	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	adds r0, r5, #7
 	movs r1, #14
 	movs r2, #14
@@ -1154,7 +1154,7 @@ Func_080f9644:
 	.2byte 0xf800
 	mov r2, r9
 	ldr r0, [r2, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r0, .L_080fa2bc
 	movs r1, #15
 	b .L_080fa088
@@ -1179,7 +1179,7 @@ Func_080f9644:
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	ldrb r3, [r7]
 	strb r3, [r5]
 	movs r5, #182
@@ -1202,7 +1202,7 @@ Func_080f9644:
 	bne .L_080fa09a
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	bl ItemMenu_SetItemWindowRow5
 	ldrb r0, [r7]
 	movs r1, #1
@@ -1233,7 +1233,7 @@ Func_080f9644:
 	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	adds r0, r6, #7
 	movs r1, #14
 .L_080fa088:
@@ -1282,7 +1282,7 @@ Func_080f9644:
 	bne .L_080fa0f8
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r1, #0
 	ldr r0, .L_080fa2c8
 	adds r2, r5, #0
@@ -1324,7 +1324,7 @@ Func_080f9644:
 	bl Func_080fae8c
 	mov r3, r9
 	ldr r0, [r3, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	ldr r5, .L_080fa2c0
 	movs r2, #8
 	adds r0, r5, #0
@@ -1346,7 +1346,7 @@ Func_080f9644:
 	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	adds r0, r5, #7
 	movs r1, #14
 	movs r2, #8
@@ -1414,7 +1414,7 @@ Func_080f9644:
 	strb r3, [r5]
 	mov r1, r9
 	ldr r0, [r1, #48]
-	bl RenderOutput_ClearListFar
+	bl WindowSprite_ClearListFar
 	movs r2, #8
 	ldr r0, .L_080fa2cc
 	movs r1, #14
@@ -1433,7 +1433,7 @@ Func_080f9644:
 	bl Func_080fb780
 	mov r1, r9
 	ldr r0, [r1, #40]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22

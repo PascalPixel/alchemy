@@ -55,8 +55,8 @@ extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[];
 void *Unit_Get(s32 owner);
 void Palette_LightenHighlight(s32 paletteNumber);
 s32 GameFlag_Test(s32 flag);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 void PsynergyMenu_CallIconRoutineWithValue(struct CharacterMenuState *menu,
                                            s32 ownerId);
@@ -99,13 +99,13 @@ s32 Func_080fe894(void) {
           DMA_ENABLE << 16 | 1, REG_DMA3);
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
-      RenderOutput_RedrawSavedRectFar(menu->selectorWindow);
-      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp, menu->selectorWindow, 0,
+      WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
+      Text_DrawCharacterAtOffsetFar(MsgRearrangeHelp, menu->selectorWindow, 0,
                                       0);
       if (GameFlag_Test(55))
-        UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp, menu->selectorWindow,
+        Text_DrawCharacterAtOffsetFar(MsgDjinnListHelp, menu->selectorWindow,
                                         0, 16);
-      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3,
+      Text_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3,
                                       menu->selectorWindow, 0, 8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
       Unit_Get(menu->ownerIds[ownerIndex]);

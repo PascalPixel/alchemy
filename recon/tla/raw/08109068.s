@@ -36,7 +36,7 @@ Func_08109068:
 	cmp r3, #0
 	beq .L_08109178
 	mov r0, r9
-	bl RenderOutput_PrepareForRedrawFar
+	bl WindowSprite_PrepareForRedrawFar
 	cmp r6, #0
 	beq .L_081090da
 	movs r1, #128
@@ -51,7 +51,7 @@ Func_08109068:
 	mov r2, r9
 	movs r3, #216
 	lsls r1, r1, #23
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	movs r2, #0
 	movs r3, #17
 	strb r2, [r0, #4]
@@ -72,7 +72,7 @@ Func_08109068:
 	mov r2, r9
 	movs r3, #216
 	lsls r1, r1, #23
-	bl RenderOutput_CreateFar
+	bl WindowSprite_CreateFar
 	movs r2, #0
 	movs r3, #15
 	strb r2, [r0, #4]
@@ -103,7 +103,7 @@ Func_08109068:
 	mov r2, r9
 	adds r0, r5, #0
 	movs r1, #1
-	bl RenderOutput_CreateLoadedFar
+	bl WindowSprite_CreateLoadedFar
 	movs r3, #252
 	strb r3, [r0, #15]
 	ldr r2, [sp, #8]

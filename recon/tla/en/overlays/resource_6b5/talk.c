@@ -41,7 +41,7 @@ void Func_02001a7c(s32 actor, s32 animation, s32 flags);
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+void FieldMessage_Show(const u8 *message, s32 flags);
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,

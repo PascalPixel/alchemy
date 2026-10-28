@@ -122,10 +122,10 @@ Func_02005198:
 	.thumb_func
 Func_020051a0:
 	overlay_veneer Func_08020230
-	.global UiText_ShowPositionedMessageAndWait
+	.global FieldMessage_Show
 	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+FieldMessage_Show:
+	overlay_veneer FieldMessage_ShowFar
 	.global Func_020051b0
 	.thumb_func
 Func_020051b0:
@@ -234,10 +234,10 @@ Object_SetPartAttribute:
 	.thumb_func
 Func_02005280:
 	overlay_veneer EventRuntime_SetMessageFar
-	.global UiText_OpenMessageAtObject
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
+FieldMessage_ShowAtActor:
+	overlay_veneer FieldMessage_ShowAtActorFar
 	.global Func_02005290
 	.thumb_func
 Func_02005290:

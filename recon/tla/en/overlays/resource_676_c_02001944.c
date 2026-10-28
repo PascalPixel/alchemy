@@ -52,7 +52,7 @@ void Func_02001904();
 void Func_02001688(void);
 void Task_Add();
 void Func_02001730(void);
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Func_02001d14(void);
 void Func_02002530();
@@ -168,7 +168,7 @@ wait3:
   Call3(ObjectMotion_ArmCallback, 10, 0x5000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
   Call2(Func_02002548, 11, 0x8000);
-  Value2(UiText_OpenMessageAtObject, 8, 0);
+  Value2(FieldMessage_ShowAtActor, 8, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Func_02001d14();

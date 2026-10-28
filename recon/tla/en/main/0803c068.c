@@ -3,7 +3,7 @@
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
 // Draft, differ 12 of 119: draws one text glyph as a 16x16 sprite carried by
-// the window, as the sprite branch of ☀️ UiText_DrawGlyph
+// the window, as the sprite branch of ☀️ Text_DrawGlyph
 // (games/tbs/src/window/window.c) with no text style animation and sentinel
 // 253. Left: instruction order only, in three places: the y argument's spill
 // against the frame's first stores, the line spacing's constant built before
@@ -17,7 +17,7 @@
 #include "window.h"
 #include "uiwindow.h"
 
-// The sprite cell at RenderOutput.unk10: a link, then the OAM words.
+// The sprite cell at WindowSprite.unk10: a link, then the OAM words.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -29,17 +29,17 @@ struct GlyphSprite {
 
 s32 Func_0803a8fc(s32 code, u32 *tiles);
 
-s32 Func_0803c068(struct UiWindow *window, s32 character, s32 x, s32 y) {
-  struct UiRenderWork *work = Ram_HeapSlots->windowTiles;
+s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
+  struct WindowWork *work = Ram_HeapSlots->windowTiles;
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   struct GlyphSprite *sprite;
   s32 index;
   s32 width;
 
-  output = RenderOutput_AcquireFree();
+  output = WindowSprite_AcquireFree();
   if (output == NULL)
     return 0;
   index = (output - work->outputs) * 4;
@@ -58,6 +58,6 @@ s32 Func_0803c068(struct UiWindow *window, s32 character, s32 x, s32 y) {
   output->y = sprite->y;
   output->index = index;
   output->next = NULL;
-  RenderOutput_AppendToList(&window->output, output);
+  WindowSprite_AppendToList(&window->output, output);
   return width;
 }

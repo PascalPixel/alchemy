@@ -83,7 +83,7 @@ Func_08040798:
 	strb r3, [r5, #15]
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl UiIcon_PrepareObjectFar
+	bl Icon_PrepareActorFar
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #116
@@ -225,7 +225,7 @@ Func_08040798:
 .L_08040954:
 	ldr r0, [sp, #16]
 	movs r1, #2
-	bl UiWork_Finalize
+	bl Window_Close
 	bl Func_08040614
 	movs r0, #1
 	bl WaitFrames

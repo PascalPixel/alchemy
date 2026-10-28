@@ -52,14 +52,14 @@ struct InventoryMenuState {
 };
 
 struct BattleUnit *Unit_Get(s32 owner);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
                             s32 style);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
+void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 
 /// Draws one page of the member's items into window: five names a page, or
@@ -74,7 +74,7 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
   u8 *message;
 
   unit = Unit_Get(menu->paneOwner[0]);
-  UiWindow_ClearInteriorTilesFar(window, 128, 8, 224, 96);
+  Window_ClearInteriorTilesFar(window, 128, 8, 224, 96);
   firstEntry = state->page * PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);
   if (rowCount > PAGE_ROWS)
@@ -82,14 +82,14 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
   Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
   Menu_DrawPageIndicator(window, state->entryCount, PAGE_ROWS, state->page, 28);
   if (menu->itemCount == 0) {
-    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X,
+    Text_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X,
                                     8);
   } else {
     rowIndex = 0;
     if (rowCount > rowIndex) {
       inventoryEntry = &menu->items[firstEntry];
       do {
-        UiText_DrawCharacterAtOffsetFar(
+        Text_DrawCharacterAtOffsetFar(
             (*inventoryEntry & ITEM_ID_MASK) + MsgItemName, window, ITEM_NAME_X,
             (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
@@ -97,11 +97,11 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
       } while (rowCount > rowIndex);
     }
   }
-  UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
+  Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   message = MsgStatLabel;
-  UiText_DrawCharacterAtOffsetFar(message, window, 32, 16);
-  UiText_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
-  UiText_DrawNumberInWindowFar(unit->atk, 3, window, STAT_X, 16);
-  UiText_DrawNumberInWindowFar(unit->def, 3, window, STAT_X, 24);
+  Text_DrawCharacterAtOffsetFar(message, window, 32, 16);
+  Text_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
+  Text_DrawNumberInWindowFar(unit->atk, 3, window, STAT_X, 16);
+  Text_DrawNumberInWindowFar(unit->def, 3, window, STAT_X, 24);
   return 1;
 }

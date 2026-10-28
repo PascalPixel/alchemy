@@ -1,6 +1,6 @@
 #include "types.h"
 
-void UiText_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);
+void Text_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);
 s32 Resource_LoadIndexedIntoBuffer(u16 packed, u32 value);
 
 typedef struct {
@@ -16,7 +16,7 @@ void Func_080456f8(u8 *base, s32 index, u32 value) {
 
   offset = index * 28;
   entry = base + offset + 0x104;
-  UiText_LoadRemappedGlyph(base, value, index * 16, index * 16);
+  Text_LoadRemappedGlyph(base, value, index * 16, index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
   /* FAKEMATCH(one-pass): the constant stored in a once-only block, after

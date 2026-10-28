@@ -22,7 +22,7 @@ s32 Func_02000864();
 s32 Func_0200086c();
 s32 GameFlag_ClearBit();
 s32 Object_GetById();
-s32 UiWork_InitializeWithResourceCounters();
+s32 WindowSystem_InitField();
 s32 WaitFrames();
 extern u8 MsgFinallyWeVe[];
 extern u8 gBgScroll[];
@@ -42,7 +42,7 @@ s32 Func_02000318(void) {
   *(u8 *)(t2 + 85) = 0;
   *(u8 *)v_r6 = 1;
   Func_02000844();
-  UiWork_InitializeWithResourceCounters();
+  WindowSystem_InitField();
   t5 = FIELD_AT(0x3000000, s32, 60);
   FIELD_AT(t5, u8, 6) = 1;
   *(u8 *)(t5 + 0x138c) = 1;

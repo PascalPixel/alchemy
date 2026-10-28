@@ -4,6 +4,6 @@
 #include "edition.h"
 #include "render_input.h"
 
-void Menu_PlaceEntryObjectInGrid(struct RenderOutput *, s32, s32, s32, s32);
+void Menu_PlaceEntryObjectInGrid(struct WindowSprite *, s32, s32, s32, s32);
 
 #endif

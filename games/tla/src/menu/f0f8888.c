@@ -1,8 +1,8 @@
 #include "m7_interfaces.h"
 
-/// Turns an icon's render output on and copies its screen position into its
+/// Turns an icon's window sprite on and copies its screen position into its
 /// OAM attributes, with no affine matrix.
-void UiIcon_PrepareObject(struct RenderOutput *object) {
+void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
     object->active = 1;
     object->oam.x = object->x;

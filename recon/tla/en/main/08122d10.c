@@ -113,7 +113,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 void BattleEvent_GrantDjinnBonus(struct PlaybackEvents *events, u32 value);
 void Sound_PlayFar(s32 cue);
 void Func_080381d0(s32 message);
-s32 UiWork_IsCompleteFar(void);
+s32 Message_AllTypedFar(void);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Func_0812824c(s32 unitId, s32 flags);
 void BattleActor_ResetRuntimeFields(s32 unitId);
@@ -178,16 +178,16 @@ void BattleEvent_Playback(void) {
                                         events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_UNIT_NAME:
-            UiText_DrawQuantity(events->queue.operands[eventIndex], 1);
+            MessageArgument_PushFar(events->queue.operands[eventIndex], 1);
             break;
           case BATTLE_EVENT_NUMBER:
-            UiText_DrawQuantity(events->queue.operands[eventIndex], 5);
+            MessageArgument_PushFar(events->queue.operands[eventIndex], 5);
             break;
           case BATTLE_EVENT_ITEM_NAME:
-            UiText_DrawQuantity(events->queue.operands[eventIndex] & 0x1ff, 2);
+            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff, 2);
             break;
           case BATTLE_EVENT_ABILITY_NAME:
-            UiText_DrawQuantity(events->queue.operands[eventIndex] & 0x3fff, 4);
+            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff, 4);
             break;
           case BATTLE_EVENT_MARK:
             ((struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4])->marked =
@@ -205,7 +205,7 @@ void BattleEvent_Playback(void) {
             events->phase = 13;
             break;
           case BATTLE_EVENT_CLEAR_ARGUMENTS:
-            UiWork_ClearValueNameTablesFar();
+            MessageArgument_ClearAllFar();
             break;
           case BATTLE_EVENT_REMOVE_UNIT:
             BattleActor_DestroyTemporaryObject(
@@ -271,7 +271,7 @@ void BattleEvent_Playback(void) {
       if (events->phase == BATTLE_PLAYBACK_DISPATCH)
         events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
     } else if (events->phase == 3 || events->phase == 13) {
-      if (UiWork_IsCompleteFar() == 0)
+      if (Message_AllTypedFar() == 0)
         return;
       if (events->phase == 13) {
         events->phase = BATTLE_PLAYBACK_DISPATCH;
@@ -293,7 +293,7 @@ void BattleEvent_Playback(void) {
 
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
-      UiWork_ClearValueNameTablesFar();
+      MessageArgument_ClearAllFar();
       QueueIoWriteDelay10(0x0400004a, 4);
       QueueIoWriteDelay6(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;

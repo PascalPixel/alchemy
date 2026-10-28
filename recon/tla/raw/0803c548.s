@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiWork_AnimateSpriteSlots
+	.global WindowSprite_UpdateAll
 	.thumb_func
-UiWork_AnimateSpriteSlots:
+WindowSprite_UpdateAll:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -17,7 +17,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range) {
 
   n = range * 2;
   tile = n + RANGE_ICON_TILE + 1;
-  UiWindow_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
-  UiWindow_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
-  UiWindow_SetTilemapEntryFar(window, tile, x + 2, y, 0);
+  Window_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
+  Window_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
+  Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }

@@ -26,7 +26,7 @@ Func_080fd8a0:
 	cmp r0, #0
 	bne .L_080fd906
 	ldr r0, [r7, #48]
-	bl RenderOutput_RedrawSavedRectFar
+	bl WindowSprite_RedrawSavedRectFar
 	movs r0, #1
 	bl WaitFrames
 	mov r2, r8
@@ -48,7 +48,7 @@ Func_080fd8a0:
 	ldr r1, [r7, #48]
 	movs r2, #0
 	movs r3, #0
-	bl UiText_DrawCharacterAtOffsetFar
+	bl Text_DrawCharacterAtOffsetFar
 	b .L_080fd910
 .L_080fd906:
 	movs r0, #128

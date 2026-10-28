@@ -29,16 +29,16 @@ void Func_02001a7c(s32 actor, s32 animation, s32 flags);
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+void FieldMessage_Show(const u8 *message, s32 flags);
 
 s32 Func_020013ec(void) {
   Func_020019ec();
-  UiText_ShowPositionedMessageAndWait(MsgBattleResultsWere, 1);
+  FieldMessage_Show(MsgBattleResultsWere, 1);
 }
 
 s32 Func_02001400(void) {
   Func_020019ec();
-  UiText_ShowPositionedMessageAndWait(MsgMonsterBattleResults, 1);
+  FieldMessage_Show(MsgMonsterBattleResults, 1);
 }
 
 /// Draws value, at most 999, as three digits from right to left.

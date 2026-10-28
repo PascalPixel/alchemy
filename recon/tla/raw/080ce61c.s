@@ -60,13 +60,13 @@ Func_080ce61c:
 	beq .L_080ce6aa
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r9
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce900
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce6aa:
 	ldr r1, [sp, #12]
@@ -86,13 +86,13 @@ Func_080ce61c:
 .L_080ce6c6:
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r9
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce900
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce6e0:
 	mov r0, r9
@@ -126,13 +126,13 @@ Func_080ce61c:
 .L_080ce71c:
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r9
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce900
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce736:
 	ldr r3, .L_080ce904
@@ -149,13 +149,13 @@ Func_080ce61c:
 	bne .L_080ce768
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r0, #139
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce900
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce768:
 	mov r0, r9
@@ -168,25 +168,25 @@ Func_080ce61c:
 	beq .L_080ce794
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r0, #149
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce908
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce794:
 	movs r0, #149
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r1, #13
 	ldr r0, .L_080ce90c
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r0, #1
 	bl Func_080d295c
 	adds r5, r0, #0
-	bl UiWork_FinalizePendingCoreFar
+	bl Message_CloseFinishedWindowsFar
 	movs r0, #0
 	cmp r5, #0
 	beq .L_080ce7b8
@@ -305,13 +305,13 @@ Func_080ce61c:
 	bne .L_080ce8b8
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	movs r0, #156
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce908
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce8b8:
 	cmp r7, #7
@@ -338,13 +338,13 @@ Func_080ce61c:
 .L_080ce8e6:
 	adds r0, r7, #0
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	mov r0, r9
 	movs r1, #4
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080ce914
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	b .L_080ceaec
 .L_080ce900:
 	.4byte 0x00000dbb

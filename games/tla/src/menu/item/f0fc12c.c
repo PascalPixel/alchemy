@@ -9,16 +9,16 @@ struct InventoryMenuState {
   u16 selectedItems[2];
   u8 unk170[0xa6];
   u8 paneOwner[2];
-  struct RenderOutput *selectedItemIcon;
+  struct WindowSprite *selectedItemIcon;
 };
 
 extern char MsgItemName[];
 
 void *Unit_Get(s32 owner);
 void Func_08038288(s32 mode, s32 item, s32 slot, s32 flags);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
-void UiText_DrawStringAtOffsetFar(void *string, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Icon_PrepareActor(struct WindowSprite *icon);
+void Text_DrawStringAtOffsetFar(void *string, s32 window, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 // Draws the selected item's icon, owner and item name in the heading.
 void Func_080fc12c(void) {
@@ -29,10 +29,10 @@ void Func_080fc12c(void) {
   menu->selectedItemIcon->active = 1;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
-  UiIcon_PrepareObject(menu->selectedItemIcon);
-  UiText_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), menu->messageWindow,
+  Icon_PrepareActor(menu->selectedItemIcon);
+  Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), menu->messageWindow,
                                16, 0);
-  UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
+  Text_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
                                       (s32)MsgItemName,
                                   menu->messageWindow, 16, 8);
 }

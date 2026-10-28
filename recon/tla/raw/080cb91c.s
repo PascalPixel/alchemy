@@ -121,7 +121,7 @@ SceneSequence_Run:
 .L_080cba0e:
 	bl Func_080e2718
 .L_080cba12:
-	bl UiWork_InitializeWithResourceCountersFar
+	bl WindowSystem_InitFieldFar
 	adds r0, r7, #0
 	bl ObjectSystem_InitializeFar
 	bl BattleEffect_ResetCounters
@@ -638,10 +638,10 @@ SceneSequence_Run:
 	mov r3, r8
 	ldrsh r0, [r6, r3]
 	movs r1, #1
-	bl UiText_DrawQuantity
+	bl MessageArgument_PushFar
 	ldr r0, .L_080cbe9c
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	movs r3, #182
 	lsls r3, r3, #1
 	add r3, r8
@@ -683,7 +683,7 @@ SceneSequence_Run:
 	bl Sound_PlayFar
 	movs r1, #1
 	ldr r0, .L_080cbeec
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 	ldr r3, .L_080cbef0
 	ldr r0, [r3]
 	bl Unit_Get
@@ -1395,7 +1395,7 @@ SceneSequence_Run:
 .L_080cc460:
 	ldr r0, .L_080cc540
 	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWaitFar
+	bl FieldMessage_ShowFar
 .L_080cc468:
 	bl Func_080cb8a4
 	movs r0, #131

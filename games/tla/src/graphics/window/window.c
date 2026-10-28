@@ -13,8 +13,8 @@
 #include "window.h"
 #include "io_reg.h"
 
-void UiWork_UploadDirtyBlocks(void) {
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void WindowSystem_UploadTilemap(void) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 flags;
   u8 *src;
   u8 *dst;
@@ -40,9 +40,9 @@ void UiWork_UploadDirtyBlocks(void) {
   }
 }
 
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   s32 tile;
   u32 bottom;
@@ -62,7 +62,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   if (height > 30)
     height = 30;
 
-  UiWindow_ClearTileAttributesInRect(x, y, width, height);
+  Window_ClearTextTilesInRect(x, y, width, height);
 
   row = 0;
   if (row < height) {

@@ -26,7 +26,7 @@ void Func_02000fc4(void) {
       Func_0200498c((s32)MsgShamanInnPaymentPrompt);
       Func_0200487c(price, 5);
       Func_0200487c(price, 5);
-      UiText_OpenMessageAtObject(12, 0);
+      FieldMessage_ShowAtActor(12, 0);
       if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
         if ((u32)gAdventure.coins < price) {
           Object_SetModeById(13, 6);

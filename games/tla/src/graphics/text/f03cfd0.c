@@ -1,7 +1,7 @@
 #include "types.h"
 #include "edition.h"
 
-void UiText_PlotGlyphRows(u16 *rows, u8 *dst, s32 color);
+void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #include "glyph.h"
@@ -19,49 +19,49 @@ s32 Func_0803cfd0(u8 *canvas, u32 ch, s32 x, s32 row) {
   const u16 *mark = NULL;
   const u16 *rows;
   s32 width;
-  s32 markCode = gUiText_MarkGlyphCodes[ch >> TEXT_MARK_SHIFT];
+  s32 markCode = gFont_MarkGlyphCodes[ch >> TEXT_MARK_SHIFT];
 
   if (markCode != 0) {
     markCode -= 32;
-    mark = gUiText_Glyphs[markCode].rows;
+    mark = gFont_Glyphs[markCode].rows;
   }
   ch &= (1 << TEXT_MARK_SHIFT) - 1;
   if (ch < KANJI_FIRST_CODE) {
     s32 index = ch - 32;
 
     // The width, then the rows after it.
-    rows = &gUiText_Glyphs[index].width;
+    rows = &gFont_Glyphs[index].width;
     width = *rows++;
   } else {
     s32 index = ch - KANJI_FIRST_CODE;
 
     width = KANJI_WIDTH;
-    rows = (const u16 *)(gUiText_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
+    rows = (const u16 *)(gFont_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
   }
   canvas += x + row * 192;
-  UiText_PlotGlyphRows((u16 *)rows, canvas + 3 * 192 + 1, 1);
+  Text_PlotGlyphRows((u16 *)rows, canvas + 3 * 192 + 1, 1);
   if (mark != NULL)
-    UiText_PlotGlyphRows((u16 *)mark, canvas + 192 + 8, 1);
-  UiText_PlotGlyphRows((u16 *)rows, canvas + 2 * 192, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + 192 + 8, 1);
+  Text_PlotGlyphRows((u16 *)rows, canvas + 2 * 192, 15);
   if (mark != NULL) {
-    UiText_PlotGlyphRows((u16 *)mark, canvas + 7, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + 7, 15);
     width++;
   }
   return width;
 }
 #else
-extern u16 gUiText_Glyphs[];
+extern u16 gFont_Glyphs[];
 
 s32 Func_0803cfd0(u8 *canvas, s32 ch, s32 x, s32 row) {
-  u16 *glyph = (u16 *)((u8 *)gUiText_Glyphs + (((ch & 0xff) - 32) << 5));
+  u16 *glyph = (u16 *)((u8 *)gFont_Glyphs + (((ch & 0xff) - 32) << 5));
   s32 width = *glyph;
   u8 *dst = canvas + (x + row * 192);
   u8 *rows;
 
   glyph++;
   rows = dst + 3 * 192 + 1;
-  UiText_PlotGlyphRows(glyph, rows, 1);
-  UiText_PlotGlyphRows(glyph, rows = dst + 2 * 192, 15);
+  Text_PlotGlyphRows(glyph, rows, 1);
+  Text_PlotGlyphRows(glyph, rows = dst + 2 * 192, 15);
   return width;
 }
 #endif

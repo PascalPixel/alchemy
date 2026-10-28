@@ -216,7 +216,7 @@ Func_081a06e0:
 	lsls r2, r2, #5
 	subs r3, #80
 	strh r2, [r3]
-	bl Ui_LoadWindowGraphics
+	bl Window_LoadGraphics
 	bl Func_08014b70
 	ldr r2, .L_081a08c0
 	movs r3, #1

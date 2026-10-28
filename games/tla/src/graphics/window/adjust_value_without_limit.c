@@ -6,24 +6,24 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
+#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-void UiText_BuildRenderEntries(s32 key, s32 mode);
+void Message_Decode(s32 key, s32 mode);
 
 /// Expands message into buf without an upper length bound.
-void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
-  UiText_DecodeMessage(message, buf, 0x7fffffff);
+void Message_DecodeRawUnbounded(s32 message, s32 buf) {
+  Message_DecodeRaw(message, buf, 0x7fffffff);
 }
 
 /// Builds message key's text entries and copies them to destination, at most
 /// capacity - 1 characters and a terminator; returns the characters copied.
-s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
-  struct UiRenderWork *work;
+s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity) {
+  struct WindowWork *work;
   u32 count;
 
   work = UI_WORK;
   work->count = 0;
-  UiText_BuildRenderEntries(key, 1);
+  Message_Decode(key, 1);
   for (count = 0;
        count < capacity - 1 && (destination[count] = work->entries[count]) != 0;
        count++) {

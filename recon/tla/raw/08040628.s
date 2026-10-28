@@ -55,7 +55,7 @@ Func_08040628:
 	movs r0, #5
 	adds r3, r4, #0
 	movs r2, #20
-	bl UiWindow_Create
+	bl Window_Create
 	mov r3, r10
 	mov r8, r0
 	cmp r3, #1
@@ -70,7 +70,7 @@ Func_08040628:
 	movs r3, #19
 	subs r5, #1
 	str r6, [sp, #0]
-	bl UiWindow_DrawDividerLine
+	bl Window_DrawDividerLine
 	adds r6, #3
 	cmp r5, #0
 	bne .L_0804069e
@@ -85,19 +85,19 @@ Func_08040628:
 	movs r2, #48
 	movs r3, #4
 	adds r5, #1
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #0
 	mov r1, r8
 	movs r2, #48
 	movs r3, #28
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	movs r7, #52
 .L_080406da:
 	adds r3, r7, #0
 	ldr r0, .L_0804078c
 	mov r1, r8
 	movs r2, #48
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	ldr r3, .L_08040784
 	adds r7, #24
 	ldrb r3, [r3]
@@ -109,19 +109,19 @@ Func_08040628:
 	mov r1, r8
 	movs r2, #48
 	adds r7, #24
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #1
 	adds r3, r7, #0
 	mov r1, r8
 	movs r2, #48
 	adds r7, #24
 	adds r5, #2
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 	adds r0, r5, #0
 	mov r1, r8
 	movs r2, #48
 	adds r3, r7, #0
-	bl UiText_DrawResource
+	bl Text_DrawMessage
 .L_0804071c:
 	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
@@ -129,7 +129,7 @@ Func_08040628:
 	lsls r1, r1, #23
 	mov r2, r8
 	str r3, [sp, #0]
-	bl RenderOutput_Create
+	bl WindowSprite_Create
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #164

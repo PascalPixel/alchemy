@@ -14,50 +14,50 @@ WaitFrames:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global UiWindow_Create
+	.global Window_Create
 	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
+Window_Create:
+	overlay_veneer Window_CreateFar
+	.global Window_Close
 	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_DrawResource
+Window_Close:
+	overlay_veneer Window_CloseFar
+	.global Text_DrawMessage
 	.thumb_func
-UiText_DrawResource:
-	overlay_veneer UiText_DrawResourceFar
-	.global UiText_DrawCharacterAtOffset
+Text_DrawMessage:
+	overlay_veneer Text_DrawMessageFar
+	.global Text_DrawCharacterAtOffset
 	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
-	.global UiText_DrawStringAtOffset
+Text_DrawCharacterAtOffset:
+	overlay_veneer Text_DrawCharacterAtOffsetFar
+	.global Text_DrawStringAtOffset
 	.thumb_func
-UiText_DrawStringAtOffset:
-	overlay_veneer UiText_DrawStringAtOffsetFar
-	.global UiText_DrawStringInWindow
+Text_DrawStringAtOffset:
+	overlay_veneer Text_DrawStringAtOffsetFar
+	.global Text_DrawStringInWindow
 	.thumb_func
-UiText_DrawStringInWindow:
-	overlay_veneer UiText_DrawStringInWindowFar
-	.global UiText_DrawNumberAtOffset
+Text_DrawStringInWindow:
+	overlay_veneer Text_DrawStringInWindowFar
+	.global Text_DrawNumberAtOffset
 	.thumb_func
-UiText_DrawNumberAtOffset:
-	overlay_veneer UiText_DrawNumberAtOffsetFar
-	.global UiText_DrawNumberInWindow
+Text_DrawNumberAtOffset:
+	overlay_veneer Text_DrawNumberAtOffsetFar
+	.global Text_DrawNumberInWindow
 	.thumb_func
-UiText_DrawNumberInWindow:
-	overlay_veneer UiText_DrawNumberInWindowFar
+Text_DrawNumberInWindow:
+	overlay_veneer Text_DrawNumberInWindowFar
 	.global Func_0200068c
 	.thumb_func
 Func_0200068c:
-	overlay_veneer UiText_DrawQuantity
-	.global RenderOutput_RedrawSavedRect
+	overlay_veneer MessageArgument_PushFar
+	.global WindowSprite_RedrawSavedRect
 	.thumb_func
-RenderOutput_RedrawSavedRect:
-	overlay_veneer RenderOutput_RedrawSavedRectFar
-	.global RenderOutput_ClearList
+WindowSprite_RedrawSavedRect:
+	overlay_veneer WindowSprite_RedrawSavedRectFar
+	.global WindowSprite_ClearList
 	.thumb_func
-RenderOutput_ClearList:
-	overlay_veneer RenderOutput_ClearListFar
+WindowSprite_ClearList:
+	overlay_veneer WindowSprite_ClearListFar
 	.global Func_020006a4
 	.thumb_func
 Func_020006a4:

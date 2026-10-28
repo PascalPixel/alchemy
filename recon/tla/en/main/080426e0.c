@@ -1,5 +1,5 @@
 // Draft, differ 80 of 137, 2026-10-15: The Broken Seal's
-// UiWindow_DrawColumnBorders on this game's window (signed position,
+// Window_DrawColumnBorders on this game's window (signed position,
 // tilemap rows indexed directly, the column added before it is doubled).
 // Remaining: the native reads the menu state into r4 in its first block and
 // reads it again at the loop's exit, so the pre-loop exit jumps past the
@@ -17,11 +17,11 @@
 #include "window.h"
 #include "uiwindow.h"
 
-extern const s8 gUiWindow_PartyColumnOffsets[];
+extern const s8 gWindow_PartyColumnOffsets[];
 
-void Func_080426e0(struct UiWindow *window, u32 flags) {
-  struct UiRenderWork *canvas =
-      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+void Func_080426e0(struct Window *window, u32 flags) {
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 first = 1;
   s32 bias = 0;
   u32 max = window->width - 1;
@@ -38,8 +38,8 @@ void Func_080426e0(struct UiWindow *window, u32 flags) {
     first = 0;
   }
   i = first;
-  while (gUiWindow_PartyColumnOffsets[i] >= 0) {
-    col = gUiWindow_PartyColumnOffsets[i] + bias;
+  while (gWindow_PartyColumnOffsets[i] >= 0) {
+    col = gWindow_PartyColumnOffsets[i] + bias;
     if (col < max) {
       for (row = 0; row != rows; row++) {
         dest = canvas->tilemap[(s16)window->y + row] + ((s16)window->x + col);

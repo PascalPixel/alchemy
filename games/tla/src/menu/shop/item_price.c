@@ -23,9 +23,9 @@
 /// MsgItemCondition starts a list: "----------", "Processed", "Rusted".
 extern u8 MsgCannotBuyThat[], MsgNotBroken[], MsgPrice[], MsgItemName[],
     MsgItemCondition[];
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
+void WindowSprite_RedrawSavedRectFar(s32 window);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 
 /// Draws the shop item's name and price, or its cannot-buy or not-broken note;
@@ -40,23 +40,23 @@ void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
     return;
   goto draw;
 cannot_buy:
-  UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
+  Text_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
                                   SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
-  UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
+  Text_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
                                   8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
-  UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  Text_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   labelMessage -= 3;
-  UiText_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);
+  Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
+  Text_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);
   return;
 draw:
-  RenderOutput_RedrawSavedRectFar(window);
-  UiText_DrawCharacterAtOffsetFar(itemId + (s32)MsgItemName, window, 0, 0);
+  WindowSprite_RedrawSavedRectFar(window);
+  Text_DrawCharacterAtOffsetFar(itemId + (s32)MsgItemName, window, 0, 0);
   if (price == 0) {
     switch (priceKind) {
     case 1:
@@ -66,7 +66,7 @@ draw:
     }
   }
   if (priceKind == 3)
-    UiText_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
+    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
                                     8);
   else
     goto show_price;

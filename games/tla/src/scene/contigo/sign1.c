@@ -6,7 +6,7 @@ void Func_02004204(s32 a0);
 void Func_0200412c(s32 a0);
 s32 Func_0200414c(s32 a0, s32 a1);
 void Func_02004074(void);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void FieldMessage_Show(s32 message, s32 position);
 
 void Func_02000eb8(void) {
   Func_0200406c();
@@ -22,15 +22,15 @@ void Func_02000edc(void) {
   Func_0200406c();
   Func_02004204(0);
   msg = (s32)MsgContigo25;
-  UiText_ShowPositionedMessageAndWait(msg, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 1, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 2, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 3, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 4, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 5, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 6, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 7, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 8, 1);
+  FieldMessage_Show(msg, 1);
+  FieldMessage_Show(msg + 1, 1);
+  FieldMessage_Show(msg + 2, 1);
+  FieldMessage_Show(msg + 3, 1);
+  FieldMessage_Show(msg + 4, 1);
+  FieldMessage_Show(msg + 5, 1);
+  FieldMessage_Show(msg + 6, 1);
+  FieldMessage_Show(msg + 7, 1);
+  FieldMessage_Show(msg + 8, 1);
   Func_02004074();
 }
 
@@ -40,10 +40,10 @@ void Func_02000f40(void) {
   Func_0200406c();
   Func_02004204(0);
   msg = (s32)MsgContigo06;
-  UiText_ShowPositionedMessageAndWait(msg, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 1, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 2, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 3, 1);
+  FieldMessage_Show(msg, 1);
+  FieldMessage_Show(msg + 1, 1);
+  FieldMessage_Show(msg + 2, 1);
+  FieldMessage_Show(msg + 3, 1);
   Func_02004074();
 }
 
@@ -53,11 +53,11 @@ void Func_02000f7c(void) {
   Func_0200406c();
   Func_02004204(0);
   msg = (s32)MsgContigo07;
-  UiText_ShowPositionedMessageAndWait(msg, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 1, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 2, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 3, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 4, 1);
-  UiText_ShowPositionedMessageAndWait(msg + 5, 1);
+  FieldMessage_Show(msg, 1);
+  FieldMessage_Show(msg + 1, 1);
+  FieldMessage_Show(msg + 2, 1);
+  FieldMessage_Show(msg + 3, 1);
+  FieldMessage_Show(msg + 4, 1);
+  FieldMessage_Show(msg + 5, 1);
   Func_02004074();
 }

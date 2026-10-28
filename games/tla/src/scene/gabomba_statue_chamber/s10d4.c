@@ -47,7 +47,7 @@ void Func_02001ef0(void);
 void ObjectMotion_ArmCallback();
 void ObjectMotion_SetPositionAndReset();
 void Motion_SetModeAndWaitAnimation();
-s32 UiText_OpenMessageAtObject();
+s32 FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void ObjectMotion_EnableActionAndSetCallback();
 void Event_FinishScreenTransition(void);
@@ -188,7 +188,7 @@ void Func_020010d4(void) {
   Call3(ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call3(ObjectMotion_SetPositionAndReset, 12, 404, 220);
   Call3(ObjectMotion_Launch, 12, 4, 10);
-  Value2(UiText_OpenMessageAtObject, 12, 0);
+  Value2(FieldMessage_ShowAtActor, 12, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Call2(Func_02001e90, 12, 258);

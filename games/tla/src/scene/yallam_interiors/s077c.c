@@ -12,7 +12,7 @@ extern const u8 MsgHereSThe[];
 extern const u8 MsgManSunshineWould[];
 
 void FieldEvent_WaitFrames(s32 frames);
-s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void Party_AdjustCoins(s32 amount);
@@ -43,7 +43,7 @@ void Func_0200077c(s32 actor) {
     Func_02000980(price, 5);
     message = (s32)MsgHereSThe;
     Func_02000a18(message);
-    UiText_OpenMessageAtObject(actor, 0);
+    FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) != 0) {
       Func_02000a18(message + 1);
       Func_02000a28(actor, 0);

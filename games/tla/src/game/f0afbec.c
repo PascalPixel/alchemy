@@ -23,7 +23,7 @@ extern const u8 gEnemy_DefinitionTable[];
 extern u8 MsgEnemyName[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
-void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
+void Message_DecodeRawFar(s32 message, u16 *buffer, s32 length);
 void Unit_CalculateBaseElements(s32 owner, struct BattleElementStats *elements);
 void Unit_Calculate(s32 unitId);
 
@@ -70,7 +70,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseActionCount = enemy->turns;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
-  UiText_DecodeMessageFar(index + (s32)MsgEnemyName, name, 15);
+  Message_DecodeRawFar(index + (s32)MsgEnemyName, name, 15);
   for (i = 0; i < 14 && name[i] != 0; i++)
     unit->name[i] = name[i];
   if (suffix <= 8) {

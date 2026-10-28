@@ -42,7 +42,7 @@ s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_ReleaseHeapBlock();
 s32 Task_Add();
 s32 Task_RemoveFar();
-s32 UiText_ShowPositionedMessageAndWait();
+s32 FieldMessage_Show();
 s32 VramCache_Load();
 s32 WaitFrames();
 extern u8 Data_02004cec[];
@@ -67,7 +67,7 @@ void Func_02000e80(void) {
 L_02008ea2:
   Func_020042dc();
   Call1((void (*)())Func_0200444c, 0);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgMarsStar09, 1);
+  Call2((void (*)())FieldMessage_Show, (s32)MsgMarsStar09, 1);
   Call1((void (*)())Func_0200446c, 78);
   Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200446c, 182);
@@ -153,7 +153,7 @@ L_0200905c:
   t53 = *(s32 *)0x3000080;
   Func_020042dc();
   Call1((void (*)())Func_0200444c, 0);
-  Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgMarsStar09, 1);
+  Call2((void (*)())FieldMessage_Show, (s32)MsgMarsStar09, 1);
   Call1((void (*)())Func_0200446c, 78);
   Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200446c, 182);

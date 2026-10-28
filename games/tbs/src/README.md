@@ -18,10 +18,11 @@ their banks out.
 The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the [actors](../glossary.md#actor), movement, and
 loading, scrolling and drawing the map grid. [Running a scene](overworld/README.md),
-the `overworld` folder, runs
-one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the party leaves
-by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands events
-use; `ParentSequence_Run`, the loop that runs one scene after another, is there too.
+the `overworld` folder, runs one scene on that engine, from its set-up to the
+[exit](../glossary.md#exit) the party leaves by, with random encounters, field
+[Psynergy](../glossary.md#psynergy-and-pp) and the commands events use;
+`ParentSequence_Run`, the loop that runs one sequence after another, is there
+too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
 templates, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
@@ -128,9 +129,9 @@ packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The scene table,
 `gScenes` in [field/scenes.s](field/scenes.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
-([overworld/overworld/parent_sequence.c](overworld/overworld/parent_sequence.c)) unpacks the overlay a scene's row
-names before `SceneSequence_Run` runs it; a battle or a minigame is main-image
-code and loads none.
+([overworld/overworld/parent_sequence.c](overworld/overworld/parent_sequence.c))
+unpacks the overlay a scene's row names before `SceneSequence_Run` runs it; a
+battle or a minigame is main-image code and loads none.
 
 In the source an overlay is three files in its folder:
 
@@ -229,8 +230,8 @@ a table from its `.tsv`, or a map, under the name the code uses.
 ## Where to start reading
 
 `System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
-is the first C to run; it ends by calling `ParentSequence_Run`, which is short enough
-to read whole. [Runtime](runtime/README.md) follows the same path.
+is the first C to run; it ends by calling `ParentSequence_Run`, which is short
+enough to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.
 Each animation's comment names the abilities that play it, so searching

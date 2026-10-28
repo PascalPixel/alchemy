@@ -31,8 +31,8 @@ interrupt: pressing all four marks a reset as wanted, and the next frame
 carries it out.
 
 The cartridge header jumps to `System_Entry`, which sets up the stacks and
-calls `System_Initialize`; that ends by calling `ParentSequence_RunFar`. The reset is
-`Input_HandleKeyInterrupt`.
+calls `System_Initialize`; that ends by calling `ParentSequence_RunFar`. The
+reset is `Input_HandleKeyInterrupt`.
 
 ## The frame loop
 

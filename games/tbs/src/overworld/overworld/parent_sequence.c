@@ -97,8 +97,9 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the after-battle destination an event set, or to the return
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// ParentSequence_Run after each sequence from SEQUENCE_NONE on; stores result
-/// in gCommon.sequenceResult and sets gCommon.sceneId and .entrance.
+/// ParentSequence_Run after each sequence other than the scene sequence (the
+/// ids from SEQUENCE_NONE up); stores result in gCommon.sequenceResult and sets
+/// gCommon.sceneId and .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;

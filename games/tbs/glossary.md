@@ -181,8 +181,8 @@ rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
 
 ### Main image
 
-The code the processor runs straight from the cartridge, about 1 MB of code
-in [banks](#bank); the rest runs from RAM, a scene's [overlay](#overlay) in EWRAM
+The code the processor runs straight from the cartridge, about 1 MB in
+[banks](#bank); the rest runs from RAM, a scene's [overlay](#overlay) in EWRAM
 and the fast routines in IWRAM.
 
 ### Bank

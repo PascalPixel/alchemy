@@ -41,7 +41,7 @@ flowchart TB
     subgraph scene ["Scene sequence"]
       direction TB
       c2["Loads one scene: its code, its map, its people"]
-      subgraph mgr ["Its loop"]
+      subgraph mgr ["The scene sequence's loop"]
         direction TB
         c3["Runs the scene a frame at a time until the party leaves"]
         subgraph frame ["Frame"]
@@ -66,15 +66,15 @@ flowchart TB
   style frame fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
 ```
 
-- **[Parent sequence](#the-parent-sequence).** Runs one
-  [sequence](glossary.md#sequence) at a time, for as long as the console is
-  on: the scene sequence, the battle sequence, the dice sequence (Lucky Dice)
-  or the slots sequence (Lucky Wheels).
+- **[Parent sequence](#the-parent-sequence).** Runs one sequence at a
+  time, for as long as the console is on: the scene sequence, the battle
+  sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
+  Wheels).
 - **[Scene sequence](#the-scene-sequence).** Loads one
   [scene](glossary.md#scene): a place such as Xian, or a screen such as the
   Title.
-- **[Its loop](#the-scene-sequences-loop).** Runs that scene, one
-  [frame](glossary.md#frame) at a time, until the party leaves.
+- **[The scene sequence's loop](#the-scene-sequences-loop).** Runs that scene,
+  one [frame](glossary.md#frame) at a time, until the party leaves.
 - **Frame.** Every queued [task](glossary.md#task) runs once, then the scene
   sequence handles what the player or the scene asked for.
 
@@ -308,9 +308,9 @@ flowchart TD
 
 Between scenes the parent sequence clears the
 [game flags](glossary.md#game-flag) the last scene kept for itself, and the
-[area](glossary.md#area)'s flags on entering a new area. It starts the area's music and unpacks the scene's code, its
-[overlay](glossary.md#overlay). The scene sequence then loads the
-[map](glossary.md#map), places the party at its
+[area](glossary.md#area)'s flags on entering a new area. It starts the area's
+music and unpacks the scene's code, its [overlay](glossary.md#overlay). The
+scene sequence then loads the [map](glossary.md#map), places the party at its
 [entrance](glossary.md#entrance) and creates every
 [actor](glossary.md#actor) on the scene's list. Last, the scene's own set-up
 arranges the place as the story has left it, and the screen fades in.

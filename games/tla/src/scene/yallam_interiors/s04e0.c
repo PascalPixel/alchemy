@@ -3,6 +3,7 @@
 #include "call.h"
 #include "yallam_interiors.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 s32 Func_02000a90(void);
 void Func_02000a60(s32 actor, s32 angle);
@@ -80,13 +81,13 @@ void Func_02000524(void) {
         Actor_WaitForMoveById(14);
         Call3((void (*)())Actor_ResetAndSetPositionInMode2, 16, 632,
               346);
-        YallamInteriors_ObjArm(16, 0x4000, 0);
+        YallamInteriors_ObjArm(16, FACING_SOUTH, 0);
         Actor_SetModeById(16, 0);
         Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 600,
               360);
         Actor_WaitForMoveById(14);
         Actor_SetModeById(14, 0);
-        YallamInteriors_ObjArm(14, 0x4000, 0);
+        YallamInteriors_ObjArm(14, FACING_SOUTH, 0);
         Actor_GetById(14)->collisionFlags = 129;
         Actor_GetById(14)->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
@@ -98,7 +99,7 @@ void Func_02000524(void) {
       } else {
         Call3((void (*)())Actor_ResetAndSetPosition, 14, 491, 398);
         Actor_WaitForMoveById(14);
-        YallamInteriors_ObjArm(14, 0x4000, 0);
+        YallamInteriors_ObjArm(14, FACING_SOUTH, 0);
         Actor_SetSingleChildFlags(Actor_GetById(14), 0);
         Call2((void (*)())Func_02000a60, 14, 0);
       }

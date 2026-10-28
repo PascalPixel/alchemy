@@ -1,6 +1,7 @@
 #include "scene.h"
 #include "actor.h"
 #include "call.h"
+#include "scene_tables.h"
 
 void Func_02000b84(s32 x, s32 y, s32 z);
 void Func_02000f24(void);
@@ -42,7 +43,7 @@ loop_3:
     goto loop_3;
   Scene_Call4090(22, 0, 0);
   FieldEvent_Wait(20);
-  Scene_CamBounds(0xe80000, -1, 0xc40000, 1);
+  Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
   Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Scene_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);

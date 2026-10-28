@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -30,35 +31,37 @@ void Func_0200030c(void) {
   s32 t16;
 
   Call1(GameFlag_SetBit, 0x891);
-  t1 = Value1(Actor_GetById, 0xa);
+  t1 = Value1(Actor_GetById, 10);
   FIELD_AT((t1 + 0x55), u8, 0) = 0;
   FIELD_AT(t1, s32, 72) = 0x28f;
   FIELD_AT(t1, s32, 48) = 0x18000;
   FIELD_AT(t1, s32, 52) = 0x8000;
-  Call4(Actor_SetPositionAndResetMotion, t1, 0xd80000, 0x600000, 0xb00000);
-  t3 = Value1(Actor_GetById, 0xb);
+  Call4(Actor_SetPositionAndResetMotion, t1, PIXELS(216), PIXELS(96),
+        PIXELS(176));
+  t3 = Value1(Actor_GetById, 11);
   FIELD_AT((t3 + 0x55), u8, 0) = 0;
   FIELD_AT(t3, s32, 72) = 0x7ae;
   FIELD_AT(t3, s32, 48) = 0x18000;
   FIELD_AT(t3, s32, 52) = 0x8000;
-  Call4(Actor_SetPositionAndResetMotion, t3, 0x2680000, 0x600000, 0x980000);
+  Call4(Actor_SetPositionAndResetMotion, t3, PIXELS(616), PIXELS(96),
+        PIXELS(152));
   Call2(Func_0200297c, 0xcccc, 0x1999);
-  Call4(Camera_MoveWithinMapBounds, 0x1780000, -1, 0xf80000, 0);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t9 = Value1(Actor_GetById, 0xa);
-  Call2(Actor_SetModeById, 0xa, 4);
-  Call1(Import_SoundPlay, 0xa5);
+  t9 = Value1(Actor_GetById, 10);
+  Call2(Actor_SetModeById, 10, 4);
+  Call1(Import_SoundPlay, 165);
   Call4(Func_02002884, t9, 0x1600000, 0x80000, 0xb00000);
   Call2(Func_02002864, t9, (s32)gData_0200b000);
-  Call1(FieldEvent_Wait, 0x19);
-  Call4(Camera_MoveWithinMapBounds, 0x1780000, -1, 0x680000, 1);
-  t16 = Value1(Actor_GetById, 0xb);
-  Call2(Actor_SetModeById, 0xb, 4);
+  Call1(FieldEvent_Wait, 25);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(104), 1);
+  t16 = Value1(Actor_GetById, 11);
+  Call2(Actor_SetModeById, 11, 4);
   Call4(Func_02002884, t16, 0x1a00000, 0x80000, 0x980000);
   Call2(Func_02002864, t16, (s32)gData_0200b000);
-  Call1(FieldEvent_Wait, 0x3c);
-  Call1(Import_SoundPlay, 0xa5);
+  Call1(FieldEvent_Wait, 60);
+  Call1(Import_SoundPlay, 165);
   Call1(Actor_WaitForMoveById, 0xa);
   Call1(Actor_WaitForMoveById, 0xb);
   Func_0200298c();

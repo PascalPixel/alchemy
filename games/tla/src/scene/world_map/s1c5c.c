@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 extern const u8 gData_02004e38[];
 extern const u8 gData_02004e58[];
@@ -62,9 +63,9 @@ void Func_02001c5c(void) {
    * the three placements as in the native; as a literal each forwarded call
    * builds it again. */
   angle = 0xe000;
-  Func_02004c90_(16, 0x22d10000, 0x16dd0000, angle);
-  Func_02004c90_(17, 0x22e10000, 0x16ed0000, angle);
-  Func_02004c90_(18, 0x22e10000, 0x16fd0000, angle);
+  Func_02004c90_(16, PIXELS(8913), PIXELS(5853), angle);
+  Func_02004c90_(17, PIXELS(8929), PIXELS(5869), angle);
+  Func_02004c90_(18, PIXELS(8929), PIXELS(5885), angle);
   Event_StartScreenTransition();
   Actor_SetSpeedParameters_(16, 0x3333, 0x1999);
   Actor_SetSpeedParameters_(17, 0x3333, 0x1999);

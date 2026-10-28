@@ -1,5 +1,6 @@
 #include "types.h"
 #include "io_write_queue.h"
+#include "io_reg.h"
 
 extern u32 gFrameCount;
 extern u16 gData_02006e08;
@@ -17,11 +18,12 @@ void Func_02003c50(void) {
   s32 odd;
   u16 *alpha;
 
-  QueueIoWriteDelay2(0x04000050, 0x3f41);
+  QueueIoWriteDelay2((u32)&REG_BLDCNT,
+                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   odd = gFrameCount & 2;
   alpha = &gData_02006e08;
   if (odd)
-    QueueBlend(0x04000052, *alpha | 12);
+    QueueBlend((u32)&REG_BLDALPHA, *alpha | 12);
   else
-    QueueBlend(0x04000052, *alpha | 16);
+    QueueBlend((u32)&REG_BLDALPHA, *alpha | 16);
 }

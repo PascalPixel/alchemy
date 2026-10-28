@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct VenusActor {
   u8 unk00[0xa];
@@ -190,17 +191,17 @@ static inline void Venus_Countdown(s32 value) {
 void Func_02000b2c(void) {
   struct EventWork *work;
 
-  Venus_ObjSetPos(4, 0x2c80000, 0x3300000);
-  Venus_ObjSetPos(5, 0x2b80000, 0x3480000);
-  Venus_ObjSetPos(8, 0x2d80000, 0x3480000);
-  Venus_ObjTurn(4, 0x4000, 0);
-  Venus_ObjTurn(5, 0xc000, 0);
-  Venus_ObjTurn(8, 0xc000, 0);
+  Venus_ObjSetPos(4, PIXELS(712), PIXELS(816));
+  Venus_ObjSetPos(5, PIXELS(696), PIXELS(840));
+  Venus_ObjSetPos(8, PIXELS(728), PIXELS(840));
+  Venus_ObjTurn(4, FACING_SOUTH, 0);
+  Venus_ObjTurn(5, FACING_NORTH, 0);
+  Venus_ObjTurn(8, FACING_NORTH, 0);
   Venus_ObjSpeed(4, 0x10000, 0x8000);
   Venus_ObjSpeed(5, 0x10000, 0x8000);
   Venus_ObjSpeed(8, 0x10000, 0x8000);
   Venus_ObjSpeed(9, 0x10000, 0x8000);
-  Venus_CamMove(0x2980000, -1, 0x3380000, 0);
+  Venus_CamMove(PIXELS(664), -1, PIXELS(824), 0);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 256;
   work->delay = 60;
@@ -213,19 +214,19 @@ void Func_02000b2c(void) {
   Venus_ObjModeWait(8, 3);
   Venus_Wait(10);
   Venus_ObjWalk(4, 664, 824);
-  Venus_ObjTurn(4, 0xc000, 0);
+  Venus_ObjTurn(4, FACING_NORTH, 0);
   Venus_Wait(10);
   Venus_ObjWalk(8, 712, 824);
-  Venus_ObjTurn(5, 0xa000, 0);
+  Venus_ObjTurn(5, FACING_NORTHWEST, 0);
   Venus_Wait(20);
   VenusLighthouse_RunSetupStep();
   SceneState_RunActor13AtColumn42Setup();
   Venus_Wait(20);
   Venus_ObjWalk(8, 728, 840);
-  Venus_ObjTurn(8, 0xc000, 0);
-  Venus_ObjTurn(5, 0xc000, 0);
+  Venus_ObjTurn(8, FACING_NORTH, 0);
+  Venus_ObjTurn(5, FACING_NORTH, 0);
   Venus_ObjWalk(4, 712, 816);
-  Venus_ObjTurn(4, 0x4000, 0);
+  Venus_ObjTurn(4, FACING_SOUTH, 0);
   Venus_Wait(30);
   Venus_ObjModeWait(4, 3);
   Venus_Wait(20);
@@ -239,8 +240,8 @@ void Func_02000b2c(void) {
   Venus_Se(129);
   Venus_ObjEffectSet(4, -1);
   Venus_Wait(50);
-  Venus_ObjTurn(5, 0xc000, 0);
-  Venus_ObjTurn(8, 0xc000, 0);
+  Venus_ObjTurn(5, FACING_NORTH, 0);
+  Venus_ObjTurn(8, FACING_NORTH, 0);
   Venus_ObjSetPos(4, 0, 0);
 }
 
@@ -265,13 +266,13 @@ void Func_02000d30(void) {
   Venus_ObjWalk(5, 664, 888);
   Venus_ObjCommitHere(8);
   Venus_Jump(8, 256, 30);
-  Venus_ObjTurn(8, 0xa000, 0);
+  Venus_ObjTurn(8, FACING_NORTHWEST, 0);
   Venus_Wait(20);
   Venus_ObjWalk(8, 696, 888);
   Venus_ObjTurn(5, 0, 0);
-  Venus_ObjTurn(8, 0x8000, 0);
+  Venus_ObjTurn(8, FACING_WEST, 0);
   Venus_Wait(20);
-  Venus_CamMove(0x2b80000, -1, 0x3980000, 1);
+  Venus_CamMove(PIXELS(696), -1, PIXELS(920), 1);
   Func_02001c4c();
   Venus_Wait(20);
   Venus_ObjVar(5, 2);
@@ -290,7 +291,7 @@ void Func_02000d30(void) {
   Venus_Jump(8, 257, 30);
   Venus_MessagePut(0x2008, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(5, 0xe000, 0);
+  Venus_ObjTurn(5, FACING_NORTHEAST, 0);
   Venus_Wait(30);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
@@ -302,13 +303,13 @@ void Func_02000d30(void) {
   Venus_MessagePut(5, 0);
   Venus_Wait(30);
   Venus_Se(198);
-  Venus_ObjSetPos(9, 0x2a80000, 0x3980000);
+  Venus_ObjSetPos(9, PIXELS(680), PIXELS(920));
   Venus_ObjTurn(9, 0xb000, 0);
   Venus_ObjEffect(9);
   Venus_ObjTurn(9, 0xb000, 0);
   Venus_Wait(20);
-  Venus_ObjTurn(5, 0x4000, 0);
-  Venus_ObjTurn(8, 0x4000, 0);
+  Venus_ObjTurn(5, FACING_SOUTH, 0);
+  Venus_ObjTurn(8, FACING_SOUTH, 0);
   Venus_Wait(10);
   Venus_Wait(20);
   Venus_ObjModeWait(9, 4);
@@ -321,8 +322,8 @@ void Func_02000d30(void) {
   Venus_Jump(9, 256, 30);
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(5, 0x4000, 0);
-  Venus_ObjTurn(8, 0x4000, 0);
+  Venus_ObjTurn(5, FACING_SOUTH, 0);
+  Venus_ObjTurn(8, FACING_SOUTH, 0);
   Venus_Wait(20);
   Venus_Jump(8, 258, 40);
   Venus_MessagePut(0x2008, 0);
@@ -331,9 +332,9 @@ void Func_02000d30(void) {
   Venus_Wait(10);
   Venus_ObjTurn(9, 0, 0);
   Venus_Wait(30);
-  Venus_ObjTurn(9, 0x8000, 0);
+  Venus_ObjTurn(9, FACING_WEST, 0);
   Venus_Wait(30);
-  Venus_ObjTurn(9, 0xc000, 0);
+  Venus_ObjTurn(9, FACING_NORTH, 0);
   Venus_Wait(30);
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
@@ -356,7 +357,7 @@ void Func_02000d30(void) {
   Venus_MessagePut(0x2008, 0);
   Venus_Wait(10);
   Venus_Jump(9, 256, 30);
-  Venus_ObjTurn(9, 0xe000, 0);
+  Venus_ObjTurn(9, FACING_NORTHEAST, 0);
   Venus_Wait(30);
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
@@ -417,7 +418,7 @@ void Func_02000d30(void) {
   Venus_ObjModeWait(5, 4);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(5, 0x4000, 0);
+  Venus_ObjTurn(5, FACING_SOUTH, 0);
   Venus_Wait(20);
   Venus_ObjCommit(5, 0, 16);
   Venus_ObjTurn(5, 0x3000, 0);
@@ -478,7 +479,7 @@ void Func_02000d30(void) {
   Venus_Jump(5, 263, 30);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(8, 0xe000, 0);
+  Venus_ObjTurn(8, FACING_NORTHEAST, 0);
   Venus_Wait(30);
   Venus_ObjModeWait(8, 3);
   Venus_Wait(10);
@@ -488,17 +489,17 @@ void Func_02000d30(void) {
   Venus_Wait(10);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(8, 0x8000, 0);
+  Venus_ObjTurn(8, FACING_WEST, 0);
   Venus_Wait(30);
   Venus_ObjCommit(5, 0, -16);
   Venus_Wait(10);
-  Venus_ObjTurn(5, 0xe000, 0);
+  Venus_ObjTurn(5, FACING_NORTHEAST, 0);
   Venus_Wait(30);
   Venus_ObjModeWait(5, 3);
   Venus_Wait(20);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(9, 0xe000, 0);
+  Venus_ObjTurn(9, FACING_NORTHEAST, 0);
   Venus_ObjTurn(8, 0x5000, 0);
   Venus_Wait(50);
   Venus_ObjTurn(8, 0x9000, 0);
@@ -528,7 +529,7 @@ void Func_02000d30(void) {
   Venus_Wait(25);
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(8, 0x4000, 0);
+  Venus_ObjTurn(8, FACING_SOUTH, 0);
   Venus_Wait(20);
   Venus_ObjModeWait(8, 3);
   Venus_Wait(10);
@@ -541,14 +542,14 @@ void Func_02000d30(void) {
   Venus_Jump(5, 258, 40);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
-  Venus_ObjTurn(9, 0xa000, 0);
+  Venus_ObjTurn(9, FACING_NORTHWEST, 0);
   Venus_Wait(20);
   Venus_ObjModeWait(9, 3);
   Venus_Wait(10);
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
   Venus_ObjLink(5, 8, 50);
-  Venus_ObjTurn(9, 0x4000, 0);
+  Venus_ObjTurn(9, FACING_SOUTH, 0);
   Venus_Wait(30);
   Venus_Jump(9, 264, 30);
   Venus_MessagePut(9, 0);
@@ -567,7 +568,7 @@ void Func_02000d30(void) {
   Venus_MessagePut(9, 0);
   Venus_Wait(10);
   Venus_Jump(5, 257, 30);
-  Venus_ObjTurn(5, 0x4000, 0);
+  Venus_ObjTurn(5, FACING_SOUTH, 0);
   Venus_Wait(20);
   Venus_MessagePut(5, 0);
   Venus_Wait(10);
@@ -605,7 +606,7 @@ void Func_02000d30(void) {
   Venus_Wait(10);
   Venus_ObjModeWait(8, 3);
   Venus_Wait(20);
-  Venus_ObjTurn(8, 0x8000, 0);
+  Venus_ObjTurn(8, FACING_WEST, 0);
   Venus_Wait(20);
   Venus_MessagePut(0x2008, 0);
   Venus_Wait(10);
@@ -645,14 +646,14 @@ void Func_02000d30(void) {
   Venus_Wait(15);
   Venus_ObjWalk(5, 728, 944);
   Venus_ObjWalk(5, 728, 928);
-  Venus_ObjSetPos(5, 0x2d80000, 0x3900000);
+  Venus_ObjSetPos(5, PIXELS(728), PIXELS(912));
   Venus_Se(129);
   Venus_ObjEffectSet(5, -1);
   Venus_Wait(40);
   Venus_CopyCells(53, 50, 42, 49, 1, 1);
   Venus_CopyCells(55, 117, 41, 117, 3, 5);
   Venus_FlagClr(513);
-  Venus_ObjSetPos(10, 0x2980000, 0x3180000);
+  Venus_ObjSetPos(10, PIXELS(664), PIXELS(792));
   Venus_CamMove(-1, -1, -1, 0);
   gMainRoutineWork.currentOwner = 5;
   Venus_PartyRemove(4);

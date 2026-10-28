@@ -4,6 +4,7 @@
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct EventDestination {
   u8 unk000[0x154];
@@ -99,15 +100,15 @@ void Func_02000994(void) {
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       Actor_SetPositionAndReset_(5, x + 24, z - 12);
-      Actor_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gMainRoutineWork.currentOwner, 0xe000);
+      Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
+      Func_02004d00_(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgWeShouldnT);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 0x2000);
+      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 8192);
       Func_02004df8_(0x10000, 6);
     } else {
       Func_02004df8_(0x16666, 6);
@@ -115,13 +116,13 @@ void Func_02000994(void) {
       wait(1);
       z -= 12;
       Actor_SetPositionAndReset_(5, x + 24, z);
-      Actor_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gMainRoutineWork.currentOwner, 0xe000);
+      Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
+      Func_02004d00_(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgYouReNot);
       Func_02004cf0(5, 0);
       Func_02004db0();
-      Actor_ArmCallback_(5, 0x8000, 0);
+      Actor_ArmCallback_(5, FACING_WEST, 0);
       Func_02004d10_(gMainRoutineWork.currentOwner, 258);
       Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, x + 12, z);
       Func_02004d00_(gMainRoutineWork.currentOwner, 0);
@@ -135,7 +136,7 @@ void Func_02000994(void) {
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 0x2000);
+      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 8192);
       Flag_Set(0x9b3);
       Func_02004df8_(0x10000, 6);
     }

@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "scene_tables.h"
 
 void Func_02001518(void) {
   struct FieldActor *object = Actor_GetById(64);
@@ -8,7 +9,7 @@ void Func_02001518(void) {
 
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    Scene_Call4090(64, 0x1200000, 0xf00000);
+    Scene_Call4090(64, PIXELS(288), PIXELS(240));
     /* FAKEMATCH: both coordinates are read before 0x80000 is built, as the
      * native reads them; in one expression the constant comes between the two
      * reads */
@@ -16,6 +17,6 @@ void Func_02001518(void) {
     b = object->x;
     if ((a + 0x80000) >> 20 == (b + 0x80000) >> 20 &&
         (leader->z + 0x80000) >> 20 == (object->z + 0x80000) >> 20)
-      Scene_Call4090(gMainRoutineWork.currentOwner, 0x1200000, 0x1000000);
+      Scene_Call4090(gMainRoutineWork.currentOwner, PIXELS(288), PIXELS(256));
   }
 }

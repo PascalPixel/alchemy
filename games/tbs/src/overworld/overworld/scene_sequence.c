@@ -25,7 +25,7 @@ struct ActorSystemSuspendView {
 /// (Field_UpdateWalking each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
-/// Called by ParentSequence_Run for every scene, which
+/// Called by SequenceParent_Run for every scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gAdventure's

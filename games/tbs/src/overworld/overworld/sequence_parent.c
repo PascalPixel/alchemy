@@ -1,5 +1,5 @@
 /// @file
-/// Scene changes: exits, returns from battle, the parent sequence, entering.
+/// Scene changes: exits, returns from battle, the sequence parent, entering.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -21,7 +21,7 @@
 /// scene's exit table gives the first exit of that kind (or of any kind) whose
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by ParentSequence_Run with SceneSequence_Run's result; sets
+/// Called by SequenceParent_Run with SceneSequence_Run's result; sets
 /// gAdventure.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
@@ -88,7 +88,7 @@ void Scene_TakeExit(s32 exitId) {
 }
 
 /// Chooses where the game continues after a sequence other than the scene
-/// sequence (see ParentSequence_Run). result is its result:
+/// sequence (see SequenceParent_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the story battle's defeat point
@@ -97,7 +97,7 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the after-battle destination an event set, or to the return
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// ParentSequence_Run after each sequence other than the scene sequence (the
+/// SequenceParent_Run after each sequence other than the scene sequence (the
 /// ids from SEQUENCE_NONE up); stores result in gAdventure.sequenceResult and
 /// sets gAdventure.sceneId and .entrance.
 void Scene_ReturnFromSequence(s32 result) {
@@ -174,7 +174,7 @@ enum {
 /// Runs the dice sequence (Lucky Dice), preserving BG palettes 14 and 15 in a
 /// 64-byte Heap_Alloc copy freed afterwards. Returns the minigame's result, 0,
 /// for Scene_ReturnFromSequence.
-static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
+static __inline__ s32 SequenceParent_RunDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -191,8 +191,8 @@ static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
 }
 
 /// Runs the slots sequence (Lucky Wheels), preserving BG palettes 14 and 15 as
-/// ParentSequence_RunDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 ParentSequence_RunSlots(s32 entrance) {
+/// SequenceParent_RunDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 SequenceParent_RunSlots(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -208,14 +208,14 @@ static __inline__ s32 ParentSequence_RunSlots(s32 entrance) {
   return result;
 }
 
-/// The parent sequence: runs one sequence after another and never returns.
+/// The sequence parent: runs one sequence after another and never returns.
 /// mode, an enum GameStart, chooses the first scene. Each pass resets the
 /// runtime, then either runs the battle, dice or slots sequence and picks the
 /// scene to return to, or runs the scene sequence: loads the scene's code,
 /// starts its music and runs it until the party takes an exit. Called with
-/// GAME_START_TITLE through ParentSequence_RunFar by System_Initialize at
+/// GAME_START_TITLE through SequenceParent_RunFar by System_Initialize at
 /// power-on and by Game_RestartQuest.
-void ParentSequence_Run(s32 mode) {
+void SequenceParent_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;
@@ -272,10 +272,10 @@ void ParentSequence_Run(s32 mode) {
         entrance = Battle_RunFar(entrance);
         break;
       case SEQUENCE_DICE:
-        entrance = ParentSequence_RunDice(entrance);
+        entrance = SequenceParent_RunDice(entrance);
         break;
       case SEQUENCE_SLOTS:
-        entrance = ParentSequence_RunSlots(entrance);
+        entrance = SequenceParent_RunSlots(entrance);
         break;
       case SEQUENCE_NONE:
         entrance = 0;
@@ -311,7 +311,7 @@ void ParentSequence_Run(s32 mode) {
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by ParentSequence_Run before SceneSequence_Run.
+/// Called by SequenceParent_Run before SceneSequence_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
@@ -327,7 +327,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// entering a new area so are the area's flags and step
 /// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
-/// (FLAG_AREA_VISITED) is set. Called by ParentSequence_Run before each
+/// (FLAG_AREA_VISITED) is set. Called by SequenceParent_Run before each
 /// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gAdventure.area
 /// and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
@@ -374,7 +374,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 }
 
 /// Starts the current scene's field music, chosen by
-/// Scene_ChooseMusic. Called by ParentSequence_Run, and by
+/// Scene_ChooseMusic. Called by SequenceParent_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
 void Scene_PlayMusic(void) { Sound_PlayFar(gAdventure.sceneMusic); }
 

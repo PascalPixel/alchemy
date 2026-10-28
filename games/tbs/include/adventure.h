@@ -84,7 +84,7 @@ struct Adventure {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The destination: the sequence the parent sequence runs next, a
+  /// The destination: the sequence the sequence parent runs next, a
   /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.
   /// During a scene it is the scene running. An exit-table lookup overwrites
   /// it, and EXIT_KEEP_DESTINATION keeps it.

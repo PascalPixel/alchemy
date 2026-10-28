@@ -5,10 +5,10 @@
 /// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
 /// gAdventure already holds the next scene.
 s32 SceneSequence_RunFar(s32 entrance);
-/// The parent sequence, which never returns; mode, an enum GameStart,
+/// The sequence parent, which never returns; mode, an enum GameStart,
 /// picks the first scene. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
-void ParentSequence_RunFar(s32 mode);
+void SequenceParent_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void Event_WaitFar(s32 frames);
 /// Opens an event: closes any area name window, stops the leader and resets the

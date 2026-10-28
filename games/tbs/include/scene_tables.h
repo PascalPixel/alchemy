@@ -99,7 +99,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 #define SCENE_EXITS_END 0x1ff
 
 /// Sequence ids above the scene table's rows: the sequences other than the
-/// scene sequence, which ParentSequence_Run runs in its place. They have no row
+/// scene sequence, which SequenceParent_Run runs in its place. They have no row
 /// in gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.

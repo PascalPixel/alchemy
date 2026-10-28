@@ -74,7 +74,7 @@
 /// Jupiter Lighthouse is lit; no scene in The Broken Seal sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
-/// The next scene keeps the music that is playing; parent_sequence.c clears
+/// The next scene keeps the music that is playing; sequence_parent.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
 /// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.

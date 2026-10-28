@@ -25,7 +25,7 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each turn.
 ///
-/// Reached through its far stub from ParentSequence_Run's switch on the
+/// Reached through its far stub from SequenceParent_Run's switch on the
 /// sequence (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message

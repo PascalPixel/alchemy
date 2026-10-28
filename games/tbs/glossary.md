@@ -184,7 +184,7 @@ Evidence: plain English; the project's own word.
 ### System
 
 The code the field, the battles and the user interface are built on: start-up,
-the parent sequence, waiting and [tasks](#task), interrupts, the
+the sequence parent, waiting and [tasks](#task), interrupts, the
 [heap](#heap-and-pools), [banks](#bank), [overlays](#overlay), saving and the
 sound driver. It is one of the code's four divisions, with Field, Battle and
 User Interface; [System](system.md) explains it.
@@ -192,17 +192,17 @@ User Interface; [System](system.md) explains it.
 Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 "Field", "User Interface" and "Support" (`gCredits_Lines`).
 
-### Parent sequence
+### Sequence parent
 
 The loop that runs one [sequence](#sequence) after another for as long as the
-console is on, `ParentSequence_Run`. Each pass reads one id from the
+console is on, `SequenceParent_Run`. Each pass reads one id from the
 [adventure](#adventure) and runs one thing: a [scene](#scene), any row of the
 scene table, the Title and the File Screen included, which the
 [scene sequence](#scene-sequence) runs until the party takes an exit; or the
 battle, dice or slots sequence. In each transition it tears down what the last
 sequence set up (its tasks, its interrupt handlers, the heap) and starts the
 next, so going from one scene to the next is a transition just as going into a
-battle is ([The front page](README.md#the-parent-sequence)).
+battle is ([The front page](README.md#the-sequence-parent)).
 
 Evidence: Sega: a coinage from its lineage. "Sequence" for one flow of the
 game is Namco's (黒須一雄; 遠藤雅伸's ゲームシーケンス) and Sega's through
@@ -215,7 +215,7 @@ names Camelot's routine.
 One flow of the game, run from its start to its end: the scene sequence, the
 battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time
-([The front page](README.md#the-parent-sequence)).
+([The front page](README.md#the-sequence-parent)).
 
 Evidence: Sega: 平山尚's sequences (2008). Camelot uses プログラム only for the
 whole game's code.
@@ -223,7 +223,7 @@ whole game's code.
 ### Transition and next sequence
 
 The handover from one sequence to the next. A sequence that ends names the
-next sequence in the [adventure](#adventure), and the parent sequence starts it
+next sequence in the [adventure](#adventure), and the sequence parent starts it
 ([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
 Evidence: Sega: 平山尚's シーケンス遷移 and its 遷移判定 (2008).
@@ -487,7 +487,7 @@ Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugCategoryName`).
 
 The sequence that runs one scene, `SceneSequence_Run`: a frame of its tasks,
 then the field requests, until the party takes an exit. The next scene is the
-parent sequence's to start
+sequence parent's to start
 ([The front page](README.md#the-scene-sequence)).
 
 Evidence: Sega: 平山尚's sequence (2008), named for what it runs.
@@ -696,7 +696,7 @@ Evidence: plain English.
 
 ### Destination
 
-The scene and entrance the parent sequence runs next (`gAdventure.sceneId`
+The scene and entrance the sequence parent runs next (`gAdventure.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

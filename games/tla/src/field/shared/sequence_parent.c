@@ -60,10 +60,10 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     Heap_Release(saved);                                                            \
   }
 
-/// The parent sequence, as The Broken Seal's ParentSequence_Run, with this
+/// The sequence parent, as The Broken Seal's SequenceParent_Run, with this
 /// game's four debug starts, gRenderOamEnabled set after stopping DMA 0, and
 /// three sequences that keep BG palettes 14 and 15.
-void ParentSequence_Run(s32 mode) {
+void SequenceParent_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;

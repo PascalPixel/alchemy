@@ -22,7 +22,7 @@ struct Actor;
 /// battles, Retreat and the event commands that set a destination
 /// (Event_SetDestination) raise it, and SceneSequence_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (parent_sequence.c, scene_sequence.c).
+/// (sequence_parent.c, scene_sequence.c).
 #define EXIT_KEEP_DESTINATION 999
 
 /// gAdventure.movementMode: how the scene sequence hands the party leader
@@ -36,7 +36,7 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// ParentSequence_Run's mode: where the game starts.
+/// SequenceParent_Run's mode: where the game starts.
 enum GameStart {
   GAME_START_TITLE = 0,            ///< the Title, with a fresh adventure
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
@@ -105,7 +105,7 @@ enum EncounterZoneId {
 void Scene_TakeExit(s32 exitId);
 void Scene_ReturnFromSequence(s32 result);
 s32 Scene_GetArea(s32 sceneId);
-void ParentSequence_Run(s32 mode);
+void SequenceParent_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_Arrive(s32 unused, s32 keep);
 void Scene_PlayMusic(void);

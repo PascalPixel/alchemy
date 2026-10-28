@@ -17,7 +17,7 @@ void Func_08014b70(void);
 void VramCache_Reset(void);
 void Func_0801399c(void);
 void Sound_InitializeFar(void);
-void ParentSequence_RunFar(s32);
+void SequenceParent_RunFar(s32);
 void wait(s32 frames);
 void Iwram_Halt(void);
 
@@ -53,5 +53,5 @@ void Func_0801319c(void) {
   gOamUsage.used = 0;
   gSleepDisabled = 0;
   wait(10);
-  ParentSequence_RunFar(0);
+  SequenceParent_RunFar(0);
 }

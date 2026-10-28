@@ -291,7 +291,7 @@ extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Chooses the current scene's field music (gAdventure.cue) from the
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
-/// when none does. Called by ParentSequence_Run on entering each scene, before
+/// when none does. Called by SequenceParent_Run on entering each scene, before
 /// Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;

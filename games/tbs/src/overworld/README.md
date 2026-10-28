@@ -188,8 +188,8 @@ matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-`ParentSequence_Run` runs one sequence after another;
-[the front page](../../README.md#the-parent-sequence) describes it. For a
+`SequenceParent_Run` runs one sequence after another;
+[the front page](../../README.md#the-sequence-parent) describes it. For a
 scene it clears the scene's flags, loads the overlay and runs the scene
 sequence, `SceneSequence_Run`; for the battle, dice or slots sequence it runs
 that and then loads the scene again. The overlay supplies the scene's tables

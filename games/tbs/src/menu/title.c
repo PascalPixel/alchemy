@@ -70,7 +70,7 @@ u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 /// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the File Screen's entrance 2, which offers to
 ///   save the cleared game.
-/// - Entrance 2, at power-on (ParentSequence_Run) and after the logo:
+/// - Entrance 2, at power-on (SequenceParent_Run) and after the logo:
 /// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
 ///   with its "Press Start" prompt; then the File Screen's

@@ -218,7 +218,7 @@ void DebugBattle_ViewMessages(void) {
           index = DEBUG_VIEW_LIMIT;
         if (gKeysRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
           break;
-        if (TextPrinter_AllFinishedFar() != 0 && (gKeysRepeat & KEY_A))
+        if (Message_AllTypedFar() != 0 && (gKeysRepeat & KEY_A))
           break;
         WaitFrames(1);
       }

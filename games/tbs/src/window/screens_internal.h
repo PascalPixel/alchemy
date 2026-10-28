@@ -97,8 +97,8 @@
 // them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);
-struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
-                                    s32 y, u16 *spacing, s32 flags);
+struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
+                              u16 *spacing, s32 flags);
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y);
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);

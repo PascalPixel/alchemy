@@ -491,7 +491,7 @@ static void ValePlaza_UsePsynergyStone(void) {
   Party_AddPp(999, 0);
   Event_WaitFrames(10);
   FieldMessage_Show(MsgValePartyPpRestored, 1);
-  TextPrinter_CloseFinishedWindows();
+  Message_CloseFinishedWindows();
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
 }

@@ -272,7 +272,7 @@ enum {
   /// The article class of the name it starts, in item and class names, which
   /// Message_AppendArticleName reads and drops.
   MESSAGE_ARTICLE_CLASS = 29,
-  /// Kept as TEXT_END_ALT, which the printer ends as it ends TEXT_END.
+  /// Kept as TEXT_END_ALT, which the message ends as it ends TEXT_END.
   MESSAGE_END_NOW = 30,
 };
 
@@ -310,7 +310,7 @@ extern u8 *gLocalizedWord_CountedNouns[];
 /// again. Argument codes take their values from the argument table
 /// (MessageArgument_Push), and clear empties the table afterwards. Names,
 /// numbers and articles are written out; style codes are kept with their
-/// operands for the text printer to run.
+/// operands for the message to run.
 /// The message is written at WindowWork.textBufferEnd, which it leaves just
 /// past the message's terminator, and is cut at the ring's length. The decoder
 /// routine is copied into heap slot TEXT_WORK_BLOCK for the call and freed at

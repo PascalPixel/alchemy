@@ -340,7 +340,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       }
     } else {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      // Pair two narrow characters into one cell, as TextPrinter_Step
+      // Pair two narrow characters into one cell, as Message_Type
       // does.
       if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         nextCode = *text;

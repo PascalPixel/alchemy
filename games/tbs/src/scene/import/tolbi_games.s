@@ -14,7 +14,7 @@
 	.set import.Text_DrawMessageAsTiles, 1
 	.set import.Text_DrawNumberInWindow, 1
 	.set import.MessageArgument_Push, 1
-	.set import.TextPrinter_CloseFinishedWindows, 1
+	.set import.Message_CloseFinishedWindows, 1
 	.set import.Menu_SelectCoinsOrMedals, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.GameFlag_Get, 1

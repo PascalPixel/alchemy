@@ -246,7 +246,7 @@ void BattlePlayback_Run(void) {
                events->phase == PLAY_MESSAGE_ADD) {
       // Wait until the message finishes appearing. The arrow's resource entry
       // is fetched again (-1) and its wait timed from now.
-      if (TextPrinter_AllFinishedFar() == 0)
+      if (Message_AllTypedFar() == 0)
         return;
       if (events->phase == PLAY_MESSAGE_ADD) {
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;

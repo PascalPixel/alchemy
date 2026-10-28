@@ -11,7 +11,7 @@ FarCall_WindowTable:
 	export Message_CopyExpandedFar, Message_CopyExpanded
 	export Message_OpenWindowFar, Message_OpenWindow
 	export FieldMessage_ShowFar, FieldMessage_Show
-	export TextPrinter_AllFinishedFar, TextPrinter_AllFinished
+	export Message_AllTypedFar, Message_AllTyped
 	export Window_IsClosedFar, Window_IsClosed
 	export Message_SetDecodeFlagsFar, Message_SetDecodeFlags
 	export WindowSprite_PrepareForRedrawFar, WindowSprite_PrepareForRedraw
@@ -42,7 +42,7 @@ FarCall_WindowTable:
 	export PartyStatus_CreateWindowFar, PartyStatus_CreateWindow
 	export PartyStatus_DrawFar, PartyStatus_Draw
 	export PartyStatus_CloseFar, PartyStatus_Close
-	export TextPrinter_CloseFinishedWindowsFar, TextPrinter_CloseFinishedWindows
+	export Message_CloseFinishedWindowsFar, Message_CloseFinishedWindows
 	export Window_CloseAllFar, Window_CloseAll
 	overlay_veneer SelectionMenu_Create
 	overlay_veneer SelectionMenu_Clear
@@ -70,7 +70,7 @@ FarCall_WindowTable:
 	export AreaNameWindow_HideFar, AreaNameWindow_Hide
 	export FieldMessage_ShowCenteredFar, FieldMessage_ShowCentered
 	export BattleMessage_CloseFar, BattleMessage_Close
-	export TextPrinter_ResetFreeFar, TextPrinter_ResetFree
+	export Message_ResetFreeFar, Message_ResetFree
 	export MenuArrow_CreateFar, MenuArrow_Create
 	export MenuArrow_SetPositionFar, MenuArrow_SetPosition
 	export MenuArrow_ReleaseFar, MenuArrow_Release

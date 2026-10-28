@@ -8,7 +8,7 @@
 	.endif
 	.set import.FieldMessage_Show, 1
 	.ifndef TBS_EDITION_JA
-	.set import.TextPrinter_AllFinished, 1
+	.set import.Message_AllTyped, 1
 	.endif
 	.set import.Text_DrawMessage, 1
 	.set import.Text_DrawMessageAsTiles, 1
@@ -21,7 +21,7 @@
 	.set import.MessageArgument_Push, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.TextPrinter_CloseFinishedWindows, 1
+	.set import.Message_CloseFinishedWindows, 1
 	.endif
 	.set import.WindowSprite_RedrawSavedRect, 1
 	.set import.WindowSprite_ClearList, 1

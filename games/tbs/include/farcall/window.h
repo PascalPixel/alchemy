@@ -36,9 +36,9 @@ struct Window *Message_OpenWindowFar(s32 message, s32 x, s32 y, u32 packed);
 /// Unless flags move it lower, the window goes above or below the player's
 /// character, away from where it stands.
 void FieldMessage_ShowFar(s32 no, s32 flags);
-/// Returns 1 once every text printer has finished typing its text, even if
+/// Returns 1 once every message has finished typing its text, even if
 /// its window is still open.
-s32 TextPrinter_AllFinishedFar(void);
+s32 Message_AllTypedFar(void);
 /// Returns 1 once window has closed and freed its slot; a new window in that
 /// slot reads as still open.
 s32 Window_IsClosedFar(struct Window *window);
@@ -142,7 +142,7 @@ void PartyStatus_DrawFar(s32 flags);
 void PartyStatus_CloseFar(void);
 /// Closes each message window whose text has ended, then waits ten frames;
 /// windows still typing stay open.
-void TextPrinter_CloseFinishedWindowsFar(void);
+void Message_CloseFinishedWindowsFar(void);
 /// Closes every window, waiting only for the message windows to finish closing.
 void Window_CloseAllFar(s32 unused);
 /// Runs the party's battle commands for a round into out, one per unit in in,
@@ -178,9 +178,9 @@ void FieldMessage_ShowCenteredFar(s32 message, s32 mode, s32 yOffset);
 /// Closes the battle message window at once, so the next battle message opens a
 /// new one.
 void BattleMessage_CloseFar(void);
-/// Clears the first idle text printer's pen, style and canvas, as auto
+/// Clears the first idle message's pen, style and canvas, as auto
 /// battle does after each action.
-void TextPrinter_ResetFreeFar(void);
+void Message_ResetFreeFar(void);
 /// Sets up a sprite as the right-pointing arrow and returns its tile slot in
 /// *slot, for MenuArrow_Release to free.
 void MenuArrow_CreateFar(struct MenuSprite *object, s32 *slot);
@@ -322,7 +322,7 @@ s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
 /// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
 s32 WindowSprite_GetPointerTilesFar(s32 no);
 /// Types a message into an open window from its top left, without voice blips.
-/// Returns the text printer as an integer, or 0 when nothing could start.
+/// Returns the message as an integer, or 0 when nothing could start.
 s32 Message_OpenDecodedFar(struct Window *window, s32 argument);
 /// Returns how many save files there are, leaving out the files saved at the
 /// end of the game when flag is nonzero, or SAVE_ERROR_NO_MEMORY.

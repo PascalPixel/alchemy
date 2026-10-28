@@ -2,7 +2,7 @@
 #define ALCHEMY_WINDOW_H
 
 /// @file
-/// Windows, the text printers that type into them, and the window renderer's
+/// Windows, the messages that type into them, and the window renderer's
 /// work.
 
 #include "unit/window/window.h"
@@ -33,11 +33,11 @@ struct Window {
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
   /// The animation a message's TEXT_WINDOW_STATE code sets. Only
-  /// WINDOW_ANIMATION_SWELL is acted on; its text printer types nothing more
+  /// WINDOW_ANIMATION_SWELL is acted on; its message types nothing more
   /// until the swell ends and clears it.
   u16 animation;
-  /// 0 while a text printer is typing into the window; 1 once its text has
-  /// ended or closed the window, which frees the printer for the next text.
+  /// 0 while a message is typing into the window; 1 once its text has
+  /// ended or closed the window, which frees the message for the next text.
   u16 state;
   u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
   /// The zoom's stage: counts down from 7 to 0 while opening, and up from 0 to
@@ -55,9 +55,9 @@ STATIC_ASSERT(offsetof(struct Window, width) == 8);
 STATIC_ASSERT(offsetof(struct Window, zoomStage) == 0x18);
 STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
-/// A text printer, one of three, which types decoded text into a window a few
+/// A message, one of three, which types decoded text into a window a few
 /// characters a frame and runs its control codes.
-struct TextPrinter {
+struct Message {
   struct Window *window; ///< the window typed into; NULL when free
   u16 x;                 ///< pen, 8.8 fixed-point pixels
   u16 y;                 ///< pen, 8.8 fixed-point pixels
@@ -78,11 +78,11 @@ struct TextPrinter {
   u16 unused;      ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct TextPrinter) == 0x28);
-STATIC_ASSERT(offsetof(struct TextPrinter, textIndex) == 0x12);
-STATIC_ASSERT(offsetof(struct TextPrinter, countdown) == 0x14);
-STATIC_ASSERT(offsetof(struct TextPrinter, transition) == 0x1c);
-STATIC_ASSERT(offsetof(struct TextPrinter, flags) == 0x24);
+STATIC_ASSERT(sizeof(struct Message) == 0x28);
+STATIC_ASSERT(offsetof(struct Message, textIndex) == 0x12);
+STATIC_ASSERT(offsetof(struct Message, countdown) == 0x14);
+STATIC_ASSERT(offsetof(struct Message, transition) == 0x1c);
+STATIC_ASSERT(offsetof(struct Message, flags) == 0x24);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
 // A statement macro (10 sites): the dirty-row store stays where it
@@ -103,7 +103,7 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define PORTRAIT_SLOT_EMPTY 999
 
 /// The window system's work: the windows' tilemap, the windows, the three text
-/// printers, the 64 window sprites, and the decoded message and its arguments.
+/// messages, the 64 window sprites, and the decoded message and its arguments.
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
 /// WindowSystem_InitField takes for the field and
@@ -113,10 +113,10 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
-  // XXX (no evidence): why three text printers, and why the international
+  // XXX (no evidence): why three messages, and why the international
   // editions gave up four windows when they doubled textBuffer; only Camelot's
   // sources could say how the counts were chosen.
-  struct TextPrinter printers[3]; ///< the text printers, NULL work when free
+  struct Message messages[3]; ///< the messages, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 0x80 to 0xFF, then 0x200 to 0x27F): bit 0 once
@@ -133,10 +133,10 @@ struct WindowWork {
   u8 battleMode;        ///< enum WindowBattleMode
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;  ///< text tiles' palette; 15 by default, 14 or 5 for low HP
-  u16 lineSpacing; ///< the current printer's, copied in to draw
+  u16 lineSpacing; ///< the current message's, copied in to draw
   u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                ///< the current printer's, copied in to draw
-  u16 colour;                 ///< the current printer's, copied in to draw
+  u16 outline;                ///< the current message's, copied in to draw
+  u16 colour;                 ///< the current message's, copied in to draw
   // XXX: likely doubled in the international editions for their longer text;
   // the bytes show only the change.
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
@@ -173,8 +173,8 @@ struct WindowWork {
 };
 
 STATIC_ASSERT(offsetof(struct WindowWork, windows) == 0x500);
-STATIC_ASSERT(offsetof(struct WindowWork, printers) ==
-              WINDOW_WORK_PRINTERS_OFFSET);
+STATIC_ASSERT(offsetof(struct WindowWork, messages) ==
+              WINDOW_WORK_MESSAGES_OFFSET);
 STATIC_ASSERT(offsetof(struct WindowWork, sprites) ==
               WINDOW_WORK_SPRITES_OFFSET);
 STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) ==

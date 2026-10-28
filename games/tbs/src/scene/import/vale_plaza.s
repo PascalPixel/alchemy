@@ -16,7 +16,7 @@
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.Anim_ApplyChildValues, 1
 	.set import.FieldMessage_Show, 1
-	.set import.TextPrinter_CloseFinishedWindows, 1
+	.set import.Message_CloseFinishedWindows, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1

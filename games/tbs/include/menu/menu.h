@@ -72,7 +72,7 @@ extern struct ActorSystemWork *gActorSystemWork;
 #endif
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
-/// terminator. The debug text printers and the Djinn preview's numbers
+/// terminator. The debug text routines and the Djinn preview's numbers
 /// (String_FormatNumberToHalfwords) read it.
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.

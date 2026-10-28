@@ -13,7 +13,7 @@
 
 /// Keys down now.
 /* FAKEMATCH(volatile): as plain u32, 18 functions differ in tbs-en, most
- * TextPrinter_Step (249), FileScreen_CheckButtonCodes (134). */
+ * Message_Type (249), FileScreen_CheckButtonCodes (134). */
 extern volatile u32 gKeysHeld;
 /// Keys that went down this frame.
 /* FAKEMATCH(volatile): as plain u32, 41 functions differ in tbs-en, most

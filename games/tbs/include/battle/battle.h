@@ -176,7 +176,7 @@ extern s32 gScene_BattleBackgroundRules[];
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Message_SetVoiceFromActor). The same values as
-/// gMessageSpeed_VoiceGaps, which the text printer reads, in a copy of its own.
+/// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
 extern u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];

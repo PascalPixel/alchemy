@@ -20,8 +20,8 @@ the shop counters in [Shops](../shop/README.md).
 
 Everything the window system keeps between frames lives in one block of
 memory, set up with each [scene](../../glossary.md#scene) and with each battle,
-and gone when the next begins: the windows themselves, the three text
-printers that type into them, the small pictures they carry, the unpacked
+and gone when the next begins: the windows themselves, the three messages
+being typed into them, the small pictures they carry, the unpacked
 text waiting to be typed and the blanks to fill in it.
 
 In the code the block is `struct WindowWork`, borrowed from the
@@ -91,7 +91,7 @@ buffer; the bit-by-bit work is the handwritten `Text_DecodeSymbol`.
 
 ## The text buffer
 
-Unpacked messages wait in the text buffer until a text printer has typed them.
+Unpacked messages wait in the text buffer until they have been typed.
 
 The buffer is a ring: each message is written after the one before, and when
 writing reaches the end it carries on from the start, over whatever was there.
@@ -99,7 +99,7 @@ Nothing has to be set aside or given back, so several windows can show text
 at once, and a message stays readable until enough later text has run over
 it. No message in the game is long enough to run over itself
 ([Evidence](#evidence)). `Message_Decode` returns where in the ring a message
-starts, and that position is all a text printer needs.
+starts, and that position is all the typing needs.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -109,25 +109,25 @@ starts, and that position is all a text printer needs.
 
 ![Isaac talks to Garet's sister in Vale: a message window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-A text printer puts a message into its window a little each frame, with the
+A message is typed into its window a little each frame, with the
 speaker's voice blip every few letters. At a page break it shows the arrow
 and waits for a button; then the window is cleared, refitted to the next
 page's text and typing goes on. At the end the window stays open or, with the
 closing mark, waits for a button and closes.
 
 The window system runs once a frame as a [task](../../glossary.md#task): it
-grows and shrinks the windows, lets each of the three text printers type its
-share, and moves the window sprites. `Message_OpenWindow` (`window/borders.c`)
+grows and shrinks the windows, types a share of each of the three messages,
+and moves the window sprites. `Message_OpenWindow` (`window/borders.c`)
 is the whole path for one message, and shows the order every caller follows:
 
 ```c
 entry = Message_Decode(message, 1);
 Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
 window = Window_Create(x, y, width, height, flags);
-TextPrinter_Add(window, entry, 0, 0, bounds, 0);
+Message_Start(window, entry, 0, 0, bounds, 0);
 ```
 
-`TextPrinter_Step` types a printer's share each frame and acts on the control
+`Message_Type` types a message's share each frame and acts on the control
 codes, whose meanings are listed with them in `window_internal.h` (`TEXT_`).
 
 ### How fast the letters come
@@ -277,7 +277,7 @@ so renaming one changes other folders too.
   wider or taller than 30, is not drawn, and nothing stops a window running
   off the bottom.
 - Twelve windows at once in Japanese and eight in the international editions.
-- Three text printers and 64 window sprites.
+- Three messages and 64 window sprites.
 - Eight blanks at a time; a ninth is dropped.
 - The text buffer holds 256 letter codes in Japanese and 512 in the others.
 - The text canvas holds 120 tiles, one canvas window at a time.
@@ -294,7 +294,7 @@ so renaming one changes other folders too.
 - **text canvas**: a window with `WINDOW_FLAG_TEXT_CANVAS`, whose text is drawn
   into bitmap tiles rather than placed as sprites or tilemap tiles.
 - **text buffer**: the ring `work->textBuffer` of unpacked 16-bit codes.
-- **text printer**: a `struct TextPrinter`, which types unpacked text into one
+- **message**: a `struct Message`, which types unpacked text into one
   window and runs its control codes (`TEXT_`).
 - **window sprite**: a `struct WindowSprite`, one sprite a window carries.
 - **file list**: the list of the three save files (`FileList_SelectFile`).
@@ -302,12 +302,13 @@ so renaming one changes other folders too.
 
 ## Evidence
 
-Windows, text printers and window sprites are named from how their structs
-are used, the control codes from what the decoder and the printer do with each,
-and the screens from the English release's text they show. Messages are
-named by their linker symbols, made from their English text. That "Yo" is
+Windows and window sprites are named from how their structs are used,
+a message from the game's own word for its text (Message Speed), the
+control codes from what the decoder and the typing do with each, and the
+screens from the English release's text they show. Messages are named
+by their linker symbols, made from their English text. That "Yo" is
 typed on the first frame follows from the English glyph widths
-(`graphics/font/text.tsv`) and the pairing rule in `TextPrinter_Step`, and
+(`graphics/font/text.tsv`) and the pairing rule in `Message_Type`, and
 agrees with the recording of the window opening
 (`guides/window/window-open.png`).
 
@@ -319,7 +320,7 @@ codes and at most 446 (Italian) of the others' 512. The two bytes before the
 argument table, `padding` in `struct WindowWork`, align `argumentValues` to a
 word in every edition, and nothing reads them. The halfword after
 `lineSpacing`, `unusedAfterLineSpacing`, is set to 1 whenever `Text_ResetStyle`
-resets the text style and read by nothing: the text printer has no field to
-copy into it (`TextPrinter_ApplyStyle` copies only the colour, outline and
+resets the text style and read by nothing: the message has no field to
+copy into it (`Message_ApplyStyle` copies only the colour, outline and
 line spacing), no text control code writes it, and the glyph code, all C,
 reads the style through its named fields.

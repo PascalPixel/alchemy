@@ -218,7 +218,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #if TBS_PATCH_3
     case TEXT_PAGE:
       // The French, Spanish and Italian releases end the style at a page
-      // break, as their printers do (TextPrinter_Step).
+      // break, as their messages do (Message_Type).
       work->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif

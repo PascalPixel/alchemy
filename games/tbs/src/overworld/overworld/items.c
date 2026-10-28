@@ -164,7 +164,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
          * higher in global allocation (r6, as the bytes have it); as a local
          * of its own, 109 of 253 instructions differ in tbs-en. */
         partyIndex = FieldYesNo_Ask(1);
-        TextPrinter_CloseFinishedWindowsFar();
+        Message_CloseFinishedWindowsFar();
         if (partyIndex != 0)
           return 0;
 

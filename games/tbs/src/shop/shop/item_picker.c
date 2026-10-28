@@ -191,9 +191,9 @@ s32 Shop_SelectUse(s32 unitId) {
         Message_OpenWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
       Sound_PlaySongFar(SE_MENU_CANCEL);
-      while (TextPrinter_AllFinishedFar() == 0)
+      while (Message_AllTypedFar() == 0)
         WaitFrames(1);
-      TextPrinter_CloseFinishedWindowsFar();
+      Message_CloseFinishedWindowsFar();
       continue;
     }
 

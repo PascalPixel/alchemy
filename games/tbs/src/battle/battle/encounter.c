@@ -296,7 +296,7 @@ s32 Battle_Run(s32 enemyGroup) {
     // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
     // the cursor, at pixel (92, 24).
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
-    while (TextPrinter_AllFinishedFar() == 0)
+    while (Message_AllTypedFar() == 0)
       WaitFrames(1);
     Window_CloseFar(tutorialWindow, 1);
     WaitFrames(1);

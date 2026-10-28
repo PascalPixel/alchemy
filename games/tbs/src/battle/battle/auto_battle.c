@@ -139,7 +139,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     break;
   }
 
-  TextPrinter_ResetFreeFar();
+  Message_ResetFreeFar();
   return 0;
 }
 

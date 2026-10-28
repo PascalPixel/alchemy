@@ -282,7 +282,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(2, 96);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0) {
+          while (Message_AllTypedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);
@@ -315,7 +315,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(106, 56);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0) {
+          while (Message_AllTypedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);

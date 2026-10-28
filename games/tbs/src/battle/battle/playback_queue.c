@@ -81,7 +81,7 @@ s32 BattleMessage_WaitForAdvance(void) {
   struct Window *window;
   struct BattleMessageOffset *offset;
 
-  while (!TextPrinter_AllFinishedFar())
+  while (!Message_AllTypedFar())
     WaitFrames(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
@@ -141,7 +141,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   pointerTiles = WindowSprite_GetPointerTilesFar(0);
   position.x = x;
   position.y = y;
-  while (!TextPrinter_AllFinishedFar())
+  while (!Message_AllTypedFar())
     WaitFrames(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);

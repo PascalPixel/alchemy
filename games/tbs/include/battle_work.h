@@ -34,19 +34,19 @@ struct AdvanceArrowSprite {
 
 struct Window;
 
-/// The battle message's text printer, as far as its offset in the window:
+/// The battle message, as far as its offset in the window:
 /// the advance arrow is drawn at the window's corner plus this offset.
 struct BattleMessageOffset {
-  struct Window *window; ///< TextPrinter.window; not named here
+  struct Window *window; ///< Message.window; not named here
   u16 x;                 ///< 1/256 pixels
   u16 y;                 ///< 1/256 pixels
 };
 
-/// The battle message window: its window, its text printer and whether the
+/// The battle message window: its window, its message and whether the
 /// next message is marked.
 struct BattleMessageWork {
   struct Window *window;              ///< the message window
-  struct BattleMessageOffset *offset; ///< its text printer
+  struct BattleMessageOffset *offset; ///< its message
   s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
 };
 

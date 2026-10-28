@@ -21,7 +21,7 @@
 	.set import.Text_DrawMessage, 1
 	.set import.Text_DrawMessageAsTiles, 1
 	.set import.Text_DrawString, 1
-	.set import.TextPrinter_CloseFinishedWindows, 1
+	.set import.Message_CloseFinishedWindows, 1
 	.set import.FileList_SelectAction, 1
 	.set import.IconMenu_ChooseSendOption, 1
 	.set import.FieldMessage_ShowCentered, 1

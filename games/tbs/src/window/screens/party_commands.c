@@ -594,7 +594,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                   (const struct AbilityDefinition *)ability));
           if (state->tutorialStep != 0) {
             hint = Message_ShowAndWait(MsgDjinnUnleashHint, 15, 8);
-            while (TextPrinter_AllFinished() == 0) {
+            while (Message_AllTyped() == 0) {
               WaitFrames(1);
             }
             Window_Close(hint, 1);

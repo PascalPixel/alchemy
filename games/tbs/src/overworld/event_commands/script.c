@@ -308,7 +308,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       FieldMessage_ShowFar(MsgWhatWillYouDrop + 1,
                            FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
       result = FieldYesNo_Ask(1);
-      TextPrinter_CloseFinishedWindowsFar();
+      Message_CloseFinishedWindowsFar();
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
@@ -426,7 +426,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   while (gKeysPressed != 0)
     WaitFrames(1);
 
-  while (TextPrinter_AllFinishedFar() == 0)
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
 
   WaitFrames(3);
@@ -451,12 +451,12 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   if (answer != 0) {
     Actor_SetModeById(actorId, 4);
     Portrait_CloseWindowFar(sprite);
-    TextPrinter_CloseFinishedWindowsFar();
+    Message_CloseFinishedWindowsFar();
     Actor_WaitForAnimationEnd(actorId, 4);
   } else {
     Actor_SetModeById(actorId, 3);
     Portrait_CloseWindowFar(sprite);
-    TextPrinter_CloseFinishedWindowsFar();
+    Message_CloseFinishedWindowsFar();
     Actor_WaitForAnimationEnd(actorId, 3);
   }
 

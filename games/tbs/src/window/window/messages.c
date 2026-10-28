@@ -120,16 +120,16 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
   return p;
 }
 
-// Closing the text printers' windows, and the message argument table.
+// Closing the messages' windows, and the message argument table.
 
-/// Closes every window: first the text printers' windows, waiting until
+/// Closes every window: first the messages' windows, waiting until
 /// they have closed, then the windows opened directly, which it does not wait
-/// for. A printer lets go of its window only once the window has finished
+/// for. A message lets go of its window only once the window has finished
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
 void Window_CloseAll(s32 unused) {
   struct WindowWork *windowWork;
-  struct TextPrinter *printer;
+  struct Message *message;
   struct Window *win;
   u32 done;
   struct Window *window;
@@ -138,31 +138,31 @@ void Window_CloseAll(s32 unused) {
   u16 flag;
 
   windowWork = WINDOW_WORK;
-  printer = windowWork->printers;
+  message = windowWork->messages;
   win = windowWork->windows;
   i = 0;
   do {
-    window = printer->window;
+    window = message->window;
     if (window != 0 && window->flags != 0)
       Window_Close(window, 0);
     i++;
-    printer++;
+    message++;
   } while (i != 3);
 
-  // Free each printer whose window has closed; while one is still closing,
+  // Free each message whose window has closed; while one is still closing,
   // wait a frame.
   for (;;) {
     done = 1;
-    printer = windowWork->printers;
+    message = windowWork->messages;
     i = 0;
     do {
-      pollWindow = printer->window;
+      pollWindow = message->window;
       if (pollWindow != 0) {
         if (pollWindow->zoomStage == 0 && pollWindow->duration == 0) {
           flag = pollWindow->flags;
-          // flag is 0 here: the printer is set free.
+          // flag is 0 here: the message is set free.
           if (flag == 0)
-            printer->window = (struct Window *)(u32)flag;
+            message->window = (struct Window *)(u32)flag;
           else
             done = 0;
         } else {
@@ -170,7 +170,7 @@ void Window_CloseAll(s32 unused) {
         }
       }
       i++;
-      printer++;
+      message++;
     } while (i != 3);
     i = 0;
     if (done)
@@ -189,13 +189,13 @@ void Window_CloseAll(s32 unused) {
   }
 }
 
-/// Steps a text printer's window animation (WINDOW_ANIMATION_SWELL): the frame
+/// Steps a message's window animation (WINDOW_ANIMATION_SWELL): the frame
 /// is drawn a tile bigger on every side until the countdown ends, then back to
-/// normal. Any other animation is left set and does nothing, so the printer
-/// types no more text. TextPrinter_RunAll calls it in place of typing while the
+/// normal. Any other animation is left set and does nothing, so the message
+/// types no more text. Message_UpdateAll calls it in place of typing while the
 /// window has an animation.
-void Window_StepSwellEffect(struct TextPrinter *printer) {
-  struct Window *window = printer->window;
+void Window_StepSwellEffect(struct Message *message) {
+  struct Window *window = message->window;
   s32 effect = window->animation;
   s32 x = window->x;
   s32 y = window->y;
@@ -206,11 +206,11 @@ void Window_StepSwellEffect(struct TextPrinter *printer) {
     return;
 
   Window_DrawBorder(x - 1, y - 1, width + 2, height + 2);
-  printer->countdown--;
-  if (printer->countdown != 0)
+  message->countdown--;
+  if (message->countdown != 0)
     return;
 
-  printer->window->animation = 0;
+  message->window->animation = 0;
   Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
   Window_DrawBorder(x, y, width, height);
 }
@@ -274,13 +274,13 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   return value;
 }
 
-/// Ends a text printer's pause early: when the message waits on a sound that
+/// Ends a message's pause early: when the message waits on a sound that
 /// has finished (busy), or while A, B, L or R is held. Clears the countdown and
 /// returns 1 if it ended.
 /// This path uses held keys; dismissal below uses newly pressed keys instead.
-/// TextPrinter_Step asks it each frame of a short or longest pause;
+/// Message_Type asks it each frame of a short or longest pause;
 /// the long pause cannot be cut short.
-s32 Text_CheckPauseSkipped(struct TextPrinter *printer) {
+s32 Text_CheckPauseSkipped(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
   s32 zero;
@@ -291,7 +291,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *printer) {
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != zero) {
-    printer->countdown = zero;
+    message->countdown = zero;
     return 1;
   }
   return zero;
@@ -302,7 +302,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *printer) {
 /// dismissed the text.
 /// Mode chooses latched presses rather than changing which buttons dismiss
 /// text.
-s32 Text_CheckTextDismissed(struct TextPrinter *printer) {
+s32 Text_CheckTextDismissed(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
   s32 cancelKeys = 0;
@@ -317,30 +317,30 @@ s32 Text_CheckTextDismissed(struct TextPrinter *printer) {
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != 0) {
-    printer->countdown = zero;
+    message->countdown = zero;
     return 1;
   }
   return 0;
 }
 
-/// Closes each text printer's window whose text has ended, then waits ten
+/// Closes each message's window whose text has ended, then waits ten
 /// frames. It does not wait for the zooms to finish, and leaves windows still
 /// typing open.
-void TextPrinter_CloseFinishedWindows(void) {
+void Message_CloseFinishedWindows(void) {
   s32 i;
-  struct TextPrinter *printer;
+  struct Message *message;
   struct Window *window;
 
-  printer = WINDOW_WORK->printers;
+  message = WINDOW_WORK->messages;
   i = 0;
   do {
-    window = printer->window;
+    window = message->window;
     if (window != NULL && window->zoomStage == 0 && window->duration == 0 &&
         window->flags != 0 && window->state != 0) {
       Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }
     i++;
-    printer++;
+    message++;
   } while (i != 3);
   WaitFrames(10);
 }
@@ -378,10 +378,10 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
       messageWindow->width = mode;
       messageWindow->height = mode;
     }
-    if (TextPrinter_Add(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
+    if (Message_Start(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
       Window_Close(messageWindow, 1);
     else {
-      while (TextPrinter_AllFinished() == 0)
+      while (Message_AllTyped() == 0)
         WaitFrames(1);
       if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(messageWindow, 0);

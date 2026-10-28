@@ -226,17 +226,17 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   canvas->dirty = 1;
 }
 
-/// Returns 1 when every text printer has finished its text (or is idle),
+/// Returns 1 when every message has finished its text (or is idle),
 /// and 0 while one is still typing. The message routines wait on it a frame at
 /// a time; a window whose text has ended counts as finished though it is still
 /// open.
-s32 TextPrinter_AllFinished(void) {
-  struct TextPrinter *printer;
+s32 Message_AllTyped(void) {
+  struct Message *message;
   s32 i;
 
-  printer = WINDOW_WORK->printers;
-  for (i = 0; i != 3; i++, printer++) {
-    if (printer->window != NULL && printer->window->state == 0)
+  message = WINDOW_WORK->messages;
+  for (i = 0; i != 3; i++, message++) {
+    if (message->window != NULL && message->window->state == 0)
       return 0;
   }
   return 1;
@@ -329,12 +329,12 @@ void BattleMessage_Close(void) {
 /// Shows a message in the battle message window, opening the window (a
 /// full-width text canvas along the bottom of the screen) if it is not open,
 /// and returns without waiting. The window stays open from message to message
-/// until BattleMessage_Close closes it; the printer typing the message
+/// until BattleMessage_Close closes it; the message typing the message
 /// is kept in the battle message window's work (BattleMessageWork.offset), NULL
 /// when none was free.
 void BattleMessage_Open(s32 argument) {
   s32 entryIndex;
-  struct TextPrinter *printer;
+  struct Message *message;
   struct Window *previousWindow;
   struct Window *messageWindow;
   struct WindowWork *state;
@@ -343,9 +343,9 @@ void BattleMessage_Open(s32 argument) {
   state = WINDOW_WORK;
   control = (struct BattleMessageWork *)
       gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
-  // printer starts as NULL, though it is assigned again before it is read; the
+  // message starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
-  printer = NULL;
+  message = NULL;
   state->battleMode = WINDOW_BATTLE_MESSAGE;
   entryIndex = Message_Decode(argument, 1);
   state->battleMode = WINDOW_BATTLE;
@@ -364,13 +364,13 @@ void BattleMessage_Open(s32 argument) {
       messageWindow = previousWindow;
     }
     if (messageWindow != NULL) {
-      printer =
+      message =
           BattleMessage_Continue(messageWindow, entryIndex, control->marked);
-      control->offset = (struct BattleMessageOffset *)printer;
+      control->offset = (struct BattleMessageOffset *)message;
       control->marked = 0;
-      // With no printer free the window is closed, though control->window
+      // With no message free the window is closed, though control->window
       // still names its slot.
-      if (printer == NULL) {
+      if (message == NULL) {
         Window_Close(messageWindow, 1);
       }
     }
@@ -381,20 +381,20 @@ void BattleMessage_Open(s32 argument) {
 /// typed out.
 void BattleMessage_ShowAndWait(s32 argument) {
   BattleMessage_Open(argument);
-  while (TextPrinter_AllFinished() == 0)
+  while (Message_AllTyped() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
 
 /// Types a message into an open window from its top left, keeping the window's
-/// size from page to page, with no voice blips. Returns the printer typing it
+/// size from page to page, with no voice blips. Returns the message typing it
 /// (as an integer), or 0 when the message is empty, window is NULL or no
-/// printer is free. The result is the printer pointer encoded as a word, not a
+/// message is free. The result is the message pointer encoded as a word, not a
 /// message-completion status.
 s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
-  s32 printer = 0;
+  s32 typing = 0;
   /* FAKEMATCH(dead): an unused array for the stack frame's 8 bytes above the
    * outgoing arguments; as no array, 2 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
@@ -406,10 +406,10 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
     return 0;
   if (window == 0)
     return 0;
-  printer = (s32)TextPrinter_Add(window, entry, 0, 0, 0, 1);
-  if (printer == 0)
+  typing = (s32)Message_Start(window, entry, 0, 0, 0, 1);
+  if (typing == 0)
     return 0;
-  return printer;
+  return typing;
 }
 
 /// Sets the decode flags the next message is decoded with
@@ -438,7 +438,7 @@ void Message_SetDecodeFlags(s32 flags) {
 /// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
 /// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
 /// bits 16 to 27. Returns the window, or NULL when the message is empty or no
-/// window or printer is free. It returns once the window is open (after the
+/// window or message is free. It returns once the window is open (after the
 /// zoom), without waiting for the text.
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
@@ -462,7 +462,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   if (work->textBuffer[entry] == 0)
     return NULL;
   // bounds receives each line's extra gap between characters, which the
-  // printer spreads the line with.
+  // message spreads the line with.
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
@@ -477,7 +477,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
     return NULL;
-  if (TextPrinter_Add(window, entry, 0, 0, out, 0) == 0) {
+  if (Message_Start(window, entry, 0, 0, out, 0) == 0) {
     Window_Close(window, 1);
     return NULL;
   }
@@ -535,7 +535,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   window = Message_OpenWindow(message, x, y, zoom);
 
   if (window != NULL) {
-    while (TextPrinter_AllFinished() == 0) {
+    while (Message_AllTyped() == 0) {
       WaitFrames(1);
     }
 
@@ -558,11 +558,11 @@ void FieldMessage_Show(s32 message, s32 flags) {
   WaitFrames(3);
 }
 
-/// The window system's per-frame task: windows, then text printers,
+/// The window system's per-frame task: windows, then messages,
 /// then sprite animation. Both setups schedule it in the frame pass
 /// (TASK_PASS_FRAME); nothing here removes it.
 void WindowSystem_Update(void) {
   Window_UpdateZooms();
-  TextPrinter_RunAll();
+  Message_UpdateAll();
   WindowSprite_UpdateAll();
 }

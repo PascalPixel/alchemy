@@ -4,15 +4,15 @@
 
 #include "../screens_internal.h"
 
-// UB: the joined messages pass five of TextPrinter_Add' six
+// UB: the joined messages pass five of Message_Start' six
 // arguments, so its flags are whatever the stack slot of the sixth holds;
 // UBFIX passes 0, as the window object's own messages do.
 #ifdef UBFIX
 #define JOINED_QUEUE_TEXT(window, entry, x, y, spacing)                        \
-  TextPrinter_Add(window, entry, x, y, (u16 *)(spacing), 0)
+  Message_Start(window, entry, x, y, (u16 *)(spacing), 0)
 #else
 #define JOINED_QUEUE_TEXT(window, entry, x, y, spacing)                        \
-  TextPrinter_Add(window, entry, x, y, spacing)
+  Message_Start(window, entry, x, y, spacing)
 #endif
 
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \

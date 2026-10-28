@@ -127,12 +127,12 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
-// WindowWork owns three text printers, each with four line gaps.
-#define TEXT_PRINTER_COUNT 3
-#define TEXT_PRINTER_LINE_COUNT 4 ///< lines a page; spacing has one gap each
+// WindowWork owns three messages, each with four line gaps.
+#define MESSAGE_COUNT 3
+#define MESSAGE_LINE_COUNT 4 ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_COLOR                                                     \
-  TEXT_COLOR_WHITE                   ///< a text printer's text colour at start
-#define TEXT_DEFAULT_LINE_SPACING 10 ///< a text printer's line spacing at start
+  TEXT_COLOR_WHITE                   ///< a message's text colour at start
+#define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
 
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
@@ -169,7 +169,7 @@ enum {
   TEXT_LINE_SPACING = 10,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
   TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
-  /// The printer runs the codes below it as control codes and draws the rest.
+  /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,
   TEXT_VOICED_MARK = 222,    ///< dakuten
@@ -200,7 +200,7 @@ enum TextStyle {
 };
 
 /// The window animation a message can start (TEXT_WINDOW_STATE): the window's
-/// frame grows by a tile and its text sprites pulse, for the printer's
+/// frame grows by a tile and its text sprites pulse, for the message's
 /// countdown.
 #define WINDOW_ANIMATION_SWELL 4
 

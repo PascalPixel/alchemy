@@ -372,8 +372,8 @@ void Window_WaitZoom(struct Window *window) {
 /// it zooms closed over four frames first, and its slot stays taken until
 /// Window_UpdateZooms frees it (Window_IsClosed says when). It returns
 /// without waiting. Unless the window is a text canvas, its window sprites go
-/// back to the pool at once; a text printer typing into it lets go of it
-/// once it has closed (TextPrinter_RunAll). Does nothing for NULL.
+/// back to the pool at once; a message typing into it lets go of it
+/// once it has closed (Message_UpdateAll). Does nothing for NULL.
 void Window_Close(struct Window *window, s32 instant) {
   u16 zero;
 
@@ -535,27 +535,27 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   entry->motion = 0;
 }
 
-/// Starts a free text printer typing the decoded text that begins at entry
+/// Starts a free message typing the decoded text that begins at entry
 /// into window, with the pen at pixel (x, y). spacing gives each of four lines
 /// an extra gap between characters, in 1/256 pixels (or none for NULL), and is
 /// copied, so the caller's array need not outlive the call; flags is kept with
-/// the printer (nonzero keeps the window's size from page to page). Returns
-/// the printer, or NULL when all three are busy. The printer stays taken
+/// the message (nonzero keeps the window's size from page to page). Returns
+/// the message, or NULL when all three are busy. The message stays taken
 /// until its window closes.
-struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
-                                    s32 y, u16 *spacing, s32 flags) {
-  struct TextPrinter *printer = WINDOW_WORK->printers;
-  struct TextPrinter *found = NULL;
+struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
+                              u16 *spacing, s32 flags) {
+  struct Message *message = WINDOW_WORK->messages;
+  struct Message *found = NULL;
   u32 i;
 
-  for (i = 0; i != TEXT_PRINTER_COUNT; i++, printer++) {
-    if (printer->window == NULL) {
-      found = printer;
+  for (i = 0; i != MESSAGE_COUNT; i++, message++) {
+    if (message->window == NULL) {
+      found = message;
       break;
     }
   }
   if (found != NULL) {
-    // The printer stores pen coordinates in 1/256 pixels.
+    // The message stores pen coordinates in 1/256 pixels.
     found->window = window;
     found->startX = x << 8;
     found->x = x << 8;
@@ -568,10 +568,10 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
     found->ended = 0;
     found->flags = flags;
     if (spacing != NULL) {
-      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -579,24 +579,24 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-/// Starts a text printer typing the decoded text at entry into the battle
-/// message window. A text printer that already serves a finished window
+/// Starts a message typing the decoded text at entry into the battle
+/// message window. A message that already serves a finished window
 /// continues below its last line (scrolling up once both lines are used) unless
 /// keepPosition is set; BattleMessage_Open passes the battle message window's
-/// marked flag there. Returns the printer, or NULL when all three are busy.
-struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
-                                           s32 keepPosition) {
-  struct TextPrinter *printer;
-  struct TextPrinter *selected;
+/// marked flag there. Returns the message, or NULL when all three are busy.
+struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
+                                       s32 keepPosition) {
+  struct Message *message;
+  struct Message *selected;
   u16 *spacing;
   u16 zero;
   u32 index;
 
-  printer = WINDOW_WORK->printers;
+  message = WINDOW_WORK->messages;
   selected = 0;
-  for (index = 0; index != TEXT_PRINTER_COUNT; printer++, index++) {
-    if (printer->window == 0 || printer->window->state != 0) {
-      selected = printer;
+  for (index = 0; index != MESSAGE_COUNT; message++, index++) {
+    if (message->window == 0 || message->window->state != 0) {
+      selected = message;
       break;
     }
   }
@@ -635,7 +635,7 @@ struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
     do {
       index++;
       *spacing++ = zero;
-    } while (index < TEXT_PRINTER_LINE_COUNT);
+    } while (index < MESSAGE_LINE_COUNT);
   }
   return selected;
 }
@@ -651,18 +651,18 @@ s32 Text_FillCanvasBackground(void) {
                          TEXT_CANVAS_BACKGROUND_WORD);
 }
 
-/// Resets the pen and text style of the first idle text printer, clearing
-/// the canvas when the printer still has a window. The auto battle
+/// Resets the pen and text style of the first idle message, clearing
+/// the canvas when the message still has a window. The auto battle
 /// (battle/battle/auto_battle.c) calls it after playing each action, so the
 /// next battle message starts on a clear canvas at its first line.
-void TextPrinter_ResetFree(void) {
-  struct TextPrinter *printer = WINDOW_WORK->printers;
-  struct TextPrinter *selection = 0;
+void Message_ResetFree(void) {
+  struct Message *message = WINDOW_WORK->messages;
+  struct Message *selection = 0;
   s32 i;
 
-  for (i = 0; i != TEXT_PRINTER_COUNT; printer++, i++) {
-    if (printer->window == 0 || printer->window->state != 0) {
-      selection = printer;
+  for (i = 0; i != MESSAGE_COUNT; message++, i++) {
+    if (message->window == 0 || message->window->state != 0) {
+      selection = message;
       break;
     }
   }
@@ -679,19 +679,19 @@ void TextPrinter_ResetFree(void) {
   }
 }
 
-/// Copies the printer's text colour, outline and line spacing into the shared
-/// glyph renderer before that printer draws its next character.
-void TextPrinter_ApplyStyle(struct TextPrinter *printer) {
+/// Copies the message's text colour, outline and line spacing into the shared
+/// glyph renderer before that message draws its next character.
+void Message_ApplyStyle(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = printer->colour;
-  work->outline = printer->outline;
-  work->lineSpacing = printer->lineSpacing;
+  work->colour = message->colour;
+  work->outline = message->outline;
+  work->lineSpacing = message->lineSpacing;
 }
 
-/// Starts a text printer scrolling its canvas up a line: 12 pixel rows, 6 a
-/// frame over two frames (TextPrinter_Step, Text_ScrollCanvasUp), during which
-/// the printer types nothing.
-void Text_StartCanvasScroll(struct TextPrinter *printer) {
-  printer->transition = 2;
+/// Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a
+/// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
+/// the message types nothing.
+void Text_StartCanvasScroll(struct Message *message) {
+  message->transition = 2;
 }

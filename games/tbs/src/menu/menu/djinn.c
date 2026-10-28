@@ -766,7 +766,7 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 previous;
   s32 selection;
   struct Window *list;
-  struct TextPrinter *printer;
+  struct Message *typing;
   s32 message;
   s32 helpIndex;
   s32 listMessage;
@@ -800,7 +800,7 @@ s32 DjinnMenu_ShowHelp(void) {
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
-    printer = (struct TextPrinter *)Message_OpenDecodedFar(
+    typing = (struct Message *)Message_OpenDecodedFar(
         helpWindow, selection + MsgDjinnInfoText);
     Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, WINDOW_PALETTE);
     Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1,
@@ -829,7 +829,7 @@ s32 DjinnMenu_ShowHelp(void) {
         result = DJINN_RESULT_BACK;
         break;
       } else if (gKeysPressed & KEY_A) {
-        if (TextPrinter_AllFinishedFar()) {
+        if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_WrapIndex(selection, 7);
           Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -839,7 +839,7 @@ s32 DjinnMenu_ShowHelp(void) {
       }
     }
     // Before the next topic: free the page arrow's VRAM slot the text took
-    // (99: none), and stop the text's printer typing.
+    // (99: none), and stop its typing.
     if (work->glyphResource != 99) {
       VramCache_FreeEntry(work->glyphResource);
       work->glyphResource = 99;
@@ -847,13 +847,13 @@ s32 DjinnMenu_ShowHelp(void) {
     ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
-      struct Window *window = printer->window;
+      struct Window *window = typing->window;
 
       window->zoomStage = 0;
       window->duration = 0;
       window->state = 0;
     }
-    printer->window = NULL;
+    typing->window = NULL;
   } while (result == 0);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);
@@ -1183,7 +1183,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialRecovery, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1191,7 +1191,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAgain, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1210,7 +1210,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow = Message_OpenWindowFar(MsgDjinnTutorialGive, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1244,7 +1244,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAfterGive, 9, 9, 1);
           gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1274,7 +1274,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialPowers, 9, 9, 1);
           MenuCursor_Slide(2, 146);
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
@@ -1285,7 +1285,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           WaitFrames(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialUnleash, 9, 9, 1);
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
@@ -1296,7 +1296,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           WaitFrames(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialDemonstrate, 9, 9, 1);
-          while (TextPrinter_AllFinishedFar() == 0)
+          while (Message_AllTypedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);

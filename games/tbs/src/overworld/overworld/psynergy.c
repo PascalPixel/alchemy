@@ -63,7 +63,7 @@ s32 Field_UsePsynergy(u32 code) {
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
     declined = FieldYesNo_Ask(1); // 0 is yes
-    TextPrinter_CloseFinishedWindowsFar();
+    Message_CloseFinishedWindowsFar();
     if (declined != 0)
       return 0;
     {

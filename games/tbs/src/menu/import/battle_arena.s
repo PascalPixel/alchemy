@@ -24,7 +24,7 @@
 	.set import.Window_Close, 1
 	.set import.Message_DecodeRawUnbounded, 1
 	.set import.Message_OpenWindow, 1
-	.set import.TextPrinter_AllFinished, 1
+	.set import.Message_AllTyped, 1
 	.set import.WindowSprite_PrepareForRedraw, 1
 	.set import.Text_DrawNumber, 1
 	.set import.MessageArgument_ClearAll, 1

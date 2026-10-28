@@ -370,13 +370,13 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 #endif
 
   Message_OpenWindow(MsgOverwriteConfirm, 8, 12, 2);
-  while (TextPrinter_AllFinished() == 0) {
+  while (Message_AllTyped() == 0) {
     WaitFrames(1);
   }
   if (YesNoMenu_Run(1, 0, 0, 1)) {
-    TextPrinter_CloseFinishedWindows();
+    Message_CloseFinishedWindows();
   } else {
-    TextPrinter_CloseFinishedWindows();
+    Message_CloseFinishedWindows();
     Sound_PlaySongFar(MUS_SAVED);
     result = Save_ProcessSelectedFile();
     if (result >= 0) {
@@ -459,13 +459,13 @@ s32 Save_EraseSelectedFile(void) {
       result = file;
     } else {
       Message_OpenWindow(MsgEraseConfirm, 8, 1, 2);
-      while (TextPrinter_AllFinished() == 0) {
+      while (Message_AllTyped() == 0) {
         WaitFrames(1);
       }
       if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
-        TextPrinter_CloseFinishedWindows();
+        Message_CloseFinishedWindows();
       } else {
-        TextPrinter_CloseFinishedWindows();
+        Message_CloseFinishedWindows();
         error = Save_DeleteRecord(file);
         error |= Save_DeleteRecord(file + SAVE_FILE_COUNT);
         if (error != 0) {
@@ -1218,21 +1218,21 @@ s32 Save_ToChosenFile(void) {
         FieldMessage_Show(MsgOverwriteConfirm, FIELD_MESSAGE_ZOOM |
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
-        while (TextPrinter_AllFinished() == 0) {
+        while (Message_AllTyped() == 0) {
           WaitFrames(1);
         }
         if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
-          TextPrinter_CloseFinishedWindows();
+          Message_CloseFinishedWindows();
           goto done;
         }
-        TextPrinter_CloseFinishedWindows();
+        Message_CloseFinishedWindows();
       }
       gSaveSlot = file;
       Sound_PlaySongFar(MUS_SAVED);
       FieldMessage_Show(MsgSaving, FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_KEEP_OPEN |
                                        FIELD_MESSAGE_LOWER);
-      while (TextPrinter_AllFinished() == 0) {
+      while (Message_AllTyped() == 0) {
         WaitFrames(1);
       }
       Save_BuildFileSummary();
@@ -1240,7 +1240,7 @@ s32 Save_ToChosenFile(void) {
       error = Save_WriteRecord(file, gSaveBuffer);
       error |= Save_WriteRecord(file + SAVE_FILE_COUNT,
                                 gSaveBuffer + SAVE_RECORD_BYTES);
-      TextPrinter_CloseFinishedWindows();
+      Message_CloseFinishedWindows();
       if (error != 0) {
         FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_WRITE;

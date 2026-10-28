@@ -87,7 +87,7 @@ void Shop_ReleaseWork(void) {
 
   state = gMenuWork;
   Task_Remove(MenuCursor_Step);
-  TextPrinter_CloseFinishedWindowsFar();
+  Message_CloseFinishedWindowsFar();
   VramCache_FreeEntry(state->cursorIcon);
   VramCache_FreeEntry(state->previousPageIcon);
   VramCache_FreeEntry(state->nextPageIcon);
@@ -228,7 +228,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   s32 resolvedMessage = messageId;
   s8 shopType;
 
-  TextPrinter_CloseFinishedWindowsFar();
+  Message_CloseFinishedWindowsFar();
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_ARMOR)
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
@@ -238,7 +238,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   if ((s8)shop->warriorShop != 0)
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
-  while (TextPrinter_AllFinishedFar() == 0)
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -271,10 +271,10 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   }
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  TextPrinter_CloseFinishedWindowsFar();
+  Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,
                         (portraitResource << 0x10) | 0x22);
-  while (TextPrinter_AllFinishedFar() == 0) {
+  while (Message_AllTypedFar() == 0) {
     WaitFrames(1);
   }
   WaitFrames(1);

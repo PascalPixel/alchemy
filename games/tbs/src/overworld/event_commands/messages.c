@@ -239,7 +239,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
-    while (!TextPrinter_AllFinishedFar())
+    while (!Message_AllTypedFar())
       WaitFrames(1);
   }
   work->messageWindow = (s32)handle;
@@ -284,7 +284,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
       frames++;
       if (frames > 600 || ((gKeysHeld & KEY_SELECT) && (gKeysHeld & KEY_R) &&
                            (gKeysHeld & KEY_L) && (gKeysHeld & KEY_A))) {
-        TextPrinter_CloseFinishedWindowsFar();
+        Message_CloseFinishedWindowsFar();
       }
     }
   }
@@ -470,7 +470,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
       work->message++, secondX, secondY, Speaker_GetVoice(secondSprite) << 16);
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
-  while (TextPrinter_AllFinishedFar() == 0)
+  while (Message_AllTypedFar() == 0)
     WaitFrames(1);
 
   WaitFrames(1);
@@ -480,7 +480,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   WaitFrames(1);
   Portrait_CloseWindowFar(firstSprite);
   Portrait_CloseWindowFar(secondSprite);
-  TextPrinter_CloseFinishedWindowsFar();
+  Message_CloseFinishedWindowsFar();
   WaitFrames(1);
 
   while (Window_IsClosedFar((struct Window *)firstWindow) == 0)

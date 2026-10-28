@@ -688,7 +688,7 @@
 #define SE_COLOSSO_WARRIOR_APPEAR 252
 /// The first voice blip of a message: an actor's voice is 0x100 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
-/// it plus the letter code's low two bits (TextPrinter_Step), so a voice is
+/// it plus the letter code's low two bits (Message_Type), so a voice is
 /// four blips. gSpeakerDefinitions gives each sprite one of eight voices; this
 /// first one is the animals': the dog, the cat, the bird and the pink winged
 /// monster.

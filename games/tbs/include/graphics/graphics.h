@@ -90,7 +90,7 @@ struct MenuCursor;
 struct TileMask;
 struct TransitionShape;
 struct UiBobPairOutput;
-struct TextPrinter;
+struct Message;
 struct UiScaleSprite;
 struct Window;
 struct Vec2;

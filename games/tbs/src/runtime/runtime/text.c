@@ -113,7 +113,7 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 
 /// Prints the string `src` (at most 32 characters) at the debug text cursor,
 /// wrapping from the end of the screen to its start, when debug text is on;
-/// the cursor moves past it. Called by the hex and decimal printers and
+/// the cursor moves past it. Called by the hex and decimal number routines and
 /// through the far-call table.
 void DebugText_Print(const u8 *src) {
   if (gDebugTextEnabled != 0) {

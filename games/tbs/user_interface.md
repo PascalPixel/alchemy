@@ -40,7 +40,7 @@ them, once a [frame](glossary.md#frame).
 
 The cartridge keeps the game's text squeezed, so a message is unpacked whole
 before it is shown, and its blanks (a name, a number, an item) are filled in
-then. A text printer then types it into its window a few letters each frame,
+then. It is then typed into its window a few letters each frame,
 with the speaker's voice blip, and waits for a button at each page break.
 
 `Message_OpenWindow` does all of it for one message. The text itself is in the
@@ -139,7 +139,7 @@ the scene's events, none of which exist while the menu runs.
 
 - The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles, or
   wider or taller than 30, draws no border.
-- Eight windows at once (twelve in Japanese), three text printers, 64 window
+- Eight windows at once (twelve in Japanese), three messages being typed, 64 window
   sprites and eight message blanks; a ninth blank is dropped.
 - The text buffer holds 512 letter codes (256 in Japanese).
 - The menu work is 2,672 bytes, with room for eight party members and 32

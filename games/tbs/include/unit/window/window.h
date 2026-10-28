@@ -19,7 +19,7 @@ struct SelectionNode;
 struct SelectionMenuWork;
 struct BattleCommandRowWork;
 struct MessageReader;
-struct TextPrinter;
+struct Message;
 struct OptionMenuWork;
 
 /// The flags of a UI window (struct Window.flags), which Window_Create
@@ -78,7 +78,7 @@ enum TextColor {
   TEXT_COLOR_PINK =
       9, ///< in BASIC_COLORS_PALETTE; WINDOW_PALETTE shows it white
   TEXT_COLOR_GREY = 14,
-  TEXT_COLOR_WHITE = 15, ///< a text printer's colour at start
+  TEXT_COLOR_WHITE = 15, ///< a message's colour at start
 };
 
 /// The OAM shape and size a window sprite is created with
@@ -323,28 +323,28 @@ void WindowSprite_UpdateListTail(struct WindowSpriteList *list);
 // and BattleDjinnMenu_ShowChangePreview, and WindowSprite_Create changes (2 of
 // 61 instructions in tbs-en). Split evidence for window|screens.
 void WindowSprite_Release(struct WindowSprite *entry);
-// TextPrinter_Add is called from screens.c with no prototype
+// Message_Start is called from screens.c with no prototype
 // in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and
 // Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
 // with its definition first, they would not compile. Split evidence for
 // window|battle_command.
-struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
-                                           s32 keepPosition);
+struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
+                                       s32 keepPosition);
 s32 Text_ClearCanvas(void);
 s32 Text_FillCanvasBackground(void);
-void TextPrinter_ResetFree(void);
-void TextPrinter_ApplyStyle(struct TextPrinter *printer);
-void Text_StartCanvasScroll(struct TextPrinter *printer);
+void Message_ResetFree(void);
+void Message_ApplyStyle(struct Message *message);
+void Text_StartCanvasScroll(struct Message *message);
 void Text_ScrollCanvasUp(s32 step);
-void TextPrinter_RunAll(void);
-s32 TextPrinter_Step(struct TextPrinter *printer);
+void Message_UpdateAll(void);
+s32 Message_Type(struct Message *message);
 void Window_UpdateZooms(void);
 void Window_DrawZoomBorder(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
-s32 TextPrinter_AllFinished(void);
+s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
 void Text_ResetStyle();
 void WindowSystem_StartFieldUpdate(void);
@@ -414,13 +414,13 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 *Memory_ClearWordIfSet(s32 *p);
 void Window_CloseAll(s32 unused);
-void Window_StepSwellEffect(struct TextPrinter *printer);
+void Window_StepSwellEffect(struct Message *message);
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(u32 value, u32 kind);
 u32 MessageArgument_Lookup(u32 kind, u32 clear);
-s32 Text_CheckPauseSkipped(struct TextPrinter *printer);
-s32 Text_CheckTextDismissed(struct TextPrinter *printer);
-void TextPrinter_CloseFinishedWindows(void);
+s32 Text_CheckPauseSkipped(struct Message *message);
+s32 Text_CheckTextDismissed(struct Message *message);
+void Message_CloseFinishedWindows(void);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Message_DecodeMode1(s32 message);
 void Message_Find(struct MessageReader *reader, s32 message);

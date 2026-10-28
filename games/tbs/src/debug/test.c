@@ -112,9 +112,9 @@ u8 *MenuTest_GetActorTemplates(void) { return (u8 *)gMenuTest_ActorTemplates; }
 #if TBS_PATCH_1
 /// Finishes pending UI work, displays a message, and waits one final frame.
 static void MenuTest_ShowMessageAndWait(s32 messageId) {
-  TextPrinter_CloseFinishedWindows();
+  Message_CloseFinishedWindows();
   Message_OpenWindow(messageId, 5, 0, 0x22);
-  while (TextPrinter_AllFinished() == 0) {
+  while (Message_AllTyped() == 0) {
     WaitFrames(1);
   }
   WaitFrames(1);
@@ -158,7 +158,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
     }
   }
 end:
-  TextPrinter_CloseFinishedWindows();
+  Message_CloseFinishedWindows();
   Window_Close(window, 2);
 }
 

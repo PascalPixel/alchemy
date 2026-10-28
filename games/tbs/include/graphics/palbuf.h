@@ -18,9 +18,9 @@ struct TitlePaletteFade {
   u16 palette[512];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[0x600];
-  u16 target[0x600]; ///< the colours current moves toward, as current
-  u16 delta[0x600];  ///< added to each current channel each frame
+  u16 current[512 * 3];
+  u16 target[512 * 3]; ///< the colours current moves toward, as current
+  u16 delta[512 * 3];  ///< added to each current channel each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][512];
   u8 page;        ///< the packed page queued this frame
@@ -44,14 +44,14 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 struct PaletteFade {
   /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;
   /// palette[0] is the backdrop.
-  u16 palette[0x1c0];
+  u16 palette[448];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[0x540];
-  u16 target[0x540]; ///< the colours current moves toward, as current
-  u16 delta[0x540];  ///< added to each current channel each frame
+  u16 current[448 * 3];
+  u16 target[448 * 3]; ///< the colours current moves toward, as current
+  u16 delta[448 * 3];  ///< added to each current channel each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
-  u16 packed[2][0x1c0];
+  u16 packed[2][448];
   u8 page;        ///< the packed page queued this frame
   s8 duration;    ///< frames; 0 when the colours are not moving
   s8 step;        ///< frames

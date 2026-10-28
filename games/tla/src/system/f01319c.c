@@ -40,7 +40,7 @@ void Func_0801319c(void) {
   Func_080132d0();
   Window_LoadGraphics();
   Func_08014b70();
-  REG_DISPCNT = 0x140;
+  REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Irq_SetHandler(0, 1, Func_0801399c);
   Irq_SetHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);

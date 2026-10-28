@@ -76,5 +76,5 @@ void Serial_PrepareSendPacket(void *payload) {
     REG_TM3CNT_H = 0;
   sr->sendIndex = -1;
   if (sr->mode != 0 && sr->transferEnabled != 0)
-    REG_TM3CNT_H = 0xc0;
+    REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
 }

@@ -65,7 +65,9 @@ void Actor_Release(struct ActorView *obj) {
     }
     src = &zero;
     *src = 0;
-    Dma_Set(src, obj, 0x85000000 | (sizeof(struct Actor) / 4),
+    Dma_Set(src, obj,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+                (sizeof(struct Actor) / 4),
             REG_DMA3);
   }
 }

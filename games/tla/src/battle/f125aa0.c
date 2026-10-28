@@ -1,6 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "system.h"
+#include "io_reg.h"
 
 void Fade_ToBlack(s32 arg0);
 
@@ -16,9 +17,9 @@ s32 Func_08125aa0(void) {
   volatile u16 *reg;
   u32 saved;
 
-  bg0cnt = *(volatile u16 *)0x04000008;
-  *(volatile u16 *)0x04000008 = bg0cnt | 0x40;
-  reg = (volatile u16 *)0x04000008;
+  bg0cnt = REG_BG0CNT;
+  REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
+  reg = &REG_BG0CNT;
   bg1cnt = *++reg;
   *reg = bg1cnt | 0x40;
   bg2cnt = *++reg;
@@ -34,14 +35,14 @@ s32 Func_08125aa0(void) {
     Random16();
     Random16();
     Random16();
-    *(volatile u16 *)0x0400004c = (i << 8) | i;
+    REG_MOSAIC = (i << 8) | i;
     wait(1);
   }
 
-  *(volatile u16 *)0x04000000 = 1;
+  REG_DISPCNT = 1;
   wait(4);
   saved = bg0cnt;
-  reg = (volatile u16 *)0x04000008;
+  reg = &REG_BG0CNT;
   *reg++ = saved;
   *reg++ = bg1cnt;
   *reg++ = bg2cnt;

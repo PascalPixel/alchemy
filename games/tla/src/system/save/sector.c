@@ -5,12 +5,11 @@
 #include "dma.h"
 #include "flash.h"
 
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define DMA3_BUSY 0x80000000
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+#define DMA3_BUSY (DMA_ENABLE << 16)
 
 #define START_DMA(source_, destination_, control_)                             \
-  Dma_Set((const void *)(source_), (void *)(destination_), (control_),         \
-          (volatile u32 *)0x040000d4)
+  Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA3_BUSY) != 0) {
@@ -106,7 +105,7 @@ s32 Save_ReadSector(s32 index) {
   ReadFlash(index, 0, work->slot, 0x1000);
   ReadFlash(index + 1, 0, work->slot + 0x1000, 0x1000);
   ReadFlash(index + 2, 0, work->slot + 0x2000, 0x1000);
-  START_DMA(work->slot, &header, 0x84000004);
+  START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
   WAIT_DMA();
   return (u16)Save_ChecksumSector() - header.checksum;
 }

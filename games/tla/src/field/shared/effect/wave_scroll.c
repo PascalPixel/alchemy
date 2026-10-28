@@ -57,5 +57,5 @@ void WAVE_SCROLL(void) {
    * the last control read; plain, combine folds the step into Dma_Set's r0 copy
    * after the read (differ 2), and an asm barrier on the source also matches */
   line = (s16 *)scroll;
-  Dma_Set(source, line, 0xa2600001, (volatile u32 *)dma);
+  Dma_Set(source, line, DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
 }

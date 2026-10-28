@@ -33,7 +33,7 @@ s32 Func_0802c9c8(void) {
   value = *(s16 *)0x05000000;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
-  Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
+  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);

@@ -49,8 +49,8 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
   }
   size = (u32)BattleEffect_ExpandCodeSize;
   decoder = (PackedDecoder)Heap_Alloc(size);
-  Dma_Set(BattleEffect_ExpandCode, decoder, 0x84000000 | (size >> 2),
-          REG_DMA3);
+  Dma_Set(BattleEffect_ExpandCode, decoder,
+          (DMA_ENABLE | DMA_32BIT) << 16 | (size >> 2), REG_DMA3);
   decoder(resourceData + 256, tileDestination, paletteOffset);
   Heap_Release(decoder);
 
@@ -67,5 +67,6 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
     red = (sum + red * 5) / 16;
     gFlash_Handler3[i] = blue << 10 | green << 5 | red;
   }
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3, 0x84000040);
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3,
+                      DMA_COPY_WORDS(64));
 }

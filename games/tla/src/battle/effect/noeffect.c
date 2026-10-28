@@ -55,8 +55,8 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
    * 2 instructions differ in tla-en. */
   asm volatile("" : "+l"(io));
   (void)channel[5];
-  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28), 0xa6600001,
-          (volatile u32 *)channel);
+  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28),
+          DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }
 
 /// BattleEffect_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
@@ -77,6 +77,6 @@ void BattleEffect_ArmBg1HBlankDma(void) {
    * BattleEffect_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("" : "+l"(io));
   (void)channel[5];
-  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14), 0xa6600001,
-          (volatile u32 *)channel);
+  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14),
+          DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
 }

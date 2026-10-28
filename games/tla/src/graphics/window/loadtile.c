@@ -25,7 +25,7 @@ void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset) {
   s32 width = rect->width;
   s32 height = rect->height;
 
-  Dma_Set(source, (void *)0x06000100, 0x84000040, (volatile u32 *)0x040000d4);
+  Dma_Set(source, (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
   Func_0803a1c0(x, y, width, height);
 }
 
@@ -57,7 +57,7 @@ void Func_0803cbf8(struct Window_0803cbf8 *window) {
     window->timer--;
     if (window->timer == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
-              (void *)0x06000100, 0x84000040, (volatile u32 *)0x040000d4);
+              (void *)0x06000100, 0x84000040, REG_DMA3);
       window->rect->state = 0;
     }
   }

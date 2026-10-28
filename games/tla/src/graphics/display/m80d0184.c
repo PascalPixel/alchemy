@@ -13,7 +13,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   volatile u32 zero;
 
   zero = 0;
-  Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4),
+  Dma_Set((const void *)&zero, state,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*state) / 4),
           REG_DMA3);
   state->mode = mode;
   state->value = 0;
@@ -32,6 +33,7 @@ void *Func_080d019c(void) {
   void *block = HeapSlot_AllocEwram(124, 0x540);
   volatile u32 zero = 0;
 
-  Dma_Set(&zero, block, 0x85000150, (volatile u32 *)0x040000d4);
+  Dma_Set(&zero, block, (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 336,
+          REG_DMA3);
   return block;
 }

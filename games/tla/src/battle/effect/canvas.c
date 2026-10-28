@@ -58,24 +58,40 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   display->secondMode = 1;
   wait(1);
   REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
+                          DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
   gBgScroll[1].y = 32;
   wait(1);
   BattleStaging_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
   wait(1);
-  REG_BG2CNT = bgControl | 0x784;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
+  REG_BG2CNT =
+      bgControl | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = 0;
   wait(1);
 
   Func_0814355c();
-  REG_WININ = 0x3537;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
+  REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
+              WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
+              WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
   wait(1);
 
   // The canvas map: 16 rows of 8 character pairs.
@@ -104,7 +120,8 @@ void BattleEffect_StartTiledCanvas(s32 bg_control) {
   s32 offset;
 
   BattleEffect_StartCanvasLayer(bg_control);
-  REG_BG2CNT = bg_control | 0x4784;
+  REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
+               BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
   for (row = 0; row != 16; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
@@ -127,7 +144,8 @@ void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
   s32 offset;
 
   BattleEffect_StartCanvasLayer(bg_control);
-  REG_BG2CNT = bg_control | 0x4784;
+  REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
+               BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
   for (row = 0; row != 16; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
@@ -156,11 +174,16 @@ void BattleEffect_EndCanvasLayer(void) {
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  REG_BG2CNT = 0x787;
+  REG_BG2CNT = BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1) |
+               BGCNT_PRIORITY(3);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
+                          DISPCNT_MODE_1,
+                      IO_WRITE_16);
   REG_BLDCNT = 0;
   wait(1);
 
@@ -171,7 +194,11 @@ void BattleEffect_EndCanvasLayer(void) {
     wait(1);
   }
 
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG2_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
+                          DISPCNT_MODE_1,
+                      IO_WRITE_16);
   wait(1);
 }
 
@@ -185,9 +212,14 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
               ->secondMode;
   battle = Ram_HeapSlots->battleWork;
   *flag = 1;
-  QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
+  QueueIoWriteDelay2((u32)&REG_DISPCNT,
+                     DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
+                         DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1);
   wait(1);
   BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f83, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
+                      BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
+                          BGCNT_PRIORITY(3),
+                      IO_WRITE_16);
   wait(1);
 }

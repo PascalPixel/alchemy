@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "iowrite.h"
+#include "io_reg.h"
 
 struct AdvanceSprite {
   struct AdvanceSprite *next;
@@ -74,9 +75,9 @@ void BattleMessage_WaitForAdvance(void) {
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
     window = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->window;
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
-    QueueIoWriteDelay10(0x0400004a, 4);
-    QueueIoWriteDelay6(0x0400004a, 16);
-    Io_Write16(16, (volatile u16 *)0x04000052);
+    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
+    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    Io_Write16(16, &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);

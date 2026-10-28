@@ -49,7 +49,8 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = Resource_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   HeapSlot_Release(68);
-  Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
+  Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
 }
 
 void UiGlyph_ReservedNoOp(void) {}
@@ -73,8 +74,8 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
     } while (0);
     code = Heap_Alloc(size);
     size >>= 2;
-    Dma_Set((const void *)Tile_Decompress4bppCode, code, 0x84000000 | size,
-            REG_DMA3);
+    Dma_Set((const void *)Tile_Decompress4bppCode, code,
+            (DMA_ENABLE | DMA_32BIT) << 16 | size, REG_DMA3);
   }
   ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
   Heap_Release(code);
@@ -84,16 +85,16 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
     size = (u32)Tile_ExpandMaskedCodeSize;
     code = Heap_Alloc(size);
     size >>= 2;
-    Dma_Set((const void *)Tile_ExpandMaskedCode, code, 0x84000000 | size,
-            REG_DMA3);
+    Dma_Set((const void *)Tile_ExpandMaskedCode, code,
+            (DMA_ENABLE | DMA_32BIT) << 16 | size, REG_DMA3);
   } else {
     u32 size;
 
     size = (u32)Tile_ExpandOpaqueCodeSize;
     code = Heap_Alloc(size);
     size >>= 2;
-    Dma_Set((const void *)Tile_ExpandOpaqueCode, code, 0x84000000 | size,
-            REG_DMA3);
+    Dma_Set((const void *)Tile_ExpandOpaqueCode, code,
+            (DMA_ENABLE | DMA_32BIT) << 16 | size, REG_DMA3);
   }
   ((void (*)(u8 *, u8 *, u32, u32))code)(glyph->input, glyph->tiles,
                                          (u16)glyph->width, (u16)glyph->height);

@@ -9,7 +9,7 @@
 /// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
 /// 20 bytes from 0x0600028c.
 s32 BattleStaging_InitializeTilePattern(void) {
-  Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008,
+  Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3); // 8 halfwords.
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }

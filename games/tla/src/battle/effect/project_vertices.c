@@ -23,8 +23,8 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);
   routine = (void (*)(s32, s32, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Data_0813b9a0, routine, 0x84000000 | (size >> 2),
-          REG_DMA3);
+  Dma_Set((const void *)Data_0813b9a0, routine,
+          (DMA_ENABLE | DMA_32BIT) << 16 | (size >> 2), REG_DMA3);
   routine(arg0, arg1, arg2);
   Heap_Release(routine);
 }

@@ -59,5 +59,5 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      0x84000008);
+                      DMA_COPY_WORDS(8));
 }

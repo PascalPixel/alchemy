@@ -73,7 +73,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
-  REG_BLDALPHA = 0x0f0f;
+  REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The motes start at the caster's chest with random velocities.

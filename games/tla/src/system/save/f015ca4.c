@@ -4,12 +4,11 @@
 #include "dma.h"
 #include "flash.h"
 
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define DMA3_BUSY 0x80000000
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+#define DMA3_BUSY (DMA_ENABLE << 16)
 
 #define START_DMA(source_, destination_, control_)                             \
-  Dma_Set((const void *)(source_), (void *)(destination_), (control_),         \
-          (volatile u32 *)0x040000d4)
+  Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA3_BUSY) != 0) {
@@ -40,20 +39,21 @@ s32 Func_08015ca4(s32 partId, void *source) {
   u32 sector;
 
   zero = 0;
-  START_DMA(&zero, work->slot, 0x85000c00);
+  START_DMA(&zero, work->slot,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3072);
   WAIT_DMA();
   current = Save_FindLatestSector(partId);
   sector = Save_SelectWriteSector(partId);
   if (sector > 14)
     return 1;
-  START_DMA(source, work->slot + 16, 0x84000bfc);
+  START_DMA(source, work->slot + 16, DMA_COPY_WORDS(3068));
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
+  START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.partId = partId;
   header.checksum = Save_ChecksumSector();
   header.counter = Save_GetLatestCounter(partId) + 1;
-  START_DMA(&header, work->slot, 0x84000004);
+  START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
   WAIT_DMA();
   work->sectorCount = 0;
   work->sectorTotal = 3;
@@ -65,7 +65,7 @@ s32 Func_08015ca4(s32 partId, void *source) {
     return 3;
   if (header.counter > 0xfde8) {
     header.counter = 1;
-    START_DMA(&header, work->slot, 0x84000004);
+    START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
     WAIT_DMA();
     if (Save_WriteSector(current) != 0)
       return 4;

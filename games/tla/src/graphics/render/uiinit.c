@@ -47,7 +47,7 @@ void WindowSystem_InitBattle(s32 kind) {
     src &= 0x3ff;
     dst &= 0x3ff;
     Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
-            0x80000008, REG_DMA3);
+            DMA_COPY_HALFWORDS(8), REG_DMA3);
     return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
   }
 

@@ -53,10 +53,11 @@ void Func_02000490(void) {
   gBgScroll[2].y = 0;
   blank = 0x1ff;
   res = Resource_GetTableEntry(id);
-  Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
+  Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
   Decode_(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, DMA_COPY_WORDS(9600),
+          REG_DMA3);
   /* FAKEMATCH: a one-pass block ends the scheduling block, so the tilemap
    * address loads before the first tile number is built (one reordered row
    * without it). */
@@ -88,6 +89,6 @@ scroll_pair:
   y++;
   if (y <= 3)
     goto scroll_pair;
-  Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct TitleWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
 }

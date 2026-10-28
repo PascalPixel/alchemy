@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "io_reg.h"
 
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
@@ -19,7 +20,7 @@ void Palette_StepFadeTransfer(void) {
     s32 *step = (s32 *)(work + 0x77b8);
 
     (*step)++;
-    ColorBuffer_ScaleFar(battle + 0x56c, (void *)0x050000c0,
+    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
                          0x10000 - *step * 1092, 128);
     (*framesLeft)--;
   }

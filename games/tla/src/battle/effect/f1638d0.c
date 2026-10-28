@@ -82,8 +82,9 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
   Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
-  REG_BG2CNT = 0x2784;
-  REG_BLDALPHA = 0x1000;
+  REG_BG2CNT =
+      BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
@@ -152,12 +153,12 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     if (frame <= RIPPLE_FADE_IN_FRAMES) {
       level = frame * 2;
       wave = level;
-      REG_BLDALPHA = level | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(level, 16);
     } else {
       wave = frame * 2;
     }
     if (frame > RIPPLE_FADE_OUT_FRAME)
-      REG_BLDALPHA = (RIPPLE_FRAMES * 2 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(RIPPLE_FRAMES * 2 - frame * 2, 16);
 
     // The hit: results phase, shake, and the target knocked back.
     if (frame == RIPPLE_HIT_FRAME) {
@@ -179,9 +180,10 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
     } else {
       ramp[1] = ramp[DISC_RINGS];
-      Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS, 0x80a0003e, REG_DMA3);
+      Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
+              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 | 62, REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
-                          0x8000003f);
+                          DMA_COPY_HALFWORDS(63));
     }
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();

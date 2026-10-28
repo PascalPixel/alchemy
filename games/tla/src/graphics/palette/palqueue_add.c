@@ -20,7 +20,7 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count) {
   entry->count = size;
   entry->source = source;
   entry->delay = delay;
-  Dma_Set(source, entry->colors, 0x80000000 | size, REG_DMA3);
+  Dma_Set(source, entry->colors, DMA_ENABLE << 16 | size, REG_DMA3);
   work->count++;
   return 0;
 }

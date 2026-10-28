@@ -23,17 +23,25 @@ void Func_0200031c(void) {
   gData_020006dc = 0;
   Title_LoadSprites(0);
   Task_Add(Func_02000278, TASK_PASS_VBLANK);
-  IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000052, 0x1010, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_1D_MAP,
+                      IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                          BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG0 |
+                          BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
+                          BLDCNT_TGT2_BD,
+                      IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   FieldEvent_Wait(120);
   /* FAKEMATCH: a goto loop carries no loop notes, so each pass reloads the
    * queue and interrupt register addresses; as a for or do/while loop, 90
    * instructions differ in tla-en. */
   i = 0;
 fade:
-  IO_WRITE_QUEUE_PUSH(0x4000054, 16 - i, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_16);
   wait(3);
   if (++i <= 16)
     goto fade;

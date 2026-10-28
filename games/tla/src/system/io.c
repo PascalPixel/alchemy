@@ -70,31 +70,31 @@ void Input_HandleKeyInterrupt(void) {
 
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, IO_WRITE_8)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 0x20000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, IO_WRITE_16)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, 0x30000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, IO_WRITE_32)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, 0x50000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, IO_WRITE_SET | IO_WRITE_8)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, 0x60000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, IO_WRITE_SET | IO_WRITE_16)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, 0x70000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, IO_WRITE_SET | IO_WRITE_32)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 0x90000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, IO_WRITE_CLEAR | IO_WRITE_8)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 0xa0000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, IO_WRITE_CLEAR | IO_WRITE_16)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 0xb0000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, IO_WRITE_CLEAR | IO_WRITE_32)
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 

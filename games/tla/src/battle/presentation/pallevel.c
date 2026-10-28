@@ -22,7 +22,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     s32 once;
 
     slot = &ime;
-    imeReg = (u16 *)0x04000208;
+    imeReg = (u16 *)&REG_IME;
     once = 0;
 
     do {
@@ -32,7 +32,8 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
+            REG_DMA3);
   } else {
     ColorBuffer_Scale(palette, (u16 *)0x050000c0,
                       screen->brightness = 0x10000 - level * 1092, 128);

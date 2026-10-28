@@ -1,6 +1,7 @@
 #include "types.h"
 #include "input.h"
 #include "iowrite.h"
+#include "io_reg.h"
 
 struct CursorSprite {
   struct CursorSprite *next;
@@ -53,9 +54,9 @@ s32 Func_08120060(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    QueueIoWriteDelay10(0x0400004a, 4);
-    QueueIoWriteDelay6(0x0400004a, 16);
-    Io_Write16(16, (volatile u16 *)0x04000052);
+    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
+    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    Io_Write16(16, &REG_BLDALPHA);
     ((s32 *)prompt)[1] = 0x40000000;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);

@@ -6,6 +6,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
+#include "io_reg.h"
 
 struct ObjectSystemWork {
   u8 unk00[4];
@@ -128,7 +129,7 @@ s32 Func_08100e7c(void) {
   Func_08038290();
   Text_UseExtraTilesFar(0);
   CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
-  CopyWords_((void *)0x05000080, backdrop->palette, 128);
+  CopyWords_((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);

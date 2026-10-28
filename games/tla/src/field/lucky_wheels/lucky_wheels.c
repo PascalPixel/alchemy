@@ -82,4 +82,4 @@ void Func_081b3294(void) {
     Dma_Set(work->obj, OAM, DMA_COPY_WORDS(work->spriteCount * 2), REG_DMA3);
 }
 
-#include "reel_tables.h"
+#include "../../graphics/lucky_wheels/reel_tables.h"

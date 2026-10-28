@@ -155,7 +155,7 @@ The selector opens from [the Pause menu](../window/README.md#the-pause-menu),
 inside [the field sequence](../overworld/README.md#the-field-sequence-serves-requests).
 The palette editor, which opens with L on the Pause menu in debug mode, is in
 the main image rather than a scene
-([palette_editor.c](../overworld/overworld/palette_editor.c)).
+([palette_editor.c](../field/field_sequence/palette_editor.c)).
 
 ## Limits
 

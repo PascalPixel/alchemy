@@ -3,11 +3,11 @@
 /// It is the first code of bank 04, linked before the field sequence's object.
 
 #include "module/system/main_routine.h"
-#include "module/overworld/battle_cue.h"
-#include "module/overworld/zonedata.h"
+#include "module/field/battle_music.h"
+#include "module/field/world_map_encounter_rules.h"
 #include "vram_cache.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "types.h"
 #include "battle_type.h"

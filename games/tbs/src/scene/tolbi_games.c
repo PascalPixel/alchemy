@@ -38,8 +38,8 @@
 
 #include "keystate.h"
 #include "module/scene/tolbi_games.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/window/window.h"

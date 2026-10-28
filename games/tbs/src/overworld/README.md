@@ -9,7 +9,7 @@ back to the [main routine](../../glossary.md#main-routine). The main routine
 belongs to the System's design but sits in this
 [bank](../../glossary.md#bank), beside the field sequence it runs most. The
 slots sequence, Lucky Wheels in Tolbi's game room, is here too, in a bank of
-its own ([`lucky_wheels.c`](lucky_wheels.c)).
+its own ([`lucky_wheels.c`](../field/lucky_wheels.c)).
 
 The code underneath, which moves everything and draws the maps, is
 [The field bank](../field/README.md), where the
@@ -264,7 +264,7 @@ nearest place when the d-pad is let go, and a place's name shows from closer
 by.
 
 `WorldPicture_Show` draws the picture, the screen's own work is in
-[`event_commands/world_map.c`](event_commands/world_map.c), and
+[`event_commands/world_picture.c`](../field/event_commands/world_picture.c), and
 `gWorldPicture_AreaMarkers` lists each place's visited flag, marker and name.
 
 | Name | Value | Meaning |
@@ -315,7 +315,7 @@ before each battle as well as between scenes.
 - **field kind**: what an ability does on the field, the `fieldPsynergy` field
   of each ability in [`abilities.c`](../game/abilities.c), named by
   `enum FieldPsynergy`
-  (`module/overworld/event_commands.h`). Whirlwind and Gale share
+  (`module/field/event_commands.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.
 - **field effect**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field Psynergy playing: the ability, its field kind (`fieldPsynergy`), its
@@ -351,4 +351,4 @@ step trigger. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), 
 `Event_ForwardShowMessageAtPosition` are unused: each is reached only
 through a bare [veneer](../../glossary.md#veneer) in
 `gamepak/far_call/FIELD_SEQUENCE.S`, which has no symbol for code to call
-([`event_commands/messages.c`](event_commands/messages.c)).
+([`event_commands/messages.c`](../field/event_commands/messages.c)).

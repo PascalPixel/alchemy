@@ -63,8 +63,8 @@
 #include "module/import.h"
 #include "module/scene/tunnel_ruins.h"
 #include "module/scene/shared/effect_spawn.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "actor_effect.h"
 

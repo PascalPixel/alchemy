@@ -50,8 +50,8 @@
 
 #include "module/scene/tolbi.h"
 #include "djinn_ids.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
 #include "module/system/system.h"

@@ -167,7 +167,7 @@ extern const u32 BattleEffect_CopyForward[];
 extern const u8 gBasicSpritePalettes[];
 /// The sprite tile uploader, run from HEAP_SLOT_PICTURE_UPLOADER.
 extern u8 Tile_CopyStrided[];
-/// The size of Tile_CopyStrided (convert_map.s).
+/// The size of Tile_CopyStrided (map_grid_convert.s).
 extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decompress_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];

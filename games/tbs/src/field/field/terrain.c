@@ -329,7 +329,7 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 ///
 /// Called each frame by Actor_UpdateAllThumb for actors that follow the
 /// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
-/// overworld's actor code, field Psynergy and about ten scene overlays.
+/// field sequence's actor code, field Psynergy and about ten scene overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridScrollAnimView *work = gMapGridWork[0];
   struct MapGridCell *cell;

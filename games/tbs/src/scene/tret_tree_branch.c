@@ -29,8 +29,8 @@
 /// unused hooks and a link-cable input exchange no table reaches.
 
 #include "module/scene/tret_tree_branch.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
 #include "battle.h"

@@ -67,7 +67,7 @@
 /// (FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST
 /// and _WEST) or up by
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE starts the
-/// fade overlay (overworld/overworld/fade_overlay.c), which follows the leader
+/// fade overlay (field/field_sequence/ground_mask.c), which follows the leader
 /// except from
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE, and
 /// step triggers 15 and 16 start and stop its following. When Reveal ends, the
@@ -83,9 +83,9 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/imil_fuchin_falls.h"
-#include "module/overworld/overworld.h"
+#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
 #include "battle.h"

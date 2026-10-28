@@ -4,7 +4,7 @@
 /// @file
 /// The main-image calls the debug menus import, and their palette swatch tiles.
 
-#include "module/overworld/overworld.h"
+#include "module/field/field_sequence.h"
 #include "module/menu/menu.h"
 #include "module/game/game.h"
 #include "module/window/window.h"

@@ -49,8 +49,8 @@
 
 #include "main_routine_work.h"
 #include "module/scene/stucco_rooms_b.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "stucco_rooms_b.h"
 #include "event.h"
 #include "text/msg_ids.h"

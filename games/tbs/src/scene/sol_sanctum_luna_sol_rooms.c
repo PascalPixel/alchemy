@@ -52,8 +52,8 @@
 
 #include "main_routine_work.h"
 #include "module/scene/sol_sanctum_luna_sol_rooms.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "battle.h"
 #include "debug.h"

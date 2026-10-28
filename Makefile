@@ -182,7 +182,7 @@ SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/sr
            $(wildcard games/tla/src/sound/driver.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
 FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
            $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
-ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
+ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \
            games/tla/src/graphics/tile/cell_picture.c
 
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork

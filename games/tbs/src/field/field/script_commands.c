@@ -61,8 +61,8 @@ s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
 
 /// SC_CALL(fn): calls fn with the actor. A non-zero result waits and calls
 /// it again next frame; zero moves on, past the command unless fn moved the
-/// cursor itself. Events and the field effect scripts of fxdata.c use
-/// it to run their own per-actor routines.
+/// cursor itself. Events and the field effect scripts of
+/// field_sequence_tables.c use it to run their own per-actor routines.
 s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
   s16 initialCursor = interpreter->scriptCursor;
   ScriptCommand callback =
@@ -820,8 +820,8 @@ enum ScriptOperandOperation {
   }
 
 /// The work value handlers, one for each entry of enum ActorScriptValue (see
-/// gActorScript_OperandHandlerTable in operand.c); each names the actor field
-/// it sets, adds to or compares.
+/// gActorScript_OperandHandlerTable in actor_script_operands.c); each names the
+/// actor field it sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress,
                               scriptAddress)
 

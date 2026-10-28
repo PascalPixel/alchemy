@@ -1,0 +1,218 @@
+/// @file
+/// Lift.
+// Part of event_commands.c.
+
+#include "../event_commands_internal.h"
+
+/// A hand appears 32 pixels to either side, each moves 14 pixels in, and
+/// they lift the target 32 pixels with them.
+///
+/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
+///
+/// This is Lift cast on a target, which FieldPsynergy_Dispatch calls.
+/// It leaves the target raised and floating (motion flag bit 2), with its
+/// update set to Actor_CycleSpriteColors.
+void FieldPsynergy_LiftOnTarget(s32 unused) {
+  struct FieldEffectWork *effectWork;
+  struct Actor *caster;
+  struct Actor *target;
+  // Untyped: as struct Actor *, the load of pair[0] waits for the store to
+  // the target's motion flags.
+  void *pair[2];
+  s32 pos[3];
+  s32 x, y, z;
+  s32 handIndex;
+  s32 startY;
+
+  effectWork = gFieldEffectWork;
+  target = effectWork->child;
+  caster = effectWork->mainActor;
+  if (target == NULL)
+    return;
+
+  FieldPsynergy_FadeToCastColor();
+  // The caster's script starts 3 words into the shared particle script, with
+  // the target as its argument.
+  caster->watchedActor = target;
+  Actor_StartScriptFar(caster, gFieldEffect_SharedParticleScript + 3);
+
+  x = effectWork->x;
+  pos[0] = x;
+  y = effectWork->y + PIXELS(16); // 16 pixels up
+  pos[1] = y;
+  z = effectWork->z;
+  pos[2] = z;
+  pair[0] = FieldEffect_SpawnItemBreakMode3(x + PIXELS(32), y, z, FACING_WEST);
+  pair[1] = FieldEffect_SpawnItemBreakMode3(pos[0] - PIXELS(32), pos[1], pos[2],
+                                            FACING_EAST);
+
+  // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
+  // left) and moves 14 pixels that way.
+  wait(15);
+  for (handIndex = 0; handIndex < 2; handIndex++) {
+    struct Actor *hand = pair[handIndex];
+    if (hand != NULL)
+      Actor_SetTargetPositionFromMagnitudeAngle(hand, PIXELS(14), hand->facing);
+  }
+
+  Actor_WaitForMoveFar(pair[0]);
+  target->update = Actor_CycleSpriteColors;
+  Sound_PlayFar(SE_PSYNERGY_START);
+  target->motionFlags = ACTOR_FLOATS;
+
+  // Lift 32 pixels, a quarter pixel at a time.
+  startY = target->y.fixed;
+  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + PIXELS(32)) {
+    do {
+      ((struct Actor *)pair[0])->y.fixed += 0x4000;
+      ((struct Actor *)pair[1])->y.fixed += 0x4000;
+      target->y.fixed += 0x4000;
+      wait(1);
+    } while (target->y.fixed <= startY + PIXELS(32));
+  }
+
+  // The hands burst into particles; the target stays up.
+  UpdateRisingParticleBurst(pair[0]);
+  UpdateRisingParticleBurst(pair[1]);
+  FieldPsynergy_FadeFromCastColor();
+}
+
+/// Two hands appear 16 pixels above the spot in front of the caster, 32
+/// pixels to either side, then close in 24 pixels and scatter into shards.
+///
+/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
+///
+/// This is Lift cast with no target, which FieldPsynergy_Run calls.
+DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
+
+/// Spawns a hand (sprite 215) and grows it, spinning, from a quarter to full
+/// size over 24 frames; angle is the way it faces once grown. Makes Lift's
+/// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
+/// NULL when no actor could be spawned. Unlike Carry's
+/// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
+/// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
+struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
+  struct Actor *fragment;
+  s32 scale;
+
+  Sound_PlayFar(SE_ITEM_BREAK);
+  fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  if (fragment != NULL) {
+    fragment->scaleX = fragment->scaleY = 0x4000;
+    fragment->acceleration = fragment->speedLimit =
+        PIXELS(3); // 3 pixels a frame
+    ((struct Sprite *)fragment->sprite)->image.priority = 0;
+    Actor_SelectAnimationFar(fragment, 3);
+    scale = fragment->scaleX;
+    if (scale < Q16_ONE) {
+      do {
+        scale += 0x800;
+        fragment->scaleY = scale;
+        fragment->scaleX = scale;
+        fragment->facing += 0x2000; // 1/8 turn
+        wait(1);
+        scale = fragment->scaleX;
+      } while (scale <= 0xffff);
+    }
+    fragment->facing = angle;
+  }
+  return fragment;
+}
+
+/// Field effect sprite callback of a particle that scatters 25 pixels from its
+/// origin in a random direction, then gathers beside the main actor and is
+/// freed. Set on Force's 12 flashes by FieldPsynergy_Force in force.c.
+void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
+  // A for/continue retry keeps the same states but grows the native English
+  // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
+  // OUT_AND_BACK_AIM_BACK immediately.
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct Vector3 pos;
+  s32 state;
+
+again:
+  state = effect->state;
+  if (state == OUT_AND_BACK_AIM_OUT) {
+    // 25 pixels from the origin, in a random direction.
+    pos.x = effect->originX;
+    pos.z = effect->originZ;
+    Vector_AddPolarOffset(25 << 16, (u16)Random16(), &pos);
+    effect->targetX = pos.x;
+    effect->targetZ = pos.z;
+    effect->acceleration = 3 << 16;
+    effect->speedMax = 3 << 16;
+    effect->turnStepLimited = 0;
+    effect->state++;
+    return;
+  }
+
+  if (state == OUT_AND_BACK_FLYING_OUT) {
+    // On arrival, go straight on.
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
+      effect->state++;
+      goto again;
+    }
+    return;
+  }
+
+  if (state == OUT_AND_BACK_AIM_BACK) {
+    // 8 pixels toward effectWork->angle from 16 pixels above the main actor,
+    // on screen, give or take 4 pixels.
+    struct Actor *caster = effectWork->mainActor;
+
+    pos.x = caster->x.fixed;
+    pos.y = caster->y.fixed + (16 << 16);
+    pos.z = caster->z.fixed;
+    Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
+    Camera_WorldToScreen(&pos);
+    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    effect->targetX = pos.x;
+    effect->targetZ = pos.z;
+    effect->turnStepMax = 0x800;
+    effect->turnStepLimited = 1;
+    effect->state++;
+    return;
+  }
+
+  if (state == OUT_AND_BACK_FLYING_BACK &&
+      FieldParticle_HasPendingTarget(effect) == 0)
+    FieldEffect_ClearOwnedSlot(effect);
+}
+
+/// A heavy impact: places an actor of sprite 283 32 pixels below the source
+/// for 20 frames and scatters 12 shards from it. Reached through SC_CALL in
+/// gFieldEffect_HeavyImpactScript (field_sequence_tables.c), where the
+/// interpreter is the actor running the script, which Force's thrown actor runs
+/// (force.c). Returns 0, so the script moves on and releases the actor.
+s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
+  struct Actor *source = interpreter;
+  struct Vector3 pos;
+  struct Actor *impact;
+  struct Actor *fragment;
+  s32 fragmentIndex;
+
+  Sound_PlayFar(SE_HEAVY_IMPACT);
+  pos.x = source->x.fixed;
+  pos.y = source->y.fixed;
+  pos.z = source->z.fixed;
+  impact = Actor_Spawn(283, pos.x, pos.y - (32 << 16), pos.z);
+  if (impact != NULL) {
+    impact->motionFlags = 0;
+    impact->wait = 20;
+    Actor_StartScriptFar(impact, gFieldEffect_SharedParticleScript);
+  }
+
+  // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
+  for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
+    fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+    if (fragment != NULL) {
+      Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
+      fragment->speedLimit = Random16() + (1 << 16);
+      fragment->acceleration = 1 << 16;
+      fragment->motionFlags = 0;
+      Actor_SetTargetPositionFromMagnitudeAngle(
+          fragment, Random16() * 24 + (8 << 16), Random16());
+    }
+  }
+  return 0;
+}

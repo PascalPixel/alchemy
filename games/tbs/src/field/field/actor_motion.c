@@ -407,7 +407,7 @@ void Actor_UpdateAllThumb(void) {
 /// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it. Reached through SC_POSITION and Actor_Create, and as
 /// Actor_SetPositionAndResetMotionFar from field Psynergy and the
-/// overworld's actor code.
+/// field sequence's actor code.
 void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
   actor->z.fixed = z;
   actor->targetX = TARGET_UNSET;

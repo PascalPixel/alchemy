@@ -37,13 +37,13 @@ them.
 
 [Field](../field.md), everything outside a battle:
 
-- [Running a scene](overworld/README.md), the `overworld` folder, runs one
-  scene from its set-up to the [exit](../glossary.md#exit) the party leaves
-  by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp)
-  and the event commands. `MainRoutine_Run`,
-  [the main routine](../glossary.md#main-routine), which runs one
-  [sequence](../glossary.md#sequence) after another, is there too, in
-  [main_routine.c](system/main_routine.c).
+- [Running a scene](overworld/README.md), `field_sequence.c` and
+  `event_commands.c` in `field`, runs one scene from its set-up to the
+  [exit](../glossary.md#exit) the party leaves by, with random encounters,
+  field [Psynergy](../glossary.md#psynergy-and-pp) and the event commands.
+  `MainRoutine_Run`, [the main routine](../glossary.md#main-routine), which
+  runs one [sequence](../glossary.md#sequence) after another, is in the same
+  bank, in [main_routine.c](system/main_routine.c).
 - [The field bank](field/README.md) is the code under every town, dungeon and
   the world map: the [actors](../glossary.md#actor), walking, and loading,
   scrolling and drawing the map.
@@ -95,7 +95,7 @@ far-call tables.
 | `rom_main_01` | `FIELD.S` | `field` |
 | `rom_main_02` | `WINDOW.S` | `window` |
 | `rom_main_03` | `GAME.S` | `game` |
-| `rom_main_04` | `FIELD_SEQUENCE.S` | `overworld` |
+| `rom_main_04` | `FIELD_SEQUENCE.S` | `field` (`field_sequence.c`, `event_commands.c`) |
 | `rom_main_05` | `MENU.S` | `menu` |
 | `rom_main_06` | `SHOP.S` | `shop` |
 | `rom_main_07` | `BATTLE.S` | `battle` |
@@ -103,7 +103,7 @@ far-call tables.
 | `rom_main_09` | `CREDITS.S` | `graphics/credits` |
 | `rom_main_10` | `TITLE.S` | `graphics/title` |
 | `rom_main_11` | `LUCKY_DICE.S` | `field/lucky_dice.c` |
-| `rom_main_12` | `LUCKY_WHEELS.S` | `overworld/lucky_wheels.c` |
+| `rom_main_12` | `LUCKY_WHEELS.S` | `field/lucky_wheels.c` |
 | `rom_main_13` | `SOUND.S` | `sound` |
 
 After the banks come the sound driver with the music and samples, then the
@@ -193,7 +193,7 @@ written as it is.
 
 | Code | Compiler | Where |
 | --- | --- | --- |
-| ARM C | GCC 2.95.2 | `window/glyph_arm.c`, `field/update.c`, `field/vertices.c` |
+| ARM C | GCC 2.95.2 | `window/glyph_arm.c`, `field/actor_update_arm.c`, `field/world_map_lines.c` |
 | the sound driver's C, the flash library | `old_agbcc` | `sound/`, `gamepak/flash/` |
 | the game's Thumb C | alchemy-gcc, a GCC of July 2000 | every other C file, and libgcc |
 

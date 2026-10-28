@@ -5,7 +5,7 @@
 /// The speaker lookup's view of an actor's sprite, the speaker
 /// definitions, and the palette fade's heap slot.
 
-#include "module/overworld/overworld.h"
+#include "module/field/field_sequence.h"
 #include "types.h"
 #include "static_assert.h"
 #include "palbuf.h"

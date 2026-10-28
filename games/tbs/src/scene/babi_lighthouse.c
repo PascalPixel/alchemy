@@ -53,8 +53,8 @@
 #include "module/import.h"
 #include "module/scene/babi_lighthouse.h"
 #include "module/scene/shared/effect_spawn.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "macros.h"
 

@@ -62,8 +62,8 @@
 #include "module/scene/shared/effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
 #include "module/scene/shared/effect_psynergy.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/window/window.h"
@@ -123,7 +123,7 @@
 
 /// Area flags that choose the aerie's field music after each battle, by
 /// the scene's field music rules (gScene_MusicRules,
-/// overworld/scene_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
+/// field/scene_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
 /// the first has begun and MUS_ELEMENTAL_STARS once the second has.
 /// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
 /// area, keep their Psynergy Stones in the same two flags, which no one goes

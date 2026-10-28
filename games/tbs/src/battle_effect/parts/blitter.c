@@ -279,7 +279,7 @@
 /// BattleEffect_FetchRectangleBlitters, directly by the particle streams for a
 /// canvas 256 pixels wide, and from other banks through its far stub,
 /// BattleEffect_BuildBlitterFar (the star field in battle/star_field.c and
-/// overworld/lucky_wheels.c).
+/// field/lucky_wheels.c).
 ///
 /// It allocates the slot's block (from IWRAM when it fits) at exactly the
 /// routine's size. A slot that already holds a block keeps it, whatever its

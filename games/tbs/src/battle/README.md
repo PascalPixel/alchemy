@@ -552,7 +552,7 @@ staging and hand back control when they finish.
   battle each console sends three.
 - `formations.c` has 380 formations, each of up to five kinds of enemy with
   the least and most of each. The encounter zones in
-  `../overworld/encounter_zones.c` choose among them.
+  `../field/encounter_zones.c` choose among them.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) playback commands.
 
 ## Words used here

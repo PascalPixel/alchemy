@@ -166,7 +166,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// scene change.
 ///
 /// Called through ActorSystem_InitializeFar by the field sequence
-/// (overworld/overworld/field_sequence.c) and the battle's encounter, and
+/// (field/field_sequence/run.c) and the battle's encounter, and
 /// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
 /// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
 /// for the actors, and sets the sprite outline colours.
@@ -227,7 +227,7 @@ void *Actor_FindFree(void) {
 /// Clearing the script lets Actor_FindFree hand the actor out
 /// again. Reached through SC_RELEASE (ActorScript_Release) and, as
 /// Actor_ReleaseFar, from the battle, field Psynergy and the
-/// overworld's actor code.
+/// field sequence's actor code.
 void Actor_Release(struct Actor *actor) {
   s32 spritesRemaining;
   void **sprites;
@@ -256,7 +256,7 @@ void Actor_Release(struct Actor *actor) {
 /// bits the sprite's animation id.
 ///
 /// Called as Actor_CreateFar by the battle's placement, field
-/// Psynergy, the overworld's actor code and treasure spots and the scenes'
+/// Psynergy, the field sequence's actor code and treasure spots and the scenes'
 /// events, and directly by the player control for footprints and ripples.
 /// Gives the actor gActor_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
@@ -463,7 +463,7 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
-/// The field sequence (overworld/overworld/field_sequence.c) gives it to the
+/// The field sequence (field/field_sequence/run.c) gives it to the
 /// leader when gMainRoutineWork.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
@@ -496,7 +496,7 @@ void Actor_StartIdle(struct Actor *actor) {
 /// Starts an actor on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
 /// acceleration of 0.5. Called through
-/// Actor_StartCameraFar by the overworld's actor code, the Psynergy
+/// Actor_StartCameraFar by the field sequence's actor code, the Psynergy
 /// camera and the Colosso and Kolima Forest scenes.
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);

@@ -1,6 +1,6 @@
 #include "module/debug/test_scenes.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

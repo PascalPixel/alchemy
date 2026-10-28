@@ -64,11 +64,11 @@ const s32 gActor_IdleScript[] = {
 };
 
 /// The handler for each script command number; 0x24 onwards act as SC_END.
-/// Actor_UpdateAll (update.c) and Actor_UpdateAllThumb (actor_motion.c)
-/// call through it. They take any word up to 63 as a command, so 0x2f to 63
-/// would call through the data after the table, but every script in the game
-/// is written in actor_script.h's macros, the last SC_KEY_COUNT, and none holds
-/// a word from 0x24 to 63 where a command goes.
+/// Actor_UpdateAll (actor_update_arm.c) and Actor_UpdateAllThumb
+/// (actor_motion.c) call through it. They take any word up to 63 as a command,
+/// so 0x2f to 63 would call through the data after the table, but every script
+/// in the game is written in actor_script.h's macros, the last SC_KEY_COUNT,
+/// and none holds a word from 0x24 to 63 where a command goes.
 const ScriptCommand gActorScript_CommandTable[47] = {
     ActorScript_Wait,                      // 0x00 SC_WAIT
     ActorScript_WaitForArrival,            // 0x01 SC_SYNC

@@ -445,7 +445,7 @@ The change of the backgrounds' and sprites' colours, by an equal amount each
 frame, towards a target, so that they all arrive together; the field fades
 each scene in from its backdrop colour with it, and the weather and Mind Read
 tint the screen with it (`PaletteFade_Update`, in
-[color.c](src/overworld/overworld/color.c)).
+[palette_fade.c](src/field/field_sequence/palette_fade.c)).
 
 Evidence: plain English.
 
@@ -455,7 +455,7 @@ A table that gives each of the screen's 160 lines its own background scroll,
 written into the scroll registers line by line by HBlank DMA; Mind Read's wave,
 the Lamakan Desert and the Lemurian Ship's ripple bend a layer with it
 (`struct LineScrollWork`, `LineScroll_`, in
-[wave_scroll.c](src/overworld/event_commands/wave_scroll.c)).
+[line_scroll.c](src/field/event_commands/line_scroll.c)).
 
 Evidence: tradition: ラインスクロール.
 

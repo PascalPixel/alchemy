@@ -183,7 +183,7 @@ leaves the partner's party there for the link battle that follows; the World
 Map's still picture; and the debug sprite viewer.
 
 Each scene's row of `gScenes` ([`field/scenes.s`](../field/scenes.s)) names a
-row of `gMaps` ([`field/maps.c`](../field/maps.c)), which gives the map's
+row of `gMaps` ([`map/maps.c`](../map/maps.c)), which gives the map's
 header, palette and tiles. A map's folder is named after its header's label in
 the resource directory
 ([`gamepak/resource_directory.s`](../gamepak/resource_directory.s)), not

@@ -59,7 +59,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // The battle's work areas. The actor system's sprite and layer pools
   // are taken here from EWRAM first: ActorSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
-  // is (field/field/animation.c, system/system/heap.c).
+  // is (field/field/sprite_animation.c, system/system/heap.c).
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);

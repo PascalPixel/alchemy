@@ -8,8 +8,8 @@
 
 #include "module/battle_effect/battle_effect_table.h"
 #include "module/battle_effect/battle_effect.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"

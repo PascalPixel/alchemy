@@ -230,7 +230,7 @@ extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 extern u32 gPushedActor_FootprintKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
-/// The size of TileMap_DrawRows (decode.s).
+/// The size of TileMap_DrawRows (picture_decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
 /// The size of Transform_UpdateVertices, copied to heap slot 46; an address
 /// equal to the size (constants.ld).
@@ -245,8 +245,8 @@ void WorldMap_StartStillPicture(void);
 #ifndef OWN_Actor_Destroy
 #endif
 
-// The field effects' scripts and tables (overworld/fxdata.c, scripts.s and
-// arcspark.s).
+// The field effects' scripts and tables (field/field_sequence_tables.c,
+// scripts.s and spark_tiles.s).
 extern u16 gFieldEffect_CyclePatternWords[];
 extern s8 gFieldEffect_RandomChildValues[];
 /// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;

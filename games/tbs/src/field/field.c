@@ -12,14 +12,14 @@
 /// use. Where to start:
 ///
 ///   Sprites         sprite_draw.c: Sprite_ComposePicture,
-///                   Render_PlaceProjectedSprite; animation.c:
+///                   Render_PlaceProjectedSprite; sprite_animation.c:
 ///                   Sprite_Create, Sprite_StartAnimation
 ///   Actors          actors.c: Actor_Create, ActorSystem_Initialize;
 ///                   actor_motion.c: Actor_UpdateAllThumb,
 ///                   Actor_SetMoveTarget
 ///   Actor scripts   script_commands.c (the SC_ commands of actor_script.h);
 ///                   player_control.c: Actor_UpdatePlayerControl
-///   Maps            map_layers.c: MapGrid_LoadMap,
+///   Maps            map_grid.c: MapGrid_LoadMap,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView
 ///   Ground          terrain.c: MapGrid_GetTerrainHeight,
@@ -31,7 +31,7 @@
 // The parts, in ROM order (src/README.md, "Objects and parts").
 #include "field/decompress.c"
 #include "field/sprite_draw.c"
-#include "field/animation.c"
+#include "field/sprite_animation.c"
 #include "field/actors.c"
 #include "field/actor_camera.c"
 #include "field/actor_motion.c"

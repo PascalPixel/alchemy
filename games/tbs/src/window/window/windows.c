@@ -65,7 +65,7 @@ void WindowSprite_InitializeFreeList(void) {
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every window sprite and starts the two per-frame tasks, the tilemap
 /// upload and the window update. Reached from FieldSequence_Run
-/// (overworld/overworld/field_sequence.c), the debug message viewer
+/// (field/field_sequence/run.c), the debug message viewer
 /// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
 /// allocated; nothing here frees it.

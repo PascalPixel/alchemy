@@ -11,7 +11,7 @@ tilted into perspective. It decides nothing about any one
 Three other folders hold the rest. This folder is named after the
 [bank](../../glossary.md#bank) it fills; the
 [field sequence](../../glossary.md#field-sequence) that drives it is in
-`overworld` ([Running a scene](../overworld/README.md)). Each scene's own
+`field_sequence.c` ([Running a scene](../overworld/README.md)). Each scene's own
 code, its [events](../../glossary.md#event) included, is an
 [overlay](../../glossary.md#overlay): [Scenes](../scene/README.md). What a town or
 dungeon shows and stands on is its map:

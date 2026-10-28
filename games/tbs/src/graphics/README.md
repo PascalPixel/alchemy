@@ -86,7 +86,7 @@ uses it only here. It is a [task](../../glossary.md#task),
 `TitlePaletteFade_Update`, set up by `TitlePaletteFade_Initialize` and started
 by `TitlePaletteFade_Start`.
 Scenes fade through the general palette fade instead, `PaletteFade_Update` in
-[color.c](../overworld/overworld/color.c), which the field sequence starts for
+[color.c](../field/field_sequence/palette_fade.c), which the field sequence starts for
 every scene and which covers 224 background and 224 sprite colours.
 
 ## The credits

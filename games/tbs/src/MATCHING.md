@@ -201,7 +201,7 @@ Some memory is read through a struct of its own, a field-for-field copy of
 the layout that differs only where its reader does, because that reader's
 code matches only through it. [An actor](../glossary.md#actor)'s 112 bytes
 are `struct Actor` almost everywhere, but `BattleObject_SpawnObjectsForList`
-reads them as `BattleActor`, with the sprite word untyped; `update.c`,
+reads them as `BattleActor`, with the sprite word untyped; `actor_update_arm.c`,
 ARM code built with GCC 2.95.2, which cannot read `Actor`'s anonymous
 unions, keeps `ActorArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites

@@ -103,7 +103,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 /// blocks are freed (EFFECT_FINISH_CANVAS). Clears work->transferPending after
 /// a copy, and counts work->vblanksSinceTransfer: 1 on a VBlank that copied,
 /// one more on each VBlank that did not. No effect reads that count;
-/// overworld/lucky_wheels.c keeps the same count for its own transfer.
+/// field/lucky_wheels.c keeps the same count for its own transfer.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];

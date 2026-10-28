@@ -5,8 +5,8 @@
 
 #include "scene_ids.h"
 #include "module/menu/file_screen.h"
-#include "module/overworld/overworld.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"

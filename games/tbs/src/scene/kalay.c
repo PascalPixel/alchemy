@@ -68,7 +68,7 @@
 ///   Sleep Bomb, a Lucky Medal, 200 coins and a Potion. Once
 ///   FLAG_KALAY_TUNNEL_OPEN is set a man (ACTOR_WAITING_MAN) waits here,
 ///   thinking `The things beyond these doors belong to you all.` The fade
-///   overlay (overworld/overworld/fade_overlay.c) follows the leader through
+///   overlay (field/field_sequence/ground_mask.c) follows the leader through
 ///   the treasure room unless he comes down from the town
 ///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); step triggers 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
@@ -94,9 +94,9 @@
 #include "module/import.h"
 #include "module/scene/kalay.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/overworld/overworld.h"
+#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
-#include "module/overworld/event_commands.h"
+#include "module/field/event_commands.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
 #include "module/system/system.h"

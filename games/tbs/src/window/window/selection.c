@@ -80,7 +80,7 @@ void SelectionMenu_Clear(void) {
   screen = gSelectionMenuWork;
   screen->head = NULL;
   screen->unread = 0;
-  if (screen->cursorIndex & 0x80) {
+  if (screen->cursorIndex & SELECTION_CURSOR_RESET) {
     screen->top = 0;
     screen->cursorIndex = 0;
   }
@@ -360,7 +360,7 @@ void SelectionMenu_Draw(void) {
     {
       void *src = (void *)(entryIndex + (((gVBlankCount >> 2) & 15) << 8));
 
-      cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
+      cursorEntry->tile = VramCache_Load(cursor->slot, 256, src);
     }
     if (cursor->targetX != cursor->x) {
       axisStep = (cursor->targetX - cursor->x) >> 1;
@@ -949,7 +949,7 @@ void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state,
 /// Stops the battle's highlight of units (BattleHighlight_SetModesFar
 /// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
 /// passes a unit list with one place an icon, of which only the end marker
-/// (0xff, BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
+/// (BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
 void Menu_SendNodeCountList(struct SelectionMenuWork *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
@@ -959,7 +959,7 @@ void Menu_SendNodeCountList(struct SelectionMenuWork *screen) {
     node = node->next;
     count++;
   }
-  data[count] = 0xff;
+  data[count] = BATTLE_UNIT_LIST_END;
   BattleHighlight_SetModesFar(data, 0);
 }
 
@@ -1146,7 +1146,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 /// reuse is set), its name message and its sprite.
 /// kind must select a command, item or Psynergy with the matching base ID.
 /// Items and Psynergy are drawn over the icon base; the sprite is 16x16 at
-/// full size (0x100).
+/// full size (Q_8_8(1)).
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse) {
   s32 cacheSlot;
@@ -1179,8 +1179,8 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   node->slot = cacheSlot;
   node->tile = tile;
   node->kind = kind;
-  node->scale = 0x100;
-  node->scaleEnd = 0x100;
+  node->scale = Q_8_8(1);
+  node->scaleEnd = Q_8_8(1);
 
   sprite = &node->sprite;
   sprite->mode = 0;
@@ -1256,7 +1256,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   screen->pathCursor[nodeIndex] = screen->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
   screen->unread = 0;
-  screen->cursorIndex |= 0x80;
+  screen->cursorIndex |= SELECTION_CURSOR_RESET;
   wait(2);
   other = SelectionMenu_FindFreeIcon(SELECTION_ICON_CHOSEN);
   other->kind = node->kind;
@@ -1272,8 +1272,8 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   other->homeY = node->homeY;
   other->dx = 0;
   other->dy = 0;
-  other->scale = 0x100;
-  other->scaleEnd = 0x100;
+  other->scale = Q_8_8(1);
+  other->scaleEnd = Q_8_8(1);
   sprite = &other->sprite;
   sprite->mode = 0;
   sprite->colors = 0;
@@ -1318,7 +1318,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
   s32 cacheSlot = VramCache_FindFreeEntry();
 
   *slot = cacheSlot;
-  sprite->oam.f.tile = VramCache_Load(cacheSlot, 0x80, data);
+  sprite->oam.f.tile = VramCache_Load(cacheSlot, 128, data);
   sprite->oam.f.mode = 0;
   sprite->oam.f.mosaic = 0;
   sprite->oam.f.colors = 1;
@@ -1341,7 +1341,7 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
 void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
-/// 256 colours (0x400 bytes, record 15), its scale stepping from 40 to 240 by
+/// 256 colours (32 * 32 bytes, record 15), its scale stepping from 40 to 240 by
 /// 40 a frame, after which SelectionMenu_Draw shows it at its own size.
 /// Other kinds of entry show none. The icon keeps its VRAM cache entry until
 /// Resource_ResetPendingTransfer.
@@ -1371,7 +1371,7 @@ void SelectionMenu_LoadLargeIcon(void) {
 
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = VramCache_FindFreeEntry();
-  transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
+  transfer->tile = VramCache_Load(transfer->slot, 32 * 32, buffer);
   transfer->kind = ICON_KIND_COMMAND;
   transfer->base = resourceId;
   transfer->scale = 40;
@@ -1415,10 +1415,10 @@ s32 FieldMenu_Run(void) {
     selection = FieldMenu_SelectCommand(selection);
     // German, Spanish, French and Italian: mark a menu open (field work byte
     // 0xcca, which pauses Reveal's sparkles) and, while Reveal is active
-    // (FieldWork.revealActive at 0xcb8), clear its sparkles.
+    // (FieldWork.revealActive), clear its sparkles.
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
-    if (*(s16 *)(state + 0xcb8) != 0) {
+    if (((struct FieldWork *)state)->revealActive != 0) {
       FieldEffect_ClearRandomParticlesFar();
       wait(1);
     }

@@ -171,9 +171,9 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           break;
         }
       } else {
-        // A tilemap code (such as 0xf01d) draws window tile glyphCode & 0xff.
-        // In Japanese a kana mark moves back 3 pixels onto the character
-        // before it and draws from glyphs 254 and 255.
+        // A tilemap code (such as WINDOW_TILE_HP_LABEL) draws window tile
+        // glyphCode & 0xff. In Japanese a kana mark moves back 3 pixels onto
+        // the character before it and draws from glyphs 254 and 255.
         glyphCode &= 0xFF;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
         if (glyphCode == 222 || glyphCode == 223) {
@@ -201,16 +201,17 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           }
           dst += 248;
         }
-        // The sign tiles Text_DrawPrefixedNumberAtOffset writes (0xf01d to
-        // 0xf01f, and 0xf005 in Spanish, French and Italian) advance 8 or 3
+        // The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
+        // labels' tiles) advance 8 for a first tile and 3 for a second, in
         // pixels; a character its font width, and any other tile below 32 one.
-        if (code == 0xF01D || code == 0xF01F)
+        if (code == WINDOW_TILE_HP_LABEL || code == WINDOW_TILE_PP_LABEL)
           x += 8;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-        else if (code == 0xF01E || code == 0xF005)
+        else if (code == WINDOW_TILE_HP_LABEL_END ||
+                 code == WINDOW_TILE_PP_LABEL_END)
 #else
-        else if (code == 0xF01E)
+        else if (code == WINDOW_TILE_HP_LABEL_END)
 #endif
           x += 3;
         else {
@@ -264,7 +265,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       mask = 255;
     // Attribute n is text tile 0x80 + n, and with alt set 128 to 255 are
     // tiles 0x200 to 0x27f.
-    tile = *tiles & 0x3FF;
+    tile = *tiles & TILE_NUMBER_MASK;
     if ((tile < 0x80 || tile > 0xFF) &&
         (work->extraTextTiles == 0 || tile < 0x200 || tile > 0x27F)) {
       tile = work->nextTextTile & mask;
@@ -311,7 +312,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     u32 column;
 
     for (column = 0; column < width; column++) {
-      u32 tileId = *cursor++ & 0x3FF;
+      u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
       if ((tileId - 0x80) <= 0x7F ||
           (alternateTiles != 0 && tileId > 0x1FF && tileId <= 0x27F)) {
@@ -342,7 +343,7 @@ void Window_MarkVisibleTextTiles(void) {
   // from column 24 on and row 19 are never marked shown.
   for (row = 20; row != 0; row--) {
     for (x = 0; x < width; x++) {
-      u32 tileId = *cursor++ & 0x3ff;
+      u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
       if ((tileId - 0x80) <= 0x7f ||
           (alternateTiles != 0 && tileId > 0x1ff && tileId <= 0x27f)) {
@@ -735,9 +736,10 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 }
 
 /// Draws a four-digit number after a two-glyph sign as tiles in window work at
-/// pixel (offsetX, offsetY) of its interior: window tiles 0x1d and 0x1e for
-/// variant 0, the party status window's HP; 0x1f and 0x1e for variant 1, its
-/// PP (0x1f and 0x05 in Spanish, French and Italian). The number is padded
+/// pixel (offsetX, offsetY) of its interior: the HP label (WINDOW_TILE_HP_LABEL
+/// and WINDOW_TILE_HP_LABEL_END) for variant 0, the party status window's HP;
+/// the PP label (WINDOW_TILE_PP_LABEL and WINDOW_TILE_PP_LABEL_END) for
+/// variant 1, its PP. The number is padded
 /// to four places with spaces.
 void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant) {
@@ -757,19 +759,19 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   if (variant == 0) {
-    output[0] = 0xf01d;
-    output[1] = 0xf01e;
+    output[0] = WINDOW_TILE_HP_LABEL;
+    output[1] = WINDOW_TILE_HP_LABEL_END;
   } else {
-    output[0] = 0xf01f;
-    output[1] = 0xf005;
+    output[0] = WINDOW_TILE_PP_LABEL;
+    output[1] = WINDOW_TILE_PP_LABEL_END;
   }
 #else
   if (variant == 0) {
-    output[0] = 0xf01d;
+    output[0] = WINDOW_TILE_HP_LABEL;
   } else {
-    output[0] = 0xf01f;
+    output[0] = WINDOW_TILE_PP_LABEL;
   }
-  output[1] = 0xf01e;
+  output[1] = WINDOW_TILE_HP_LABEL_END;
 #endif
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];

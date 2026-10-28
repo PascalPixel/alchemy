@@ -35,7 +35,7 @@ struct ArticleTable {
 // line spacing 8 and a space after. Only the Japanese decoder sets mode, from
 // WindowWork.battleMode's WINDOW_BATTLE_MESSAGE, which BattleMessage_Open
 // sets while it decodes; the others always pass 0. The write position wraps at
-// 0x1ff, the ring's mask (TEXT_BUFFER_MASK) outside Japanese.
+// TEXT_BUFFER_MASK, the ring's mask.
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -66,11 +66,11 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
   if (mode != 0) {
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = TEXT_LINE_SPACING;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = 10;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   // A name's leading article class (MESSAGE_ARTICLE_CLASS and its
   // operand) is never copied.
@@ -100,21 +100,21 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #else
     p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
-    // At most 8 letters, the first capitalised (less 0x20) at the start of a
+    // At most 8 letters, the first capitalised at the start of a
     // sentence.
     for (cnt = 0; cnt < 8; cnt++) {
       if ((letter = *p++) == 0)
         break;
       if (cnt == 0 && *suffix == 2)
-        letter -= 0x20;
+        letter -= 'a' - 'A';
       entries[writePosition] = letter;
-      writePosition = (writePosition + 1) & 0x1ff;
+      writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     }
   }
   while (*name != 0) {
     code = *name++;
     entries[writePosition] = code;
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #if (LANGUAGE == LANGUAGE_GERMAN)
     if (code == 's' || code == 'S' || code == 'z' || code == 'Z')
       *suffix = 1;
@@ -128,12 +128,12 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
   }
   if (mode != 0) {
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x08;
-    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = TEXT_LINE_SPACING;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = 8;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   return writePosition;
 }
@@ -158,11 +158,11 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 
   if (mode != 0) {
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = TEXT_LINE_SPACING;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = 10;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
@@ -187,7 +187,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
       if ((letter = *p++) == 0)
         break;
       entries[writePosition] = letter;
-      writePosition = (writePosition + 1) & 0x1ff;
+      writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     }
   } else {
     head = name[0];
@@ -197,7 +197,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   while (*name != 0) {
     code = *name++;
     entries[writePosition] = code;
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     if (code == 'S' || code == 's')
       *suffix = 1;
     else
@@ -206,18 +206,18 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (articleForm == 2 || (articleForm == 3 && plural != 0)) {
     if (*suffix != 0) {
       entries[writePosition] = 'e';
-      writePosition = (writePosition + 1) & 0x1ff;
+      writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     }
     entries[writePosition] = 's';
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   if (mode != 0) {
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x08;
-    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = TEXT_LINE_SPACING;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    entries[writePosition] = 8;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   return writePosition;
 }
@@ -573,10 +573,10 @@ s32 Message_Decode(s32 script, s32 clear) {
             form = no & 7;
 #endif
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
-            // The argument is an inventory code: its low 9 bits are the item,
-            // a mask that TEXT_BUFFER_MASK's 0x1ff spells here. In German,
-            // Spanish, French and Italian, forms 2 and 4, and 3 after a plural
-            // number, take the item's plural name.
+            // The argument is an inventory code: its low 9 bits are the item
+            // (INVENTORY_ITEM_ID_MASK), which TEXT_BUFFER_MASK spells here. In
+            // German, Spanish, French and Italian, forms 2 and 4, and 3 after a
+            // plural number, take the item's plural name.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             argument &= TEXT_BUFFER_MASK;
@@ -749,7 +749,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               if ((letter = *word++) == 0)
                 break;
               if (value == 0 && suffix == 2)
-                letter -= 0x20;
+                letter -= 'a' - 'A';
               entry[writePosition] = letter;
               writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
@@ -771,7 +771,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               if ((letter = *word++) == 0)
                 break;
               if (i == 0 && suffix == 2)
-                letter -= 0x20;
+                letter -= 'a' - 'A';
               entry[writePosition] = letter;
               writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
@@ -853,7 +853,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
   if (mode != 0) {
     entries[writePosition] = ' ';
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    entries[writePosition] = 10;
+    entries[writePosition] = TEXT_LINE_SPACING;
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = 10;
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
@@ -864,7 +864,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   if (mode != 0) {
-    entries[writePosition] = 10;
+    entries[writePosition] = TEXT_LINE_SPACING;
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = 8;
     writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;

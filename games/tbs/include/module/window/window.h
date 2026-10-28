@@ -146,8 +146,29 @@ enum {
   WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x80),
   WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(0x81),
   WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x82),
+  /// In battle, the tile the command row fills its empty panels with
+  /// (screens/command_row.c), and Window_EraseBorderRect below row 16.
+  WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(0x7f),
+  /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
+  /// or a Psynergy's cost: each label's first tile, and the second tile the
+  /// HP label always takes.
+  WINDOW_TILE_HP_LABEL = WINDOW_TILE(0x1d),
+  WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(0x1e),
+  WINDOW_TILE_PP_LABEL = WINDOW_TILE(0x1f),
 };
 
+/// The PP label's second tile: the HP label's in English, German and
+/// Japanese, a tile of its own in Spanish, French and Italian.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(0x05)
+#else
+#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END
+#endif
+
+/// A tilemap entry's tile number, the bits below its flip bits and palette
+/// number in the hardware's screen entry.
+#define TILE_NUMBER_MASK 0x3ff
 /// The tilemap entry flip bits.
 #define TILE_HFLIP 0x400
 #define TILE_VFLIP 0x800
@@ -288,6 +309,25 @@ enum IconKind {
   /// The one tile Resource_LoadTableEntry loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
+
+// The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
+// the count above one, equipped and broken in Resource_LoadByMode and
+// ItemIcon_LoadIntoSlot; those and the artifact mark for
+// Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all but the broken mark for
+// its ICON_KIND_EQUIPMENT_ITEM.
+#define ICON_BASE 1            ///< the base under the icon
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+// XXX: likely ICON_EQUIPPED and ICON_BROKEN are swapped, because the first
+// draws mark 1 for INVENTORY_BROKEN and the second mark 0 for
+// INVENTORY_EQUIPPED, the bits the shops equip and repair by, and the
+// equipment view (ICON_KIND_EQUIPMENT_ITEM) leaves out the second; a render of
+// an equipped item's icon would settle it.
+#define ICON_EQUIPPED 8 ///< mark 1, on an item with INVENTORY_BROKEN
+#define ICON_BROKEN 16  ///< mark 0, on an item with INVENTORY_EQUIPPED
+/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
+/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
+#define ICON_ARTIFACT 32
 
 /// The kinds of message argument (MessageArgument_Push), which the message
 /// codes such as {argument_item_name} read.

@@ -4,6 +4,15 @@
 
 #include "../window_internal.h"
 
+/// The entries of the debug shortcut picker's list, which
+/// Menu_FindShortcutEntries searches whole.
+#define SHORTCUT_LIST_ENTRIES 448
+/// A shortcut (gMainRoutineWork.firstShortcut and secondShortcut) is
+/// member << SHORTCUT_MEMBER_SHIFT | action, as Debug_SelectAbilityPair stores
+/// it.
+#define SHORTCUT_MEMBER_SHIFT 10
+#define SHORTCUT_ABILITY_MASK 0x3ff
+
 /// The area name notice's fields, which live in the field work block
 /// (gFieldWork, a scene's work), for as long as the scene runs.
 struct TimedNoticeWork {
@@ -122,9 +131,9 @@ void Debug_SelectAbilityPair(void) {
   cursor = NULL;
   redraw = 1;
   // Build the debug shortcut candidates before creating their three windows.
-  // 0x700 bytes hold 448 entries, as many as Menu_FindShortcutEntries
-  // searches.
-  list = Heap_Alloc(0x700);
+  // The block holds SHORTCUT_LIST_ENTRIES entries, as many as
+  // Menu_FindShortcutEntries searches.
+  list = Heap_Alloc(SHORTCUT_LIST_ENTRIES * sizeof(struct AbilityListEntry));
   Unit_LearnPsynergyFar(ISAAC, ABILITY_MOVE);
   Unit_LearnPsynergyFar(GARET, ABILITY_MOVE);
   Unit_LearnPsynergyFar(IVAN, ABILITY_MOVE);
@@ -235,9 +244,9 @@ void Debug_SelectAbilityPair(void) {
     // A, B and START all keep the picks. The cursor's window sprite and VRAM
     // entry go with its window.
     gMainRoutineWork.firstShortcut =
-        (list[first].member << 10) | list[first].ability;
+        (list[first].member << SHORTCUT_MEMBER_SHIFT) | list[first].ability;
     gMainRoutineWork.secondShortcut =
-        (list[second].member << 10) | list[second].ability;
+        (list[second].member << SHORTCUT_MEMBER_SHIFT) | list[second].ability;
     Window_Close(win, 1);
     Window_Close(title, 1);
     Window_Close(info, 1);
@@ -283,7 +292,7 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
 /// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
 /// returns their indexes (0 for one not found).
 /// A shortcut absent from the list falls back to entry 0.
-/// A shortcut is member << 10 | action. The search runs over all 448 places
+/// The search runs over all SHORTCUT_LIST_ENTRIES places
 /// of the list's block, past its last entry too.
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
@@ -292,19 +301,21 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   *firstIndex = 0;
   *secondIndex = 0;
 
-  for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
+  for (entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gMainRoutineWork.firstShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gMainRoutineWork.firstShortcut >> 10)) {
+            (gMainRoutineWork.firstShortcut & SHORTCUT_ABILITY_MASK) &&
+        entries[entryIndex].member ==
+            (gMainRoutineWork.firstShortcut >> SHORTCUT_MEMBER_SHIFT)) {
       *firstIndex = entryIndex;
       break;
     }
   }
 
-  for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
+  for (entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gMainRoutineWork.secondShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gMainRoutineWork.secondShortcut >> 10)) {
+            (gMainRoutineWork.secondShortcut & SHORTCUT_ABILITY_MASK) &&
+        entries[entryIndex].member ==
+            (gMainRoutineWork.secondShortcut >> SHORTCUT_MEMBER_SHIFT)) {
       *secondIndex = entryIndex;
       break;
     }
@@ -338,7 +349,8 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_WORKSPACE,
+                             sizeof(struct SelectionWorkspace));
   zero = 0;
   work->firstActive = zero;
   work->secondActive = zero;
@@ -362,3 +374,7 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   }
   HeapSlot_Release(HEAP_SLOT_SELECTION_WORKSPACE);
 }
+
+#undef SHORTCUT_LIST_ENTRIES
+#undef SHORTCUT_MEMBER_SHIFT
+#undef SHORTCUT_ABILITY_MASK

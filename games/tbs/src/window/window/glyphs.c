@@ -128,7 +128,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
                                                     sizeof(struct FontGlyph)))
             ->rows;
   code &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
-  if (code <= 0xff) {
+  if (code <= TEXT_LAST_FONT_CODE) {
     glyph = (const u8 *)gFont_Glyphs + (code - 32) * sizeof(struct FontGlyph);
     width = ((const struct FontGlyph *)glyph)->width;
     glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
@@ -205,7 +205,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   return width;
 }
 
-// From the German release on, every character up to 0xff counts as 10
+// From the German release on, every code up to TEXT_LAST_FONT_CODE counts as 10
 // pixels, and those above as nothing. English draws the same Latin font with
 // its glyph widths, so the change is an update, not the language's.
 #if TBS_PATCH_2
@@ -218,10 +218,10 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
                               (const u8 *)gFont_Glyphs))
 
 /// Returns the width in pixels of a zero-terminated string of 16-bit character
-/// codes: 4 for a space, and for other codes up to 0xff the font width, but
-/// nothing for the kana marks; 10 for a kanji (code 0x100 and up). German,
-/// Spanish, French and Italian count every code up to 0xff but the space as a
-/// flat 10, and codes above it as nothing. Control codes are counted as
+/// codes: 4 for a space, and for other codes up to TEXT_LAST_FONT_CODE the font
+/// width, but nothing for the kana marks; 10 for a kanji (any code above it).
+/// German, Spanish, French and Italian count every code up to it but the space
+/// as a flat 10, and codes above it as nothing. Control codes are counted as
 /// characters.
 s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
@@ -236,9 +236,9 @@ s32 Text_GetWideStringWidth(u16 *text) {
   cursor = text + 1;
   if (code != 0) {
     do {
-      if (code == 0x20) {
+      if (code == TEXT_SPACE) {
         width += 4;
-      } else if (code <= 0xffU) {
+      } else if (code <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
@@ -292,9 +292,10 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
   {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    // Codes above 0xff become code 0x40, as the decoder makes them.
+    // Codes above TEXT_LAST_FONT_CODE become code 0x40, as the decoder makes
+    // them.
     code = *text++;
-    if (code > 0xff)
+    if (code > TEXT_LAST_FONT_CODE)
       code = 0x40;
     if (code == 0)
       break;
@@ -420,8 +421,8 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 /// control codes; a NULL text draws the decoded text in WindowWork.textBuffer.
 /// Control operands are skipped, not rendered as glyphs; the input is read
 /// only. The character code is the tile's number (Window_PutGlyph), so only
-/// codes up to 0xff show. The Djinn preview (screens/djinn_preview.c)
-/// draws its numbers this way.
+/// codes up to TEXT_LAST_FONT_CODE show. The Djinn preview
+/// (screens/djinn_preview.c) draws its numbers this way.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {
   struct WindowWork *work;

@@ -75,7 +75,7 @@
 #include "module/window/screens.h"
 #include "module/menu/menu.h"
 #include "module/sound/sound.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "module/scene/shared/colosso_item_icon.h"
 #include "battle.h"
 #include "keystate.h"

@@ -50,4 +50,4 @@
 	.set import.Sound_WaitForJingle, 1
 	.set import.Sound_Play, 1
 	.set import.Sound_SetBgmTempo, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

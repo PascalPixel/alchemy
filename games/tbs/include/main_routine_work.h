@@ -239,7 +239,7 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 
 #ifndef OWN_gMainRoutineWork
-/// The game's state (cartridge/ewram.s).
+/// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
 #endif
 

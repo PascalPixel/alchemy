@@ -61,7 +61,7 @@
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
 #include "module/shop/shop.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "iowrite.h"
 
 #include "battle.h"

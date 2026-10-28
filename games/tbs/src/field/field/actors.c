@@ -119,7 +119,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 /// layered map draws a point at height 0. It ignores y and the ground height,
 /// which the camera takes off z when it draws the sprite and its shadow. No
 /// code names it: its veneer in the field far-call table
-/// (cartridge/far_call/FIELD.S) is unnamed.
+/// (gamepak/far_call/FIELD.S) is unnamed.
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

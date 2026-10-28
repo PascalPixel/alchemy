@@ -1,4 +1,4 @@
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"
 	overlay_veneer FileScreen_Run
 	overlay_veneer FileScreen_GetEntrances
 	overlay_veneer FileScreen_GetExits

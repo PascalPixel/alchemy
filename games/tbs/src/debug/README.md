@@ -180,6 +180,6 @@ with a blank tileset of its own (tilesets 68 to 75, all black), and differs
 only in its labels. The test scenes are reserved slots never given their own
 content, which is why one overlay serves them all.
 
-The debug mode switch is written only in `runtime/runtime/system.c` and
+The debug mode switch is written only in `system/system/start_up.c` and
 `field/field/sprite_viewer.c`; the viewer's veneer is in
-`cartridge/far_call/FIELD.S`.
+`gamepak/far_call/FIELD.S`.

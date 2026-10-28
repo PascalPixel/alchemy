@@ -186,7 +186,7 @@ Each scene's row of `gScenes` ([`field/scenes.s`](../field/scenes.s)) names a
 row of `gMaps` ([`field/maps.c`](../field/maps.c)), which gives the map's
 header, palette and tiles. A map's folder is named after its header's label in
 the resource directory
-([`cartridge/resource/directory.s`](../cartridge/resource/directory.s)), not
+([`gamepak/resource_directory.s`](../gamepak/resource_directory.s)), not
 after its row of `gMaps`, so the two numbers differ: the north of Suhalla
 Desert is row 151 of `gMaps` and folder `map_147`, and Vale is row 3 and
 folder `map_002`.

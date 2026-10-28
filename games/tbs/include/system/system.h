@@ -60,7 +60,7 @@ extern u8 gNumberBufferHexEnd[];
 extern u8 gLink_TimeLabelString[];
 /// Each resource's ROM address by resource id (Resource_GetTableEntry).
 extern void *Resource_DirectoryTable[];
-/// The size of Resource_PatchThumbBranch (decode_tagged_lz.s).
+/// The size of Resource_PatchThumbBranch (decompress_tagged_lz.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
 extern const u8 gSpriteColorTables[][256];
@@ -107,7 +107,7 @@ extern u8 gSaveBuffer[];
 extern s16 gSaveSlot;
 /// The five reverb codes' mixer code, SOUND_REVERB_CODE_SIZE bytes each.
 extern u8 IwramSoundReverbCodes[];
-/// The size of Oam_BuildBufferKernel (decode_byte_lz.s).
+/// The size of Oam_BuildBufferKernel (decompress_byte_lz.s).
 extern u8 LoadedRuntime_Size[];
 /// No code in the tree defines or reads it.
 extern const u16 gMath_ArcTanTable[];
@@ -169,7 +169,7 @@ extern const u8 gBasicSpritePalettes[];
 extern u8 Tile_CopyStrided[];
 /// The size of Tile_CopyStrided (convert_map.s).
 extern u8 Tile_CopyStridedCodeSize[];
-/// The size of Resource_ExecuteTransfer (decode_tagged_lz.s).
+/// The size of Resource_ExecuteTransfer (decompress_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 first, s32 second, s32 target);
 void Iwram_Halt(void);

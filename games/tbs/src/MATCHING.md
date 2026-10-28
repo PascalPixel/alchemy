@@ -24,7 +24,7 @@ scaffolds, below, aside), so the comparison is a hash of the whole image and
 is all or nothing. One wrong bit anywhere gives a completely different hash,
 which says nothing about where the difference is. To find it, compare the
 compiler's output before and after your change. The build keeps each C file's
-assembly beside its object (`out/tbs-en/obj/games/tbs/src/runtime/runtime.s`
+assembly beside its object (`out/tbs-en/obj/games/tbs/src/system/system.s`
 for `runtime.c`): copy it from a build that compared OK, rebuild, and diff the
 two with the `.L` label numbers ignored. The optional `alchemy-devtools diff`
 instead compares one function with the original's instructions read from your
@@ -136,7 +136,7 @@ handwritten file the proof names the instruction, stack frame or pattern
 `import/` files of the debug scenes, the menus and the
 [scenes](../glossary.md#scene), are proven once, where their entries are
 made: each entry is a [veneer](../glossary.md#veneer), which the
-`overlay_veneer` macro in `cartridge/overlay.s` writes out whole.
+`overlay_veneer` macro in `gamepak/far_call/veneer.s` writes out whole.
 
 ## Spellings that match at different sites
 

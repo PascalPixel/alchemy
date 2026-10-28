@@ -38,4 +38,4 @@
 	.set import.Sanctum_Run, 1
 	.set import.Inn_CheckIn, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

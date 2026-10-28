@@ -50,7 +50,7 @@ extern u8 IwramIrqMain[];
 extern const u32 IwramIrqModeWord;
 /// Where the IWRAM-resident code lies in ROM (main.ld), 0x1400 bytes copied to
 /// IwramIrqMain at power-on.
-extern const u8 IwramRuntime_Rom[];
+extern const u8 IwramResident_Rom[];
 /// The BIOS's interrupt vector, pointed at IwramIrqMain at power-on.
 extern void *gIrqVector;
 

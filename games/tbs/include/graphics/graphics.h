@@ -97,7 +97,7 @@ struct Vec2;
 struct OptionMenuWork;
 
 // The pixel shading kernels and their sizes: each
-// PaletteFade_BackupAnd... function in runtime/decompress.c copies its
+// PaletteFade_BackupAnd... function in system/system/decompress.c copies its
 // kernel onto its own stack and runs it there.
 /// PaletteFade_BrightenKernel, for PaletteFade_BackupAndBrighten.
 extern u8 PaletteFade_BackupAndBrightenCodeSize[];

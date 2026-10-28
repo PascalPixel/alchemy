@@ -8,7 +8,7 @@
 /// part read on its own still resolves.
 
 #include "module/shop/shop.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

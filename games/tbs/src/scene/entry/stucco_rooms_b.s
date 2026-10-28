@@ -1,4 +1,4 @@
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"
 	overlay_veneer StuccoRoomsB_ApplyEntryState
 	overlay_veneer StuccoRoomsB_GetEntrances
 	overlay_veneer StuccoRoomsB_GetExits

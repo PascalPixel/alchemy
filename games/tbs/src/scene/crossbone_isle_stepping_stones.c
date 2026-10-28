@@ -46,7 +46,7 @@
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
 #include "module/field/field.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "actor.h"
 #include "types.h"
 #include "animspr.h"

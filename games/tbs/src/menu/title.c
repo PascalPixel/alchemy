@@ -12,7 +12,7 @@
 #include "module/graphics/title/intro.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -112,7 +112,7 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
-  // The stub does nothing with its argument (runtime/runtime/system.c), the
+  // The stub does nothing with its argument (system/system/start_up.c), the
   // far-call bank the logo and intro calls below go through. XXX (no
   // evidence): what the call once did; the stub is empty in every edition, so
   // only an earlier build of the game would show.

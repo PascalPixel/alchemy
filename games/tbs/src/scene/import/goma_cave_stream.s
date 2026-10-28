@@ -22,4 +22,4 @@
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

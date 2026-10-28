@@ -12,7 +12,7 @@
 #include "vram_cache.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "types.h"
 #include "battle_type.h"
 #include "main_routine_work.h"

@@ -62,7 +62,7 @@ Waiting and the task table belong to the System and work the same under every
 sequence. Every sequence is straight-line code: it does one thing, then the
 next, and where time must pass it calls [`wait(n)`](glossary.md#wait), which
 returns to the next line once n [frames](glossary.md#frame) have run.
-Simplified, from [frame.c](src/runtime/runtime/frame.c):
+Simplified, from [frame.c](src/system/system/frame.c):
 
 ```c
 void wait(s32 frames) {

@@ -1,0 +1,13 @@
+@ Battle effect dispatch, drawing and presentation setup.
+#include "table.inc"
+	.global FarCall_BattleEffectTable
+FarCall_BattleEffectTable:
+	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter
+	export BattleEffect_RunByIdRangeFar, BattleEffect_RunByIdRange
+	export BattleEffect_RunSummonFar, BattleEffect_RunSummon
+	export BattleEffect_RunFromTableFar, BattleEffect_RunFromTable
+	export BattleEffect_RunElementPillarFar, BattleEffect_RunElementPillar
+	export BattleEffect_RunShatteringOpeningFar, BattleEffect_RunShatteringOpening
+	export BattleEffect_RunElementBurstFar, BattleEffect_RunElementBurst
+	export BattleEffect_StartElementStreaksFar, BattleEffect_StartElementStreaks
+	export BattleEffect_EndElementStreaksFar, BattleEffect_EndElementStreaks

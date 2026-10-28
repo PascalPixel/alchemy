@@ -12,7 +12,7 @@
 #include "module/field/operand.h"
 #include "module/field/map_grid_data.h"
 #include "module/field/field.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

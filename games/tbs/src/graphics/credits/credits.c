@@ -5,7 +5,7 @@
 #define OWN_gFlash
 #define OWN_gFlashNumRemainingBytes
 #endif
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"

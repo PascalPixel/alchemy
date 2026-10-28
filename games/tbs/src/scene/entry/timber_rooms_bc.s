@@ -1,4 +1,4 @@
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"
 	overlay_veneer Scene_Initialize
 	overlay_veneer TimberRoomsBC_GetEntrances
 	overlay_veneer TimberRoomsBC_GetExits

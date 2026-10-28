@@ -91,11 +91,11 @@ far-call tables.
 
 | Place | Far-call table | Folder |
 | --- | --- | --- |
-| `rom_main_00` | `RUNTIME.S` | `runtime`, with the decoders and the flash library from `cartridge` |
+| `rom_main_00` | `SYSTEM.S` | `runtime`, with the decoders and the flash library from `cartridge` |
 | `rom_main_01` | `FIELD.S` | `field` |
 | `rom_main_02` | `WINDOW.S` | `window` |
 | `rom_main_03` | `GAME.S` | `game` |
-| `rom_main_04` | `OVERWORLD.S` | `overworld` |
+| `rom_main_04` | `FIELD_SEQUENCE.S` | `overworld` |
 | `rom_main_05` | `MENU.S` | `menu` |
 | `rom_main_06` | `SHOP.S` | `shop` |
 | `rom_main_07` | `BATTLE.S` | `battle` |
@@ -107,7 +107,7 @@ far-call tables.
 | `rom_main_13` | `SOUND.S` | `sound` |
 
 After the banks come the sound driver with the music and samples, then the
-data the resource directory finds, with `RESOURCE.S`, a fifteenth far-call
+data the resource directory finds, with `SPRITE.S`, a fifteenth far-call
 table whose one entry is the resource metadata lookup. `graphics`, `map`, `sound` and `cartridge`
 also gather one kind of thing (images, maps, sound, the memory map) from
 wherever the linker places it.
@@ -149,7 +149,7 @@ its folder:
 - `<scene>.c`, the scene's code and tables.
 - `import/<scene>.s`, the import table: the [veneers](../glossary.md#veneer)
   the overlay calls the main image through, chosen from the list in
-  `cartridge/overlay.inc`.
+  `system/overlay/imports.inc`.
 
 Code several scenes use is in headers under `scene/shared/`, and each scene
 that includes one compiles its own copy.
@@ -194,23 +194,23 @@ written as it is.
 | Code | Compiler | Where |
 | --- | --- | --- |
 | ARM C | GCC 2.95.2 | `window/glyph_arm.c`, `field/update.c`, `field/vertices.c` |
-| the sound driver's C, the flash library | `old_agbcc` | `sound/`, `cartridge/save/` |
+| the sound driver's C, the flash library | `old_agbcc` | `sound/`, `gamepak/flash/` |
 | the game's Thumb C | alchemy-gcc, a GCC of July 2000 | every other C file, and libgcc |
 
 Code stays assembly only where its instructions show that none of those
 compilers wrote it. Each such file states that proof in comment lines at its
 top that begin `@ Why` ([Matching](MATCHING.md#the-other-markers)). The
 proofs are instructions the compilers never emit: a branch on a shift's carry
-(`runtime/trig.s`, `cartridge/resource/decode_byte_lz.s`), a load into `pc`
+(`system/trig.s`, `system/decompress_byte_lz.s`), a load into `pc`
 from a table the code rewrites (`graphics/tile/decode.s`), a switch from
 Thumb to ARM inside a routine (`sound/mixer.s`), a write to the processor's
-mode (`cartridge/entry.s`). Most of this handwritten code is decoders, the
+mode (`system/entry.s`). Most of this handwritten code is decoders, the
 sound mixing and the routines copied into
 [IWRAM](../glossary.md#iwram-and-ewram). The few handwritten helpers inside
 the C are each marked `CAMELOT_ASM` with their proof.
 
 The rest of the assembly, about 50 KB in each edition, is stubs: the 8-byte
-entries of the far-call tables in `cartridge/far_call/` (`.S` files, which the
+entries of the far-call tables in `gamepak/far_call/` (`.S` files, which the
 C preprocessor reads first) and of every overlay's entry and import tables.
 The compiler's library routines come from libgcc, built from alchemy-gcc's
 sources; two overlays use its double-precision arithmetic. Most `.s` files
@@ -219,7 +219,7 @@ place data, not code: an image built from the PNG beside it, a table from its
 
 ## Where to start reading
 
-`System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
+`System_Initialize`, in [system/system/start_up.c](system/system/start_up.c),
 is the first C to run; it ends by calling `MainRoutine_Run` through its
 far-call stub. The main routine, in
 [overworld/overworld/main_routine.c](overworld/overworld/main_routine.c), is

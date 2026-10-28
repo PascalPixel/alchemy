@@ -24,7 +24,8 @@
 /// PCM_DMA_BUF_SIZE. It holds transferPeriod VBlanks of samples (this /
 /// pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's rate), after which
 /// m4aSoundVSync starts the DMAs again from its start; the mixer
-/// (sound_mixer_render.s) reaches the left buffer this far past the right one.
+/// (resident_mixer_render.s) reaches the left buffer this far past the right
+/// one.
 #define SOUND_PCM_BUFFER_SIZE 1584
 
 // A sound mode word, as m4aSoundMode and a song header's mode byte take it,

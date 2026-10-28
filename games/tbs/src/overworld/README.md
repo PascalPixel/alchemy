@@ -350,5 +350,5 @@ step trigger. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), 
 `Event_ShowSpeakerMessage`, `Event_ShowMessageAtPosition` and
 `Event_ForwardShowMessageAtPosition` are unused: each is reached only
 through a bare [veneer](../../glossary.md#veneer) in
-`cartridge/far_call/OVERWORLD.S`, which has no symbol for code to call
+`gamepak/far_call/FIELD_SEQUENCE.S`, which has no symbol for code to call
 ([`event_commands/messages.c`](event_commands/messages.c)).

@@ -23,4 +23,4 @@
 	.set import.Title_ShowNintendoLogo, 1
 	.set import.Import_TitleShowCamelotLogo, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

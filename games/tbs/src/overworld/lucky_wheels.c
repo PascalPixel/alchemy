@@ -1,6 +1,6 @@
 #include "sound_driver_symbols.h"
 #include "module/overworld/lucky_wheels.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

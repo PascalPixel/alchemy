@@ -17,8 +17,8 @@
 /// its checksum and its counter.
 struct SaveSectorHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
-  /// File n's parts are n and n + 3; SAVE_PART_NONE (runtime/save.c) marks
-  /// a free sector.
+  /// File n's parts are n and n + 3; SAVE_PART_NONE (system/system/save.c)
+  /// marks a free sector.
   u8 partId;
   u16 checksum;   ///< low half of the payload's checksum
   u16 counter;    ///< the highest is the current copy; restarts after 65000

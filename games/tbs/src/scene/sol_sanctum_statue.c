@@ -54,7 +54,7 @@
 #include "module/scene/sol_sanctum_statue.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "task.h"
 #include "resource.h"
 #include "mem.h"

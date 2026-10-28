@@ -6,8 +6,8 @@
 ///
 /// The VBlank handler reads the keypad into these cells, and
 /// Input_UpdateKeyRepeatAndDirection turns them into repeats after each frame
-/// (runtime/frame.c). The first five are volatile, a device: each tag names
-/// what differs without it.
+/// (system/system/frame.c). The first five are volatile, a device: each tag
+/// names what differs without it.
 
 #include "types.h"
 

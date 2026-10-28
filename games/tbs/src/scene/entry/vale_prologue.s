@@ -1,4 +1,4 @@
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"
 	overlay_veneer ValePrologue_Initialize
 	overlay_veneer ValePrologue_GetEntrances
 	overlay_veneer ValePrologue_GetExits

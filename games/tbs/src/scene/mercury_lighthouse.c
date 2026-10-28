@@ -99,7 +99,7 @@
 #include "module/game/game.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "actor.h"
 #include "mem.h"
 #include "mercury.h"

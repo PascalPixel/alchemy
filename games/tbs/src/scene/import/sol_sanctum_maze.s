@@ -3,4 +3,4 @@
 	.set import.GameFlag_Get, 1
 	.set import.FieldEffect_InitializeSparkles, 1
 	.set import.Scene_QueueMusic, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

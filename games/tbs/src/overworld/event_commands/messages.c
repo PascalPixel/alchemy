@@ -327,8 +327,8 @@ s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
 void Event_EmptyCallback(void) {}
 
 /// Unused: reached only through a bare veneer in
-/// cartridge/far_call/OVERWORLD.S, which has no symbol, so no code can call it.
-/// It would record the speaker, open the message near it and wait unless
+/// gamepak/far_call/FIELD_SEQUENCE.S, which has no symbol, so no code can call
+/// it. It would record the speaker, open the message near it and wait unless
 /// fast-forwarding, then advance the message index. Like
 /// Event_ShowMessageAtPosition it moves the position 32 away from the middle
 /// and clamps it to 8..312 and 20..220, ranges larger than the 240 by 160
@@ -405,16 +405,16 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   state->message++;
 }
 
-/// Unused: reached only through a bare veneer in OVERWORLD.S; forwards its
+/// Unused: reached only through a bare veneer in FIELD_SEQUENCE.S; forwards its
 /// arguments to Event_ShowMessageAtPosition.
 void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
                                         s32 y) {
   Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
-/// Unused: reached only through a bare veneer in OVERWORLD.S. It would open the
-/// event's message at (x, y), wait for it and advance the message index; its
-/// units are as unknown as Event_ShowSpeakerMessage's.
+/// Unused: reached only through a bare veneer in FIELD_SEQUENCE.S. It would
+/// open the event's message at (x, y), wait for it and advance the message
+/// index; its units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 py = y;

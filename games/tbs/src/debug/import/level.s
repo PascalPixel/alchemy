@@ -49,4 +49,4 @@
 	.set import.Import_EventSetExitRequest, 1
 	.set import.ItemMenu_DrawItemDetails, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

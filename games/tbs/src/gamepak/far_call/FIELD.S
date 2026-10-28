@@ -1,0 +1,91 @@
+@ Actors, movement, map drawing and event commands.
+#include "table.inc"
+	.global FarCall_FieldTable
+FarCall_FieldTable:
+	export ActorSystem_ConfigureFar, ActorSystem_Configure
+	export Actor_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
+	overlay_veneer Render_PlaceProjectedSprite
+	overlay_veneer Sprite_ResetAnimations
+	export Sprite_StartAnimationFar, Sprite_StartAnimation
+	overlay_veneer Sprite_SetAnimationTimers
+	export Sprite_CreateFar, Sprite_Create
+	export Sprite_DestroyFar, Sprite_Destroy
+	overlay_veneer Render_PlaceSpritePartPair
+	export Sprite_AddAnimationFar, Sprite_AddAnimation
+	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
+	overlay_veneer Sprite_RemoveAnimationAt
+	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
+	overlay_veneer SpriteAnimation_Reset
+	export SpriteAnimation_StartFar, SpriteAnimation_Start
+	export ActorSystem_InitializeFar, ActorSystem_Initialize
+	export Actor_SelectAnimationFar, Actor_SelectAnimation
+	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
+	overlay_veneer Actor_SetAnimationAndSpeed
+	export Actor_StartScriptFar, Actor_StartScript
+	export Actor_StartPlayerControlFar, Actor_StartPlayerControl
+	export Actor_StartWorldMapControlFar, Actor_StartWorldMapControl
+	export Actor_StartMoveByKeysFar, Actor_StartMoveByKeys
+	export Actor_StartKeyCheckFar, Actor_StartKeyCheck
+	overlay_veneer Actor_FindFree
+	export Actor_CreateFar, Actor_Create
+	export Actor_ReleaseFar, Actor_Release
+	overlay_veneer Actor_SetSpriteRotation
+	export Actor_StartCameraFar, Actor_StartCamera
+	overlay_veneer Actor_StartApproachWatched
+	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
+	export SpriteDissolve_StepFar, SpriteDissolve_Step
+	export SpriteDissolve_RunFar, SpriteDissolve_Run
+	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
+	export MapGrid_LoadMapFar, MapGrid_LoadMap
+	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
+	overlay_veneer MapGrid_SetCameraCenter
+	export MapGrid_CenterOnFollowedPointFar, MapGrid_CenterOnFollowedPoint
+	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
+	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
+	export Actor_StartIdleFar, Actor_StartIdle
+	export Actor_WaitForScriptEndFar, Actor_WaitForScriptEnd
+	export Actor_SetMoveTargetFar, Actor_SetMoveTarget
+	export Actor_WaitForMoveFar, Actor_WaitForMove
+	overlay_veneer MapGrid_GetScreenRelativePosition
+	overlay_veneer WorldMap_UpdateView
+	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
+	export MapGrid_PlayMapEditFar, MapGrid_PlayMapEdit
+	export MapGrid_CopyCellPictureIndicesRectFar, MapGrid_CopyCellPictureIndicesRect
+	export TilesetAnim_ResumeFar, TilesetAnim_Resume
+	export TilesetAnim_PauseFar, TilesetAnim_Pause
+	export BlendScript_ResumeFar, BlendScript_Resume
+	export BlendScript_SuspendFar, BlendScript_Suspend
+	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
+	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
+	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
+	export MapGrid_CopyCellAttributeRectFar, MapGrid_CopyCellAttributeRect
+	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
+	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
+	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
+	export Actor_SetSpriteFlagsFar, Actor_SetSpriteFlags
+	export Actor_SetBlendModeFar, Actor_SetBlendMode
+	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
+	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
+	overlay_veneer Actor_SetFirstSpriteAnimation
+	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
+	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
+	overlay_veneer Actor_SetSpriteScale
+	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
+	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
+	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
+	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
+	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
+	export Sprite_SetAnimationColorModesFar, Sprite_SetAnimationColorModes
+	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
+	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
+	export SpriteAnimation_SumCommandLengthsFar, SpriteAnimation_SumCommandLengths
+	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
+	export SpritePictureCache_LoadFar, SpritePictureCache_Load
+	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
+	export Sprite_SetAnimationSpeedFar, Sprite_SetAnimationSpeed
+	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
+	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
+	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
+	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
+	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
+	overlay_veneer SpriteViewer_Run

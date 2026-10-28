@@ -12,7 +12,7 @@
 #include "module/window/screens.h"
 #include "module/overworld/overworld.h"
 #include "module/window/glyph_arm.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "types.h"
 #include "edition.h"
 #include "window.h"

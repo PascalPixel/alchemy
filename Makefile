@@ -157,7 +157,7 @@ UPPER_fr := FR
 UPPER_it := IT
 DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
 
-# The cartridge's last address: objcopy fills the image to it with zeros.
+# The Game Pak's last address: objcopy fills the image to it with zeros.
 ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
@@ -180,7 +180,7 @@ CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c \
            $(wildcard games/tla/src/sound/driver.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
-FLASH_C := $(addprefix games/tbs/src/cartridge/save/,flash.c sst.c atmel.c program_flash_sector.c) \
+FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
            $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
            games/tla/src/graphics/tile/cell_picture.c
@@ -193,9 +193,9 @@ EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
 ifeq ($(GAME),tbs)
-OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/cartridge/overlay/overlay.ld
+OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
 OVERLAY_SOURCE = $(wildcard games/tbs/src/cartridge/overlay/ovl_$*.s)
-OVERLAY_STREAM := games/tbs/src/cartridge/overlay/overlays
+OVERLAY_STREAM := games/tbs/src/system/overlay/overlays
 $(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
 	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)
 else

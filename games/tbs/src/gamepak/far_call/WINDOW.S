@@ -1,0 +1,138 @@
+@ Window construction, text drawing and selection interfaces.
+#include "table.inc"
+	.global FarCall_WindowTable
+FarCall_WindowTable:
+	export WindowSystem_InitFieldFar, WindowSystem_InitField
+	export WindowSystem_InitBattleFar, WindowSystem_InitBattle
+	export Window_CreateFar, Window_Create
+	export Window_CloseFar, Window_Close
+	export Message_DecodeRawUnboundedFar, Message_DecodeRawUnbounded
+	export Message_DecodeRawFar, Message_DecodeRaw
+	export Message_CopyExpandedFar, Message_CopyExpanded
+	export Message_OpenWindowFar, Message_OpenWindow
+	export FieldMessage_ShowFar, FieldMessage_Show
+	export Message_AllTypedFar, Message_AllTyped
+	export Window_IsClosedFar, Window_IsClosed
+	export Message_SetDecodeFlagsFar, Message_SetDecodeFlags
+	export WindowSprite_PrepareForRedrawFar, WindowSprite_PrepareForRedraw
+	export Window_ClearInteriorTilesFar, Window_ClearInteriorTiles
+	export Window_DrawDividerLineFar, Window_DrawDividerLine
+	export Text_DrawMessageFar, Text_DrawMessage
+	export Text_DrawMessageAsTilesFar, Text_DrawMessageAsTiles
+	export Text_DrawStringFar, Text_DrawString
+	export Text_DrawStringAtOffsetFar, Text_DrawStringAtOffset
+	export Text_DrawStringInWindowFar, Text_DrawStringInWindow
+	export Text_DrawNumberFar, Text_DrawNumber
+	export Text_DrawNumberAtOffsetFar, Text_DrawNumberAtOffset
+	export Text_DrawNumberInWindowFar, Text_DrawNumberInWindow
+	export Text_SetColorFar, Text_SetColor
+	overlay_veneer Text_SetStyle
+	export WindowSprite_CreateFar, WindowSprite_Create
+	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
+	export Portrait_CreateFar, Portrait_Create
+	export Portrait_ReloadFar, Portrait_Reload
+	overlay_veneer WindowSprite_SetMotion
+	overlay_veneer WindowSprite_SetInvertedSentinel
+	export Portrait_OpenWindowFar, Portrait_OpenWindow
+	export Portrait_CloseWindowFar, Portrait_CloseWindow
+	export Text_GetMessageSizeFar, Text_GetMessageSize
+	export Text_GetMessageSizeAltFar, Text_GetMessageSizeAlt
+	export MessageArgument_ClearAllFar, MessageArgument_ClearAll
+	export MessageArgument_PushFar, MessageArgument_Push
+	export PartyStatus_CreateWindowFar, PartyStatus_CreateWindow
+	export PartyStatus_DrawFar, PartyStatus_Draw
+	export PartyStatus_CloseFar, PartyStatus_Close
+	export Message_CloseFinishedWindowsFar, Message_CloseFinishedWindows
+	export Window_CloseAllFar, Window_CloseAll
+	overlay_veneer SelectionMenu_Create
+	overlay_veneer SelectionMenu_Clear
+	overlay_veneer SelectionMenu_AddEntry
+	overlay_veneer SelectionMenu_StartDrawing
+	overlay_veneer SelectionMenu_StopDrawing
+	overlay_veneer SelectionMenu_OpenNameWindow
+	overlay_veneer SelectionMenu_Close
+	overlay_veneer Menu_SetupSelectionBothSides
+	overlay_veneer SelectionMenu_Run
+	overlay_veneer SelectionMenu_RunWithSounds
+	overlay_veneer MenuArrow_NoOpCallbackBank
+	overlay_veneer MenuArrow_NoOpCallback1
+	overlay_veneer SelectionMenu_BuildEntries
+	overlay_veneer SelectionMenu_ReservedNoOp
+	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
+	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
+	export BattleMessage_OpenFar, BattleMessage_Open
+	overlay_veneer MenuArrow_NoOpCallback4
+	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
+	export FieldMenu_RunFar, FieldMenu_Run
+	export FileList_SelectActionFar, FileList_SelectAction
+	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
+	export AreaNameWindow_ShowFar, AreaNameWindow_Show
+	export AreaNameWindow_HideFar, AreaNameWindow_Hide
+	export FieldMessage_ShowCenteredFar, FieldMessage_ShowCentered
+	export BattleMessage_CloseFar, BattleMessage_Close
+	export Message_ResetIdleFar, Message_ResetIdle
+	export MenuArrow_CreateFar, MenuArrow_Create
+	export MenuArrow_SetPositionFar, MenuArrow_SetPosition
+	export MenuArrow_ReleaseFar, MenuArrow_Release
+	overlay_veneer Menu_RunSelectionHook
+	overlay_veneer Item_RemoveFromInventory
+	export Icon_DrawItemFar, Icon_DrawItem
+	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
+	overlay_veneer SettingsMenu_SelectionNoOp
+	export ScanlineWindow_FillSpansFar, ScanlineWindow_FillSpans
+	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
+	export WindowSprite_ClearListFar, WindowSprite_ClearList
+	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
+	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
+	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
+	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	overlay_veneer Debug_SelectAbilityPair
+	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
+	overlay_veneer ItemIcon_Compose
+	export PartyStatus_HighlightMembersFar, PartyStatus_HighlightMembers
+	overlay_veneer Icon_BuildItemIconTiles
+	overlay_veneer Icon_BuildAbilityIconTiles
+	export WindowSprite_CreateLoadedFar, WindowSprite_CreateLoaded
+	overlay_veneer WindowSprite_CreateFromTable
+	overlay_veneer Save_WriteCurrentFile
+	export Save_ToChosenFileFar, Save_ToChosenFile
+	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
+	export Save_CopyFileFar, Save_CopyFile
+	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
+	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	overlay_veneer Save_WriteFile
+	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
+	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
+	overlay_veneer NameEntry_LoadPointingHandTiles
+	overlay_veneer NameEntry_LoadCaretTiles
+	overlay_veneer SelectionMenu_SetPosition
+	export DebugBrowser_IconsFar, DebugBrowser_Icons
+	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
+	overlay_veneer Item_ReturnTrue
+	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
+	export WindowColor_ApplyFar, WindowColor_Apply
+	overlay_veneer SettingsMenu_Run
+	export PauseMenu_RunFar, PauseMenu_Run
+	overlay_veneer BgScreen_FillRect
+	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
+	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
+	export YesNoMenu_RunFar, YesNoMenu_Run
+	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
+	export ColossoMenu_ChooseFar, ColossoMenu_Choose
+	overlay_veneer Resource_LoadTableEntry
+	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
+	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
+	export Text_MeasureMessageFar, Text_MeasureMessage
+	export Window_HighlightRectFar, Window_HighlightRect
+	export Ability_LoadGlyphFar, Ability_LoadGlyph
+	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
+	export Text_UseExtraTilesFar, Text_UseExtraTiles
+	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
+	export WindowSprite_GetPointerTilesFar, WindowSprite_GetPointerTiles
+	export Message_OpenDecodedFar, Message_OpenDecoded
+	export Save_CountFilesExcludingSentFar, Save_CountFilesExcludingSent
+	export Window_DrawBorderFar, Window_DrawBorder
+	export Window_EraseBorderRectFar, Window_EraseBorderRect
+	export Link_DrawPageArrowsFar, Link_DrawPageArrows
+	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
+	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage

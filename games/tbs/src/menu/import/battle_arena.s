@@ -60,4 +60,4 @@
 	.set import.DjinnRecovery_CountDownTwenty, 1
 	.set import.DebugParameterSet_Load, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

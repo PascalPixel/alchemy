@@ -1,43 +1,43 @@
 image	place	object	sections	editions
-main	ewram	games/tbs/src/cartridge/ewram	.sym_ewram
-main	rom_start	games/tbs/src/cartridge/rom_head
-main	rom_start	games/tbs/src/cartridge/far_call/RUNTIME
-main	rom_start	games/tbs/src/cartridge/entry	.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2
+main	ewram	games/tbs/src/system/ewram	.sym_ewram
+main	rom_start	games/tbs/src/gamepak/rom_header
+main	rom_start	games/tbs/src/gamepak/far_call/SYSTEM
+main	rom_start	games/tbs/src/system/entry	.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2
 main	rom_start	games/tbs/src/sound/channel_update_entry
-main	iwram_runtime	games/tbs/src/cartridge/irq
-main	iwram_runtime	games/tbs/src/cartridge/runtime_irq_table
-main	iwram_runtime	games/tbs/src/cartridge/runtime_mul_q16_ip	.text .data .text.runtime_divide
-main	iwram_runtime	games/tbs/src/cartridge/sound_mixer
-main	iwram_runtime	games/tbs/src/cartridge/sound_mixer_interpolate	.text .data .text.sound_mixer_channel
-main	iwram_runtime	games/tbs/src/cartridge/sound_mixer_render	.text .data .text.runtime_copy_words
-main	iwram	games/tbs/src/cartridge/iwram	.sym_iwram
-main	rom_main_00	games/tbs/src/cartridge/resource/decode_byte_lz
-main	rom_main_00	games/tbs/src/cartridge/iwram_entry	.text
-main	rom_main_00	games/tbs/src/runtime/trig
-main	rom_main_00	games/tbs/src/cartridge/resource/decode_tagged_lz	.text .rodata .text.decode_2_loop
-main	rom_main_00	games/tbs/src/cartridge/heapfree	.text .text.* .rodata .data .padding
-main	rom_main_00	games/tbs/src/runtime/runtime	.text
-main	rom_main_00	games/tbs/src/cartridge/cpu_set	.text .padding .text.sound_vsync_on
-main	rom_main_00	games/tbs/src/cartridge/save/flash	.text
-main	rom_main_00	games/tbs/src/cartridge/save/sst	.text
-main	rom_main_00	games/tbs/src/cartridge/save/program_flash_sector	.text
-main	rom_main_00	games/tbs/src/cartridge/save/atmel	.text
+main	iwram_resident	games/tbs/src/system/irq
+main	iwram_resident	games/tbs/src/system/irq_table
+main	iwram_resident	games/tbs/src/system/iwram_routines	.text .data .text.iwram_divide
+main	iwram_resident	games/tbs/src/sound/resident_mixer
+main	iwram_resident	games/tbs/src/sound/resident_mixer_interpolate	.text .data .text.sound_mixer_channel
+main	iwram_resident	games/tbs/src/sound/resident_mixer_render	.text .data .text.iwram_copy_words
+main	iwram	games/tbs/src/system/iwram	.sym_iwram
+main	rom_main_00	games/tbs/src/system/decompress_byte_lz
+main	rom_main_00	games/tbs/src/system/iwram_entry	.text
+main	rom_main_00	games/tbs/src/system/trig
+main	rom_main_00	games/tbs/src/system/decompress_tagged_lz	.text .rodata .text.decode_2_loop
+main	rom_main_00	games/tbs/src/system/heap_release	.text .text.* .rodata .data .padding
+main	rom_main_00	games/tbs/src/system/system	.text
+main	rom_main_00	games/tbs/src/system/bios	.text .padding .text.sound_vsync_on
+main	rom_main_00	games/tbs/src/gamepak/flash/flash	.text
+main	rom_main_00	games/tbs/src/gamepak/flash/sst	.text
+main	rom_main_00	games/tbs/src/gamepak/flash/program_flash_sector	.text
+main	rom_main_00	games/tbs/src/gamepak/flash/atmel	.text
 main	rom_main_00	libgcc.a:_call_via_rX	.text
-main	rom_main_00	games/tbs/src/cartridge/runtime_irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
-main	rom_main_00	games/tbs/src/runtime/math_table	.rodata
-main	rom_main_00	games/tbs/src/cartridge/syspal	.rodata
-main	rom_main_00	games/tbs/src/runtime/numtext	.rodata
-main	rom_main_00	games/tbs/src/runtime/q16_dot_product
-main	rom_main_00	games/tbs/src/cartridge/save/savedata	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/flashtab	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/flash	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/flashsst	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/sst	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/flashmx	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/program_flash_sector	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/flashat	.rodata
-main	rom_main_00	games/tbs/src/cartridge/save/atmel	.rodata
-main	rom_main_01	games/tbs/src/cartridge/far_call/FIELD
+main	rom_main_00	games/tbs/src/system/irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
+main	rom_main_00	games/tbs/src/system/math_table	.rodata
+main	rom_main_00	games/tbs/src/graphics/palettes/palettes	.rodata
+main	rom_main_00	games/tbs/src/system/number_text	.rodata
+main	rom_main_00	games/tbs/src/system/q16_dot_product
+main	rom_main_00	games/tbs/src/system/savedata	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/flashtab	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/flash	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/flashsst	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/sst	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/flashmx	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/program_flash_sector	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/flashat	.rodata
+main	rom_main_00	games/tbs/src/gamepak/flash/atmel	.rodata
+main	rom_main_01	games/tbs/src/gamepak/far_call/FIELD
 main	rom_main_01	games/tbs/src/cartridge/resource/colconv
 main	rom_main_01	games/tbs/src/field/remap
 main	rom_main_01	games/tbs/src/graphics/render/decode	.text .data .text.draw_map
@@ -55,7 +55,7 @@ main	rom_main_01	games/tbs/src/field/griddata
 main	rom_main_01	games/tbs/src/field/actor_script
 main	rom_main_01	games/tbs/src/field/operand
 main	rom_main_01	games/tbs/src/field/maps
-main	rom_main_02	games/tbs/src/cartridge/far_call/WINDOW
+main	rom_main_02	games/tbs/src/gamepak/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/window/glyph_arm	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
@@ -78,7 +78,7 @@ main	rom_main_02	games/tbs/src/window/message_speed	.rodata
 main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
 main	rom_main_02	games/tbs/src/window/slidpal	.rodata
 main	rom_main_02	games/tbs/src/window/keyboard	.rodata
-main	rom_main_03	games/tbs/src/cartridge/far_call/GAME
+main	rom_main_03	games/tbs/src/gamepak/far_call/GAME
 main	rom_main_03	games/tbs/src/game/game
 main	rom_main_03	games/tbs/src/game/experience_table
 main	rom_main_03	games/tbs/src/game/artifact_slots
@@ -91,7 +91,7 @@ main	rom_main_03	games/tbs/src/game/summons
 main	rom_main_03	games/tbs/src/game/classes
 main	rom_main_03	games/tbs/src/game/element_table
 main	rom_main_03	games/tbs/src/game/djinn_table
-main	rom_main_04	games/tbs/src/cartridge/far_call/OVERWORLD
+main	rom_main_04	games/tbs/src/gamepak/far_call/FIELD_SEQUENCE
 main	rom_main_04	games/tbs/src/overworld/overworld
 main	rom_main_04	games/tbs/src/overworld/event_commands
 main	rom_main_04	games/tbs/src/overworld/arcspark
@@ -104,15 +104,15 @@ main	rom_main_04	games/tbs/src/overworld/swatch
 main	rom_main_04	games/tbs/src/overworld/fxdata
 main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/overworld/scripts
-main	rom_main_05	games/tbs/src/cartridge/far_call/MENU
+main	rom_main_05	games/tbs/src/gamepak/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/menu
 main	rom_main_05	games/tbs/src/graphics/ui/menuspr
 main	rom_main_05	games/tbs/src/menu/menustr
 main	rom_main_05	games/tbs/src/menu/menudata
-main	rom_main_06	games/tbs/src/cartridge/far_call/SHOP
+main	rom_main_06	games/tbs/src/gamepak/far_call/SHOP
 main	rom_main_06	games/tbs/src/shop/shopspr
 main	rom_main_06	games/tbs/src/shop/shop
-main	rom_main_07	games/tbs/src/cartridge/far_call/BATTLE
+main	rom_main_07	games/tbs/src/gamepak/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/battle
@@ -123,13 +123,13 @@ main	rom_main_07	games/tbs/src/battle/debug_parameter_sets
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_07	games/tbs/src/battle/formations
 main	rom_main_07	games/tbs/src/battle/battle_sprites
-main	rom_main_08	games/tbs/src/cartridge/far_call/BATTLE_EFFECT
+main	rom_main_08	games/tbs/src/gamepak/far_call/BATTLE_EFFECT
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect	.text .data
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect_table	.data
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite_color
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect_bits	.data
-main	rom_main_09	games/tbs/src/cartridge/far_call/CREDITS
+main	rom_main_09	games/tbs/src/gamepak/far_call/CREDITS
 main	rom_main_09	games/tbs/src/graphics/tile/dot_product
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.text .data .text.battle_effect_expand_commands
@@ -137,21 +137,21 @@ main	rom_main_09	games/tbs/src/graphics/credits/credits	.text
 main	rom_main_09	games/tbs/src/graphics/credits/credits	.rodata
 main	rom_main_09	games/tbs/src/graphics/credits/credits	.data
 main	rom_main_09	games/tbs/src/graphics/credits/font	.rodata
-main	rom_main_10	games/tbs/src/cartridge/far_call/TITLE
+main	rom_main_10	games/tbs/src/gamepak/far_call/TITLE
 main	rom_main_10	games/tbs/src/graphics/title/prompt
 main	rom_main_10	games/tbs/src/graphics/title/intro
-main	rom_main_11	games/tbs/src/cartridge/far_call/LUCKY_DICE
+main	rom_main_11	games/tbs/src/gamepak/far_call/LUCKY_DICE
 main	rom_main_11	games/tbs/src/field/lucky_dice
-main	rom_main_12	games/tbs/src/cartridge/far_call/LUCKY_WHEELS
+main	rom_main_12	games/tbs/src/gamepak/far_call/LUCKY_WHEELS
 main	rom_main_12	games/tbs/src/overworld/lucky_wheels
-main	rom_main_13	games/tbs/src/cartridge/far_call/SOUND
+main	rom_main_13	games/tbs/src/gamepak/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/umul_high	.text .padding
 main	iwram_mixer	games/tbs/src/sound/mixer
-main	iwram_high	games/tbs/src/cartridge/iwram_hi	.sym_iwram_high
+main	iwram_high	games/tbs/src/system/iwram_high	.sym_iwram_high
 main	rom_tail_00	games/tbs/src/sound/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
 main	rom_tail_00	games/tbs/src/sound/audio	.text
-main	rom_tail_00	games/tbs/src/cartridge/sound_get_jump_list
+main	rom_tail_00	games/tbs/src/sound/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/driver	.text
 main	rom_tail_00	games/tbs/src/sound/empty_callback	.text
 main	rom_tail_00	games/tbs/src/sound/sound	.rodata
@@ -425,15 +425,15 @@ main	rom_tail_00	games/tbs/sound/songs/se_materialize	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_star_bounce	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_310	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_311	.rodata
-main	rom_tail_01	games/tbs/src/cartridge/far_call/RESOURCE
-main	rom_tail_01	games/tbs/src/cartridge/resource/metadata_get_record	.text
+main	rom_tail_01	games/tbs/src/gamepak/far_call/SPRITE
+main	rom_tail_01	games/tbs/src/system/sprite_metadata	.text
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata
 main	rom_tail_01	games/tbs/src/graphics/animref0	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.a
 main	rom_tail_01	games/tbs/src/graphics/animref1	.rodata
 main	rom_tail_01	games/tbs/src/graphics/animref2	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
-main	rom_tail_02	games/tbs/src/cartridge/resource/directory
+main	rom_tail_02	games/tbs/src/gamepak/resource_directory
 main	rom_tail_02	games/tbs/src/graphics/ui/ui
 main	rom_tail_02	games/tbs/src/graphics/title/title
 main	rom_tail_02	games/tbs/src/graphics/battle_bg/battle_bg
@@ -629,7 +629,7 @@ main	rom_tail_02	games/tbs/src/map/map_176/map
 main	rom_tail_02	games/tbs/src/map/map_177/map
 main	rom_tail_02	games/tbs/src/map/map_178/map
 main	rom_tail_02	games/tbs/src/map/map_179/map
-main	rom_tail_02	games/tbs/src/cartridge/overlay/overlays
+main	rom_tail_02	games/tbs/src/system/overlay/overlays
 36f	text	games/tbs/src/menu/entry/title
 36f	text	games/tbs/src/menu/title
 36f	text	games/tbs/src/menu/import/title

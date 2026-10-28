@@ -73,7 +73,7 @@
 #include "module/overworld/event_commands.h"
 #include "module/battle/battle.h"
 #include "module/game/game.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

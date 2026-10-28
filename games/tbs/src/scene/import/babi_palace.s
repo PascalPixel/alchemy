@@ -65,4 +65,4 @@
 	.set import.Actor_WatchAndSetScript, 1
 	.set import.Inn_PlaySleep, 1
 	.set import.Sound_Play, 1
-	.include "games/tbs/src/cartridge/overlay.inc"
+	.include "games/tbs/src/system/overlay/imports.inc"

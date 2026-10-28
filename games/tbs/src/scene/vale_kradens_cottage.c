@@ -71,7 +71,7 @@
 #include "module/scene/vale_kradens_cottage.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
-#include "module/runtime/runtime.h"
+#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

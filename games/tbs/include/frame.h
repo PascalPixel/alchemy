@@ -5,7 +5,7 @@
 /// The frame loop's globals: the VBlanks a frame takes, the CPU load
 /// display and the VBlank flags.
 ///
-/// wait() (runtime/frame.c) and the VBlank handler share these cells.
+/// wait() (system/system/frame.c) and the VBlank handler share these cells.
 /// gVBlankDone and gFrameCount are volatile because an interrupt handler uses
 /// them too; the other volatiles are only ever read and written outside
 /// the interrupt, so they are devices, and each tag names the function that

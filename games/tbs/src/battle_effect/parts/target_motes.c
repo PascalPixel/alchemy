@@ -228,7 +228,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // table is filled in every mode but read only where the HBlank DMA runs.
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
-      *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
+      *row++ = ((4 << 16) -
+                ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
+               10;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
@@ -245,7 +247,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           s32 x;
           s32 y;
 
-          angle = Random16() & 0xffff;
+          angle = Random16() & TRIG_ANGLE_MASK;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintCellWidths[frame & 3] >> 1);
@@ -321,7 +323,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += 0x10000;
+                mote->y += 1 << 16;
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
@@ -411,14 +413,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
     current->x = ((Random16() & 63) + 32) << 16;
-    current->y = -0x200000;
+    current->y = -(32 << 16);
     current->velocityY = Random16() & 0;
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
   }
   // Over the party's side: the canvas moves 112 pixels right.
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(112 << 8);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
@@ -442,7 +444,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     current = sheep;
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
          particleIndex++, current++) {
-      if (frame > particleIndex * 4 && current->y <= 0x7fffff) {
+      if (frame > particleIndex * 4 && current->y <= (128 << 16) - 1) {
         s32 cell;
 
         // Eight 32x32 images (1024 bytes each), the last four drawn from the
@@ -455,19 +457,19 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
           drawFlipped(canvas, work->sheet + (cell << 10) - 0x1000,
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         current->y += current->velocityY;
-        current->velocityY += 0x2000;
+        current->velocityY += Q16_ONE / 8;
         current->variant += current->z;
         // BUG: meant to bounce a sheep off the ground (y 92), tumbling faster,
         // but it tests for a speed of exactly 0 just after gravity was added,
         // so the sheep almost always fall on through. BUGFIX bounces any sheep
         // that is falling.
 #ifdef BUGFIX
-        if (current->y > 0x5c0000 && current->velocityY > 0) {
+        if (current->y > (92 << 16) && current->velocityY > 0) {
 #else
-        if (current->y > 0x5c0000 && current->velocityY == 0) {
+        if (current->y > (92 << 16) && current->velocityY == 0) {
 #endif
           s32 speed = current->velocityY + 1;
-          current->y = 0x5c0000;
+          current->y = 92 << 16;
           current->z += 4;
           current->velocityY = -speed / 2;
         }
@@ -521,7 +523,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Over the party's side: the canvas moves 112 pixels right, and the
   // targets' x is moved back by the same below.
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(112 << 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);

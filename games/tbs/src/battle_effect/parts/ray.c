@@ -60,12 +60,12 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      REG_BG2X = -0x1000;
+      REG_BG2X = -(16 << 8);
     else
-      REG_BG2X = 0x1000;
+      REG_BG2X = 16 << 8;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      REG_BG2X = -0x8000;
+      REG_BG2X = -(128 << 8);
   }
 
   // Every spark starts free (variant 0). A bolt that throws it overwrites x,
@@ -78,7 +78,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     s32 angle;
 
     speed = (Random16() & 0x3ff) + 256;
-    angle = (Random16() & 0x7fff) - 0x4000;
+    angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
     SET_POSITION(spark, 0x4000, 0x7000, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
@@ -105,7 +105,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         // fast. Each frame a bolt picks one of four pictures and jitters up
         // to 7 pixels across.
         thrown = 0;
-        angle = ((frame << 11) + 0x4000) * bolt;
+        angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
         if (work->args->variant == EFFECT_VARIANT_BASIC)
@@ -132,7 +132,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             s32 spread;
 
             speed = (Random16() & 0x1ff) + 128;
-            spread = (Random16() & 0x7fff) - 0x4000;
+            spread = (Random16() & 0x7fff) - TRIG_TURN / 4;
             spark->x = x << 16;
             spark->y = (y + 112) << 16;
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
@@ -156,10 +156,10 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, -0x800);
-        if (spark->y > 0x780000) {
+        Particle_AdvanceWithGravity2D(spark, 60, -Q16_ONE / 32);
+        if (spark->y > (120 << 16)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
+        } else if (spark->x >= 0 && spark->x < (127 << 16) && spark->y >= 0) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;

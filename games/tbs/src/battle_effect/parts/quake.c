@@ -167,7 +167,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
             // 12 pixels a frame upwards, under the gravity the battle's own
             // motions use (BattleMotion_ReturnToSpot in battle/motion.c).
             actor->velocityY = 12 << 16;
-            actor->gravity = 0xab85;
+            actor->gravity = BATTLE_UNIT_GRAVITY;
           }
           if (actor->y.fixed < 0)
             BattleEffect_TintBattler(work->args->targets[member], 0,

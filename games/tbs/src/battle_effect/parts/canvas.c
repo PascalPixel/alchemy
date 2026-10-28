@@ -295,7 +295,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (actorIndex != 8);
 }
 
-// The canvas layer: BG2 shows the effect's 128x128 8bpp canvas (0x4000
+// The canvas layer: BG2 shows the effect's 128x128 8bpp canvas (CANVAS_BYTES
 // bytes), its tiles from character block 1, stretched to twice the width
 // so it spans 256 pixels. Opening and closing it hide BG2 while its
 // settings change, through DISPCNT values queued two frames ahead.
@@ -563,8 +563,8 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 
 /// Shows the canvas on BG1 instead of BG2, at its own size: BG1 becomes a
 /// 256-colour layer whose map points 16 rows of 16 tiles at the canvas
-/// (tiles 0x100 onwards, which at 64 bytes a tile start at character block
-/// 1, where the canvas lives), with blank tile 0xff to the right, blended over
+/// (tiles 256 onwards, which at 64 bytes a tile start at character block
+/// 1, where the canvas lives), with blank tile 255 to the right, blended over
 /// the rest inside the effect windows. Also clears the canvas. The
 /// full-screen Ram_MapGridCellBuffer effects use
 /// BattleEffect_FlushPendingGraphicsTransfer instead.
@@ -572,7 +572,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 /// Called by BattleEffect_RunBeam and
 /// BattleEffect_RunRingAndSpark (beams.c). Clears work->actorTimers,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED, clears tile
-/// 0xff of character block 0 and writes BG1's map in screen block 31; writes
+/// 255 of character block 0 and writes BG1's map in screen block 31; writes
 /// DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the windows, WININ and WINOUT directly;
 /// sets gBgScroll[1].y to 32 and the background view's secondMode to
 /// BATTLE_BACKGROUND_NONE; clears the canvas and character block 1.
@@ -597,24 +597,24 @@ void BattleEffect_SetupCanvasTileMap(void) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
-  // Blank tile 0xff, then map rows 4 to 11 filled with 0xffff, which show
-  // nothing: the entry names tile 0x3ff (the flips and palette bits change
+  // Blank tile 255, then map rows 4 to 11 filled with 0xffff, which show
+  // nothing: the entry names tile 1023 (the flips and palette bits change
   // nothing in a blank 256-colour tile), whose 64 bytes from character base
   // 0 are this map's own row 31. BattleTransition_BuildTilemap leaves that
-  // row alone and BattleBackground_Load clears it, so tile 0x3ff is the
+  // row alone and BattleBackground_Load clears it, so tile 1023 is the
   // battle's blank tile, as the battlefield's own map uses it.
-  Iwram_ClearWords(BG_CHAR_BLOCK(0) + 0xff * 64, 64);
-  Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 0x200, -1);
-  // Rows 12 to 27: the canvas's 16 tiles from tile 0x100, then blank tile
-  // 0xff across the rest of the 32-tile row.
+  Iwram_ClearWords(BG_CHAR_BLOCK(0) + 255 * 64, 64);
+  Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 8 * 64, -1);
+  // Rows 12 to 27: the canvas's 16 tiles from tile 256, then blank tile
+  // 255 across the rest of the 32-tile row.
   byteOffset = 0;
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 32; column++, byteOffset += 2) {
       if (column > 15)
-        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 0xff;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 255;
       else
         *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) =
-            row * 16 + 0x100 + column;
+            row * 16 + 256 + column;
     }
   }
   REG_DISPCNT = EFFECT_DISPCNT;

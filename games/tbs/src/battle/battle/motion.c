@@ -10,8 +10,8 @@
 
 // The motion values below are 16.16 fixed point, in pixels and frames:
 // acceleration and speedLimit per frame, velocityY the hop's upward speed,
-// and verticalMotionStrength the gravity taken from it each frame (0xab85
-// about 0.67, 0x9999 0.6, 0x7851 about 0.47).
+// and verticalMotionStrength the gravity taken from it each frame
+// (BATTLE_UNIT_GRAVITY about 0.67, 0x9999 0.6, 0x7851 about 0.47).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
@@ -28,7 +28,7 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   stopped = 0;
   actor->acceleration = 0x20000;
   actor->speedLimit = 0x80000;
-  actor->gravity = 0xab85;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->velocityY = stopped;
   actor->bounce = stopped;
   actor->steeringFlags = stopped;
@@ -88,7 +88,7 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   start->acceleration = 0x20000;
   start->speedLimit = 0x80000;
   start->velocityY = 0x40000;
-  start->gravity = 0xab85;
+  start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, startZ + zStep);
@@ -101,7 +101,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
 
   actor->acceleration = 0x20000;
   actor->speedLimit = 0x80000;
-  actor->gravity = 0xab85;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
@@ -218,7 +218,7 @@ void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
   if (actor->motionFlags & ACTOR_FLOATS)
     actor->velocityY = initialVelocityY;
   actor->velocityY = initialVelocityY;
-  actor->gravity = 0xab85;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->steeringFlags = 1;
   Actor_StartIdleFar(actor);
   Actor_SetMoveTargetFar(actor, x, 0, z);

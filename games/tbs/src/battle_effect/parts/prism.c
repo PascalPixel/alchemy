@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-#define PRISM_GROUND_Y 0x380000       ///< y 56, where the crystals shatter
+#define PRISM_GROUND_Y (56 << 16)     ///< y 56, where the crystals shatter
 #define PRISM_SHARD_OFFSETS (32 * 64) ///< the shards, after the 32x64 crystal
 
 /// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
@@ -60,7 +60,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     seed = &work->particles[j];
     // This first random number is drawn and discarded.
     x = Random16() & 31;
-    seed->y = -0x400000;
+    seed->y = -(64 << 16);
     if (work->args->side == EFFECT_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
@@ -124,7 +124,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             // Shards gain 1/8 pixel a frame of downward speed each frame.
             // Their spin starts at 32 and slows by 1 every other frame, down
             // to 1.
-            Particle_AdvanceWithGravity2D(shard, 64, 0x2000);
+            Particle_AdvanceWithGravity2D(shard, 64, Q16_ONE / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -134,7 +134,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           // frame of downward speed each frame.
           draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
                       Q_16_16_TO_INT(crystal->y), 32, 64);
-          Particle_AdvanceWithGravity2D(crystal, 64, 0x10000);
+          Particle_AdvanceWithGravity2D(crystal, 64, Q16_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
             crystal->z = 1;
@@ -206,7 +206,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   s32 blueOffset;
   s32 index;
 
-  phase = frame * 0x400;
+  phase = frame * (TRIG_TURN / 64);
   redOffset = (Trig_Sin(phase + redPhase) * 16) >> 15;
   greenOffset = (Trig_Sin(phase + greenPhase) * 16) >> 15;
   blueOffset = (Trig_Sin(phase + bluePhase) * 16) >> 15;

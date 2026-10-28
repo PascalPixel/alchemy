@@ -3,6 +3,7 @@
 #include "types.h"
 #include "vector3.h"
 #include "render_placement.h"
+#include "fixed_math.h"
 
 // Cell layouts, timing rows and handler entries for the battle effects.
 // Keep the definitions in link order. Picture cell offsets are byte offsets
@@ -310,7 +311,7 @@ u8 gNereid_Columns[][2] = {
 };
 /// Ember gravity while falling, by ember index & 3, in 16.16 pixels a frame
 /// each frame: 1/2, 1/4, 1/4 and 1/8.
-s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+s32 gNereid_Gravity[] = {Q16_ONE / 2, Q16_ONE / 4, Q16_ONE / 4, Q16_ONE / 8};
 
 // vortices.c: Vortex mote counts and tornado shapes.
 
@@ -738,7 +739,7 @@ u8 gBoreas_FallHeights[] = {48, 38, 26};
 u16 gBoreas_FallCells[] = {0, 1152, 2064};
 /// Ice shards: shard i falls with gravity i & 3, in 16.16 pixels a frame
 /// each frame: 1/4, 1/8, 1/4 and 1/2.
-s32 gDrain_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
+s32 gDrain_Gravities[] = {Q16_ONE / 4, Q16_ONE / 8, Q16_ONE / 4, Q16_ONE / 2};
 
 // stat_change.c: Stat-reduction shard geometry.
 
@@ -815,7 +816,7 @@ u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 /// Staged particle scale: Atalanta's formation sprites keep this
 /// scale, one to one, throughout.
-struct SpriteScale gAtalanta_UnitScale = {{{0x10000, 0x10000}}};
+struct SpriteScale gAtalanta_UnitScale = {{{Q16_ONE, Q16_ONE}}};
 
 // growth.c: Growing vine and pillar geometry.
 
@@ -1076,7 +1077,8 @@ u8 gRagnarok_FlashCells[] = FLASH_FADE_OFFSETS;
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gTitanBlade_FlashCells[] = FLASH_FADE_OFFSETS;
 /// Dust gravity, by particle index & 3, in gNereid_Gravity's steps.
-s32 gTitanBlade_DustGravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+s32 gTitanBlade_DustGravity[] = {Q16_ONE / 2, Q16_ONE / 4, Q16_ONE / 4,
+                                 Q16_ONE / 8};
 // Judgment's burst: seven quarter pictures, each half as wide as it is
 // tall, from JUDGMENT_SHEET_BURST.
 u8 gJudgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
@@ -1098,7 +1100,7 @@ u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 u8 gNeptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 /// Spray gravity, by particle index & 3, in gNereid_Gravity's steps.
-s32 gNeptune_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+s32 gNeptune_Gravity[] = {Q16_ONE / 2, Q16_ONE / 4, Q16_ONE / 4, Q16_ONE / 8};
 
 // undead_sword.c: Rising burst spark cells.
 

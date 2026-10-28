@@ -20,7 +20,7 @@ enum {
 
 /// Where the bolt pictures start in the sheet: after the six glints that open
 /// the tornado sheet (gBattleEffect_GlintCells), over its tornado strips.
-#define BOLT_OFFSETS 0xc56
+#define BOLT_OFFSETS GLINT_SET_BYTES
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
@@ -122,7 +122,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                j++) {
             struct Particle *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
-            s32 angle = (Random16() & 0x7fff) - 0x4000;
+            s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
             spark->x = screen.x << 16;
             spark->y = 104 << 16;
@@ -173,7 +173,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, 0x1000);
+        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
         if (spark->y > 104 << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0) {

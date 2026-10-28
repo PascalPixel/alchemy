@@ -8,8 +8,7 @@
 // light falls from the sky onto each target.
 
 // Images in work->sheet.
-#define DJINN_BEAMS_MOTE_OFFSETS                                               \
-  0x2710 ///< the motes (CrescentMoonSheet, 24x24)
+#define DJINN_BEAMS_MOTE_OFFSETS 10000 ///< the motes (CrescentMoonSheet, 24x24)
 #define DJINN_BEAMS_DJINNI_OFFSETS 0x65c0 ///< the Djinni (40x40)
 
 /// Motes drift down over each target and a column of light falls on it, in the

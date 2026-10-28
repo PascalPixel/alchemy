@@ -68,7 +68,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   for (i = 0; i != 64; i++) {
     struct Particle *seed = &work->particles[i];
 
-    seed->x = Random16() & 0xffff;
+    seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
     seed->y = ((Random16() & 31) - 64) << 16;
   }
@@ -76,7 +76,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // On EFFECT_SIDE_PARTY the canvas moves 112 pixels right, over the party.
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(112 << 8);
 
   for (frame = 0;
        frame != gFrost_Timings[work->args->variant][FROST_FRAME] + 75;
@@ -157,7 +157,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                 mote->z -= 2;
               if (mote->y < 48 << 16)
                 mote->y += 5 << 16;
-              mote->x += 0x200;
+              mote->x += TRIG_TURN / 128;
             }
           } else {
             mote->z += 8;

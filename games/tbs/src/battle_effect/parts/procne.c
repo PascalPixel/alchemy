@@ -91,8 +91,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       (DrawRectangle)slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_CANVAS];
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
-  Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
-  resource += 0x80;
+  Iwram_CopyWords((void *)BG_PLTT, resource, 128);
+  resource += 128;
   Decompress_TaggedLz(resource, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
@@ -102,8 +102,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   // wave is where the block of sprites sways, from (128, 40); drift is a
   // push from each comet.
-  wave.x = 0x800000;
-  wave.y = 0x280000;
+  wave.x = 128 << 16;
+  wave.y = 40 << 16;
   drift.x = 0;
   drift.y = 0;
 
@@ -186,22 +186,22 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
-            actor->y.fixed += 0x60000;
+            actor->y.fixed += 6 << 16;
           else
-            actor->y.fixed += 0x8000;
-          if (actor->y.fixed > 0x7c0000)
-            actor->y.fixed = 0x7c0000;
+            actor->y.fixed += Q16_ONE / 2;
+          if (actor->y.fixed > (124 << 16))
+            actor->y.fixed = 124 << 16;
         }
 
         if (frame <= 490) {
           heading[index] += spin[index];
-          if (heading[index] > 0x10000)
-            heading[index] -= 0x10000;
+          if (heading[index] > TRIG_TURN)
+            heading[index] -= TRIG_TURN;
           actor->facing += spin[index] / 4;
         }
 
         if (frame == 395)
-          actor->gravity = 0xab85;
+          actor->gravity = BATTLE_UNIT_GRAVITY;
 
         slot = 0;
         do {
@@ -262,7 +262,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           screen.x >>= 1;
           // Always true: a mote restarts once past 48 pixels up, and climbs
           // little more than 2 pixels a frame.
-          if (point[index].y <= 0x3fffff) {
+          if (point[index].y <= (64 << 16) - 1) {
             draw[0](canvas, work->sheet + PROCNE_DUST_OFFSETS, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
@@ -276,7 +276,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             point[index].velocityX = 4096;
           point[index].velocityY += 2048;
           point[index].y += point[index].velocityY * 2;
-          if (point[index].y > 0x300000) {
+          if (point[index].y > (48 << 16)) {
             point[index].y = 0;
             point[index].z = 100;
             point[index].velocityY = 0;
@@ -305,8 +305,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       BattleEffect_SpawnObjects(9, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
-      Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
-      resource += 0x80;
+      Iwram_CopyWords((void *)BG_PLTT, resource, 128);
+      resource += 128;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_OFFSETS);
 
       index = 0;
@@ -374,8 +374,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // Oam_AddSpriteAtDepth stops at 255).
       index = 0;
       do {
-        place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
-        place.height = 0xff0000 + index * 0x400000;
+        place.x = (gProcne_GridX[index] << 16) + wave.x + (40 << 16);
+        place.height = (255 << 16) + index * (64 << 16);
         place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
@@ -392,7 +392,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame > 255) {
         s32 threshold;
 
-        depthOffset.z = 0x1000000;
+        depthOffset.z = 256 << 16;
         alive = 0;
         depthOffset.x = 0;
         depthOffset.y = 0;
@@ -454,7 +454,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             index = 0;
             do {
               speed = (Random16() & 127) + 16;
-              angle = Random16() & 0xffff;
+              angle = Random16() & TRIG_ANGLE_MASK;
               spark = &PARTICLES[slot * 128 + index];
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
@@ -517,8 +517,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               slot++;
             } while (slot != 28);
 
-            drift.x = 0x80000;
-            drift.y = -0x20000;
+            drift.x = 8 << 16;
+            drift.y = -(2 << 16);
             work->shakeFrames = 8;
           }
 

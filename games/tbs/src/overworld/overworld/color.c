@@ -4,6 +4,11 @@
 
 #include "../overworld_internal.h"
 
+// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
+#define COLOR_MAX 448
+#define COLOR_HALF 224
+#define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
+
 /// Sets each of the 1344 colour channels of step to the amount to add each
 /// frame for source to reach target in frames frames; with frames 0 or less
 /// step is left as it was. Called by PaletteFade_StartInterpolation and by

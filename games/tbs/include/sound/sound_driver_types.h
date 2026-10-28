@@ -20,10 +20,12 @@
 
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)
 
-/// Bytes in each of SoundInfo's two sample buffers, under pret's name; the
-/// mixer (sound_mixer_render.s) reaches the left buffer this far past the
-/// right one.
-#define PCM_DMA_BUF_SIZE 1584
+/// The PCM buffer's size in samples, one byte each. It holds transferPeriod
+/// VBlanks of samples (SOUND_PCM_BUFFER_SIZE / pcmSamplesPerVBlank, rounded
+/// down: 4 of 352 at the game's rate), after which m4aSoundVSync starts the
+/// DMAs again from its start; the mixer (sound_mixer_render.s) reaches the left
+/// buffer this far past the right one.
+#define SOUND_PCM_BUFFER_SIZE 0x630
 
 #define REG_NR10 (*(volatile u8 *)0x04000060)
 #define REG_NR11 (*(volatile u8 *)0x04000062)
@@ -471,7 +473,7 @@ struct SoundInfo {
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 c15;
-  u8 transferPeriod; ///< VBlanks the buffers hold: PCM_DMA_BUF_SIZE /
+  u8 transferPeriod; ///< VBlanks the buffers hold: SOUND_PCM_BUFFER_SIZE /
                      ///< pcmSamplesPerVBlank.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. gMaxLines, 0.
@@ -502,7 +504,7 @@ struct SoundInfo {
   struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod VBlanks of pcmSamplesPerVBlank each.
-  s8 buffers[2][PCM_DMA_BUF_SIZE];
+  s8 buffers[2][SOUND_PCM_BUFFER_SIZE];
 };
 
 /// An entry of the music player table: a music player, its tracks and track

@@ -259,9 +259,10 @@ enum AbilityUse {
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
 
-/// A full HP or PP gauge: Unit_UpdateGauges takes hp / hpMax shifted up 14,
-/// and Unit_ClampGauge caps it here.
-#define UNIT_GAUGE_FULL 0x4000
+/// A full HP or PP gauge, the cap Unit_ClampGauge puts on hp / hpMax scaled by
+/// UNIT_GAUGE_SHIFT.
+#define UNIT_GAUGE_SHIFT 14
+#define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
@@ -450,10 +451,12 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 // are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->hpMax);     \
+    (unit)->hpGauge =                                                          \
+        Unit_ClampGauge(((unit)->hp << UNIT_GAUGE_SHIFT) / (unit)->hpMax);     \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->ppMax);     \
+    (unit)->ppGauge =                                                          \
+        Unit_ClampGauge(((unit)->pp << UNIT_GAUGE_SHIFT) / (unit)->ppMax);     \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)

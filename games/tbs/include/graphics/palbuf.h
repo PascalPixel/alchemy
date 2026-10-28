@@ -9,12 +9,6 @@
 #include "types.h"
 #include "static_assert.h"
 
-// The palette fade's colours: 224 BG colours and 224 OBJ colours, each kept
-// as B, G and R channels (PaletteFade_CalculateSteps' loop).
-#define COLOR_MAX 448
-#define COLOR_HALF 224
-#define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
-
 /// A palette fade for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 /// The title intro's form of HEAP_SLOT_PALETTE_FADE, allocated by
@@ -50,15 +44,14 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 struct PaletteFade {
   /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;
   /// palette[0] is the backdrop.
-  u16 palette[COLOR_MAX];
+  u16 palette[0x1c0];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[COLOR_CHANNEL_COUNT];
-  u16 target[COLOR_CHANNEL_COUNT]; ///< the colours current moves toward, as
-                                   ///< current
-  u16 delta[COLOR_CHANNEL_COUNT];  ///< added to each current channel each frame
+  u16 current[0x540];
+  u16 target[0x540]; ///< the colours current moves toward, as current
+  u16 delta[0x540];  ///< added to each current channel each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
-  u16 packed[2][COLOR_MAX];
+  u16 packed[2][0x1c0];
   u8 page;        ///< the packed page queued this frame
   s8 duration;    ///< frames; 0 when the colours are not moving
   s8 step;        ///< frames

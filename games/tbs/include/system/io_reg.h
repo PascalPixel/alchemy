@@ -206,8 +206,9 @@ enum DisplayControl {
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
-/// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
-#define OBJ_VRAM0 0x06010000
+/// Sprite tile memory, as pret names it: the 32 KB of sprite tiles after the
+/// four character blocks.
+#define OBJ_VRAM0 (VRAM + 0x10000)
 
 /// Timer 3's reload value and control as one word; it paces the serial
 /// transfers.

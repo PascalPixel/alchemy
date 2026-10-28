@@ -48,10 +48,6 @@ void CgbOscOff(u8 channel);
 
 extern const u8 gCgb3Vol[];
 
-/// The PCM buffer's size in samples. It holds transferPeriod VBlanks of
-/// samples (0x630 / pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's
-/// rate), after which m4aSoundVSync starts the DMAs again from its start.
-#define SOUND_PCM_BUFFER_SIZE 0x630
 /// The VBlank rate in ten-thousandths of a hertz: 59.7275 VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
 /// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles.
@@ -236,9 +232,11 @@ void m4aSoundVSyncOff(void) {
     REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
   REG_DMA1CNT_H = DMA_32BIT;
   REG_DMA2CNT_H = DMA_32BIT;
-  // 0x318 words: both 0x630-byte buffers.
+  // Both buffers, in words.
   zero = 0;
-  Bios_CpuSet(&zero, work->buffers, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x318);
+  Bios_CpuSet(&zero, work->buffers,
+              CPU_SET_SRC_FIXED | CPU_SET_32BIT |
+                  SOUND_PCM_BUFFER_SIZE * 2 / 4);
 }
 
 /// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off

@@ -90,10 +90,10 @@ struct SerialWork {
   u8 packetNumber;
   u8 reserved0c[8]; ///< not named by TBS code
   /// The halfword of sendBuffer[1] sent next; -1 between packets, when
-  /// SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
+  /// serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
   s32 sendIndex;
   /// Each console's next halfword in its incomingBuffer; -1 after an idle
-  /// SERIAL_IDLE_HALFWORD.
+  /// serial.c's SERIAL_IDLE_HALFWORD.
   s32 receiveIndex[2];
   u8 reserved20[8]; ///< not named by TBS code
   /// The packet being built ([0]) and the packet being sent ([1]).

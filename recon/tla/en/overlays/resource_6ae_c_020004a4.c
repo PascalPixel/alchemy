@@ -47,7 +47,7 @@ void Func_020004a4(void) {
       object->action = Random16Far() & 0x0ffff000;
       object->unk66 = phase;
       object->update = Func_020005a0;
-      object->linkedObject = anchor;
+      object->watchedObject = anchor;
       object->speedLimit = Math_Sine((offset & 0xfffff) >> 4) * 24 >> 16;
       sprite->unk1a = 0;
       sprite->layer =

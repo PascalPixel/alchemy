@@ -57,7 +57,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {
-        Sprite_StartAnim(animation, 6 - st->levels);
+        Sprite_StartAnimation(animation, 6 - st->levels);
         animation->flags = 0;
         animation->image.priority = 1;
       }
@@ -79,7 +79,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->priorityFlags = 2;
     obj->speedLimit = 0x40000;
     if (animation != 0) {
-      Sprite_StartAnim(animation, 6);
+      Sprite_StartAnimation(animation, 6);
       animation->flags = 0;
     }
     st->stepEffect = obj;

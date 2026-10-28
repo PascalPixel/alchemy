@@ -655,7 +655,7 @@ s32 Text_FillCanvasBackground(void) {
 /// the canvas when the message still has a window. The auto battle
 /// (battle/battle/auto_battle.c) calls it after playing each action, so the
 /// next battle message starts on a clear canvas at its first line.
-void Message_ResetFree(void) {
+void Message_ResetIdle(void) {
   struct Message *message = WINDOW_WORK->messages;
   struct Message *selection = 0;
   s32 i;

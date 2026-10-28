@@ -18,7 +18,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
-void Object_LinkPair(s32 id, s32 partner, s32 flags);
+void Object_TurnToFaceEachOther(s32 id, s32 partner, s32 flags);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
@@ -273,7 +273,7 @@ void Func_020006e4(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value3(Func_0200204c, 7, 0x102, 30);
   Call3((void (*)())Func_0200202c, 7, 0, 5);
-  Call3((void (*)())Object_LinkPair, 6, 5, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 6, 5, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x4000, 0);
   Call2((void (*)())Func_02002044, 5, 0x2000);
@@ -306,8 +306,8 @@ void Func_020006e4(void) {
   Call3((void (*)())Func_0200202c, 9, 0, 5);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 4, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call3((void (*)())Object_LinkPair, 9, 7, 0);
-  Call3((void (*)())Object_LinkPair, 6, 5, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 9, 7, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 6, 5, 0);
   Call2((void (*)())Object_SetModeById, 6, 3);
   Call2((void (*)())Object_SetModeById, 5, 3);
   Call2((void (*)())Object_SetModeById, 9, 3);

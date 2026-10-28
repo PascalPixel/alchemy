@@ -34,7 +34,7 @@ void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetVariantCallback();
 struct ObjectRuntime *Object_GetById();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 void Func_02001910(void);
@@ -61,7 +61,7 @@ void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
 struct ObjectRuntime *Object_GetById();
 void Object_LinkObjectAndSetCallback();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
 void PartyInventory_Remove();
@@ -111,7 +111,7 @@ void Func_02001008(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 11, 0xa000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_02001e28, 11, 0, 10);
-  Call3((void (*)())Object_LinkPair, 10, 11, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 10, 11, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_SetAngleToward, 10, 4, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -208,7 +208,7 @@ void Func_02001310(void) {
   Call2((void (*)())Func_02001e40, 10, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())Func_02001e28, 10, 0, 5);
-  Call3((void (*)())Object_LinkPair, 10, 11, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 10, 11, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_SetAngleToward, 10, 4, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -265,7 +265,7 @@ void Func_02001450(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Value3((s32 (*)())Func_02001e48, 27, 0x109, 30);
   Call3((void (*)())Func_02001e28, 27, 0, 10);
-  Call3((void (*)())Object_LinkPair, 7, 4, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 7, 4, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x8000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x6000, 0);
@@ -390,7 +390,7 @@ L_020098ec:
 void Func_02001910(void) {
   Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors127);
   Call3((void (*)())Func_02001e28, 28, 0, 10);
-  Call3((void (*)())Object_LinkPair, 4, 31, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 4, 31, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x6000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 31, 0x5000, 0);

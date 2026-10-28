@@ -336,12 +336,12 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimFar(work->animations[i], i + 16);
+        Sprite_StartAnimationFar(work->animations[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimFar(work->animations[i], i + 32);
+        Sprite_StartAnimationFar(work->animations[i], i + 32);
       }
     }
 
@@ -454,7 +454,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
     work->animations[i] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      Sprite_StartAnimFar(animation, (i % 3));
+      Sprite_StartAnimationFar(animation, (i % 3));
       work->animations[i]->image.priority = 0;
     }
   }

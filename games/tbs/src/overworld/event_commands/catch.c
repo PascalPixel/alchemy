@@ -60,7 +60,7 @@ void FieldPsynergy_Catch(void) {
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
-  Anim_ApplyChildValuesFar(object, SPRITE_COLOR_GRB);
+  Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
   // way each frame.

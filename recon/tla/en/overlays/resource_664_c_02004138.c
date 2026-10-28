@@ -99,7 +99,7 @@ void Func_02004138(s32 idA, s32 idB) {
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
-    spark->linkedObject = b;
+    spark->watchedObject = b;
     ((u8 *)spark)[98] = (16 - i) * 8 + 15;
     Object_SetPartAttribute(spark, 2);
     Object_SetSpritePriority(spark, 1);
@@ -128,7 +128,7 @@ void Func_02004138(s32 idA, s32 idB) {
     spark->bounce = spark->x;
     spark->unk4c = 0;
     spark->gravity = spark->z;
-    spark->linkedObject = b;
+    spark->watchedObject = b;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Object_SetPartAttribute(spark, 2);

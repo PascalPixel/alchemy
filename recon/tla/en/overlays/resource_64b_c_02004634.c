@@ -71,7 +71,7 @@ loop:
       part = child->animation;
       child->motionFlags = 0;
       child->action = 0;
-      child->linkedObject = parent;
+      child->watchedObject = parent;
       if (part != NULL) {
         sprite = &part->sprite;
         Animation_ApplyChildArgument(sprite, 0);

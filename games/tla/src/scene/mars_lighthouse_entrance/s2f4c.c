@@ -52,7 +52,7 @@ void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02004bc0(object, 1);
-  object->linkedObject = source;
+  object->watchedObject = source;
   object->action = 0;
   object->unk66 = a3;
   BYTE_AT(object, 98) = kind;

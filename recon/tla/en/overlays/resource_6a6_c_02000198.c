@@ -56,7 +56,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_SetVariantCallback();
 s32 Object_GetById();
 s32 Object_LinkObjectAndSetCallback();
-s32 Object_LinkPair();
+s32 Object_TurnToFaceEachOther();
 s32 Object_RefreshSelectorById();
 s32 Object_SetModeById();
 s32 Random16Far();
@@ -276,7 +276,7 @@ L_02008474:
   W_Func_020013a8(18, 0x105, 50);
   W_Func_020013a8(18, 0x102, 35);
   Call2(Func_02001390, 18, 0);
-  Call3(Object_LinkPair, 16, 17, 0);
+  Call3(Object_TurnToFaceEachOther, 16, 17, 0);
   Call1(FieldEvent_WaitFrames, 40);
   Call3(ObjectMotion_ArmCallback, 16, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 17, 0xc000, 0);
@@ -354,7 +354,7 @@ L_02008474:
   Call2(Func_02001390, 16, 0);
   Call1(Object_RefreshSelectorById, 17);
   Call1(Object_RefreshSelectorById, 18);
-  Call3(Object_LinkPair, 17, 18, 0);
+  Call3(Object_TurnToFaceEachOther, 17, 18, 0);
   Call1(FieldEvent_WaitFrames, 20);
   goto L_020088f0;
 L_020088f0:

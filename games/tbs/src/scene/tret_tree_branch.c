@@ -226,7 +226,7 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
   Serial_PollAndTransfer(header, sTransferData);
 }
 
-/// Initializes the backdrop transition and installs BG3's scanline scroll
+/// Initializes the backdrop transition and installs BG3's line scroll
 /// split. Returns 0 for the overlay initialization entry point.
 s32 TretTreeBranch_Initialize(void) {
 #ifndef UBFIX

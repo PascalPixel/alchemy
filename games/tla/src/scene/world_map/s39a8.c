@@ -5,7 +5,7 @@
 s32 Math_Sine(s32 angle);
 
 s32 Func_020039a8(struct ObjectRuntime *object) {
-  struct ObjectRuntime *parent = object->linkedObject;
+  struct ObjectRuntime *parent = object->watchedObject;
   s32 step = ++object->action;
   s32 scale;
 

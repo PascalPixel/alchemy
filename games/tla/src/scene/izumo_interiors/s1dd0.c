@@ -26,7 +26,7 @@ void ObjectMotion_SetAngleToward();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetVariantCallback();
 s32 Object_GetById();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void PartyInventory_Remove();
 void UiText_OpenMessageAtObject();
@@ -87,7 +87,7 @@ L_02009e48:
   Call2(Object_SetModeById, 15, 4);
   Call1(FieldEvent_WaitFrames, 60);
   Call2(Func_02002254, 15, 0);
-  Call3(Object_LinkPair, 15, 24, 0);
+  Call3(Object_TurnToFaceEachOther, 15, 24, 0);
   Call2(Func_02002254, 15, 0);
   Call1(FieldEvent_WaitFrames, 60);
   Call3(ObjectMotion_Launch, 24, 4, 20);

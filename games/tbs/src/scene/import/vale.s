@@ -12,7 +12,7 @@
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_Load, 1
-	.set import.Sprite_StartAnim, 1
+	.set import.Sprite_StartAnimation, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1
@@ -29,7 +29,7 @@
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.ActorSystem_SuspendProjectionAndShowSprites, 1
 	.set import.ActorSystem_ResumeProjectionAndHideLayers, 1
-	.set import.Anim_ApplyChildValues, 1
+	.set import.Actor_SetSpriteColorMode, 1
 	.set import.FieldMessage_Show, 1
 	.set import.FieldMessage_ShowCentered, 1
 	.set import.Icon_DrawItem, 1

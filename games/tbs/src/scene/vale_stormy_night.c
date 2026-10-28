@@ -2962,7 +2962,7 @@ static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
       child->timer = 0;
       child->watchedActor = parent;
       if (sprite != NULL) {
-        Sprite_StartAnim(sprite, 0);
+        Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;

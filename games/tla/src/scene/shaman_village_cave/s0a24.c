@@ -31,7 +31,7 @@ void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_SetAngleToward();
 void ObjectMotion_SetSpeedParameters();
 void Object_GetById();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 
@@ -165,7 +165,7 @@ void Func_02000a24(void) {
   Call1(FieldEvent_WaitFrames, 20);
   Call2(ObjectMotion_EnableActionAndSetCallback, 21, gData_0200161c);
   Call1(FieldEvent_WaitFrames, 100);
-  Call3(Object_LinkPair, 0, 4, 0);
+  Call3(Object_TurnToFaceEachOther, 0, 4, 0);
   Call3(ObjectMotion_SetAngleToward, 18, 4, 0);
   Call1(FieldEvent_WaitFrames, 40);
   Call2(Object_SetModeById, 0, 3);

@@ -18,7 +18,7 @@ struct ArcEffectObject {
   u8 unk54[0x10];
   s16 phase; ///< 1 spins the caster
   s16 step;  ///< frames since the arcs started
-  struct FieldActor *linkedObject;
+  struct FieldActor *watchedObject;
   void (*callback)(union FieldObject *object); ///< run each frame
 };
 

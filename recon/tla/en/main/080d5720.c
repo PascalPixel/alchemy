@@ -9,7 +9,7 @@
 // priority's store, this just before it. Reading the flags through a pointer
 // taken before the frame copy brought it from 4 to 2 (permute, 2026-10-18).
 // An empty asm barrier after the priority's store puts the address in place
-// but moves the linked object's store (str r6, [r5, #104]) a slot earlier,
+// but moves the watched object's store (str r6, [r5, #104]) a slot earlier,
 // wherever the barrier stands after it (differ 2): sched2 links every asm,
 // volatile or not, to the stores still pending, which gives that store a
 // third dependent and puts it ahead of the mode's movs r1, #2 (tied in
@@ -58,7 +58,7 @@ s32 Func_080d5720(void) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  leader->linkedObject = (struct ObjectRuntime *)item;
+  leader->watchedObject = (struct ObjectRuntime *)item;
   Object_SetMode(leader, 2);
   Object_SetPosition(leader, item->x, item->y, item->z);
   Object_CommitPosition(leader);

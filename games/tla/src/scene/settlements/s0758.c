@@ -18,7 +18,7 @@ void Func_02000714(struct ObjectRuntime *object) {
   object->scaleX += step;
   object->scaleY += step;
   object->action += 2;
-  if (--*(s32 *)&object->linkedObject == 0)
+  if (--*(s32 *)&object->watchedObject == 0)
     Func_02002000(object);
 }
 
@@ -38,7 +38,7 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     ObjectDispatch_SetSingleChildFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
-    *(s32 *)&object->linkedObject = 60;
+    *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Func_02000714;
     Func_02001fe0(object, 5);
     Animation_SetStateFlags(object, 1);

@@ -9,7 +9,7 @@
 void BattleEffect_ArmBg0HBlankDma(void);
 void Func_08038348(s32 first, s32 second);
 
-/// Stops scanline scrolling and restores background palette 15, as The
+/// Stops line scrolling and restores background palette 15, as The
 /// Broken Seal's Ui_SetBank15PaletteAndClearRenderMode does.
 void Func_080dcadc(void) {
   u8 *work = Ram_HeapSlots->windowTiles;

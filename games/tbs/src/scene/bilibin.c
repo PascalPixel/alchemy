@@ -985,7 +985,7 @@ static void Bilibin_SpawnRipple(struct Actor *actor) {
   if (sprite == NULL)
     return;
 
-  Sprite_StartAnim(sprite, 2);
+  Sprite_StartAnimation(sprite, 2);
   sprite->flags = 0;
   sprite->image.objectMode = 1;
   sprite->image.priority = 3;

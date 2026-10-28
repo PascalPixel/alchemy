@@ -188,7 +188,6 @@ u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);
 #endif
-void Anim_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 struct Sprite *GetBattleEffectObject(s32 kind);
@@ -215,7 +214,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// The battle sprites' animations (Sprite_StartAnim numbers)
+/// The battle sprites' animations (Sprite_StartAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

@@ -4,7 +4,7 @@
 #include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_LinkPair(s32 id, s32 other, s32 mode);
+void Object_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
 void Object_SetModeById(u32 id, s32 mode);
 void WaitFrames(s32 frames);
 void Func_02001bcc(void);
@@ -18,7 +18,7 @@ extern u8 MsgEveryoneSpoilsMe;
 extern u8 MsgWeAreThe;
 extern u8 MsgAreThereOther;
 
-/// Actor 18's talk: one message, and Object_LinkPair with the party leader,
+/// Actor 18's talk: one message, and Object_TurnToFaceEachOther with the party leader,
 /// while the event work's halfword at 0x166 is 0, another once it is set; the
 /// actor's angle is restored after.
 void Func_02000308(void) {
@@ -34,7 +34,7 @@ void Func_02000308(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgItHasBeen);
-    Object_LinkPair(18, gAdventure.currentOwner, 2);
+    Object_TurnToFaceEachOther(18, gAdventure.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgEveryoneSpoilsMe);
   }
@@ -60,7 +60,7 @@ void Func_02000398(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgWeAreThe);
-    Object_LinkPair(19, gAdventure.currentOwner, 2);
+    Object_TurnToFaceEachOther(19, gAdventure.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgAreThereOther);
   }

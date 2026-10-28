@@ -98,7 +98,7 @@ s32 Func_08029570(struct ObjectRuntime *object) {
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
-    best = (struct LadderPoint *)object->linkedObject;
+    best = (struct LadderPoint *)object->watchedObject;
     position.x = object->x;
     position.y = best->y;
     position.z = object->z;
@@ -140,7 +140,7 @@ s32 Func_08029570(struct ObjectRuntime *object) {
           pair->speed += 0x8000;
           if (pair->speed > 0x20000)
             pair->speed = 0x20000;
-          object->linkedObject = (struct ObjectRuntime *)best;
+          object->watchedObject = (struct ObjectRuntime *)best;
         }
         position.y = best->y;
         position.x = best->x;

@@ -370,7 +370,7 @@ void Actor_SetModeById(u32 actorId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an actor's sprites
-/// (Sprite_SetAnimSpeed). Called by the Tolbi ship and
+/// (Sprite_SetAnimationSpeed). Called by the Tolbi ship and
 /// Lamakan Desert events.
 void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
   struct Actor *actor = Actor_Lookup(actorId);

@@ -36,7 +36,7 @@ s32 Func_0200425c(struct ObjectRuntime *object);
 void Func_0200424c(struct SparkleSprite *sprite);
 
 void Func_02003cd8(struct ObjectRuntime *object) {
-  struct SparkleWork *work = (struct SparkleWork *)object->linkedObject;
+  struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
   u8 *count = (u8 *)object + 0x63;
   u8 state;
   struct SparkleSprite *sprite;

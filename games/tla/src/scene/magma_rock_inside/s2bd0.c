@@ -3,7 +3,7 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 s32 Func_02002bd0(struct ObjectRuntime *object) {
-  struct ObjectRuntime *target = object->linkedObject;
+  struct ObjectRuntime *target = object->watchedObject;
   s32 steps;
   s32 from;
 

@@ -28,7 +28,7 @@ void ObjectMotion_OffsetPositionAndReset();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void ObjectMotion_ResetAndSetPositionInMode2();
 void ObjectMotion_SetPositionAndReset();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void Party_SetFields1eeAnd1f0();
 void Party_SetFields1f2And1f4();
@@ -132,7 +132,7 @@ void Func_02000430(void) {
   Call2(Motion_SetVarCbAndRefresh, 19, 2);
   Call1(FieldEvent_WaitFrames, 5);
   Call3(Func_02001148, 19, 0, 5);
-  Call3(Object_LinkPair, 18, 4, 0);
+  Call3(Object_TurnToFaceEachOther, 18, 4, 0);
   Call1(FieldEvent_WaitFrames, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
@@ -167,7 +167,7 @@ void Func_02000430(void) {
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 258, 30)
   Call3(Func_02001148, 0, 0, 5);
-  Call3(Object_LinkPair, 20, 21, 0);
+  Call3(Object_TurnToFaceEachOther, 20, 21, 0);
   Call1(FieldEvent_WaitFrames, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */

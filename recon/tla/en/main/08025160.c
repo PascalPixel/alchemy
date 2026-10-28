@@ -36,7 +36,7 @@ s32 Func_08025160(struct ObjectRuntime *cameraObject) {
   s32 nearZ;
 
   bounds = Ram_HeapSlots->mapWork;
-  leader = cameraObject->linkedObject;
+  leader = cameraObject->watchedObject;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + leader->y + 0x600000;
   maxX = bounds->maxX - 0x780000;

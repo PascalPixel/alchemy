@@ -332,7 +332,7 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
                                        s32 keepPosition);
 s32 Text_ClearCanvas(void);
 s32 Text_FillCanvasBackground(void);
-void Message_ResetFree(void);
+void Message_ResetIdle(void);
 void Message_ApplyStyle(struct Message *message);
 void Text_StartCanvasScroll(struct Message *message);
 void Text_ScrollCanvasUp(s32 step);

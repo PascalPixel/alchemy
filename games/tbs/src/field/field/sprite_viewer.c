@@ -10,11 +10,12 @@ enum {
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
-  /// An anim priority above 3, which Sprite_ComposePicture skips.
+  /// A sprite animation priority above 3, which Sprite_ComposePicture skips.
   UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8
 };
 
-/// What left and right choose for L and R to change on the selected anim.
+/// What left and right choose for L and R to change on the selected sprite
+/// animation.
 enum UiSpriteViewerEditMode {
   UI_SPRITE_VIEWER_EDIT_ANIMATION,
   UI_SPRITE_VIEWER_EDIT_SPRITE,
@@ -35,13 +36,13 @@ struct UiSpriteViewerLayer {
 /// A debug sprite viewer, which never returns. It shows a sprite (with up to
 /// three more sprite animations) once for each of its facings, in a ring.
 /// Start with the direction pad moves the ring; otherwise up and down choose
-/// an anim and left and right what to edit (enum UiSpriteViewerEditMode): the
-/// animation, the sprite number (ten at a time with Start), the priority or
-/// the draw parameter, changed with L and R. A restarts the animation, or in
-/// the other modes turns an anim on or off. Pressing Start toggles the shadows;
-/// B turns the ring when it is rebuilt with Start held. Select starts over; it
-/// passes a far-call resource set (the alternate one unless B is held) to
-/// Stub_ReturnZero, a stub that ignores it.
+/// a sprite animation and left and right what to edit (enum
+/// UiSpriteViewerEditMode): the animation, the sprite number (ten at a time
+/// with Start), the priority or the draw parameter, changed with L and R. A
+/// restarts the animation, or in the other modes turns a sprite animation on or
+/// off. Pressing Start toggles the shadows; B turns the ring when it is rebuilt
+/// with Start held. Select starts over; it passes a far-call resource set (the
+/// alternate one unless B is held) to Stub_ReturnZero, a stub that ignores it.
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
@@ -88,8 +89,8 @@ void SpriteViewer_Run(void) {
   Dma_Fill32Cell(fillWord, 0, ring, 4);
   Dma_Fill32Cell(fillWord, 0, layers, sizeof(layers));
 
-  // All four anims start on the first sprite with an image, animation 1,
-  // priority 1; only anim 0 is shown.
+  // All four sprite animations start on the first sprite with an image,
+  // animation 1, priority 1; only sprite animation 0 is shown.
   spriteId = SpriteViewer_FindNextSpriteWithImage(-1, 1);
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
@@ -105,7 +106,7 @@ void SpriteViewer_Run(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   ScreenFade_FromBlack(1);
 
-  // Rebuilt from here whenever anim 0's sprite changes or Select is
+  // Rebuilt from here whenever sprite animation 0's sprite changes or Select is
   // pressed: a fresh heap, task table and VRAM cache each time.
 restart:
   InitHeap();
@@ -114,9 +115,9 @@ restart:
                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
   ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
-  // With no map loaded, the map cell buffer holds anim 0's pictures; a
-  // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the
-  // actor sprite buffer, as sprite picture cache 1.
+  // With no map loaded, the map cell buffer holds sprite animation 0's
+  // pictures; a two-part sprite (ANIM_FACING_TWO_PART) puts its second part in
+  // the actor sprite buffer, as sprite picture cache 1.
   SpritePictureCache_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId,
                           0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
@@ -136,11 +137,11 @@ restart:
     spriteWork.sprite =
         Sprite_Create(layers[0].spriteId + spriteWork.resourceOffset +
                       (spriteWork.resourceOffset << 12));
-    // Anims 1 to 3 are added to every copy whether shown or not; a hidden
-    // anim is kept out of the drawing by its priority below.
-    Sprite_AddAnim(spriteWork.sprite, layers[1].spriteId);
-    Sprite_AddAnim(spriteWork.sprite, layers[2].spriteId);
-    Sprite_AddAnim(spriteWork.sprite, layers[3].spriteId);
+    // Sprite animations 1 to 3 are added to every copy whether shown or not; a
+    // hidden sprite animation is kept out of the drawing by its priority below.
+    Sprite_AddAnimation(spriteWork.sprite, layers[1].spriteId);
+    Sprite_AddAnimation(spriteWork.sprite, layers[2].spriteId);
+    Sprite_AddAnimation(spriteWork.sprite, layers[3].spriteId);
     /* FAKEMATCH(temporary): the native adds the flags offset to the sprite's
      * own register (r5) in place; as spriteWork.sprite->flags = shadowsEnabled,
      * 21 of 672 instructions differ in tbs-en. */
@@ -148,7 +149,7 @@ restart:
     *spriteWork.flags = shadowsEnabled;
   }
 
-  // Priority 8 hides an anim: Sprite_ComposePicture draws only
+  // Priority 8 hides a sprite animation: Sprite_ComposePicture draws only
   // priorities 0 to 3.
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0) {
@@ -157,7 +158,7 @@ restart:
       SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
-    SpriteViewer_StartStaggeredAnims(i, layers[i].animationIndex);
+    SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
@@ -172,8 +173,8 @@ next:
   repeatedKeys = &gKeysRepeat;
   for (;;) {
     // Start held: the direction pad moves the ring a pixel a frame.
-    // Otherwise up and down pick the anim and left and right the mode,
-    // both wrapping at four.
+    // Otherwise up and down pick the sprite animation and left and right the
+    // mode, both wrapping at four.
 
     if ((*heldKeys & KEY_START) != 0) {
       if ((*heldKeys & KEY_LEFT) != 0) {
@@ -218,8 +219,8 @@ next:
     }
 
     switch (editMode) {
-    // The animation: anim 1 follows anim 0's and is not edited on
-    // its own; 0 to 99.
+    // The animation: sprite animation 1 follows sprite animation 0's and is not
+    // edited on its own; 0 to 99.
     case UI_SPRITE_VIEWER_EDIT_ANIMATION:
       if (selectedLayer == 1) {
         break;
@@ -273,11 +274,13 @@ next:
       if (changed == 0) {
         break;
       }
-      // A new sprite on anim 0 changes the ring and the copies: start over.
+      // A new sprite on sprite animation 0 changes the ring and the copies:
+      // start over.
       if (selectedLayer == 0) {
         goto restart;
       }
-      // A hidden anim only remembers the number until it is shown again.
+      // A hidden sprite animation only remembers the number until it is shown
+      // again.
       if (layers[selectedLayer].enabled != 0) {
         SpriteViewer_SetGridColumnNumber(selectedLayer,
                                          layers[selectedLayer].spriteId);
@@ -285,12 +288,12 @@ next:
                                            layers[selectedLayer].priority);
         SpriteViewer_SetGridColumnColorMode(selectedLayer,
                                             layers[selectedLayer].colorMode);
-        SpriteViewer_StartStaggeredAnims(selectedLayer,
-                                         layers[selectedLayer].animationIndex);
+        SpriteViewer_StartStaggeredAnimations(
+            selectedLayer, layers[selectedLayer].animationIndex);
       }
       goto next;
 
-    // The anim's draw priority, 0 to 3 and wrapping.
+    // The sprite animation's draw priority, 0 to 3 and wrapping.
     case UI_SPRITE_VIEWER_EDIT_PRIORITY:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
@@ -317,7 +320,7 @@ next:
       goto next;
 
     // The draw parameter (SpriteColorMode), 0 to 15 and wrapping;
-    // SPRITE_COLOR_HIDDEN is the value Sprite_SetAnimColorModes
+    // SPRITE_COLOR_HIDDEN is the value Sprite_SetAnimationColorModes
     // leaves alone.
     case UI_SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
@@ -348,17 +351,19 @@ next:
       break;
     }
 
-    // A, editing the animation: restart the selected anim's animation (anim 0
-    // also restarts anim 1, which follows it). In the other modes: show or
-    // hide the anim; anim 0 is always shown.
+    // A, editing the animation: restart the selected sprite animation (sprite
+    // animation 0 also restarts sprite animation 1, which follows it). In the
+    // other modes: show or hide the sprite animation; sprite animation 0 is
+    // always shown.
     if ((*repeatedKeys & KEY_A) != 0) {
       if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
-            SpriteViewer_StartStaggeredAnims(
+            SpriteViewer_StartStaggeredAnimations(
                 selectedLayer, layers[selectedLayer].animationIndex);
             if (selectedLayer == 0) {
-              SpriteViewer_StartStaggeredAnims(1, layers[1].animationIndex);
+              SpriteViewer_StartStaggeredAnimations(1,
+                                                    layers[1].animationIndex);
             }
           }
           goto next;
@@ -554,8 +559,9 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     }                                                                          \
   }
 
-/// Sets the colour mode (SpriteColorMode, the anim's draw parameter) or the
-/// priority of one anim of the viewer's ten sprites.
+/// Sets the colour mode (SpriteColorMode, the sprite animation's draw
+/// parameter) or the priority of one sprite animation of the viewer's ten
+/// sprites.
 UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnColorMode, colorMode)
 UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 
@@ -563,7 +569,7 @@ UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
 /// Called by SpriteViewer_Run.
-void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
+void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct Sprite *spriteGroup;
 
@@ -582,8 +588,8 @@ void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
         // speed, with no frame drawn yet.
         entry->kind = metadata->drawKind;
         entry->script = entry->scripts[animationIndex];
-        entry->timer = spriteIndex * ANIM_NORMAL_STEP;
-        entry->step = ANIM_NORMAL_STEP;
+        entry->timer = spriteIndex * SPRITE_ANIMATION_NORMAL_STEP;
+        entry->step = SPRITE_ANIMATION_NORMAL_STEP;
         entry->scriptOffset = initialFrame;
         entry->pictureBase = initialFrame;
         entry->picture = 0xff;
@@ -597,8 +603,8 @@ void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
 }
 
 /// Sets spriteId on layerIndex of each of the viewer's ten sprites.
-/// Resets each anim from its new metadata. Called by SpriteViewer_Run when
-/// an anim other than 0 gets a new sprite.
+/// Resets each sprite animation from its new metadata. Called by
+/// SpriteViewer_Run when a sprite animation other than 0 gets a new sprite.
 void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   struct Sprite *spriteGroup = gSprites;
   s32 spriteIndex;

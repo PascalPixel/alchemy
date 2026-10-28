@@ -235,7 +235,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   }
 
   // Restore the target's colours, script and update, and remove the hand.
-  Anim_ApplyChildValuesFar(target, effectWork->savedPalette);
+  Actor_SetSpriteColorModeFar(target, effectWork->savedPalette);
   Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
   FieldPsynergy_StopCasterUpdate();

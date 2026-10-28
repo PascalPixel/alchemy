@@ -80,7 +80,7 @@ void Func_080dd054(void) {
   if (target == NULL)
     return;
   BattleEffect_InitializeSharedScene();
-  user->linkedObject = target;
+  user->watchedObject = target;
   ObjectDispatch_InitializeFar(user, gData_080f0e60);
   pusher = BattleEffect_StartItemBreak(user);
   if (pusher == NULL) {
@@ -91,7 +91,7 @@ void Func_080dd054(void) {
   event = Func_080ce458(0x50000005, scene->fieldKind,
                         Func_080ce31c(scene->fieldKind));
   position.x = target->x;
-  pusher->linkedObject = target;
+  pusher->watchedObject = target;
   position.y = target->y + 0x100000;
   position.z = target->z;
   Vector_AddPolarOffset(0x100000, angle, &position);

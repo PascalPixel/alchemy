@@ -26,7 +26,7 @@ void Func_02001c8c(void);
 void Func_020005b4(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *linked = actor->linkedObject;
+  struct ObjectRuntime *linked = actor->watchedObject;
   struct ObjectRuntime *shadow;
   s32 facing;
   s32 i;

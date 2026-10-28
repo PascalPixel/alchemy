@@ -31,10 +31,10 @@ void ObjectDispatch_InitializeFar(struct LinkedEffectObject *object,
 void Object_SetMode(struct LinkedEffectObject *object, s32 mode);
 void Object_Destroy(struct LinkedEffectObject *object);
 s32 Object_IsOutsideAnimation108(struct LinkedEffectObject *object);
-void BattleEffect_CopyLinkedObjectPosition(void);
+void BattleEffect_CopyWatchedObjectPosition(void);
 extern const u8 gData_080f341c[];
 
-/// The Broken Seal's BattleEffect_ConfigureLinkedObject with this game's
+/// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
 /// calls: with flags & 3 zero it destroys the object's linked effect;
 /// otherwise (mode 2, or when the linked effect is outside animation 0x108)
 /// it creates effect object 264 at the object and links it, mode 1 keeping it
@@ -83,7 +83,7 @@ void Func_080d489c(s32 id, s32 flags) {
 
   child->resourceId = id;
   child->value55 = 0;
-  child->callback = BattleEffect_CopyLinkedObjectPosition;
+  child->callback = BattleEffect_CopyWatchedObjectPosition;
   visual = child->visual;
   visual->value26 = 0;
   child->resource = object;

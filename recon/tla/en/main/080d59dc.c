@@ -46,7 +46,7 @@ s32 Func_080d59dc(void) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  leader->linkedObject = (struct ObjectRuntime *)item;
+  leader->watchedObject = (struct ObjectRuntime *)item;
   Object_SetMode(leader, 2);
   Object_SetPosition(leader, item->x, item->y, item->z);
   Object_CommitPosition(leader);

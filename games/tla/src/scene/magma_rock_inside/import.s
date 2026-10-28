@@ -222,9 +222,9 @@ Func_02004da8:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Object_LinkPair
+	.global Object_TurnToFaceEachOther
 	.thumb_func
-Object_LinkPair:
+Object_TurnToFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Func_02004dc0
 	.thumb_func

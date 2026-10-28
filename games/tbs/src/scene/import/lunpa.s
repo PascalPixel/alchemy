@@ -17,7 +17,7 @@
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.Actor_SetBlendMode, 1
-	.set import.Anim_ApplyChildValues, 1
+	.set import.Actor_SetSpriteColorMode, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1

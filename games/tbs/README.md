@@ -648,7 +648,7 @@ section pages follow them.
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations       |
 | [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
 | [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows                  |
-| [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers        |
+| [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers       |
 | [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                       |
 | [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                             |
 | [Source](src/README.md)                              | every file of the code, with its comments                                |

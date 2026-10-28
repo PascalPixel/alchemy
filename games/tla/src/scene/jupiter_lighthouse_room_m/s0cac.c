@@ -53,7 +53,7 @@ void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void Camera_FollowActor(s32 id, s32 mode);
-void Object_LinkPair(s32 a, s32 b, s32 c);
+void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
@@ -310,7 +310,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(3, 0, 5);
   Object_SetModeById(0, 1);
   Object_SetModeById(2, 1);
-  Object_LinkPair(0, 2, 0);
+  Object_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048cc(0, 0x102, 30);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
@@ -363,7 +363,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(2, 0x101, 0);
   I_Func_020048cc(0, 0x101, 30);
-  Object_LinkPair(0, 2, 0);
+  Object_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048cc(0, 0x106, 30);
   I_ObjectMotion_ArmCallback(2, 0xa000, 0);
@@ -437,7 +437,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048b4(0, 0xa000);
   FieldEvent_WaitFrames(10);
   Func_0200489c(0, 0, 5);
-  Object_LinkPair(26, 27, 0);
+  Object_TurnToFaceEachOther(26, 27, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048cc(26, 0x108, 0);
   I_Func_020048cc(26, 0x108, 30);
@@ -518,7 +518,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048b4(26, 0xa000);
   FieldEvent_WaitFrames(10);
   Func_0200489c(26, 0, 5);
-  Object_LinkPair(0, 2, 0);
+  Object_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_WaitFrames(10);
   I_Func_020048bc(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
   I_ObjectMotion_ArmCallback(0, 0xa000, 0);
@@ -536,7 +536,7 @@ void Func_02000cac(s32 arg) {
   ObjectMotion_EnableActionAndSetCallback(27, gData_020049ec);
   Func_0200489c(27, 0, 5);
   Object_RefreshSelectorById(27);
-  Object_LinkPair(26, 27, 30);
+  Object_TurnToFaceEachOther(26, 27, 30);
   Object_SetModeById(26, 3);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 2 of 1568 instructions differ in tla-en. */

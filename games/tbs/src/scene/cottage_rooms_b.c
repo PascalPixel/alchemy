@@ -1265,7 +1265,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
       child->watchedActor = parent;
       if (part != NULL) {
         sprite = part;
-        Sprite_StartAnim(part, 0);
+        Sprite_StartAnimation(part, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;

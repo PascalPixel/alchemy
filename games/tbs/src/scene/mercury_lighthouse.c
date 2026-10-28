@@ -2949,7 +2949,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   effect->priorityFlags = 2;
 
   if (sprite != 0) {
-    Sprite_StartAnim(sprite, 2);
+    Sprite_StartAnimation(sprite, 2);
     sprite->flags = 0;
     sprite->image.priority = 3;
   }

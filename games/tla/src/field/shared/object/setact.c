@@ -36,7 +36,7 @@ void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
     kind = (s32)gData_080f373c;
     break;
   case 6:
-    object->linkedObject = Object_GetById(gAdventure.currentOwner);
+    object->watchedObject = Object_GetById(gAdventure.currentOwner);
     kind = (s32)gData_080f3750;
     break;
   case 7:

@@ -83,7 +83,7 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
   struct ObjectRuntime *target = ObjectTable_Get(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
-    follower->linkedObject = target;
+    follower->watchedObject = target;
     if (!(targetId & 0x10000)) {
       /* FAKEMATCH(pin): the collision flags' zero held in r1, which the
        * native loads from the pool between the action's store and the

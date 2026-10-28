@@ -54,7 +54,7 @@ void FieldPsynergy_Force(void) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = 0xb333; // 0.7
     effect->scaleX = 0xb333;
     WaitFrames(2);
@@ -80,7 +80,7 @@ void FieldPsynergy_Force(void) {
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   Actor_SelectAnimationFar(projectile, 5);
-  Anim_ApplyChildValuesFar(projectile, SPRITE_COLOR_BGR);
+  Actor_SetSpriteColorModeFar(projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < Q16_ONE) {
     do {
@@ -106,7 +106,7 @@ void FieldPsynergy_Force(void) {
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, 5);
-      Anim_ApplyChildValuesFar(copy, SPRITE_COLOR_RBG);
+      Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);
     }

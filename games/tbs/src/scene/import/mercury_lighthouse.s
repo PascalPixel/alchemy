@@ -9,7 +9,7 @@
 	.set import.Trig_Sin, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.AllocHeapSlotEwram, 1
-	.set import.Sprite_StartAnim, 1
+	.set import.Sprite_StartAnimation, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1

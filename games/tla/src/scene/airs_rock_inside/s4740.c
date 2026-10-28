@@ -23,7 +23,7 @@ s32 Func_02005dcc();
 s32 Func_02005dd4();
 s32 Func_02004138();
 s32 UiText_DrawQuantityPairWithCue();
-s32 Object_LinkPair();
+s32 Object_TurnToFaceEachOther();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 ObjectMotion_ResetAndSetPosition();
@@ -85,7 +85,7 @@ void Func_02004534(void) {
     Call2(Func_02004138, 8, 6);
     Call2(UiText_DrawQuantityPairWithCue, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
-    Call3(Object_LinkPair, gAdventure.currentOwner, 6, 0);
+    Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 6, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetModeById, 6, 3);
     Call2(Object_SetModeById, gAdventure.currentOwner, 3);

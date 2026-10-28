@@ -27,7 +27,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_Launch(s32 id, s32 mode, s32 value);
-void Object_LinkPair(s32 id, s32 other, s32 value);
+void Object_TurnToFaceEachOther(s32 id, s32 other, s32 value);
 void GameFlag_SetBit(s32 flag);
 
 void Func_020015ac(void) {
@@ -70,7 +70,7 @@ void Func_020015ac(void) {
     ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 68, 680);
   }
   Func_0200401c(0, 0, 0);
-  Object_LinkPair(gAdventure.currentOwner, 17, 0);
+  Object_TurnToFaceEachOther(gAdventure.currentOwner, 17, 0);
   FieldEvent_WaitFrames(10);
   GameFlag_SetBit(2535);
   Func_02004074();

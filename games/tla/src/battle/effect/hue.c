@@ -11,7 +11,7 @@ struct WaveFxScroll {
   u8 delay;
 };
 
-/// Applies BG0 scanline scrolling with HBlank DMA.
+/// Applies BG0 line scrolling with HBlank DMA.
 void BattleEffect_ArmBg0HBlankDma(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 

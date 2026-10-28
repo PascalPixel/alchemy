@@ -6,11 +6,11 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 
-/// SC_APPROACH_WATCHED: follows the linked object at its speed. More than 16
+/// SC_APPROACH_WATCHED: follows the watched object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 // As ☀️'s function of the same name.
-s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
+s32 Object_ApproachWatchedObject(struct ObjectRuntime *object) {
   s32 distancePixels;
   s32 moveZ;
   s32 dx;
@@ -19,16 +19,16 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
   s32 deltaXPixels;
   s32 remainingDistance;
   s32 moveX;
-  /* FAKEMATCH(pin): the linked object held in the r2 the native keeps it in;
+  /* FAKEMATCH(pin): the watched object held in the r2 the native keeps it in;
    * as a plain local, 15 of 65 instructions differ in tla-en. */
-  register struct ObjectRuntime *linkedObject asm("r2");
+  register struct ObjectRuntime *watchedObject asm("r2");
 
-  linkedObject = object->linkedObject;
-  object->speedLimit = linkedObject->speedLimit;
-  object->acceleration = linkedObject->acceleration;
+  watchedObject = object->watchedObject;
+  object->speedLimit = watchedObject->speedLimit;
+  object->acceleration = watchedObject->acceleration;
   {
     /* FAKEMATCH(temporary): the object's x in its own variable, which ⚓️
-     * loads before the linked object's; as object->x in the subtraction
+     * loads before the watched object's; as object->x in the subtraction
      * with no barrier, 2 of 65 instructions differ in tla-en. */
     s32 objectX = object->x;
 
@@ -36,9 +36,9 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
      * ahead; as the temporary alone, 9 of 65 instructions differ in
      * tla-en. */
     asm volatile("" : "+l"(objectX));
-    dx = linkedObject->x - objectX;
+    dx = watchedObject->x - objectX;
   }
-  dz = linkedObject->z - object->z;
+  dz = watchedObject->z - object->z;
   deltaXPixels = dx >> 0x10;
   deltaZPixels = dz >> 0x10;
   distancePixels =

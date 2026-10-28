@@ -2,7 +2,7 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.ArcTan2, 1
-	.set import.Sprite_StartAnim, 1
+	.set import.Sprite_StartAnimation, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1

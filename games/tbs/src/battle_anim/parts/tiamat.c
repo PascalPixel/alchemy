@@ -166,10 +166,10 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode) {
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
       if (mode == PALETTE_PARTICLES_TIAMAT) {
-        Sprite_StartAnimFar(work->animations[0], 8);
-        Sprite_StartAnimFar(work->animations[1], 9);
-        Sprite_StartAnimFar(work->animations[3], 10);
-        Sprite_StartAnimFar(work->animations[4], 11);
+        Sprite_StartAnimationFar(work->animations[0], 8);
+        Sprite_StartAnimationFar(work->animations[1], 9);
+        Sprite_StartAnimationFar(work->animations[3], 10);
+        Sprite_StartAnimationFar(work->animations[4], 11);
       }
       ANIM_FOR_EACH_TARGET(i, work->args) {
         BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
@@ -377,16 +377,16 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode) {
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
-        Sprite_StartAnimFar(work->animations[0], 8);
-        Sprite_StartAnimFar(work->animations[1], 9);
-        Sprite_StartAnimFar(work->animations[3], 10);
-        Sprite_StartAnimFar(work->animations[4], 11);
+        Sprite_StartAnimationFar(work->animations[0], 8);
+        Sprite_StartAnimationFar(work->animations[1], 9);
+        Sprite_StartAnimationFar(work->animations[3], 10);
+        Sprite_StartAnimationFar(work->animations[4], 11);
       }
       if (frame == 176) {
-        Sprite_StartAnimFar(work->animations[0], 0);
-        Sprite_StartAnimFar(work->animations[1], 1);
-        Sprite_StartAnimFar(work->animations[3], 3);
-        Sprite_StartAnimFar(work->animations[4], 4);
+        Sprite_StartAnimationFar(work->animations[0], 0);
+        Sprite_StartAnimationFar(work->animations[1], 1);
+        Sprite_StartAnimationFar(work->animations[3], 3);
+        Sprite_StartAnimationFar(work->animations[4], 4);
       }
       BattleAnim_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
                                        focus.y);

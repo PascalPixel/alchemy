@@ -303,7 +303,7 @@ void BattleAnim_TintBattler(s32 unitId, s32 palette, s32 animation,
         }
       }
       if (animation != -1)
-        Sprite_StartAnimFar(group, animation);
+        Sprite_StartAnimationFar(group, animation);
     }
     groupIndex++;
   }

@@ -102,7 +102,7 @@ static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position) {
 }
 
 s32 Func_0200047c(struct ObjectRuntime *object) {
-  struct ObjectRuntime *owner = object->linkedObject;
+  struct ObjectRuntime *owner = object->watchedObject;
 
   if (owner != NULL) {
     u8 *phase = &OBJECT_BYTE(object, 98);

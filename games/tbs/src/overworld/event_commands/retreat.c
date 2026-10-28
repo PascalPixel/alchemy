@@ -126,7 +126,7 @@ void FieldPsynergy_Retreat(void) {
 
   // Start spinning.
   Sound_PlaySongFar(SE_SHIMMER);
-  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   Actor_SelectAnimationFar(actor, 3);
   actor->update = FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
@@ -148,7 +148,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -304,7 +304,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     actor->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    Sprite_StartAnimFar((struct Sprite *)sprite, 0);
+    Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
     sprite->flags = zero;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->arcTileSlot;

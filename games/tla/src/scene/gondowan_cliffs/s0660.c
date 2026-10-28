@@ -16,7 +16,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Vector_AddPolarOffsetFar();
 void Func_0200120c(void);
 void Func_020012e4(s32);
-void Object_LinkPair(s32, s32, s32);
+void Object_TurnToFaceEachOther(s32, s32, s32);
 void Func_0200128c(s32);
 void Func_02001294(s32, s32);
 void ObjectMotion_ArmCallback();
@@ -38,7 +38,7 @@ void Func_02000660(void) {
   } else {
     Func_0200120c();
     Func_020012e4(0);
-    Object_LinkPair(16, gAdventure.currentOwner, 0);
+    Object_TurnToFaceEachOther(16, gAdventure.currentOwner, 0);
     Func_0200128c((s32)MsgRrruffRrruff2);
     Func_02001294(16, 0);
     Call3(ObjectMotion_ArmCallback, 16, 0x8000, 0);

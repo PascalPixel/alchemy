@@ -14,8 +14,9 @@ void Actor_ApplyProjectedPlacementFar(struct Sprite *sprite,
                                       const struct SpriteScale *scale,
                                       s32 facing);
 /// Starts animation `flags & 0x7f` on every sprite animation of a sprite unless
-/// it plays it already; bit 7 keeps each anim's place and timer. Returns 0.
-s32 Sprite_StartAnimFar(struct Sprite *state, s32 flags);
+/// it plays it already; bit 7 keeps each sprite animation's place and timer.
+/// Returns 0.
+s32 Sprite_StartAnimationFar(struct Sprite *state, s32 flags);
 /// Creates a sprite for animation `id` with a VRAM cache entry for its tiles,
 /// or returns NULL when there's no room or the id has no image. The caller
 /// keeps it until Sprite_DestroyFar.
@@ -24,12 +25,12 @@ struct Sprite *Sprite_CreateFar(s32 id);
 /// zeroes it so it's free again.
 void Sprite_DestroyFar(struct Sprite *sprite);
 /// Adds a sprite animation playing animation `id` to a sprite, the first free
-/// one of four. Returns the anim, 0 when none is free, or -1 when all four are
-/// taken.
-s32 Sprite_AddAnimFar(struct Sprite *state, s32 id);
+/// one of four. Returns the sprite animation, 0 when none is free, or -1 when
+/// all four are taken.
+s32 Sprite_AddAnimationFar(struct Sprite *state, s32 id);
 /// Takes sprite animation `handle` off a sprite and clears it; the battle's
 /// objects use it to drop an extra one.
-void Sprite_RemoveAnimFar(struct Sprite *state, s32 handle);
+void Sprite_RemoveAnimationFar(struct Sprite *state, s32 handle);
 /// Zeroes one sprite animation, which frees it; NULL is ignored.
 void SpriteAnimation_ClearFar(struct SpriteAnimation *layer);
 /// Starts animation `no` on one sprite animation when its metadata has it. Bit
@@ -187,12 +188,12 @@ void WorldMap_StartStillPictureFar(void);
 /// returns to the perspective view.
 void WorldMap_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
-/// anims, except hidden ones.
-void Anim_ApplyChildValuesFar(struct Actor *actor, u32 val);
+/// sprite animations, except hidden ones.
+void Actor_SetSpriteColorModeFar(struct Actor *actor, u32 val);
 /// Sets every sprite animation of a sprite to colour mode `value`, skipping
 /// those drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for
 /// redrawing.
-void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
+void Sprite_SetAnimationColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an actor at `values` would overlap a solid actor
 /// (ACTOR_SOLID), each radius less 2 pixels, else 0.
 s32 ActorScript_CheckOverlapFar(struct Actor *actor, s32 *values);
@@ -214,7 +215,7 @@ s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 void MapGrid_SetCellBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);
 /// Sets the timer step of a sprite's animated sprite animations: 16 plays at
 /// normal speed, 0 stops them.
-void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);
+void Sprite_SetAnimationSpeedFar(struct Sprite *group, s32 val);
 /// Remaps `cnt` bytes of `buf` in place through gSpriteColorRemapTables, as
 /// the command icons' colours are.
 void SpriteColor_RemapPixelsFar(u8 *buf, s32 cnt);

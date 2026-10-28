@@ -68,7 +68,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
         near = 1;
     }
     if (near && !GameFlag_Test(0x104)) {
-      leader->linkedObject = shot;
+      leader->watchedObject = shot;
       leader->angle = shot->angle;
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
@@ -89,7 +89,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
 search:
   other = *objects++;
   if (other->script != 0) {
-    launcher = shot->linkedObject;
+    launcher = shot->watchedObject;
     if (launcher->x >> 20 != other->x >> 20 ||
         launcher->y >> 20 != other->y >> 20 ||
         launcher->z >> 20 != other->z >> 20) {

@@ -17,8 +17,8 @@
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
-	.set import.Anim_ApplyChildValues, 1
-	.set import.Sprite_SetAnimColorModes, 1
+	.set import.Actor_SetSpriteColorMode, 1
+	.set import.Sprite_SetAnimationColorModes, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1

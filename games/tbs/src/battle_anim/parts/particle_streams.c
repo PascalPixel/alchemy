@@ -203,7 +203,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       work->animations[i] = animation;
       if (animation != 0) {
         animation->flags = 0;
-        Sprite_StartAnimFar(animation, 2);
+        Sprite_StartAnimationFar(animation, 2);
         work->animations[i]->image.priority = 3;
       }
     }

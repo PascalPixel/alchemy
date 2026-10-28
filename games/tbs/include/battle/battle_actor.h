@@ -4,7 +4,7 @@
 /// @file
 /// BattleActor, the view of struct Actor one battle function gives a
 /// unit its sprites through, and SpriteAnimationHeadView, the start of a sprite
-/// anim.
+/// sprite animation.
 
 #include "types.h"
 #include "static_assert.h"

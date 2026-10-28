@@ -623,7 +623,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
         summary->party[i], (s8)summary->childhood));
 
     if (sprite != NULL) {
-      Sprite_StartAnimFar(sprite, 1);
+      Sprite_StartAnimationFar(sprite, 1);
       sprite->flags = 0;
       sprite->image.priority = 0;
     }
@@ -695,7 +695,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
       struct Sprite *sprite = Sprite_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
-        Sprite_StartAnimFar(sprite, 2);
+        Sprite_StartAnimationFar(sprite, 2);
         sprite->flags = 0;
         sprite->image.priority = 0;
       }

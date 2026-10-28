@@ -166,9 +166,9 @@ ObjectMotion_Launch:
 	.thumb_func
 ObjectMotion_SetAngleToward:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Object_LinkPair
+	.global Object_TurnToFaceEachOther
 	.thumb_func
-Object_LinkPair:
+Object_TurnToFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Object_SetPartAttribute
 	.thumb_func

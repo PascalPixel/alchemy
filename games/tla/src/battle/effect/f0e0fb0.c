@@ -15,7 +15,7 @@ void BattleEffect_UpdateDescendingParticleNegativeArc(
 
 
   limit = particle->terrainHeight + 0xA0000;
-  source = particle->linkedObject;
+  source = particle->watchedObject;
   if (party->map == (s32)&SceneId_Ov64a)
     limit = particle->terrainHeight + 0x40000;
 

@@ -512,7 +512,7 @@ static void AltmillerCave_StartRetreat(void) {
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainActor;
   Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
-  Anim_ApplyChildValues(original, 0);
+  Actor_SetSpriteColorMode(original, 0);
   Event_WaitFrames(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
                                   original->z.fixed);
@@ -2257,8 +2257,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldParticle_SetActorMode(fragment, 7);
-    Sprite_SetAnimColorModes(fragment->actor,
-                             (u32)(Import_RandomNext() * 7) >> 16);
+    Sprite_SetAnimationColorModes(fragment->actor,
+                                  (u32)(Import_RandomNext() * 7) >> 16);
     scale = Math_DivideUnsigned(Import_RandomNext(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;

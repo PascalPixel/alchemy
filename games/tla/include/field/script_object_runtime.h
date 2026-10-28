@@ -10,7 +10,7 @@ struct ScriptObjectRuntime {
   const s32 *script; ///< null when the object is free
   u16 scriptCursor;  ///< in words
   /// The object's facing, 1/65536 turns: the heading the wander commands
-  /// wander around, and where SC_FACE_WATCHED stores the angle to the linked
+  /// wander around, and where SC_FACE_WATCHED stores the angle to the watched
   /// object.
   u16 scriptValue;
   s32 x;             ///< 16.16 fixed-point pixels
@@ -52,7 +52,7 @@ struct ScriptObjectRuntime {
   s16 homeZ;
   ///@}
   /// The object SC_FACE_WATCHED and SC_MOVE_TO_WATCHED aim at.
-  struct ScriptObjectRuntime *linkedObject;
+  struct ScriptObjectRuntime *watchedObject;
   u8 unk6c[0x04]; ///< the update hook (ObjectRuntime.update); not named here
 };
 
@@ -62,6 +62,6 @@ STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptCursor) == 0x04);
 STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptValue) == 0x06);
 STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, x) == 0x08);
 STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, speedLimit) == 0x30);
-STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, linkedObject) == 0x68);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, watchedObject) == 0x68);
 
 #endif

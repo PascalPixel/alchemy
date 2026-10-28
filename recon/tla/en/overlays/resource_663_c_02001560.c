@@ -1,5 +1,5 @@
 // Draft, differ 298 of 377: the leader rides the object it stands on (its
-// linkedObject) in Air's Rock: while that object's byte 0x63 is set the
+// watchedObject) in Air's Rock: while that object's byte 0x63 is set the
 // leader is carried up on it, rising faster each frame and spinning and
 // flickering by the frame count (cue 137 at the start, 0x120 at the end).
 // Facing up (0xc000), the leader then waits up to 60 frames for up,
@@ -37,7 +37,7 @@ s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02001560(void) {
   struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *ride = leader->linkedObject;
+  struct ObjectRuntime *ride = leader->watchedObject;
   struct ObjectRuntime *rider, *dust;
   u8 *riding, *motion, *priority;
   s32 rise, dx, dz, moved, i, height;
@@ -65,7 +65,7 @@ void Func_02001560(void) {
   Func_02003cd8(0x120);
   priority = &leader->priorityFlags;
   if (ride->angle == 0xc000) {
-    rider = ride->linkedObject;
+    rider = ride->watchedObject;
     dx = 0;
     dz = 0;
     *priority = 4;

@@ -9,7 +9,7 @@
 s32 Math_Sine(s32 angle);
 
 s32 Func_02001064(struct ObjectRuntime *object) {
-  struct ObjectRuntime *anchor = object->linkedObject;
+  struct ObjectRuntime *anchor = object->watchedObject;
   s32 frame;
   s32 scale;
 

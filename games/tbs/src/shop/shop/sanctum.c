@@ -363,9 +363,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
+        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 30);
       else
-        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
+        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 1);
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = 0xb333;
@@ -453,8 +453,8 @@ void Shop_ResetEffects(void) {
   } while (remainingEffects >= 0);
   burstMember = shop->burstMember;
   if (burstMember != -1)
-    Sprite_SetAnimColorModesFar(shop->partyMemberIcons[burstMember],
-                                (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
+                                     (Random16() * 7) >> 16);
 }
 
 /// The tune each service's burst plays, by enum SanctumService; the burst
@@ -489,7 +489,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlaySongFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
-  Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = TASK_PASS_FRAME;
   Task_Add(Shop_ResetEffects, callbackPriority);
@@ -505,7 +505,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, 0x11c, position.x, position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
     WaitFrames(3);
@@ -532,7 +532,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   WaitFrames(20);
   Sound_PlaySongFar(SE_RECOVERY);
   shop->burstMember = -1;
-  Sprite_SetAnimColorModesFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
 
   {
@@ -552,7 +552,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Shop_ResetEffects);
-  Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   WaitFrames(30);
   shop->cursor.anchor->motion = savedCursorMode;

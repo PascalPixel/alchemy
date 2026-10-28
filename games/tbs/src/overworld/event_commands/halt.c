@@ -145,7 +145,7 @@ void FieldPsynergy_Halt(void) {
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialCamera);
-    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -167,7 +167,7 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
-  Anim_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
+  Actor_SetSpriteColorModeFar(object, table[(u32)(random * 8) >> 16]);
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
@@ -211,7 +211,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
       struct Adventure *state = &gAdventure;
       actor->update = (void (*)(struct Actor *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Anim_ApplyChildValuesFar(actor, state->pausedPose);
+      Actor_SetSpriteColorModeFar(actor, state->pausedPose);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, 16);

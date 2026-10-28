@@ -69,7 +69,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_GREEN_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = 0x8000;
     effect->scaleY = Random16() + 0x18000;
     remaining--;
@@ -117,7 +117,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
       djinni->update = FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);
-      Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
+      Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -143,7 +143,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + 0x16666;
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-    Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
+    Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
     Actor_StartScriptFar(djinni, gFieldEffect_SharedParticleScript);
   }

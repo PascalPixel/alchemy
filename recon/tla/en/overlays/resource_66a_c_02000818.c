@@ -143,7 +143,7 @@ void Func_02000818(void) {
   effect = (struct ObjectRuntime *)Value1((s32 (*)())BattleEffect_StartItemBreak,
                                           (s32)object21);
   position[0] = object15->x;
-  effect->linkedObject = object15;
+  effect->watchedObject = object15;
   position[1] = object15->y + 0x100000;
   position[2] = object15->z;
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, 0xc000, (s32)position);

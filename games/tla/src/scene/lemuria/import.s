@@ -146,9 +146,9 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 ObjectMotion_SetAngleToward:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Object_LinkPair
+	.global Object_TurnToFaceEachOther
 	.thumb_func
-Object_LinkPair:
+Object_TurnToFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Func_02001c6c
 	.thumb_func

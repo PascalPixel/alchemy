@@ -96,7 +96,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
-      Anim_ApplyChildValuesFar(copy, tint);
+      Actor_SetSpriteColorModeFar(copy, tint);
       Actor_SelectAnimationFar(copy, 0);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);

@@ -12,7 +12,7 @@ void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void ObjectMotion_SetVariantCallback(s32 actor, s32 variant);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
-void Object_LinkPair(s32 a, s32 b, s32 c);
+void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Func_02000ca8(s32 actor, s32 x, s32 z);
 void Func_02000d08(s32 actor, s32 value, s32 frames);
 void Func_02000d48(s32 actor, s32 dx, s32 dz, s32 angle);
@@ -112,7 +112,7 @@ void Func_020003a0(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(6, 0);
   Engine_EventWait(30);
-  Object_LinkPair(gAdventure.currentOwner, 28, 0);
+  Object_TurnToFaceEachOther(gAdventure.currentOwner, 28, 0);
   Engine_EventWait(30);
   ObjectMotion_SetAngleToward(28, 27, 0);
   ObjectMotion_SetAngleToward(gAdventure.currentOwner, 27, 0);

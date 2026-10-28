@@ -139,7 +139,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     break;
   }
 
-  Message_ResetFreeFar();
+  Message_ResetIdleFar();
   return 0;
 }
 
@@ -537,7 +537,7 @@ void BattleMotion_PlayFall(s32 unitId) {
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
     animation = BattleObject_Get(unitId)->actor->sprite;
-    Sprite_StartAnimFar(animation, POSE_DAMAGE);
+    Sprite_StartAnimationFar(animation, POSE_DAMAGE);
     actorData = animation->entries[0];
     actorData->colorMode = SPRITE_COLOR_GREY;
     actorData->picture = 0xFF;

@@ -4,7 +4,7 @@
 // 262; at 0 it frees its VRAM. Otherwise it queues the two banner rows of
 // sprites, each four pairs 36 pixels apart along the scrolled offset (one row
 // mirrored), and on frames 5 to 15 of every 16 a marker over each of the two
-// linked objects, projected from their positions and the course side.
+// watched objects, projected from their positions and the course side.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "frame.h"
 #include "dma.h"

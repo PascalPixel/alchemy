@@ -202,8 +202,8 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
       }
     }
     if (frame > 208) {
-      Sprite_StartAnimFar(work->animations[2],
-                          gBoreas_Animations[(frame / 4) & 3]);
+      Sprite_StartAnimationFar(work->animations[2],
+                               gBoreas_Animations[(frame / 4) & 3]);
     }
 
     scale.x = Q16_ONE;

@@ -1301,7 +1301,7 @@ Func_020012bc:
 	movs r2, #0
 	movs r1, #23
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #10
@@ -1375,7 +1375,7 @@ Func_020012bc:
 	movs r1, #23
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #30
 	bl FieldEvent_WaitFrames
 	movs r0, #23
@@ -1834,7 +1834,7 @@ Func_020012bc:
 	movs r0, #20
 	movs r1, #21
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r1, #128
 	movs r0, #22
 	lsls r1, r1, #8
@@ -1927,7 +1927,7 @@ Func_020012bc:
 	movs r1, #23
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r1, #192
@@ -1993,7 +1993,7 @@ Func_020012bc:
 	movs r2, #0
 	movs r1, #21
 	movs r0, #20
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r0, #21
@@ -2007,7 +2007,7 @@ Func_020012bc:
 	movs r2, #0
 	movs r1, #22
 	movs r0, #20
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #40
 	bl FieldEvent_WaitFrames
 	movs r0, #22

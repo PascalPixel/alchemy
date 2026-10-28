@@ -24,7 +24,7 @@ s32 Func_08025428(struct ObjectRuntime *cameraObject) {
   s32 moveStep;
 
   bounds = Ram_HeapSlots->mapWork;
-  leader = cameraObject->linkedObject;
+  leader = cameraObject->watchedObject;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + 0x600000;
   maxX = bounds->maxX - 0x780000;

@@ -1,5 +1,5 @@
 // Draft, differ 115 of 216: shared by thirteen overlays (698 to 6a4): the
-// leader rides up with its linked object, spinning and flickering, until that
+// leader rides up with its watched object, spinning and flickering, until that
 // object clears its flag; then it is set down on the 8-pixel grid beside it,
 // falls to the ground and the camera follows it again. The loops are goto loops
 // because the native rebuilds their constants (0x3ffff, 0x100000) on every
@@ -36,7 +36,7 @@ void Func_02001a84(void);
 void Func_020003cc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *linked = actor->linkedObject;
+  struct ObjectRuntime *linked = actor->watchedObject;
   struct ObjectRuntime *shadow;
   s32 facing;
   s32 i;

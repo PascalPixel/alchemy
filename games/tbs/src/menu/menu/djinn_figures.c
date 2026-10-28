@@ -27,7 +27,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL) {
-      Sprite_StartAnimFar(animation, 2);
+      Sprite_StartAnimationFar(animation, 2);
     }
     state->animations[index] = animation;
     state->positionsX[index] = 0x10;
@@ -172,7 +172,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL)
-      Sprite_StartAnimFar(animation, 2);
+      Sprite_StartAnimationFar(animation, 2);
     state->animations[index] = animation;
     state->phases[index] = Q16_ONE;
     state->positionsX[index] = 0x10;
@@ -221,7 +221,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
         Sprite_CreateFar(gDjinnFigures_SpriteIds[resourceKind]);
 
     if (animation != NULL)
-      Sprite_StartAnimFar(animation, value);
+      Sprite_StartAnimationFar(animation, value);
     state->animations[index] = animation;
   }
   return 1;
@@ -236,7 +236,7 @@ UNUSED void Menu_StartPartyFiguresWalking(void) {
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {
-    Sprite_StartAnimFar(menu->memberSprites[index], 1);
+    Sprite_StartAnimationFar(menu->memberSprites[index], 1);
   }
 }
 

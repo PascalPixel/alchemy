@@ -70,7 +70,7 @@ void Func_02001290(struct ObjectRuntime *object) {
     ((u8 *)shot)[0x62] = 0;
     ((u8 *)shot)[0x63] = 0;
     shot->angle = object->angle;
-    shot->linkedObject = object;
+    shot->watchedObject = object;
     shot->update = Func_020010b4;
     object->action = 0;
     options.priority = 1;

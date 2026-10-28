@@ -1,25 +1,26 @@
 /// @file
-/// Drawing sprites: composing their anims and placing them on screen.
+/// Drawing sprites: composing their animations and placing them on screen.
 // Part of field.c.
 
 #include "../field_internal.h"
 
-/// Draws one anim's picture into a sprite's pixel buffer (Render_DecodePicture,
-/// run from RAM).
+/// Draws one sprite animation's picture into a sprite's pixel buffer
+/// (Render_DecodePicture, run from RAM).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 /// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-/// Advances a sprite's anims by one frame, picks each anim's picture
-/// for the facing dir, and when any picture changed redraws the sprite: the
-/// anims composed by priority into one pixel buffer, an optional outline,
-/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when anim
-/// 0's picture for this facing is drawn mirrored.
+/// Advances a sprite's animations by one frame, picks each sprite animation's
+/// picture for the facing dir, and when any picture changed redraws the sprite:
+/// the sprite animations composed by priority into one pixel buffer, an
+/// optional outline, and the result uploaded to the sprite's VRAM tiles.
+/// Returns 1 when sprite animation 0's picture for this facing is drawn
+/// mirrored.
 ///
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
-/// and Render_PlaceProjectedSprite. Writes the anims' script position,
-/// timer and picture, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
-/// and the ActorSystemWork's count of bytes composed; takes heap slot
+/// and Render_PlaceProjectedSprite. Writes the sprite animations' script
+/// position, timer and picture, the sprite's dirty flag and tile, its tiles in
+/// OBJ VRAM, and the ActorSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
 s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
@@ -75,8 +76,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     decoderWasLoaded = 0;
   }
 
-  // Step each anim's script: read commands until one shows a picture for a
-  // while, else count the current picture's time down.
+  // Step each sprite animation's script: read commands until one shows a
+  // picture for a while, else count the current picture's time down.
   for (i = 0; i < animation->count; i++) {
     layer = animation->entries[i];
     if (layer == 0) {
@@ -117,9 +118,10 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->pictureBase = 255;
         layer->script = 0;
         picture = 255;
-        // Ending any anim lowers the sprite's anim count, as if the last had
-        // ended. Only sprite 283, the impact of Lift, has animations that end,
-        // and it is a sprite of one anim, so an ending always empties it.
+        // Ending any sprite animation lowers the sprite's animation count, as
+        // if the last had ended. Only sprite 283, the impact of Lift, has
+        // animations that end, and it is a sprite of one sprite animation, so
+        // an ending always empties it.
         animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a picture.
@@ -140,14 +142,14 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       }
       goto read_command;
     }
-    // Time is left on this picture: count it down by the anim's step (16, the
-    // normal speed, takes a frame off each frame).
+    // Time is left on this picture: count it down by the sprite animation's
+    // step (16, the normal speed, takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
   show_picture:
     picture = layer->pictureBase;
   select_direction:
-    // The facing table of the anim's kind gives an offset from the base
-    // picture (low three bits) and whether to mirror it (bit 7).
+    // The facing table of the sprite animation's kind gives an offset from the
+    // base picture (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
     case ANIM_FACING_ONE_PICTURE:
       facing = gAnimationFacing_OnePicture[dir >> 13];
@@ -199,8 +201,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     pixels = Alloc(size);
     Iwram_ClearWords(pixels, size);
 
-    // Sort the visible anims by priority (0-3), then by index, with an
-    // insertion sort on keys of (priority << 8) | index.
+    // Sort the visible sprite animations by priority (0-3), then by index, with
+    // an insertion sort on keys of (priority << 8) | index.
     drawCount = -1;
     for (i = animation->count - 1; i >= 0; i--) {
       layer = animation->entries[i];
@@ -239,9 +241,9 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     }
     drawCount++;
 
-    // Draw the anims in that order, each by its codec. LZ pictures are
-    // unpacked first, or drawn through a scratch buffer when the anim has a
-    // draw parameter.
+    // Draw the sprite animations in that order, each by its codec. LZ pictures
+    // are unpacked first, or drawn through a scratch buffer when the sprite
+    // animation has a draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
@@ -602,14 +604,13 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of each of a sprite's anims to
-/// value, except anims drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
-/// sprite for redrawing. The sprite's first count anims must all be present:
-/// it does not test them for null.
-/// Called by Anim_ApplyChildValues and, as
-/// Sprite_SetAnimColorModesFar, by field Psynergy, the
-/// Sanctum and the Altmiller Cave scene.
-void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {
+/// Sets the colour mode (SpriteColorMode) of each of a sprite's animations to
+/// value, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
+/// marks the sprite for redrawing. The sprite's first count sprite animations
+/// must all be present: it does not test them for null. Called by
+/// Actor_SetSpriteColorMode and, as Sprite_SetAnimationColorModesFar, by field
+/// Psynergy, the Sanctum and the Altmiller Cave scene.
+void Sprite_SetAnimationColorModes(void *rawSprite, u32 value) {
   struct Sprite *sprite = rawSprite;
   if (sprite != 0) {
     u32 count = sprite->count;

@@ -55,7 +55,7 @@ struct DispatchObject {
   u8 unk5e[6];
   s16 value64; ///< the action script's parameter; the camera clears it
   u8 unk66[2];
-  s32 argument; ///< the linked object a script approaches or follows
+  s32 argument; ///< the watched object a script approaches or follows
   void (*update)(struct DispatchObject *object); ///< per-frame hook
 };
 

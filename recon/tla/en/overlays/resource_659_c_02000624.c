@@ -59,7 +59,7 @@ void ObjectMotion_WaitForAnimationChange();
 void Camera_FollowActor();
 struct ObjectRuntime *Object_GetById();
 void Object_LinkObjectAndSetCallback();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();

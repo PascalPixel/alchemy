@@ -64,7 +64,7 @@ struct ObjectRuntime {
   s16 action;
   u16 unk66;
   /// The object its action script follows or faces.
-  struct ObjectRuntime *linkedObject;
+  struct ObjectRuntime *watchedObject;
   void (*update)(void); ///< the object's per-frame hook
   u8 unk70[0x10];
 };

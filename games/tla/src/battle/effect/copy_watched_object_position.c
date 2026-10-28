@@ -12,10 +12,10 @@
 #include "scene.h"
 #include "object_runtime.h"
 
-s32 BattleEffect_CopyLinkedObjectPosition(struct ObjectRuntime *object) {
+s32 BattleEffect_CopyWatchedObjectPosition(struct ObjectRuntime *object) {
   struct ObjectRuntime *link;
 
-  link = object->linkedObject;
+  link = object->watchedObject;
   if (link != NULL) {
     object->motionFlags = 0;
     object->x = link->x;

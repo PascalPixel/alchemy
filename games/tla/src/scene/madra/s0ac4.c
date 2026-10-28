@@ -7,7 +7,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_LinkPair(s32 a, s32 b, s32 c);
+void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
@@ -233,7 +233,7 @@ void Func_02000ac4(void) {
   ArmCallback(32, 0xb000, 0);
   Func_02002be0(25, 0, 2);
   FieldEvent_WaitFrames(10);
-  Object_LinkPair(4, 32, 0);
+  Object_TurnToFaceEachOther(4, 32, 0);
   FieldEvent_WaitFrames(20);
   FieldEvent_WaitFrames(10);
   ArmCallback(4, 0xc000, 0);
@@ -753,8 +753,8 @@ void Func_020019d8(void) {
   Emote(33, 0x107, 30);
   Func_02002be8(33, 0);
   ArmCallback(33, 0x8000, 0);
-  Object_LinkPair(6, 5, 0);
-  Object_LinkPair(7, 32, 0);
+  Object_TurnToFaceEachOther(6, 5, 0);
+  Object_TurnToFaceEachOther(7, 32, 0);
   FieldEvent_WaitFrames(40);
   Emote(4, 0x102, 30);
   Motion_SetVarCbAndRefresh(33, 2);
@@ -789,7 +789,7 @@ void Func_020019d8(void) {
     FieldEvent_WaitFrames(20);
     FieldEvent_WaitFrames(20);
     Func_02002be8(33, 0);
-    Object_LinkPair(6, 5, 0);
+    Object_TurnToFaceEachOther(6, 5, 0);
     FieldEvent_WaitFrames(40);
     ObjectMotion_SetAngleToward(6, 33, 0);
     ObjectMotion_SetAngleToward(5, 33, 0);
@@ -803,7 +803,7 @@ void Func_020019d8(void) {
   } else {
     Func_02002bd0(MsgICanTBelieveIt);
     Func_02002be8(33, 0);
-    Object_LinkPair(6, 5, 0);
+    Object_TurnToFaceEachOther(6, 5, 0);
     FieldEvent_WaitFrames(40);
     ObjectMotion_SetAngleToward(6, 33, 0);
     ObjectMotion_SetAngleToward(5, 33, 0);
@@ -979,7 +979,7 @@ void Func_020019d8(void) {
   ArmCallback(5, 0x4000, 0);
   FieldEvent_WaitFrames(20);
   Func_02002be8(5, 0);
-  Object_LinkPair(4, 7, 0);
+  Object_TurnToFaceEachOther(4, 7, 0);
   FieldEvent_WaitFrames(40);
   Motion_SetVarCbAndRefresh(32, 2);
   FieldEvent_WaitFrames(20);

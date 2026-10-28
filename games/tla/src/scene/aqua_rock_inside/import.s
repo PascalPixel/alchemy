@@ -234,9 +234,9 @@ Object_SetModeById:
 	.thumb_func
 Func_02003df4:
 	overlay_veneer Object_JumpDownLedgeFar
-	.global Object_LinkPair
+	.global Object_TurnToFaceEachOther
 	.thumb_func
-Object_LinkPair:
+Object_TurnToFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Func_02003e04
 	.thumb_func

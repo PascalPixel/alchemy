@@ -250,7 +250,7 @@ Func_02000430:
 	movs r1, #4
 	movs r2, #0
 	movs r0, #18
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r1, #2
@@ -339,7 +339,7 @@ Func_02000430:
 	movs r1, #21
 	movs r2, #0
 	movs r0, #20
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r1, #8
@@ -883,7 +883,7 @@ Func_02000a24:
 	movs r0, #0
 	movs r1, #4
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r2, #0
 	movs r1, #4
 	movs r0, #18

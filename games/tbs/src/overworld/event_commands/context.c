@@ -113,7 +113,7 @@ void Exit_PrepareAnimation(s32 animation) {
 
   actor = Actor_Lookup(gAdventure.leaderActorId);
   context = actor->sprite;
-  effect = (struct SpriteAnimation *)Sprite_AddAnimFar(context, 27);
+  effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
@@ -162,7 +162,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnimation *eff =
-      (struct SpriteAnimation *)Sprite_AddAnimFar(spriteAnimation, 27);
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation, 27);
 
   zero = 0;
   mask = 0xfff00000;

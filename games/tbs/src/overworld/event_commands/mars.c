@@ -64,7 +64,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdatePhasedRadialParticle);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_RED_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;

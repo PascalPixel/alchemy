@@ -75,7 +75,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Anim_ApplyChildValuesFar(copy, SPRITE_COLOR_BLUE_TINT);
+      Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
       Actor_SelectAnimationFar(copy, 0);
       Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
@@ -120,7 +120,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     FieldParticle_Initialize(effect, 240, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);
     effect++;

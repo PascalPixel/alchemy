@@ -5,7 +5,7 @@
 extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];
 
-/// Applies BG1 horizontal scanline scrolling with HBlank DMA.
+/// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Func_02001cac(void) {
   s16 *lines = gData_02004f10[gData_02004f04];
   s32 first = lines[0];

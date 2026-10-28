@@ -13,7 +13,7 @@
 ///
 ///   Sprites         sprite_draw.c: Sprite_ComposePicture,
 ///                   Render_PlaceProjectedSprite; animation.c:
-///                   Sprite_Create, Sprite_StartAnim
+///                   Sprite_Create, Sprite_StartAnimation
 ///   Actors          actors.c: Actor_Create, ActorSystem_Initialize;
 ///                   actor_motion.c: Actor_UpdateAllThumb,
 ///                   Actor_SetMoveTarget

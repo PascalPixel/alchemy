@@ -10,7 +10,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02003118(object, 1);
-  object->linkedObject = source;
+  object->watchedObject = source;
   object->action = 0;
   object->unk66 = angle;
   ((u8 *)object)[0x62] = value;

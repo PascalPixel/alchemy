@@ -36,7 +36,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
   s32 distance;
   s32 step;
 
-  target = object->linkedObject;
+  target = object->watchedObject;
   if (target != 0) {
     deltaX = target->x - object->x;
     if (deltaX < 0)

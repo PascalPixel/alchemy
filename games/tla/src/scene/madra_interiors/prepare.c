@@ -54,7 +54,7 @@ void ObjectMotion_WaitForAnimationChange();
 void Camera_FollowActor();
 struct ObjectRuntime *Object_GetById();
 void Object_LinkObjectAndSetCallback();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
@@ -280,7 +280,7 @@ void Func_020007dc(void) {
   Call1((void (*)())ObjectMotion_WaitForAnimationChange, 8);
   Call2((void (*)())Camera_FollowActor, 4, 1);
   ((void (*)())Func_02001e68)();
-  Call3((void (*)())Object_LinkPair, 11, 4, 0);
+  Call3((void (*)())Object_TurnToFaceEachOther, 11, 4, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 11, 0);

@@ -23,7 +23,7 @@ void Event_PrepareObjectAndApplyValue();
 void FieldEvent_WaitFrames();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void ObjectMotion_Launch();
 void ObjectMotion_ArmCallback();
 void ObjectMotion_SetAngleToward();
@@ -68,7 +68,7 @@ void Func_0200049c(void) {
   Engine_ActorSetAnimation(6, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
   FieldEvent_WaitFrames(20);
-  Object_LinkPair(6, gAdventure.currentOwner, 0);
+  Object_TurnToFaceEachOther(6, gAdventure.currentOwner, 0);
   Engine_EventShowMessage(6, 0);
   Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   Engine_ActorShowEmote(6, 0x105, 20);
@@ -171,7 +171,7 @@ void Func_020006a8(void) {
     Call2(Engine_ActorSetAnimation, 8, 4);
     Call2(Engine_EventShowMessage, 8, 0);
     Call3(ObjectMotion_SetPositionAndReset, 8, 172, 756);
-    Call3(Object_LinkPair, 8, gAdventure.currentOwner, 0);
+    Call3(Object_TurnToFaceEachOther, 8, gAdventure.currentOwner, 0);
     Call2(Engine_ActorSetAnimation, 8, 3);
     Call2(Engine_EventShowMessage, 0x6008, 0);
     Call2(Engine_ActorSetAnimation, 8, 2);

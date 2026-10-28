@@ -42,7 +42,7 @@ void Func_02001424(void) {
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->scaleX = 0x8000;
   object->scaleY = 0x8000;
-  *(s32 *)&object->linkedObject = 60;
+  *(s32 *)&object->watchedObject = 60;
   object->update = Func_020013e4;
   Func_020041cc(object, 5);
   Animation_SetStateFlags(object, 1);

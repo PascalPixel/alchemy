@@ -695,7 +695,7 @@ Func_080ccec8:
 	ldr r1, [r5]
 	mov r0, r11
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 .L_080cd482:
 	ldr r3, [r6, #8]
 .L_080cd484:

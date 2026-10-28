@@ -35,7 +35,7 @@ s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02000988(void) {
   struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
-  struct ObjectRuntime *ride = leader->linkedObject;
+  struct ObjectRuntime *ride = leader->watchedObject;
   struct ObjectRuntime *rider, *dust;
   u8 *riding, *motion, *priority;
   s32 rise, dx, dz, moved, i, height;
@@ -68,7 +68,7 @@ void Func_02000988(void) {
   }
   priority = &leader->priorityFlags;
   if (ride->angle == 0xc000) {
-    rider = ride->linkedObject;
+    rider = ride->watchedObject;
     dx = 0;
     dz = 0;
     *priority = 4;

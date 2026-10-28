@@ -110,9 +110,9 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Object_LinkPair
+	.global Object_TurnToFaceEachOther
 	.thumb_func
-Object_LinkPair:
+Object_TurnToFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Func_020012bc
 	.thumb_func

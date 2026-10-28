@@ -329,7 +329,7 @@ main	rom_main_01	recon/tla/de/rom	.rom.00025160	de
 main	rom_main_01	recon/tla/raw/08025160	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00025160	ja
 main	rom_main_01	games/tla/src/field/shared/script/f025428	.text
-main	rom_main_01	games/tla/src/field/shared/script/approach_link	.text
+main	rom_main_01	games/tla/src/field/shared/script/approach_watched	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025698	it
 main	rom_main_01	recon/tla/fr/rom	.rom.00025698	fr
 main	rom_main_01	recon/tla/es/rom	.rom.00025698	es
@@ -1693,7 +1693,7 @@ main	rom_main_05	recon/tla/raw/080d3378	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d3356	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d3358	ja
 main	rom_main_05	games/tla/src/field/shared/object/angle	.text
-main	rom_main_05	games/tla/src/field/shared/object/link_pair	.text
+main	rom_main_05	games/tla/src/field/shared/object/turn_to_face_each_other	.text
 main	rom_main_05	games/tla/src/field/shared/object/child	.text
 main	rom_main_05	games/tla/src/field/shared/object/part_attribute	.text
 main	rom_main_05	games/tla/src/field/shared/object/step_angle	.text
@@ -1731,13 +1731,13 @@ main	rom_main_05	games/tla/src/field/shared/object/f0d4330	.text
 main	rom_main_05	games/tla/src/field/shared/object/attach_work_target_to_object	.text
 main	rom_main_05	games/tla/src/field/shared/object/f0d440c	.text
 main	rom_main_05	games/tla/src/field/shared/camera/bounds	.text
-main	rom_main_05	games/tla/src/battle/effect/copy_linked_object_position	.text
+main	rom_main_05	games/tla/src/battle/effect/copy_watched_object_position	.text
 main	rom_main_05	games/tla/src/battle/effect/f0d47b4	.text
 main	rom_main_05	games/tla/src/battle/effect/anim108	.text
 main	rom_main_05	games/tla/src/battle/effect/f0d489c	.text
 main	rom_main_05	games/tla/src/field/shared/object/action	.text
 main	rom_main_05	games/tla/src/field/shared/object/facing	.text
-main	rom_main_05	games/tla/src/field/shared/object/linkact	.text
+main	rom_main_05	games/tla/src/field/shared/object/watch_and_face	.text
 main	rom_main_05	games/tla/src/field/shared/object/layer	.text
 main	rom_main_05	games/tla/src/field/shared/object/setact	.text
 main	rom_main_05	games/tla/src/field/shared/object/f0d4bc4	.text

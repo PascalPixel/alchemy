@@ -22,7 +22,7 @@ void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void Object_LinkPair(s32 id, s32 other, s32 mode);
+void Object_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
 void Object_SetModeById(u32 id, s32 mode);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -125,7 +125,7 @@ static __inline__ void ObjectMotion_CommitCurrentPositionAndActivate_(s32 id) {
 
 static __inline__ void Object_LinkPair_(s32 id, s32 other, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_LinkPair(id, other, mode);
+  Object_TurnToFaceEachOther(id, other, mode);
 }
 
 static __inline__ void Object_SetModeById_(u32 id, s32 mode) {

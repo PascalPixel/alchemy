@@ -319,7 +319,7 @@ void Field_EndBusyAndRevealFar(void);
 void FieldPsynergy_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
 void FieldPsynergy_FinishWaveAndReleaseHeapBlockFar(void);
-/// Stops BG0's scanline scroll and restores BG palette 15.
+/// Stops BG0's line scroll and restores BG palette 15.
 void FieldPsynergy_RestoreMindReadPaletteFar(void);
 /// Returns whether the scene has a Psynergy trigger of this group for what the
 /// leader faces; nothing in ☀️ calls it.

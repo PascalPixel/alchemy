@@ -209,9 +209,9 @@ void BattlePlayback_Run(void) {
                                        recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != BATTLE_SIDE_ENEMY)
-                Sprite_StartAnimFar(record, POSE_PARTY_HELD);
+                Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
               else
-                Sprite_StartAnimFar(record, POSE_ENEMY_DOWN);
+                Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
             }
             if (unit->side == BATTLE_SIDE_ENEMY) {
               events->phase = PLAY_FELLED;

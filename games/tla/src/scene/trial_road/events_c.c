@@ -63,7 +63,7 @@ void Func_02000660(s32 id) {
 }
 
 s32 Func_02000694(struct ObjectRuntime *object) {
-  struct ObjectRuntime *owner = object->linkedObject;
+  struct ObjectRuntime *owner = object->watchedObject;
 
   SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
                owner->z);
@@ -82,7 +82,7 @@ void Func_020006b4(s32 id) {
     if (object != NULL) {
       ObjectDispatch_SetSingleChildFlags(object, 0);
       Func_020057d0(object, gData_02005a7c);
-      object->linkedObject = owner;
+      object->watchedObject = owner;
       /* FAKEMATCH: stores the owner link before it copies the object for the
        * priority flags (differ 2 without it; an explicit flag pointer is differ
        * 27). */
@@ -92,7 +92,7 @@ void Func_020006b4(s32 id) {
       object->motionFlags = 0;
       object->collisionFlags = 0;
       OBJECT_BYTE(object, 99) = 16;
-      owner->linkedObject = object;
+      owner->watchedObject = object;
     }
   }
 }

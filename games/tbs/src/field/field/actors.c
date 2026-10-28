@@ -386,10 +386,11 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
   }
 
 /// Switches all of an actor's sprites to animation value.
-ACTOR_DEFINE_APPLY(Actor_SelectAnimation, void *, Sprite_StartAnim)
+ACTOR_DEFINE_APPLY(Actor_SelectAnimation, void *, Sprite_StartAnimation)
 
 /// Sets the animation speed (timer step) of all of an actor's sprites.
-ACTOR_DEFINE_APPLY(Actor_SetAnimationSpeed, struct Actor *, Sprite_SetAnimSpeed)
+ACTOR_DEFINE_APPLY(Actor_SetAnimationSpeed, struct Actor *,
+                   Sprite_SetAnimationSpeed)
 
 /// Both of the above: switches all of an actor's sprites to animation and
 /// sets their timer step to step.
@@ -401,16 +402,16 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
   if (actor != 0) {
     switch (actor->spriteStorageKind & 15) {
     case ACTOR_SPRITE_ONE:
-      Sprite_StartAnim(actor->sprite, animation);
-      Sprite_SetAnimSpeed(actor->sprite, step);
+      Sprite_StartAnimation(actor->sprite, animation);
+      Sprite_SetAnimationSpeed(actor->sprite, step);
       break;
     case ACTOR_SPRITE_GROUP:
       sprites = (void **)actor->sprite;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != 0) {
-          Sprite_StartAnim(sprite, animation);
-          Sprite_SetAnimSpeed(sprite, step);
+          Sprite_StartAnimation(sprite, animation);
+          Sprite_SetAnimationSpeed(sprite, step);
         }
       }
       break;
@@ -424,11 +425,9 @@ void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation) {
     actor->sprite->rotation = rotation;
 }
 
-/// Gives a one-sprite actor's first anim animation id animationId and
-/// restarts its anims.
-/// A negative animationId does nothing.
-void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor,
-                                       s32 animationId) {
+/// Gives a one-sprite actor's first sprite animation animation id animationId
+/// and restarts its animations. A negative animationId does nothing.
+void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
   struct Actor *actor = rawDispatchActor;
   struct Sprite *sprite;
 
@@ -436,18 +435,18 @@ void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor,
     sprite = actor->sprite;
     if (animationId >= 0) {
       sprite->entries[0]->animationId = animationId;
-      Sprite_ResetAnims(sprite);
+      Sprite_ResetAnimations(sprite);
     }
   }
 }
 
-/// Adds an anim of animation id animationId to a one-sprite actor's sprite.
-/// A negative animationId does nothing.
+/// Adds a sprite animation of animation id animationId to a one-sprite actor's
+/// sprite. A negative animationId does nothing.
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
   if (actor != 0 && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
     if (animationId >= 0)
-      Sprite_AddAnim(sprite, animationId);
+      Sprite_AddAnimation(sprite, animationId);
   }
 }
 
@@ -553,11 +552,11 @@ void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale) {
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's anims,
-/// except those drawn hidden (see Sprite_SetAnimColorModes).
-void Anim_ApplyChildValues(struct Actor *actor, u32 param) {
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
+/// animations, except those drawn hidden (see Sprite_SetAnimationColorModes).
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
-    Sprite_SetAnimColorModes(actor->sprite, param);
+    Sprite_SetAnimationColorModes(actor->sprite, param);
 }
 
 /// Suspends the actor camera updates, starts the palette back to normal and,

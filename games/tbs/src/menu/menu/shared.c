@@ -578,7 +578,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
       menu->memberScale[i] = Q16_ONE;
       figure->image.priority = 0;
       figure->flags = 0;
-      Sprite_StartAnimFar(figure, 1);
+      Sprite_StartAnimationFar(figure, 1);
     }
   }
   // Clear the unused party slots so the task can skip them.

@@ -199,7 +199,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId);
-void Anim_ApplyChildPalette(struct Actor *actor, s32 palette);
+void Actor_SetSpritePalette(struct Actor *actor, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);

@@ -23,8 +23,8 @@
 #define SC_CMD_03 0x03
 #define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    ///< move to a target
 #define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) ///< move by an offset
-#define SC_FACE_WATCHED 0x06                       ///< face the linked object
-#define SC_MOVE_TO_WATCHED 0x07                       ///< move to the linked object
+#define SC_FACE_WATCHED 0x06                    ///< face the watched object
+#define SC_MOVE_TO_WATCHED 0x07                 ///< move to the watched object
 #define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
 #define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)

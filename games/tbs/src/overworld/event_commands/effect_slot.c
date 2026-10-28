@@ -134,7 +134,7 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 
 /// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
-  Sprite_StartAnimFar(effect->actor, mode);
+  Sprite_StartAnimationFar(effect->actor, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.

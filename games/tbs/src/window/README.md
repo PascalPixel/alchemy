@@ -277,7 +277,7 @@ so renaming one changes other folders too.
   wider or taller than 30, is not drawn, and nothing stops a window running
   off the bottom.
 - Twelve windows at once in Japanese and eight in the international editions.
-- Three messages and 64 window sprites.
+- Three messages being typed at once (`struct Message`) and 64 window sprites.
 - Eight blanks at a time; a ninth is dropped.
 - The text buffer holds 256 letter codes in Japanese and 512 in the others.
 - The text canvas holds 120 tiles, one canvas window at a time.
@@ -320,7 +320,7 @@ codes and at most 446 (Italian) of the others' 512. The two bytes before the
 argument table, `padding` in `struct WindowWork`, align `argumentValues` to a
 word in every edition, and nothing reads them. The halfword after
 `lineSpacing`, `unusedAfterLineSpacing`, is set to 1 whenever `Text_ResetStyle`
-resets the text style and read by nothing: the message has no field to
+resets the text style and read by nothing: `struct Message` has no field to
 copy into it (`Message_ApplyStyle` copies only the colour, outline and
 line spacing), no text control code writes it, and the glyph code, all C,
 reads the style through its named fields.

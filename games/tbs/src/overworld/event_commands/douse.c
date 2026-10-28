@@ -232,7 +232,8 @@ void FieldPsynergy_Douse(void) {
         particle->flag = 0;
         particle->sprite->priority = 2;
         Actor_SelectAnimationFar(particle, 8);
-        Anim_ApplyChildValuesFar((struct Actor *)particle, SPRITE_COLOR_WHITE);
+        Actor_SetSpriteColorModeFar((struct Actor *)particle,
+                                    SPRITE_COLOR_WHITE);
       }
       WaitFrames(6);
     }

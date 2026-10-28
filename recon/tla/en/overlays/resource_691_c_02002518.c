@@ -1,4 +1,4 @@
-// Draft, differ 97 of 112: builds four parts around the linked object of an object
+// Draft, differ 97 of 112: builds four parts around the watched object of an object
 // whose update is Func_020015e4, each copying the first part's sprite and
 // position and taking Func_02001528. Left: the native keeps the parts' array
 // base in r7, the anchor in r8 and the count in r10, with 0 in r6 for the
@@ -25,7 +25,7 @@ void Func_02002518(u16 id) {
 
   if (Object_GetById(id)->update != Func_020015e4)
     return;
-  anchor = Object_GetById(id)->linkedObject;
+  anchor = Object_GetById(id)->watchedObject;
   parts[0] = Engine_ObjectCreate(0x15f, anchor->x + 0x10000,
                                  anchor->y + 0x200000, anchor->z);
   i = 1;
@@ -46,7 +46,7 @@ next:
     Func_02003a54(parts[i], 3);
     part = parts[i];
     BYTE_AT(part, 98) = i - 1;
-    part->linkedObject = anchor;
+    part->watchedObject = anchor;
     part->update = Func_02001528;
     Object_SetPartAttribute(part, 3);
   }
@@ -60,7 +60,7 @@ next:
     struct ObjectRuntime *part = parts[0];
 
     BYTE_AT(part, 98) = 3;
-    part->linkedObject = anchor;
+    part->watchedObject = anchor;
     part->update = Func_02001528;
     Object_SetPartAttribute(part, 3);
   }

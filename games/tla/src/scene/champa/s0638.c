@@ -28,7 +28,7 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Motion_SetVarCbAndRefresh();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Func_02002b04();
-s32 Object_LinkPair();
+s32 Object_TurnToFaceEachOther();
 s32 ObjectMotion_Launch();
 void Func_0200060c(void);
 s32 Object_SetModeById();
@@ -117,7 +117,7 @@ void Func_02000638(void) {
       Call1(FieldEvent_WaitFrames, 0x14);
       Call2(Func_02002b04, 0x1d, 0xc000);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call3(Object_LinkPair, 0x1e, 4, 0);
+      Call3(Object_TurnToFaceEachOther, 0x1e, 4, 0);
       Call1(FieldEvent_WaitFrames, 0x28);
       Call3(ObjectMotion_ArmCallback, 0x1e, 0x4000, 0);
       Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
@@ -165,7 +165,7 @@ void Func_02000638(void) {
       Call1(FieldEvent_WaitFrames, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Func_0200060c();
-      Call3(Object_LinkPair, 0x1e, 4, 0);
+      Call3(Object_TurnToFaceEachOther, 0x1e, 4, 0);
       Call1(FieldEvent_WaitFrames, 0x28);
       Call3(ObjectMotion_ArmCallback, 0x1e, 0x4000, 0);
       Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
@@ -188,7 +188,7 @@ void Func_02000638(void) {
       Call3(ObjectMotion_SetSpeedParameters, 0x1d, 0x13333, 0x9999);
       Call3(ObjectMotion_OffsetPositionAndReset, 0x1d, 0, 0x64);
       Call1(FieldEvent_WaitFrames, 0xa);
-      Call3(Object_LinkPair, 4, 0x1e, 0);
+      Call3(Object_TurnToFaceEachOther, 4, 0x1e, 0);
       Call1(FieldEvent_WaitFrames, 0x1e);
       Call2(Object_SetModeById, 0x1e, 3);
       Call2(Motion_SetModeAndWaitAnimation, 4, 3);

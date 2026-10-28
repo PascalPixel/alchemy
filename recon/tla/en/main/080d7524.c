@@ -112,7 +112,7 @@ void Func_080d7524(s32 djinniId) {
       Object_SetMode(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
       sharedSprite = Object_ReplaceResourceEntry(copy->animation, sharedSprite);
-      copy->linkedObject = prev;
+      copy->watchedObject = prev;
       prev = copy;
     }
   }

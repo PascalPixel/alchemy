@@ -77,12 +77,12 @@ void Func_02005ee4(void);
 /// The gust picks up an object it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
 #define PICK_UP(object, at)                                                    \
-  ((object)->linkedObject = gust, (object)->update = Func_020017f4,            \
+  ((object)->watchedObject = gust, (object)->update = Func_020017f4,            \
    (object)->motionFlags = 0, (object)->priorityFlags &= ~1,                   \
    ObjectDispatch_SetSingleChildFlags(object, 0),                              \
    ((struct FieldSprite *)(object)->animation)->priority =                     \
        ((struct FieldSprite *)gust->animation)->priority,                      \
-   gust->linkedObject = (object), carried = (at))
+   gust->watchedObject = (object), carried = (at))
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
@@ -210,7 +210,7 @@ void Func_02001828(void) {
     FieldEvent_WaitFrames(1);
   }
   if (carried != 0) {
-    object = gust->linkedObject;
+    object = gust->watchedObject;
     object->x = (carried >> 16) << 19;
     object->z = carried << 19;
     object->velocityY = 0x80000;

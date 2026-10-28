@@ -7,7 +7,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void Object_LinkPair(s32 a, s32 b, s32 c);
+void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Func_0200129c(s32 id, s32 x, s32 z);
 
 void Func_0200115c(void) {
@@ -28,6 +28,6 @@ void Func_0200115c(void) {
     /* FAKEMATCH: the native loads the second argument before the owner; a
      * direct call and a forwarding inline load the owner first. */
     __asm__ volatile("" : "+r"(other));
-    Object_LinkPair(gAdventure.currentOwner, other, 0);
+    Object_TurnToFaceEachOther(gAdventure.currentOwner, other, 0);
   }
 }

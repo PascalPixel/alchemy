@@ -2536,7 +2536,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   actor->layer = 2;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
-  Sprite_AddAnim(actor->sprite, 16);
+  Sprite_AddAnimation(actor->sprite, 16);
   FieldCamera_FollowActor(id, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));

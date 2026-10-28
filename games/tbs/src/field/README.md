@@ -154,7 +154,7 @@ the facing tables.
 | --- | --- | --- |
 | `ANIM_OBJECT_COUNT` | 64 | sprites, and the sprite animations they share |
 | `ANIM_LAYER_COUNT` | 4 | animations one sprite lays over each other |
-| `ANIM_NORMAL_STEP` | 16 | sixteenths of a frame off an anim's timer each frame: normal speed |
+| `SPRITE_ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off a sprite animation's timer each frame: normal speed |
 
 ## Actors move first, then the camera draws them
 
@@ -390,7 +390,7 @@ differences from this one.
   `FACING_SOUTH` a quarter turn).
 
 In the code, `actor`, `object` and `interpreter` are the actor a command runs on,
-`sprite` and `layer` a sprite and one of its anims, `work` or `gridWork` the
+`sprite` and `layer` a sprite and one of its animations, `work` or `gridWork` the
 map work (`gMapGridWork[0]`), and `perspective` the world map's. Because the
 parts compile as one file, a part's own types, macros and static helpers carry
 its family's name (`ActorCamera`, `Layout`, `WorldMap`), and a part undefines
@@ -409,11 +409,11 @@ word from 47 to 63 would call through whatever follows the table. No script
 does: every script is written in `actor_script.h`'s macros, whose last command is
 `SC_KEY_COUNT` (`0x23`), and none holds a bare word from `0x24` to 63.
 
-The field scenes sampled for a sprite with more than one drawn anim (Vale,
-Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
-have none: the leader on the world map has a second anim, `SPRITE_BLANK_32`,
-which draws nothing. The recording of a sprite's anims is therefore of a
-battle, whose units are the same `struct Sprite` composed by the same
+The field scenes sampled for a sprite with more than one drawn sprite
+animation (Vale, Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi
+and the world map) have none: the leader on the world map has a second sprite
+animation, `SPRITE_BLANK_32`, which draws nothing. The recording of a sprite's
+animations is therefore of a battle, whose units are the same `struct Sprite` composed by the same
 `Sprite_ComposePicture`.
 
 Three halfwords of the map work between the next message and the camera

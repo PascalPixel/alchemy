@@ -5,15 +5,15 @@ FarCall_FieldTable:
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
 	export Actor_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
-	overlay_veneer Sprite_ResetAnims
-	export Sprite_StartAnimFar, Sprite_StartAnim
-	overlay_veneer Sprite_SetAnimTimers
+	overlay_veneer Sprite_ResetAnimations
+	export Sprite_StartAnimationFar, Sprite_StartAnimation
+	overlay_veneer Sprite_SetAnimationTimers
 	export Sprite_CreateFar, Sprite_Create
 	export Sprite_DestroyFar, Sprite_Destroy
 	overlay_veneer Render_PlaceSpritePartPair
-	export Sprite_AddAnimFar, Sprite_AddAnim
-	export Sprite_RemoveAnimFar, Sprite_RemoveAnim
-	overlay_veneer Sprite_RemoveAnimAt
+	export Sprite_AddAnimationFar, Sprite_AddAnimation
+	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
+	overlay_veneer Sprite_RemoveAnimationAt
 	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
 	overlay_veneer SpriteAnimation_Reset
 	export SpriteAnimation_StartFar, SpriteAnimation_Start
@@ -66,7 +66,7 @@ FarCall_FieldTable:
 	export Actor_SetBlendModeFar, Actor_SetBlendMode
 	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
 	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
-	overlay_veneer Anim_SetIndexAndInitializeObjects
+	overlay_veneer Actor_SetFirstSpriteAnimation
 	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
 	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
 	overlay_veneer Actor_SetSpriteScale
@@ -74,15 +74,15 @@ FarCall_FieldTable:
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
 	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
-	export Anim_ApplyChildValuesFar, Anim_ApplyChildValues
-	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes
+	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
+	export Sprite_SetAnimationColorModesFar, Sprite_SetAnimationColorModes
 	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
 	export SpriteAnimation_SumCommandLengthsFar, SpriteAnimation_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
 	export SpritePictureCache_LoadFar, SpritePictureCache_Load
 	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
-	export Sprite_SetAnimSpeedFar, Sprite_SetAnimSpeed
+	export Sprite_SetAnimationSpeedFar, Sprite_SetAnimationSpeed
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll

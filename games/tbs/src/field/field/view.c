@@ -57,7 +57,7 @@ void MapGrid_WaitForShakeToSettle(void) {
 typedef void (*TileMapRowDrawer)(const struct WorldMapAffinePair *lines,
                                  u8 *pixels, const u8 *tiles, const u8 *map);
 
-/// Draws the current affine page into the world map's still-view pixels.
+/// Draws the current affine page into the world map's still-picture pixels.
 /// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
 /// The ARM kernel borrows HEAP_SLOT_RAM_CODE_TEMP for this synchronous call;
 /// it is released before returning, while both graphics buffers stay owned

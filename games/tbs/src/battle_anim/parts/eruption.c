@@ -243,7 +243,7 @@ void BattleAnim_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
     work->animations[entryIndex] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      Sprite_StartAnimFar(animation, entryIndex);
+      Sprite_StartAnimationFar(animation, entryIndex);
       work->animations[entryIndex]->image.priority = priority;
     }
     entryIndex++;

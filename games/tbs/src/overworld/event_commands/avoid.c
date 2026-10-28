@@ -110,7 +110,7 @@ void FieldPsynergy_Avoid(void) {
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gAdventure.avoidDistance = 0x09600000;
     gAdventure.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
-    Anim_ApplyChildValuesFar(actor, zero);
+    Actor_SetSpriteColorModeFar(actor, zero);
     actor->update = FieldEffect_UpdatePairedArcSpawner;
     actor->arcPhase = zero;
     actor->arcFrames = zero;
@@ -142,7 +142,7 @@ void FieldPsynergy_Avoid(void) {
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_OUTLINED);
   else
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
-  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }

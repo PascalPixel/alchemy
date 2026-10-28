@@ -16,7 +16,7 @@ struct BattleEffectResource {
   struct BattleEffectVisual *visual;
 };
 
-struct BattleEffectLinkedObject {
+struct BattleEffectWatchedObject {
   u8 unk00[80];
   struct BattleEffectVisual *visual;
   u8 value54;
@@ -28,20 +28,20 @@ struct BattleEffectLinkedObject {
   void (*callback)(void);
 };
 
-struct BattleEffectLinkedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
+struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Object_SetMode(struct BattleEffectWatchedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void EventRuntime_Wait(s32 state);
-void BattleEffect_CopyLinkedObjectPosition(void);
+void BattleEffect_CopyWatchedObjectPosition(void);
 extern const u8 gData_080f3310[];
 
 /// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
 /// (488): spawns an effect object at object resourceId that follows it,
 /// waits state, and returns the new object.
-struct BattleEffectLinkedObject *Func_080d47b4(s32 resourceId, s32 flags,
+struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
                                                s32 state) {
   struct BattleEffectResource *resource;
-  struct BattleEffectLinkedObject *object;
+  struct BattleEffectWatchedObject *object;
 
   if ((flags & 0xff) == 6) {
     Audio_PlayCue(110);
@@ -58,7 +58,7 @@ struct BattleEffectLinkedObject *Func_080d47b4(s32 resourceId, s32 flags,
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;
-      object->callback = BattleEffect_CopyLinkedObjectPosition;
+      object->callback = BattleEffect_CopyWatchedObjectPosition;
       object->resource = resource;
       object->visual->value26 = 0;
 

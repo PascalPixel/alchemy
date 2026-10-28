@@ -3600,11 +3600,11 @@ Func_02001bc4:
 	movs r0, #5
 	movs r1, #6
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r2, #0
 	movs r1, #4
 	movs r0, #7
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r0, #30

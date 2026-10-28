@@ -10,9 +10,9 @@ void FieldEffect_UpdateOrbitingParticleMain(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
-    Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_RBG);
+    Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_RBG);
   } else if (frame == 2) {
-    Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_NORMAL);
   }
 }
 
@@ -141,7 +141,7 @@ void FieldPsynergy_Frost(void) {
       particle->facing = Random16();
       particle->timer = 60;
       particle->userValue = Random16();
-      Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_BLUE_TINT);
+      Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
       radius = (Random16() << 2) + (2 << 16);
@@ -165,9 +165,9 @@ void FieldPsynergy_Frost(void) {
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
     do {
-      Anim_ApplyChildValuesFar(target, SPRITE_COLOR_WHITE);
+      Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
       WaitFrames(1);
-      Anim_ApplyChildValuesFar(target, SPRITE_COLOR_NORMAL);
+      Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_NORMAL);
       WaitFrames(4);
       remainingCycles--;
     } while (remainingCycles >= 0);

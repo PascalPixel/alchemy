@@ -6,7 +6,7 @@
 	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.VramCache_FreeEntry, 1
-	.set import.Sprite_StartAnim, 1
+	.set import.Sprite_StartAnimation, 1
 	.set import.Actor_Create, 1
 	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
@@ -18,7 +18,7 @@
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
-	.set import.Anim_ApplyChildValues, 1
+	.set import.Actor_SetSpriteColorMode, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1

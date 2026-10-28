@@ -34,7 +34,7 @@ s32 Func_020000e8(struct ObjectRuntime *self) {
   other = Object_GetById(gAdventure.currentOwner);
   if (Func_02000038(&self->x, &other->x) <= 11)
     goto far;
-  if (Func_02000070(self, self->linkedObject, 18) != 0)
+  if (Func_02000070(self, self->watchedObject, 18) != 0)
     goto near;
   if (Func_02000070(self, Object_GetById(gAdventure.currentOwner), 26) != 0)
     goto near;

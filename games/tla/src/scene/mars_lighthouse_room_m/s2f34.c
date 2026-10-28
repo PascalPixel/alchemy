@@ -17,7 +17,7 @@ s32 Func_02002f34(struct ObjectRuntime *object) {
   } else if (frame <= 30) {
     if (frame == 30) {
       Func_020032b8(136);
-      Func_02003118(object->linkedObject, 2);
+      Func_02003118(object->watchedObject, 2);
     }
   } else if (frame <= 60) {
     object->scaleX = 0x10000;
@@ -25,13 +25,13 @@ s32 Func_02002f34(struct ObjectRuntime *object) {
     {
       s32 half = (object->action / 2) & 1;
 
-      Animation_ApplyChildValues(object->linkedObject, half * 7);
+      Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
   } else {
-    Func_02003118(object->linkedObject, 1);
+    Func_02003118(object->watchedObject, 1);
     Func_020032b8(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->linkedObject = 0;
+    object->watchedObject = 0;
     return 0;
   }
   object->action++;
@@ -43,7 +43,7 @@ s32 Func_02002fe0(struct ObjectRuntime *object) {
 
   if (frame == 0) {
     Func_020032b8(136);
-    Func_02003118(object->linkedObject, 2);
+    Func_02003118(object->watchedObject, 2);
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
     object->scaleX = frame;
     object->scaleY = frame;
@@ -56,13 +56,13 @@ s32 Func_02002fe0(struct ObjectRuntime *object) {
     {
       s32 half = (object->action / 2) & 1;
 
-      Animation_ApplyChildValues(object->linkedObject, half * 7);
+      Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
   } else {
-    Func_02003118(object->linkedObject, 1);
+    Func_02003118(object->watchedObject, 1);
     Func_020032b8(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->linkedObject = 0;
+    object->watchedObject = 0;
     return 0;
   }
   object->action++;

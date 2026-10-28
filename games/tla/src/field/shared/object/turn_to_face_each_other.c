@@ -14,7 +14,7 @@
 
 s32 ArcTan2(s32 y, s32 x);
 
-void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
+void Object_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
   void *first = ObjectTable_Get(firstId);
   void *second = ObjectTable_Get(secondId);
 

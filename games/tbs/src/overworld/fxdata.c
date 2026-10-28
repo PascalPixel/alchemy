@@ -52,7 +52,7 @@ const s16 gFieldEffect_TargetRangeByMode[25] = {
     -1,
 };
 
-/// The palette cycle of Mind Read's caster (Anim_ApplyChildPalette,
+/// The palette cycle of Mind Read's caster (Actor_SetSpritePalette,
 /// (gFrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each.
 const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 

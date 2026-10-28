@@ -85,14 +85,15 @@ enum AnimationCommand {
   ANIMCMD_BLANK = 255     ///< show nothing for `arg`
 };
 
-/// The field's pool sizes, and an anim's timer step at normal speed.
+/// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
   RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
   ACTOR_COUNT = 64,        ///< gActors, HEAP_SLOT_ACTORS
   ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite animations
   ANIM_LAYER_COUNT = 4,    ///< Sprite.entries
-  /// Sixteenths of a frame taken off an anim's timer each frame: one frame.
-  ANIM_NORMAL_STEP = 16
+  /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
+  /// frame.
+  SPRITE_ANIMATION_NORMAL_STEP = 16
 };
 
 /// Layered-map viewport distances in 16.16 pixels. The followed point is below

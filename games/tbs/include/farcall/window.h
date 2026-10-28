@@ -180,7 +180,7 @@ void FieldMessage_ShowCenteredFar(s32 message, s32 mode, s32 yOffset);
 void BattleMessage_CloseFar(void);
 /// Clears the first idle message's pen, style and canvas, as auto
 /// battle does after each action.
-void Message_ResetFreeFar(void);
+void Message_ResetIdleFar(void);
 /// Sets up a sprite as the right-pointing arrow and returns its tile slot in
 /// *slot, for MenuArrow_Release to free.
 void MenuArrow_CreateFar(struct MenuSprite *object, s32 *slot);

@@ -93,7 +93,7 @@ u32 Random16(void);
 void EventRuntime_RunMessage(s32 actor, s32 message);
 void ObjectDispatch_SetAnimationSpeedFar(struct ObjectRuntime *object,
                                          s32 value);
-void Object_LinkPair(s32 first, s32 second, s32 mode);
+void Object_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 void UiWork_SetBusyFlagsFar(s32 flags);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const void *script);
@@ -357,7 +357,7 @@ s32 Func_080ccec8(s32 id) {
       leader = Object_GetById(gAdventure.currentOwner);
       Object_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
                                           leader->z);
-      Object_LinkPair(id, gAdventure.currentOwner, 0);
+      Object_TurnToFaceEachOther(id, gAdventure.currentOwner, 0);
     }
   }
   if (talk->script < 0x10000) {
@@ -370,7 +370,7 @@ s32 Func_080ccec8(s32 id) {
   if (!paused) {
     if (object->script[object->step] == 17) {
       if (placement->kind == 3) {
-        object->linkedObject = Object_GetById(gAdventure.currentOwner);
+        object->watchedObject = Object_GetById(gAdventure.currentOwner);
         object->actionFlags |= 1;
         Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
       } else if (placement->kind == 1) {

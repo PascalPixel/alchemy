@@ -28,6 +28,6 @@ void Func_02002ad0(struct ObjectRuntime *self) {
   object->scaleX = 0;
   object->scaleY = 0;
   object->action = 0;
-  object->linkedObject = self->linkedObject;
+  object->watchedObject = self->watchedObject;
   Func_0200446c(104);
 }

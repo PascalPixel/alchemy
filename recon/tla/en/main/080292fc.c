@@ -105,7 +105,7 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
   object->motionFlags = collisionFlags;
   angle = gData_0802ec5c[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
-    best = (struct RailPoint *)object->linkedObject;
+    best = (struct RailPoint *)object->watchedObject;
     value = 0;
   } else {
     value = 16;
@@ -162,7 +162,7 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
       pair->speed += 0x8000;
       if (pair->speed > 0x20000)
         pair->speed = 0x20000;
-      object->linkedObject = (struct ObjectRuntime *)best;
+      object->watchedObject = (struct ObjectRuntime *)best;
       position.x = best->x;
       position.y = best->y;
       position.z = best->z;

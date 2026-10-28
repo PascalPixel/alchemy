@@ -179,10 +179,12 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *args) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      Sprite_StartAnimFar(work->animations[3],
-                          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
-      Sprite_StartAnimFar(work->animations[4],
-                          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
+      Sprite_StartAnimationFar(
+          work->animations[3],
+          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
+      Sprite_StartAnimationFar(
+          work->animations[4],
+          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
     }
 
     // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches
@@ -420,7 +422,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *args) {
             actor->y.fixed = 128 << 16;
           actor->gravity = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->actor, n)) != 0; n++)
-            Sprite_StartAnimFar(record, 5);
+            Sprite_StartAnimationFar(record, 5);
         }
       }
     }

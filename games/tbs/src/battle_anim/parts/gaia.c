@@ -137,7 +137,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *args) {
     work->animations[i] = rock;
     if (rock != 0) {
       rock->flags = 0;
-      Sprite_StartAnimFar(rock, i / 4);
+      Sprite_StartAnimationFar(rock, i / 4);
       work->animations[i]->image.priority = 1;
     }
   }

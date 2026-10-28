@@ -26,7 +26,7 @@ s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_WaitFrames();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void ObjectMotion_Launch();
 void ObjectMotion_ArmCallback();
 void ObjectMotion_WaitForAnimationChange();

@@ -14,7 +14,7 @@ static inline s32 LowestLineOffset(void) {
   return -64;
 }
 
-/// Fills BG0's scanline scroll table with a jittered sine wave and streams it
+/// Fills BG0's line scroll table with a jittered sine wave and streams it
 /// to BG0HOFS by HBlank DMA 0.
 void Func_02000378(void) {
   s16 *line = gData_02006350;

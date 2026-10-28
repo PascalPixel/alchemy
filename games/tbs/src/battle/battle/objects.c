@@ -261,13 +261,13 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
       }
 
       if (battleObject->animationEntry != 0 && changed != 0) {
-        Sprite_RemoveAnimFar(record, (s32)battleObject->animationEntry);
+        Sprite_RemoveAnimationFar(record, (s32)battleObject->animationEntry);
         battleObject->animationEntry = 0;
       }
 
       if (iconAnimation >= 0 && changed != 0) {
         // The handle is stored first and cleared again when registration fails.
-        iconHandle = Sprite_AddAnimFar(record, iconAnimation);
+        iconHandle = Sprite_AddAnimationFar(record, iconAnimation);
         battleObject->animationEntry =
             (struct SpriteAnimationHeadView *)iconHandle;
         if (iconHandle == -1)
@@ -444,13 +444,13 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         entry->priority = 1;
         entry->palette = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
-                                                                      spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
+              record, spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
-                                                                      spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
+              record, spriteId);
           battleObject->animationEntry = entry;
           SpriteAnimation_StartFar((struct SpriteAnimation *)entry, 0);
           entry->priority = 3;
@@ -458,8 +458,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
             spriteId = NARROW_SHADOW_SPRITE;
-          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
-                                                                      spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
+              record, spriteId);
           battleObject->shadowEntry = entry;
           entry->priority = 0;
           record->flags = 0;

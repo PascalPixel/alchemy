@@ -1,4 +1,4 @@
-// Unless flag 0x109 is set, places the object at the linked object first +
+// Unless flag 0x109 is set, places the object at the watched object first +
 // side, gives it Func_02000dc0 and faces it along the pair first and first + 1.
 #include "types.h"
 #include "object_runtime.h"

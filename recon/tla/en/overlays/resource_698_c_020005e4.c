@@ -69,7 +69,7 @@ void Func_020005e4(struct ObjectRuntime *self) {
           near = 1;
         if (near && !GameFlag_Test(260)) {
           leader->angle = self->angle;
-          leader->linkedObject = self;
+          leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;

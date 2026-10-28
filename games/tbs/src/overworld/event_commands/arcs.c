@@ -113,7 +113,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the Psynergy's tiles.
-    Sprite_StartAnimFar((struct Sprite *)sprite, 0);
+    Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->tileSlot;
@@ -140,9 +140,9 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
 void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 2) != 0) {
-    Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_WHITE);
+    Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_WHITE);
   } else {
-    Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcActors(actor);
@@ -158,7 +158,7 @@ void FieldEffect_CycleActorValueByCounter(struct Actor *updated) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Anim_ApplyChildValuesFar(actor, colorIndex);
+    Actor_SetSpriteColorModeFar(actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcActors(actor);

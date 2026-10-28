@@ -293,7 +293,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
   actor = BattleObject_Get(unitId)->actor;
   if ((actor != NULL) && ((ACTOR_SPRITE_KIND_MASK & actor->spriteStorageKind) ==
                           ACTOR_SPRITE_ONE)) {
-    effectHandle = Sprite_AddAnimFar(actor->sprite, HIT_FLASH_ANIMATION);
+    effectHandle = Sprite_AddAnimationFar(actor->sprite, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
       effect = (struct SpriteAnimation *)effectHandle;
       SpriteAnimation_StartFar(effect, 1);

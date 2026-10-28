@@ -1229,7 +1229,7 @@ Func_02001ed0:
 	movs r1, #27
 	movs r2, #0
 	movs r0, #26
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #26
 	bl Object_RefreshSelectorById
 	movs r0, #27
@@ -1359,11 +1359,11 @@ Func_02001ed0:
 	movs r0, #6
 	movs r1, #5
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r1, #28
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #4
 	bl Object_RefreshSelectorById
 	movs r0, #28
@@ -1470,7 +1470,7 @@ Func_02001ed0:
 	movs r1, #4
 	movs r2, #0
 	movs r0, #28
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #28
 	bl Object_RefreshSelectorById
 	movs r0, #10
@@ -1489,7 +1489,7 @@ Func_02001ed0:
 	movs r1, #28
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #4
 	bl Object_RefreshSelectorById
 	movs r0, #10
@@ -1516,7 +1516,7 @@ Func_02001ed0:
 	movs r1, #27
 	movs r2, #0
 	movs r0, #26
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #26
 	bl Object_RefreshSelectorById
 	movs r0, #27
@@ -1606,11 +1606,11 @@ Func_02001ed0:
 	movs r0, #4
 	movs r1, #7
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r1, #5
 	movs r2, #0
 	movs r0, #6
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #6
 	bl Object_RefreshSelectorById
 	movs r0, #5
@@ -2599,7 +2599,7 @@ Func_02001ed0:
 	movs r1, #27
 	movs r2, #0
 	movs r0, #26
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #26
 	bl Object_RefreshSelectorById
 	movs r0, #27
@@ -2729,11 +2729,11 @@ Func_02001ed0:
 	movs r0, #6
 	movs r1, #5
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r1, #28
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #4
 	bl Object_RefreshSelectorById
 	movs r0, #28
@@ -2840,7 +2840,7 @@ Func_02001ed0:
 	movs r1, #4
 	movs r2, #0
 	movs r0, #28
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #28
 	bl Object_RefreshSelectorById
 	movs r0, #10
@@ -2859,7 +2859,7 @@ Func_02001ed0:
 	movs r1, #28
 	movs r2, #0
 	movs r0, #4
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #4
 	bl Object_RefreshSelectorById
 	movs r0, #10
@@ -2886,7 +2886,7 @@ Func_02001ed0:
 	movs r1, #27
 	movs r2, #0
 	movs r0, #26
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #26
 	bl Object_RefreshSelectorById
 	movs r0, #27
@@ -2976,11 +2976,11 @@ Func_02001ed0:
 	movs r0, #4
 	movs r1, #7
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r1, #5
 	movs r2, #0
 	movs r0, #6
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #6
 	bl Object_RefreshSelectorById
 	movs r0, #5

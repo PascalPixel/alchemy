@@ -371,7 +371,7 @@ static inline void FieldActor_SetMoveTarget(struct Actor *actor, s32 fixed_x,
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's layers,
 /// except those drawn hidden.
 static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
-  Anim_ApplyChildValues(actor, mode);
+  Actor_SetSpriteColorMode(actor, mode);
 }
 
 /// Creates an actor in an empty slot of gActors, outside the actor ids, or

@@ -247,7 +247,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // Restore the target's look and motion, and throw it up at 10 pixels a
   // frame: it falls and follows the ground again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
-  Anim_ApplyChildValuesFar(target, effectWork->savedPalette);
+  Actor_SetSpriteColorModeFar(target, effectWork->savedPalette);
   Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
   target->motionFlags = 3;
@@ -255,7 +255,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->bounce = 0x3333;
   target->layer = 0;
   src->update = 0;
-  Anim_ApplyChildValuesFar(src, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorModeFar(src, SPRITE_COLOR_NORMAL);
   if (effectWork->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)

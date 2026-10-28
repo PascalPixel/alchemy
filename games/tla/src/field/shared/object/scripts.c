@@ -78,7 +78,7 @@ const u8 gData_080f330c[4] = {
     0,
 };
 
-/// gBattleEffect_LinkedObjectScript: squash and stretch, then release.
+/// gBattleEffect_WatchedObjectScript: squash and stretch, then release.
 const s32 gData_080f3310[] = {
     SC_ADD(SW_SCALE_X, -0x8000),
     SC_ADD(SW_SCALE_Y, 0x4000),

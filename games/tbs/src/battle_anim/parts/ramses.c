@@ -75,7 +75,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *args) {
     work->animations[9 + i] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      Sprite_StartAnimFar(animation, i % 3);
+      Sprite_StartAnimationFar(animation, i % 3);
       work->animations[9 + i]->image.priority = 1;
     }
   }

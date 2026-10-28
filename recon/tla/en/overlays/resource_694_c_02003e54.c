@@ -55,7 +55,7 @@ void Func_02003e54(struct ObjectRuntime *object, struct SparkleWork *work) {
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02003cd8;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
-  object->linkedObject = (struct ObjectRuntime *)work;
+  object->watchedObject = (struct ObjectRuntime *)work;
   for (row = 0; row <= 1; row++) {
     sprite = &work->sprites[row * 2];
     for (col = 1; col >= 0; col--) {

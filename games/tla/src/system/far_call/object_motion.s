@@ -112,7 +112,7 @@ ObjectMotion_SetAngleTowardFar:
 	.global Object_LinkPairFar
 	.thumb_func
 Object_LinkPairFar:
-	overlay_veneer Object_LinkPair
+	overlay_veneer Object_TurnToFaceEachOther
 	.global ObjectGroup_ConfigureChildValueFar
 	.thumb_func
 ObjectGroup_ConfigureChildValueFar:

@@ -109,7 +109,7 @@ void FieldPsynergy_StopCasterUpdate(void) {
   struct Actor *user = effectWork->mainActor;
 
   user->update = NULL;
-  Anim_ApplyChildValuesFar(user, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorModeFar(user, SPRITE_COLOR_NORMAL);
   WaitFrames(1);
 }
 

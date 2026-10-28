@@ -85,7 +85,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
       spark->gravity = 458;
       spark->timer = Random16() >> 9;
       spark->targetX = spark->x.fixed;
-      Anim_ApplyChildValuesFar(spark, SPRITE_COLOR_BLUE_TINT);
+      Actor_SetSpriteColorModeFar(spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
       Actor_StartScriptFar(spark, gFieldEffect_SharedParticleScript);
     }
@@ -157,7 +157,7 @@ void FieldPsynergy_Ply(void) {
     target->y.fixed = effectWork->y + 0x100000;
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
-    Anim_ApplyChildValuesFar(target, SPRITE_COLOR_WHITE);
+    Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
   }
 
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
@@ -170,15 +170,15 @@ void FieldPsynergy_Ply(void) {
        * instructions differ in tbs-en. */
       target = actor;
       if (i & 3)
-        Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_BLUE_TINT);
+        Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BLUE_TINT);
       else
-        Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_RED_TINT);
+        Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   Sound_PlaySongFar(MUS_CURE);
   if (actor != 0) {
     target->update = FieldEffect_RunSparkEmitter;

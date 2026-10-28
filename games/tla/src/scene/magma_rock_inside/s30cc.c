@@ -24,7 +24,7 @@ s32 Func_02004d10();
 s32 Func_02004d18();
 s32 Func_02002cd0();
 s32 UiText_DrawQuantityPairWithCue();
-s32 Object_LinkPair();
+s32 Object_TurnToFaceEachOther();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 ObjectMotion_ArmCallback();
@@ -91,7 +91,7 @@ void Func_020030cc(void) {
     Call2(Func_02002cd0, 8, 5);
     Call2(UiText_DrawQuantityPairWithCue, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
-    Call3(Object_LinkPair, gAdventure.currentOwner, 5, 0);
+    Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 5, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetModeById, 5, 3);
     Call2(Object_SetModeById, gAdventure.currentOwner, 3);

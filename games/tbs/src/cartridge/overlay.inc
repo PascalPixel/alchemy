@@ -75,8 +75,8 @@
 	import Serial_GetActiveTransfers, Serial_GetActiveTransfersFar
 	import Task_SetFlags, Task_SetFlagsFar
 @ Field bank (far_call/FIELD.S)
-	import Sprite_StartAnim, Sprite_StartAnimFar
-	import Sprite_AddAnim, Sprite_AddAnimFar
+	import Sprite_StartAnimation, Sprite_StartAnimationFar
+	import Sprite_AddAnimation, Sprite_AddAnimationFar
 	import SpriteAnimation_Clear, SpriteAnimation_ClearFar
 	import Actor_SelectAnimation, Actor_SelectAnimationFar
 	import Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
@@ -112,8 +112,8 @@
 	import Actor_RegisterSpriteMetadata, Actor_RegisterSpriteMetadataFar
 	import WorldMap_StartStillPicture, WorldMap_StartStillPictureFar
 	import WorldMap_LoadAreaGraphics, WorldMap_LoadAreaGraphicsFar
-	import Anim_ApplyChildValues, Anim_ApplyChildValuesFar
-	import Sprite_SetAnimColorModes, Sprite_SetAnimColorModesFar
+	import Actor_SetSpriteColorMode, Actor_SetSpriteColorModeFar
+	import Sprite_SetAnimationColorModes, Sprite_SetAnimationColorModesFar
 	import MapGrid_SetShownLayers, MapGrid_SetShownLayersFar
 	import MapGrid_SetCellBehaviorAt, MapGrid_SetCellBehaviorAtFar
 @ Window bank (far_call/WINDOW.S)

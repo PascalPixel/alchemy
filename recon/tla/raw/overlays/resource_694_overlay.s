@@ -508,7 +508,7 @@ Func_020015ac:
 	ldr r0, [r3]
 	movs r1, #17
 	movs r2, #0
-	bl Object_LinkPair
+	bl Object_TurnToFaceEachOther
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r0, #144

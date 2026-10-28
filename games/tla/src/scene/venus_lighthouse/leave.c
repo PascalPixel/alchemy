@@ -28,7 +28,7 @@ void Engine_AudioPlayCue(s32 cue);
 void Func_02001be4(s32 actor, s32 x, s32 z);
 void Func_02001cd4(s32 actor);
 void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
-void Object_LinkPair(s32 first, s32 second, s32 distance);
+void Object_TurnToFaceEachOther(s32 first, s32 second, s32 distance);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
@@ -133,7 +133,7 @@ static inline void Venus_ObjVariant(s32 actor, s32 value) {
 
 static inline void Venus_ObjLink(s32 first, s32 second, s32 distance) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Object_LinkPair(first, second, distance);
+  Object_TurnToFaceEachOther(first, second, distance);
 }
 
 static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {

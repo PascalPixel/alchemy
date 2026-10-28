@@ -190,6 +190,45 @@ A sprite is a small picture the hardware draws over or between the background
 layers; OAM, the object attribute memory, is the hardware's list of them,
 rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
 
+### Sprite animation
+
+One of the up to four pictures laid over each other in a sprite, each playing
+its own run of pictures (`struct SpriteAnimation`): Isaac's body, his weapon
+and his shadow are three sprite animations of one sprite
+([Field](src/field/README.md#sprites-and-their-animation)).
+
+Evidence: plain English. "Anim" was a clipped word, and no word of the time
+names one layer of a sprite.
+
+### Palette number
+
+Which of the sixteen 16-colour palettes a tile or a sprite is drawn in, the
+4-bit number the hardware reads beside each tile
+([Graphics](src/graphics/README.md#the-palette-fade)).
+
+Evidence: plain English for the hardware's own field. "Bank" stays the main
+image's word.
+
+### Line scroll
+
+A table that gives each of the screen's 160 lines its own background scroll,
+written into the scroll registers line by line by HBlank DMA; Mind Read's wave,
+the Lamakan Desert and the Lemurian Ship's ripple bend a layer with it
+(`struct LineScrollWork`, `LineScroll_`) ([Field](field.md#field-psynergy)).
+
+Evidence: Sega's SGL names per-line scroll offsets a line scroll
+(ラインスクロール).
+
+### Message
+
+The text the game types into a window a few letters each frame, with the
+speaker's voice blip, waiting for a button at each page break. Up to three are
+typed at once (`struct Message`, `Message_Type`)
+([Windows](src/window/README.md#typing)).
+
+Evidence: the game's own word, from its settings: Message Speed
+(メッセージスピード). No word of the time names the routine that types it.
+
 ### Main image
 
 The code the processor runs straight from the cartridge, about 1 MB in
@@ -315,6 +354,17 @@ pret calls the nearest thing a map section.
 What a scene shows and stands on: three background layers and a grid of cells
 under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md)).
 
+### Still picture
+
+The World Map's tilted view drawn once into an ordinary background picture,
+so that a menu's or an event's windows can use the layer the tilt was using
+(`WorldMap_StartStillPicture`) ([Field](field.md#the-world-map)). The map R
+shows of the whole world is the world picture, a screen of its own
+([Running a scene](src/overworld/README.md#the-world-picture)).
+
+Evidence: plain English for what the player sees, the view standing still;
+the code already showed it through `WorldMap_PresentStillPicture`.
+
 ### Sheet of rooms
 
 A map that packs indoor rooms drawn in one tile style side by side, each its
@@ -382,6 +432,15 @@ such as player control (`SC_PLAYER`) or the camera's
 Evidence: plain English. A built-in script is part of the actor script it
 runs under, and "controller" stays the game pad's word.
 
+### Watched actor
+
+The actor another actor's actor script faces, follows or approaches
+(`Actor.watchedActor`, `SC_FACE_WATCHED`, `SC_APPROACH_WATCHED`)
+([Field](field.md#actors-and-their-actor-scripts)).
+
+Evidence: plain English for what the commands do. "Linked" stays the linker's
+and the link cable's word.
+
 ### Trigger
 
 A row of a scene's trigger table (`struct Trigger`): a kind, the subject it
@@ -437,6 +496,9 @@ A routine an event calls: `Event_` for speech, waits and destinations,
 `Actor_` for actors and `FieldCamera_` for the camera. An event calls most of
 them through one inline each in `event_inline.h`
 ([Scenes](src/scene/README.md#events)).
+
+Evidence: plain English. The header every event is written with is `event.h`,
+named for what it serves.
 
 ### Destination
 

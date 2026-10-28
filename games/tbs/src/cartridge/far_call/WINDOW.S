@@ -70,7 +70,7 @@ FarCall_WindowTable:
 	export AreaNameWindow_HideFar, AreaNameWindow_Hide
 	export FieldMessage_ShowCenteredFar, FieldMessage_ShowCentered
 	export BattleMessage_CloseFar, BattleMessage_Close
-	export Message_ResetFreeFar, Message_ResetFree
+	export Message_ResetIdleFar, Message_ResetIdle
 	export MenuArrow_CreateFar, MenuArrow_Create
 	export MenuArrow_SetPositionFar, MenuArrow_SetPosition
 	export MenuArrow_ReleaseFar, MenuArrow_Release

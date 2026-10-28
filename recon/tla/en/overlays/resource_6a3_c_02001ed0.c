@@ -49,7 +49,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offse
 void Func_020048f4(void);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Object_LinkPair(s32 a, s32 b, s32 c);
+void Object_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Object_RefreshSelectorById(u32);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
@@ -240,7 +240,7 @@ L_ja_0200a412:
   Object_SetModeById(5, 4);
   FieldEvent_WaitFrames(0x21);
   Func_0200489c(5, 0, 5);
-  Object_LinkPair(0x1a, 0x1b, 0);
+  Object_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Object_RefreshSelectorById(0x1a);
   Object_RefreshSelectorById(0x1b);
   Func_020048cc(0x1a, 0x105, 0);
@@ -280,8 +280,8 @@ L_ja_0200a412:
   FieldEvent_WaitFrames(0xa);
   Func_0200489c(0x1b, 0, 5);
   ObjectMotion_SetAngleToward(7, 4, 0);
-  Object_LinkPair(6, 5, 0);
-  Object_LinkPair(4, 0x1c, 0);
+  Object_TurnToFaceEachOther(6, 5, 0);
+  Object_TurnToFaceEachOther(4, 0x1c, 0);
   Object_RefreshSelectorById(4);
   Object_RefreshSelectorById(0x1c);
   Func_020048cc(4, 0x108, 0);
@@ -311,14 +311,14 @@ L_ja_0200a6b6:
   *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
   Func_0200489c(0x1a, 0, 5);
 L_ja_0200a6e0:
-  Object_LinkPair(0x1c, 4, 0);
+  Object_TurnToFaceEachOther(0x1c, 4, 0);
   Object_RefreshSelectorById(0x1c);
   FieldEvent_WaitFrames(0xa);
   Object_SetModeById(0x1c, 3);
   FieldEvent_WaitFrames(0x14);
   FieldEvent_WaitFrames(0xa);
   Func_0200489c(0x1c, 0, 5);
-  Object_LinkPair(4, 0x1c, 0);
+  Object_TurnToFaceEachOther(4, 0x1c, 0);
   Object_RefreshSelectorById(4);
   FieldEvent_WaitFrames(0xa);
   Func_020048cc(4, 0x102, 0x1e);
@@ -328,7 +328,7 @@ L_ja_0200a6e0:
   Object_SetModeById(4, 3);
   FieldEvent_WaitFrames(0x14);
   FieldEvent_WaitFrames(0x1e);
-  Object_LinkPair(0x1a, 0x1b, 0);
+  Object_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Object_RefreshSelectorById(0x1a);
   Object_RefreshSelectorById(0x1b);
   Func_020048cc(0x1b, 0x108, 0);
@@ -350,8 +350,8 @@ L_ja_0200a6e0:
   Func_0200489c(0x1c, 0, 5);
   Func_020048cc(0x1a, 0x108, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Object_LinkPair(4, 7, 0);
-  Object_LinkPair(6, 5, 0);
+  Object_TurnToFaceEachOther(4, 7, 0);
+  Object_TurnToFaceEachOther(6, 5, 0);
   Object_RefreshSelectorById(6);
   Object_RefreshSelectorById(5);
   FieldEvent_WaitFrames(0x28);
@@ -652,7 +652,7 @@ L_0200a412:
   Object_SetModeById(5, 4);
   FieldEvent_WaitFrames(0x21);
   Func_0200489c(5, 0, 5);
-  Object_LinkPair(0x1a, 0x1b, 0);
+  Object_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Object_RefreshSelectorById(0x1a);
   Object_RefreshSelectorById(0x1b);
   Func_020048cc(0x1a, 0x105, 0);
@@ -692,8 +692,8 @@ L_0200a412:
   FieldEvent_WaitFrames(0xa);
   Func_0200489c(0x1b, 0, 5);
   ObjectMotion_SetAngleToward(7, 4, 0);
-  Object_LinkPair(6, 5, 0);
-  Object_LinkPair(4, 0x1c, 0);
+  Object_TurnToFaceEachOther(6, 5, 0);
+  Object_TurnToFaceEachOther(4, 0x1c, 0);
   Object_RefreshSelectorById(4);
   Object_RefreshSelectorById(0x1c);
   Func_020048cc(4, 0x108, 0);
@@ -723,14 +723,14 @@ L_0200a6b6:
   *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
   Func_0200489c(0x1a, 0, 5);
 L_0200a6e0:
-  Object_LinkPair(0x1c, 4, 0);
+  Object_TurnToFaceEachOther(0x1c, 4, 0);
   Object_RefreshSelectorById(0x1c);
   FieldEvent_WaitFrames(0xa);
   Object_SetModeById(0x1c, 3);
   FieldEvent_WaitFrames(0x14);
   FieldEvent_WaitFrames(0xa);
   Func_0200489c(0x1c, 0, 5);
-  Object_LinkPair(4, 0x1c, 0);
+  Object_TurnToFaceEachOther(4, 0x1c, 0);
   Object_RefreshSelectorById(4);
   FieldEvent_WaitFrames(0xa);
   Func_020048cc(4, 0x102, 0x1e);
@@ -740,7 +740,7 @@ L_0200a6e0:
   Object_SetModeById(4, 3);
   FieldEvent_WaitFrames(0x14);
   FieldEvent_WaitFrames(0x1e);
-  Object_LinkPair(0x1a, 0x1b, 0);
+  Object_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Object_RefreshSelectorById(0x1a);
   Object_RefreshSelectorById(0x1b);
   Func_020048cc(0x1b, 0x108, 0);
@@ -762,8 +762,8 @@ L_0200a6e0:
   Func_0200489c(0x1c, 0, 5);
   Func_020048cc(0x1a, 0x108, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Object_LinkPair(4, 7, 0);
-  Object_LinkPair(6, 5, 0);
+  Object_TurnToFaceEachOther(4, 7, 0);
+  Object_TurnToFaceEachOther(6, 5, 0);
   Object_RefreshSelectorById(6);
   Object_RefreshSelectorById(5);
   FieldEvent_WaitFrames(0x28);

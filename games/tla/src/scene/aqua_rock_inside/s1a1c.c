@@ -29,7 +29,7 @@ void ObjectMotion_ResetAndSetPositionInMode2();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
-void Object_LinkPair();
+void Object_TurnToFaceEachOther();
 void Object_SetModeById();
 void UiText_DrawQuantityPairWithCue();
 void UiText_ShowPositionedMessageAndWait();
@@ -95,7 +95,7 @@ L_02009a46:
   Call1(FieldEvent_WaitFrames, 30);
   Call1(Func_02003e14, (s32)&MsgWhatWentWrong);
   Value3((s32 (*)())Func_02003e34, 7, 0x105, 20);
-  Call3(Object_LinkPair, gAdventure.currentOwner, 7, 0);
+  Call3(Object_TurnToFaceEachOther, gAdventure.currentOwner, 7, 0);
   Call1(FieldEvent_WaitFrames, 10);
   Call2(Func_02003e1c, 7, 0);
   Func_02003e34(7, 0x100, 20);

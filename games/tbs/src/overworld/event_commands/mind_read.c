@@ -59,7 +59,7 @@ void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gMindReadWork);
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
-  Anim_ApplyChildPalette(Actor_GetById(((struct MindReadWork *)work)->sourceId),
+  Actor_SetSpritePalette(Actor_GetById(((struct MindReadWork *)work)->sourceId),
                          1);
   FieldPsynergy_FadeFromCastColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
@@ -102,7 +102,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
-  Anim_ApplyChildPalette(Actor_GetById(work->sourceId), 0);
+  Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
@@ -143,7 +143,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     work->counter = 0;
 }
 
-// What Mind Read's wave uses: BG0's scanline scroll, the hue cycle and BG
+// What Mind Read's wave uses: BG0's line scroll, the hue cycle and BG
 // WINDOW_PALETTE.
 
 #define MIND_READ_GREY RGB(28, 28, 28)
@@ -253,7 +253,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
 }
 
 /// Turns colours 1 and 3 to 12 of WINDOW_PALETTE grey and starts the BG0
-/// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// line scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
@@ -286,7 +286,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK);
 }
 
-/// Stops the BG0 scanline scroll and restores WINDOW_PALETTE.
+/// Stops the BG0 line scroll and restores WINDOW_PALETTE.
 void FieldPsynergy_RestoreMindReadPalette(void) {
   void *work;
 

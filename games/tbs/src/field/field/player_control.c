@@ -497,7 +497,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (animation != 0) {
-        Sprite_StartAnim(animation, 1);
+        Sprite_StartAnimation(animation, 1);
         animation->flags = collision;
         animation->rotation = footprintAngle + 0x4000;
         animation->image.priority = 3;
@@ -506,7 +506,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       // sides; each second one faces a half turn round.
       // Read signed: the footprint side was a signed halfword here.
       if (*(s16 *)&actor->userValue == 2) {
-        Sprite_StartAnim(animation, 2);
+        Sprite_StartAnimation(animation, 2);
         actor->userValue = collision;
       }
       if (*(s16 *)&actor->userValue != 0)
@@ -799,9 +799,9 @@ update_object:
     playerSprite = actor->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
-    // In a forest the sprite's second anim is drawn (priority 1) and its
-    // shadow is not; elsewhere that anim takes priority 9, and an anim above
-    // 3 is not drawn.
+    // In a forest the sprite's second sprite animation is drawn (priority 1)
+    // and its shadow is not; elsewhere that sprite animation takes priority 9,
+    // and a sprite animation above 3 is not drawn.
     if (terrainCollision == WORLD_MAP_COLLISION_FOREST) {
       playerSprite->entries[1]->priority = 1;
       playerSprite->flags = 0;
@@ -822,7 +822,7 @@ update_object:
         ripple->motionFlags = collision;
         ripple->layer = 1;
         if (rippleSprite != 0) {
-          Sprite_StartAnim(rippleSprite, 1);
+          Sprite_StartAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
           rippleSprite->image.priority = 2;

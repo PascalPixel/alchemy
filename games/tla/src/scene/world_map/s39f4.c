@@ -38,7 +38,7 @@ void Func_020039f4(struct ObjectRuntime *object) {
     Func_02004b20(spark, gData_02004f90);
     spark->motionFlags = 0;
     spark->action = 0;
-    spark->linkedObject = object;
+    spark->watchedObject = object;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 2);
       sprite->nextFrame = 0;
@@ -52,7 +52,7 @@ void Func_020039f4(struct ObjectRuntime *object) {
     Func_02004b20(spark, gData_02004f90);
     spark->motionFlags = 0;
     spark->action = 0;
-    spark->linkedObject = object;
+    spark->watchedObject = object;
     spark->terrainId = 1;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 1);

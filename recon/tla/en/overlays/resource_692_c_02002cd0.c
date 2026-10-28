@@ -89,7 +89,7 @@ void Func_02002cd0(s32 a, s32 b) {
     object->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
     object->motionFlags = 0;
     object->unk4c = 0x7a0000;
-    object->linkedObject = second;
+    object->watchedObject = second;
     ((u8 *)object)[0x62] = ((16 - i) << 3) + 15;
     Object_SetPartAttribute(object, 10);
     Object_SetSpritePriority(object, 1);
@@ -119,7 +119,7 @@ void Func_02002cd0(s32 a, s32 b) {
     object->bounce = object->x;
     object->unk4c = 0;
     object->gravity = object->z;
-    object->linkedObject = second;
+    object->watchedObject = second;
     object->motionFlags = 0;
     object->priorityFlags = 1;
     Object_SetPartAttribute(object, 10);

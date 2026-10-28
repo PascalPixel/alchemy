@@ -157,9 +157,9 @@ it, whose comment names the abilities that reach it. A trigger's moment is
 
 ## The world picture
 
-![On the World Map, R brings up the still picture of the whole world, a hand on the party's place beside a "Present location" window; the hand moves right and up across the map, sits back on the party's place while L is held, and A closes the picture](https://alchemy.pascalpixel.com/guides/object/world-map-picture.gif)
+![On the World Map, R brings up the picture of the whole world, a hand on the party's place beside a "Present location" window; the hand moves right and up across the map, sits back on the party's place while L is held, and A closes the picture](https://alchemy.pascalpixel.com/guides/object/world-map-picture.gif)
 
-On the World Map, R shows a still picture of the whole world with a marker on
+On the World Map, R shows a picture of the whole world with a marker on
 every place the party has visited, and L pulls the moving view back. A hand
 moves with the d-pad, faster the longer it is held, and returns to the party's
 place while L or R is held; the place nearest it blinks and its name shows in

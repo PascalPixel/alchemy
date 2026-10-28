@@ -597,7 +597,7 @@ The other forms it takes, in
 
 | Form                               | Example                                                                                                                       |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| a scene per point in the story     | the stormy night in Vale ([vale_stormy_night.c](src/scene/vale_stormy_night.c))                                               |
+| a scene per point in the story     | the stormy night in Vale ([vale_prologue.c](src/scene/vale_prologue.c))                                               |
 | a scene with no triggers           | Vale erupting plays its event and leaves by its one exit ([vale_eruption.c](src/scene/vale_eruption.c))                       |
 | a row that lasts until its flag    | each pedestal of the Elemental Stars offers its star once ([sol_sanctum_elemental_star_room.c](src/scene/sol_sanctum_elemental_star_room.c)) |
 | a flag set by arriving             | reaching the World Map from Vale marks that the party has left                                                                |

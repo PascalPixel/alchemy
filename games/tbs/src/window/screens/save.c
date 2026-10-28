@@ -975,7 +975,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, y);
     } else {
       Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-      Text_DrawMessage(summary->area + MsgDebugEntryName, fileList, 62, y);
+      Text_DrawMessage(summary->area + MsgDebugAreaName, fileList, 62, y);
       work->dirty = 1;
     }
   }
@@ -1053,7 +1053,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     } else {
       y = i * 16;
       Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
-      Text_DrawMessage(save->summary[i].area + MsgDebugEntryName, fileList, 72,
+      Text_DrawMessage(save->summary[i].area + MsgDebugAreaName, fileList, 72,
                        y);
       work->dirty = 1;
     }

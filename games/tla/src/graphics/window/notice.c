@@ -18,7 +18,7 @@ struct TimedNoticeWork {
 void UiTimedNotice_Update(void);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
-extern u8 MsgDebugEntryName;
+extern u8 MsgDebugAreaName;
 
 void Text_DrawMessage(s32 resource, struct Window *window, s32 x, s32 y);
 
@@ -44,7 +44,7 @@ void UiTimedNotice_Create(void) {
    * 8 (differ 4); keep it after them. */
   __asm__("" : : "r"(state));
   resource = Scene_GetAreaNameIndexFar(state->scene, state->entrance) +
-             (s32)&MsgDebugEntryName;
+             (s32)&MsgDebugAreaName;
   Text_GetMessageSize(resource, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;

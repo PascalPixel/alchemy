@@ -1,5 +1,5 @@
 /// @file
-/// The debug party presets: runs of party members, each run ended by
+/// The debug parameter sets: runs of party members, each run ended by
 /// DEBUG_PRESET_END, that DebugParty_LoadPreset gives the party.
 
 #include "debug_party.h"
@@ -8,7 +8,7 @@
 #include "ability_ids.h"
 
 // clang-format off
-const struct DebugPartyEntry gDebug_PartyPresets[] = {
+const struct DebugPartyEntry gDebug_ParameterSets[] = {
     {
         .unitId = ISAAC,
         .level = 35,

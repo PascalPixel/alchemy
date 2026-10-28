@@ -410,7 +410,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
       else
-        nearestName = Area_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
+        nearestName = Area_GetNameIndex(nearestName, 1) + MsgDebugAreaName;
       Text_MeasureMessageFar(nearestName, &width, &height);
       cursorX = nearestX;
       cursorY = nearestY;

@@ -332,7 +332,7 @@ struct AreaNameRule {
   s16 id;            ///< a scene, or an area
   s16 entrance : 15; ///< -1 for any entrance
   u16 useMapId : 1;  ///< 1 when id is a scene, 0 when it is an area
-  /// The area name, as an offset that most readers add to MsgDebugEntryName.
+  /// The area name, as an offset that most readers add to MsgDebugAreaName.
   /// 0 is the Title's name (area 0's rule), which a scene no rule
   /// matches also gets.
   s32 areaNameIndex;
@@ -344,7 +344,7 @@ extern const struct AreaNameRule gArea_NameRules[];
 /// the scene or its area; 0, the Title's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
 /// area name windows through Area_GetNameIndexFar, and by
-/// WorldPicture_UpdateMarkers; most add it to MsgDebugEntryName for the
+/// WorldPicture_UpdateMarkers; most add it to MsgDebugAreaName for the
 /// message. The save stores it as its area (save.h).
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   const struct AreaNameRule *rule = gArea_NameRules;

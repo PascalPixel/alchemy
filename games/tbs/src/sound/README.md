@@ -77,11 +77,11 @@ step of that mixing decides how much of each VBlank's sound carries into the
 next, in effect an echo, which MusicPlayer2000 calls reverb, and the game
 keeps five versions of it. Starting a piece of music copies one into place:
 the title and ending music carry the most, most music a little less, and a
-link battle none at all. The audio test can step through all five.
+link battle none at all. The sound test can step through all five.
 
 The versions are `enum SoundReverbCode`, copied into place by
 `Sound_LoadReverbCode`. When the mixer clips a sample that comes out too loud,
-it also marks it in `gSoundMixerClipped`, which only the audio test looks at.
+it also marks it in `gSoundMixerClipped`, which only the sound test looks at.
 
 ## Design
 

@@ -404,7 +404,7 @@ void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the World Map's zoom to end.
 void Event_WaitForZoomTransitionFar(void);
 /// Returns the area name of a scene and entrance, an offset from
-/// MsgDebugEntryName, or 0 when no rule matches.
+/// MsgDebugAreaName, or 0 when no rule matches.
 s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
 /// Starts an actor's movement type: an enum MovementType, or the actor script
 /// itself.

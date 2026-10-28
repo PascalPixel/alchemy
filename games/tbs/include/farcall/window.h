@@ -211,12 +211,12 @@ void Window_SetTilemapEntryFar(struct Window *window, s32 value, s32 x, s32 y,
                                u32 mode);
 #ifdef UBFIX
 /// Debug: the scene selector, returning nothing under UBFIX.
-void DebugMapSelect_RunFar(void);
+void DebugSceneSelect_RunFar(void);
 #else
 /// Debug: the scene selector, where An exits to the chosen scene and
 /// entrance and B closes it. The field opens it from the Start menu with B
 /// held. Its result is undefined, and nothing reads it.
-s16 DebugMapSelect_RunFar(void);
+s16 DebugSceneSelect_RunFar(void);
 #endif
 /// Debug: shows the game flags 256 at a time as a grid the player can toggle,
 /// starting on page 8. Returns 0.

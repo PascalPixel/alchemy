@@ -2,12 +2,12 @@
 #define ALCHEMY_DEBUG_PARTY_H
 
 /// @file
-/// The debug party presets.
+/// The debug parameter sets.
 
 #include "types.h"
 #include "battle_unit.h"
 
-/// One row of the debug party presets: a party member, the level to raise them
+/// One row of the debug parameter sets: a party member, the level to raise them
 /// to, the Djinn of each element to give them, the items to equip and up to two
 /// abilities to teach. A row whose party member is DEBUG_PRESET_END ends a
 /// preset. Read only by DebugParty_LoadPreset.

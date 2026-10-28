@@ -205,43 +205,43 @@ enum {
   WORLD_MAP_TO_ROCK_ROOMS = 112,
 };
 
-/// SceneId_ValeStormyNight's entrances.
+/// SceneId_ValePrologue's entrances.
 enum {
-  VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
-  VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
-  VALE_STORMY_NIGHT_FROM_VALE_PLAZA = 5,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST = 6,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH = 7,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH = 9,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST = 10,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST = 12,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST = 13,
-  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
-  VALE_STORMY_NIGHT_FROM_BOULDER_PASSED = 16,
+  VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_PROLOGUE_FROM_VALE_PLAZA = 5,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_EAST = 6,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_SOUTH = 7,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH = 9,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST = 10,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST = 12,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST = 13,
+  VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
+  VALE_PROLOGUE_FROM_BOULDER_PASSED = 16,
 };
-/// SceneId_ValeStormyNight's exits.
+/// SceneId_ValePrologue's exits.
 enum {
-  VALE_STORMY_NIGHT_TO_VALE_PLAZA = 2,
-  VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
-  VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST = 5,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH = 6,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE =
+  VALE_PROLOGUE_TO_VALE_PLAZA = 2,
+  VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST = 5,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH = 6,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE =
       7, ///< ★ Named from what the player sees: the door of Isaac's house on
          ///< the stormy night (its render)
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH = 8,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST = 9,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR =
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH = 8,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST = 9,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR =
       10, ///< ★ Named from what the player sees: the second door of the house
           ///< by the river, leading where the first house door does (its
           ///< render)
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR =
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR =
       11, ///< ★ Named from what the player sees: the door where the Sanctum
           ///< stands by day (its render)
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST = 12,
-  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST = 13,
-  VALE_STORMY_NIGHT_TO_BOULDER_PASSED =
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST = 12,
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_EAST = 13,
+  VALE_PROLOGUE_TO_BOULDER_PASSED =
       20, ///< ★ Named from what the player sees: the riverbank where Isaac
           ///< stands once the Boulder has swept down the river (its render)
 };
@@ -302,7 +302,7 @@ enum {
   /// Where the battle with the travelers on the stormy night returns, won or
   /// lost (ValePlaza_FightTravelers).
   VALE_PLAZA_AFTER_TRAVELERS_BATTLE = 19,
-  /// Entrances only the debug menu's map select reaches: no table
+  /// Entrances only the debug scene selector reaches: no table
   /// places them and no exit leads to them. The first replays the travelers
   /// leaving, the second sets FLAG_CHILDHOOD, the third a preset of story flags
   /// (ValePlaza_SetProgressFlagsAndExit).
@@ -349,8 +349,8 @@ enum {
   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH = 3,
   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST = 4,
   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST = 6,
-  VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH = 11,
-  VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH = 12,
+  VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH = 11,
+  VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH = 12,
   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG =
       13, ///< ★ Named from the game: "Mythril Bag" (MsgItemName)
 };
@@ -399,8 +399,8 @@ enum {
   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST = 11,
-  COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST = 12,
+  COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST = 11,
+  COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST = 12,
   COTTAGE_ROOMS_B_FROM_BABI_PALACE = 19,
   COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST = 20,
   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
@@ -427,13 +427,13 @@ enum {
   COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST = 10,
-  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST = 11,
+  COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST = 10,
+  COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST = 11,
   COTTAGE_ROOMS_B_TO_BABI_PALACE = 19,
   COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
       20, ///< ★ Named from what the player sees: the ground floor at the foot
           ///< of the stairs (its render)
-  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA =
+  COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA =
       21, ///< ★ Named from what the player sees: Dora leading Isaac down and
           ///< out of the house on the stormy night (its render)
   COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH = 22,
@@ -3632,7 +3632,7 @@ enum {
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
   /// The middle of the room, facing south. No exit leads to it: only the debug
-  /// map selector, which exits to any entrance from 0 to 99, reaches
+  /// scene selector, which exits to any entrance from 0 to 99, reaches
   /// it. ★ Named from its area name: Crossbone Isle
   CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE = 99,
 };
@@ -6103,7 +6103,7 @@ enum {
 /// SceneId_LemurianShip's entrances.
 enum {
   LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C = 1,
-  /// In no table row and led to by no exit: only the debug map selector,
+  /// In no table row and led to by no exit: only the debug scene selector,
   /// which exits to any entrance from 0 to 99, reaches it. Arriving by
   /// it hands the leader the Black Orb. ★ Named from the game: "You got the
   /// Black Orb." (MsgWorldMapLook)

@@ -8,33 +8,33 @@
 /// Schedules the debug scene and entrance selector;
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
-UNUSED void DebugMapSelect_Schedule(void) {
+UNUSED void DebugSceneSelect_Schedule(void) {
 #ifdef UBFIX
-  Task_Add(DebugMapSelect_Run, TASK_PASS_FRAME);
+  Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
 #else
-  Task_Add((TaskFunc)DebugMapSelect_Run, TASK_PASS_FRAME);
+  Task_Add((TaskFunc)DebugSceneSelect_Run, TASK_PASS_FRAME);
 #endif
 }
 
 /// Draws the debug scene and entrance numbers with their category/area
-/// labels. The first line has the scene's name (MsgDebugCategoryName + scene)
-/// and, beside it, the area its entrance leads to (MsgDebugEntryName + area);
+/// labels. The first line has the scene's name (MsgDebugSceneCode + scene)
+/// and, beside it, the area its entrance leads to (MsgDebugAreaName + area);
 /// the numbers, three digits each, go under them.
-void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
-                            const s16 *entrance) {
+void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
+                              const s16 *entrance) {
   s16 mapIndex = sceneId;
-  s32 label = Area_GetNameIndexFar(mapIndex, *entrance) + MsgDebugEntryName;
+  s32 label = Area_GetNameIndexFar(mapIndex, *entrance) + MsgDebugAreaName;
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(mapIndex, 3, window, 0, 14);
   Text_DrawNumber(*entrance, 3, window, MENU_LABEL_X, 14);
   Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
-  Text_DrawMessage(mapIndex + MsgDebugCategoryName, window, 0, 0);
+  Text_DrawMessage(mapIndex + MsgDebugSceneCode, window, 0, 0);
   Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
 // The debug scene selector: a scene and an entrance number, starting from
-// the scene being run (DebugMapSelect_HandleRowInput has the keys). An exits
+// the scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
 // there (Event_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (overworld/overworld/field_sequence.c).
@@ -42,9 +42,9 @@ void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders Event_SetDestinationFar's argument setup.
 #ifdef UBFIX
-void DebugMapSelect_Run(void) {
+void DebugSceneSelect_Run(void) {
 #else
-s16 DebugMapSelect_Run(void) {
+s16 DebugSceneSelect_Run(void) {
 #endif
   s32 cursorSlot;
   s16 selectedField;
@@ -59,7 +59,7 @@ s16 DebugMapSelect_Run(void) {
   sceneId = gSequenceParentWork.returnScene;
   entrance = gSequenceParentWork.returnEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
-  DebugMapSelect_DrawRow(window, sceneId, &entrance);
+  DebugSceneSelect_DrawRow(window, sceneId, &entrance);
   MenuArrow_Create(&cursor, &cursorSlot);
 
   // Wait for the keys that opened it to be let go.
@@ -67,8 +67,8 @@ s16 DebugMapSelect_Run(void) {
     wait(1);
 
   for (;;) {
-    result = DebugMapSelect_HandleRowInput(window, sceneId, &entrance,
-                                           &selectedField);
+    result = DebugSceneSelect_HandleRowInput(window, sceneId, &entrance,
+                                             &selectedField);
     if (result == -1) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
@@ -104,8 +104,8 @@ s16 DebugMapSelect_Run(void) {
 /// R and L step a scene by ten, setting the entrance to 0, and past
 /// either end go to the other (195 + 10 gives 0); they step an entrance
 /// by ten, wrapping by 99 (95 + 10 gives 6).
-s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
-                                  s16 *entrance, s16 *selectedField) {
+s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
+                                    s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
     return -1;
   if (gKeysRepeat & KEY_B)
@@ -124,7 +124,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
     }
     if (sceneId > 200)
       sceneId = 0;
-    DebugMapSelect_DrawRow(window, sceneId, entrance);
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*selectedField == 0) {
       sceneId--;
@@ -135,7 +135,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
     }
     if (sceneId < 0)
       sceneId = 200;
-    DebugMapSelect_DrawRow(window, sceneId, entrance);
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
       *entrance = 0;
@@ -147,7 +147,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
     }
     if (sceneId > 200)
       sceneId = 0;
-    DebugMapSelect_DrawRow(window, sceneId, entrance);
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
       *entrance = 0;
@@ -159,7 +159,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
     }
     if (sceneId < 0)
       sceneId = 200;
-    DebugMapSelect_DrawRow(window, sceneId, entrance);
+    DebugSceneSelect_DrawRow(window, sceneId, entrance);
   }
   return sceneId;
 }

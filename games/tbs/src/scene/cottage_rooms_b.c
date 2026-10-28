@@ -10,13 +10,13 @@
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from menu/file_screen.c), and
 ///   its ground floor, entered from Vale (COTTAGE_ROOMS_B_FROM_VALE, from
 ///   Vale's VALE_TO_COTTAGE_ROOMS_B and the stormy night's
-///   VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE), joined by the stairs
+///   VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE), joined by the stairs
 ///   (COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS and
 ///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR).
 /// - A house in Vale with two beds before a hearth, entered only on the stormy
 ///   night, by either of its two doors
-///   (COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST and
-///   COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST).
+///   (COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST and
+///   COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST).
 /// - Kraden's study, the inside of his cottage
 ///   (COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH and
 ///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
@@ -52,11 +52,11 @@
 ///   CottageRoomsB_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
 ///   hurry, ACTOR_FLAME_AND_SMOKE shakes outside the house, then turns to
 ///   smoke and rises away, and they run for the plaza, where the village takes
-///   refuge, by COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA into
-///   ValeStormyNight (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
+///   refuge, by COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA into
+///   ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
 ///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
 ///   flashes, and COTTAGE_ROOMS_B_TO_VALE leads into the storm
-///   (ValeStormyNight) instead of Vale (gCottageRoomsB_StormExits). Kyle dies
+///   (ValePrologue) instead of Vale (gCottageRoomsB_StormExits). Kyle dies
 ///   that night, as the village says later.
 /// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 ///   cottage (ValeKradensCottage's
@@ -93,9 +93,9 @@
 ///   Kraden. The setup does not show the area's name there.
 ///
 /// The exits COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
-/// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the cell
+/// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST are taken by the cell
 /// behaviors of the same numbers, leading to the rest of Vale (ValePlaza,
-/// ValeKradensCottage, Vale and ValeStormyNight) or between this scene's own
+/// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
 #include "sequence_parent_work.h"
@@ -168,7 +168,7 @@ enum CottageRoomsBActorId {
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in
-  /// vale_stormy_night.c).
+  /// vale_prologue.c).
   /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
@@ -487,8 +487,8 @@ static void CottageRoomsB_ExitToInnUpstairs(void) {
 }
 
 /// Reached by cell behavior 6; leads to Vale
-/// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValeStormyNight
-/// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
+/// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValePrologue
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
 static void CottageRoomsB_ExitToVale(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
@@ -516,18 +516,18 @@ static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Reached by cell behavior 10; leads to ValeStormyNight
-/// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST).
-static void CottageRoomsB_ExitToValeStormyNightWest(void) {
+/// Reached by cell behavior 10; leads to ValePrologue
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST).
+static void CottageRoomsB_ExitToValePrologueWest(void) {
   Sound_Play(SE_MAP_EXIT);
-  CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST);
+  CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST);
 }
 
-/// Reached by cell behavior 11; leads to ValeStormyNight
-/// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST).
-static void CottageRoomsB_ExitToValeStormyNightEast(void) {
+/// Reached by cell behavior 11; leads to ValePrologue
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST).
+static void CottageRoomsB_ExitToValePrologueEast(void) {
   Sound_Play(SE_MAP_EXIT);
-  CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST);
+  CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST);
 }
 
 /// Sets up these rooms for the stormy night or the story's villagers. It also
@@ -793,9 +793,9 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 /// away, as they run to the plaza. Called by CottageRoomsB_Initialize on
 /// arrival by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
 /// CottageRoomsB_DoraWakesIsaac. Takes
-/// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, to ValeStormyNight
-/// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA), where
-/// ValeStormyNight_DoraSendsIsaacToThePlaza follows.
+/// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA, to ValePrologue
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA), where
+/// ValePrologue_DoraSendsIsaacToThePlaza follows.
 static void CottageRoomsB_HurryToThePlaza(void) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -919,7 +919,7 @@ ramp:
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA);
+  Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -1487,9 +1487,9 @@ struct SceneEntrance gCottageRoomsB_Entrances[] = {
     {COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 408, 0,
      665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST, CONDITION_ALWAYS, 705, 0, 817,
+    {COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST, CONDITION_ALWAYS, 879, 0, 765,
+    {COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
     {COTTAGE_ROOMS_B_FROM_BABI_PALACE, CONDITION_ALWAYS, 760, 0, 328,
@@ -1523,17 +1523,17 @@ u32 gCottageRoomsB_Exits[] = {
                COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
     SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
                COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST),
     SCENE_EXIT(COTTAGE_ROOMS_B_TO_BABI_PALACE, BabiPalace,
                BABI_PALACE_FROM_COTTAGE_ROOMS_B),
     SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
                CottageRoomsB,
                COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA),
     SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH,
                ValeKradensCottage,
                VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH),
@@ -1553,23 +1553,23 @@ u32 gCottageRoomsB_StormExits[] = {
                VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH),
     SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CottageRoomsB,
                COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE),
     SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CottageRoomsB,
                COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR),
     SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CottageRoomsB,
                COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
     SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
                COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST),
     SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
                CottageRoomsB,
                COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA),
     SCENE_EXITS_END,
 };
 
@@ -1668,8 +1668,8 @@ struct Trigger gCottageRoomsB_StormTriggers[] = {
     { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1699,8 +1699,8 @@ struct Trigger gCottageRoomsB_Triggers[] = {
     { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1734,8 +1734,8 @@ struct Trigger gCottageRoomsB_TriggersAfterLeaving[] = {
     { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1781,8 +1781,8 @@ struct Trigger gCottageRoomsB_TriggersAfterKalay[] = {
     { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },

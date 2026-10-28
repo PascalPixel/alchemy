@@ -25,9 +25,9 @@ The last ten rows of the scene table are the test rooms: eight of them run the
 Djinn room, each on a map of its own, and the other two are the level room
 and the menu test room.
 
-The selector is `DebugMapSelect_Run`, among the window bank's menus since it
+The selector is `DebugSceneSelect_Run`, among the window bank's menus since it
 is built from windows ([debug.c](../window/screens/debug.c)); the rooms' scenes
-are `TestRoom0` to `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`.
+are `Test0` to `Test7`, `IncreaseItemAndLevel` and `MenuTest`.
 
 ### Why debug mode stays off
 
@@ -158,8 +158,10 @@ palette editor the same debug mode opens is in
 
 ## Evidence
 
-The game gives the rooms no names, so their scene ids (`TestRoom0` to
-`TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`) and functions are named for
+Camelot labels the eight Djinn room scenes TEST0 to TEST7, and their area
+names are Test 0 to Test 7, so their scene ids are `Test0` to `Test7`; the
+other two take their area names, Increase item and level and Menu test
+(`IncreaseItemAndLevel` and `MenuTest`), and the functions are named for
 what they let a tester do, going by the messages they show. `test.c` keeps one
 empty function nothing calls, `MenuTest_NoOp`, marked
 [`UNUSED`](../../glossary.md#unused).

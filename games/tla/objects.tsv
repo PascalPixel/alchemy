@@ -4462,7 +4462,7 @@ main	rom_main_15	games/tla/src/sound/music_set_volume	.text
 main	rom_main_15	games/tla/src/sound/wait_for_completion	.text
 main	rom_main_15	games/tla/src/system/sound_driver_mode
 main	rom_main_15	games/tla/src/sound/noop_stub	.text
-main	rom_main_15	games/tla/src/sound/audio_test	.text
+main	rom_main_15	games/tla/src/sound/sound_test	.text
 main	rom_main_15	games/tla/src/sound/update_toggle_mask	.text
 main	rom_main_15	games/tla/src/sound/sound_flag	.text
 main	rom_main_15	games/tla/src/sound/pcm_rate	.text
@@ -4495,7 +4495,7 @@ main	rom_tail_00	games/tla/src/sound/tail	.text
 main	rom_tail_00	games/tla/src/sound/music_track_set_voice_length	.text
 main	rom_tail_00	games/tla/src/sound/music_track_set_voice_pan_or_sweep	.text
 main	rom_tail_00	games/tla/src/sound/empty_callback	.text
-main	rom_tail_00	games/tla/src/sound/audio_test	.rodata
+main	rom_tail_00	games/tla/src/sound/sound_test	.rodata
 main	rom_tail_00	games/tla/src/sound/tables	.rodata
 main	rom_tail_00	games/tla/sound/voices	.rodata
 main	rom_tail_00	games/tla/sound/cgb_waves	.rodata

@@ -9,7 +9,7 @@
 /// table; C takes the number as (s32)&SceneId_Vale, and the exit tables name a
 /// scene by its place (SCENE_EXIT).
 
-/// ★ Named from the game: "Title screen" (MsgDebugEntryName)
+/// ★ Named from the game: "Title screen" (MsgDebugAreaName)
 extern char SceneId_Title;
 /// The File Screen, where the player chooses a file; the debug map list calls
 /// it "(Clear data)".
@@ -23,9 +23,9 @@ extern char SceneId_WorldMap;
 /// gSequenceParentWork.mapId with.
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)
-/// ★ Named from the game: "I just knew a storm like this would knock it loose!"
-/// (MsgValeSureHelp)
-extern char SceneId_ValeStormyNight;
+/// Vale on the stormy night of the prologue, which Camelot labels PLOGV00.
+/// ★ Named from the game: "PLOGV00" (MsgDebugSceneCode)
+extern char SceneId_ValePrologue;
 /// ★ Named from its area name: Vale
 extern char SceneId_Vale;
 /// ★ Named from the game: "Why's everyone hanging around the town gate?"
@@ -64,7 +64,7 @@ extern char SceneId_SolSanctumCorridor;
 /// ★ Named from what the player sees: the hall of the two minotaur reliefs that
 /// take the Small Jewels (its render)
 extern char SceneId_SolSanctumReliefs;
-/// ★ Named from the game: "Elemental Star Room" (MsgDebugEntryName)
+/// ★ Named from the game: "Elemental Star Room" (MsgDebugAreaName)
 extern char SceneId_SolSanctumElementalStarRoom;
 /// ★ Named from the game: "It's erupting..." (MsgSolSanctumReturnStarToBag)
 extern char SceneId_SolSanctumEruption;
@@ -111,7 +111,7 @@ extern char SceneId_Bilibin;
 extern char SceneId_CottageRoomsC;
 /// ★ Named from its area name: Bilibin Treasury
 extern char SceneId_BilibinTreasury;
-/// ★ Named from the game: "McCoy's Palace" (MsgDebugEntryName)
+/// ★ Named from the game: "McCoy's Palace" (MsgDebugAreaName)
 extern char SceneId_McCoyPalace;
 /// ★ Named from the game: "planning the new palace."
 /// (MsgBilibinIShouldntHaveSaidAnythingWhen)
@@ -529,30 +529,30 @@ extern char SceneId_VenusLighthouseThirdFloor;
 /// ★ Named from what the player sees: the fourth floor of the climb, below the
 /// Lighthouse Aerie (its render)
 extern char SceneId_VenusLighthouseFourthFloor;
-/// ★ Named from the game: "Lighthouse Aerie" (MsgDebugEntryName)
+/// ★ Named from the game: "Lighthouse Aerie" (MsgDebugAreaName)
 extern char SceneId_VenusLighthouseAerie;
 /// ★ Named from its area name: Lemurian ship
 extern char SceneId_LemurianShip;
 /// ★ Named from its area name: Tolbi Spring
 extern char SceneId_TolbiSpring;
-/// ★ Named from the game: "Lobby" (MsgDebugEntryName)
+/// ★ Named from the game: "Lobby" (MsgDebugAreaName)
 extern char SceneId_BattleArena;
-/// ★ Named from the game: "Test 0" (MsgDebugEntryName)
-extern char SceneId_TestRoom0;
-/// ★ Named from the game: "Test 1" (MsgDebugEntryName)
-extern char SceneId_TestRoom1;
-/// ★ Named from the game: "Test 2" (MsgDebugEntryName)
-extern char SceneId_TestRoom2;
-/// ★ Named from the game: "Test 3" (MsgDebugEntryName)
-extern char SceneId_TestRoom3;
-/// ★ Named from the game: "Test 4" (MsgDebugEntryName)
-extern char SceneId_TestRoom4;
-/// ★ Named from the game: "Test 5" (MsgDebugEntryName)
-extern char SceneId_TestRoom5;
-/// ★ Named from the game: "Test 6" (MsgDebugEntryName)
-extern char SceneId_TestRoom6;
-/// ★ Named from the game: "Test 7" (MsgDebugEntryName)
-extern char SceneId_TestRoom7;
+/// ★ Named from the game: "Test 0" (MsgDebugAreaName)
+extern char SceneId_Test0;
+/// ★ Named from the game: "Test 1" (MsgDebugAreaName)
+extern char SceneId_Test1;
+/// ★ Named from the game: "Test 2" (MsgDebugAreaName)
+extern char SceneId_Test2;
+/// ★ Named from the game: "Test 3" (MsgDebugAreaName)
+extern char SceneId_Test3;
+/// ★ Named from the game: "Test 4" (MsgDebugAreaName)
+extern char SceneId_Test4;
+/// ★ Named from the game: "Test 5" (MsgDebugAreaName)
+extern char SceneId_Test5;
+/// ★ Named from the game: "Test 6" (MsgDebugAreaName)
+extern char SceneId_Test6;
+/// ★ Named from the game: "Test 7" (MsgDebugAreaName)
+extern char SceneId_Test7;
 /// ★ Named from its area name: Increase item and level
 extern char SceneId_IncreaseItemAndLevel;
 /// ★ Named from its area name: Menu test

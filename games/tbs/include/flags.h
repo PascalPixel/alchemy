@@ -1493,7 +1493,7 @@
 #define FLAG_VALE_STORM_SAW_FELIX_HANGING_ON 0x83a
 /// The Boulder has come down the river and swept away Felix, his parents and
 /// Kyle, as Jenna came back with help
-/// (ValeStormyNight_ShowBoulderSweepingDownriver); Dora, Jenna, Garet and the
+/// (ValePrologue_ShowBoulderSweepingDownriver); Dora, Jenna, Garet and the
 /// villager are left at the bank. Afterwards Dora says "No... It can't be.
 /// Kyle..." and Jenna "Don't leave me all alone...". ★ Named from the game:
 /// "Please... Don't leave me all alone..." (MsgValeMomDadFelixPleaseDontLeave)

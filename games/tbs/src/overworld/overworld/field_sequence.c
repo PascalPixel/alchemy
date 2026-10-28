@@ -319,7 +319,7 @@ s32 FieldSequence_Run(s32 entrance) {
           WorldMap_Freeze();
           GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
-            DebugMapSelect_RunFar();
+            DebugSceneSelect_RunFar();
           }
           /* FAKEMATCH(volatile): gDebugMode read through a volatile pointer,
              so this second test loads it again; as gDebugMode, 48 of 965

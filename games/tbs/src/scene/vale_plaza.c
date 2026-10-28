@@ -7,7 +7,7 @@
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
-///   (Vale, SceneId_ValeStormyNight, by VALE_STORMY_NIGHT_TO_VALE_PLAZA), where
+///   (Vale, SceneId_ValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
 ///   Felix has fallen in. Walking up to the villagers (cell behavior 20)
 ///   plays ValePlaza_SentToAidElders: Garet's grandfather, the mayor, sends
 ///   two strongmen to aid the elders holding the Boulder, then sends Isaac and
@@ -53,7 +53,7 @@
 /// each one's flag keeping it gone. The doors lead into the houses
 /// (SceneId_CottageRoomsA) and into the inn and the forge
 /// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
-/// the stormy night, back to the storm's scene (SceneId_ValeStormyNight), and
+/// the stormy night, back to the storm's scene (SceneId_ValePrologue), and
 /// the exit row of cell behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM,
 /// which the exit table sends to Goma Cave (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
@@ -282,7 +282,7 @@ enum ValePlazaStormActorId {
   /// ★ Named from what the player sees: the shadow under the floating rock,
   /// render probe vale-gate (its render)
   ACTOR_STORM_SMALL_ROCK_SHADOW,
-  /// Rested at the Psynergy Stone, the strongman vale_stormy_night.c calls
+  /// Rested at the Psynergy Stone, the strongman vale_prologue.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
   /// ★ Named from the game: "all charged up" (MsgValeGoAidElders)
   ACTOR_STORM_CHARGED_UP_STRONGMAN,
@@ -889,7 +889,7 @@ static void ValePlaza_OpenSoutheastDoor(void) {
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
 /// storm's scene: stepping on cell behavior 9 takes VALE_PLAZA_TO_VALE, to
-/// the storm's VALE_STORMY_NIGHT_FROM_VALE_PLAZA.
+/// the storm's VALE_PROLOGUE_FROM_VALE_PLAZA.
 static void ValePlaza_LeaveThroughWestPassage(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
@@ -1082,7 +1082,7 @@ static inline void ValePlaza_RejoinParty(s32 actorId) {
 /// Reached by stepping on cell behavior 20 on the stormy night, until
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for
 /// the mayor's first order, but what it records is the boys being sent back:
-/// the return to the river (vale_stormy_night.c) waits for it.
+/// the return to the river (vale_prologue.c) waits for it.
 static void ValePlaza_SentToAidElders(void) {
   struct Actor *leader;
   s32 skipReply = 0;
@@ -2430,7 +2430,7 @@ u32 gValePlaza_StormExits[] = {
     SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST),
     SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST),
     SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST),
-    SCENE_EXIT(VALE_PLAZA_TO_VALE, ValeStormyNight, VALE_STORMY_NIGHT_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_VALE, ValePrologue, VALE_PROLOGUE_FROM_VALE_PLAZA),
     SCENE_EXIT(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
     SCENE_EXITS_END,
 };

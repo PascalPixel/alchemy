@@ -705,8 +705,8 @@ static void Vale_EnterCottageRoomsAWest(void) {
 
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
 /// (map/map_000, the stormy night's too) carries, as
-/// ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor in
-/// vale_stormy_night.c. It would have opened Isaac's door, walked the leader to
+/// ValePrologue_UnusedLeaveToCottageRoomsAWestBySecondDoor in
+/// vale_prologue.c. It would have opened Isaac's door, walked the leader to
 /// the spot before it and taken VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into
 /// the house of Jenna's grandparents, whose way out returns by the other door.
 static void Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
@@ -3812,7 +3812,7 @@ struct Trigger gVale_TriggersAfterKalay[] = {
 // clang-format on
 
 // The doors' cell animations, from the layout's cells below the village, each
-// picture shown for two frames; vale_stormy_night.c has the same four kinds.
+// picture shown for two frames; vale_prologue.c has the same four kinds.
 // Each table takes the name of a door it opens. The two of Jenna's
 // grandparents' kind and the west house's show their one open picture twice,
 // where the stormy night's show two.

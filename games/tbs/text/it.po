@@ -12355,7 +12355,7 @@ msgstr ""
 "Il menu Pausa non è\n"
 "disponibile al momento.{end_wait}"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "03039"
 msgstr "Schermo del titolo"
 
@@ -64861,7 +64861,7 @@ msgctxt "message"
 msgid "10701"
 msgstr "Together"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "10702"
 msgstr "TITLE"
 

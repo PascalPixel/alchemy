@@ -292,5 +292,5 @@ with a wait of 0 (`Actor_ArmCallback`), the world map's lighthouse
 jitter moves the camera with a glide, Lucky Wheels and the link countdown
 open instant windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite
 respawn tests `gTasksRunning`. The tenth path is the debug scene selector,
-which only the unused `DebugMapSelect_Schedule` would add as a task. The same
+which only the unused `DebugSceneSelect_Schedule` would add as a task. The same
 graph has no path from any task to `Task_Add`.

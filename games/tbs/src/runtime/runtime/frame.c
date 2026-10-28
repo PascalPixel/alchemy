@@ -447,7 +447,7 @@ void System_VBlankHandler(void) {
 /// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
 /// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. Called by
 /// Sound_Play for music, the battle and the Battle Arena for theirs, and
-/// the audio test. Always returns 0.
+/// the sound test. Always returns 0.
 s32 Sound_LoadReverbCode(s32 code) {
   s32 index;
 

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "input.h"
 
-/// The sound VBlank state's byte 2, set while the audio test runs.
+/// The sound VBlank state's byte 2, set while the sound test runs.
 struct SoundVBlankState {
   u8 unk00[2];
   u8 unk02;
@@ -17,25 +17,25 @@ void Sound_LoadPresetParameters(s32 preset);
 void Sound_Play(s32 id);
 void wait(s32 frames);
 
-struct AudioTestCues {
+struct SoundTestCues {
   s32 cue[3];
 };
 
 /// The three cues the test starts with: the object's .rodata, which the
 /// object list places after DummyFunc.
 // As ☀️'s sound.c has its .rodata in the sound tail.
-static const struct AudioTestCues sAudioTestCues = {{0, 80, 100}};
+static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 
-/// Runs the audio test's three cue selectors and five mixer presets forever,
+/// Runs the sound test's three cue selectors and five mixer presets forever,
 /// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2 and
 /// the commands 0, 78 and 390.
-// As ☀️'s AudioTest_RunParameterController (games/tbs/src/sound/sound.c).
+// As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
 void Func_081c1014(void) {
   /* FAKEMATCH(temporary): the cues' address loaded before sp is copied for
    * the array, through an empty asm on it (barrier); as s32 cues[3] = {0,
    * 80, 100}, 2 of 145 instructions differ in tla-en. */
-  const struct AudioTestCues *initial = &sAudioTestCues;
-  struct AudioTestCues cues;
+  const struct SoundTestCues *initial = &sSoundTestCues;
+  struct SoundTestCues cues;
   s32 preset;
   s32 row;
   s32 timer;

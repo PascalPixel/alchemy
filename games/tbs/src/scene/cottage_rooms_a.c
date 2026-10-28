@@ -6,7 +6,7 @@
 /// same number back out. In story order, by the exits that lead in:
 ///
 /// - From the village (SceneId_Vale, and on the stormy night
-///   SceneId_ValeStormyNight): the house of Garet's family
+///   SceneId_ValePrologue): the house of Garet's family
 ///   (COTTAGE_ROOMS_A_FROM_VALE_EAST), his grandfather the mayor, his
 ///   grandmother and his parents; the house of Jenna's grandparents
 ///   (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
@@ -26,7 +26,7 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's scene (SceneId_ValeStormyNight) instead (CottageRoomsA_GetExits).
+///   storm's scene (SceneId_ValePrologue) instead (CottageRoomsA_GetExits).
 ///   The jars and the barrel are empty, and six more bookcases than by day can
 ///   be read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -346,7 +346,7 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
 
 // The rooms' doors: stepping on a door's cell, whose cell behavior is its
 // exit's number, takes that exit back out, in every table. On the stormy night
-// the exits to SceneId_Vale lead to the storm's scene (SceneId_ValeStormyNight)
+// the exits to SceneId_Vale lead to the storm's scene (SceneId_ValePrologue)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
@@ -1045,18 +1045,18 @@ u32 gCottageRoomsA_Exits[] = {
 
 u32 gCottageRoomsA_StormExits[] = {
     SCENE_EXITS(CottageRoomsA),
-    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST),
-    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH),
     SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
                VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
     SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
                VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
-    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH),
-    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, ValeStormyNight,
-               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, ValePrologue,
+               VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_EAST),
     SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
                VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
     SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,

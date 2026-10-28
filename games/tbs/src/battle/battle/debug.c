@@ -1,5 +1,5 @@
 /// @file
-/// Debug: the party presets, the message viewer and the battle test menu.
+/// Debug: the parameter sets, the message viewer and the battle test menu.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -26,9 +26,9 @@
 // Declared here without const, as Camelot's code read it: with const,
 // alchemy-gcc compiles DebugParty_LoadPreset differently. debug_presets.c
 // defines it, const, in ROM.
-extern struct DebugPartyEntry gDebug_PartyPresets[];
+extern struct DebugPartyEntry gDebug_ParameterSets[];
 
-/// The last row of gDebug_PartyPresets; the scan reports a missing preset past
+/// The last row of gDebug_ParameterSets; the scan reports a missing preset past
 /// it.
 #define DEBUG_PRESET_LAST_ROW 332
 
@@ -66,7 +66,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   // Presets are runs of rows each ended by a DEBUG_PRESET_END row; skip
   // to the run numbered preset and apply its rows.
   for (row = 0;; row++) {
-    unitId = gDebug_PartyPresets[row].unitId;
+    unitId = gDebug_ParameterSets[row].unitId;
     if (row < 0 || row > DEBUG_PRESET_LAST_ROW) {
       notFound = 1;
       break;
@@ -81,7 +81,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       continue;
 
     Party_AddMemberFar(unitId);
-    Unit_LevelUpToFar(unitId, gDebug_PartyPresets[row].level);
+    Unit_LevelUpToFar(unitId, gDebug_ParameterSets[row].level);
 
     // Start from no Djinn and no abilities.
     member = (struct Unit *)Unit_GetFar(unitId);
@@ -96,14 +96,15 @@ s32 DebugParty_LoadPreset(s32 preset) {
     for (i = 0; i < 32; i++)
       *(u16 *)&member->psynergy[i] = 0;
     for (i = 0; i < 2; i++) {
-      if (gDebug_PartyPresets[row].abilities[i] != 0)
-        Unit_LearnPsynergyFar(unitId, gDebug_PartyPresets[row].abilities[i]);
+      if (gDebug_ParameterSets[row].abilities[i] != 0)
+        Unit_LearnPsynergyFar(unitId, gDebug_ParameterSets[row].abilities[i]);
     }
 
     // Djinn are numbered across the party, so no two party members get the
     // same.
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
+      for (djinnIndex = 0;
+           djinnIndex < gDebug_ParameterSets[row].djinnCounts[i];
            djinnIndex++) {
         Djinn_GiveFar(unitId, i, nextDjinn[i]);
         Djinn_SetFar(unitId, i, nextDjinn[i]);
@@ -116,10 +117,10 @@ s32 DebugParty_LoadPreset(s32 preset) {
     for (i = 0; i < INVENTORY_SLOTS + 1; i++)
       Inventory_RemoveFar(unitId, 0);
     for (i = 0; i < 4; i++) {
-      if (gDebug_PartyPresets[row].items[i] != 0)
+      if (gDebug_ParameterSets[row].items[i] != 0)
         Inventory_EquipFar(
             unitId,
-            Inventory_AddItemFar(unitId, gDebug_PartyPresets[row].items[i]));
+            Inventory_AddItemFar(unitId, gDebug_ParameterSets[row].items[i]));
     }
   }
   return notFound;
@@ -238,7 +239,7 @@ void DebugBattle_ViewMessages(void) {
 /// Debug: the battle test menu, which never returns. Without Down held it
 /// fights DEBUG_FIRST_ENCOUNTER again and again with auto battle on. Holding
 /// Down at the start opens the chooser: Right and Left step the encounter, Up
-/// and Down by ten, R and L pick the party preset, Start opens the message
+/// and Down by ten, R and L pick the parameter set, Start opens the message
 /// viewer and A fights; B marks every later battle BATTLE_TYPE_DEBUG.
 /// Holding Down when A is pressed makes it a link battle. Exported as
 /// DebugBattle_RunMenuFar; nothing in the source calls it. Sets

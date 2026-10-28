@@ -10010,7 +10010,7 @@ msgctxt "message"
 msgid "02458"
 msgstr "Together"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "02459"
 msgstr "Title screen"
 
@@ -10442,7 +10442,7 @@ msgctxt "message"
 msgid "02566"
 msgstr "Menu test"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "02567"
 msgstr "TITLE"
 

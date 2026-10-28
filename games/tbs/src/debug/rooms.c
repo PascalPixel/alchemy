@@ -103,8 +103,8 @@ struct SceneEntrance gTestRoom_Entrances[] = {
 };
 
 u32 gTestRoom_Exits[] = {
-    SCENE_EXITS(TestRoom0), SCENE_EXITS(TestRoom1), SCENE_EXITS(TestRoom2),
-    SCENE_EXITS(TestRoom3), SCENE_EXITS_END,
+    SCENE_EXITS(Test0), SCENE_EXITS(Test1), SCENE_EXITS(Test2),
+    SCENE_EXITS(Test3), SCENE_EXITS_END,
 };
 
 struct ActorPlacement gTestRoom_ActorPlacements[] = {

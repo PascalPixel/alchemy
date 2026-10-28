@@ -718,7 +718,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   // (POSE_CAST).
   // The other runners test > ALLY_MAX; with > 4, Jenna, Sheba and Piers
   // take the enemies' view. In play only Isaac, Garet, Ivan and Mia fight,
-  // so the two tests agree; only the debug party presets with Jenna
+  // so the two tests agree; only the debug parameter sets with Jenna
   // (debug_presets.c) let an item turn the camera the wrong way.
   // XXX (no evidence): whether > 4 is a slip; the play the game allows
   // behaves the same either way, so only the author's intent would say.

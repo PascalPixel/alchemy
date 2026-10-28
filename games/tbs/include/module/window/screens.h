@@ -226,16 +226,16 @@ s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
 s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
-void DebugMapSelect_Schedule(void);
-void DebugMapSelect_DrawRow(struct Window *window, s32 first,
-                            const s16 *second);
+void DebugSceneSelect_Schedule(void);
+void DebugSceneSelect_DrawRow(struct Window *window, s32 first,
+                              const s16 *second);
 #ifdef UBFIX
-void DebugMapSelect_Run(void);
+void DebugSceneSelect_Run(void);
 #else
-s16 DebugMapSelect_Run(void);
+s16 DebugSceneSelect_Run(void);
 #endif
-s32 DebugMapSelect_HandleRowInput(struct Window *arg, s16 value, s16 *sub,
-                                  s16 *mode);
+s32 DebugSceneSelect_HandleRowInput(struct Window *arg, s16 value, s16 *sub,
+                                    s16 *mode);
 s32 DebugFlagEditor_Run(void);
 void String_FormatHexDigits(u32 value, u32 count, u8 *out);
 void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);

@@ -1,7 +1,0 @@
-	.include "games/tbs/src/cartridge/overlay.inc"
-	overlay_veneer ValeStormyNight_Initialize
-	overlay_veneer ValeStormyNight_GetEntrances
-	overlay_veneer ValeStormyNight_GetExits
-	overlay_veneer ValeStormyNight_GetActorPlacements
-	overlay_veneer ValeStormyNight_GetTriggers
-	overlay_veneer ValeStormyNight_GetRegions

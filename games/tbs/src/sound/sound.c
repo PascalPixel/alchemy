@@ -179,7 +179,7 @@ void Sound_UpdateBgmRamps(void) {
   m4aSoundVSync();
 }
 
-/// Runs the audio test's three sound selectors and five reverb codes forever.
+/// Runs the sound test's three sound selectors and five reverb codes forever.
 /// Up and Down choose a row, Right and Left change its sound by 1, R and L by
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
 /// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
@@ -198,7 +198,7 @@ void SoundTest_Run(void) {
   /* FAKEMATCH(one-pass): the block keeps the state-address load after
    * reverbCode setup and the state store before clipTimer setup. Plain store:
    * differ 8 or more in nine statement orders. */
-  // XXX (no evidence): why the audio test clears the first four digits of the
+  // XXX (no evidence): why the sound test clears the first four digits of the
   // build stamp copy; nothing in the game reads that copy.
   do {
     gBuildStamp[0] = 0;

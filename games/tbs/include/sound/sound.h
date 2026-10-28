@@ -64,7 +64,7 @@ extern s32 gBuildStamp[];
 extern u8 gBgmFadeRequested;
 /// Set by the resident mixer whenever it clips a sample: when a sum overflows,
 /// IwramSoundNormalizeChannels saturates the samples and stores the clip mask
-/// (0x80008000) here, through pc. Cleared by the audio test, SoundTest_Run,
+/// (0x80008000) here, through pc. Cleared by the sound test, SoundTest_Run,
 /// which restarts a 20-frame countdown when it finds it set.
 extern s32 gSoundMixerClipped;
 /// An EWRAM byte Sound_Initialize clears and nothing else

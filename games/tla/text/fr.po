@@ -16822,7 +16822,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Ensemble"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "04133"
 msgstr "Ecran titre"
 
@@ -17214,7 +17214,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Test magasin"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "04231"
 msgstr "TITLE"
 

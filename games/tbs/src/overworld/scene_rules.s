@@ -303,7 +303,7 @@ gArea_NameRules:
 
 	.global gScene_RestartRules
 gScene_RestartRules:
-	restart_point ValeStormyNight, 15, CottageRoomsB, 16
+	restart_point ValePrologue, 15, CottageRoomsB, 16
 	restart_point Vale, 16, Sanctum, 2
 	restart_point Vault, 1, Sanctum, 12
 	restart_point Vault, 3, Sanctum, 12
@@ -326,7 +326,7 @@ gScene_RestartRules:
 @ A scene not listed takes the last battle background.
 	.global gScene_BattleBackgroundRules
 gScene_BattleBackgroundRules:
-	backdrop ValeStormBackdrop, ValeStormyNight, Vale, ValePlaza, ValeKradensCottage
+	backdrop ValeStormBackdrop, ValePrologue, Vale, ValePlaza, ValeKradensCottage
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
 	backdrop InteriorBackdrop, LogRoomsA
 	backdrop GomaCaveBackdrop, GomaCaveEntrance

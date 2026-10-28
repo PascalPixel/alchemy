@@ -490,7 +490,7 @@ Screen, 201 in all, each running an overlay's code and drawn on a map
 ([The front page](README.md#scenes-and-overlays)).
 
 Evidence: tradition: シーン, a screen of a game; the row is the project's.
-Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugCategoryName`).
+Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugSceneCode`).
 
 ### Field sequence
 

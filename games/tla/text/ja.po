@@ -14956,7 +14956,7 @@ msgctxt "message"
 msgid "03673"
 msgstr "みんなで"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "03674"
 msgstr "タイトルがめん"
 
@@ -15348,7 +15348,7 @@ msgctxt "message"
 msgid "03771"
 msgstr "ショップテスト"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "03772"
 msgstr "TITLE"
 

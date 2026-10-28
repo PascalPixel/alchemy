@@ -10278,7 +10278,7 @@ msgctxt "message"
 msgid "02515"
 msgstr "みんなで"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "02516"
 msgstr "タイトルがめん"
 
@@ -10710,7 +10710,7 @@ msgctxt "message"
 msgid "02623"
 msgstr "メニューテスト"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "02624"
 msgstr "TITLE"
 

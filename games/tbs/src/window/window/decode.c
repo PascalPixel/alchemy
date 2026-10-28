@@ -615,7 +615,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
-                    MsgDebugEntryName,
+                    MsgDebugAreaName,
                 name, MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
@@ -1067,7 +1067,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
-                    MsgDebugEntryName,
+                    MsgDebugAreaName,
                 name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);

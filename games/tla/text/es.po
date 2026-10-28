@@ -16807,7 +16807,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Juntos"
 
-msgctxt "MsgDebugEntryName"
+msgctxt "MsgDebugAreaName"
 msgid "04133"
 msgstr "Pantalla de título"
 
@@ -17199,7 +17199,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Shop Test"
 
-msgctxt "MsgDebugCategoryName"
+msgctxt "MsgDebugSceneCode"
 msgid "04231"
 msgstr "TITLE"
 

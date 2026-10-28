@@ -83,7 +83,7 @@ FarCall_WindowTable:
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
 	export WindowSprite_ClearListFar, WindowSprite_ClearList
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
-	export DebugMapSelect_RunFar, DebugMapSelect_Run
+	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
 	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
 	overlay_veneer Debug_SelectAbilityPair

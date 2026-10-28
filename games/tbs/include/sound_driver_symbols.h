@@ -61,9 +61,9 @@ enum MusicPlayerId {
 /// starts the next VBlank with.
 enum SoundReverbCode {
   /// One value for both channels, from the two buffers together; only the
-  /// audio test loads it.
+  /// sound test loads it.
   SOUND_REVERB_MONO,
-  /// Each channel's old samples crossed with the other's; only the audio test
+  /// Each channel's old samples crossed with the other's; only the sound test
   /// loads it.
   SOUND_REVERB_CROSSED,
   /// A quarter of the mix and an eighth of each buffer's old samples carry

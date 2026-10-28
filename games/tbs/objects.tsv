@@ -643,10 +643,10 @@ main	rom_tail_02	games/tbs/src/cartridge/overlay/overlays
 371	text	games/tbs/src/scene/import/world_map
 371	text	games/tbs/src/graphics/world_map/story
 371	bss	games/tbs/src/scene/world_map	.bss COMMON
-372	text	games/tbs/src/scene/entry/vale_stormy_night
-372	text	games/tbs/src/scene/vale_stormy_night
-372	text	games/tbs/src/scene/import/vale_stormy_night
-372	bss	games/tbs/src/scene/vale_stormy_night	.bss COMMON
+372	text	games/tbs/src/scene/entry/vale_prologue
+372	text	games/tbs/src/scene/vale_prologue
+372	text	games/tbs/src/scene/import/vale_prologue
+372	bss	games/tbs/src/scene/vale_prologue	.bss COMMON
 373	text	games/tbs/src/scene/entry/vale
 373	text	games/tbs/src/scene/vale
 373	text	games/tbs/src/scene/import/vale

@@ -16,8 +16,8 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 #endif
 }
 
-/// Draws the debug scene and entrance numbers with their category/area
-/// labels. The first line has the scene's name (MsgDebugSceneCode + scene)
+/// Draws the debug scene and entrance numbers with their scene code and area
+/// name. The first line has the scene's code (MsgDebugSceneCode + scene)
 /// and, beside it, the area its entrance leads to (MsgDebugAreaName + area);
 /// the numbers, three digits each, go under them.
 void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,

@@ -194,8 +194,10 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 
 ### Main routine
 
-The loop that runs one [sequence](#sequence) after another for as long as the
-console is on, `MainRoutine_Run`. Each pass reads one id from the
+The routine that runs everything outside the interrupts, `MainRoutine_Run`:
+called once at power-on (and afresh only by the debug Restart quest), it
+never returns, and each pass of its loop runs one
+[sequence](#sequence). Each pass reads one id from the
 [main routine's work](#main-routines-work) and runs one
 thing: a [scene](#scene), any row of the scene table, the Title and the File
 Screen included, which the
@@ -205,11 +207,10 @@ sequence set up (its tasks, its interrupt handlers, the heap) and starts the
 next, so going from one scene to the next is a transition just as going into a
 battle is ([The front page](README.md#the-main-routine)).
 
-Evidence: Sega: a coinage from its lineage. "Sequence" for one flow of the
-game is Namco's (黒須一雄; 遠藤雅伸's ゲームシーケンス) and Sega's through
-平山尚 (ゲームプログラマになる前に覚えておきたい技術, 2008, from Sega's course
-for new programmers), and "parent" only 平山尚's `Sequence::Parent`; no source
-names Camelot's routine.
+Evidence: tradition: メインルーチン, the period's word for the code that runs
+outside the interrupts (黒須一雄 of Namco, DCAJ 2008, p.312; 遠藤雅伸 of Namco,
+2001). No source names Camelot's routine. Not main loop, monitor, sequence
+parent, sequence manager or job controller.
 
 ### Sequence
 
@@ -218,8 +219,10 @@ battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time
 ([The front page](README.md#the-main-routine)).
 
-Evidence: Sega: 平山尚's sequences (2008). Camelot uses プログラム only for the
-whole game's code.
+Evidence: tradition: Namco's ゲームシーケンス (遠藤雅伸, 2001; 黒須一雄, DCAJ
+2008) and Sega's through 平山尚 (ゲームプログラマになる前に覚えておきたい技術,
+2008, from Sega's course for new programmers). Camelot uses プログラム only
+for the whole game's code.
 
 ### Transition and next sequence
 
@@ -232,8 +235,9 @@ Evidence: Sega: 平山尚's シーケンス遷移 and its 遷移判定 (2008).
 
 ### Main routine's work
 
-The one struct every sequence shares and that outlives each of them,
-`gMainRoutineWork` (`struct MainRoutineWork`, `main_routine_work.h`).
+The main routine's [work](#work), the one struct every sequence shares and
+that outlives each of them, `gMainRoutineWork` (`struct MainRoutineWork`,
+`main_routine_work.h`).
 It holds the main routine's own transition data (the scene and entrance it
 runs next, what the last sequence reported in `sequenceResult`, the return
 point, the after-battle and defeat destinations and the restart point) and
@@ -242,10 +246,8 @@ the play time and the options. It is a fixed struct in EWRAM, never freed and
 in no [heap slot](#heap-slot). Save Game writes it to the cartridge with the
 game flags ([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
-Evidence: Sega: 平山尚's `Sequence::Parent` keeps what its children share
-(2008); work: working memory, as the [work](#work) entry says. The game's
-"Save your adventure?" (`MsgSaveAdventureQuestion`) names what the player
-saves, not a memory structure.
+Evidence: tradition: work, working memory, as the [work](#work) entry says;
+it is named for its owner, the main routine.
 
 ### Frame
 
@@ -489,8 +491,10 @@ dungeon floor, the World Map, or a screen such as the Title or the File
 Screen, 201 in all, each running an overlay's code and drawn on a map
 ([The front page](README.md#scenes-and-overlays)).
 
-Evidence: tradition: シーン, a screen of a game; the row is the project's.
-Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugSceneCode`).
+Evidence: Camelot: The Lost Age's developer test message 05746 heads a
+location name シーン, beside クラス, アイテム and まほう. Each row also carries
+Camelot's scene code (PLOGV00, TITLE, WORLD, `MsgDebugSceneCode`) and its
+area name (`MsgDebugAreaName`), which the debug scene selector shows.
 
 ### Field sequence
 
@@ -502,7 +506,8 @@ the main routine's to start
 ([The front page](README.md#the-field-sequence)).
 
 Evidence: Camelot: the credits' Programming division "Field", paired with
-"Battle" (`gCredits_Lines`); Sega lineage: sequence (平山尚, 2008).
+"Battle" (`gCredits_Lines`); sequence: Namco's ゲームシーケンス (遠藤雅伸) and
+Sega's through 平山尚, as the [sequence](#sequence) entry says.
 
 ### Room
 
@@ -731,13 +736,17 @@ Force III, 1998).
 ### Debug menus
 
 What the released game keeps for its makers and never shows: the debug scene
-selector and the test rooms it reaches, and, in debug mode, the Pause menu's
-Rough menu, Recovery test and Restart quest
+selector (`DebugSceneSelect_Run`), which names each scene by its scene code
+and area name, and the test scenes it reaches (`SceneId_Test0` to
+`SceneId_Test7`); in debug mode, the Pause menu's Rough menu, Recovery test
+and Restart quest; the parameter sets the Battle Arena's debug helper loads
+(`gDebug_ParameterSets`); and the sound test (`SoundTest_Run`)
 ([Debug rooms](src/debug/README.md#how-the-rooms-are-reached)).
 
 Evidence: Camelot: the menus' own labels, "Rough menu"
-(`MsgWorkspaceRoughMenu`) and "Recovery test", and the scene labels TEST0 to
-TEST7.
+(`MsgWorkspaceRoughMenu`) and "Recovery test"; the scene codes TEST0 to TEST7
+and the area names Test 0 to Test 7; パラメータセット
+(`MsgLobbyChooseParameters`); The Lost Age's サウンドテスト.
 
 ## The battle
 

@@ -13,7 +13,7 @@ fill, not of what they do. The debug rooms are scenes too, reached only in
 debug mode. How scenes and overlays fit into the whole game is on
 [the front page](README.md).
 
-## The scene sequence and its requests
+## The field sequence and its requests
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he steps inside, the screen fades and the room inside appears with him at its door](https://alchemy.pascalpixel.com/guides/world/door.gif)
 
@@ -30,9 +30,9 @@ A random battle is a way out of the scene too: the game remembers where
 everyone stood, runs the battle as the next sequence, and afterwards
 loads the scene again with everyone put back where they were.
 
-`SceneSequence_Run` runs one scene and `struct FieldWork` holds the
+`FieldSequence_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
-scene](src/overworld/README.md#the-scene-sequence-serves-requests) lists
+scene](src/overworld/README.md#the-field-sequence-serves-requests) lists
 all twelve requests in the order they are handled.
 
 ## Scene entries

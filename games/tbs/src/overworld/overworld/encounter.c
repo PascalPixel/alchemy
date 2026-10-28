@@ -43,7 +43,7 @@ typedef struct WorldMapEncounterRule {
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gSequenceParentWork.encounterSteps, is reset only when a
 /// random battle starts or a new area is entered) and chooses the battle
-/// background. Called by SceneSequence_Run on scene load, with useRules 0 on
+/// background. Called by FieldSequence_Run on scene load, with useRules 0 on
 /// the World Map and 1 in a scene; writes work->encounterZones, encounterBias
 /// and encounterThreshold, and gSequenceParentWork.special.
 void Encounter_SelectMapZones(s32 useRules) {
@@ -200,7 +200,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: SceneSequence_Run clears it when it starts the battle.
+    // not cleared here: FieldSequence_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gSequenceParentWork.encounterSteps += Iwram_MulQ16(step, steps);
@@ -377,7 +377,7 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 /// of gScene_RestartRules that matches the current scene and entrance: {scene,
 /// entrance (-1 for any), return scene, return entrance}, ended by scene -1.
 /// Without a match the restart point stays as it was. Called by
-/// SceneSequence_Run on scene load.
+/// FieldSequence_Run on scene load.
 void Scene_SetRestartPoint(void) {
   s16 sceneId = gSequenceParentWork.sceneId;
   s16 entrance = gSequenceParentWork.entrance;

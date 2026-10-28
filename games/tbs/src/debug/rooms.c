@@ -77,7 +77,7 @@ static void TestRoom_ReceiveGust(void) {
 /// Djinni.
 u8 *TestRoom_GetTriggers(void) { return (u8 *)gTestRoom_Triggers; }
 
-/// The room's initialize entry, which SceneSequence_Run runs on entry: nothing
+/// The room's initialize entry, which FieldSequence_Run runs on entry: nothing
 /// to set up.
 s32 TestRoom_Initialize(void) { return 0; }
 

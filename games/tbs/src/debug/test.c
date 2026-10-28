@@ -792,7 +792,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero. The room's
-/// initialize entry, which SceneSequence_Run runs on every entry and whose
+/// initialize entry, which FieldSequence_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
 /// party member is below 30 (Isaac 50 outside Japanese).

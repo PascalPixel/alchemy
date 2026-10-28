@@ -3,7 +3,7 @@
 
 /// @file
 /// FieldWork, the running scene's work, with its treasure spots and the raised
-/// triggers the scene sequence handles itself.
+/// triggers the field sequence handles itself.
 
 #include "types.h"
 #include "edition.h"
@@ -34,7 +34,7 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, id) == 4);
 STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
-/// The values of FieldWork.raisedTrigger that the scene sequence handles
+/// The values of FieldWork.raisedTrigger that the field sequence handles
 /// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
@@ -46,11 +46,11 @@ enum FieldRaisedTrigger {
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 
-/// A field scene's work: SceneSequence_Run allocates it in heap slot
-/// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the scene
+/// A field scene's work: FieldSequence_Run allocates it in heap slot
+/// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field
 /// sequence, the event commands and the scene overlays all reach it through
 /// gFieldWork. The twelve requests from stepTrigger to raisedTrigger are
-/// handled by the scene sequence.
+/// handled by the field sequence.
 struct FieldWork {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.
@@ -61,7 +61,7 @@ struct FieldWork {
   struct Actor *actors[ACTOR_ID_COUNT];
   struct TreasureSpot
       treasureSpots[10]; ///< the map's treasure spots (TREASURE_SPOT_MAX)
-  /// The twelve requests: each nonzero value asks the scene sequence for one
+  /// The twelve requests: each nonzero value asks the field sequence for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
   s16 stepTrigger; ///< a step trigger (1 to 239) for Scene_RunStepTriggerOrExit
@@ -180,7 +180,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 0xcc6);
 STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
 STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
-/// The running field scene's work, heap slot HEAP_SLOT_FIELD; SceneSequence_Run
+/// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldSequence_Run
 /// takes it and frees it.
 extern struct FieldWork *gFieldWork;
 

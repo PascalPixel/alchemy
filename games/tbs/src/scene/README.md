@@ -336,7 +336,7 @@ of an actor, update routines returning `s32`) are in
 ## How it fits with the rest of the game
 
 `SequenceParent_Run` unpacks the overlay into `gOverlayArea`
-(`Scene_LoadOverlay`) and `SceneSequence_Run` calls its entries; [System](../../system.md#overlays)
+(`Scene_LoadOverlay`) and `FieldSequence_Run` calls its entries; [System](../../system.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
 page](../../README.md#the-scene-table-and-areas). The maps the scenes are

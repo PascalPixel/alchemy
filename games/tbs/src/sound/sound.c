@@ -349,7 +349,7 @@ void Sound_UpdateCommandMask(u32 command) {
 }
 
 /// Returns the music Sound_Play last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music. SceneSequence_Run saves it
+/// MUS_SILENCE after a fade, else the last music. FieldSequence_Run saves it
 /// as gSequenceParentWork.returnMusic before the Pause menu, so the music can
 /// be started again when the party is put back where it was
 /// (SequenceParent_Run, overworld/overworld/sequence_parent.c).

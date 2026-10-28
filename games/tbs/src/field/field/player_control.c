@@ -53,7 +53,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the scene sequence (scene_sequence.c)
+/// work->item or work->event, which the field sequence (field_sequence.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -146,8 +146,8 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gActor_PlayerScript, which the scene sequence
-/// (scene_sequence.c) starts on the leader through
+/// Run each frame by gActor_PlayerScript, which the field sequence
+/// (field_sequence.c) starts on the leader through
 /// Actor_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and timer, moves the
 /// actors it pushes, counts gFieldWork->blockedSteps and creates the
@@ -528,8 +528,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 /// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
-/// Run each frame by gActor_WorldMapScript, which the scene sequence
-/// (scene_sequence.c) starts on the leader through
+/// Run each frame by gActor_WorldMapScript, which the field sequence
+/// (field_sequence.c) starts on the leader through
 /// Actor_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and timer, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
@@ -838,7 +838,7 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
 /// Returns 1. Run each frame by gActor_KeyCheckScript, which the
-/// scene sequence starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
+/// field sequence starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
 /// pad does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -853,7 +853,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
 /// into an occupied cell, across a change of cell behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gActor_KeysScript, which the scene sequence starts
+/// Run each frame by gActor_KeysScript, which the field sequence starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
 s32 Actor_MoveByKeys(struct Actor *interpreter) {

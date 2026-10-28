@@ -3,7 +3,7 @@
 	.include "games/tla/src/system/overlay.inc"
 	.global Resource_FarCall006
 Resource_FarCall006:
-	.global SceneSequence_RunFar
+	.global FieldSequence_RunFar
 	.thumb_func
-SceneSequence_RunFar:
-	overlay_veneer SceneSequence_Run
+FieldSequence_RunFar:
+	overlay_veneer FieldSequence_Run

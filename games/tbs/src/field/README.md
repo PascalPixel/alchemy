@@ -48,9 +48,9 @@ stopped while a request is handled, an event is one routine that plays from
 start to end while the party waits; whatever must keep moving meanwhile moves
 on its own, as an actor script ([below](#everything-that-moves-runs-an-actor-script)).
 
-`SceneSequence_Run` runs the loop and `Field_UpdateWalking` checks the
+`FieldSequence_Run` runs the loop and `Field_UpdateWalking` checks the
 ground under the leader once a frame; [Running a
-scene](../overworld/README.md#the-scene-sequence-serves-requests) has
+scene](../overworld/README.md#the-field-sequence-serves-requests) has
 the requests themselves.
 
 ## Everything that moves runs an actor script
@@ -177,8 +177,8 @@ update at a higher priority so that it runs first;
 
 | Mode | Started by | Actor update | Camera |
 | --- | --- | --- | --- |
-| `ACTOR_SYSTEM_MAP` (2) | the scene sequence, the debug sprite viewer | `Actor_UpdateAllThumb` | `ActorSystem_PlaceSprites` |
-| `ACTOR_SYSTEM_WORLD_MAP` (3) | the scene sequence | `Actor_UpdateAllThumb` | `ActorSystem_ProjectSprites` |
+| `ACTOR_SYSTEM_MAP` (2) | the field sequence, the debug sprite viewer | `Actor_UpdateAllThumb` | `ActorSystem_PlaceSprites` |
+| `ACTOR_SYSTEM_WORLD_MAP` (3) | the field sequence | `Actor_UpdateAllThumb` | `ActorSystem_ProjectSprites` |
 | `ACTOR_SYSTEM_BATTLE` (4) | the battle | `Actor_UpdateAllMotion` | `ActorSystem_ProjectSprites` |
 
 ## Walking and running

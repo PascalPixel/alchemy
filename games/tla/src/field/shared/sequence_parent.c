@@ -28,11 +28,11 @@ void Func_080c9c38(s32 unused, s32 keep);
 void Scene_ResolveInteractionResult(void);
 void Party_PlaySavedMusic(void);
 void BattleEffect_LoadResourceGroup(s32 unused);
-s32 SceneSequence_Run(s32 entrance);
+s32 FieldSequence_Run(s32 entrance);
 void Scene_TakeExit(s32 exitKind);
 
 /// Sequence ids above the scene table's rows, as The Broken Seal's
-/// SEQUENCE_ values: the sequences other than the scene sequence.
+/// SEQUENCE_ values: the sequences other than the field sequence.
 enum {
   // XXX: what sequence Resource_FarCall00F runs here, where The Broken
   // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4's listing
@@ -144,7 +144,7 @@ void SequenceParent_Run(s32 mode) {
     }
     gSequenceParentWork.map = record->mapIndex;
     BattleEffect_LoadResourceGroup(0);
-    entrance = SceneSequence_Run(entrance);
+    entrance = FieldSequence_Run(entrance);
     Scene_TakeExit(entrance);
   }
 }

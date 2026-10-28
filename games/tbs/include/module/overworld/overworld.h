@@ -20,13 +20,13 @@ struct Actor;
 /// The exit request whose destination is already in gSequenceParentWork.sceneId
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random
 /// battles, Retreat and the event commands that set a destination
-/// (Event_SetDestination) raise it, and SceneSequence_Run returns it when
+/// (Event_SetDestination) raise it, and FieldSequence_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (sequence_parent.c, scene_sequence.c).
+/// (sequence_parent.c, field_sequence.c).
 #define EXIT_KEEP_DESTINATION 999
 
-/// gSequenceParentWork.movementMode: how the scene sequence hands the party
-/// leader back to the player (SceneSequence_Run).
+/// gSequenceParentWork.movementMode: how the field sequence hands the party
+/// leader back to the player (FieldSequence_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the World Map or a layered map.
   LEADER_MOVEMENT_WALK = 0,
@@ -178,7 +178,7 @@ void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_Freeze(void);
 void WorldMap_Unfreeze(void);
-s32 SceneSequence_Run(s32 entrance);
+s32 FieldSequence_Run(s32 entrance);
 s32 Actor_GetTriggerCellAheadOfCurrent(void);
 void Scene_ApplyEntrance(void);
 void PaletteEditor_Run(void);

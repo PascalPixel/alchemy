@@ -46,7 +46,7 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's scene tables, which SceneSequence_Run reads through
+/// The title overlay's scene tables, which FieldSequence_Run reads through
 /// entry/title.s: one entrance row, the exit, and no actor
 /// placements or triggers.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }

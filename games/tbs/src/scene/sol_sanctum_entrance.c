@@ -655,7 +655,7 @@ static void SolSanctumEntrance_PushStatue(void) {
   }
 }
 
-/// Sets up Sol Entrance or Sol Sanctum. Called by SceneSequence_Run once the
+/// Sets up Sol Entrance or Sol Sanctum. Called by FieldSequence_Run once the
 /// actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 sceneId = gSequenceParentWork.sceneId;

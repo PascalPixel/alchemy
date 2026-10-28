@@ -4,7 +4,7 @@
 /// Runs the scene the party entered by entrance until it leaves,
 /// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
 /// gSequenceParentWork already holds the next scene.
-s32 SceneSequence_RunFar(s32 entrance);
+s32 FieldSequence_RunFar(s32 entrance);
 /// The sequence parent, which never returns; mode, an enum GameStart,
 /// picks the first scene. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
@@ -202,7 +202,7 @@ void Event_SetAfterBattleDestinationFar(s32 first, s32 second);
 /// Sets where the party wakes up after losing a battle, ahead of a fight
 /// an event starts.
 void Event_SetDefeatDestinationFar(s32 first, s32 second);
-/// Sets the destination and raises EXIT_KEEP_DESTINATION, so the scene sequence
+/// Sets the destination and raises EXIT_KEEP_DESTINATION, so the field sequence
 /// leaves on its next pass; only Tolbi's spring uses it.
 void Event_LeaveForFar(u16 first, u16 second);
 /// Writes an actor's screen position in pixels, y at the top of its

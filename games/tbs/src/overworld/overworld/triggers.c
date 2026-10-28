@@ -179,7 +179,7 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
 ///
-/// Called by SceneSequence_Run for the A button, to choose between talking and
+/// Called by FieldSequence_Run for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an
 /// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
@@ -203,9 +203,9 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// comes first; without one, a talk trigger that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
-/// stood in for it; SceneSequence_Run ignores the result.
+/// stood in for it; FieldSequence_Run ignores the result.
 ///
-/// Called by SceneSequence_Run for its talk request (work->talk). Resumes
+/// Called by FieldSequence_Run for its talk request (work->talk). Resumes
 /// the stopped actor and sets gSequenceParentWork.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
@@ -309,7 +309,7 @@ finish:
 /// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
-/// Called by SceneSequence_Run for a positive event request (work->event).
+/// Called by FieldSequence_Run for a positive event request (work->event).
 s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
@@ -340,7 +340,7 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by SceneSequence_Run for its step request (work->stepTrigger), which
+/// Called by FieldSequence_Run for its step request (work->stepTrigger), which
 /// Field_UpdateWalking raises for CELL_BEHAVIOR_EVENT_FIRST to
 /// CELL_BEHAVIOR_EVENT_LAST. Sets work->exit for an exit, and clears
 /// work->blockedSteps after a step trigger that needs pushing.
@@ -398,7 +398,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
 /// it has pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by SceneSequence_Run for its push request (work->pushCell), which
+/// Called by FieldSequence_Run for its push request (work->pushCell), which
 /// Field_UpdateWalking raises for CELL_BEHAVIOR_LEDGE to
 /// CELL_BEHAVIOR_JUMP_FORWARD. Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
@@ -439,7 +439,7 @@ s32 Field_RunPushCell(s32 behavior) {
 /// message, or a chest holding a Psynergy Stone, a mimic, coins or an item;
 /// with no event, "checked the ground" and "found nothing".
 ///
-/// Called by SceneSequence_Run for its search request (work->tile). Opening a
+/// Called by FieldSequence_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->encounter), give coins or an item, or restore all PP.
 s32 Field_ExamineCell(s32 tile) {
@@ -551,7 +551,7 @@ s32 Field_ExamineCell(s32 tile) {
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinni,
-              // which SceneSequence_Run resolves when the scene is entered
+              // which FieldSequence_Run resolves when the scene is entered
               // again after the battle.
               if (condition != -1) {
                 condition = gSequenceParentWork.pendingDjinni =

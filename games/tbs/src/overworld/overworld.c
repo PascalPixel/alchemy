@@ -19,7 +19,7 @@
 #include "overworld/encounter.c"
 #include "overworld/actors.c"
 #include "overworld/walking.c"
-#include "overworld/scene_sequence.c"
+#include "overworld/field_sequence.c"
 #include "overworld/palette_editor.c"
 #include "overworld/triggers.c"
 #include "overworld/targets.c"

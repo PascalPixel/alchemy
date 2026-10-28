@@ -727,10 +727,10 @@ Func_080cae5c:
 Func_080cb09c:
 	.incbin "baserom.gba", 0x000d409c, 0x0000062c
 	.section .rom.000d491c, "ax"
-	.global SceneSequence_Run
-	.type SceneSequence_Run, %function
+	.global FieldSequence_Run
+	.type FieldSequence_Run, %function
 	.thumb_func
-SceneSequence_Run:
+FieldSequence_Run:
 	.incbin "baserom.gba", 0x000d491c, 0x00000c30
 	.global Func_080cc54c
 	.type Func_080cc54c, %function

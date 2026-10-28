@@ -17,11 +17,11 @@
 #define EXIT_ID_ANY 0xff
 
 /// Chooses the scene and entrance to go to when the party leaves the
-/// current scene. exitId is the kind of exit SceneSequence_Run ended on; the
+/// current scene. exitId is the kind of exit FieldSequence_Run ended on; the
 /// scene's exit table gives the first exit of that kind (or of any kind) whose
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by SequenceParent_Run with SceneSequence_Run's result; sets
+/// Called by SequenceParent_Run with FieldSequence_Run's result; sets
 /// gSequenceParentWork.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
@@ -87,7 +87,7 @@ void Scene_TakeExit(s32 exitId) {
   }
 }
 
-/// Chooses where the game continues after a sequence other than the scene
+/// Chooses where the game continues after a sequence other than the field
 /// sequence (see SequenceParent_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
@@ -97,7 +97,7 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the after-battle destination an event set, or to the return
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// SequenceParent_Run after each sequence other than the scene sequence (the
+/// SequenceParent_Run after each sequence other than the field sequence (the
 /// ids from SEQUENCE_NONE up); stores result in
 /// gSequenceParentWork.sequenceResult and sets gSequenceParentWork.sceneId and
 /// .entrance.
@@ -212,7 +212,7 @@ static __inline__ s32 SequenceParent_RunSlots(s32 entrance) {
 /// The sequence parent: runs one sequence after another and never returns.
 /// mode, an enum GameStart, chooses the first scene. Each pass resets the
 /// runtime, then either runs the battle, dice or slots sequence and picks the
-/// scene to return to, or runs the scene sequence: loads the scene's code,
+/// scene to return to, or runs the field sequence: loads the scene's code,
 /// starts its music and runs it until the party takes an exit. Called with
 /// GAME_START_TITLE through SequenceParent_RunFar by System_Initialize at
 /// power-on and by Game_RestartQuest.
@@ -302,7 +302,7 @@ void SequenceParent_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gSequenceParentWork.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
-      // last opened (scene_sequence.c). A random battle and every normal entry
+      // last opened (field_sequence.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
       Sound_PlayFar(gSequenceParentWork.returnMusic);
     } else {
@@ -310,12 +310,12 @@ void SequenceParent_Run(s32 mode) {
     }
     gSequenceParentWork.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
-    Scene_TakeExit(SceneSequence_Run(entrance));
+    Scene_TakeExit(FieldSequence_Run(entrance));
   }
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by SequenceParent_Run before SceneSequence_Run.
+/// Called by SequenceParent_Run before FieldSequence_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 

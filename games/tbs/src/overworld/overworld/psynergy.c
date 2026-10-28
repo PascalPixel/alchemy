@@ -14,11 +14,11 @@
 /// the Psynergy aim at the actor ahead, and the Psynergy that acts on it
 /// (Force, Frost, Reveal) finds it itself. An after trigger whose subject
 /// has TRIGGER_SUBJECT_OWN_EFFECT plays the Psynergy itself. Called by
-/// SceneSequence_Run for the Psynergy request (work->psynergy); sets
+/// FieldSequence_Run for the Psynergy request (work->psynergy); sets
 /// work->psynergyActing while the Psynergy plays. On the World Map, placed
 /// actors far from the view are released for the Psynergy, and all placed
 /// actors are placed again afterwards. Returns 0 whatever happens;
-/// SceneSequence_Run ignores it.
+/// FieldSequence_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = gFieldWork;

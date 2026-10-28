@@ -24,7 +24,7 @@ enum SceneType {
 enum HazardMode {
   /// The distance the leader walks on CELL_BEHAVIOR_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
-  /// One each frame the scene sequence runs; no ☀️ code sets it.
+  /// One each frame the field sequence runs; no ☀️ code sets it.
   HAZARD_COUNT_FRAMES = 1
 };
 
@@ -172,7 +172,7 @@ struct SequenceParentWork {
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a scene, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (SceneSequence_Run, LamakanDesert_Initialize).
+  /// (FieldSequence_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode

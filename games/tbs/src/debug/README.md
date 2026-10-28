@@ -144,7 +144,7 @@ the set-up and exit region entries, which take the scene overlays' names.
 ## How it fits with the rest of the game
 
 The rooms are scenes like any other: the scene table names their overlays,
-`SceneSequence_Run` runs them, and their [events](../../glossary.md#event) call the
+`FieldSequence_Run` runs them, and their [events](../../glossary.md#event) call the
 same main-image code the real scenes call, through the same import tables
 ([Cartridge and memory](../cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the

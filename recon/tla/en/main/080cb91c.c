@@ -1,5 +1,5 @@
-// Draft, differ 940 of 1300: SceneSequence_Run, this game's form of ☀️'s
-// SceneSequence_Run (games/tbs/src/overworld/overworld/scene_sequence.c):
+// Draft, differ 940 of 1300: FieldSequence_Run, this game's form of ☀️'s
+// FieldSequence_Run (games/tbs/src/overworld/overworld/field_sequence.c):
 // runs the current scene until the party leaves it and returns how (the
 // warp, or 999 after the party falls). It sets the scene up in the event
 // work (heap slot 108, 0xd50 bytes, cleared), the world map (scene map 1,
@@ -181,7 +181,7 @@ void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea.words[index])()
 
-s32 SceneSequence_Run(void) {
+s32 FieldSequence_Run(void) {
   struct FieldWork *work;
   struct SequenceParentWork *party;
   struct Actor *leader;

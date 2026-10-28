@@ -64,8 +64,8 @@ s32 Field_FindItemTrigger(s32 item) {
 /// uses it (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS
 /// still set afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes
 /// the item. Returns 0 when the scene's event ran or Retreat was declined, else
-/// -1, the item's own action included; SceneSequence_Run ignores it. Called by
-/// SceneSequence_Run for the item request (work->item and work->itemSlot).
+/// -1, the item's own action included; FieldSequence_Run ignores it. Called by
+/// FieldSequence_Run for the item request (work->item and work->itemSlot).
 /// Retreat sets gSequenceParentWork.sceneId and .entrance to the Retreat point
 /// and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {

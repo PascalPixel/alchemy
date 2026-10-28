@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global SceneSequence_Run
+	.global FieldSequence_Run
 	.thumb_func
-SceneSequence_Run:
+FieldSequence_Run:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

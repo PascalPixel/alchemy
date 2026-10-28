@@ -38,7 +38,7 @@
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a party member takes effect here. When the player picks Psynergy to use
 /// on the field, it is recorded as the field's Psynergy request (FieldWork's
-/// psynergy, member << 10 | Psynergy), which SceneSequence_Run hands to
+/// psynergy, member << 10 | Psynergy), which FieldSequence_Run hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.

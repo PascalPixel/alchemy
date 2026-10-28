@@ -91,7 +91,7 @@ enum HeapSlot {
   /// Mind Read's wave work (struct MindReadWork, gMindReadWork).
   HEAP_SLOT_MIND_READ = 22,
   /// A field scene's struct FieldWork, which scenes read as struct FieldWork
-  /// (gFieldWork); SceneSequence_Run takes it and frees it on the way out.
+  /// (gFieldWork); FieldSequence_Run takes it and frees it on the way out.
   HEAP_SLOT_FIELD = 27,
   /// The palette cycles (struct PaletteCycleWork).
   HEAP_SLOT_PALETTE_CYCLES = 28,

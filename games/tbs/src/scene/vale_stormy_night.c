@@ -534,7 +534,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBEast(void) {
 /// event and the Boulder from their flags, starts the storm, and plays the
 /// event with Dora and Kyle on the first arrival by
 /// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by
-/// SceneSequence_Run once the actors are placed. Sets FLAG_VALE_STORM; after a
+/// FieldSequence_Run once the actors are placed. Sets FLAG_VALE_STORM; after a
 /// battle (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he
 /// joins, is shown struggling with his things.
 s32 ValeStormyNight_Initialize(void) {

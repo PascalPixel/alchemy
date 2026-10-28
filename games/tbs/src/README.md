@@ -130,7 +130,7 @@ party arrives ([System](../system.md#overlays)). The scene table,
 `gScenes` in [field/scenes.s](field/scenes.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
 ([overworld/overworld/sequence_parent.c](overworld/overworld/sequence_parent.c))
-unpacks the overlay a scene's row names before `SceneSequence_Run` runs it; a
+unpacks the overlay a scene's row names before `FieldSequence_Run` runs it; a
 battle or a minigame is main-image code and loads none.
 
 In the source an overlay is three files in its folder:

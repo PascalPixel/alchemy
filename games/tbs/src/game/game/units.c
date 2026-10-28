@@ -453,7 +453,7 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a scene (Scene_Arrive, SceneSequence_Run) and at the end of
+/// entering a scene (Scene_Arrive, FieldSequence_Run) and at the end of
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;

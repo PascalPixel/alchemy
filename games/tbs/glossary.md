@@ -199,7 +199,7 @@ console is on, `SequenceParent_Run`. Each pass reads one id from the
 [sequence parent's work](#sequence-parents-work) and runs one
 thing: a [scene](#scene), any row of the scene table, the Title and the File
 Screen included, which the
-[scene sequence](#scene-sequence) runs until the party takes an exit; or the
+[field sequence](#field-sequence) runs until the party takes an exit; or the
 battle, dice or slots sequence. In each transition it tears down what the last
 sequence set up (its tasks, its interrupt handlers, the heap) and starts the
 next, so going from one scene to the next is a transition just as going into a
@@ -213,7 +213,7 @@ names Camelot's routine.
 
 ### Sequence
 
-One flow of the game, run from its start to its end: the scene sequence, the
+One flow of the game, run from its start to its end: the field sequence, the
 battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time
 ([The front page](README.md#the-sequence-parent)).
@@ -492,14 +492,17 @@ Screen, 201 in all, each running an overlay's code and drawn on a map
 Evidence: tradition: シーン, a screen of a game; the row is the project's.
 Camelot labels each row (TITLE, UTIL, WORLD, `MsgDebugCategoryName`).
 
-### Scene sequence
+### Field sequence
 
-The sequence that runs one scene, `SceneSequence_Run`: a frame of its tasks,
-then the field requests, until the party takes an exit. The next scene is the
-sequence parent's to start
-([The front page](README.md#the-scene-sequence)).
+The sequence that runs one [scene](#scene), `FieldSequence_Run`: it allocates
+`gFieldWork`, loads the map, starts the actors and windows and calls the
+overlay's initialize entry, then waits a frame at a time, answering the
+[field requests](#field-request), until one ends the scene. The next scene is
+the sequence parent's to start
+([The front page](README.md#the-field-sequence)).
 
-Evidence: Sega: 平山尚's sequence (2008), named for what it runs.
+Evidence: Camelot: the credits' Programming division "Field", paired with
+"Battle" (`gCredits_Lines`); Sega lineage: sequence (平山尚, 2008).
 
 ### Room
 
@@ -676,10 +679,10 @@ Evidence: Camelot: the game's text, 入口.
 
 ### Field request
 
-What the scene sequence answers once the leader stops walking: one of twelve
+What the field sequence answers once the leader stops walking: one of twelve
 `FieldWork` members asks for an exit, an encounter, a talk, an examine, an
-item, a field Psynergy, a menu or a raised trigger, and the scene sequence
-serves them most urgent first ([Field](field.md#the-scene-sequence-and-its-requests)).
+item, a field Psynergy, a menu or a raised trigger, and the field sequence
+serves them most urgent first ([Field](field.md#the-field-sequence-and-its-requests)).
 
 Evidence: plain English; the project's own word.
 

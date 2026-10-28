@@ -51,11 +51,11 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and scene_sequence.c ignores it; as void, the
+// UB: no value is returned, and field_sequence.c ignores it; as void, the
 // epilogue changes.
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by SceneSequence_Run when it
+/// fading it to black over 16 frames. Called by FieldSequence_Run when it
 /// handles work->encounter; clears work->transitionActive once the screen is
 /// closed.
 #ifdef UBFIX
@@ -191,7 +191,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
 /// ANIM_LEADER_ARRIVE, returns 1) or a EXIT_STYLE_STAIRS_DOWN one
 /// (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by SceneSequence_Run as the
+/// Returns 0 when there is nothing to play. Called by FieldSequence_Run as the
 /// scene fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 Entrance_PlayArrival(void) {

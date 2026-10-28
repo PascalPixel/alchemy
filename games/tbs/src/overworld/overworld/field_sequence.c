@@ -1,5 +1,5 @@
 /// @file
-/// The scene sequence: running a scene until the party leaves it, and its
+/// The field sequence: running a scene until the party leaves it, and its
 /// entrance.
 // Part of overworld.c.
 
@@ -16,7 +16,7 @@ struct ActorSystemSuspendView {
   u16 wait;
 };
 
-/// The scene sequence: runs the current scene, which the party entered by
+/// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
 /// gSequenceParentWork: a random battle, a party that fell outside battle,
@@ -31,7 +31,7 @@ struct ActorSystemSuspendView {
 /// block the scene took after it from the same pool; sets gSequenceParentWork's
 /// return point, after-battle and defeat destinations, and clears
 /// FLAG_IN_BATTLE and, once the scene has started, FLAG_KEEP_PARTY_POSITION.
-s32 SceneSequence_Run(s32 entrance) {
+s32 FieldSequence_Run(s32 entrance) {
   struct FieldWork *work;
   struct Actor *actor;
   s32 mode;
@@ -407,7 +407,7 @@ done:
 /// leader or up to 64 pixels above it, or a behavior the scene has an examine
 /// trigger for. Returns 0 otherwise.
 ///
-/// Called by SceneSequence_Run for the A button (a non-zero result becomes
+/// Called by FieldSequence_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
 /// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
@@ -464,7 +464,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by SceneSequence_Run once the scene's events are set. Writes
+/// Called by FieldSequence_Run once the scene's events are set. Writes
 /// gSequenceParentWork's position, heading and turn, and the scene's minX to
 /// maxY.
 void Scene_ApplyEntrance(void) {

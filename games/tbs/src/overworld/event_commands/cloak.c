@@ -128,7 +128,7 @@ void FieldPsynergy_EndCloak(void) {
   gSequenceParentWork.cloaked = 0;
 }
 
-/// Starts the Cloak cell check if the leader is hidden. SceneSequence_Run calls
+/// Starts the Cloak cell check if the leader is hidden. FieldSequence_Run calls
 /// it as a scene loads, since gSequenceParentWork.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
   if (gSequenceParentWork.cloaked != 0) {

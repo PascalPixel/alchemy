@@ -180,7 +180,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
 /// for that Djinni (condition = its flag) goes back to its placement's
 /// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
-/// (0x800) set, and stands (animation 1). SceneSequence_Run calls it as it
+/// (0x800) set, and stands (animation 1). FieldSequence_Run calls it as it
 /// rebuilds the scene, only while an event is still pending after
 /// Djinn_ResolvePending's first call, that is after a won battle; the second
 /// call then makes this actor join the party.
@@ -230,7 +230,7 @@ void Actor_PlaceMapActors(void) {
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
 /// in sequenceResult (the enemies defeated, 999 when the party fled, -1
-/// when it lost). SceneSequence_Run calls it with shown 0 while it builds the
+/// when it lost). FieldSequence_Run calls it with shown 0 while it builds the
 /// scene and, while the event is still pending, with shown nonzero once the
 /// scene is on screen.
 ///

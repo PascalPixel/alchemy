@@ -852,7 +852,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 }
 
 /// Restores the room's statues, beams and seals from their flags and plays
-/// Kraden's two visits. Called by SceneSequence_Run once the actors
+/// Kraden's two visits. Called by FieldSequence_Run once the actors
 /// exist. Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
 /// SolSanctumStatue_ExplainTrapDisarmed and at

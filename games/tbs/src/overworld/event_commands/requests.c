@@ -7,7 +7,7 @@
 /// Sets up a battle with the formation in slot of encounter table zone. On
 /// the World Map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
-/// the scene sequence then handles, and the battle music;
+/// the field sequence then handles, and the battle music;
 /// ENCOUNTER_ZONE_SCRIPTED's first slot also sets gSequenceParentWork.special
 /// to the Aerie's storm battle background. About 35 scenes reach it through
 /// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
@@ -85,7 +85,7 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gSequenceParentWork.sceneId and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION (999), so the scene sequence leaves on its next pass.
+/// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
 /// Only Tolbi's spring reaches it, through Event_LeaveForFar.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;

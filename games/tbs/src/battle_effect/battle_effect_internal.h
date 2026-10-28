@@ -100,11 +100,6 @@
 /// angle.
 #define EFFECT_ANGLE_MASK (EFFECT_TURN - 1)
 
-/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
-/// in 16.16: BattleMotion_ReturnToSpot (battle/motion.c) sets it, and effects
-/// that change a unit's gravity for a leap or a lift give it this one back.
-#define BATTLE_UNIT_GRAVITY 0xab85
-
 /// A heap slot read through a pointer to the effect's own slot,
 /// gHeapSlots[HEAP_SLOT_BATTLE_EFFECT].
 #define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])

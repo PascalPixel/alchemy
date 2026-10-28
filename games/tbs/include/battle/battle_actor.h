@@ -66,6 +66,12 @@ struct BattleActor {
   void (*update)(struct Actor *actor);
 };
 
+/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
+/// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
+/// spot, and effects that change a unit's gravity for a leap or a lift give it
+/// this one back.
+#define BATTLE_UNIT_GRAVITY 0xab85
+
 /// A sprite animation, as battle objects set its palette and
 /// drawing priority: the start of a SpriteAnimation.
 struct SpriteAnimationHeadView {

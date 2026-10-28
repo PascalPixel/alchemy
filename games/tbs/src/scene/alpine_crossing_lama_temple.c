@@ -2,7 +2,7 @@
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
 /// (SceneId_LamaTemple), two scenes on Silk Road west of Xian that share this
 /// overlay. The getters pick each scene's tables by
-/// gMainRoutineWork.sceneId, both scenes share one exit table, and
+/// gMainRoutineWork.next, both scenes share one exit table, and
 /// Scene_Initialize sets up the scene being entered from the story flags of
 /// Hsu's rescue, which runs through both.
 ///
@@ -238,7 +238,7 @@ static s32 AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.sceneId == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Entrances;
   }
   return gLamaTemple_Entrances;
@@ -250,7 +250,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_ActorPlacements;
   }
   return gLamaTemple_ActorPlacements;
@@ -906,7 +906,7 @@ static void AlpineCrossing_GrowSprout(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Triggers;
   }
   return gLamaTemple_Triggers;
@@ -917,7 +917,7 @@ s32 Scene_Initialize(void) {
   s32 entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.sceneId == MAP_LAMA_TEMPLE) {
+  if (gMainRoutineWork.next == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_AMBIENT_WIND) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
@@ -938,7 +938,7 @@ s32 Scene_Initialize(void) {
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
-  } else if (gMainRoutineWork.sceneId == MAP_ALPINE_CROSSING) {
+  } else if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_WATER_FOR_FROST), 0);
     Actor_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=

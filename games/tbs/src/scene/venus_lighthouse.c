@@ -1099,7 +1099,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 /// Selects the scene's entrances; VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryEntrances;
@@ -1132,7 +1132,7 @@ const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
 
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryActorPlacements;
   }
@@ -2702,7 +2702,7 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// scene.
 const struct Trigger *VenusLighthouse_GetTriggers(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryTriggers;
@@ -2779,7 +2779,7 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_RestoreScriptedChildValues();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // entrance.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
@@ -3810,7 +3810,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
       Actor_StartScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+    if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouseThirdFloor) {
       for (socket = 0;
            socket <= 3 &&
            !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&

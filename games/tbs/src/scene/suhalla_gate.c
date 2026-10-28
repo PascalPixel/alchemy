@@ -15,7 +15,7 @@
 ///   onto the World Map, with a Psynergy Stone.
 ///
 /// One exit table serves the three scenes; the other getters choose by
-/// gMainRoutineWork.sceneId, and SuhallaGateCheckpoint's actor placements
+/// gMainRoutineWork.next, and SuhallaGateCheckpoint's actor placements
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any scene
 /// not otherwise named.
 ///
@@ -129,7 +129,7 @@ static void SuhallaGate_FightDew(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewEntrances;
@@ -147,7 +147,7 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
 /// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewActorPlacements;
@@ -165,7 +165,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Gateway Cave (SceneId_GatewayCave), or of the gate itself
 /// (SceneId_SuhallaGateCheckpoint) for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewTriggers;
@@ -192,7 +192,7 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.restartScene = (s32)&SceneId_RockRooms;
     gMainRoutineWork.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Import_ActorSetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);

@@ -779,7 +779,7 @@ Evidence: plain English.
 
 ### Destination
 
-The scene and entrance the main routine runs next (`gMainRoutineWork.sceneId`
+The scene and entrance the main routine runs next (`gMainRoutineWork.next`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Four others are read only at given moments: after a battle or minigame the

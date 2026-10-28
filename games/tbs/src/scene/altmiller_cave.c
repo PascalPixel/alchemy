@@ -20,7 +20,7 @@
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
 /// The rooms share one entrance table and one exit table, and the other
-/// getters choose by gMainRoutineWork.sceneId. AltmillerCave_Initialize
+/// getters choose by gMainRoutineWork.next. AltmillerCave_Initialize
 /// sends an entry from outside the cave (entrance 0) to the room's first
 /// entrance, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
@@ -313,7 +313,7 @@ const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
 const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
 const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiActorPlacements;
@@ -472,12 +472,12 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// Reveal's light: AltmillerCaveEntrance is lit and AltmillerCaveDraught's
 /// rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
     s32 alpha = BLEND_ALPHA(0, 16);
 
     REG_BLDALPHA = alpha;
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -496,7 +496,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_NONE);
     Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_NONE);
     Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -2009,7 +2009,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 }
 
 const struct Trigger *AltmillerCave_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiTriggers;
@@ -2058,30 +2058,30 @@ s32 AltmillerCave_Initialize(void) {
   s32 i;
 
   if (gMainRoutineWork.entrance == 0) {
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveVialChest) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveCookieChest) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Event_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
     if (gMainRoutineWork.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneLocalState + 4) = 0;
@@ -2096,7 +2096,7 @@ s32 AltmillerCave_Initialize(void) {
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Import_ActorSetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2107,7 +2107,7 @@ s32 AltmillerCave_Initialize(void) {
     }
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2126,7 +2126,7 @@ s32 AltmillerCave_Initialize(void) {
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the update routines are stored through an s32 view of update, which

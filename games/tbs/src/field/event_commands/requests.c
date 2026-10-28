@@ -84,12 +84,12 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 }
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
-/// gMainRoutineWork.sceneId and entrance and raises the exit request
+/// gMainRoutineWork.next and entrance and raises the exit request
 /// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
 /// Only Tolbi's spring reaches it, through Event_LeaveForFar.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
-  gMainRoutineWork.sceneId = sceneId;
+  gMainRoutineWork.next = sceneId;
   gMainRoutineWork.entrance = entrance;
   work->exit = EXIT_KEEP_DESTINATION;
 }

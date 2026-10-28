@@ -42,7 +42,7 @@ s32 FieldSequence_Run(s32 entrance) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gMainRoutineWork.returnScene = gMainRoutineWork.sceneId;
+  gMainRoutineWork.returnScene = gMainRoutineWork.next;
   gMainRoutineWork.returnEntrance = gMainRoutineWork.entrance;
   gMainRoutineWork.afterBattleScene = -1;
   gMainRoutineWork.afterBattleEntrance = -1;
@@ -131,7 +131,7 @@ s32 FieldSequence_Run(s32 entrance) {
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
-        AreaNameWindow_ShowFar(gMainRoutineWork.sceneId);
+        AreaNameWindow_ShowFar(gMainRoutineWork.next);
       }
       if (gMainRoutineWork.pendingDjinni != 0) {
         Djinn_ResolvePending(gMainRoutineWork.pendingDjinni, 1);
@@ -199,7 +199,7 @@ s32 FieldSequence_Run(s32 entrance) {
               vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gMainRoutineWork.sceneId = gMainRoutineWork.restartScene;
+              gMainRoutineWork.next = gMainRoutineWork.restartScene;
               gMainRoutineWork.entrance = gMainRoutineWork.restartEntrance;
               WorldMap_Unfreeze();
               result = EXIT_KEEP_DESTINATION;
@@ -226,7 +226,7 @@ s32 FieldSequence_Run(s32 entrance) {
           Leader_StopMoving();
           Actor_Snapshot();
           gMainRoutineWork.returnMusic = -1;
-          gMainRoutineWork.sceneId = SEQUENCE_BATTLE;
+          gMainRoutineWork.next = SEQUENCE_BATTLE;
           gMainRoutineWork.entrance = work->encounter;
           work->exit = EXIT_KEEP_DESTINATION;
           Field_StartEncounterTransition(work->encounter);

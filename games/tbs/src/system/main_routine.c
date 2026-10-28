@@ -102,7 +102,7 @@
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
 /// Called by MainRoutine_Run with FieldSequence_Run's result; sets
-/// gMainRoutineWork.sceneId and .entrance, and leaves them alone for
+/// gMainRoutineWork.next and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
 void Scene_TakeExit(s32 exitId) {
@@ -117,7 +117,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gMainRoutineWork.sceneId;
+  currentMap = gMainRoutineWork.next;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -162,7 +162,7 @@ void Scene_TakeExit(s32 exitId) {
 
   // Commit the chosen exit only after a matching scene was found.
   if (destinationScene != EXIT_KEEP_DESTINATION) {
-    gMainRoutineWork.sceneId = destinationScene;
+    gMainRoutineWork.next = destinationScene;
     gMainRoutineWork.entrance = destinationEntrance;
   }
 }
@@ -179,7 +179,7 @@ void Scene_TakeExit(s32 exitId) {
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
 /// MainRoutine_Run after each sequence other than the field sequence (the
 /// ids from SEQUENCE_NONE up); stores result in
-/// gMainRoutineWork.sequenceResult and sets gMainRoutineWork.sceneId and
+/// gMainRoutineWork.sequenceResult and sets gMainRoutineWork.next and
 /// .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
@@ -206,13 +206,13 @@ void Scene_ReturnFromSequence(s32 result) {
     sceneId = gMainRoutineWork.defeatScene;
     entrance = gMainRoutineWork.defeatEntrance;
     if (sceneId == -1 && entrance == -1) {
-      gMainRoutineWork.sceneId = gMainRoutineWork.restartScene;
+      gMainRoutineWork.next = gMainRoutineWork.restartScene;
       gMainRoutineWork.entrance = gMainRoutineWork.restartEntrance;
     } else {
       if (sceneId != -1)
-        gMainRoutineWork.sceneId = sceneId;
+        gMainRoutineWork.next = sceneId;
       else
-        gMainRoutineWork.sceneId = gMainRoutineWork.returnScene;
+        gMainRoutineWork.next = gMainRoutineWork.returnScene;
       if (entrance != -1)
         gMainRoutineWork.entrance = entrance;
       else
@@ -224,15 +224,15 @@ void Scene_ReturnFromSequence(s32 result) {
     entrance = gMainRoutineWork.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
-        gMainRoutineWork.sceneId = sceneId;
+        gMainRoutineWork.next = sceneId;
       else
-        gMainRoutineWork.sceneId = gMainRoutineWork.returnScene;
+        gMainRoutineWork.next = gMainRoutineWork.returnScene;
       if (entrance != -1)
         gMainRoutineWork.entrance = entrance;
       else
         gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance;
     } else {
-      gMainRoutineWork.sceneId = gMainRoutineWork.returnScene;
+      gMainRoutineWork.next = gMainRoutineWork.returnScene;
       gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
@@ -304,14 +304,14 @@ void MainRoutine_Run(s32 mode) {
   table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
-    gMainRoutineWork.sceneId = (s32)&SceneId_ValePlaza;
+    gMainRoutineWork.next = (s32)&SceneId_ValePlaza;
     gMainRoutineWork.entrance = mode;
   } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gMainRoutineWork.sceneId = (s32)&SceneId_FileScreen;
+    gMainRoutineWork.next = (s32)&SceneId_FileScreen;
     gMainRoutineWork.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
     MainRoutineWork_InitializeDefaultsFar();
-    gMainRoutineWork.sceneId = (s32)&SceneId_Title;
+    gMainRoutineWork.next = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
@@ -327,7 +327,7 @@ void MainRoutine_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlayFar(SE_STOP_ACTION_SE);
-    record = &table[gMainRoutineWork.sceneId];
+    record = &table[gMainRoutineWork.next];
     entrance = gMainRoutineWork.entrance;
 
     // Stop DMA 0, which a scene may have left running for an HBlank effect.
@@ -349,8 +349,8 @@ void MainRoutine_Run(s32 mode) {
     // The battle, dice and slots sequences return a result, not an exit: the
     // return scene is chosen from the main routine's work, and no overlay is
     // loaded.
-    if (gMainRoutineWork.sceneId >= SEQUENCE_NONE) {
-      switch (gMainRoutineWork.sceneId) {
+    if (gMainRoutineWork.next >= SEQUENCE_NONE) {
+      switch (gMainRoutineWork.next) {
       case SEQUENCE_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
@@ -369,7 +369,7 @@ void MainRoutine_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_Arrive(gMainRoutineWork.sceneId,
+    Scene_Arrive(gMainRoutineWork.next,
                  GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
@@ -400,7 +400,7 @@ void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
   table = gScenes;
-  Overlay_Load(table[gMainRoutineWork.sceneId].resourceId, &gOverlayArea);
+  Overlay_Load(table[gMainRoutineWork.next].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gScenes[id])
@@ -415,7 +415,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets
 /// gMainRoutineWork.area and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = MAP_HEADER(gMainRoutineWork.sceneId)->area;
+  s32 area = MAP_HEADER(gMainRoutineWork.next)->area;
   s32 flag;
 
   if (keep == 0) {
@@ -433,7 +433,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gMainRoutineWork.retreatScene = gMainRoutineWork.sceneId;
+      gMainRoutineWork.retreatScene = gMainRoutineWork.next;
       gMainRoutineWork.retreatEntrance = gMainRoutineWork.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
@@ -451,7 +451,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   }
   gMainRoutineWork.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
-  gMainRoutineWork.sceneType = MAP_HEADER(gMainRoutineWork.sceneId)->sceneType;
+  gMainRoutineWork.sceneType = MAP_HEADER(gMainRoutineWork.next)->sceneType;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();

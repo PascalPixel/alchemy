@@ -15,7 +15,7 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One exit table serves every scene; the other getters choose by
-/// gMainRoutineWork.sceneId, Gondowan Passage's actor placements and
+/// gMainRoutineWork.next, Gondowan Passage's actor placements and
 /// triggers also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any
 /// other scene. Every scene's trigger table carries GondowanCaveRiver's two
 /// chests.
@@ -158,7 +158,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 #include "actor_script.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     return gGondowanPassageEntrances;
@@ -180,7 +180,7 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -200,7 +200,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The triggers of each scene, with Iodem's in Gondowan Passage when he is
 /// there.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -509,13 +509,13 @@ static void GondowanCave_LiftBoulder(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_GondowanPassage) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
     }
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_GondowanCave) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCave) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
     if (gMainRoutineWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {

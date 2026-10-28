@@ -389,7 +389,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 const struct SceneEntrance *Kalay_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownEntrances;
@@ -420,7 +420,7 @@ const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
 const struct ActorPlacement *Kalay_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownActorPlacements;
@@ -458,7 +458,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 
 /// The conversations, exits and Psynergy targets of each scene.
 const struct Trigger *Kalay_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownTriggers;
@@ -1194,7 +1194,7 @@ s32 Kalay_Initialize(void) {
   s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_Kalay) {
     Kalay_PrepareTown();
   } else if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {

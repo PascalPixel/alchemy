@@ -509,12 +509,12 @@ void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene:
 /// raises the exit request EXIT_KEEP_DESTINATION and writes
-/// gMainRoutineWork.sceneId and entrance. Called by the Title, the File
+/// gMainRoutineWork.next and entrance. Called by the Title, the File
 /// Screen, the Battle Arena, the debug battle command and five events (the
 /// Lemurian ship and the World Map among them).
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gMainRoutineWork.sceneId = sceneId;
+  gMainRoutineWork.next = sceneId;
   gMainRoutineWork.entrance = entrance;
 }
 
@@ -529,7 +529,7 @@ void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gMainRoutineWork's sceneId and entrance). Events reach it as
+/// for gMainRoutineWork's next and entrance). Events reach it as
 /// Import_EventSetExitRequest (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

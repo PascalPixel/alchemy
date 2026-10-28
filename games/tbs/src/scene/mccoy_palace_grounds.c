@@ -135,7 +135,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -168,7 +168,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -320,7 +320,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
   }
 

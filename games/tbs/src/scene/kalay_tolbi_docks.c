@@ -2,7 +2,7 @@
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, in three scenes that share one overlay: SceneId_KalayDocks,
 /// SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet that holds a room at
-/// each. The getters pick each scene's tables by gMainRoutineWork.sceneId,
+/// each. The getters pick each scene's tables by gMainRoutineWork.next,
 /// and three story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI,
 /// whether the ship has made its crossing (set on the World Map,
 /// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
@@ -281,7 +281,7 @@ static void KalayTolbiDocks_GroundJoins(void) {
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     return gKalayTolbiDocks_KalayEntrances;
@@ -307,7 +307,7 @@ const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -354,7 +354,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 
 /// Selects each scene's events for the same three times as its people.
 const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -671,11 +671,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gMainRoutineWork.sceneId == (s32)&SceneId_TolbiDocks) {
+    if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -696,11 +696,11 @@ s32 KalayTolbiDocks_Initialize(void) {
   if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_TolbiDocks) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_CottageRoomsE) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_CottageRoomsE) {
     KalayTolbiDocks_PrepareInterior();
   }
   return 0;

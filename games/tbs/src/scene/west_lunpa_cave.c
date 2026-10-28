@@ -104,7 +104,7 @@ const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave scene places puddles, Hammet, Bunza and the party members.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_WestLunpaCave) {
+  if (gMainRoutineWork.next == (s32)&SceneId_WestLunpaCave) {
     return gCaveActorPlacements;
   }
   return gCaveNoActorPlacements;
@@ -1038,7 +1038,7 @@ static void Party_RidesWagon(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_WestLunpaCave) {
+  if (gMainRoutineWork.next == (s32)&SceneId_WestLunpaCave) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_UNUSED_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTH_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_GATE_PUDDLE), 0);

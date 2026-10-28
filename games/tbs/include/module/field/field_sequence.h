@@ -17,7 +17,7 @@ struct ActorPlacement;
 struct Window;
 struct Actor;
 
-/// The exit request whose destination is already in gMainRoutineWork.sceneId
+/// The exit request whose destination is already in gMainRoutineWork.next
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random
 /// battles, Retreat and the event commands that set a destination
 /// (Event_SetDestination) raise it, and FieldSequence_Run returns it when

@@ -38,9 +38,9 @@ void AreaNameWindow_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = Area_GetNameIndexFar(gMainRoutineWork.sceneId,
-                                     gMainRoutineWork.entrance) +
-                RENDER_RESOURCE_BASE;
+  areaMessage =
+      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance) +
+      RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;

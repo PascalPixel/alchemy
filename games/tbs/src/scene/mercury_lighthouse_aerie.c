@@ -222,7 +222,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);

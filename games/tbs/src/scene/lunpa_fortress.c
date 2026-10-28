@@ -22,7 +22,7 @@
 ///   judges him after the battle (LunpaFortress_DonpaJudgesDodonpa), which sets
 ///   FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// The getters choose by gMainRoutineWork.sceneId; LunpaFortressCave and
+/// The getters choose by gMainRoutineWork.next; LunpaFortressCave and
 /// LunpaFortressToadonpa share one exit table. Every return through the Lunpa
 /// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
 /// flags, so the fortress starts over.
@@ -433,7 +433,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 #define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_SCENE_TEMP_70
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorEntrances;
@@ -450,7 +450,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorExits;
@@ -464,7 +464,7 @@ const u32 *Scene_GetExits(void) {
 
 /// The guards, the other people and the objects of each scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   // Unused: this overlay never runs for West Lunpa Cave, which has its own.
   if (sceneId == (s32)&SceneId_WestLunpaCave) {
@@ -487,7 +487,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// What the party can talk to, search and use Psynergy on, by scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorTriggers;
@@ -3211,15 +3211,15 @@ s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
   gLunpaFortressRandomPick = (u32)Import_RandomNext() * 7 >> 16;
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LunpaFortressUpperFloor)
+  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressUpperFloor)
     LunpaFortress_InitializeUpperFloor();
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LunpaFortressCave)
+  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressCave)
     LunpaFortress_InitializeCave();
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressToadonpa) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 0);

@@ -263,7 +263,7 @@ static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
 /// Chooses the outside entrance table or the shared interior
 /// entrances.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEntrances;
@@ -278,7 +278,7 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 /// Selects the room's actors and applies the post-lesson actor
 /// placement changes.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gMainRoutineWork.next == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsActorPlacements;
   }
   if (gMainRoutineWork.entrance ==
@@ -1545,7 +1545,7 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
 
 /// Selects the outdoor, school, or lesson trigger table.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gMainRoutineWork.next == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsTriggers;
   }
   if (gMainRoutineWork.entrance ==
@@ -2355,7 +2355,7 @@ s32 Scene_Initialize(void) {
   struct Actor *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LacquerRoomsA) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LacquerRoomsA) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gMainRoutineWork.entrance ==

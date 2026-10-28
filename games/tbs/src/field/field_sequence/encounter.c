@@ -57,7 +57,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   u32 i;
 
   work = gFieldWork;
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   entrance = gMainRoutineWork.entrance;
   groundZones = work->encounterZones;
   rule = gScene_EncounterRules;
@@ -297,7 +297,7 @@ extern const struct MapMusicRule gScene_MusicRules[];
 /// Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
   s16 group = gMainRoutineWork.area;
   const struct MapMusicRule *rule = gScene_MusicRules;
@@ -379,7 +379,7 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 /// Without a match the restart point stays as it was. Called by
 /// FieldSequence_Run on scene load.
 void Scene_SetRestartPoint(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
   const s16 *rule = gScene_RestartRules;
 
@@ -404,7 +404,7 @@ s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
 /// one listed last before it, and a scene not listed takes the last one. Called
 /// by Encounter_SelectMapZones; sets gMainRoutineWork.special.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gMainRoutineWork.sceneId;
+  s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   // The first scene_rules.s word names a battle background. It cannot match the

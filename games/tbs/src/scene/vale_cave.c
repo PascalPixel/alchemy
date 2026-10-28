@@ -292,7 +292,7 @@ static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 /// Selects entrance positions and camera bounds for the current cave
 /// room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthEntrances;
@@ -314,7 +314,7 @@ const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 /// Selects the current room's actor placements: Kite, and the crates and
 /// logs.
 const struct ActorPlacement *ValeCave_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthActorPlacements;
@@ -775,7 +775,7 @@ static void ValeCave_PushLogNorth(void) {
 
 /// Selects the current room's coord, Psynergy and examine triggers.
 const struct Trigger *ValeCave_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthTriggers;
@@ -800,7 +800,7 @@ s32 ValeCave_Initialize(void) {
 
   *request =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -897,7 +897,7 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_ValeCaveKite) {
+  if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveKite) {
     switch (gMainRoutineWork.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
@@ -948,7 +948,7 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_ValeCaveLogs) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveLogs) {
     switch (gMainRoutineWork.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:

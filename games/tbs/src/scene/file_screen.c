@@ -380,7 +380,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   }
   // -1 unless the map is the world map: -d | d has its top bit set for any
   // d but 0.
-  mapDifference = gMainRoutineWork.sceneId ^ (s32)&SceneId_WorldMap;
+  mapDifference = gMainRoutineWork.next ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
@@ -538,7 +538,7 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gMainRoutineWork.sceneId = (s32)&SceneId_CottageRoomsB;
+    gMainRoutineWork.next = (s32)&SceneId_CottageRoomsB;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
@@ -558,7 +558,7 @@ menu_top:;
     state = &gMainRoutineWork;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
-      state->sceneId = state->restartScene;
+      state->next = state->restartScene;
       state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
@@ -567,7 +567,7 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->sceneId = state->restartScene;
+      state->next = state->restartScene;
       state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
@@ -591,7 +591,7 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->sceneId = state->restartScene;
+      state->next = state->restartScene;
       state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RECOVERED_AT_SANCTUM);

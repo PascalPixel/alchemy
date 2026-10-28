@@ -7,7 +7,7 @@
 /// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
 /// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each scene is a room
 /// of the mine, and the getters pick each room's tables by
-/// gMainRoutineWork.sceneId, all the rooms share one exit table, and
+/// gMainRoutineWork.next, all the rooms share one exit table, and
 /// Scene_Initialize calls the setup of the room being entered
 /// (AltinPeak_RestoreFirstWaterBeastRoom and so on), which puts back what the
 /// party has already done there.
@@ -362,7 +362,7 @@ static s32 AltinPeak_FlyDebris(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_FirstWaterBeastEntrances;
@@ -402,7 +402,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 /// AltinPeakFallingRocks and AltinPeakHydrosStatue have regions.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_FallingRocksRegions;
@@ -417,7 +417,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_FirstWaterBeastActorPlacements;
@@ -1216,33 +1216,31 @@ static void AltinPeak_ReadFallingRockSign(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   const struct Trigger *table;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastTriggersDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastTriggers;
     }
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakRailTunnel) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakRailTunnel) {
     table = gAltinPeak_RailTunnelTriggers;
-  } else if (gMainRoutineWork.sceneId ==
-             (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     table = gAltinPeak_SecondWaterBeastTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSouthEntrance) {
     table = gAltinPeak_SouthEntranceTriggers;
-  } else if (gMainRoutineWork.sceneId ==
-             (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     table = gAltinPeak_ThirdWaterBeastTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakPool) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakPool) {
     table = gAltinPeak_PoolTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakSpritz) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSpritz) {
     table = gAltinPeak_SpritzTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakJunction) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakJunction) {
     table = gAltinPeak_JunctionTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFallingRocks) {
     table = gAltinPeak_FallingRocksTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakHydrosStatue) {
     table = gAltinPeak_HydrosStatueTriggers;
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakWestExit) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakWestExit) {
     table = gAltinPeak_WestExitTriggers;
   } else {
     table = gAltinPeak_TriggersOther;
@@ -1525,25 +1523,23 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     AltinPeak_RestoreFirstWaterBeastRoom();
-  } else if (gMainRoutineWork.sceneId ==
-             (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     AltinPeak_RestoreSecondWaterBeastRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSouthEntrance) {
     AltinPeak_RestoreSouthEntranceRoom();
-  } else if (gMainRoutineWork.sceneId ==
-             (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     AltinPeak_RestoreThirdWaterBeastRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakPool) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakPool) {
     AltinPeak_RestorePoolRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakSpritz) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSpritz) {
     AltinPeak_RestoreSpritzRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFallingRocks) {
     AltinPeak_RestoreFallingRocksRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakHydrosStatue) {
     AltinPeak_RestoreHydrosStatueRoom();
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_AltinPeakWestExit) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakWestExit) {
     AltinPeak_RestoreWestExitRoom();
   }
   return 0;

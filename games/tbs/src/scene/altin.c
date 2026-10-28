@@ -5,7 +5,7 @@
 /// of them Altin's: its houses, shops and inn, entered by the village's doors
 /// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
 /// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each scene's tables
-/// by gMainRoutineWork.sceneId, both share one exit table, and a third,
+/// by gMainRoutineWork.next, both share one exit table, and a third,
 /// empty set of tables serves any other scene.
 ///
 /// The village is flooded by the water beasts of its mine, whose scenes the
@@ -296,7 +296,7 @@ static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpawnSpray(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Entrances;
@@ -315,7 +315,7 @@ const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
@@ -342,7 +342,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Triggers;
@@ -782,7 +782,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_ALTIN_WATER_DRAINED);
   }
 
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
   } else if (sceneId == MAP_ALTIN_HOUSES) {

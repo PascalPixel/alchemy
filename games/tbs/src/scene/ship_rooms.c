@@ -704,7 +704,7 @@ static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_ShipRooms) {
+  if (gMainRoutineWork.next == (s32)&SceneId_ShipRooms) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;

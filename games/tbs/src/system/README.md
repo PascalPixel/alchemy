@@ -74,7 +74,7 @@ outside the heap survives: the
 `gMainRoutineWork`, the game flags, and fixed buffers such as
 `gActorSnapshot`.
 
-It then reads `gMainRoutineWork.sceneId`. An id from `SEQUENCE_NONE` up runs
+It then reads `gMainRoutineWork.next`. An id from `SEQUENCE_NONE` up runs
 another sequence ([System](../../system.md#the-main-routine) lists them).
 `MainRoutine_RunDice` and `MainRoutine_RunSlots` copy BG palettes 14 and 15
 (15 holds the window colours) into a 64-byte heap block before the minigame

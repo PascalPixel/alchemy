@@ -193,7 +193,7 @@ u32 Save_BuildFileSummary(void) {
   summary->level = leader->level;
   summary->playTime = gMainRoutineWork.playTime;
   summary->area =
-      Area_GetNameIndexFar(gMainRoutineWork.sceneId, gMainRoutineWork.entrance);
+      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
   summary->classId = leader->classId;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);

@@ -226,7 +226,7 @@ const struct SceneEntrance *TimberRoomsBC_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TimberRoomsB) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -236,7 +236,7 @@ const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorPlacementsAfterLighthouse;
@@ -420,7 +420,7 @@ static void TimberRoomsBC_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *TimberRoomsBC_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -849,7 +849,7 @@ s32 Scene_Initialize(void) {
   }
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
@@ -873,7 +873,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.restartEntrance = entrance;
     }
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     actor = Actor_GetById(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;

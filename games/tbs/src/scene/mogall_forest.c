@@ -439,7 +439,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Entrances;
@@ -459,7 +459,7 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ActorPlacements;
@@ -1364,7 +1364,7 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *MogallForest_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Triggers;
@@ -1394,7 +1394,7 @@ s32 MogallForest_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
     // crossing.

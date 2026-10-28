@@ -323,7 +323,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 
   Field_EndBusyAndReveal();
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
   } else if (sceneId == (s32)&SceneId_ColosseumSatrageMatch) {
@@ -360,7 +360,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 message;
 
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
   } else if (sceneId == (s32)&SceneId_ColosseumSatrageMatch) {

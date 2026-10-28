@@ -89,11 +89,12 @@ struct MainRoutineWork {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[16];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The destination: the sequence the main routine runs next, a
-  /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.
-  /// During a scene it is the scene running. An exit-table lookup overwrites
-  /// it, and EXIT_KEEP_DESTINATION keeps it.
-  s16 sceneId;
+  /// What the main routine runs next: a scene (a SceneId_ row of gScenes),
+  /// which means the field sequence running that scene, or a SEQUENCE_ value
+  /// above the table's rows for another sequence. During a scene it is the
+  /// scene running. An exit-table lookup overwrites it, and
+  /// EXIT_KEEP_DESTINATION keeps it.
+  s16 next;
   /// The destination's entrance; in SEQUENCE_BATTLE, the formation to fight.
   /// Not a union with a formation member: alchemy-gcc pads a union to a word,
   /// which would move every member after it.

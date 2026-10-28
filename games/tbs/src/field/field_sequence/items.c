@@ -65,7 +65,7 @@ s32 Field_FindItemTrigger(s32 item) {
 /// the item. Returns 0 when the scene's event ran or Retreat was declined, else
 /// -1, the item's own action included; FieldSequence_Run ignores it. Called by
 /// FieldSequence_Run for the item request (work->item and work->itemSlot).
-/// Retreat sets gMainRoutineWork.sceneId and .entrance to the Retreat point
+/// Retreat sets gMainRoutineWork.next and .entrance to the Retreat point
 /// and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
@@ -171,7 +171,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gMainRoutineWork.sceneId = gMainRoutineWork.retreatScene;
+        gMainRoutineWork.next = gMainRoutineWork.retreatScene;
         gMainRoutineWork.entrance = gMainRoutineWork.retreatEntrance;
         work->exit = EXIT_KEEP_DESTINATION;
       }

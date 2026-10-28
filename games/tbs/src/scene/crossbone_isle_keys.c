@@ -235,7 +235,7 @@ static void CrossboneIsleKeys_BaneJoins(void) {
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomEntrances;
@@ -254,7 +254,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomActorPlacements;
@@ -473,7 +473,7 @@ static void CrossboneIsleKeys_HaltBane(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.sceneId;
+  s16 selector = gMainRoutineWork.next;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomTriggers;
@@ -1290,13 +1290,13 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_CrossboneIsleKeys) {
+  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_CrossboneIsleStatues) {
+  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleStatues) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_CrossboneIsleBane) {
+  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleBane) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;

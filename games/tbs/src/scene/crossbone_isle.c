@@ -237,7 +237,7 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleEntrances;
@@ -262,7 +262,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleActorPlacements;
@@ -312,8 +312,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 static void CrossboneIsle_FightDeadbeard(void) {
 
   Event_Start();
-  Event_SetAfterBattleDestination(gMainRoutineWork.sceneId,
-                                  ENTRANCE_AFTER_BATTLE);
+  Event_SetAfterBattleDestination(gMainRoutineWork.next, ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
@@ -321,7 +320,7 @@ static void CrossboneIsle_FightDeadbeard(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleTriggers;
@@ -367,7 +366,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     CrossboneIsle_DrawLogPuzzleFootprints();
     return 0;
@@ -378,7 +377,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
-    if (gMainRoutineWork.sceneId == sceneId) {
+    if (gMainRoutineWork.next == sceneId) {
       if (gMainRoutineWork.entrance != ENTRANCE_AFTER_BATTLE) {
         if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
@@ -390,7 +389,7 @@ s32 Scene_Initialize(void) {
       return 0;
     }
   }
-  current = gMainRoutineWork.sceneId;
+  current = gMainRoutineWork.next;
   if (current == (s32)&SceneId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(ACTOR_ISLE_NUT)->targetX = PIXELS(129);
@@ -449,7 +448,7 @@ s32 Scene_Initialize(void) {
       TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
   }
-  current = gMainRoutineWork.sceneId;
+  current = gMainRoutineWork.next;
   if (current >= first) {
     if (current <= (s32)&SceneId_CrossboneIsleNinthFloor) {
       CrossboneIsle_RestoreSunkPillar();
@@ -469,8 +468,8 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 
   actor = Actor_Get(ACTOR_SINKING_PILLAR);
   cleared = GameFlag_Get(
-      (gMainRoutineWork.sceneId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                   (s32)&SceneId_CrossboneIsleFirstFloor)));
+      (gMainRoutineWork.next + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     Actor_SetPosition(ACTOR_SINKING_PILLAR, PIXELS(650), PIXELS(168));
     actor->y.fixed = -PIXELS(32);
@@ -502,10 +501,10 @@ static void CrossboneIsle_MovePillar(void) {
 
 #if TBS_PATCH_1
   // Through state, the map's address is built as gMainRoutineWork's plus an
-  // offset, as the bytes have it; &gMainRoutineWork.sceneId folds into one
+  // offset, as the bytes have it; &gMainRoutineWork.next folds into one
   // literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
   state = &gMainRoutineWork;
-  mapNumber = &state->sceneId;
+  mapNumber = &state->next;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                  (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
     return;
@@ -531,7 +530,7 @@ static void CrossboneIsle_MovePillar(void) {
 
 #if !TBS_PATCH_1
   state = &gMainRoutineWork;
-  mapNumber = &state->sceneId;
+  mapNumber = &state->next;
 #endif
   GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                              (s32)&SceneId_CrossboneIsleFirstFloor));
@@ -559,16 +558,16 @@ static void CrossboneIsle_OpenWestDoor(void) {
 /// party comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door
 /// opens onto the side room.
 static void CrossboneIsle_OpenEastDoor(void) {
-  if (GameFlag_Get(gMainRoutineWork.sceneId +
+  if (GameFlag_Get(gMainRoutineWork.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     Event_Start();
-    Event_SetAfterBattleDestination(gMainRoutineWork.sceneId,
+    Event_SetAfterBattleDestination(gMainRoutineWork.next,
                                     ENTRANCE_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
-    switch (gMainRoutineWork.sceneId - (s32)&SceneId_CrossboneIsleFirstFloor) {
+    switch (gMainRoutineWork.next - (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
       Field_RequestBattleFromEncounterTable(
           ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
@@ -621,7 +620,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set((gMainRoutineWork.sceneId +
+  GameFlag_Set((gMainRoutineWork.next +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&SceneId_CrossboneIsleFirstFloor)));
   Event_Wait(30);

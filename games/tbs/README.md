@@ -31,7 +31,7 @@ tearing down whatever the last sequence left behind: its
 [tasks](glossary.md#task) (`Task_ResetAll`), its HBlank and VCount interrupt
 handlers (`Irq_SetHandler`) and every block it took from the
 [heap](glossary.md#heap-and-pools) (`Heap_Initialize`). Then it reads one id,
-`gMainRoutineWork.sceneId`, from the [main routine's
+`gMainRoutineWork.next`, from the [main routine's
 work](glossary.md#main-routines-work), which every sequence reads and writes.
 
 Most ids are [scenes](glossary.md#scene). A scene is a row of the scene table: a

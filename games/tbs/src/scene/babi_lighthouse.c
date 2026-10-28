@@ -3,7 +3,7 @@
 /// Lighthouse, entered from the World Map; SceneId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; SceneId_BabiLighthouseLuff and
 /// SceneId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// exit table, the other getters choose by gMainRoutineWork.sceneId with the
+/// exit table, the other getters choose by gMainRoutineWork.next with the
 /// road as the fallback, and BabiLighthouse_SetupMap restores the scene being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
@@ -313,7 +313,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryEntrances;
@@ -330,7 +330,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (gMainRoutineWork.next == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -340,7 +340,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryActorPlacements;
@@ -1224,7 +1224,7 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryTriggers;
@@ -1321,11 +1321,11 @@ s32 BabiLighthouse_SetupMap(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gMainRoutineWork;
-  sceneId = state->sceneId;
+  sceneId = state->next;
   if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
     state->retreatEntrance = 1;
     state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
-    mapCopy = state->sceneId;
+    mapCopy = state->next;
   }
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {

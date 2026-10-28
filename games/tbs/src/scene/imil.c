@@ -306,7 +306,7 @@ static s32 Imil_UpdateShiver(struct Actor *interpreter) {
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_IceRooms) {
+  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
     return gImil_InteriorEntrances;
   }
   return gImil_TownEntrances;
@@ -322,7 +322,7 @@ const u32 *Imil_GetExits(void) { return gImil_Exits; }
 const struct ActorPlacement *Imil_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
-  if (gMainRoutineWork.sceneId == ((s32)&SceneId_IceRooms)) {
+  if (gMainRoutineWork.next == ((s32)&SceneId_IceRooms)) {
     script = gImil_InteriorActorPlacements;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -352,7 +352,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct Trigger *Imil_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_IceRooms) {
+  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
     return gImil_InteriorTriggers;
   }
   return gImil_TownTriggers;
@@ -824,7 +824,7 @@ s32 Imil_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_Imil) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Imil) {
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -845,7 +845,7 @@ s32 Imil_Initialize(void) {
         gMainRoutineWork.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_IceRooms) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
     // Restore each interior's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

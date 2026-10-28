@@ -12,7 +12,7 @@
 ///   Gates): the steps up to the fortress door, kept by two guards whom the
 ///   party gets past under Cloak.
 ///
-/// The getters choose by gMainRoutineWork.sceneId, and the town's triggers
+/// The getters choose by gMainRoutineWork.next, and the town's triggers
 /// also by FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets:
 /// before it the townspeople live under Dodonpa's men (gLunpaSealedTriggers),
 /// after it they talk of the intruders (gLunpaReopenedTriggers). Both tables
@@ -137,7 +137,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaEntrances;
@@ -151,7 +151,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaExits;
@@ -164,7 +164,7 @@ const u32 *Scene_GetExits(void) {
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaActorPlacements;
@@ -311,7 +311,7 @@ static void Lunpa_SearchWell(void) {
 /// The triggers of the Lunpa Fortress Gates, or the town's before and after
 /// Donpa's judgment.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
@@ -929,7 +929,7 @@ static void Lunpa_LeaderSneaksOut(void) {
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_Lunpa) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Lunpa) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Lunpa_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -942,7 +942,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
   // Restore the gate's arrival event and active detection tasks separately.
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gMainRoutineWork.retreatEntrance = GATE_RETREAT_ENTRANCE;
     if (gMainRoutineWork.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&

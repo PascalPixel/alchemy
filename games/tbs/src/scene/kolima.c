@@ -274,7 +274,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeEntrances;
@@ -288,7 +288,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneExitRegion *Kolima_GetRegions(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (gMainRoutineWork.next == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -304,7 +304,7 @@ const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ActorPlacement *Kolima_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -343,7 +343,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
 const struct Trigger *Kolima_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_KolimaBridge) {
+  if (gMainRoutineWork.next == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -513,7 +513,7 @@ s32 Kolima_Initialize(void) {
   u32 actorId;
   const s32 *table;
 
-  sceneId = gMainRoutineWork.sceneId;
+  sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     Kolima_RestoreBridgeState();

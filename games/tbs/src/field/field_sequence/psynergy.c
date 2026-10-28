@@ -70,7 +70,7 @@ s32 Field_UsePsynergy(u32 code) {
       struct MainRoutineWork *state = &gMainRoutineWork;
       s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
-      state->sceneId = sceneId;
+      state->next = sceneId;
       returnEntrance = (u16)state->retreatEntrance;
       state->entrance = returnEntrance;
     }

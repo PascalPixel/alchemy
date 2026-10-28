@@ -142,7 +142,7 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 /// Selects Hammet Palace's entrances, or the fallback table for any
 /// other scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceEntrances;
@@ -157,7 +157,7 @@ const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 /// Applies actor placement clipping before returning Hammet Palace's
 /// actor rows.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_HammetPalace) {
+  if (gMainRoutineWork.next == (s32)&SceneId_HammetPalace) {
     Scene_AssignViewFlags(gHammetPalaceActorPlacements);
     return gHammetPalaceActorPlacements;
   }
@@ -166,7 +166,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Selects Hammet Palace's dialogue and doorway handlers.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceTriggers;
@@ -252,7 +252,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.sceneId == (u32)&SceneId_HammetPalace) {
+  if (gMainRoutineWork.next == (u32)&SceneId_HammetPalace) {
     HammetPalace_SetUpEntrance();
   }
   return 0;

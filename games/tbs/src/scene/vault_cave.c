@@ -236,7 +236,7 @@ enum VaultCaveMouthActorId {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Entrances;
@@ -256,7 +256,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Exits;
@@ -272,7 +272,7 @@ const u32 *Scene_GetExits(void) {
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_ActorPlacements;
@@ -421,7 +421,7 @@ static void VaultCave_ShowLockedDoor(void) {
 /// Selects the cave scene's examine triggers, movement checks and Psynergy
 /// callbacks.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Triggers;
@@ -990,7 +990,7 @@ static void VaultCave_StartTimedFalls(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (gMainRoutineWork.next == (s32)&SceneId_VaultCavePassage) {
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
@@ -1014,7 +1014,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       Actor_GetById(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
     }
@@ -1077,7 +1077,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_GetById(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveMouth) {
     Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
       Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 2);

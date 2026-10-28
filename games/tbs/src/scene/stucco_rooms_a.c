@@ -187,7 +187,7 @@ static void StuccoRoomsA_ApplyRoomState(void);
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct SceneEntrance *StuccoRoomsA_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     return gStuccoRoomsA_HouseEntrances;
@@ -205,7 +205,7 @@ const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
 /// The inn's rooms share one actor placement table and the houses
 /// another, chosen by entrance and clipped to the current view.
 const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     s32 entrance = gMainRoutineWork.entrance;
@@ -238,7 +238,7 @@ const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
 /// Selects room dialogue with the same entrance grouping as the
 /// actor placements.
 const struct Trigger *StuccoRoomsA_GetTriggers(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     s32 entrance = gMainRoutineWork.entrance;
@@ -392,7 +392,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 s32 StuccoRoomsA_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (gMainRoutineWork.next == (s32)&SceneId_StuccoRoomsA) {
     StuccoRoomsA_ApplyRoomState();
   }
   return 0;

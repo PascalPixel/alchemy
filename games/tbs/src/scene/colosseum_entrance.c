@@ -352,7 +352,7 @@ enum {
 };
 
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
     return gColosseumEntrances;
@@ -375,7 +375,7 @@ const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_Colosseum) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Colosseum) {
     switch (gMainRoutineWork.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
@@ -407,7 +407,7 @@ const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
       table = gColosseumActorPlacements;
       break;
     }
-  } else if (gMainRoutineWork.sceneId == (s32)&SceneId_ColosseumEntrance) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_ColosseumEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceActorPlacementsAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -422,7 +422,7 @@ const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
 }
 
 const struct Trigger *ColosseumEntrance_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.sceneId;
+  s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ColosseumTunnel) {
     return gColosseumTunnelTriggers;
@@ -1382,7 +1382,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 /// set up by the entrance the party arrives at, and the Colosseum
 /// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
-  s32 sceneId = gMainRoutineWork.sceneId;
+  s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
     ColosseumEntrance_ApplyArrivalState();

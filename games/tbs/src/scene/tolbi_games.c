@@ -276,7 +276,7 @@ const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
 const struct ActorPlacement *TolbiSpring_GetActorPlacements(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringActorPlacements;
   }
   return gTolbiSpringActorPlacementsOther;
@@ -351,7 +351,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct Trigger *TolbiSpring_GetTriggers(void) {
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringTriggers;
   }
   return gTolbiSpringTriggersOther;
@@ -370,7 +370,7 @@ s32 TolbiSpring_Initialize(void) {
   s32 prizeIndex;
   s32 item;
 
-  if (gMainRoutineWork.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);

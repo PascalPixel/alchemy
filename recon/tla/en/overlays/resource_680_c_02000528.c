@@ -5,7 +5,7 @@
 // counter in r10 stepped by -2 beside i in r8. As a for loop, loop.c hoists all
 // three and the timer is 20 - 2 * i. As the goto loop below only gcse's
 // hoisting of the position address (sfp - 12) remains, with the source in r8
-// and the position in r7 where the native has r7 and r5; the native's frame
+// and the position in r7 where the native has r7 and r5; the native's stack frame
 // holds no r11. The priority byte's zero comes from the pool with a plain byte
 // store.
 #include "types.h"

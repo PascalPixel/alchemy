@@ -9,7 +9,7 @@
 // Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
 // (call order BattleEffect_RunDragonCloud 0.417): ⚓️'s own effect on ☀️'s
 // frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (BattleEffect_RunTripleChomp). The native frame (108) holds the mode at
+// in Triple Chomp (BattleEffect_RunTripleChomp). The native stack frame (108) holds the mode at
 // sp+64, work 60, canvas 56, frame 52, graphics 48, the user's position's
 // address 44 (and a copy at 36), the target's 40, the mouth's x 32 and y 28,
 // the sheet's glow cell 24, the blitter pair's address 20, the vertices 16 and

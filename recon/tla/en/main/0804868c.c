@@ -8,7 +8,7 @@
 // cursor position as a two-word struct (spilled whole, as the native's sp 12
 // and 16), the twin's chosen-Djinn search, x block, barrier and entry packing
 // (1009 to 678; the twin's devices are untagged here until it matches). Left:
-// the frame is 228 bytes, one stack word more than the native's, and held,
+// the stack frame is 228 bytes, one stack word more than the native's, and held,
 // repeated and pressed take other registers (the native: r8, r7 and r1), so
 // allocation differs from the input reads on.
 #include "types.h"

@@ -1,7 +1,7 @@
 // Draft of BattleEffect_RunLifeShear, decompiled from the listing: differ 318 of
 // 602 (draft 598), the same 55 calls and control flow; allocation differs.
 // 2026-10-19 (run 33): the blitter as a pair (tagged below), which gives
-// the native's 64-byte frame and its unused sp+36: 334 to 318. Left: a
+// the native's 64-byte stack frame and its unused sp+36: 334 to 318. Left: a
 // six-use spill slot at sp+28 the native keeps in a register, and with it
 // the order of the slots below.
 
@@ -129,7 +129,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+32 and the unused sp+36
-   * the native frame has. As a single DrawRectangle the frame is 60 bytes
+   * the native stack frame has. As a single DrawRectangle the stack frame is 60 bytes
    * (334 of 602 instructions differ in tla-en, 318 with the pair). */
   DrawRectangle blit[2];
   struct EffectPosition target;

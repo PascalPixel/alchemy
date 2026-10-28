@@ -232,7 +232,7 @@ void BattleAnim_RunFlurry(struct BattleAnimArgs *args, s32 mode) {
 
         if ((i & 3) <= 1 ||
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
-          // The arc: six 48x72 frames.
+          // The arc: six 48x72 pictures.
           if (work->args->side == ANIM_SIDE_ENEMIES)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
                         targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
@@ -240,7 +240,7 @@ void BattleAnim_RunFlurry(struct BattleAnimArgs *args, s32 mode) {
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
                         targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
-          // The wave: six 48x16 frames.
+          // The wave: six 48x16 pictures.
           if (work->args->side == ANIM_SIDE_ENEMIES)
             draw[i & 1](canvas, FLURRY_WAVE_OFFSETS + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
@@ -271,7 +271,7 @@ void BattleAnim_RunFlurry(struct BattleAnimArgs *args, s32 mode) {
         for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
-      // The flash: six 20x48 frames, 2 frames each.
+      // The flash: six 20x48 pictures, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * (20 * 48) +

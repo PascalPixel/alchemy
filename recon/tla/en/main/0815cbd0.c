@@ -41,7 +41,7 @@
 // plain, BattleEffect_LoadBlitter returning s32                         166
 // declaration order, a greedy sweep                          166
 // ☀️'s other device (the frame pinned to r9) does not apply:
-// the native frame is in r7
+// the native stack frame is in r7
 // 2026-10-19 (devices allowed), differ 59 of 223: the empty asm on work at
 // the top of the frame loop stops the sheet's hoisting (166 to 107), the
 // blend register through a local pointer (alchemy-devtools permute's find; 107 to

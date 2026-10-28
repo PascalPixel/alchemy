@@ -37,7 +37,7 @@ static inline s32 FillWords(void *destination, s32 size, u32 value) {
 }
 
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH: an unread 32-byte reserve, the native frame's extra bytes. */
+  /* FAKEMATCH: an unread 32-byte reserve, the native stack frame's extra bytes. */
   u32 reserve[8];
   u8 pens[16];
   struct UiRenderWork *work;

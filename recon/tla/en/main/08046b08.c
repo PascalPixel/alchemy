@@ -8,7 +8,7 @@
 // and the help line follows the cursor. The battle figure is spawned for the
 // member shown and released on the way out; a reserve member (past the
 // fourth) is labelled. The structure follows the listing, and the locals are
-// declared in the native's frame order (the first declared takes the highest
+// declared in the native's stack frame order (the first declared takes the highest
 // slot; in code order, differ 3122); left: cursorX and cursorY, which the
 // native spills and the draft keeps in registers, shift the slots below them,
 // and the allocation differs from there.

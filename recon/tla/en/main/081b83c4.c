@@ -11,7 +11,7 @@
 // wall, settle to a face and are drawn back to front with their shadows;
 // palettes of the banners pulse with Func_081b810c.
 // The same calls, tables, sprite words and control flow as the listing;
-// left: the frame is 760 bytes against the native 756 (one more spill
+// left: the stack frame is 760 bytes against the native 756 (one more spill
 // slot), which moves every stack local by 4 and so shows in most rows, and
 // register choice. The message names stand for 0xd68 to 0xd6a and 0xd77 to
 // 0xd7e; the resources are directory entries 0x85 to 0x97.

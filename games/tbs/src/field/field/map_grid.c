@@ -833,9 +833,9 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the chains of temporaries, tmp2 to tmp17, set the
-   * registers, the schedule and the slots of the 36-byte frame; as a plain
-   * body (the offset computed once, two word stores), 85 of 137 instructions
-   * differ in tbs-en. */
+   * registers, the schedule and the slots of the 36-byte stack frame; as a
+   * plain body (the offset computed once, two word stores), 85 of 137
+   * instructions differ in tbs-en. */
   s32 y = dstY;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapGridCellBuffer)[y * 128 + dstX];
@@ -981,8 +981,8 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
-   * the 36-byte frame; as a plain body (the offset computed once, two word
-   * stores), 94 of 142 instructions differ in tbs-en. */
+   * the 36-byte stack frame; as a plain body (the offset computed once, two
+   * word stores), 94 of 142 instructions differ in tbs-en. */
   s32 y;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapGridCellBuffer)[dstY * 128 + dstX];

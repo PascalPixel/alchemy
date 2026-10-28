@@ -353,7 +353,7 @@ void SelectionMenu_Draw(void) {
     node = node->next;
   }
   // Point at the selected battle target, smoothing each axis separately: the
-  // hand covers half the distance left each frame. Its 16 frames of 256 bytes
+  // hand covers half the distance left each frame. Its 16 pictures of 256 bytes
   // change every 4 frames.
   if (cursor->kind != ICON_KIND_NONE) {
     entryIndex = (s32)gMenu_AnimatedCursorTiles;
@@ -1101,8 +1101,8 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
 /// slot when -1) and returns the slot, or -1 when none was free. An item's icon
 /// has its count above one and its equipped, broken and artifact marks,
 /// ICON_KIND_EQUIPMENT_ITEM the same without the broken mark. For a
-/// command option is the frame drawn under the icon; for Psynergy, whether the
-/// icon frame is drawn.
+/// command option is the base drawn under the icon; for Psynergy, whether the
+/// icon base is drawn.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -1145,7 +1145,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 /// Sets up a selection icon for an entry: its icon tiles (in its old slot when
 /// reuse is set), its name message and its sprite.
 /// kind must select a command, item or Psynergy with the matching base ID.
-/// Items and Psynergy are drawn over the icon frame; the sprite is 16x16 at
+/// Items and Psynergy are drawn over the icon base; the sprite is 16x16 at
 /// full size (0x100).
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse) {

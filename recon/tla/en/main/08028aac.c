@@ -15,7 +15,7 @@
 // (a separate index, differ 351: it lands in r4 and is saved around the
 // call); the animation kind in a local, the high branch written last
 // (differ 173 testing the field twice); separate locals for the two event
-// work loads (as one, the frame grows by a word).
+// work loads (as one, the stack frame grows by a word).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

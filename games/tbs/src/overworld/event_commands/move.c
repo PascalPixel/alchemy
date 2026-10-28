@@ -310,7 +310,7 @@ void FieldPsynergy_Move(void) {
   object = effectWork->mainActor;
 
   /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
-   * mainActor load below the frame's sub sp; as a plain call, 2 of 24
+   * mainActor load below the stack frame's sub sp; as a plain call, 2 of 24
    * instructions differ in tbs-en. */
   do {
     FieldPsynergy_FadeToCastColor();

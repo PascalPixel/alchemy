@@ -1,6 +1,6 @@
 // Draft, differ 153 (157 before statements reordered 2026-10-26) of 167: Func_080d64f0's sibling for the same 64 ground
 // particles with fixed sprites: each counts down its frame (held while flag
-// 358 is set), is drawn at its frame's offset (Data_080f0b50, pairs) with the
+// 358 is set), is drawn at its picture's offset (Data_080f0b50, pairs) with the
 // work's tile, shape 1 and size 2 when on screen, and when its count runs out
 // is placed again at a random point (x within -64 to +192, z within -128 to
 // +128 pixels of the map's focus), on the ground, for 12 frames. No ☀️ twin

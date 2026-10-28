@@ -143,7 +143,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+20 and the unused sp+24
-   * the native frame has. As a single DrawRectangle the frame is 64 bytes
+   * the native stack frame has. As a single DrawRectangle the stack frame is 64 bytes
    * and every slot above it moves (differ 325 against 299). */
   DrawRectangle draw[2];
   struct ModelTexture texture;

@@ -141,7 +141,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   u8 *sprites;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
    * though only the first is used; its second word is the unused word at
-   * sp 40 of the native's 84-byte frame. As one DrawRectangle the frame is
+   * sp 40 of the native's 84-byte stack frame. As one DrawRectangle the frame is
    * 80 bytes and every stack offset moves (differ 509). */
   DrawRectangle blit[2];
   s32 *camera;

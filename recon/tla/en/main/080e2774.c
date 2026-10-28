@@ -1,4 +1,4 @@
-// Draft, differ 238 of 169: other, mostly allocation. The native frame is
+// Draft, differ 238 of 169: other, mostly allocation. The native stack frame is
 // 44 bytes against 36: it keeps the left and top edges, the scroll, the
 // lift and the three stack arguments on the stack and the four copied
 // coordinates in r8 to r11; this draft holds the edges in registers and

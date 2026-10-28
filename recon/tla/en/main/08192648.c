@@ -1,7 +1,7 @@
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
 // 120; a greedy device search found nothing lower.
 // Draft, differ 16 of 120 (no device): summon 25's
-// falling drop with its trail, written from the listing. The native frame
+// falling drop with its trail, written from the listing. The native stack frame
 // (28 bytes) holds x at sp+24, the blitter pair at sp+16/20 (only the first
 // is called; the second is read and stored, as in The Broken Seal's
 // BlitterPair), and the trail's size - 1 and size * 2 at sp+8/12.
@@ -34,7 +34,7 @@
 extern u16 gData_08197410[];
 
 // Summon 25: draws one falling drop at (x, y), large (20x40) when small is 0
-// and small (12x24) otherwise, its animation frame chosen by frame / 2, and
+// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
 // under it a trail of particles every half size down to row 112.
 void Func_08192648(u32 frame, s32 x, s32 y, s32 small) {
   DrawRectangle draw[2];

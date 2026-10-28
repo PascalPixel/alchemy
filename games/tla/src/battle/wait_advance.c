@@ -65,7 +65,7 @@ void BattlePresentation_WaitForAdvance(void) {
     WaitFrames(1);
   prompt = &promptStorage;
   /* FAKEMATCH(temporary): the arrow sheet's address held in a local, so the
-   * native's frame offset is added after the window loads; as
+   * native's stack frame offset is added after the window loads; as
    * (s32)Data_0812996c at its use, 36 of 146 instructions differ in tla-en. */
   sheet = (s32)Data_0812996c;
   tileSlot = VramCache_AllocEntry(128);

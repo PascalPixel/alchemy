@@ -1,7 +1,7 @@
 // Draft of overlay 6a7's Func_020001d8, translated from its listing: differ 12
 // of 438 in tla-en (was 44). The read-modify-write is a compound assignment and
 // the two vectors handed to Func_020006b0 are local arrays, which give the
-// native's 24-byte frame. Left: the native builds the heap slot base
+// native's 24-byte stack frame. Left: the native builds the heap slot base
 // (0x3000000) in r5 before that call, where this builds it after the next two;
 // and two argument constants one row apart.
 #include "types.h"

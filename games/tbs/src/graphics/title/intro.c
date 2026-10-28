@@ -638,7 +638,7 @@ s32 Title_ShowCamelotLogo(void) {
   workIndex = (u32)Ram_MapGridCellBuffer;
   Decompress_TaggedLz(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   // The decoded resource: 224 colours, the map, the still tiles, then four
-  // animation frames of 0x400 bytes each.
+  // animation pictures of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x1c0 / 4), REG_DMA3);
   resourceData += 0x1c0;
@@ -659,7 +659,7 @@ s32 Title_ShowCamelotLogo(void) {
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   // Replace only the animated tiles; the rest of the decoded logo stays
-  // in VRAM while the four animation frames cycle.
+  // in VRAM while the four animation pictures cycle.
   for (workIndex = 0; workIndex < 120; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
             BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);

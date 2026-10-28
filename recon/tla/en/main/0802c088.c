@@ -24,7 +24,7 @@ struct MapAffinePair {
   u32 words[8];
 };
 
-struct MapFrameWork {
+struct MapAffineWork {
   struct MapScanline scanlines[160];
   struct MapAffinePair pages[2][160];
 };
@@ -40,7 +40,7 @@ struct PerspectiveWindow {
 
 void Func_0802c088(void) {
   struct MapAffinePair(*affinePages)[160] =
-      ((struct MapFrameWork *)Ram_HeapSlots->unk1c[0])->pages;
+      ((struct MapAffineWork *)Ram_HeapSlots->unk1c[0])->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)0x04000020;
   struct PerspectiveWindow *perspective =

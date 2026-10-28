@@ -25,7 +25,7 @@ struct OptionMenuWork {
   /// and optionCount; on the Pause menu its entry, indexing icon.
   u16 page;
   u16 tint[3]; ///< the window tint's red, green and blue, 0 to 31
-  /// Frames counted; its low three bits pick the frame of the marker of the
+  /// Frames counted; its low three bits pick the picture of the marker of the
   /// slider in use.
   u16 cursorFrame;
   /// The colour preset SELECT last chose, 0 to 5, from

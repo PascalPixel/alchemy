@@ -9,7 +9,7 @@
 // unextended, so its parameter is an int here (an s8 parameter adds lsl/asr).
 // The cell's raised bit as a bitfield measured 142, as |= 0x80 and &= 0x7f 153.
 // Raises or lowers the map under a list of switch actors. For each
-// (actor, flag) entry until 0xffff whose sprite frame (0 when the flag is
+// (actor, flag) entry until 0xffff whose sprite picture (0 when the flag is
 // set, 1 when clear) disagrees with its flag, it records the actor in the
 // event work's word at 0xcbc, toggles the flag and moves the actor's cell
 // four half-units down (flag was set) or up: the cell's shape in

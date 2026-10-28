@@ -7,7 +7,7 @@
 // cursor reached through sprite, the cursor get, set and tilemap row mark in
 // once-only blocks as the twin's macros are, pageTile (58). The cursor pointer
 // set once more in the item branch is a dead store that orders the spill
-// slots of the sprite and cursor addresses as the native frame does (58 to
+// slots of the sprite and cursor addresses as the native stack frame does (58 to
 // 20); it would be tagged FAKEMATCH(dead). Left, instruction order only: the
 // native stores the three parameters before it builds the heap base, issues
 // two pool loads later, and a few stores one slot later. No single device or

@@ -3,7 +3,7 @@
 // the faded copies of the pillar sheet, the head flying the path and its trail,
 // the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
 // target, sends the head to the target before it dives, and added a second
-// variant with orange colours and three showers of sparks. The native frame
+// variant with orange colours and three showers of sparks. The native stack frame
 // (248) holds the trail at sp+88, the target's screen position at 76, the
 // head's at 64, the blitter pair at 56, effect 52, canvas 48, frame 44, drift
 // 40, the path 36, x 32, y 28, graphics 24, the blitter pair's address 20, the

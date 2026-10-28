@@ -34,8 +34,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   s32 enemyId;
   s32 levelTotal;
   s32 enemyCount;
-  /* FAKEMATCH(dead): an unused array for the frame's 28 bytes; without it, 2
-   * of 94 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an unused array for the stack frame's 28 bytes; without
+   * it, 2 of 94 instructions differ in tbs-en. */
   UNUSED s32 levels[7];
 
   enemyCount = 0;

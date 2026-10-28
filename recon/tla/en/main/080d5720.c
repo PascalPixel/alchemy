@@ -2,7 +2,7 @@
 // order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 87: the leader grabs the nearest workspace item
 // (Func_080d5670): with none it returns 0; otherwise cue 152, the leader is
-// moved onto the item and linked to it, its motion flags, sprite frame and
+// moved onto the item and linked to it, its motion flags, sprite picture and
 // priority are saved, it is drawn at priority 1, and the render mode becomes 3.
 // Returns 1. No ☀️ twin found. Left: instruction order only: the native starts
 // the priority flags' address (adds r0, r5; adds r0, #35) after the saved

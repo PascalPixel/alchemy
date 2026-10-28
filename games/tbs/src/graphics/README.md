@@ -33,9 +33,9 @@ The placing is a short assembly file, usually beside its picture: the
 grassland is `battle_bg/grassland.s`, which places `Battle_GrasslandBackdrop`.
 A `.tsv` beside a picture holds its packing options, such as a font's first
 letter. A sprite's `.tsv` in `sprite/` also holds its animations, one line
-each, written as the commands the field reads: `frame 55 6` shows
-frame 55 for 6 frames, and `loop`, `play 1` or `hold` says what follows the
-last frame.
+each, written as the commands the field reads: `picture 55 6` shows
+picture 55 for 6 frames, and `loop`, `play 1` or `hold` says what follows the
+last picture.
 
 ## The palette fade
 

@@ -100,12 +100,12 @@ void ObjectSystem_UpdateCameraFixed(void) {
   struct PlacedObject *object;
   s32 angle;
   s32 i;
-  /* FAKEMATCH(dead): an unused point for the frame's 12 bytes; as no local,
+  /* FAKEMATCH(dead): an unused point for the stack frame's 12 bytes; as no local,
    * 12 of 93 instructions differ in tla-en. */
   struct CameraPoint unused;
 
   /* FAKEMATCH(one-pass): the decoder's copy in a once-only block, which
-   * makes the frame before the first call's arguments; as a plain call, 6 of
+   * makes the stack frame before the first call's arguments; as a plain call, 6 of
    * 93 instructions differ in tla-en. */
   do {
     Dma_Set(

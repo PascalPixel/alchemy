@@ -405,7 +405,7 @@ void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
 }
 
 /// The stat arrows: the up and down arrow sprites the menu loads into its two
-/// sprite frame cache slots (Resource_LoadPairedBlocks).
+/// sprite picture cache slots (Resource_LoadPairedBlocks).
 enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 
 /// Writes Attack, Defense and Agility into a status window as they are now

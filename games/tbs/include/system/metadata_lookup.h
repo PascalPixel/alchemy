@@ -10,12 +10,12 @@
 #include "farcall.h"
 
 /// An animation's metadata: the sprite's size, scale and offsets, how its
-/// frames are drawn and decoded, its frames and its animation scripts.
+/// pictures are drawn and decoded, its pictures and its animation scripts.
 struct AnimationMetadata {
   u8 width;    ///< pixels
   u8 height;   ///< pixels
   u16 scale;   ///< 8.8 fixed point, 0x100 full size
-  u8 drawKind; ///< SpriteAnim.kind: the facing table its frames follow
+  u8 drawKind; ///< SpriteAnim.kind: the facing table its pictures follow
   /// The scripts in animation; an animation number at or past it is not
   /// played.
   u8 animationCount;

@@ -190,8 +190,8 @@ gActors:
 	.global gActorSystemWork
 gActorSystemWork:
 	.space 0x00000004
-	.global gWorldMapFrameWork
-gWorldMapFrameWork:
+	.global gWorldMapAffineWork
+gWorldMapAffineWork:
 	.space 0x00000004
 	.global gMapGridWork
 gMapGridWork:

@@ -247,8 +247,8 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *args) {
 #if !TBS_PATCH_1
               {
                 /* FAKEMATCH(temporary): the result pointer named, which gives
-                 * the 124-byte frame and j a stack slot; as &screen, 166 of
-                 * 958 instructions differ in tbs-ja. */
+                 * the 124-byte stack frame and j a stack slot; as &screen, 166
+                 * of 958 instructions differ in tbs-ja. */
                 struct ScreenPoint *out = &screen;
 
                 Projection_Point(point, out);

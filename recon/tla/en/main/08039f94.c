@@ -38,7 +38,7 @@ struct UiWindow {
 
 void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 
-// Draw the frame partway through opening or closing.
+// Draw the window partway through opening or closing.
 void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
   struct UiWindow *window = arg;
   s32 scratch[3];

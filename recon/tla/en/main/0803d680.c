@@ -14,14 +14,14 @@
 #include "ram_buffer.h"
 #include "item.h"
 
-extern u8 *gUiIcon_PicturePointerTable[];
+extern u8 *gUiIcon_BasePointerTable[];
 extern u8 *gUiIcon_ItemIconPointers[];
 extern u8 *gUiIcon_MarkPointers[];
 extern u8 *gUiIcon_DigitPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 
-#define ICON_FRAME 1
+#define ICON_BASE 1              ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2
 #define ICON_COUNT 4
 #define ICON_EQUIPPED 8
@@ -40,8 +40,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   work = Ram_HeapSlots->glyphWork;
   if (work == NULL)
     return -1;
-  if (layers & ICON_FRAME) {
-    work->encoded = gUiIcon_PicturePointerTable[2];
+  if (layers & ICON_BASE) {
+    work->encoded = gUiIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);

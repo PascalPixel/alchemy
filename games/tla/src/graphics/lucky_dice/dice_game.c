@@ -9,7 +9,7 @@
 /// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
 /// none. The matched values are collected in a local array the score never
 /// reads.
-// The native's frame and stores keep that array.
+// The native's stack frame and stores keep that array.
 s32 Func_081b834c(s32 *dice) {
   s32 matches[2];
   s32 score;

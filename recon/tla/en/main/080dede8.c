@@ -1,7 +1,7 @@
 // Near miss, differ 194 of 409 (206 before statements reordered 2026-10-26) (2026-10-15): ⚓️'s FieldEffect_RunDouse, the
 // form of ☀️'s: an orb grows from the target to the effect's point over
 // eleven frames, sheds falling motes (10 or 24) or drifting ones (10 or
-// 30), and shrinks back. The native's frame is 52 bytes, this one 56 (one
+// 30), and shrinks back. The native's stack frame is 52 bytes, this one 56 (one
 // more spill slot, 411 instructions against 409); the work and the anchor
 // take each other's registers (the native keeps the work in r8 and the
 // anchor in sl), and the order follows from there. Belongs between

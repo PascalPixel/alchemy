@@ -6,7 +6,7 @@
 // call (the native loads the blitter early for the first, so its tails
 // differ); a separate sheet pointer or blitter copy does not change that.
 // The rest is allocation.
-// 2026-10-19: the native frame is 144 bytes, here 136. Its blitter slot
+// 2026-10-19: the native stack frame is 144 bytes, here 136. Its blitter slot
 // (sp 80) has an unused word above it, as The Broken Seal's blitter pair
 // would give (770 with the pair, not kept until the frame's other word
 // is found), and frame, declared after the blitter and before camera,

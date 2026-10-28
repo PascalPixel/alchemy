@@ -483,8 +483,8 @@ static void MenuTest_GiveConsumableTestStock(void) {
 /// every edition.
 static void MenuTest_GivePartyDjinn(void) {
   /* FAKEMATCH(dead): the Japanese loop's buffer, unread outside
-   * Japanese, for the frame's 256 bytes; as declared inside the #if, 2 of 232
-   * instructions differ in tbs-en. */
+   * Japanese, for the stack frame's 256 bytes; as declared inside the #if, 2 of
+   * 232 instructions differ in tbs-en. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

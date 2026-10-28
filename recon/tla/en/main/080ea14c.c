@@ -8,7 +8,7 @@
 // origin set here), drift to the owner, close in, and the owner plays
 // gData_080f3614 for 60 frames. The owner is set back to full size.
 // Same calls, offsets and control flow; left: stack and register allocation
-// (the native frame is 64 bytes against 60, with the pebble count and
+// (the native stack frame is 64 bytes against 60, with the pebble count and
 // cursor at sp 8 and 4 and the work in r9), which shifts most rows.
 #include "types.h"
 #include "ram_buffer.h"

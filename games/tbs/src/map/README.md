@@ -286,7 +286,7 @@ stored pictures, waits 15 frames, takes the next picture, and starts again
 after the fourth. Up to 16 channels run side by side.
 
 Both scripts are lists of numbers, run each frame as
-[tasks](../../glossary.md#task): a channel's start, then frames of four
+[tasks](../../glossary.md#task): a channel's start, then pictures of four
 values each (the tile to copy from, how many tiles, the tile to copy to and
 the frames to wait), then a jump, a stop or a loop. A blend script's commands set
 how the layers blend and wait.
@@ -297,7 +297,7 @@ which have no names for their words; the names below are the tables'.
 | Word | Value | Meaning |
 | --- | --- | --- |
 | `channel n` | `0xfd00 + n` | channel n starts at the next value; with bit 7 set it starts paused |
-| `frame` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
+| `picture` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
 | `jump n` | `0xfe00 + n` | continue at value 2n of the channel's script |
 | `stop` | `0xfeff` | halt the channel |
 | `end` | `0xffff` | loop back to the channel's start |

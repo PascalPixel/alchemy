@@ -5,7 +5,7 @@
 // move it.
 // Draft, differ 8 of 360: the Shrine of the Sea God's descent: the map's
 // three layers and the party move down while the blend steps from 0x80c to
-// 0x1000 and Func_0200094c draws the steps. Left: the frame's sub sp and
+// 0x1000 and Func_0200094c draws the steps. Left: the stack frame's sub sp and
 // the third layer's spill one load later than the native, and the
 // leader's id loaded after the 1 of its SetActionVariant call.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"

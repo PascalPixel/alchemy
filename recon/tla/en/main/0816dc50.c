@@ -1,6 +1,6 @@
 // Draft of BattleEffect_RunSerac, decompiled from the listing: differ 1130 of 1101
 // (draft 1093), the same 91 calls and control flow; allocation differs.
-// 2026-10-19: the native frame is 160 bytes (here 176 at first). Its
+// 2026-10-19: the native stack frame is 160 bytes (here 176 at first). Its
 // arrays above the arguments' slots take 92 bytes, one 12-byte point
 // fewer than here: the falling Djinni is projected into shard, not a
 // point of its own (164); screenB is declared before screenA and frame

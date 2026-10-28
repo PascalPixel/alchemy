@@ -59,8 +59,8 @@ enum HeapSlot {
   /// debug menus and the world map effect set its suspended field while they
   /// are open, so sprites that are not held are not drawn and free their VRAM.
   HEAP_SLOT_ACTOR_SYSTEM = 6,
-  /// The world map's frame work (struct WorldMapFrameWork).
-  HEAP_SLOT_WORLD_MAP_FRAME = 7,
+  /// The world map's affine work (struct WorldMapAffineWork).
+  HEAP_SLOT_WORLD_MAP_AFFINE = 7,
   /// The field map's scrolling work (struct MapGridScrollWork), or on the world
   /// map its perspective view (struct WorldMapView); gMapGridWork.
   HEAP_SLOT_MAP_GRID = 8,

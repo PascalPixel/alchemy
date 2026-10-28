@@ -2,7 +2,7 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// Field object tables: the animation frame for each facing, the tile
+// Field object tables: the animation picture for each facing, the tile
 // dissolve order, the fixed camera, and the small scripts the field and
 // the world map start by themselves. Most are The Broken Seal's, byte for
 // byte; its names for them are in the comments.

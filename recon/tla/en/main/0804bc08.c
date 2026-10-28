@@ -10,7 +10,7 @@
 // count is added to the result; B on the party's row undoes a reserve swap;
 // command 49 swaps a reserve member in (Func_0804b8b8 after choosing the slot);
 // Status lists the reserve as well; Flee is command 99; the Djinn tutorial's
-// hint follows an unleash. Structure follows the listing; left: the frame is 4
+// hint follows an unleash. Structure follows the listing; left: the stack frame is 4
 // bytes smaller here (one spill slot fewer), which shifts every stack slot, and
 // the allocation.
 #include "types.h"

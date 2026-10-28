@@ -20,7 +20,7 @@ s32 Func_08127588(s32 recordId) {
   s32 enemyId;
   s32 levelTotal;
   s32 enemyCount;
-  /* FAKEMATCH(dead): an unused array explains the native's 32-byte frame; as
+  /* FAKEMATCH(dead): an unused array explains the native's 32-byte stack frame; as
    * the function without it, 4 of 91 instructions differ in tla-en. */
   s32 levels[7];
 

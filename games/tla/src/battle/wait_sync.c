@@ -60,7 +60,7 @@ s32 BattlePres_SyncTurn(void) {
   u16 *peer;
   u16 *sig;
   s32 lost = 0;
-  /* FAKEMATCH: unused local, the native frame's twenty bytes that no
+  /* FAKEMATCH: unused local, the native stack frame's twenty bytes that no
    * instruction touches. Without it differ 16 on tla-ja, tla-en and tla-de: no
    * sub sp, #20 and its add back, the movs r7, #0 scheduled earlier. */
   u16 spare[10];

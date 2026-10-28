@@ -3,7 +3,7 @@
 // loop runs to size / 2 with its right-hand columns written from size, so
 // it keeps the native's six row pointers stepping by two; the last
 // particle is read in place.
-// Left: allocation, and a frame of 60 bytes for 68.
+// Left: allocation, and a stack frame of 60 bytes for 68.
 
 #include "types.h"
 #include "battle_effect.h"

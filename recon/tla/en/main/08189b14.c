@@ -2,7 +2,7 @@
 // order BattleEffect_RunRamses 0.455): ⚓️'s own effect on ☀️'s
 // frame, with its rune and swords drawn as textured quads by ⚓️'s model
 // kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
-// The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
+// The native stack frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
 // the blitter 32, graphics 28, the start's address 24, the vertices 20, the
 // texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
 // offset at 8; the texture is at sp+56, the target's screen position at 64

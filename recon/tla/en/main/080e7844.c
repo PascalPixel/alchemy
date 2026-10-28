@@ -10,7 +10,7 @@
 // to white over 100 frames. A marked object is set on its terrain again, the
 // event runs, and the palettes fade back.
 // Same calls, offsets and control flow; left: register and stack allocation
-// (the native frame is 100 bytes against 96, the caster in r7 and the work
+// (the native stack frame is 100 bytes against 96, the caster in r7 and the work
 // pointer at sp 72) and the order it cascades into.
 #include "types.h"
 #include "ram_buffer.h"

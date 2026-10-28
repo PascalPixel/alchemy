@@ -6,7 +6,7 @@
 // stores the slot pointer to its stack home before it copies the zero index to
 // r8 (str r2, [sp, #4]; mov r8, r1), this form copies first. The two tagged
 // empty asm statements keep the frames store ahead of the animation store;
-// without them the frames are stored two rows later and that pair differs as
+// without them the pictures are stored two rows later and that pair differs as
 // well (differ 4).
 #include "types.h"
 #include "animspr.h"
@@ -56,7 +56,7 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
     asm volatile(""); /* FAKEMATCH: first fence of the pair below */
     *(s32 *)&object->frames = frames;
     asm volatile(""); /* FAKEMATCH: the listing stores the frames before the
-                         animation; unfenced, the frames are stored two rows
+                         animation; unfenced, the pictures are stored two rows
                          later (one reordered row) */
     *(s32 *)&object->scripts = animation;
     object->mode = metadata->pictureCodec;

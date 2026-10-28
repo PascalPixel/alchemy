@@ -2,7 +2,7 @@
 // before frame, with selectedPages cleared from it (80); the page row marked
 // through UiRender_MarkRow with the signed row (54); the help window's
 // address kept in its own slot pointer beside the left and right ones, and
-// pageCount declared before counts (36): the frame's spill slots now follow
+// pageCount declared before counts (36): the stack frame's spill slots now follow
 // the native's for the declared pointers. Left: the heap slot's load before
 // sub sp in the prologue, and the three loop-invariant addresses (the pair
 // owner's, the selected page's and the page count's) spilled in another order

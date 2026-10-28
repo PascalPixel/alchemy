@@ -1,6 +1,6 @@
 // Draft of BattleEffect_RunGeode, decompiled from the listing: differ 785 of 1139
 // (draft 1136), the same 69 calls and control flow; allocation differs.
-// Left (2026-10-19): the native frame is 152 bytes, here 148: the native
+// Left (2026-10-19): the native stack frame is 152 bytes, here 148: the native
 // spills one pseudo more (its 17 slots between sp 4 and sp 68 against 16
 // here; the dome block spills its curl at sp 44 and another value at sp
 // 48), so every stack offset from the arrays down is 4 off.
@@ -143,7 +143,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
    * though only the first is used; its second word is the unused word at
-   * sp 72 of the native's frame (differ 960 as one DrawRectangle). */
+   * sp 72 of the native's stack frame (differ 960 as one DrawRectangle). */
   DrawRectangle blit[2];
   s32 *transition;
   u8 *projected;

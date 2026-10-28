@@ -1,5 +1,5 @@
 	.section .rodata
-@ Field effect particles, 16x16 sprite frames packed one after another
+@ Field effect particles, 16x16 sprite pictures packed one after another
 
 @ A copy of The Broken Seal's gFieldEffect_GroundParticleTiles
 	.global gData_080f3798

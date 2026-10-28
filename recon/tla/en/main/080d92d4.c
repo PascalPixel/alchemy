@@ -4,7 +4,7 @@
 // grown a frame later by Func_080d9790; otherwise it is drawn whole, the
 // shared wobble angle advances and both objects return to mode 2. A target
 // whose byte 99 is 99 adjusts its x and z through its hook at offset 104
-// first. Left: other. The native frame is 52 bytes against 40: it spills
+// first. Left: other. The native stack frame is 52 bytes against 40: it spills
 // the two first squares (sp 28, 24) and stores the partial and whole sums to
 // sp 16 and 20, never read again, so the source probably kept them in
 // memory in a way this draft does not (an array or address-taken locals);

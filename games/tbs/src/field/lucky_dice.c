@@ -254,9 +254,9 @@ void LuckyDice_Run(void) {
   s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
-  /* FAKEMATCH(dead): an unused local for the 32 bytes the native frame keeps
-   * at sp+168..200, between screen and the affine halfwords; without it, 21
-   * of 2046 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an unused local for the 32 bytes the native stack frame
+   * keeps at sp+168..200, between screen and the affine halfwords; without it,
+   * 21 of 2046 instructions differ in tbs-en. */
   UNUSED s32 unused[8];
   /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
    * reloaded with ldrh, the form the bytes prove; as plain u16 locals, 463 of
@@ -270,7 +270,8 @@ void LuckyDice_Run(void) {
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
   s32 drawOrder[DICE_COUNT];    // the dice, back to front
 // UB: three equal numbers produce three pairs, so the unused result list
-// needs a third slot. Keep the original frame layout in the matching build.
+// needs a third slot. Keep the original stack frame layout in the matching
+// build.
 #ifdef UBFIX
   UNUSED s32 matchedNumbers[3]; // written, never read
 #else

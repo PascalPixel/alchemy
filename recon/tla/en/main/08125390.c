@@ -12,7 +12,7 @@
 // BattleUnit_ProcessTurnEnd does, and the first drain is announced
 // (MsgDjinnDrained, the next message for an enemy; MsgAllDjinnDrained with
 // all, which repeats until none is left). The outer loop is a goto: as a
-// do-while, loop.c hoists both arrays' addresses and the frame grows by 8.
+// do-while, loop.c hoists both arrays' addresses and the stack frame grows by 8.
 // Left: the prologue's mov r9, r0 (unitId) one slot ahead of the stores of
 // all and shown; sched2 takes the parameter copy first by RTL order, where
 // the native has it after the shown store. Tried: a local copy of the

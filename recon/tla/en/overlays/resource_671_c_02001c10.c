@@ -1,6 +1,6 @@
 // Draft, differ 907 of 522: copies gData_02005910's twelve words to
 // Data_0202c001 + 0x1cf, then for objects 8 to 63 with one sprite whose
-// sprite's frame list (its word 0x28) begins with picture 357 to 362 marks
+// sprite's picture list (its word 0x28) begins with picture 357 to 362 marks
 // the cells under it in both map layers (the map work's layers at 0x13c
 // and 0x174, metatiles 116 to 127) and ORs its shapes into both shape
 // grids (0x138 and 0x170): a 3 by 3 platform for 357, one cell for 358, a
@@ -8,7 +8,7 @@
 // 126 instead of 127), none for 362. Each such object is then made
 // still, its flags cleared. Then it schedules Func_02001b98.
 // Left: a rough reading: the alignment is poor; the native keeps the four grids
-// in r9, r10, r8 and r5 and the object in r11 with a 4-byte frame (the draft
+// in r9, r10, r8 and r5 and the object in r11 with a 4-byte stack frame (the draft
 // spills a layer), shares the last cell's shape stores between cases by
 // cross-jumping and keeps the shapes in r0, r4 and lr across a case.
 #include "types.h"

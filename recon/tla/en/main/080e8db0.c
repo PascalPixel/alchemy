@@ -1,6 +1,6 @@
 // Draft, differ 345 of 333 (2026-10-15, written from the listing; ☀️ has no
 // twin): the structure, calls, constants and work layout follow the ROM, but
-// the frame is 52 bytes where the ROM's is 56 (as in Func_080e9090: one more
+// the stack frame is 52 bytes where the ROM's is 56 (as in Func_080e9090: one more
 // slot for the shake phase's copy in the object loop), the work pointer stays
 // in r11 where the ROM spills it to sp+52, and every slot after it moves.
 // Declaration order does not move it (345). The resource row 0x1ee

@@ -1,11 +1,11 @@
 // Draft of BattleEffect_RunThor, Thor (scene kind 12): differ 1410 of 1676
 // (draft 1670; 2026-10-26: the twin's fullWidth barrier and the s32 returns
 // of the blitter loaders and the scheduler, as defined, 1439 to 1410), the
-// same 125 calls in the same order. Left: the frame is 328 bytes for 324,
+// same 125 calls in the same order. Left: the stack frame is 328 bytes for 324,
 // which shifts every stack offset, and the allocation differs from the
 // prologue on (the native keeps the dimmed-copy counter in r9 and the
-// effect at [sp, #120]). The native frame has an unused word at sp+96, as
-// the twin's blitter pair leaves; with the pair here the frame is 332, so
+// effect at [sp, #120]). The native stack frame has an unused word at sp+96, as
+// the twin's blitter pair leaves; with the pair here the stack frame is 332, so
 // this draft spills two words the native keeps in registers (this draft's slots
 // 12 to 44 hold one more variable, and r4's caller-save slot at sp+8 is used
 // 22 times in the native, 8 here).

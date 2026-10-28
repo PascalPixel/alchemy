@@ -164,9 +164,9 @@ extern u8 gMapGridShapes[];
 /// the pool's blocks can reach these bytes.
 extern u8 gBgTileBuffer[];
 
-/// HEAP_SLOT_WORLD_MAP_FRAME under its own name, which no code reads; the world
-/// map keeps its struct WorldMapFrameWork in the slot.
-extern u8 *gWorldMapFrameWork;
+/// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
+/// world map keeps its struct WorldMapAffineWork in the slot.
+extern u8 *gWorldMapAffineWork;
 
 /// A row of gMaps: a layout's resources, counted from
 /// ResourceId_Map001: its header, palette, three tilesets and the tileset

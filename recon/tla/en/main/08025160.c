@@ -1,7 +1,7 @@
 // Draft, differ 332 (378 before statements reordered 2026-10-26) of 345: logic in place (the region push decoded from
 // the listing), allocation far: the native spills the camera object to sp+4
-// and keeps x, y and z in r10, r11 and r9 with an 8-byte frame; here x and z
-// take r8 and r10 and the frame is 12 bytes.
+// and keeps x, y and z in r10, r11 and r9 with an 8-byte stack frame; here x and z
+// take r8 and r10 and the stack frame is 12 bytes.
 // SC_CAMERA, ☀️'s Camera_FollowLeaderInBounds (games/tbs/src/field/
 // field.c) with The Lost Age's keep-out regions: after the map bounds, a
 // target inside one of the map's rectangles (a list of s16 x0, z0, x1, z1 in

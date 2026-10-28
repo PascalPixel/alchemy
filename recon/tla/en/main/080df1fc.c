@@ -1,6 +1,6 @@
 // Near miss, differ 20 of 551 (2026-10-26): the twin of The Broken Seal's
 // FieldEffect_SteerLiftedTarget, now with its 20 shard pointers kept on the
-// stack (the native's 128-byte frame). Only instruction order is left: after
+// stack (the native's 128-byte stack frame). Only instruction order is left: after
 // a store the native issues another instruction before the next load, in the
 // position setups and the steering loop.
 #include "types.h"

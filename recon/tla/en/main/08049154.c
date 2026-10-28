@@ -7,7 +7,7 @@
 // the cursor reached through cur and pushed through sprite, the cursor get,
 // set and tilemap row mark in once-only blocks as its macros are, one call
 // for a standby count with the tile chosen before it (as the listing has),
-// and the declaration order searched. Left: the frame is 12 bytes larger than
+// and the declaration order searched. Left: the stack frame is 12 bytes larger than
 // the native's (384 for 372), so the stack slots and allocation differ from
 // there.
 #include "types.h"

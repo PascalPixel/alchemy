@@ -38,7 +38,7 @@
 // Tried:
 // ☀️'s body with The Lost Age's changes                      42
 // the preparer's two arrays declared before the position,
-// as the native frame has them (screen at sp+84)          42 -> 36
+// as the native stack frame has them (screen at sp+84)          42 -> 36
 // declaration order, a greedy sweep of 12 locals           36
 // target in a block from its first assignment (kept)       34 -> 24
 // barriers at every statement, one at a time               22

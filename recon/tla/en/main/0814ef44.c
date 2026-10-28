@@ -43,7 +43,7 @@
 // Tried (2026-10-15):
 // - The Broken Seal's declaration order: 315; the five arrays declared
 // origin, target, base, screen, point, so that they take the native's
-// frame offsets (blit at sp+80 up to origin at sp+136): 299.
+// stack frame offsets (blit at sp+80 up to origin at sp+136): 299.
 // - greedy declaration-order sweep, two passes: no gain.
 // - a separate counter for the frame loop's motes: no change.
 // Tried (2026-10-26): declaration order, statement moves, each local

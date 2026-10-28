@@ -7,7 +7,7 @@
 // with a cursor icon over the members. With browseOnly 0 each move redraws
 // the member's status and Psynergy; A returns the chosen member's id, B -1.
 // The selection moves through Menu_MoveGridCursor and stays on the stack.
-// Differ 6 of 254 (2026-10-19): only the frame's sub sp, which the native
+// Differ 6 of 254 (2026-10-19): only the stack frame's sub sp, which the native
 // issues right after the menu load and agscc after the count's first move
 // (sched2 priority 80 against 82). Reading the count first, a barrier after
 // the menu load or reordering the locals is no nearer (8 to 12).

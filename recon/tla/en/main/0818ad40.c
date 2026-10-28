@@ -2,7 +2,7 @@
 // (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
 // sibling of the four cards of Func_0818a220. The card itself scrolls on a
 // tiled background; its picture is a textured quad by ⚓️'s model kernels.
-// The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the
+// The native stack frame (84) holds effect at sp+48, the mode 44, canvas 40, the
 // blitter pair 32, the card's scale 28, the background's scroll 24, the
 // card's overflow past the scroll's range 20, the length 16, the length less
 // 8 at 12 and frame - 48 at 8; the texture is at sp+52, the targets' middle

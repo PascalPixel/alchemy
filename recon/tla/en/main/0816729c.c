@@ -1,6 +1,6 @@
 // Draft of BattleEffect_RunJudgment, decompiled from the listing: differ 2553 of
 // 2680 (draft 2655), the same 172 calls and control flow; allocation differs.
-// 2026-10-19: the native's arrays, from the top of its 188-byte frame:
+// 2026-10-19: the native's arrays, from the top of its 188-byte stack frame:
 // anchor (sp 176), pos (164), the swords' placement (148), the falling
 // objects' placement (132, its own array: drift here), req (124), the
 // first texture (116), the glare's texture (108, its own: glare here) and

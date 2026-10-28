@@ -9,7 +9,7 @@
 // Left: allocation. The instructions are the native's. The native keeps the
 // effect argument in r9, the point array's address in r10, and takes the
 // screen position's address inside the member loop (add r5, sp, #44, then
-// r11 for the four cels), in a 68-byte frame; here the screen address is
+// r11 for the four cels), in a 68-byte stack frame; here the screen address is
 // hoisted out of the frame loop and spilled (72 bytes) and the argument takes
 // r11. Tried: BattleEffect_LoadBlitter returning s32 (123 -> 119); screen declared in
 // the member block (no change); a greedy scan of the declaration order

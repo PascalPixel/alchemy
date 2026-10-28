@@ -16,7 +16,7 @@
 // the axe's scale as a local 80000 passed as scale >> 1 and scale (the
 // native derives 40000 by a shift)                                  334
 // the draw loop through a walking EffectStep pointer: axe (623), its
-// own block-local pointer (611, the frame grows by a word)
+// own block-local pointer (611, the stack frame grows by a word)
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -137,7 +137,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
    * though only the first is used; its second word is the unused word at
-   * sp 40 of the native's 100-byte frame. As one DrawRectangle the frame
+   * sp 40 of the native's 100-byte stack frame. As one DrawRectangle the frame
    * is 96 bytes and every stack offset below it moves (differ 549). */
   DrawRectangle blit[2];
   s32 frame;

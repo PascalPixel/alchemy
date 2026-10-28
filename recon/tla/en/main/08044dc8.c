@@ -1,5 +1,5 @@
 // Draft, differ 33 of 162 (47 before, 2026-10-26; counts declared with 11
-// words, which gives the native's 52-byte frame: a frame-gap device to tag
+// words, which gives the native's 52-byte stack frame: a frame-gap device to tag
 // if it matches, since only four are used): announces a summon (message 0x32
 // with its name from Data_0805f676, a jingle, held until it ends or a button),
 // then shows message 0x33 with the two elements it needs most (0x34 + element,

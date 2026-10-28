@@ -1,7 +1,7 @@
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
 // 464 with two empty asm: one before the heap reads stores the argument at
 // sp+24 first, as the native, and one before the frame loop (10 without
-// either). Left: the frame's 0 stored before &caster is built, and the spark
+// either). Left: the stack frame's 0 stored before &caster is built, and the spark
 // loop's 0 after the shake store (an empty asm there moves the
 // gMapCellBuffer pool load: 12).
 // Draft (tla-en): listing 464 instructions, draft 464, common 447, differ 34.
@@ -9,7 +9,7 @@
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
 // at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
 // from frame 18 on with sizes from gData_08197410.
-// 2026-10-19 (run 33): the native frame's unreferenced slot at sp+16 is the
+// 2026-10-19 (run 33): the native stack frame's unreferenced slot at sp+16 is the
 // second half of a blitter pair (tagged below): 285 to 34, with the frame,
 // canvas in r11, the allocation and the call sites all the native's. What
 // is left is 17 reordered pairs, each the native loading caster.y or a
@@ -17,9 +17,9 @@
 // widths and sheet offsets), the scheduling difference most ⚓️ near misses
 // share.
 // Earlier notes, from before the pair:
-// - the native frame is 40 bytes with an unreferenced slot at sp+16
+// - the native stack frame is 40 bytes with an unreferenced slot at sp+16
 // between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
-// in r11 and draw and sheet are spilled. Here the frame is 36 and canvas
+// in r11 and draw and sheet are spilled. Here the stack frame is 36 and canvas
 // is spilled.
 // - the heap slot base stays in r5 from the first loads to draw's load
 // after the BattleEffect_LoadBlitter call, as through the "heap" pointer here.
@@ -107,7 +107,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   struct EffectStep *spark;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+12 and the unused sp+16
-   * the native frame has. As a single DrawRectangle the frame is 36 bytes
+   * the native stack frame has. As a single DrawRectangle the stack frame is 36 bytes
    * and the allocation moves (285 of 464 instructions differ in tla-en, 34
    * with the pair). */
   DrawRectangle draw[2];

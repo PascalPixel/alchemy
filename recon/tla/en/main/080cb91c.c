@@ -11,7 +11,7 @@
 // four ship commands), a touch or exit, a push, a battle, examining, the
 // menu, talking, searching, Psynergy, an item or the pause menu.
 // The same calls, offsets and control flow; left: register and stack
-// allocation throughout (the native frame is 12 bytes against 16, with the
+// allocation throughout (the native stack frame is 12 bytes against 16, with the
 // adventure at sp 8, the event work in r8 and the transition fields in
 // r9 to r11), which shifts most rows.
 #include "types.h"

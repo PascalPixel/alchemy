@@ -14,7 +14,7 @@
 // so the sort reloads each coordinate after every store); then the slopes
 // dxA, dxB, duA, dvA, duB, dvB at sp+72..52, the edges xA, xB, uA, vA, uB,
 // vB at sp+48..28, yMid, yBottom, dudx, work and the face pointer at
-// sp+24..8. Here the frame is 132 and the triangle is addressed as r6 plus
+// sp+24..8. Here the stack frame is 132 and the triangle is addressed as r6 plus
 // offsets, so the sort works in registers and every slot shifts.
 // Tried: six coordinate pointers (assigned before the face loop: differ
 // 1284; inside it, which hoists them as the native does: 1274; with the

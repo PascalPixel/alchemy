@@ -86,7 +86,7 @@ void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
        : 0)
 
 void Func_0802386c(void) {
-  /* An unused local for the room the native frame keeps above the
+  /* An unused local for the room the native stack frame keeps above the
    * placement, as The Broken Seal's. */
   struct CameraPoint unusedPoints[3];
   struct PlacementPoint point;

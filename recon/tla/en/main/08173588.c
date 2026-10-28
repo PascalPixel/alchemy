@@ -16,7 +16,7 @@
 // the mirror copy indexed (the native reloads the source byte after
 // the first store, as both do), centre and base declared first      296
 // the blitter as The Broken Seal's pair, only the first used (the
-// native frame's unused word; FAKEMATCH below)                     258
+// native stack frame's unused word; FAKEMATCH below)                     258
 // alchemy permute 8 minutes, 2 jobs, from the 296 form: 202 only with
 // a forced pointer
 // temporary for Haze's star->variant, 221 with star->y through a
@@ -116,7 +116,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   /* FAKEMATCH: the blitter is declared as The Broken Seal's pair though only
    * the first is used: its second word is the unused word at sp 24 that
-   * makes the native frame 84 bytes. As one DrawRectangle the frame is 80
+   * makes the native stack frame 84 bytes. As one DrawRectangle the stack frame is 80
    * and every stack offset after it moves (differ 296). */
   DrawRectangle blit[2];
   void *vertices;

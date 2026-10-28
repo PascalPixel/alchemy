@@ -6,7 +6,7 @@
 // the seven The Broken Seal has: 0x10008 darkens bright colours (a fifth off
 // each channel when their sum is over 60), and 0x10009, which the switch places
 // between the grey and sepia tints, a grey of a third of R + G + B, blue
-// three steps darker. Left: a 52-byte frame for the native's 48, which keeps
+// three steps darker. Left: a 52-byte stack frame for the native's 48, which keeps
 // the colour count on the stack at 44, and the allocation that follows.
 #include "types.h"
 #include "iwram_call.h"

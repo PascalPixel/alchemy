@@ -5,7 +5,7 @@
 // SelectLivingTargets, SpawnObjects, a frame loop with an A/B skip,
 // PlaceFormationObjects, RunImpactBurst and the twelve object releases). Its
 // rings use the ARM model renderer as summon 25's pillars do (Func_0819273c).
-// The native frame is 60 bytes: the blitter pair at sp+52, the ring
+// The native stack frame is 60 bytes: the blitter pair at sp+52, the ring
 // texture at sp+44, effect sp+40, canvas sp+36, graphics sp+32, &draw
 // sp+28, focus sp+20/24, frame - 217 at sp+16 and frame - 91 at sp+12.
 // Left: mostly allocation. The native keeps the mote pointer in r7, the

@@ -301,7 +301,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup: the pictures.
-  //   work->sheet: six 48x72 frames over the caster
+  //   work->sheet: six 48x72 pictures over the caster
   //   work->sheet + CASTING_IMPACT_ORB_OFFSETS: the impact orb
   //   Ram_MapGridCellBuffer: the impact's own pictures
   //   Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_OFFSETS: the element's

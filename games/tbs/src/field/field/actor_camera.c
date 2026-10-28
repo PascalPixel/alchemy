@@ -38,12 +38,12 @@ struct ActorCameraFixed {
 /// after the actors move) for every mode but 3 and 4;
 /// ActorSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count, may change an actor's layer and its sprite's
-/// priorities, and holds the frame decoder in heap slot HEAP_SLOT_FRAME_SCRATCH
-/// only while it runs.
+/// priorities, and holds the picture decoder in heap slot
+/// HEAP_SLOT_FRAME_SCRATCH only while it runs.
 void ActorSystem_PlaceSprites(void) {
-  /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
-   * three points above the position; without it, 2 of 267 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(dead): an unused local for the room the native stack frame keeps
+   * for three points above the position; without it, 2 of 267 instructions
+   * differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapGridScrollWork *grid;
@@ -212,9 +212,9 @@ void ActorSystem_ProjectSprites(void) {
   void *sprite;
   s32 groupScale[2];
   s32 scale[2];
-  /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
-   * two points above the scales; without it, 2 of 181 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(dead): an unused local for the room the native stack frame keeps
+   * for two points above the scales; without it, 2 of 181 instructions differ
+   * in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gActors.

@@ -76,8 +76,8 @@ extern const u8 BattleEffect_DecodePictureCopyEnd[];
 /// larger than the copy, which stops before the work area.
 extern u8 BattleEffect_DecodePictureBlockSize[];
 
-/// Draws the current frame of a picture into a cleared buffer of the given
-/// size. The ARM frame decoder runs from RAM: when no copy is loaded yet, this
+/// Draws the current picture into a cleared buffer of the given
+/// size. The ARM picture decoder runs from RAM: when no copy is loaded yet, this
 /// loads one for the call and releases it afterwards.
 void Func_080e43a4(struct FrameSource *source, void *buffer, s32 size) {
   s32 decoderLoaded = 1;

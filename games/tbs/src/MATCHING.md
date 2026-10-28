@@ -141,7 +141,7 @@ C compiler of the project's set could produce it. Each one opens with that
 proof, written as comment lines (`@` starts a comment in assembly) that begin
 `@ Why assembly:`, or `@ Why <routine> is assembly:` where a file holds
 several; assembly counts as rebuilt source only with such a proof. In a
-handwritten file the proof names the instruction, frame or pattern
+handwritten file the proof names the instruction, stack frame or pattern
 alchemy-gcc can't emit. The [far-call](../glossary.md#far-call) tables,
 such as the `entry/` and `import/` files of the debug rooms, the menus and
 the [scenes](../glossary.md#scene), are proven once, where their entries
@@ -348,6 +348,6 @@ is, and its note says so.
 - One table can go by several extern names, given as `__asm__` labels, where
   the ROM keeps a literal for each use (`Resource_LoadTableEntry`).
 - A local array of constants compiles to an anonymous read-only constant
-  copied into the frame, and a struct copy of a named table to the same code;
+  copied into the stack frame, and a struct copy of a named table to the same code;
   which one a site keeps decides where the data lands
   (`ImilFuchinFalls_SpawnDust`).

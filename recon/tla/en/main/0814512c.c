@@ -13,10 +13,10 @@
 // effect (SummonEffect_RunCanvasMode1 or 3) in place of the canvas teardown.
 
 // Left: the calls, their order, the loops and the tables are the native's;
-// the allocation is not. The native frame is 100 bytes, this one 108: the
+// the allocation is not. The native stack frame is 100 bytes, this one 108: the
 // native keeps mode * 4 in r11 for the whole effect and the shot's start
 // (k * 8 + i * 4) in r9, where agscc spills mode * 4 and one more value;
-// every frame offset after that differs. The palette chain keeps separate
+// every stack frame offset after that differs. The palette chain keeps separate
 // branches for modes 2 and 8 in the native (one load each), where agscc
 // merges them.
 

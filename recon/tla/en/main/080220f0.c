@@ -9,7 +9,7 @@
 // sprite at a fixed offset, the sprite's anchor turns with the object (sine and
 // cosine of its rotation), a zero scale draws nothing, and both sprites go into
 // the depth list by their depth (Func_080140d8). The twin's two unused arrays
-// stay: they make the native 64-byte frame.
+// stay: they make the native 64-byte stack frame.
 
 // Left: the native copies the object to r0 for the frame call before it
 // loads scaleX, loads the flags byte before the shadow's height shift, and
@@ -68,7 +68,7 @@ void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
   s32 scaleX;
   s32 scaleY;
   /* FAKEMATCH: unused, as in The Broken Seal: the two arrays supply 24
-   * bytes of the native 64-byte frame. */
+   * bytes of the native 64-byte stack frame. */
   s32 ground[3];
   s32 screen[3];
   s32 flip;

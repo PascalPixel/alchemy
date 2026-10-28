@@ -5,7 +5,7 @@
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
 
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
-  /* FAKEMATCH: an unused 32-byte local, the native frame's size. */
+  /* FAKEMATCH: an unused 32-byte local, the native stack frame's size. */
   u32 unused[8];
   u8 *canvas;
   u8 *src;

@@ -1,4 +1,4 @@
-// Draft, differ 187 of 160: other, register pressure. The native frame is
+// Draft, differ 187 of 160: other, register pressure. The native stack frame is
 // 56 bytes with the ids at sp + 8: it spills the store pointer of the
 // distinct-id loop (sp 4) across the call and the sort's halfword swap
 // value (sp 2), keeps the ids' base in r7 and the -1 end mark in r11; this

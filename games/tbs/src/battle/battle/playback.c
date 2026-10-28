@@ -353,7 +353,7 @@ void BattlePlayback_Run(void) {
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
-        // Recolour every layer's first entry and redraw its frame (255).
+        // Recolour every layer's first entry and redraw its picture (255).
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct Sprite *record;
           s32 recordIndex;

@@ -3,12 +3,12 @@
 // (twins: BattleEffect_RunTitanBlade 0.44 by shape, BattleEffect_RunHealingMotes 0.38
 // by call order); its backdrop swap is the one BattleEffect_RunMegiddo (kind 124)
 // also makes. Every call, cue and table read is in the native's order.
-// The native frame is 136 bytes: to at sp+124, from sp+112, the spawn list
+// The native stack frame is 136 bytes: to at sp+124, from sp+112, the spawn list
 // sp+84, the blitter pair sp+76, the texture sp+68, effect sp+60, work
 // sp+56, canvas sp+52, graphics sp+48, caster sp+44, transition sp+40, the
 // saved scroll sp+36, &from sp+32, &to sp+28, &texture sp+24, the flash
 // loop's 6k sp+20, the claw loop's frame * 10 - 240 - 160k sp+16, its
-// start sp+12 and 32k sp+8. Here the frame is 112 bytes: the claw and
+// start sp+12 and 32k sp+8. Here the stack frame is 112 bytes: the claw and
 // flash loops keep those values in registers, so every stack offset and
 // most registers differ.
 // Not yet tried: the claw loop's three spilled values as the native's

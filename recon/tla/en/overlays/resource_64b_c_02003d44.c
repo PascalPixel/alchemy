@@ -1,5 +1,5 @@
 // Draft, differ 16 of 593 (was 35): the world map's fade: queues the world
-// map palette for mode and its frames, then steps the blend through 0xe00 down
+// map palette for mode and its pictures, then steps the blend through 0xe00 down
 // to 0x800 and back. Overlay 64c has the same code (its Func_02001400). Mode
 // 1's Func_02004b78 goes through Call3, as the native builds its two 0x20000
 // arguments apart. Left: instruction order only, all of it a load the native

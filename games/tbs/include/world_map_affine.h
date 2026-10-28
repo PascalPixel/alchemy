@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_WORLD_MAP_FRAME_H
-#define ALCHEMY_WORLD_MAP_FRAME_H
+#ifndef ALCHEMY_WORLD_MAP_AFFINE_H
+#define ALCHEMY_WORLD_MAP_AFFINE_H
 
 /// @file
-/// The map frame's scanlines and affine lines.
+/// The world map's scanlines and affine lines.
 
 #include "unit/field/field.h"
 #include "types.h"
@@ -31,10 +31,11 @@ struct WorldMapAffinePair {
   struct WorldMapAffineLine bg2, bg3;
 };
 
-/// The world map's frame work in HEAP_SLOT_WORLD_MAP_FRAME: the scanline terms
-/// and two pages of per-line affine parameters, one built while the other is
-/// shown. The world map's setup takes the slot; the next scene change frees it.
-struct WorldMapFrameWork {
+/// The world map's affine work in HEAP_SLOT_WORLD_MAP_AFFINE: the scanline
+/// terms and two pages of per-line affine parameters, one built while the other
+/// is shown. The world map's setup takes the slot; the next scene change frees
+/// it.
+struct WorldMapAffineWork {
   struct WorldMapScanline scanlines[160];
   struct WorldMapAffinePair pages[2][160];
   u8 unused[4]; ///< no code names it
@@ -44,8 +45,8 @@ STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);
 STATIC_ASSERT(offsetof(struct WorldMapScanline, pa) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffineLine) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffinePair) == 32);
-STATIC_ASSERT(offsetof(struct WorldMapFrameWork, pages) == 0xc80);
-STATIC_ASSERT(offsetof(struct WorldMapFrameWork, unused) == 0x3480);
-STATIC_ASSERT(sizeof(struct WorldMapFrameWork) == 0x3484);
+STATIC_ASSERT(offsetof(struct WorldMapAffineWork, pages) == 0xc80);
+STATIC_ASSERT(offsetof(struct WorldMapAffineWork, unused) == 0x3480);
+STATIC_ASSERT(sizeof(struct WorldMapAffineWork) == 0x3484);
 
 #endif

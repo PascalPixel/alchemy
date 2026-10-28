@@ -106,7 +106,7 @@ enum TextColor {
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
-/// The window frame's tiles. While WindowWork.mindRead is set (a battle
+/// The window border's tiles. While WindowWork.mindRead is set (a battle
 /// animation sets it while it greys WINDOW_PALETTE and scrolls BG0 by scanline)
 /// the corners are one rounded tile, flipped for each corner.
 enum {

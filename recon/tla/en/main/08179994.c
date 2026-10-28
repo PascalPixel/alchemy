@@ -4,7 +4,7 @@
 // BattleEffect_RunHelmSplitter (0.67 by calls), neither a twin.
 // Written 2026-10-15 (lane N2).
 // Left:
-// - the native frame is 120 bytes, here 124: one more spill slot, so
+// - the native stack frame is 120 bytes, here 124: one more spill slot, so
 // every spilled value (canvas sp+60, frame sp+56, the spark cels sp+52,
 // the pair's address sp+48, lift sp+44 in the native) sits one word
 // off, and work takes sl where the native has r8.

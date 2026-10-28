@@ -7,7 +7,7 @@
 // fourth, and fifteen more rise in a column over b (gData_020060c0); the
 // screen fades back, both objects take their closing scripts and b runs
 // Func_020040b0 for 120 frames.
-// Left: a rough reading: the native keeps a in r7, idA in r9, idB in r11 and b in r10 with a 12-byte frame (the draft spills idA to the stack), keeps the blend register's address in r6 and orders the sparks' field stores otherwise.
+// Left: a rough reading: the native keeps a in r7, idA in r9, idB in r11 and b in r10 with a 12-byte stack frame (the draft spills idA to the stack), keeps the blend register's address in r6 and orders the sparks' field stores otherwise.
 #include "types.h"
 #include "object_runtime.h"
 #include "call.h"

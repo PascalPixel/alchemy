@@ -129,7 +129,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *args, s32 mode) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
   /* FAKEMATCH(temporary): secondSlot and draw, a second pointer to the pair,
-   * order the frame's spill slots; as rectangle[1] = gHeapSlots[n] and
+   * order the stack frame's spill slots; as rectangle[1] = gHeapSlots[n] and
    * rectangle[side], 11 of 503 instructions differ in tbs-en. */
   secondSlot = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   draw = rectangle;

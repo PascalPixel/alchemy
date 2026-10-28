@@ -280,9 +280,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     effect.angle = 0;
 #if !TBS_PATCH_4
-    /* FAKEMATCH(dead): seventeen dead stores restore the native frame's spill
-     * slots at sp+36 to sp+24; without them, 65 of 1585 instructions differ
-     * in tbs-en, each a spill offset. */
+    /* FAKEMATCH(dead): seventeen dead stores restore the native stack frame's
+     * spill slots at sp+36 to sp+24; without them, 65 of 1585 instructions
+     * differ in tbs-en, each a spill offset. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

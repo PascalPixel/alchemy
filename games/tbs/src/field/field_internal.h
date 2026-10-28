@@ -56,7 +56,7 @@
 #include "flags.h"
 #include "map_grid_copy.h"
 #include "fixed_point_position.h"
-#include "world_map_frame.h"
+#include "world_map_affine.h"
 #include "battle_display.h"
 #include "project.h"
 #include "frame.h"

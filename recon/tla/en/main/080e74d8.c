@@ -4,7 +4,7 @@
 // names it ColouredOrbs in system/resource/directory.s). Most of what
 // remains is allocation: agscc hoists the spawn loop's stored 0 into r11,
 // where the ROM keeps the next spark's index there and rematerializes the 0
-// at each store, so the index spills and the frame grows by a slot; and the
+// at each store, so the index spills and the stack frame grows by a slot; and the
 // ROM builds the ~12 mask inside the first loop where agscc hoists it. The
 // spin loop counts down in the frame counter's register (separate counters
 // 297), and the first loop walks sprite and spark pointers (256).

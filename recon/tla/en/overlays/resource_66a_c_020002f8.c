@@ -4,7 +4,7 @@
 // block after any one statement do not move it.
 // Near miss, differ 10 of 223, from the listing: the rooms' second setup.
 // Left: (1) the native loads gAdventure's address before it builds the
-// 0x214 offset (a one-pass block fixes it but pulls the frame's sub sp
+// 0x214 offset (a one-pass block fixes it but pulls the stack frame's sub sp
 // ahead); (2) it loads the map byte for the mode before it stores the
 // leader's priority flags (a bitfield view of the flags does not separate
 // them); (3) at both terrain calls it builds the 0 argument before it loads

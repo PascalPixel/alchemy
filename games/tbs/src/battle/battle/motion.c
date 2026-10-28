@@ -313,8 +313,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Sprite *record = GetMotionRecord(actor, 0);
   s32 projectionScale;
   s32 spriteScale;
-  /* FAKEMATCH(dead): an unused position for the frame's 12 bytes; without it,
-   * 2 of 42 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an unused position for the stack frame's 12 bytes; without
+   * it, 2 of 42 instructions differ in tbs-en. */
   UNUSED struct ScreenPoint input;
 
   BattleCamera_ApplyTransform();

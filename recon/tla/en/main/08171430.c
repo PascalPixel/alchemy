@@ -3,7 +3,7 @@
 // The pillar offsets are read as plain (not const) bytes, so the native
 // reloads and redivides them after each Trig_Sin call.
 // 2026-10-19: the bolt's head is three words, not an EffectStep (the
-// native frame is 116 bytes; with a 28-byte head it was 132), and frame,
+// native stack frame is 116 bytes; with a 28-byte head it was 132), and frame,
 // i, camera, savedYaw, target and circles are declared in the native's
 // stack order (648 to 582); the bolts' products are written sin * radius,
 // the native's multiply order (574). Left: the circle loop keeps size in

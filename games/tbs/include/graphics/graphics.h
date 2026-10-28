@@ -72,7 +72,7 @@ extern u8 *gItemIconsEnd[];
 /// The other compressed icons, among them the Status screen's status
 /// icons.
 extern u8 *gIcon_MiscIconPointers[];
-/// The compressed Psynergy icons, drawn over the shared icon frame.
+/// The compressed Psynergy icons, drawn over the shared icon base.
 extern u8 *gPsynergyIcons[];
 /// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
@@ -274,8 +274,8 @@ extern s32 gWindowSprite_PulseScales[];
 extern const u8 gMenuTitleBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gIcon_DigitPointers[];
-/// The three icon pictures; picture 2 is the one item and Psynergy icons share.
-extern u8 *gIcon_PicturePointerTable[];
+/// The three icon bases; base 2 is the one item and Psynergy icons share.
+extern u8 *gIcon_BasePointerTable[];
 /// The three marks ItemIcon_Compose draws over an item icon: 0 on a broken
 /// item, 1 on an equipped one and 2 on a cursed one.
 extern u8 *gIcon_MarkPointers[];

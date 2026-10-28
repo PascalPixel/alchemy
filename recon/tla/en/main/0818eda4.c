@@ -4,7 +4,7 @@
 // BattleEffect_RunJupiter 0.50), with the ARM model renderer for its
 // flashes, shards, splashes and rings.
 // Every call, cue and table read is in the native's order; what is left is
-// the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the
+// the frame. The native stack frame is 92 bytes: from at sp+80, to at sp+68, the
 // blitter pair at sp+60, the texture at sp+52, effect sp+48, canvas sp+44,
 // work sp+40, frame sp+36, graphics sp+32, &draw sp+28, &from sp+24, &to
 // sp+20, the blend offset sp+16, projected sp+12, &texture sp+8. Here it is

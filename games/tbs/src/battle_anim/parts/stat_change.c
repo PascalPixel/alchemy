@@ -332,7 +332,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
 
       // The mode's picture, from frame 80.
       if (mode == STAT_BOOST_IMPACT) {
-        // Seven 24x40 frames, 4 frames each.
+        // Seven 24x40 pictures, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cell = (frame - member * 8 - 80) / 4 % 7;
 
@@ -343,7 +343,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
-        // Six 32x64 frames, 4 frames each.
+        // Six 32x64 pictures, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
@@ -354,7 +354,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR) {
-        // 64x32 frames, 2 frames each, mirrored below into 64x64.
+        // 64x32 pictures, 2 frames each, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 2 % 6;
 
@@ -370,7 +370,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           ANIM_RELEASE_BLITTERS();
         }
       } else {
-        // Six 40x40 frames, 4 frames each, added.
+        // Six 40x40 pictures, 4 frames each, added.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
 

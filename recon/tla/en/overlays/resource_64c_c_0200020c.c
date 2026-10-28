@@ -1,6 +1,6 @@
 // Draft, differ 1088 of 961: one stage of the staff credits, from
 // the camera pan through the tilemap and palette pushes to the fade out;
-// stage 4 grows actor 8 and swaps its frames instead. Left: register
+// stage 4 grows actor 8 and swaps its pictures instead. Left: register
 // allocation (the native keeps stage in r11 and the buffer in r10, this draft
 // spills them, so its frame is 32 bytes against 16), the two map halfwords
 // loaded from the pool, and the scheduling that follows.

@@ -9,8 +9,8 @@
 
 // Left: allocation. The native keeps the centre's address in r11 and the
 // flashes' index as its own induction variable (frame * 2 - 96, in a stack
-// slot), with a frame of 80 bytes; here the centre's address is spilled and
-// the frame is 76 bytes, so every slot and most registers move. The control
+// slot), with a stack frame of 80 bytes; here the centre's address is spilled and
+// the stack frame is 76 bytes, so every slot and most registers move. The control
 // flow follows the listing block for block.
 
 // Tried:

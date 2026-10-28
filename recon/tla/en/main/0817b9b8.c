@@ -18,11 +18,11 @@
 // loads one row before their neighbouring constants, BattleEffect_LoadBlitter's
 // 3 before its 104, and the star base built between the divisions.
 // Earlier notes, from before the pair:
-// - the native frame is 60 bytes with an unreferenced slot at sp+20
+// - the native stack frame is 60 bytes with an unreferenced slot at sp+20
 // between frame (sp+24) and draw (sp+16); 0817c27c has the same unused
 // slot between the same two. Here "stars" (&particles[32], set once before
 // the loop) takes that slot, but it is stored and loaded where the
-// native rebuilds 0x380 + r9 at each loop. Without it the frame is 56
+// native rebuilds 0x380 + r9 at each loop. Without it the stack frame is 56
 // and every stack offset moves (differ 132). Tried for the slot: the
 // step or source pointer, angle or speed at function scope, a particles
 // pointer, stars set in each block.
@@ -111,7 +111,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   s32 frame;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+16 and the unused sp+20
-   * the native frame has. As a single DrawRectangle the frame is 56 bytes
+   * the native stack frame has. As a single DrawRectangle the stack frame is 56 bytes
    * and every stack offset moves (132 of 436 instructions differ in tla-en
    * without "stars", 88 with it, 70 with the pair). */
   DrawRectangle draw[2];

@@ -25,7 +25,7 @@
 // Listing 2278 instructions, draft 2282, differ 1002.
 
 // What remains: the control flow and the calls are the native's, block for
-// block, and the four positions sit at the native's frame slots (screen
+// block, and the four positions sit at the native's stack frame slots (screen
 // 188, world 176, origin 164, position 152). The rows left are allocation
 // and order:
 // - mode lives in r10 here and in r9 in the native, which keeps steps in

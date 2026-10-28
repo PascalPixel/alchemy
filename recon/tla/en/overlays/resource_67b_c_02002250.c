@@ -2,7 +2,7 @@
 // entries of 28 bytes after a 12-byte head): now and then a bubble starts
 // near the source object; each live bubble rises until it reaches the
 // ground's height, then drifts back 2 pixels a frame, ends at height 23 or
-// row 48, and is drawn as one of four animation frames where it is on
+// row 48, and is drawn as one of four animation pictures where it is on
 // screen (Func_020028d0). Left: the native keeps the scroll and lift in r8 to r10 and the tile in r11, and computes the screen position and clipping in another order; the alignment is poor.
 #include "types.h"
 #include "object_runtime.h"

@@ -18,7 +18,7 @@
 // of targetPosition, ground, alternate and the blitter pair in spill slots
 // (sp+36, +32, +48, +40) and reads the structs through them, and keeps mode
 // * 8 in two slots (sp+28, +52) for the record index; here the structs are
-// read sp-relative, the frame is 176 bytes for 164, and every spill slot
+// read sp-relative, the stack frame is 176 bytes for 164, and every spill slot
 // moves. The control flow follows the native block for block; the 20
 // missing instructions are reloads the native's extra pseudos cost.
 

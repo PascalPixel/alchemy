@@ -215,7 +215,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
              * which is dead by now. As a local of its own (start) or as an
              * expression, the allocation of every loop differs (differ 365
              * against 56): the merged local is what gives the native's
-             * registers and its 88-byte frame. */
+             * registers and its 88-byte stack frame. */
             lift = k * 32 + j * 6;
             if (frame >= lift) {
               struct EffectStep *streak = &work->particles[k * streaks + j];

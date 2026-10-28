@@ -137,7 +137,7 @@ s32 Field_ClimbDown(void) {
     // A wall goes down only where the cell below is the same climbing code.
     if (TILE_CELLS[index].behavior == TILE_CELLS_SOUTH[index].behavior) {
       /* FAKEMATCH(dead): a six-word probe, though only its first three words
-       * are the position, which keeps the native 24-byte frame; as one
+       * are the position, which keeps the native 24-byte stack frame; as one
        * struct FieldPosition, 4 of 163 instructions differ in tbs-en. */
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
@@ -219,7 +219,7 @@ s32 Field_ClimbUp(void) {
 
     if (TILE_CELLS[index].behavior == TILE_CELLS_NORTH[index].behavior) {
       /* FAKEMATCH(dead): a six-word probe, though only its first three words
-       * are the position, which keeps the native 24-byte frame; as one
+       * are the position, which keeps the native 24-byte stack frame; as one
        * struct FieldPosition, 4 of 183 instructions differ in tbs-en. */
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;

@@ -112,7 +112,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// Called through WorldMap_InitializePerspectiveFar when the world map
 /// starts (scene_sequence.c). Allocates and clears the perspective work in
 /// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
-/// HEAP_SLOT_WORLD_MAP_FRAME; loads the default cells, metatile attributes and
+/// HEAP_SLOT_WORLD_MAP_AFFINE; loads the default cells, metatile attributes and
 /// tileset animations; writes the blend, BG and affine registers and
 /// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
 /// WorldMap_ApplyAffinePage as tasks.
@@ -123,7 +123,7 @@ s32 WorldMap_InitializePerspective(void) {
 #endif
   struct WorldMapView *perspective;
   struct BattleCamera *camera;
-  struct WorldMapFrameWork *frameWork;
+  struct WorldMapAffineWork *affineWork;
   struct WorldMapAffinePair(*affinePages)[160];
   s32 *cameraPosition;
   s32 *distance;
@@ -131,8 +131,8 @@ s32 WorldMap_InitializePerspective(void) {
   u16 *pitch;
   u16 *zoomTransitionFrames;
   /* FAKEMATCH(volatile): the fill word is this function's own volatile local,
-   * filled by Dma_Fill32Cell, so it takes the native frame slot at sp+28; as
-   * Dma_Fill32, 2 of 331 instructions differ in tbs-en. */
+   * filled by Dma_Fill32Cell, so it takes the native stack frame slot at sp+28;
+   * as Dma_Fill32, 2 of 331 instructions differ in tbs-en. */
   volatile u32 fill;
   struct FixedPointPosition eyeOffset;
   s32 farPlane;
@@ -199,10 +199,10 @@ s32 WorldMap_InitializePerspective(void) {
   Io_Write16(0, &REG_BG3Y);
 
   camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  frameWork = AllocHeapSlot(HEAP_SLOT_WORLD_MAP_FRAME,
-                            sizeof(struct WorldMapFrameWork));
+  affineWork = AllocHeapSlot(HEAP_SLOT_WORLD_MAP_AFFINE,
+                             sizeof(struct WorldMapAffineWork));
   cameraPosition = camera->focus;
-  affinePages = frameWork->pages;
+  affinePages = affineWork->pages;
   farPlane = 0x1fe0000;
   perspective->farPlane = farPlane;
   distance = &perspective->distance;
@@ -235,11 +235,11 @@ s32 WorldMap_InitializePerspective(void) {
                    &Transform_UpdateVerticesSize);
   WorldMap_BuildScanlineTable(
       Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), cameraPosition,
-      frameWork->scanlines);
+      affineWork->scanlines);
   gScanlineAngle = 0;
   gScanlinePitch = perspective->pitch;
   ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
-      camera, cameraPosition, frameWork->scanlines,
+      camera, cameraPosition, affineWork->scanlines,
       affinePages[gFrameCount & 1]);
   // Then the world map's own view: pitch 0xe000 (minus an eighth of a
   // turn) and yaw 0, with the eye one pixel beyond the distance.
@@ -401,7 +401,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// windowPending.
 void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[160] =
-      ((struct WorldMapFrameWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_FRAME))
+      ((struct WorldMapAffineWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE))
           ->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
@@ -525,12 +525,12 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 /// Transform_UpdateVertices from heap slot 46 into this frame's affine page.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  struct WorldMapFrameWork *frameWork =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_FRAME);
+  struct WorldMapAffineWork *affineWork =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
   struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 *cameraPosition = camera->focus;
   s32 *followedPosition = perspective->origin;
-  struct WorldMapAffinePair(*affinePages)[160] = frameWork->pages;
+  struct WorldMapAffinePair(*affinePages)[160] = affineWork->pages;
   s32 distance = perspective->farPlane;
   s32 height = perspective->distance;
   struct FixedPointPosition eyeOffset;
@@ -610,12 +610,12 @@ void WorldMap_UpdateView(void) {
     s32 sine = Trig_Sin(perspective->pitch);
 
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
-                                frameWork->scanlines);
+                                affineWork->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
   }
   ((s32 (*)(void *, s32 *, void *, void *))gHeapSlots[HEAP_SLOT_RAM_CODE])(
-      camera, cameraPosition, frameWork->scanlines,
+      camera, cameraPosition, affineWork->scanlines,
       affinePages[gFrameCount & 1]);
 }
 
@@ -720,8 +720,8 @@ void WorldMap_PresentStillPicture(void) {
 /// gVBlankCallback to WorldMap_PresentStillPicture. WorldMap_LoadAreaGraphics
 /// undoes it.
 void WorldMap_StartStillView(void) {
-  struct WorldMapFrameWork *frameWork =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_FRAME);
+  struct WorldMapAffineWork *affineWork =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
   struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 one = 1;
 
@@ -730,7 +730,7 @@ void WorldMap_StartStillView(void) {
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   WaitFrames(1);
-  TileMap_DrawRowsFromRam(frameWork->pages[gFrameCount & one],
+  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & one],
                           (u8 *)gMapGridCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;

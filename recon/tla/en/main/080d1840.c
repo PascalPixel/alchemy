@@ -5,7 +5,7 @@
 // the resource table after lsls, issues mov r0, r8 for the first terrain call
 // before its add, and loads attribute byte 9 before movs r1, #13 in each mark:
 // loads a slot earlier than agscc's ARM9TDMI model. The unused halfwords are
-// ☀️'s frame device: without them the frame is 12 bytes, not 16.
+// ☀️'s frame device: without them the stack frame is 12 bytes, not 16.
 #include "types.h"
 #include "ram_buffer.h"
 #include "animspr.h"

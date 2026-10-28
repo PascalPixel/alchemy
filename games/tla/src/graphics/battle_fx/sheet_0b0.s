@@ -1,5 +1,5 @@
 	.section .rodata
-@ An archer's two 88x96 frames and three small cels, in their own 64-colour
+@ An archer's two 88x96 pictures and three small pictures, in their own 64-colour
 @ palette: the sizes BattleEffect_RunVengeance draws them at
 	.global Resource_Data0B0
 Resource_Data0B0:

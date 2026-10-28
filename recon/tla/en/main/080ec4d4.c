@@ -14,7 +14,7 @@
 // choice changes and follows the scroll. The markers' blend pulses with
 // Data_080f1100.
 // The same calls, offsets and control flow; left: stack and register
-// allocation throughout (the native frame is 84 bytes against 88, the scroll
+// allocation throughout (the native stack frame is 84 bytes against 88, the scroll
 // at sp 4 and 0, the cursor in r10 and r8), which the alignment counts in
 // nearly every row.
 #include "types.h"

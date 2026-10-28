@@ -8,7 +8,7 @@
 // directly). Left: the native copies the direction to r5 and stores it to
 // gData_02005af0 before building the scene field's offset; here the copy and
 // store fall two rows later. An empty asm after the store puts it in place but
-// moves the gAdventure load after it and the frame's sub sp first (still 4).
+// moves the gAdventure load after it and the stack frame's sub sp first (still 4).
 // Tried: scene as s32 (4) or initialised at its declaration (6), the store
 // after the scene read (6), the direction through a temporary (4), an s16
 // direction (9), gData_02005af0 as u32 (4), permuter 4 minutes (4).
@@ -16,7 +16,7 @@
 // puts the copy and store in place but loads gAdventure after the store
 // (2); with the store's address pinned to r3 and the party pointer an input
 // of an asm before the store, gAdventure is loaded before the copy (2); a
-// volatile barrier moves the frame's sub sp first (6).
+// volatile barrier moves the stack frame's sub sp first (6).
 #include "types.h"
 #include "object_runtime.h"
 #include "adventure.h"

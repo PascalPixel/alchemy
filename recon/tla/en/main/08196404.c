@@ -108,7 +108,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   u32 *cell;
   s32 runSize;
   u32 *runCopy;
-  /* FAKEMATCH: trial, 136 unused bytes of the native frame */
+  /* FAKEMATCH: trial, 136 unused bytes of the native stack frame */
   u32 frame[34];
 
   dst = Runtime_AllocateHeapBlock(slot, 436);

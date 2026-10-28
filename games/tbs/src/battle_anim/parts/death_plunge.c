@@ -553,8 +553,8 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
 ///
 /// args : only args->targets[0], the unit that flashes, is read.
 void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
-  /* FAKEMATCH(dead): an unused position for the frame's 12 bytes at sp+44;
-   * without it, 2 of 1051 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an unused position for the stack frame's 12 bytes at
+   * sp+44; without it, 2 of 1051 instructions differ in tbs-en. */
   UNUSED struct ScreenPoint position;
   struct BattleAnimWork *work;
   void *canvas;

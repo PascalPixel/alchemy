@@ -6,7 +6,7 @@
 // 0x13b), the blitter from BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode
 // 2) and the transfer callback at 0xc80. ☀️ needs its family's blitter pair
 // for the frame (a FAKEMATCH tag there), and so does this one: as a single
-// DrawRectangle the frame is 4 bytes short (differ 170).
+// DrawRectangle the stack frame is 4 bytes short (differ 170).
 
 // The frame slots and every instruction match. What is left is order: the
 // native loads the work slot before it sets the first argument, loads each

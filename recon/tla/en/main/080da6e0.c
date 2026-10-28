@@ -2,7 +2,7 @@
 // WORK_A0 slot's chain of nodes from (x1, y1, z1) towards (x2, y2, z2), one
 // node per 6 units of distance, unrolling it as a spiral over as many frames.
 // Same calls and branches as the listing; left: the native keeps the slot in
-// r10 and the tail's zero in r9 from the top (a 44-byte frame), where this
+// r10 and the tail's zero in r9 from the top (a 44-byte stack frame), where this
 // spills the slot (48), and every stack slot after that moves.
 #include "types.h"
 #include "worka0.h"

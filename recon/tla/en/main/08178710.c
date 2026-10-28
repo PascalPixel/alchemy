@@ -134,7 +134,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+68 and the unused sp+72
-   * the native frame has. As a single DrawRectangle the frame is 160 bytes
+   * the native stack frame has. As a single DrawRectangle the stack frame is 160 bytes
    * (773 of 884 instructions differ in tla-en, 723 with the pair). */
   DrawRectangle blit[2];
   s32 frame;

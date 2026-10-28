@@ -3,7 +3,7 @@
 // gData_02002202 actors in gData_02002204 with a position, projects it from
 // the map's view (as the cell sprite in field/shared/map/cell_sprite.c does),
 // skips it off screen, writes a 16 by 16 or 32 by 64 sprite (by
-// gData_02002304) at its animation frame and priority (gData_02002306, or
+// gData_02002304) at its animation picture and priority (gData_02002306, or
 // Func_02001b24 when that is -1) and pushes it at its depth. Written in the
 // cell sprite's shape (271 in the earlier form). Left: register allocation;
 // the native keeps the view x and z in r10 and r8, the index in r9 and the

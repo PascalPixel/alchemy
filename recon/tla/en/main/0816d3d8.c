@@ -53,7 +53,7 @@
 // The pixel half of a 16.16 fixed-point value.
 /* FAKEMATCH: the halves are read through an inline helper. Through the
  * cast macro ((s16 *)&v)[1], or any plain form tried (see the header), the
- * rock loop keeps i in r8 and spills the hit flag, and the frame grows by a
+ * rock loop keeps i in r8 and spills the hit flag, and the stack frame grows by a
  * word (differ 332); through the helper the allocation is the native's
  * (differ 30). */
 static inline s16 *Fixed_Halves(s32 *value) { return (s16 *)value; }

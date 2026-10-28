@@ -12,7 +12,7 @@
 // phase load before the side's constant, the root's next and the 0x410000
 // radius, the growth step's constants, the frame count's case loads).
 // The side's bits written out at each use (side << 15) rather than kept in
-// a local give the native's frame (found by permute; differ 65 with the
+// a local give the native's stack frame (found by permute; differ 65 with the
 // local).
 #include "types.h"
 #include "event_work.h"

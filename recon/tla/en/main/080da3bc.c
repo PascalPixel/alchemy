@@ -5,7 +5,7 @@
 // line between the ends, raised by a sine wave across the line's heading; each
 // node before it is pulled to within 6 units of the next, and the frame ends at
 // the first node already that close. At the end it starts the slot's wobble.
-// Left: register and frame allocation (a 92-byte frame for the native's 88; the
+// Left: register and frame allocation (a 92-byte stack frame for the native's 88; the
 // native keeps the shifted deltas in r9, r11 and r10 and counts the copy
 // loop down from segments + 1).
 #include "worka0.h"

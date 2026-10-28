@@ -51,7 +51,8 @@ s32 Battle_Run(s32 enemyGroup) {
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
-  UNUSED u8 unused[48]; // never used: the native frame keeps these 48 bytes
+  UNUSED u8
+      unused[48]; // never used: the native stack frame keeps these 48 bytes
   // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 

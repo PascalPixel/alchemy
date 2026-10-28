@@ -14,8 +14,8 @@ static inline void FillWords(void *destination, s32 size, u32 value) {
 }
 
 /// Draws a window as its flags ask: with flag 8 its inside is filled (with
-/// colour 4 under flag 0x20, which also draws the frame, else cleared), and
-/// without it only the frame is drawn. Clears the window's duration.
+/// colour 4 under flag 0x20, which also draws the border, else cleared), and
+/// without it only the border is drawn. Clears the window's duration.
 void UiWork_DrawByAttributes(struct UiWindow *window) {
   u32 flags;
   s32 x;

@@ -3,7 +3,7 @@
 // members still standing and lists in the event work those it downed. Differ 90
 // of 108. Left: register allocation (the native keeps the work in r6, the count
 // in r7 and the leader in r8, and the owner byte's base and offset in sl and r8
-// across the call, where this spills them to a 20-byte frame).
+// across the call, where this spills them to a 20-byte stack frame).
 #include "types.h"
 #include "ram_buffer.h"
 #include "adventure.h"

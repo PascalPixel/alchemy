@@ -10,7 +10,7 @@
 // English; they need names in the six catalogs before this links.
 // Differ 20 of 260 (2026-10-19): the native sets redraw (movs r6, #1) right
 // after the first cue, where agscc sets it only before the first loop wherever
-// the statement stands; the frame's sub sp and two offsets' moves are one
+// the statement stands; the stack frame's sub sp and two offsets' moves are one
 // slot off. pages is a local so that the page wrap calls __modsi3 as the
 // native does (a constant 2 compiles inline).
 #include "types.h"

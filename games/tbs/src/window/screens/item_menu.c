@@ -212,8 +212,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
     /* FAKEMATCH(dead): sprite set again to the cursor each frame orders
-     * the spill slots of the cursor address and row * 2 as the native frame
-     * does; without it, 28 of 770 instructions differ in tbs-en. */
+     * the spill slots of the cursor address and row * 2 as the native stack
+     * frame does; without it, 28 of 770 instructions differ in tbs-en. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)sprite)[2] = 0;

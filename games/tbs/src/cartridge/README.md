@@ -135,7 +135,7 @@ after it.
 Code names a resource by a symbol, which follows a moved row, but in a few
 places the numbers travel bare, without a symbol: the scene table names each
 scene's code by number, and some code counts on from one resource to the next
-(the maps, and the frames of the settings menu's marker). The directory ends
+(the maps, and the pictures of the settings menu's marker). The directory ends
 with 25 spare rows, where a row fits without renumbering any other.
 
 The directory is `Resource_DirectoryTable` in `resource/directory.s`, read by

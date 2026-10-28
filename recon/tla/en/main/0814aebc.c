@@ -9,7 +9,7 @@
 // becomes a scroll added to every sheep's x; the cels are at sheet + 0x800;
 // the blitters are transparent, ⚓️ mode 2 (☀️ 1).
 
-// Declaration order sets the native frame: the middle above the position
+// Declaration order sets the native stack frame: the middle above the position
 // record, and drawB, drawA, scroll spilled in that order. Under
 // -mthumb-slow-loads the REG_BG2PA pin is no longer needed, and a one-pass
 // block around the four set-up assignments (sheep, work, canvas, scroll)

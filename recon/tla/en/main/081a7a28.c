@@ -9,8 +9,8 @@
 // Seal's C as it stands 1007; the blend tint through SET_VECTOR 766; The
 // Broken Seal's two XOR devices dropped 758. Left: register allocation. The
 // native keeps source in r9, the colour index in r11 and each tint loop's 31
-// in r10 across its calls, with a 48-byte frame; here source takes r10 and
-// the frame is 44. permute (25 minutes) found nothing below 602 but
+// in r10 across its calls, with a 48-byte stack frame; here source takes r10 and
+// the stack frame is 44. permute (25 minutes) found nothing below 602 but
 // meaningless rewrites.
 #include "types.h"
 #include "dma.h"

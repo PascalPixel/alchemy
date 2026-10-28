@@ -1,5 +1,5 @@
 // Draft, differ 150 of 142: The Broken Seal twin with this game layer type. The
-// native keeps the destination x in r11 and a 36-byte frame (three positions
+// native keeps the destination x in r11 and a 36-byte stack frame (three positions
 // and three spills: the row end, the destination and the source cursors); this
 // draft spills the destination x as a fourth and keeps the position array in
 // r11 (40-byte frame). A plain rewrite without the twin devices is differ 211.

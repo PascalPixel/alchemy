@@ -1,8 +1,8 @@
 // Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
 // its start with a midpoint callback). Written from the listing; no Broken
 // Seal twin (twins12 0.46).
-// The native frame is 140 bytes: work at sp+4, midpoint at sp+8, the ramp at
-// sp+12 and a word at sp+0 that nothing reads; here the frame is 136 (work
+// The native stack frame is 140 bytes: work at sp+4, midpoint at sp+8, the ramp at
+// sp+12 and a word at sp+0 that nothing reads; here the stack frame is 136 (work
 // sp+0, midpoint sp+4), which shifts every spill (about 10 rows).
 // Left: in the band loop the native keeps y in r5, x in r6, the row offset
 // in r0 and copies the falling edge's giv (r7, 2y - 192) into r4 each row;

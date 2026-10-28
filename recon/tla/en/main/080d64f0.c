@@ -3,7 +3,7 @@
 // native's invariants and allocation; left, instruction order and the new
 // position's sum, which the native forms through r1 and a spill): updates the 64 ground particles of the heap slot
 // 0x74 workspace. Each counts down its frame (held a frame longer while flag
-// 358 is set), is drawn from its frame's offsets, tile, shape and size when on
+// 358 is set), is drawn from its picture's offsets, tile, shape and size when on
 // screen, and when its count runs out is placed again at a random point within
 // 128 pixels of the map's focus, on the ground, for 16 frames. No ☀️ twin
 // found. The statements and blocks follow the native one for one; what

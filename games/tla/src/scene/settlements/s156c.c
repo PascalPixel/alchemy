@@ -25,7 +25,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
                    struct SettlementsSpawn *spawn);
 
 void Func_0200156c(s32 id) {
-  /* FAKEMATCH: unused; its twelve bytes are the gap the native frame keeps
+  /* FAKEMATCH: unused; its twelve bytes are the gap the native stack frame keeps
    * above the spawn record, where Func_02001620 holds its velocity. */
   struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;

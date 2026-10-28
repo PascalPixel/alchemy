@@ -8,9 +8,9 @@
 /// Each set is a palette and five tilesets: WorldMap_LoadGraphics decodes
 /// the palette into BG palettes 0 to 13, the next four into the two halves of
 /// char blocks 2 and 3, and the last into gMapGridAnimTiles, where the tileset
-/// animations copy their frames from. It takes the second set when the cell it
-/// loads at is WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD, and keeps the set's row in
-/// the perspective work's resources, from which WorldMap_LoadAreaGraphics
+/// animations copy their pictures from. It takes the second set when the cell
+/// it loads at is WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD, and keeps the set's row
+/// in the perspective work's resources, from which WorldMap_LoadAreaGraphics
 /// reloads all but the last. Not const: the loader reads it through a u32 *.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {

@@ -8,7 +8,7 @@
 // the veneers between them left out) and the --arm draft's object with
 // objdump and diffing the rows: 246 to 245 instructions, 99 rows differ
 // (about 80 in the first routine, 19 in the second). Left in the first: the
-// native has a 76-byte frame (each 3-word point at the start of a 32-byte
+// native has a 76-byte stack frame (each 3-word point at the start of a 32-byte
 // area) where the draft has 36, keeps 0x8000 in r9, and calls
 // IwramRatioMulQ14 through a register (ldr, mov lr, pc, bx) where GCC
 // 2.95.2 emits bl (long_call and #pragma long_calls have no effect, and a

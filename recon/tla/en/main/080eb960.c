@@ -6,7 +6,7 @@
 // when its sprite and its child flags come back; 74 frames later it ends.
 //
 // Differ 135 of 325 (draft 322; five minutes of permuter found nothing
-// better). The shape follows the listing; left: the frame is 48 bytes in the
+// better). The shape follows the listing; left: the stack frame is 48 bytes in the
 // native, with a spill slot at sp + 4 for the sprite pointer of the second
 // loop, which the native keeps in r4 and copies to r6 for the drawing (this
 // keeps one pointer in r6), and the stack slots of the saved angle, depth,

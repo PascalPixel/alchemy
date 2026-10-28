@@ -10,7 +10,7 @@
 // stores of collision and the animation around the adventure's load, the
 // retry list's first index load, the copy of the right probe's address, the
 // yaw table's and the input's pool loads (native earlier), and two ripple
-// stores. Measured: angleOffsets[22] as ☀️'s (as [6] the frame is 32 bytes
+// stores. Measured: angleOffsets[22] as ☀️'s (as [6] the stack frame is 32 bytes
 // short), the ripple sprite's mode and priority as 2-bit fields (as byte
 // masks, differ 70); an empty asm passing the adventure and the input
 // through before the shortcut test orders those loads but swaps r1 and r2

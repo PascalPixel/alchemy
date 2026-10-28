@@ -28,33 +28,33 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
-/// One animation layer of a sprite: its animation id, frames, running script
+/// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct AnimationEntry {
-  s16 animId; ///< the sprite id whose metadata and frames it uses
-  /// Time left on the current frame in sixteenths of a frame, read signed:
+  s16 animId; ///< the sprite id whose metadata and pictures it uses
+  /// Time left on the current picture in sixteenths of a frame, read signed:
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
-  /// The facing table its frames follow (from the metadata, or
+  /// The facing table its pictures follow (from the metadata, or
   /// animation command 240).
   u8 kind;
   u8 param;      ///< SpriteColorMode its pixels are drawn with
   u8 priority;   ///< drawing order 0 to 3 among the layers; above 3 not drawn
-  u8 mode;       ///< frame codec: 1 type-01, 3 LZ, anything else raw
-  void **frames; ///< frame pointers, from the metadata or a resource slot
+  u8 mode;       ///< picture codec: 1 type-01, 3 LZ, anything else raw
+  void **frames; ///< picture pointers, from the metadata or a resource slot
   u8 **scripts;  ///< the metadata's command scripts, one per animation number
   u8 *script;    ///< the running script; null once command 239 ends it
   u8 pos;        ///< byte offset of the next command in script
   u8 step;       ///< taken off timer each frame; 16 is normal speed
-  u8 frame;      ///< frame shown, frameBase plus the facing offset; 255 none
-  u8 frameBase;  ///< frame the script chose, before facing; 255 blank
+  u8 frame;      ///< picture shown, frameBase plus the facing offset; 255 none
+  u8 frameBase;  ///< picture the script chose, before facing; 255 blank
 };
 
 /// A resource slot: the tag of the animation loaded into it (slot number and
-/// animation id) and the buffer holding its frames.
+/// animation id) and the buffer holding its pictures.
 struct ResourceSlot {
   s32 tag;      ///< (slot << 12) | animation id
-  void *buffer; ///< the decoded frames, their offsets made pointers
+  void *buffer; ///< the decoded pictures, their offsets made pointers
 };
 
 /// The object system's work: the flag that suspends sprite projection, the

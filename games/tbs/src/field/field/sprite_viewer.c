@@ -126,7 +126,7 @@ restart:
   }
 
   // Ten copies of the sprite; for a two-part sprite every other copy
-  // shows its second part, number + 1, from sprite frame cache 1.
+  // shows its second part, number + 1, from sprite picture cache 1.
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
     spriteWork.resourceOffset = 0;

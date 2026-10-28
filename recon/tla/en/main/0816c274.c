@@ -112,7 +112,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
    * though only the first is used; its second word is the unused word at
-   * sp 44 of the native's 104-byte frame. As one DrawRectangle the frame
+   * sp 44 of the native's 104-byte stack frame. As one DrawRectangle the frame
    * is 100 bytes and every stack offset moves (differ 273). */
   DrawRectangle draw[2];
   u16 *discOffsets;

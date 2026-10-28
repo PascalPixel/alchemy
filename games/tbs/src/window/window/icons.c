@@ -29,7 +29,7 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
   GlyphTransfer *work;
 
   work = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  work->encoded = gIcon_PicturePointerTable[frameIcon];
+  work->encoded = gIcon_BasePointerTable[frameIcon];
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 0);
@@ -52,7 +52,7 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           reuse);
 }
 
-/// Builds the item icon glyph, over the icon frame when withBase is set, and
+/// Builds the item icon glyph, over the icon base when withBase is set, and
 /// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
 /// in *tileOut.
 /// The optional frame is decoded first and selects masked icon expansion.
@@ -67,9 +67,9 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   if (glyph >= Icon_CountItemIcons())
     glyph = 0;
 
-  // Picture 2 is the icon picture items and Psynergy share.
+  // Base 2 is the one items and Psynergy share.
   if (withBase != 0) {
-    work->encoded = gIcon_PicturePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -92,7 +92,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 // the count above one, equipped and broken in Resource_LoadByMode; those and
 // the artifact mark for Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all
 // but the broken mark for its ICON_KIND_EQUIPMENT_ITEM.
-#define ICON_FRAME 1
+#define ICON_BASE 1            ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
 #define ICON_COUNT 4           ///< the count, always
 #define ICON_EQUIPPED 8        ///< mark 1 on an equipped item (code 0x400)
@@ -119,8 +119,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   work = gGlyphWork;
   if (work == NULL)
     return -1;
-  if (layers & ICON_FRAME) {
-    work->encoded = gIcon_PicturePointerTable[2];
+  if (layers & ICON_BASE) {
+    work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -264,7 +264,7 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// time, for the length of one call each.
 #define ROUTINE_BLOCK 49
 
-/// Builds the Psynergy icon glyph, over the icon frame when withBase is set,
+/// Builds the Psynergy icon glyph, over the icon base when withBase is set,
 /// and loads it into *cacheSlot (a free slot unless reuse is set).
 /// Returns the tile in *tileOut.
 /// The optional frame is decoded first and selects masked icon expansion.
@@ -280,7 +280,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gIcon_PicturePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);

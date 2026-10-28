@@ -148,7 +148,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   u8 *sprites;
   /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
    * though only the first is used; its second word is the unused word at
-   * sp 28 of the native's frame; as one DrawRectangle every stack offset
+   * sp 28 of the native's stack frame; as one DrawRectangle every stack offset
    * below it moves (differ 365). */
   DrawRectangle blit[2];
   struct EffectPosition pos;

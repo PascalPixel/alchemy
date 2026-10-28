@@ -28,7 +28,7 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void Func_0802c58c(void);
-void Func_0802dd70(s32 ratio, s32 *position, void *frameWork);
+void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
 void Map_RenderPaletteMappedRow(u32 tileRow);
 void Map_RenderPaletteMappedColumn(u32 tileColumn);
 
@@ -57,11 +57,11 @@ struct EyeOffset {
 
 void Func_0802c240(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
-  u8 *frameWork = Ram_HeapSlots->unk1c[0];
+  u8 *affineWork = Ram_HeapSlots->unk1c[0];
   struct WorldView *view = (struct WorldView *)Ram_HeapSlots->mapWork;
   s32 *cameraPosition = (s32 *)(camera + 12);
   s32 *followedPosition = view->origin;
-  u8 *affinePages = frameWork + 0xc80;
+  u8 *affinePages = affineWork + 0xc80;
   s32 distance = view->farPlane;
   s32 height = view->distance;
   s32 tileRow;
@@ -142,11 +142,11 @@ void Func_0802c240(void) {
     s32 cosine = Trig_Cos(view->pitch);
     s32 sine = Trig_Sin(view->pitch);
 
-    Func_0802dd70(Iwram_RatioMulQ14(cosine, sine), cameraPosition, frameWork);
+    Func_0802dd70(Iwram_RatioMulQ14(cosine, sine), cameraPosition, affineWork);
     Data_03001244 = 0;
     gData_03001144 = view->pitch;
   }
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
-      camera, cameraPosition, frameWork,
+      camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
 }

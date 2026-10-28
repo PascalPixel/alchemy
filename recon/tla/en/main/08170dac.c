@@ -1,6 +1,6 @@
 // Draft of BattleEffect_RunVoidBeam, decompiled from the listing: differ 851 of 743
 // (draft 752), the same 45 calls and control flow; allocation differs.
-// 2026-10-19: the native frame is 248 bytes (here 184 at first). Its
+// 2026-10-19: the native stack frame is 248 bytes (here 184 at first). Its
 // arrays are point at sp 236, then 132 bytes of corners from sp 104 (11
 // points, of which the hexagon uses 6), then the ring and the segment;
 // its two blitters are one pair stored together (sp 56 and 60); frame is

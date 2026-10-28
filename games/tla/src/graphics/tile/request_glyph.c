@@ -4,7 +4,7 @@
 #include "graphics.h"
 #include "resource.h"
 
-extern u8 *gUiIcon_PicturePointerTable[];
+extern u8 *gUiIcon_BasePointerTable[];
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse);
@@ -21,7 +21,7 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                             tile, reuse);
 }
 
-/// Builds item icon glyph, over the icon frame when withBase is set, and loads
+/// Builds item icon glyph, over the icon base when withBase is set, and loads
 /// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
 /// *tileOut.
 // As ☀️'s function of the same name.
@@ -37,7 +37,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gUiIcon_PicturePointerTable[2];
+    work->encoded = gUiIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);

@@ -4,7 +4,7 @@
 
 #include "../battle_anim_internal.h"
 
-/// The whirlwind sheet holds three 48x64 frames, then the dust; the violet
+/// The whirlwind sheet holds three 48x64 pictures, then the dust; the violet
 /// comets are decoded further on.
 #define PROCNE_DUST_OFFSETS (3 * (48 * 64))
 #define PROCNE_COMET_OFFSETS 0x3600

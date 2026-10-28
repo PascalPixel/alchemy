@@ -7,7 +7,7 @@
 // battle skips); a new hint (8) starts on the unit the last command aimed at,
 // which the navigation work remembers (0x10c); the enemies "Mystery Man" and
 // "Mystery Woman" are enemy kinds 355 and 352. Structure and the arrays'
-// frame order follow the listing; left: the frame is 4 bytes smaller here, the
+// frame order follow the listing; left: the stack frame is 4 bytes smaller here, the
 // curing tests read their status bytes one at a time where the native tests
 // some as a word or halfword, and the allocation differs.
 #include "types.h"

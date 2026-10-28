@@ -5,7 +5,7 @@
 // star and the same depth-sized cels, one swarm per target.
 // Written 2026-10-15 (lane N2) from the listing and the twin.
 // Left:
-// - the native frame is 84 bytes, here 80: the native keeps the effect
+// - the native stack frame is 84 bytes, here 80: the native keeps the effect
 // argument spilled at sp+68 and gives fp to the yaw angle walker of the
 // star loop (frame * 256, stepped by frame * 32), with -frame spilled at
 // sp+24 for the other walker; here the argument takes fp, and every

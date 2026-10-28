@@ -47,7 +47,7 @@ void FadeOverlay_DrawMarks(void) {
   s32 secondHeight;
   s32 screenRow;
   /* FAKEMATCH(dead): four frame bytes nothing reads or writes, which make the
-   * native 16-byte frame; without them, 4 of 200 instructions differ in
+   * native 16-byte stack frame; without them, 4 of 200 instructions differ in
    * tbs-en. */
   UNUSED s16 unused[2];
 

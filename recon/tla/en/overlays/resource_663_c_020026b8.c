@@ -7,7 +7,7 @@
 // sweeps over 272 frames, then the beam flickers (Func_02000ef4) for 257
 // frames and fades over 129 (cue 390); the display is put back and flag 0x87a
 // set. Written with the forms that matched overlay 664's Func_02003654.
-// Left: the native saves only r8 (the beam pointer) with an 8-byte frame,
+// Left: the native saves only r8 (the beam pointer) with an 8-byte stack frame,
 // keeps the counters in r7, spills the first object of each spark to the
 // stack and keeps the frame count's low bits in r6 as the sparks' 0; this
 // draft keeps the low bits in r8 and the beam in r10. Measured: without the

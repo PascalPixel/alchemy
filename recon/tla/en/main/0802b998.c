@@ -2,7 +2,7 @@
 // REG_BG3Y, REG_BLDALPHA and REG_DISPCNT written with Io_Write16 and the
 // scroll cleared layer by layer, as the twin does; 250 before that): The Broken
 // Seal's Map_InitializePerspectiveScene on this game's map work (0x978 bytes,
-// heap slot offset 32) and frame work (offset 28), with the world map's update
+// heap slot offset 32) and affine work (offset 28), with the world map's update
 // (0802c240) and affine frame (0802c088) callbacks. Resource ids 0x197 to
 // 0x199: PerspectiveDataA and DefaultMapCells as ☀️ names them, the third a
 // placeholder. The ARM routine is copied by its linker size
@@ -45,7 +45,7 @@ void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void Func_0802dd70(s32 ratio, s32 *position, void *frameWork);
+void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_0802c240(void);
 void Func_0802c088(void);
@@ -60,7 +60,7 @@ struct EyeOffset {
 void Func_0802b998(void) {
   u8 *perspective;
   u8 *camera;
-  u8 *frameWork;
+  u8 *affineWork;
   u8 *affinePages;
   s32 *cameraPosition;
   s32 *distance;
@@ -110,8 +110,8 @@ void Func_0802b998(void) {
   Io_Write16(0, &REG_BG3Y);
 
   camera = Runtime_AllocateBlock(48, 76);
-  frameWork = Runtime_AllocateHeapBlock(28, 0x3484);
-  affinePages = frameWork + 0xc80;
+  affineWork = Runtime_AllocateHeapBlock(28, 0x3484);
+  affinePages = affineWork + 0xc80;
   farPlane = 0x1fe0000;
   *(s32 *)(perspective + 0x95c) = farPlane;
   distance = (s32 *)(perspective + 0x960);
@@ -141,11 +141,11 @@ void Func_0802b998(void) {
   Transform_SetLookAt((s32 *)camera, cameraPosition);
   RamCode_LoadSlot(104, Data_0802146c, Data_0802146cSize);
   Func_0802dd70(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
-                cameraPosition, frameWork);
+                cameraPosition, affineWork);
   Data_03001244 = 0;
   gData_03001144 = *pitch;
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
-      camera, cameraPosition, frameWork,
+      camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
   cameraPosition[0] = 0;
   cameraPosition[1] = 0;

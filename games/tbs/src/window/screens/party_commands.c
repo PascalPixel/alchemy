@@ -264,9 +264,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Window_MarkVisibleTextTiles();
       gBattleMenuWork->iconShown[0] = 0;
       gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
-      /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
-       * slots at sp+24 to sp+32; without them, 26 of 1727 instructions differ
-       * in tbs-en. */
+      /* FAKEMATCH(dead): twelve dead stores restore the native stack frame's
+       * spill slots at sp+24 to sp+32; without them, 26 of 1727 instructions
+       * differ in tbs-en. */
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;

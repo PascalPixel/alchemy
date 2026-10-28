@@ -43,7 +43,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   u32 facing;
   s32 tile;
 
-  // The actor system's work and the frame decoder sit in the heap slot
+  // The actor system's work and the picture decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
   system = gActorSystemWork;

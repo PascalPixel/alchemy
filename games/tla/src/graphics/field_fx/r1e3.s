@@ -1,5 +1,5 @@
-@ Eight 16x16 frames of 16 colours, one under another: a framed box whose
-@ diagonal fill grows over four frames, then four empty frames. No loader of
+@ Eight 16x16 pictures of 16 colours, one under another: a bordered box whose
+@ diagonal fill grows over four pictures, then four empty pictures. No loader of
 @ the resource was found; r1e3.png carries the first row of the shared OBJ
 @ palette, as r1ed.png does.
 	.section .rodata

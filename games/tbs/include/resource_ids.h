@@ -275,13 +275,13 @@ extern char ResourceId_WorldMapTilesA;   ///< First set, first tileset.
 extern char ResourceId_WorldMapTilesB;   ///< First set, second tileset.
 extern char ResourceId_WorldMapTilesC;   ///< First set, third tileset.
 extern char ResourceId_WorldMapTilesD;   ///< First set, fourth tileset.
-extern char ResourceId_WorldMapTilesE;   ///< First set, animation frames.
+extern char ResourceId_WorldMapTilesE;   ///< First set, animation pictures.
 extern char ResourceId_WorldMapPaletteB; ///< The snowfield set's colours.
 extern char ResourceId_WorldMapTilesF;   ///< Snowfield set, first tileset.
 extern char ResourceId_WorldMapTilesG;   ///< Snowfield set, second tileset.
 extern char ResourceId_WorldMapTilesH;   ///< Snowfield set, third tileset.
 extern char ResourceId_WorldMapTilesI;   ///< Snowfield set, fourth tileset.
-extern char ResourceId_WorldMapTilesJ;   ///< Snowfield set, animation frames.
+extern char ResourceId_WorldMapTilesJ;   ///< Snowfield set, animation pictures.
 /// The Satrage match's opponent path (ColosseumSatrageMatch_StartOpponentPath).
 extern char ResourceId_OpponentPathB;
 extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.

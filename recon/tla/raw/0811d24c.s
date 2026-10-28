@@ -14,7 +14,7 @@ Func_0811d24c:
 	subs r3, r7, #4
 	ldr r0, [r3]
 	movs r1, #20
-	bl SerialRuntime_StartSend
+	bl Serial_StartSend
 	movs r3, #1
 	movs r5, #150
 	negs r3, r3
@@ -42,7 +42,7 @@ Func_0811d24c:
 .L_0811d296:
 	movs r6, #0
 .L_0811d298:
-	bl SerialRuntime_GetActiveTransfers
+	bl Serial_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d276
 	adds r3, r7, #0
@@ -52,7 +52,7 @@ Func_0811d24c:
 	beq .L_0811d2ea
 	subs r3, #4
 	ldr r0, [r3]
-	bl SerialRuntime_StartSend
+	bl Serial_StartSend
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2
@@ -80,7 +80,7 @@ Func_0811d24c:
 .L_0811d2e0:
 	movs r6, #0
 .L_0811d2e2:
-	bl SerialRuntime_GetActiveTransfers
+	bl Serial_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d2bc
 .L_0811d2ea:

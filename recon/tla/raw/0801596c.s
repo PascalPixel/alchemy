@@ -86,7 +86,7 @@ Func_0801596c:
 	mov r1, r9
 	strh r3, [r1]
 	mov r0, r8
-	bl SaveState_ReadSlotAndCheckChecksum
+	bl Save_ReadSector
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -114,7 +114,7 @@ Func_0801596c:
 	mov r0, r10
 	ldr r1, .L_08015acc
 	movs r2, #7
-	bl SaveState_CompareBytes
+	bl Save_CompareBytes
 	cmp r0, #0
 	bne .L_08015aa6
 	mov r1, r10

@@ -12,15 +12,15 @@ Func_080382c0:
 	.global Func_080382c8
 	.thumb_func
 Func_080382c8:
-	overlay_veneer SaveState_SelectAndLoad
+	overlay_veneer Save_ChooseAndLoadFile
 	.global Func_080382d0
 	.thumb_func
 Func_080382d0:
-	overlay_veneer SaveState_CopySlot
+	overlay_veneer Save_CopyFile
 	.global Func_080382d8
 	.thumb_func
 Func_080382d8:
-	overlay_veneer SaveState_DeleteSelectedSlot
+	overlay_veneer Save_EraseSelectedFile
 	.global Func_080382e0
 	.thumb_func
 Func_080382e0:
@@ -28,7 +28,7 @@ Func_080382e0:
 	.global Func_080382e8
 	.thumb_func
 Func_080382e8:
-	overlay_veneer SaveState_WriteSlot
+	overlay_veneer Save_WriteFile
 	.global Func_080382f0
 	.thumb_func
 Func_080382f0:

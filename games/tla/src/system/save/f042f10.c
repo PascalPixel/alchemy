@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "irqlock.h"
 
-void SerialRuntime_QueueCommand(u32 command);
+void Serial_QueueCommand(u32 command);
 s32 Func_08015ca4(s32 slot, void *buffer);
 void Func_08042dc4(s32 step);
 
@@ -17,7 +17,7 @@ void Func_08042dc4(s32 step);
 /// Runs Func_08015ca4 with interrupts masked and all four DMA channels
 /// stopped, queueing Func_08042dc4 as the serial command around it, then
 /// restores IE and IME. Func_08042ff0 does the same around
-/// SaveState_DeleteRecord.
+/// Save_DeletePart.
 s32 Func_08042f10(s32 slot, void *buffer) {
   volatile u32 ime;
   volatile u32 ie;
@@ -47,9 +47,9 @@ s32 Func_08042f10(s32 slot, void *buffer) {
   DMA_STOP(2);
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
-  SerialRuntime_QueueCommand((u32)Func_08042dc4);
+  Serial_QueueCommand((u32)Func_08042dc4);
   result = Func_08015ca4(slot, buffer);
-  SerialRuntime_QueueCommand(0);
+  Serial_QueueCommand(0);
   IRQ_LOCK(ime);
   REG_IE = ie;
   IRQ_UNLOCK(ime);

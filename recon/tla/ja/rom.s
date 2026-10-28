@@ -480,10 +480,10 @@ UiText_DrawStringAtOffset:
 PartyStatus_Draw:
 	.incbin "baserom.gba", 0x00042ac0, 0x00000430
 	.section .rom.0004349c, "ax"
-	.global SaveState_BuildSummaryHeader
-	.type SaveState_BuildSummaryHeader, %function
+	.global Save_BuildFileSummary
+	.type Save_BuildFileSummary, %function
 	.thumb_func
-SaveState_BuildSummaryHeader:
+Save_BuildFileSummary:
 	.incbin "baserom.gba", 0x0004349c, 0x00000194
 	.section .rom.00043ba8, "ax"
 	.balign 4

@@ -3,11 +3,11 @@
 #include "fixed_math.h"
 #include "runtime_interfaces.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "dma.h"
 #include "flash.h"
 
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count) {
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   s32 difference = 0;
 
   while (count != 0) {
@@ -21,7 +21,7 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count) {
   return difference;
 }
 
-u32 SaveState_GetLatestCounter(s32 recordId) {
+u32 Save_GetLatestCounter(s32 recordId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   u32 latestCounter;
   u32 i;
@@ -38,7 +38,7 @@ u32 SaveState_GetLatestCounter(s32 recordId) {
 
 /// Reads the summary of the latest save in each of the three files, clearing
 /// it first; returns how many files have one.
-s32 SaveState_LoadSummaryRecords(void) {
+s32 Save_LoadFileSummaries(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   struct SaveSummary *summary;
   s32 count;
@@ -54,7 +54,7 @@ s32 SaveState_LoadSummaryRecords(void) {
     u32 slot;
 
     Dma_Fill32(0, summary, sizeof(*summary));
-    slot = SaveState_FindLatestSlot(group);
+    slot = Save_FindLatestSector(group);
     if (slot <= 14) {
       ReadFlash(slot, 0, (u8 *)summary, sizeof(*summary));
       ReadFlash(slot + 1, 16, summary->unk38, sizeof(summary->unk38));

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "savedata.h"
 #include "dma.h"
 #include "flash.h"
@@ -23,22 +23,22 @@ extern u16 (*gFlash_Handler0)(u16 sector, u8 *source);
 
 u32 Random16(void);
 
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
 
-s32 SaveState_ChecksumWorkspace(void);
+s32 Save_ChecksumSector(void);
 
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
+s32 Save_ReadSector(s32 index);
 
-u32 SaveState_WriteWorkspaceSlot(s32 sector);
+u32 Save_WriteSector(s32 sector);
 
-s32 SaveState_InvalidateSlot(s32 index);
+s32 Save_InvalidateSector(s32 index);
 
 /// Picks the free slot to write record `mode` to, at random among every third
 /// of the 15 slots. The last free slot only goes to a record that already has
 /// a copy, so replacing a save always has room. Returns 15 when there is no
 /// slot to use.
 // As ☀️'s Save_SelectWriteSector.
-u32 SaveState_SelectWriteSlot(s32 mode) {
+u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[15];
   s32 count;
   u32 index;
@@ -64,7 +64,7 @@ u32 SaveState_SelectWriteSlot(s32 mode) {
   if (count != 0) {
     if (count == 1) {
       index = empty[0];
-      if (SaveState_FindLatestSlot(mode) == 15)
+      if (Save_FindLatestSector(mode) == 15)
         index = 15;
     } else {
       // A free slot at random, so the writes spread over the flash chip.
@@ -75,7 +75,7 @@ u32 SaveState_SelectWriteSlot(s32 mode) {
   return index;
 }
 
-u32 SaveState_WriteWorkspaceSlot(s32 sector) {
+u32 Save_WriteSector(s32 sector) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   void (*progress)(s32) = work->progress;
 
@@ -99,7 +99,7 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector) {
   return 0;
 }
 
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
+s32 Save_ReadSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   struct SaveSlotHeader header;
 
@@ -108,5 +108,5 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
   ReadFlash(index + 2, 0, work->slot + 0x2000, 0x1000);
   START_DMA(work->slot, &header, 0x84000004);
   WAIT_DMA();
-  return (u16)SaveState_ChecksumWorkspace() - header.checksum;
+  return (u16)Save_ChecksumSector() - header.checksum;
 }

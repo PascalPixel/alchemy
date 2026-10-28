@@ -12,7 +12,7 @@
 /// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 packetNumber; ///< SerialRuntime's packet number when the packet was built
+  u8 packetNumber; ///< SerialWork's packet number when the packet was built
   /// The consoles heard from before but not this frame (receivedMask ^
   /// currentMask).
   u8 missingMask;
@@ -39,7 +39,7 @@ union SerialDataRegisters {
 
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
-struct SerialRuntime {
+struct SerialWork {
   /// SIOCNT's bits 7 and 3 when this console armed timer 3 to clock the
   /// transfers: 8 then, else 0; 8 adds 0x80 to the link status.
   u8 mode;
@@ -47,13 +47,13 @@ struct SerialRuntime {
   u8 receivedMask; ///< the consoles heard from since the link began
   u8 currentMask;  ///< the consoles heard from this frame
   /// Set by the interrupt for each console and cleared each frame.
-  /// bits: 1 heard while isParent was set | 0 a packet completed
+  /// bits: 1 heard while transferError was set | 0 a packet completed
   u8 channelFlags[4];
   /// Nonzero lets a new packet restart timer 3.
   u8 transferEnabled;
   /// SIOCNT's bit 6, copied by each transfer interrupt; nonzero adds 0x1000
   /// to the link status.
-  u8 isParent;
+  u8 transferError;
   u8 reserved0a; ///< not named by TLA code
   /// The packet number, counted up each frame once connected.
   u8 packetNumber;
@@ -77,11 +77,11 @@ struct SerialRuntime {
   u8 storage[0x100];
 };
 
-STATIC_ASSERT(sizeof(struct SerialRuntime) == 0x160);
-STATIC_ASSERT(offsetof(struct SerialRuntime, mode) == 0);
-STATIC_ASSERT(offsetof(struct SerialRuntime, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
-STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
+STATIC_ASSERT(sizeof(struct SerialWork) == 0x160);
+STATIC_ASSERT(offsetof(struct SerialWork, mode) == 0);
+STATIC_ASSERT(offsetof(struct SerialWork, transferEnabled) == 8);
+STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 0x14);
+STATIC_ASSERT(offsetof(struct SerialWork, storage) == 0x60);
 
 /// A console's block transfer state, exchanged with the partner each VBlank:
 /// its block number, its status and flags, and a 20-byte block.
@@ -100,7 +100,7 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, flags) == 2);
 STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
-#define SERIAL_RUNTIME (&gSerialRuntime)
+#define SERIAL_RUNTIME (&gSerialWork)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 
 #define START_DMA(source_, destination_, control_)                             \
@@ -110,28 +110,28 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
     DMA3->control = (control_);                                                \
   } while (0)
 
-s32 SerialRuntime_PollStatus(void);
-s32 SerialRuntime_ExchangePayloads(void *send, void *receive);
-void SerialRuntime_PrepareSendPacket(void *payload);
-u8 SerialRuntime_CollectReceivedPayloads(void *payload);
-void SerialRuntime_StepBlockTransfer(void);
-void SerialRuntime_EnableTransferTimer(void);
-void SerialRuntime_DisableTransfer(void);
-s32 SerialRuntime_StartSend(void *source, s32 size);
-s32 SerialRuntime_StartReceive(void *destination);
-void SerialRuntime_WaitForSend(void);
-void SerialRuntime_WaitForReceive(void);
-void SerialRuntime_WaitForTransfers(void);
-s32 SerialRuntime_GetActiveTransfers(void);
+s32 Serial_PollStatus(void);
+s32 Serial_ExchangePayloads(void *send, void *receive);
+void Serial_PrepareSendPacket(void *payload);
+u8 Serial_CollectReceivedPayloads(void *payload);
+void Serial_StepBlockTransfer(void);
+void Serial_EnableTransferTimer(void);
+void Serial_DisableTransfer(void);
+s32 Serial_StartSend(void *source, s32 size);
+s32 Serial_StartReceive(void *destination);
+void Serial_WaitForSend(void);
+void Serial_WaitForReceive(void);
+void Serial_WaitForTransfers(void);
+s32 Serial_GetActiveTransfers(void);
 void BattleLink_ResetTransferState(void);
-void SerialRuntime_HandleTransferInterrupt(void);
-void SerialRuntime_RemoveIrqHandlers(void);
-u32 SerialRuntime_WaitForStatusMask(s32 mask);
+void Serial_HandleTransferInterrupt(void);
+void Serial_RemoveIrqHandlers(void);
+u32 Serial_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;
-extern struct SerialRuntime gSerialRuntime;
+extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
-// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
 // runtime.c)
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDest;
@@ -139,23 +139,23 @@ extern s32 gSerialReceiveDest;
 // battle.c) and LinkLobby_ReceivePartyRecords (tbs lobby.c)
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
-// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
 // runtime.c)
 extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for
- * 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */
+ * 920, and Serial_WaitForStatusMask: differ 18, 21 for 23. */
 extern volatile u16 gLinkStatus;
 
-static inline s32 SerialRuntime_AddParentFlag(s32 status) {
-  if (gSerialRuntime.isParent != 0)
+static inline s32 Serial_AddErrorFlag(s32 status) {
+  if (gSerialWork.transferError != 0)
     status |= 0x1000;
   return status;
 }
 
-static __inline__ void SerialRuntime_ResetTransferState(void) {
+static __inline__ void Serial_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;
   u32 saved;

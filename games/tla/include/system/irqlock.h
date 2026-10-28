@@ -10,7 +10,7 @@
 // Each step is its own statement macro, written do { } while (0), the shape
 // ☀️'s lock sites and write-queue pushes and ⚓️'s task table match
 // through: the saved copy is taken before IME is written.
-// SerialRuntime_Initialize writes IRQ_LOCK's two steps out (see its tag).
+// Serial_Initialize writes IRQ_LOCK's two steps out (see its tag).
 // IME_RESTORE's and IRQ_UNLOCK's wrappers are devices, not this layer: a plain
 // restore matches at some sites (see their tags).
 

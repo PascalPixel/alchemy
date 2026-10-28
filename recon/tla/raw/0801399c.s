@@ -27,7 +27,7 @@ Func_0801399c:
 	ldr r0, .L_08013a6c
 	ldr r1, .L_08013a70
 	ldr r5, .L_08013a74
-	bl SerialRuntime_ExchangePayloads
+	bl Serial_ExchangePayloads
 	strh r0, [r5]
 	bl Func_08016990
 .L_080139d6:

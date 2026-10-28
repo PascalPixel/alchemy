@@ -34,8 +34,8 @@
 #include "ram_buffer.h"
 #include "serial_runtime.h"
 
-s32 SerialRuntime_StartSend(void *source, s32 size);
-s32 SerialRuntime_GetActiveTransfers(void);
+s32 Serial_StartSend(void *source, s32 size);
+s32 Serial_GetActiveTransfers(void);
 void MemFree(void *block);
 
 extern volatile u16 gLinkStatus;
@@ -59,13 +59,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 BattleLink_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_StartSend(state, 20);
+    s32 status = Serial_StartSend(state, 20);
 
     disconnected = 0;
     timeout = 300;
     if (status == -1)
       return status;
-    while (SerialRuntime_GetActiveTransfers()) {
+    while (Serial_GetActiveTransfers()) {
       WaitFrames(1);
       if (--timeout < 0)
         return -1;
@@ -77,10 +77,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_StartSend(actions, allocationSize);
+      status = Serial_StartSend(actions, allocationSize);
       if (status == -1)
         return status;
-      while (SerialRuntime_GetActiveTransfers()) {
+      while (Serial_GetActiveTransfers()) {
         WaitFrames(1);
         if (--timeout < 0)
           return -1;
@@ -98,13 +98,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 BattleLink_ReceiveActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_StartReceive(state);
+    s32 status = Serial_StartReceive(state);
 
     disconnected = 0;
     timeout = 300;
     if (status == -1)
       return status;
-    while (SerialRuntime_GetActiveTransfers()) {
+    while (Serial_GetActiveTransfers()) {
       if (gSerialReceivedSize > 20)
         return -1;
       WaitFrames(1);
@@ -121,10 +121,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_StartReceive(actions + count);
+      status = Serial_StartReceive(actions + count);
       if (status == -1)
         return status;
-      while (SerialRuntime_GetActiveTransfers()) {
+      while (Serial_GetActiveTransfers()) {
         if (gSerialReceivedSize > (u32)(result * 16 + 19) / 20 * 20)
           return -1;
         WaitFrames(1);
@@ -202,7 +202,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
 fail:
   BattleLink_ResetTransferState();
-  SerialRuntime_RemoveIrqHandlers();
+  Serial_RemoveIrqHandlers();
   MemFree(state);
   return -1;
 }

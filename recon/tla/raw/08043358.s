@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global SaveState_BuildSummaryHeader
+	.global Save_BuildFileSummary
 	.thumb_func
-SaveState_BuildSummaryHeader:
+Save_BuildFileSummary:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

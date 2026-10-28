@@ -99,7 +99,7 @@ next:
   }
   record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
-  if ((transferResult = SerialRuntime_StartReceive(record)) == -1) {
+  if ((transferResult = Serial_StartReceive(record)) == -1) {
     goto failed;
   }
   goto testRecord;
@@ -132,7 +132,7 @@ second:
   heap = Runtime_BumpAllocateAlternatePool(size);
   tries = 0;
   if ((transferResult =
-           SerialRuntime_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
+           Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
     goto testRecovery;
   }
 failed:

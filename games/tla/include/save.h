@@ -1,5 +1,5 @@
-#ifndef TLA_SAVE_STATE_H
-#define TLA_SAVE_STATE_H
+#ifndef ALCHEMY_SAVE_H
+#define ALCHEMY_SAVE_H
 
 #include "types.h"
 #include "static_assert.h"
@@ -59,6 +59,6 @@ STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 0x30fc);
 STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x3144);
 STATIC_ASSERT(sizeof(struct SaveSlotHeader) == 0x10);
 
-u32 SaveState_FindLatestSlot(s32 recordId);
+u32 Save_FindLatestSector(s32 recordId);
 
 #endif

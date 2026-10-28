@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "dma.h"
 #include "flash.h"
 
@@ -23,14 +23,14 @@ extern const u8 gSave_Signature[];
 extern const u8 gSave_HeaderTemplate[];
 
 u32 Random16(void);
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-s32 SaveState_ChecksumWorkspace(void);
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
-u32 SaveState_WriteWorkspaceSlot(s32 sector);
-s32 SaveState_InvalidateSlot(s32 index);
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
+s32 Save_ChecksumSector(void);
+s32 Save_ReadSector(s32 index);
+u32 Save_WriteSector(s32 sector);
+s32 Save_InvalidateSector(s32 index);
 
-u32 SaveState_SelectWriteSlot(s32 recordId);
-u32 SaveState_GetLatestCounter(s32 recordId);
+u32 Save_SelectWriteSector(s32 recordId);
+u32 Save_GetLatestCounter(s32 recordId);
 
 s32 Func_08015ca4(s32 recordId, void *source) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
@@ -42,8 +42,8 @@ s32 Func_08015ca4(s32 recordId, void *source) {
   zero = 0;
   START_DMA(&zero, work->slot, 0x85000c00);
   WAIT_DMA();
-  current = SaveState_FindLatestSlot(recordId);
-  slot = SaveState_SelectWriteSlot(recordId);
+  current = Save_FindLatestSector(recordId);
+  slot = Save_SelectWriteSector(recordId);
   if (slot > 14)
     return 1;
   START_DMA(source, work->slot + 16, 0x84000bfc);
@@ -51,25 +51,25 @@ s32 Func_08015ca4(s32 recordId, void *source) {
   START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
   WAIT_DMA();
   header.recordId = recordId;
-  header.checksum = SaveState_ChecksumWorkspace();
-  header.counter = SaveState_GetLatestCounter(recordId) + 1;
+  header.checksum = Save_ChecksumSector();
+  header.counter = Save_GetLatestCounter(recordId) + 1;
   START_DMA(&header, work->slot, 0x84000004);
   WAIT_DMA();
   work->sectorCount = 0;
   work->sectorTotal = 3;
   if (current <= 14)
     work->sectorTotal = 6;
-  if (SaveState_WriteWorkspaceSlot(slot) != 0)
+  if (Save_WriteSector(slot) != 0)
     return 2;
-  if (current <= 14 && SaveState_InvalidateSlot(current) != 0)
+  if (current <= 14 && Save_InvalidateSector(current) != 0)
     return 3;
   if (header.counter > 0xfde8) {
     header.counter = 1;
     START_DMA(&header, work->slot, 0x84000004);
     WAIT_DMA();
-    if (SaveState_WriteWorkspaceSlot(current) != 0)
+    if (Save_WriteSector(current) != 0)
       return 4;
-    if (SaveState_InvalidateSlot(slot) != 0)
+    if (Save_InvalidateSector(slot) != 0)
       return 5;
     slot = current;
   }

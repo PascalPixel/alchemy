@@ -16,7 +16,7 @@
 // gAdventure before it builds 0x225 at both glow restores.
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "adventure.h"
 #include "uiwindow.h"
 #include "input.h"

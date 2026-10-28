@@ -1,6 +1,6 @@
 #include "serial_runtime.h"
 
-s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
+s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
   s32 status;
@@ -8,7 +8,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  switch (gSerialRuntime.phase) {
+  switch (gSerialWork.phase) {
   case 0: {
     u8 mask30 = control & 0x30;
     u8 mode;
@@ -18,16 +18,16 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
       s32 index;
 
       if (serialError == 0) {
-        index = gSerialRuntime.sendIndex;
+        index = gSerialWork.sendIndex;
         /* FAKEMATCH: keeps the send-index load ahead of the -1, as in
-         * SerialRuntime_PollStatus; without the barrier the -1 is started first
+         * Serial_PollStatus; without the barrier the -1 is started first
          * (differ 2). */
         asm("");
         if (index == -1) {
           u32 ie;
 
           /* FAKEMATCH: the do/while blocks and the separate enable
-           * variable are meaningless, as in SerialRuntime_PollStatus. */
+           * variable are meaningless, as in Serial_PollStatus. */
           do {
             REG_IME = serialError;
           } while (0);
@@ -44,31 +44,31 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
             REG_IF = 0xc0;
             REG_TM3CNT = 0xc963;
           } while (0);
-          gSerialRuntime.mode = mode;
+          gSerialWork.mode = mode;
         }
       }
     } else if (mask30 == 0) {
       break;
     }
-    gSerialRuntime.phase = 1;
+    gSerialWork.phase = 1;
   }
   case 1:
-    SerialRuntime_CollectReceivedPayloads(receive);
-    SerialRuntime_PrepareSendPacket(send);
+    Serial_CollectReceivedPayloads(receive);
+    Serial_PrepareSendPacket(send);
     break;
   }
 
-  gSerialRuntime.packetNumber++;
-  status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
+  gSerialWork.packetNumber++;
+  status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
+  if (gSerialWork.mode == 8)
     status |= 0x80;
-  result = SerialRuntime_AddParentFlag(status);
+  result = Serial_AddErrorFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= 0x2000;
   return result;
 }
 
-s32 SerialRuntime_PollStatus(void) {
+s32 Serial_PollStatus(void) {
   volatile u32 *siocnt;
   u32 control;
   s32 status;
@@ -76,14 +76,14 @@ s32 SerialRuntime_PollStatus(void) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  if (gSerialRuntime.phase == 0) {
+  if (gSerialWork.phase == 0) {
     u8 mode = control & 0x88;
 
     if (mode == 8) {
       u8 serialError = control & 4;
 
       if (serialError == 0) {
-        s32 index = gSerialRuntime.sendIndex;
+        s32 index = gSerialWork.sendIndex;
 
         /* FAKEMATCH: keeps the send-index load ahead of the -1. */
         asm("");
@@ -108,18 +108,18 @@ s32 SerialRuntime_PollStatus(void) {
             REG_IF = 0xc0;
             REG_TM3CNT = 0xc963;
           } while (0);
-          gSerialRuntime.mode = mode;
+          gSerialWork.mode = mode;
         }
       }
-      gSerialRuntime.phase = 1;
+      gSerialWork.phase = 1;
     }
-    gSerialRuntime.packetNumber++;
+    gSerialWork.packetNumber++;
   }
 
-  status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
+  status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
+  if (gSerialWork.mode == 8)
     status |= 0x80;
-  result = SerialRuntime_AddParentFlag(status);
+  result = Serial_AddErrorFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= 0x2000;
   return result;

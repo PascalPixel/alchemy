@@ -57,7 +57,7 @@ void Func_0801399c(void) {
     dma0[5];
   }
   if (gSerialExchangeActive != 0) {
-    gLinkStatus = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer,
+    gLinkStatus = Serial_ExchangePayloads((void *)&gSerialTransfer,
                                                  gSerialPeerPayloads);
     Func_08016990();
   }

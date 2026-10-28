@@ -16,27 +16,27 @@
 /// the halfword received from each console; a console's fourteenth halfword
 /// completes its packet. The parent then restarts timer 3 for the next.
 // As ☀️'s Serial_HandleTransferInterrupt.
-void SerialRuntime_HandleTransferInterrupt(void) {
-  struct SerialRuntime *sendState;
-  struct SerialRuntime *receiveState;
-  struct SerialRuntime *tailState;
+void Serial_HandleTransferInterrupt(void) {
+  struct SerialWork *sendState;
+  struct SerialWork *receiveState;
+  struct SerialWork *tailState;
   u16 recv[4];
   volatile u32 *sioControl;
   s32 channel;
 
   sioControl = &REG_SIOCNT;
   *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
-  sendState = &gSerialRuntime;
+  sendState = &gSerialWork;
   {
     s32 index;
-    u8 isParent = (*sioControl << 25) >> 31;
+    u8 transferError = (*sioControl << 25) >> 31;
 
     index = sendState->sendIndex;
     /* FAKEMATCH(barrier): an empty asm after the send index's read, so it
-     * loads before the isParent store; as plain statements, 2 of 121
+     * loads before the transferError store; as plain statements, 2 of 121
      * instructions differ in tla-en. */
     asm volatile("");
-    sendState->isParent = isParent;
+    sendState->transferError = transferError;
     if (index == -1) {
       u32 idleWord = 0xfefe;
       u16 *swap;
@@ -49,7 +49,7 @@ void SerialRuntime_HandleTransferInterrupt(void) {
       ((volatile u16 *)sioControl)[1] = sendState->sendBuffer[1][index];
     }
   }
-  receiveState = &gSerialRuntime;
+  receiveState = &gSerialWork;
   if (receiveState->sendIndex <= 14)
     receiveState->sendIndex++;
 
@@ -75,8 +75,8 @@ receive_loop:
       }
     }
   }
-  tailState = &gSerialRuntime;
-  if (tailState->isParent != 0)
+  tailState = &gSerialWork;
+  if (tailState->transferError != 0)
     tailState->channelFlags[channel] |= 2;
   if (tailState->receiveIndex[channel] <= 14)
     tailState->receiveIndex[channel]++;
@@ -101,13 +101,13 @@ receive_loop:
   }
 }
 
-void SerialRuntime_RemoveIrqHandlers(void) {
+void Serial_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
   Runtime_SetIrqHandler(7, 0, 0);
   Runtime_SetIrqHandler(6, 0, 0);
 }
 
-u32 SerialRuntime_WaitForStatusMask(s32 mask) {
+u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
       WaitFrames(1);
@@ -116,7 +116,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
   return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-s32 SerialRuntime_StartSend(void *source, s32 size) {
+s32 Serial_StartSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 saved;
 
@@ -132,7 +132,7 @@ s32 SerialRuntime_StartSend(void *source, s32 size) {
   return 0;
 }
 
-s32 SerialRuntime_StartReceive(void *destination) {
+s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 saved;
 

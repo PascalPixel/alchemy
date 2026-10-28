@@ -116,9 +116,9 @@ void WaitFrames(s32 frames) {
     gFrameWaitCount++;
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
-      SerialRuntime_PollStatus();
-      if (gSerialRuntime.mode)
-        gSerialRuntime.transferEnabled = 1;
+      Serial_PollStatus();
+      if (gSerialWork.mode)
+        gSerialWork.transferEnabled = 1;
     }
     if (gSleepRequested && gSleepDisabled == 0) {
       display = REG_DISPCNT;

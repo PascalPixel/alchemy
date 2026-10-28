@@ -1,14 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 
 extern u16 gData_02003860;
 extern u16 gData_020036d8;
 extern u16 gData_02005350;
 
 s32 Func_0801596c(void);
-s32 SaveState_LoadSummaryRecords(void);
-void SaveState_ReleaseWorkspace(void);
+s32 Save_LoadFileSummaries(void);
+void Save_ReleaseWork(void);
 
 s32 Func_080432a4(void) {
   s32 err;
@@ -22,7 +22,7 @@ s32 Func_080432a4(void) {
     s32 i;
     struct SaveWorkspace *work;
 
-    ret = SaveState_LoadSummaryRecords();
+    ret = Save_LoadFileSummaries();
     work = Ram_HeapSlots->serialWork;
     gData_02003860 = 0;
     gData_020036d8 = 0;
@@ -38,7 +38,7 @@ s32 Func_080432a4(void) {
         gData_02005350 = 1;
     }
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   if (ret != 0 && cnt == ret)
     return ret + 100;
   return ret;

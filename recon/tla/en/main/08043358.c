@@ -3,7 +3,7 @@
 // statements brings it closer (device search).
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "adventure.h"
 #include "battle_unit.h"
 #include "owner_state.h"
@@ -26,7 +26,7 @@ u32 Runtime_GetBuildStampTimeFar(s32);
 s32 GameFlag_Test(s32 flag);
 
 // Builds the save header.
-s32 SaveState_BuildSummaryHeader(void) {
+s32 Save_BuildFileSummary(void) {
   u16 owners[14];
   struct SaveSummary *summary;
   struct BattleUnit *owner;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "adventure.h"
 #include "frame.h"
 #include "system.h"
@@ -22,14 +22,14 @@ extern u8 gData_02000000[];
 extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
-s32 SaveState_LoadSummaryRecords(void);
-void SaveState_ReleaseWorkspace(void);
-s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
+s32 Save_LoadFileSummaries(void);
+void Save_ReleaseWork(void);
+s32 Save_ReadPart(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
 /// Selects a file and loads it.
-s32 SaveState_SelectAndLoad(s32 mode) {
+s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 slot;
 
@@ -37,11 +37,11 @@ s32 SaveState_SelectAndLoad(s32 mode) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
-    SaveState_LoadSummaryRecords();
+    Save_LoadFileSummaries();
     slot = Func_08043cd8(gData_020036d0, mode);
     if (slot == -1) {
       result = slot;
-    } else if (SaveState_ReadRecordPayload(slot, gData_02000000) != 0) {
+    } else if (Save_ReadPart(slot, gData_02000000) != 0) {
       UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
       result = -2;
     } else {
@@ -51,19 +51,19 @@ s32 SaveState_SelectAndLoad(s32 mode) {
       gData_020036d0 = slot;
     }
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }
 
 extern u8 MsgEraseFailed;
 extern u8 MsgFileCopied;
-u32 SaveState_FindFreeSummarySlot(void);
+u32 Save_FindFreeFile(void);
 s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 
 /// Selects a file and copies it to a free slot.
-s32 SaveState_CopySlot(void) {
+s32 Save_CopyFile(void) {
   s32 result = 0;
   s32 value;
   s32 token;
@@ -72,19 +72,19 @@ s32 SaveState_CopySlot(void) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
-    SaveState_LoadSummaryRecords();
+    Save_LoadFileSummaries();
     value = Func_08043cd8(0, 2);
     if (value == -1) {
       result = value;
     } else {
       void *buffer = gData_02000000;
 
-      value = SaveState_ReadRecordPayload(value, buffer);
+      value = Save_ReadPart(value, buffer);
       if (value != 0) {
         UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
         result = -2;
       } else {
-        value = SaveState_FindFreeSummarySlot();
+        value = Save_FindFreeFile();
         if (value == 999) {
           UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
           result = -5;
@@ -102,7 +102,7 @@ s32 SaveState_CopySlot(void) {
       }
     }
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }
 
@@ -120,7 +120,7 @@ void UiWork_FinalizePendingCore(void);
 #endif
 
 /// Selects a file and erases it.
-s32 SaveState_DeleteSelectedSlot(void) {
+s32 Save_EraseSelectedFile(void) {
   s32 result = 0;
   s32 value;
   s32 token;
@@ -130,7 +130,7 @@ s32 SaveState_DeleteSelectedSlot(void) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
-    SaveState_LoadSummaryRecords();
+    Save_LoadFileSummaries();
     value = Func_08043cd8(0, 3);
     if (value == -1) {
       result = value;
@@ -154,6 +154,6 @@ s32 SaveState_DeleteSelectedSlot(void) {
       }
     }
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }

@@ -25,7 +25,7 @@ void UiText_DrawResource(s32 message, void *window, s32 x, s32 y);
 void UiWork_Finalize(void *window, s32 release);
 void RenderOutput_PrepareForRedraw(void *window);
 void WaitFrames(s32 frames);
-s32 SerialRuntime_StartReceive(void *destination);
+s32 Serial_StartReceive(void *destination);
 void Unit_Calculate(s32 id);
 void Func_02002220(void);
 void Func_02002228(void);
@@ -73,7 +73,7 @@ wait:
   goto close;
 receive:
   WaitFrames(10);
-  SerialRuntime_StartReceive(Data_02012f94 + 0x6c);
+  Serial_StartReceive(Data_02012f94 + 0x6c);
   WaitFrames(10);
   ok = 1;
   shown = 0;

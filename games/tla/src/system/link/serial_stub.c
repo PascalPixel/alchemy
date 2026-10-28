@@ -34,15 +34,15 @@ void SerialTest_Run(void) {
     value--;
   } while (n >= 0);
   Cpu_Fill32(0, gMapCellBuffer, 0x400);
-  SerialRuntime_WaitForStatusMask(3);
+  Serial_WaitForStatusMask(3);
 restart:
-  SerialRuntime_StartReceive(gMapCellBuffer);
+  Serial_StartReceive(gMapCellBuffer);
   held = &gInput.held;
   for (;;) {
     if (*held & 1)
-      SerialRuntime_StartSend((void *)Cart_Restart, 0x280);
+      Serial_StartSend((void *)Cart_Restart, 0x280);
     if (*held & 2)
-      SerialRuntime_StartSend((void *)(Cartridge_Restart + 0x1000), 0x280);
+      Serial_StartSend((void *)(Cartridge_Restart + 0x1000), 0x280);
     if (*held & 8) {
       delay = 9999;
       do {

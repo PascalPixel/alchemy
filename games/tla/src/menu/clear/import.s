@@ -53,14 +53,14 @@ Fade_ToBlack:
 	.global Func_02002220
 	.thumb_func
 Func_02002220:
-	overlay_veneer SerialRuntime_InitializeFar
+	overlay_veneer Serial_InitializeFar
 	.global Func_02002228
 	.thumb_func
 Func_02002228:
-	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global SerialRuntime_StartReceive
+	overlay_veneer Serial_RemoveIrqHandlersFar
+	.global Serial_StartReceive
 	.thumb_func
-SerialRuntime_StartReceive:
+Serial_StartReceive:
 	overlay_veneer Party_CheckFar
 	.global Unit_Get
 	.thumb_func

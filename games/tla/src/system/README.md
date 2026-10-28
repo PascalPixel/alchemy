@@ -42,8 +42,8 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `AffineMatrix_`, `Animation_`, `Bios_`, `Camera_`, `Code_`, `DebugText_`,
 `Flash_`, `Graphics_`, `Input_`, `IoWriteQueue_`, `ItemIcon_`, `NumberText_`,
 `Palette_`, `PaletteQueue_`, `PartyStatus_`, `Resource_`, `ResourceMetadata_`,
-`ResourceObject_`, `ResourceSlot_`, `Runtime_`, `SaveState_`, `SceneState_`,
-`SerialRuntime_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Ui_` and
+`ResourceObject_`, `ResourceSlot_`, `Runtime_`, `Save_`, `SceneState_`,
+`Serial_`, `SerialTest_`, `Sound_`, `System_`, `Task_`, `Ui_` and
 `VramCache_`. Those only The Lost Age's code has so far:
 
 | Prefix | What it acts on |

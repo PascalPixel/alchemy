@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "mem.h"
 #include "iwram_call.h"
 
@@ -12,16 +12,16 @@ extern u8 gData_02000504[];
 extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
-s32 SaveState_LoadSummaryRecords(void);
-void SaveState_ReleaseWorkspace(void);
-s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
+s32 Save_LoadFileSummaries(void);
+void Save_ReleaseWork(void);
+s32 Save_ReadPart(s32 slot, void *buffer);
 s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
-s32 SaveState_WriteSlot(s32 slot) {
+s32 Save_WriteFile(s32 slot) {
   s32 result = 0;
 
   if (Func_0801596c() != 0) {
@@ -31,7 +31,7 @@ s32 SaveState_WriteSlot(s32 slot) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
     result = -3;
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }
 
@@ -53,7 +53,7 @@ s32 Func_08043534(void) {
     } else {
       u8 *dst;
 
-      found = SaveState_ReadRecordPayload(gData_020036d0, buffer);
+      found = Save_ReadPart(gData_020036d0, buffer);
       if (found != 0) {
         UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
         result = -2;
@@ -69,7 +69,7 @@ s32 Func_08043534(void) {
         result = -3;
       }
     }
-    SaveState_ReleaseWorkspace();
+    Save_ReleaseWork();
     MemFree(buffer);
     value = result;
   }

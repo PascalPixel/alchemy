@@ -9,7 +9,7 @@
 /// from send. Returns the link status: bits 0-7 currentMask (with bit 7 also
 /// set in mode 8), bits 8-15 receivedMask, 0x1000 for the parent and 0x2000
 /// when the SIOCNT multiplayer ID is at least 2.
-s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
+s32 Serial_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 cnt;
   s32 st;
@@ -17,23 +17,23 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
 
   siocnt = &REG_SIOCNT;
   cnt = *siocnt;
-  if (gSerialRuntime.phase == 1) {
-    SerialRuntime_CollectReceivedPayloads(receive);
-    SerialRuntime_PrepareSendPacket(send);
-    gSerialRuntime.packetNumber++;
+  if (gSerialWork.phase == 1) {
+    Serial_CollectReceivedPayloads(receive);
+    Serial_PrepareSendPacket(send);
+    gSerialWork.packetNumber++;
   }
-  st = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
+  st = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
+  if (gSerialWork.mode == 8)
     st |= 0x80;
-  ret = SerialRuntime_AddParentFlag(st);
+  ret = Serial_AddErrorFlag(st);
   if (((cnt << 26) >> 30) > 1) // Bits 4 and 5.
     ret |= 0x2000;
   return ret;
 }
 
 /// Builds the outgoing packet in sendBuffer[0], in the same format as above.
-void SerialRuntime_PrepareSendPacket(void *payload) {
-  volatile struct SerialRuntime *sr;
+void Serial_PrepareSendPacket(void *payload) {
+  volatile struct SerialWork *sr;
   u32 i;
   u32 sum;
 

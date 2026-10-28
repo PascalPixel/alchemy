@@ -289,14 +289,14 @@ RuntimeDispatch_ReservedNoOpDFar:
 	.thumb_func
 RuntimeDispatch_ReservedNoOpEFar:
 	overlay_veneer Func_080132c8
-	.global SerialRuntime_InitializeFar
+	.global Serial_InitializeFar
 	.thumb_func
-SerialRuntime_InitializeFar:
+Serial_InitializeFar:
 	overlay_veneer Func_08016180
-	.global SerialRuntime_PollAndTransferFar
+	.global Serial_PollAndTransferFar
 	.thumb_func
-SerialRuntime_PollAndTransferFar:
-	overlay_veneer SerialRuntime_PollAndTransfer
+Serial_PollAndTransferFar:
+	overlay_veneer Serial_PollAndTransfer
 	.global QueueIoWriteDelay1Far
 	.thumb_func
 QueueIoWriteDelay1Far:
@@ -341,14 +341,14 @@ Input_ResetKeyRepeatFar:
 	.thumb_func
 Transform_ApplyLookAtFar:
 	overlay_veneer Transform_ApplyLookAt
-	.global SerialRuntime_WaitForStatusMaskFar
+	.global Serial_WaitForStatusMaskFar
 	.thumb_func
-SerialRuntime_WaitForStatusMaskFar:
-	overlay_veneer SerialRuntime_WaitForStatusMask
-	.global SerialRuntime_RemoveIrqHandlersFar
+Serial_WaitForStatusMaskFar:
+	overlay_veneer Serial_WaitForStatusMask
+	.global Serial_RemoveIrqHandlersFar
 	.thumb_func
-SerialRuntime_RemoveIrqHandlersFar:
-	overlay_veneer SerialRuntime_RemoveIrqHandlers
+Serial_RemoveIrqHandlersFar:
+	overlay_veneer Serial_RemoveIrqHandlers
 	.global Sound_LoadPresetParametersFar
 	.thumb_func
 Sound_LoadPresetParametersFar:
@@ -356,30 +356,30 @@ Sound_LoadPresetParametersFar:
 	.global Func_08000380
 	.thumb_func
 Func_08000380:
-	overlay_veneer SerialRuntime_StartSend
+	overlay_veneer Serial_StartSend
 	.global Party_CheckFar
 	.thumb_func
 Party_CheckFar:
-	overlay_veneer SerialRuntime_StartReceive
+	overlay_veneer Serial_StartReceive
 	.global Func_08000390
 	.thumb_func
 Func_08000390:
-	overlay_veneer SerialRuntime_WaitForSend
-	.global SerialRuntime_WaitForReceiveFar
+	overlay_veneer Serial_WaitForSend
+	.global Serial_WaitForReceiveFar
 	.thumb_func
-SerialRuntime_WaitForReceiveFar:
-	overlay_veneer SerialRuntime_WaitForReceive
-	.global SerialRuntime_WaitForTransfersFar
+Serial_WaitForReceiveFar:
+	overlay_veneer Serial_WaitForReceive
+	.global Serial_WaitForTransfersFar
 	.thumb_func
-SerialRuntime_WaitForTransfersFar:
-	overlay_veneer SerialRuntime_WaitForTransfers
-	.global SerialRuntime_GetActiveTransfersFar
+Serial_WaitForTransfersFar:
+	overlay_veneer Serial_WaitForTransfers
+	.global Serial_GetActiveTransfersFar
 	.thumb_func
-SerialRuntime_GetActiveTransfersFar:
-	overlay_veneer SerialRuntime_GetActiveTransfers
-	.global SerialRuntime_StepBlockTransferFar
+Serial_GetActiveTransfersFar:
+	overlay_veneer Serial_GetActiveTransfers
+	.global Serial_StepBlockTransferFar
 	.thumb_func
-SerialRuntime_StepBlockTransferFar:
+Serial_StepBlockTransferFar:
 	overlay_veneer Func_08016990
 	.global Task_SetFlagsFar
 	.thumb_func

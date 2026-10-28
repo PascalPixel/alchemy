@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "save_state.h"
+#include "save.h"
 #include "mem.h"
 #include "system.h"
 #include "edition.h"
@@ -14,9 +14,9 @@ extern u8 gData_02000000[];
 extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
-s32 SaveState_LoadSummaryRecords(void);
-void SaveState_ReleaseWorkspace(void);
-s32 SaveState_BuildSummaryHeader(void);
+s32 Save_LoadFileSummaries(void);
+void Save_ReleaseWork(void);
+s32 Save_BuildFileSummary(void);
 s32 Func_08042f10(s32 slot, void *buffer);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Sound_PlayFar(s32 cue);
@@ -25,7 +25,7 @@ s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
 /// Saves the game to slot (at most 2).
-s32 SaveState_SaveToSlot(u32 slot) {
+s32 Save_ToFile(u32 slot) {
   s32 result = 0;
   s32 found;
 
@@ -35,11 +35,11 @@ s32 SaveState_SaveToSlot(u32 slot) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
-    SaveState_LoadSummaryRecords();
+    Save_LoadFileSummaries();
     gData_020036d0 = slot;
     Sound_PlayFar(85);
     UiText_ShowPositionedMessageAndWait((s32)&MsgSaving, 13);
-    SaveState_BuildSummaryHeader();
+    Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
     found = Func_08042f10(slot, gData_02000000);
     while (UiWork_IsComplete() == 0)
@@ -52,7 +52,7 @@ s32 SaveState_SaveToSlot(u32 slot) {
       UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 9);
     }
   }
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }
 
@@ -76,7 +76,7 @@ s32 Func_08043690(void) {
     UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
-    SaveState_LoadSummaryRecords();
+    Save_LoadFileSummaries();
     slot = Func_08043cd8(gData_020036d0, 0);
     if (slot == -1) {
       result = slot;
@@ -94,7 +94,7 @@ s32 Func_08043690(void) {
       }
       gData_020036d0 = slot;
       token = SaveProgress_Open(0);
-      SaveState_BuildSummaryHeader();
+      Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
       found = Func_08042f10(slot, gData_02000000);
       SaveProgress_Close(token);
@@ -108,6 +108,6 @@ s32 Func_08043690(void) {
     }
   }
 done:
-  SaveState_ReleaseWorkspace();
+  Save_ReleaseWork();
   return result;
 }

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "serial_runtime.h"
 
-s32 SerialRuntime_GetActiveTransfers(void) {
+s32 Serial_GetActiveTransfers(void) {
   s32 flags;
 
   flags = 0;

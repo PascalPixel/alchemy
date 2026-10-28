@@ -131,8 +131,8 @@ gData_02005350:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 0x0000000c
-	.global gSerialRuntime
-gSerialRuntime:
+	.global gSerialWork
+gSerialWork:
 	.space 0x00000004
 	.global Data_02005364
 Data_02005364:

@@ -16,7 +16,7 @@
 #include "ram_buffer.h"
 #include "task.h"
 #include "render_input.h"
-#include "save_state.h"
+#include "save.h"
 #include "field_sprite.h"
 
 struct ObjectRowWork {

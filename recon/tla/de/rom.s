@@ -488,10 +488,10 @@ UiText_DrawPrefixedNumberAtOffset:
 PartyStatus_Draw:
 	.incbin "baserom.gba", 0x000429d0, 0x00000430
 	.section .rom.000433ac, "ax"
-	.global SaveState_BuildSummaryHeader
-	.type SaveState_BuildSummaryHeader, %function
+	.global Save_BuildFileSummary
+	.type Save_BuildFileSummary, %function
 	.thumb_func
-SaveState_BuildSummaryHeader:
+Save_BuildFileSummary:
 	.incbin "baserom.gba", 0x000433ac, 0x00000194
 	.section .rom.00043ab8, "ax"
 	.balign 4

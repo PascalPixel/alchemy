@@ -187,7 +187,7 @@ BattlePresentation_AppendLinkedActions:
 	.4byte gRandomState
 .L_0811d580:
 	bl BattleLink_ResetTransferState
-	bl SerialRuntime_RemoveIrqHandlers
+	bl Serial_RemoveIrqHandlers
 	ldr r0, [r5]
 	bl MemFree
 	movs r0, #1

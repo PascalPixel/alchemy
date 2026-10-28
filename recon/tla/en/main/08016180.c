@@ -13,13 +13,13 @@
 #include "serial_runtime.h"
 #include "dma.h"
 
-void SerialRuntime_Initialize(void) {
+void Serial_Initialize(void) {
   u32 interruptEnable;
   /* FAKEMATCH: keep the fill word's address before its store. */
   volatile u32 zero;
   s32 index;
   volatile u16 *imeReg;
-  struct SerialRuntime *state;
+  struct SerialWork *state;
 
   interruptEnable = REG_IME;
   /* FAKEMATCH: retain the reference's IME pointer lifetime. */
@@ -27,8 +27,8 @@ void SerialRuntime_Initialize(void) {
     imeReg = &REG_IME;
   } while (0);
   *imeReg = (u32)imeReg;
-  Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
-  Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
+  Runtime_SetIrqHandler(7, 0, Serial_HandleTransferInterrupt);
+  Runtime_SetIrqHandler(6, 0, Serial_HandleTransferInterrupt);
   REG_IME = 0;
   REG_IE &= 0xff3f;
   if ((REG_IF & 0x80) != 0)
@@ -41,7 +41,7 @@ void SerialRuntime_Initialize(void) {
   REG_RCNT = 0;
   REG_SIOCNT = 0x2000;
   REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
-  state = &gSerialRuntime;
+  state = &gSerialWork;
   REG_IME = 1;
   zero = 0;
   Dma_Set(&zero, state, 0x85000058, (volatile u32 *)0x040000d4);

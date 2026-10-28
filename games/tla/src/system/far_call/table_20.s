@@ -12,4 +12,4 @@ Func_080383d8:
 	.global Func_080383e0
 	.thumb_func
 Func_080383e0:
-	overlay_veneer SaveState_CountRecordsExcludingFlagged
+	overlay_veneer Save_CountFilesExcludingSent

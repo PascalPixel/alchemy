@@ -1,6 +1,6 @@
 #include "serial_runtime.h"
 
-void SerialRuntime_WaitForSend(void) {
+void Serial_WaitForSend(void) {
   u32 count = 0;
 
   if (gSerialSendSource != 0) {
@@ -11,7 +11,7 @@ void SerialRuntime_WaitForSend(void) {
   }
 }
 
-void SerialRuntime_WaitForReceive(void) {
+void Serial_WaitForReceive(void) {
   u32 count = 0;
 
   if (gSerialReceiveDest != 0) {
@@ -22,7 +22,7 @@ void SerialRuntime_WaitForReceive(void) {
   }
 }
 
-void SerialRuntime_WaitForTransfers(void) {
+void Serial_WaitForTransfers(void) {
   u32 count = 0;
 
   while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {

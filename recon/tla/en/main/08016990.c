@@ -18,7 +18,7 @@ struct SerialHalfword {
   u16 v;
 };
 
-void SerialRuntime_StepBlockTransfer(void) {
+void Serial_StepBlockTransfer(void) {
   struct SerialTransferState *peer;
   u32 id;
   struct SerialTransferState *own;

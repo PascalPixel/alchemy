@@ -41,11 +41,11 @@ MemFree:
 	.global Func_02001914
 	.thumb_func
 Func_02001914:
-	overlay_veneer SerialRuntime_InitializeFar
+	overlay_veneer Serial_InitializeFar
 	.global Func_0200191c
 	.thumb_func
 Func_0200191c:
-	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
+	overlay_veneer Serial_RemoveIrqHandlersFar
 	.global Sound_LoadPresetParameters
 	.thumb_func
 Sound_LoadPresetParameters:
@@ -54,14 +54,14 @@ Sound_LoadPresetParameters:
 	.thumb_func
 Func_0200192c:
 	overlay_veneer Func_08000380
-	.global SerialRuntime_StartReceive
+	.global Serial_StartReceive
 	.thumb_func
-SerialRuntime_StartReceive:
+Serial_StartReceive:
 	overlay_veneer Party_CheckFar
 	.global Func_0200193c
 	.thumb_func
 Func_0200193c:
-	overlay_veneer SerialRuntime_GetActiveTransfersFar
+	overlay_veneer Serial_GetActiveTransfersFar
 	.global Func_02001944
 	.thumb_func
 Func_02001944:

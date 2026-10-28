@@ -1,6 +1,6 @@
 // Draft, differ 111 (118 before statements reordered 2026-10-26) of 164: allocates the save workspace, identifies the
 // flash chip and scans the sectors three at a time, as ☀️'s
-// SaveState_InitializeWorkspace (games/tbs/src/runtime/runtime.c) over 15
+// Save_InitializeWork (games/tbs/src/runtime/runtime.c) over 15
 // sectors. Same instructions in the same shape; what is left is register
 // choice: the native keeps the workspace in fp (here a stack slot), the
 // occupied pointer in r7 and the record id byte addressed as a stack offset
@@ -12,7 +12,7 @@
 #include "irq.h"
 #include "system.h"
 #include "savedata.h"
-#include "save_state.h"
+#include "save.h"
 
 #define START_DMA(source_, destination_, control_)                             \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_),         \
@@ -23,8 +23,8 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
+s32 Save_ReadSector(s32 index);
 
 s32 Func_0801596c(void) {
   struct SaveWorkspace *work;
@@ -52,12 +52,12 @@ s32 Func_0801596c(void) {
     work->occupied[index] = 0;
     work->recordId[index] = 16;
     work->counter[index] = 0;
-    status = SaveState_ReadSlotAndCheckChecksum(index);
+    status = Save_ReadSector(index);
     START_DMA(work->slot, &header, 0x84000004);
     WaitDma((volatile struct DmaRegisters *)0x040000d4);
     slot = &header;
 
-    if (SaveState_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
+    if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
     record = slot->recordId;
     id = record;

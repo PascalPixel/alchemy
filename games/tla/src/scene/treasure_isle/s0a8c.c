@@ -27,21 +27,21 @@ void Func_02000a8c(void) {
   Func_02000fcc();
   Call1(Func_0200104c, 0);
   Call2(Actor_StartRepeatedMotion, 8, 2);
-  Call1(FieldEvent_Wait, 0x14);
+  Call1(FieldEvent_Wait, 20);
   Call2(Func_0200103c, 0x10000, 0);
   Call2(Func_02001034, 0x10003, 1);
   Call1(Func_02001044, 0x3c);
-  Call1(FieldEvent_Wait, 0x3c);
+  Call1(FieldEvent_Wait, 60);
   Call3(Func_02000fbc, (s32)MsgIAmTheGuardian, 0, 6);
   Call2(Func_02001034, 0x10000, 0);
   Call1(Func_02001044, 0x3c);
-  Call1(FieldEvent_Wait, 0x3c);
+  Call1(FieldEvent_Wait, 60);
   t12 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
   if (t12 != 0) {
     Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
-  Call1(FieldEvent_Wait, 0x14);
+  Call1(FieldEvent_Wait, 20);
   FIELD_AT(gMainRoutineWork, u16, 596) = 0x19bb;
   FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   Call2(Func_0200101c, 0x67, 0);

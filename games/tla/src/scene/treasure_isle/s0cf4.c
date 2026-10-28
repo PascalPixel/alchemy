@@ -4,6 +4,7 @@
 #include "main_routine_work.h"
 #include "flag_call.h"
 #include "task.h"
+#include "scene_tables.h"
 
 struct TreasureIsleEventWork {
   u8 unk000[0x1ac];
@@ -45,11 +46,11 @@ s32 Func_02000cf4(void) {
     Flag_Set(0x301);
     Flag_Set(0x302);
     if (Flag_IsSet(0x300))
-      PlaceObject(8, 0x1080000, 0x1b80000);
+      PlaceObject(8, PIXELS(264), PIXELS(440));
     if (Flag_IsSet(0x301))
-      PlaceObject(9, 0x1480000, 0x1b80000);
+      PlaceObject(9, PIXELS(328), PIXELS(440));
     if (Flag_IsSet(0x302))
-      PlaceObject(10, 0x1b80000, 0x1580000);
+      PlaceObject(10, PIXELS(440), PIXELS(344));
   }
   /* FAKEMATCH(barrier): an empty asm with a memory clobber before each later
    * room test, so GCSE does not carry gMainRoutineWork's address from one test to
@@ -59,7 +60,7 @@ s32 Func_02000cf4(void) {
     Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
-      PlaceObject(10, 0x1080000, 0xb80000);
+      PlaceObject(10, PIXELS(264), PIXELS(184));
     if (Flag_IsSet(0x303))
       Func_020003fc(gData_0200117c, 0);
     if (Flag_IsSet(0x304))
@@ -78,7 +79,7 @@ s32 Func_02000cf4(void) {
     Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
-      PlaceObject(10, 0x2980000, 0xf80000);
+      PlaceObject(10, PIXELS(664), PIXELS(248));
     if (Flag_IsSet(0x30a))
       Func_020003fc(gData_020011cc, 0);
     if (Flag_IsSet(0x30b))
@@ -91,7 +92,7 @@ s32 Func_02000cf4(void) {
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Flag_IsSet(0x30d))
-      PlaceObject(8, 0x2b80000, 0x2580000);
+      PlaceObject(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
      * reaches Func_080d9e98, whose draft returns nothing; as void, these calls
      * set r0 first and 4 of 241 instructions differ in tla-en. */

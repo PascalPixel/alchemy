@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "scene_tables.h"
 
 void Func_020007dc(s32 step) {
   struct TundariaTowerPosition position;
@@ -53,7 +54,7 @@ void Func_020008a8(void) {
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   Func_02003088(8, 0, 0);
-  Func_02003088(68, 0x1580000, 0x1740000);
+  Func_02003088(68, PIXELS(344), PIXELS(372));
   Actor_GetById(68)->update = (void (*)(void))Func_02000840;
   Func_02003050();
 }

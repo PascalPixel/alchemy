@@ -3,7 +3,7 @@
 void Func_02000650(void) {
   Func_02000988();
   Func_02000a70(0);
-  Func_020009d0_(8, 0x1d80000, 0x1e00000);
+  Func_020009d0_(8, PIXELS(472), PIXELS(480));
   FieldEvent_Wait(16);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   Func_02000a18(gMainRoutineWork.currentOwner, 0x100, 0);
@@ -28,7 +28,7 @@ void Func_0200071c(void) {
 
   Func_02000988();
   Func_02000a70(0);
-  Func_020009d0_(8, 0x1d80000, 0x1e00000);
+  Func_020009d0_(8, PIXELS(472), PIXELS(480));
   FieldEvent_Wait(16);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
@@ -61,8 +61,8 @@ void Func_02000800(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_02000a00((s32)&MsgMyThatWas);
-  Func_020009d0_(9, 0x2000000, 0x1b00000);
-  Func_020009d0_(gMainRoutineWork.currentOwner, 0x2100000, 0x1b00000);
+  Func_020009d0_(9, PIXELS(512), PIXELS(432));
+  Func_020009d0_(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000a08(9, 0, 10);

@@ -190,9 +190,9 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);
-  actor->scaleX = 0x10000;
+  actor->scaleX = Q16_ONE;
   actor = Actor_Get(actorId);
-  actor->scaleY = 0x10000;
+  actor->scaleY = Q16_ONE;
   Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
@@ -223,7 +223,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
   Event_ShowMessageAndWait(ACTOR_WHARF_GUARD, 0);
-  Actor_SetSpeed(ACTOR_WHARF_GUARD, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_WHARF_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
   Actor_ArmCallback(ACTOR_WHARF_GUARD, FACING_EAST, 0);
   Event_Wait(10);
@@ -287,7 +287,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_WaitForMoveById(ACTOR_IODEM);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
@@ -363,7 +363,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(20);
   // Iodem paces while they tell where the attackers went.
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetSpeed(ACTOR_IODEM, 0x1cccc, 0xe666);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(9) / 5, PIXELS(9) / 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 360);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -389,7 +389,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IODEM, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 384);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -405,7 +405,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
   // Iodem resolves to follow; the soldiers send the party on.
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(10);
@@ -447,7 +447,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   // Iodem walks back into the leader.
-  Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -524,7 +524,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(80);
   // Iodem comes out: the door opens (cells 34, 0 drawn at 4, 18) and closes
   // behind him (cells 32, 0).
-  Actor_SetSpeed(ACTOR_IODEM, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_GetById(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
@@ -667,7 +667,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   // He holds the orb out, the leader takes it, and he steps back.
-  Actor_SetSpeed(ACTOR_BLACK_ORB, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_BLACK_ORB, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetDestinationOffset(ACTOR_BLACK_ORB, 0, 16);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(30);
@@ -731,9 +731,9 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -922,30 +922,30 @@ s32 Lalivero_Initialize(void) {
 /// The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
 /// stretches twice, then rests 80 frames.
 s32 gLalivero_CryingScript[] = {
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(80),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -1170,7 +1170,7 @@ struct Trigger gLaliveroTriggersAfterLighthouse[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
     { TRIGGER_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
     { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
     { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },

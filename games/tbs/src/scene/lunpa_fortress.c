@@ -562,10 +562,9 @@ static void LunpaFortress_OpenToadonpaDoor(s32 doorIndex) {
   s32 doorCellX = gLunpaFortressToadonpaDoorCells[doorIndex * 2];
   s32 doorCellY = gLunpaFortressToadonpaDoorCells[doorIndex * 2 + 1];
 
-  MapGrid_CopyCells(0, 0x4d, 1, 3, doorCellX, doorCellY);
-  MapGrid_CopyCells(1, 0x4d, 1, 1, doorCellX + 1, doorCellY);
-  MapGrid_CopyCells(doorCellX, doorCellY - 0x30, 1, 1, doorCellX,
-                    doorCellY - 0x2e);
+  MapGrid_CopyCells(0, 77, 1, 3, doorCellX, doorCellY);
+  MapGrid_CopyCells(1, 77, 1, 1, doorCellX + 1, doorCellY);
+  MapGrid_CopyCells(doorCellX, doorCellY - 48, 1, 1, doorCellX, doorCellY - 46);
 }
 
 /// LunpaFortressToadonpa: facing a cell door with the Cell Key opens it with a
@@ -633,10 +632,9 @@ static void LunpaFortress_OpenUpperFloorDoor(s32 doorIndex) {
   s32 doorCellX = gLunpaFortressUpperFloorDoorCells[doorIndex * 2];
   s32 doorCellY = gLunpaFortressUpperFloorDoorCells[doorIndex * 2 + 1];
 
-  MapGrid_CopyCells(0x37, 0x79, 1, 3, doorCellX, doorCellY);
-  MapGrid_CopyCells(0x38, 0x79, 1, 1, doorCellX + 1, doorCellY);
-  MapGrid_CopyCells(doorCellX, doorCellY - 0x3f, 1, 1, doorCellX,
-                    doorCellY - 0x3e);
+  MapGrid_CopyCells(55, 121, 1, 3, doorCellX, doorCellY);
+  MapGrid_CopyCells(56, 121, 1, 1, doorCellX + 1, doorCellY);
+  MapGrid_CopyCells(doorCellX, doorCellY - 63, 1, 1, doorCellX, doorCellY - 62);
 }
 
 /// LunpaFortressUpperFloor: facing a cell door with the Cell Key opens it with
@@ -666,10 +664,10 @@ static void LunpaFortress_OpenGroundFloorDoor(s32 doorIndex) {
   s32 doorCellX = gLunpaFortressGroundFloorDoorCells[doorIndex * 2];
   s32 doorCellY = gLunpaFortressGroundFloorDoorCells[doorIndex * 2 + 1];
 
-  MapGrid_CopyCells(1, 0x50, 1, 3, doorCellX, doorCellY);
-  MapGrid_CopyCells(2, 0x50, 1, 1, doorCellX + 1, doorCellY);
-  MapGrid_CopyCellAttributeRect(doorCellX, doorCellY - 0x3f, 1, 1, doorCellX,
-                                doorCellY - 0x3e);
+  MapGrid_CopyCells(1, 80, 1, 3, doorCellX, doorCellY);
+  MapGrid_CopyCells(2, 80, 1, 1, doorCellX + 1, doorCellY);
+  MapGrid_CopyCellAttributeRect(doorCellX, doorCellY - 63, 1, 1, doorCellX,
+                                doorCellY - 62);
 }
 
 /// LunpaFortressGroundFloor: facing a cell door with the Cell Key opens it with
@@ -803,12 +801,12 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   s32 leaderTileZ, leaderTileX;
 
   if (leaderFixedZ < 0) {
-    leaderFixedZ += 0xfffff;
+    leaderFixedZ += PIXELS(16) - 1;
   }
   leaderFixedX = leader->x.fixed;
   leaderTileZ = leaderFixedZ >> 20;
   if (leaderFixedX < 0) {
-    leaderFixedX += 0xfffff;
+    leaderFixedX += PIXELS(16) - 1;
   }
   leaderTileX = leaderFixedX >> 20;
   if ((u32)(leaderTileZ - 5) <= 2 && leaderTileX <= 10) {
@@ -925,17 +923,17 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   s32 leaderTileX, guardTileZ, guardTileX;
 
   if (leaderFixedX < 0) {
-    leaderFixedX += 0xfffff;
+    leaderFixedX += PIXELS(16) - 1;
   }
   leaderTileX = leaderFixedX >> 20;
   guardFixedZ = guard->z.fixed;
   if (guardFixedZ < 0) {
-    guardFixedZ += 0xfffff;
+    guardFixedZ += PIXELS(16) - 1;
   }
   guardFixedX = guard->x.fixed;
   guardTileZ = guardFixedZ >> 20;
   if (guardFixedX < 0) {
-    guardFixedX += 0xfffff;
+    guardFixedX += PIXELS(16) - 1;
   }
   guardTileX = guardFixedX >> 20;
   if (leaderTileX == 52 && guardTileX == 57 && guardTileZ > 34 &&
@@ -979,8 +977,8 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     guard->paused = 0;
     if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
         guard->paused == 0) {
-      patrolLayer->phaseX = 0x3400000 - guard->x.fixed;
-      patrolLayer->phaseY = 0x2400000 - guard->z.fixed;
+      patrolLayer->phaseX = PIXELS(832) - guard->x.fixed;
+      patrolLayer->phaseY = PIXELS(576) - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderPassingPatrollingGuard()) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
@@ -1058,8 +1056,8 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     guard->paused = 0;
     if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
         guard->paused == 0) {
-      patrolLayer->phaseX = 0x2f00000 - guard->x.fixed;
-      patrolLayer->phaseY = 0x1f00000 - guard->z.fixed;
+      patrolLayer->phaseX = PIXELS(752) - guard->x.fixed;
+      patrolLayer->phaseY = PIXELS(496) - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
@@ -2535,7 +2533,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAngleToward(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_DONPA, 0);
-  FieldCamera_MoveTo(0x1c80000, -1, 0xf00000, 1);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(240), 1);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Event_Wait(60);
   Event_PlaySound(MUS_COLOSSO);
@@ -2546,7 +2544,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 456, 280);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 440, 256);
-  FieldCamera_MoveTo(0x1c80000, -1, 0xe00000, 1);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(224), 1);
   Event_SetMessageId((donpaMessage + 1));
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DONPA, 0);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
@@ -3941,7 +3939,7 @@ struct ActorPlacement gLunpaFortressToadonpaActorPlacements[] = {
         PIXELS(136), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { 0xbb, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+    { 187, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_FACING_KEEP, 0 },
@@ -3955,7 +3953,7 @@ struct ActorPlacement gLunpaFortressToadonpaActorPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_DONPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { 0x120, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+    { SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },

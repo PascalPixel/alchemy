@@ -259,18 +259,22 @@ enum AbilityUse {
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
 
+/// A full HP or PP gauge: Unit_UpdateGauges takes hp / hpMax shifted up 14,
+/// and Unit_ClampGauge caps it here.
+#define UNIT_GAUGE_FULL 0x4000
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
   /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
   /// (a digit in Japanese); name[14] is always 0.
-  u8 name[0x0f];
+  u8 name[15];
   u8 level;        ///< 1 to 99 for a character
   s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 hpGauge;     ///< hp / hpMax in 0..0x4000; 1 while any HP remains
-  s16 ppGauge;     ///< pp / ppMax in 0..0x4000; 1 while any PP remains
+  s16 hpGauge;     ///< hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains
+  s16 ppGauge;     ///< pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains
   u16 baseAttack;  ///< before equipment, Djinn, class and stages
   u16 baseDefense; ///< before equipment, Djinn, class and stages
   u16 baseAgility; ///< before equipment, Djinn, class and stages
@@ -426,12 +430,13 @@ STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 
 STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
 
-/// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
+/// Clamps a gauge ratio to 0..UNIT_GAUGE_FULL, where UNIT_GAUGE_FULL means
+/// full.
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
 
-  if (ratio > 0x4000)
-    clamped = 0x4000;
+  if (ratio > UNIT_GAUGE_FULL)
+    clamped = UNIT_GAUGE_FULL;
   else if (ratio < 0)
     clamped = 0;
   else

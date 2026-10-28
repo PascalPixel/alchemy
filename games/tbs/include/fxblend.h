@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "static_assert.h"
+#include "palbuf.h"
 
 /// The storm's lightning work: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is
@@ -14,9 +15,9 @@
 struct FieldBlendWork {
   /// The storm's dark colours (PALETTE_TINT_WARM), as the palette fade's
   /// B, G and R channels: each flash fades back to them.
-  s16 from[0x540];
-  s16 to[0x540];    ///< the lit colours (PALETTE_TINT_PALE), as from
-  s16 delta[0x540]; ///< the 12-frame steps from to back to from
+  s16 from[COLOR_CHANNEL_COUNT];
+  s16 to[COLOR_CHANNEL_COUNT]; ///< the lit colours (PALETTE_TINT_PALE), as from
+  s16 delta[COLOR_CHANNEL_COUNT]; ///< the 12-frame steps from to back to from
   /// Frames to the next flash, which comes in three, 5 frames apart; below 0
   /// stops the lightning.
   s16 timer;

@@ -8,7 +8,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_effect.h"
 
 extern char SceneId_Ov692Room2;
@@ -39,7 +39,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 
 void Func_02001828(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u32 facing = (leader->angle + 0x2000) & 0xc000;
   struct EffectOptions options;
   s32 position[3];
@@ -58,7 +58,7 @@ void Func_02001828(void) {
   Func_02004e90(0);
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner,
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner,
                                    position[0] >> 16, position[2] >> 16);
   FieldEvent_WaitFrames(20);
   Func_02004f30(584);
@@ -68,7 +68,7 @@ void Func_02001828(void) {
   Func_02004d10(0x10000, 0x20000, 0x10000);
   Func_02004f30(107);
   FieldEvent_WaitFrames(30);
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
     dstZ = 26;
     srcX = 20;
@@ -100,7 +100,7 @@ void Func_02001828(void) {
     Func_02000694(0, 9, 16, 64);
     Object_SetModeById(11, 4);
   } else if (scene == (s32)&SceneId_Ov692Room5) {
-    if (gPartyState.entrance <= 8) {
+    if (gAdventure.entrance <= 8) {
       dstZ = 13;
       srcX = 49;
       dstX = 113;
@@ -151,7 +151,7 @@ void Func_02001828(void) {
     }
     Func_02004cd8(78, 64, dstX, dstZ, 3, 5);
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov692Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov692Room2)
     Object_GetById(15)->priorityFlags |= 1;
   Func_02004f30(288);
   Func_02004f30(181);
@@ -162,14 +162,14 @@ void Func_02001828(void) {
   Func_02004f30(584);
   *flags |= 64;
   FieldEvent_WaitFrames(20);
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffsetFar(0x100000, facing ^ 0x8000, position);
   leader->angle = facing;
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner,
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner,
                                    ((s16 *)position)[1], ((s16 *)position)[5]);
-  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
+  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   Func_02004d48();
 }

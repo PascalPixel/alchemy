@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -90,7 +90,7 @@ void Func_02000e7c(s32 id) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 12, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -119,7 +119,7 @@ void Func_0200109c(void) {
   Call3((void (*)())Func_02001c7c, 12, 0, 5);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 12, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

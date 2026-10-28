@@ -17,7 +17,7 @@ extern const u8 gData_02006a0c[];
 
 void Func_02000170(void) {
   s32 position[3];
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 angle = object->angle >> 12;
 
   angle = ((angle + 2) & 12) << 12;

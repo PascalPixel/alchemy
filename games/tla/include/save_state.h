@@ -16,11 +16,11 @@ struct SaveSummary {
   u32 coins;
   u8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
-  s8 sendFlag; ///< copied from byte 0x22f of gPartyState
+  s8 sendFlag; ///< copied from byte 0x22f of gAdventure
   s8 flagCount; ///< how many of game flags 48 to 127 are set
   s8 hasFlag34; ///< game flag 34 is set
-  u8 paletteGlow;    ///< gPartyState.paletteGlow[0]
-  u8 paletteGlowSub; ///< gPartyState.paletteGlow[1]
+  u8 paletteGlow;    ///< gAdventure.paletteGlow[0]
+  u8 paletteGlowSub; ///< gAdventure.paletteGlow[1]
   u16 frames; ///< low half of the build stamp saved with the game
   /// Filled on reading, from the record's next sector (offset 0x10, or 0x110
   /// for the extra summary).

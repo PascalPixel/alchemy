@@ -65,16 +65,16 @@ s32 Func_02002c54(void) {
         Func_02001e38();
       }
     } else if (!GameFlag_Test_(2596)) {
-      if (gPartyState.entrance == 3) {
+      if (gAdventure.entrance == 3) {
         Func_02000c08();
         GameFlag_SetBit(2596);
-        Func_02000cac(gPartyState.entrance == 3);
+        Func_02000cac(gAdventure.entrance == 3);
       }
     } else {
       Func_02000c08();
-      if (gPartyState.entrance == 5) {
+      if (gAdventure.entrance == 5) {
         Func_02001c7c();
-      } else if (gPartyState.entrance == 77) {
+      } else if (gAdventure.entrance == 77) {
         Func_02001ed0();
         GameFlag_SetBit(2595);
         GameFlag_ClearBit(2596);
@@ -86,7 +86,7 @@ s32 Func_02002c54(void) {
   Object_GetById(23)->motionFlags = 0;
   if (GameFlag_Test_(2573))
     Func_02004844(23, 0, 0);
-  if (gPartyState.entrance == 99)
+  if (gAdventure.entrance == 99)
     Func_02001ed0();
   return 0;
 }

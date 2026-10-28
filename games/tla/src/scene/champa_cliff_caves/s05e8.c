@@ -18,21 +18,21 @@ static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 actor,
 }
 
 void Func_020005e8(s32 actor) {
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 648, 200);
-  Func_02003534(gPartyState.currentOwner, 0);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 648, 200);
+  Func_02003534(gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(5);
-  Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 6);
+  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 6);
   FieldEvent_WaitFrames(7);
   Func_0200361c(10, actor);
   Func_020034d4(10, 648 << 16, 196 << 16);
-  Object_GetById(gPartyState.currentOwner)->unk5a[0] &= ~1;
-  ObjectMotion_CommitPositionAndActivate(gPartyState.currentOwner, -16, -8);
+  Object_GetById(gAdventure.currentOwner)->unk5a[0] &= ~1;
+  ObjectMotion_CommitPositionAndActivate(gAdventure.currentOwner, -16, -8);
   FieldEvent_WaitFrames(1);
   /* FAKEMATCH: the bit is set through the 8-bit field: read as a plain byte the
    * store aliases the owner's load that follows, which the scheduler then puts
    * before the zero (differ 2). */
-  ((struct ActorSolid *)Object_GetById(gPartyState.currentOwner))->solid |= 1;
-  Func_02003534(gPartyState.currentOwner, 0);
+  ((struct ActorSolid *)Object_GetById(gAdventure.currentOwner))->solid |= 1;
+  Func_02003534(gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(10);
 }
 

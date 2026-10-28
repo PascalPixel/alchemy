@@ -10,7 +10,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z) {
 }
 
 s32 Func_02000b18(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov690Room9) {
+  if (gAdventure.scene == (s32)&SceneId_Ov690Room9) {
     if (Flag_Test(0x205)) {
       CopyCells2(9, 11, 1, 1, 11, 12);
       Func_02002018(12, 32, 11, 15, 1, 1);
@@ -32,7 +32,7 @@ s32 Func_02000b18(void) {
    * the barrier the address is kept in a register across the first block
    * (differ 11). */
   __asm__("" : : : "memory");
-  if (gPartyState.scene == (s32)&SceneId_Ov690Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov690Room1) {
     if (GameFlag_Test(0xa60)) {
       Func_02002018(5, 46, 5, 47, 1, 1);
       Func_02002018(4, 25, 5, 17, 1, 1);

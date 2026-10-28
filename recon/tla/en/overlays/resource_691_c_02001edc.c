@@ -6,7 +6,7 @@
 // constants 45).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s16 gData_02003de8[];
 
@@ -20,7 +20,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001edc(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 position[3];
   struct ObjectRuntime *object;
   s32 column;

@@ -2,7 +2,7 @@
 
 void Func_02003364(void) {
   Func_02004180(0);
-  if (gPartyState.entrance == 3 || gPartyState.entrance == 4) {
+  if (gAdventure.entrance == 3 || gAdventure.entrance == 4) {
     if (Scene_FlagTest(0x889))
       Func_02004090(16, 0, 0);
     else
@@ -17,7 +17,7 @@ void Func_02003364(void) {
   Func_02003338(13);
   Func_02003338(14);
   Func_02003338(15);
-  if (gPartyState.entrance == 1 || gPartyState.entrance == 2)
+  if (gAdventure.entrance == 1 || gAdventure.entrance == 2)
     Scheduler_AddOrUpdateCallback(Func_020020a8, 0x480);
 }
 
@@ -39,7 +39,7 @@ void Func_02003404(void) {
   Func_02003338(18);
   Func_02003338(19);
   Func_02003338(20);
-  if (gPartyState.entrance == 1 || gPartyState.entrance == 2) {
+  if (gAdventure.entrance == 1 || gAdventure.entrance == 2) {
     if (GameFlag_Test(0x889) && !GameFlag_Test(0x88a))
       Func_020026a0();
   } else {

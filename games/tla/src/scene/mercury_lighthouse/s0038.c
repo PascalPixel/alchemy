@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u32 gData_020007e4;
 

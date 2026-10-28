@@ -1,7 +1,7 @@
 #include "trial_road.h"
 
 void Func_020008a4(void) {
-  if (GameFlag_Test(Func_020059b8(gPartyState.currentOwner) + 0x203))
+  if (GameFlag_Test(Func_020059b8(gAdventure.currentOwner) + 0x203))
     Func_020059c0();
 }
 

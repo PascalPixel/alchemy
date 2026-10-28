@@ -6,9 +6,9 @@ void Func_0200083c(void) {
   Func_02001080();
   Func_020011e0(0);
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

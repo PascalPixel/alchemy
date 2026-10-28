@@ -1,7 +1,7 @@
 #include "room.h"
 
 void Func_0200006c(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
   if (party->entrance == 2) {
     Func_0200046c();
@@ -33,13 +33,13 @@ void Func_0200006c(void) {
 }
 
 void Func_02000158(void) {
-  struct PartyState *party;
+  struct Adventure *party;
   s32 id;
   s32 limit;
   s32 z;
 
   if (SCENE_WORK->unk166 != 0) {
-    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
     Func_02000504_(8, 0x100, 30);
   }
   Func_020004dc((s32)MsgAreWeSetting);
@@ -51,7 +51,7 @@ void Func_02000158(void) {
     ObjectMotion_Launch(8, 4, 0);
     Func_020004f4(8, 0);
     FieldEvent_WaitFrames(5);
-    party = &gPartyState;
+    party = &gAdventure;
     z = Object_GetById(party->currentOwner)->z;
     /* FAKEMATCH: ⚓️ loads the leader's z before it builds the limit */
     asm volatile("" : "+l"(z));
@@ -67,9 +67,9 @@ void Func_02000158(void) {
     Func_020004f4(id, 0);
     FieldEvent_WaitFrames(10);
     {
-      struct PartyState *state = &gPartyState;
+      struct Adventure *state = &gAdventure;
 
-      /* FAKEMATCH: a one-pass block loads the party state before its offset is
+      /* FAKEMATCH: a one-pass block loads the adventure before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -90,10 +90,10 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_02000524(0);
   Func_02000544(158);
   Func_02000454(warp->scene, warp->x, warp->z);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  id = gPartyState.currentOwner;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  id = gAdventure.currentOwner;
   if (mode == 0)
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else

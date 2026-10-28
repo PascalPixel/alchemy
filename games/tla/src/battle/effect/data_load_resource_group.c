@@ -8,14 +8,14 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_scene.h"
 
 extern u8 gOverlayArea[];
 
 void BattleEffect_LoadResourceGroup(void) {
   const struct SceneRecord *table = gField_SceneTable;
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   Resource_LoadCode(table[scene].resourceId, gOverlayArea);
 }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 #include "field_scene.h"
 
@@ -263,10 +263,10 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_02001d04_(0);
   Func_02001d7c_(158);
   Func_02001b84(warp->scene, warp->x, warp->z);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById_(gPartyState.currentOwner, 2);
-  id = gPartyState.currentOwner;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  ObjectMotion_SetSpeedParameters_(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById_(gAdventure.currentOwner, 2);
+  id = gAdventure.currentOwner;
   if (mode == 0)
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else

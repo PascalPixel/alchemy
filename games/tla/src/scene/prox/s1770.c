@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -33,7 +33,7 @@ void Func_02001770(void) {
     }
     WaitFrames(1);
     ObjectMotion_Launch(20, 4, 20);
-    ObjectMotion_SetAngleToward(20, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(20, gAdventure.currentOwner, 0);
     FIELD_AT(work, u16, 362) = 200;
     Func_0200446c();
   }

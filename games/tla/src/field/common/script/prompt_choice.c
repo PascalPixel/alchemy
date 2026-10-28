@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "input.h"
 
 /// The requests the configured keys raise.
@@ -62,12 +62,12 @@ s32 Field_CheckConfiguredKeys(void) {
   if (work == NULL)
     return 0;
   if (work->pendingSecond != 0) {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pressed keys are read again for each test; through a
      * plain pointer one read serves all, in both branches (differ 141). */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;
 
-    /* FAKEMATCH: the native loads the party state before the input; without
+    /* FAKEMATCH: the native loads the adventure before the input; without
      * the barrier the input comes first (differ 2). */
     asm volatile("" : "+l"(party));
     if ((input->pressed & party->keys234) ||
@@ -80,11 +80,11 @@ s32 Field_CheckConfiguredKeys(void) {
     }
     return 0;
   } else {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pressed keys are read again for each test, as above. */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;
 
-    /* FAKEMATCH: the barrier of the party state's load, as above (differ 2
+    /* FAKEMATCH: the barrier of the adventure's load, as above (differ 2
      * without it). */
     asm volatile("" : "+l"(party));
     if (input->pressed & party->keys234) {

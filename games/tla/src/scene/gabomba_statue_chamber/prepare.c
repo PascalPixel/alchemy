@@ -14,14 +14,14 @@ void Func_02001c44(void);
 
 s32 Func_02001aa4(void) {
   struct GabombaStatueChamberEventWork *work;
-  struct PartyState *party;
+  struct Adventure *party;
   s16 scene;
 
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 521;
   Object_GetById(Func_02001f00())->priorityFlags |= 0x20;
-  party = &gPartyState;
-  /* FAKEMATCH: ⚓️ loads the party state's address before it builds the scene's
+  party = &gAdventure;
+  /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the scene's
    * offset; read as a plain field the offset's first half is scheduled ahead of
    * the load (differ 2). */
   asm volatile("" : "+l"(party));
@@ -51,7 +51,7 @@ void Func_02001b14(void) {
   } else {
     s32 entrance;
 
-    entrance = gPartyState.entrance;
+    entrance = gAdventure.entrance;
     if (entrance == 5) {
       Func_020010d4();
       return;
@@ -64,8 +64,8 @@ void Func_02001b14(void) {
   {
     /* FAKEMATCH(pin): a hard register is outside global CSE, so the party
      * state's address is loaded again here, as the native does; as a plain
-     * read of gPartyState.entrance, 30 of 58 instructions differ in tla-en. */
-    register struct PartyState *party asm("r3") = &gPartyState;
+     * read of gAdventure.entrance, 30 of 58 instructions differ in tla-en. */
+    register struct Adventure *party asm("r3") = &gAdventure;
 
     if (party->entrance == 3) {
       GameFlag_ClearBit(0xa27);

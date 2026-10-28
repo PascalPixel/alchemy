@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -58,16 +58,16 @@ static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
 }
 
 void Func_02000eec(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: a one-pass block loads the party state before the event work
+  /* FAKEMATCH: a one-pass block loads the adventure before the event work
    * (one reordered row). */
   do {
   } while (0);
   Object_SetModeById(party->currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Func_02001448(123);
-  Offset_(gPartyState.currentOwner, 0, -4);
+  Offset_(gAdventure.currentOwner, 0, -4);
   Func_020013d0(work->value);
 }

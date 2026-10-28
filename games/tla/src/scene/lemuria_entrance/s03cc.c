@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 
 extern u8 MsgFieldAddressCompanion;
@@ -30,8 +30,8 @@ void Func_020003cc(void) {
   struct EventWork *work;
   u8 saved;
 
-  saved = gPartyState.eventMode;
-  gPartyState.eventMode = 2;
+  saved = gAdventure.eventMode;
+  gAdventure.eventMode = 2;
   Func_0200055c();
   Func_020005cc(0);
   ObjectMotion_SetSpeedParameters_(8, 0x451e, 0x228f);
@@ -67,6 +67,6 @@ void Func_020003cc(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020005ac(1);
-  gPartyState.eventMode = saved;
+  gAdventure.eventMode = saved;
   Func_02000564();
 }

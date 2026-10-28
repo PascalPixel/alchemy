@@ -212,7 +212,7 @@ Func_0810a490:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0810a64c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0810a650:
 	.4byte Data_0810c38e
 .L_0810a654:

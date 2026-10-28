@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct JumpSprite {
@@ -50,7 +50,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
 s32 Func_080d4d08(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u8 *flags = &leader->motionFlags;
   s32 result = -1;
   u8 saved = *flags;
@@ -63,9 +63,9 @@ s32 Func_080d4d08(void) {
   s32 canJump;
   s32 i;
 
-  if (gPartyState.renderMode == 2)
+  if (gAdventure.renderMode == 2)
     return result;
-  if (gPartyState.renderMode == 3)
+  if (gAdventure.renderMode == 3)
     return result;
   if ((angle + 0x1000) & 0x2000) // not facing a quarter turn
     return result;
@@ -131,7 +131,7 @@ again:
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
     ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
-    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner,
+    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner,
                                       ((s16 *)&position[0])[1],
                                       ((s16 *)&position[2])[1]);
     Object_SetMode(leader, 6);

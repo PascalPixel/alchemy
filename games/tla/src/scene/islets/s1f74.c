@@ -23,7 +23,7 @@ void Func_02001f74(void) {
   Object_SetModeById(10, 5);
   object->motionFlags = 3;
   ObjectMotion_SetActionVariant(10, 2);
-  ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(10);
   ObjectMotion_Launch(10, 4, 0);
   ObjectMotion_SetPositionAndCommit(10, 120, 312);

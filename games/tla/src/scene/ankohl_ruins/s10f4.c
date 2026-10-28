@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 
 struct AnkohlRuinsEventWork {
@@ -18,7 +18,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_02002e0c(struct ObjectRuntime *object, s32 *position);
 
 void Func_020010f4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
@@ -42,7 +42,7 @@ void Func_020010f4(void) {
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
     return;
-  if (gPartyState.renderMode == 5)
+  if (gAdventure.renderMode == 5)
     return;
   position[0] = leader->x;
   position[1] = leader->y;

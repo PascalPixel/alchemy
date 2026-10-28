@@ -2,13 +2,13 @@
 
 void Func_0200267c(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   struct ObjectRuntime *object;
   s16 *exit;
   s32 index;
   s32 cell;
 
-  /* FAKEMATCH: the listing loads the party state address before it builds the
+  /* FAKEMATCH: the listing loads the adventure's address before it builds the
    * owner offset */
   asm volatile("" : "+l"(party));
   object = Object_GetById(party->currentOwner);

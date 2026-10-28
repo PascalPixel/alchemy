@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -21,7 +21,7 @@ extern const u8 gData_02000840[];
 extern const u8 gData_02000960[];
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov65ERoom2)
+  if (gAdventure.scene == (s32)&SceneId_Ov65ERoom2)
     return (const struct ScenePlacement *)gData_02000960;
   return (const struct ScenePlacement *)gData_02000840;
 }

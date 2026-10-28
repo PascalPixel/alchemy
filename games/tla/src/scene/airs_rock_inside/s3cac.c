@@ -1,7 +1,7 @@
 #include "types.h"
 #include "call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
@@ -20,7 +20,7 @@ void Func_02003cac(void) {
   struct ObjectRuntime *leader;
   s32 cell, row = 54;
 
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   cell = Func_02000690(2, leader->x >> 20, leader->z >> 20);
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into

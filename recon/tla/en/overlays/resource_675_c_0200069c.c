@@ -6,10 +6,10 @@
 // the palette by the entrance (Func_02000580) and wait for the transition.
 // Returns 0. Left: the native's block order after the three rooms (its
 // tests of the scene again before the dimming) and the register holding
-// gPartyState.
+// gAdventure.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 extern char SceneId_Ov675Room1, SceneId_Ov675Room2, SceneId_Ov675Room3;
@@ -36,14 +36,14 @@ s32 Func_0200069c(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
   Func_0200131c(0);
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov675Room1) {
     Func_020008c8();
     Func_02000038(gData_0200134c, gData_0200135c, gData_02001388,
                   gData_020013b4);
   } else if (scene == (s32)&SceneId_Ov675Room3) {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
-    if (gPartyState.entrance == 2) {
+    if (gAdventure.entrance == 2) {
       Func_0200129c(8, 0, 0);
       GameFlag_SetBit(0x9cf);
     }
@@ -57,15 +57,15 @@ s32 Func_0200069c(void) {
   } else {
     goto other;
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov675Room2) {
-    dim = (gPartyState.entrance - 3) / 2;
+  if (gAdventure.scene == (s32)&SceneId_Ov675Room2) {
+    dim = (gAdventure.entrance - 3) / 2;
     goto fade;
   }
 other:
-  if (gPartyState.scene != (s32)&SceneId_Ov675Room3)
+  if (gAdventure.scene != (s32)&SceneId_Ov675Room3)
     return 0;
-  if (gPartyState.scene == (s32)&SceneId_Ov675Room2)
-    dim = (gPartyState.entrance - 3) / 2;
+  if (gAdventure.scene == (s32)&SceneId_Ov675Room2)
+    dim = (gAdventure.entrance - 3) / 2;
   else
     dim = 3;
 fade:

@@ -14,7 +14,7 @@
 // (4 min twice, before the barrier) found nothing better.
 #include "types.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u16 gData_020023c4[];
 
@@ -36,11 +36,11 @@ void Party_RestoreSnapshot(void) {
       Unit_UpdateClass(owner);
       Unit_Calculate(owner);
     }
-    gPartyState.packedEvents[0] = *src++;
-    gPartyState.packedEvents[1] = *src++;
-    owners = (u16 *)&gPartyState.activeOwners[0];
+    gAdventure.packedEvents[0] = *src++;
+    gAdventure.packedEvents[1] = *src++;
+    owners = (u16 *)&gAdventure.activeOwners[0];
     *owners = src[0];
-    owners = (u16 *)&gPartyState.activeOwners[2];
+    owners = (u16 *)&gAdventure.activeOwners[2];
     {
       s32 zero = 0;
       __asm__("" : "+l"(src) : "l"(zero), "l"(owners));

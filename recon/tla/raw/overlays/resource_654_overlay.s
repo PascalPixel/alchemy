@@ -84,7 +84,7 @@ Func_02000568:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008610:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008614:
 	.4byte 0xffff8000
 	.section .text.x0200887c,"ax",%progbits
@@ -170,7 +170,7 @@ Func_0200087c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008924:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008928:
 	.4byte 0xffff8000
 	.section .text.x02008994,"ax",%progbits
@@ -540,7 +540,7 @@ Func_02000994:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008cd8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008cdc:
 	.4byte 0xffbc0000
 .L_02008ce0:
@@ -661,7 +661,7 @@ Func_02001340:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009420:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009424:
 	.4byte 0xffff0000
 .L_02009428:
@@ -875,7 +875,7 @@ Func_02001474:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200963c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009640:
 	.4byte Func_02001464
 .L_02009644:
@@ -1347,7 +1347,7 @@ Func_02001d24:
 	movs r2, #20
 	b .L_0200a17c
 .L_0200a160:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200a164:
 	.4byte MsgFieldPraiseRopeWork
 .L_0200a168:

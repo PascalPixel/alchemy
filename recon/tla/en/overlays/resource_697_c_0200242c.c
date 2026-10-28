@@ -50,7 +50,7 @@ static __inline__ void Deal(struct TrialRoadStage *state) {
   u8 *p;
   u32 sum = 0;
 
-  unit = Unit_Get(gPartyState.currentOwner);
+  unit = Unit_Get(gAdventure.currentOwner);
   Iwram_ClearWords(state, 32);
   for (p = unit; p <= unit + 13; p++)
     sum += *p;
@@ -72,8 +72,8 @@ static __inline__ void SetLayer(u8 *map, s32 offset, s32 x, u8 *cells,
 s32 Func_0200242c(void) {
   struct TrialRoadStage *state = (struct TrialRoadStage *)gTrialRoadState;
   u8 *map;
-  s32 scene = gPartyState.scene;
-  s32 entrance = gPartyState.entrance;
+  s32 scene = gAdventure.scene;
+  s32 entrance = gAdventure.entrance;
   struct ObjectRuntime *leader;
   s32 piece;
   s32 px;
@@ -189,7 +189,7 @@ s32 Func_0200242c(void) {
   Func_020057e8();
   if (entrance == 55)
     return 0;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (!GameFlag_Test(265))
     leader->terrainHeight = leader->y =
         Map_GetTerrainHeight(0, leader->x, leader->z);
@@ -202,7 +202,7 @@ s32 Func_0200242c(void) {
     }
     if (state->stage < state->best)
       Func_020002a4(state->mirrored);
-    Func_020055c4(gPartyState.currentOwner, 8);
+    Func_020055c4(gAdventure.currentOwner, 8);
     Func_02005688((s16)(state->mirrored ^ 1));
     Scheduler_AddOrUpdateCallback(Func_0200223c, 0x480);
   } else {

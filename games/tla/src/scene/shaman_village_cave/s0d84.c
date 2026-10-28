@@ -15,7 +15,7 @@ next:
   id++;
   if (id < 64)
     goto next;
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
   {
     s32 mode = 2;
 
@@ -23,9 +23,9 @@ next:
      * loaded after it as the native has; plain, or with the mode pinned to r1,
      * the leader is loaded first (one reordered row). */
     __asm__("" : "+l"(mode) : : "r0");
-    Object_SetModeById(gPartyState.currentOwner, mode);
+    Object_SetModeById(gAdventure.currentOwner, mode);
   }
-  ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
+  ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -8);
   FieldEvent_WaitFrames(5);
   Func_02001210(123);
   Func_02001198(work->value154);

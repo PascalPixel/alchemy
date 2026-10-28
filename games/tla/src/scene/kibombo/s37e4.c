@@ -27,7 +27,7 @@ void Func_020037e4(void) {
 void Func_0200384c(void) {
   Func_02005c14(136, 1);
   Scheduler_AddOrUpdateCallback(Func_020037e4, 0x480);
-  Func_02005c1c(gPartyState.currentOwner, -1);
+  Func_02005c1c(gAdventure.currentOwner, -1);
   Func_02005c34();
   Field_DispatchTypeHandler(1);
   Func_02005c24();
@@ -36,7 +36,7 @@ void Func_0200384c(void) {
 }
 
 void Func_02003898(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Kibombo4)
     Scheduler_RemoveCallbackFar(Func_02002c34);
@@ -77,12 +77,12 @@ void Func_02003948(void) {
    */
   do {
   } while (0);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   Func_02005a9c();
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  Kibombo_ObjSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  Kibombo_ObjSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
   x = leader->x;
   px = x >> 16;
   Func_02005a54(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
@@ -90,7 +90,7 @@ void Func_02003948(void) {
   leader->facing = 0xc000;
   if (GameFlag_Test(0x202))
     Func_02003898();
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02005cd0);
   WaitFrames(12);
   Func_02005c9c(123);

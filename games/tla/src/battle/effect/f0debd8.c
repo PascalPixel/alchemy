@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "animspr.h"
 
@@ -68,5 +68,5 @@ void Func_080debd8(void) {
   }
 
   sprite->blend = 1;
-  gPartyState.cloaked = 0;
+  gAdventure.cloaked = 0;
 }

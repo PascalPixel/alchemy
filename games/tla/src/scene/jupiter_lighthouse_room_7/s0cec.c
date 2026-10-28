@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -9,7 +9,7 @@ void Func_02002bec(void);
 void Func_02002c24(void);
 
 void Func_02000cec(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *first = Object_GetById(18);
   struct ObjectRuntime *second = Object_GetById(19);
   s32 position[3];

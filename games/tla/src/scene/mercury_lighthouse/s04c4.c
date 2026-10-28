@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u32 gData_020007e4;
 
@@ -17,7 +17,7 @@ void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
 
 s32 Func_020004c4(void) {
-  if (gPartyState.entrance == 12) {
+  if (gAdventure.entrance == 12) {
     Func_02000568();
     Func_020005f8(0);
     Event_StartScreenTransition();

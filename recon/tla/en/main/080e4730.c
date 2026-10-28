@@ -18,7 +18,7 @@
 
 struct PendingEvent;
 
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 extern u8 Data_02000452;
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
@@ -76,7 +76,7 @@ void Func_080e4730(void) {
   s32 delay;
 
   Func_080dc954();
-  gPartyState[620] = 0;
+  gAdventure[620] = 0;
   ObjectGroup_SetActionForOthers(owner, 1, 0);
   Scheduler_RemoveCallback(Func_080e42d4);
   Resource_DecodeType01(Resource_GetTableEntry(0x1e1), work);
@@ -97,7 +97,7 @@ void Func_080e4730(void) {
   *motionFlags = 0;
   Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                       owner->z);
-  party = gPartyState;
+  party = gAdventure;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
   animation = owner->animation;
   animation[5] &= 63;

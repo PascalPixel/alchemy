@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -74,7 +74,7 @@ void Func_02003720(void) {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
   }
   if (GameFlag_Test(0x109) == 0) {
-    switch (gPartyState.entrance) {
+    switch (gAdventure.entrance) {
     case 1:
     case 2:
     case 3:
@@ -88,7 +88,7 @@ void Func_02003720(void) {
   }
   if (GameFlag_Test(0x200) != 0) {
     Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
-    Camera_FollowActor(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gAdventure.currentOwner, 0);
     Func_02003ffc();
     WaitFrames(1);
   }

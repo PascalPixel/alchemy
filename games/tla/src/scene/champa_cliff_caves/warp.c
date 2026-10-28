@@ -7,10 +7,10 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_020035b4(0);
   Func_0200362c(158);
   Func_02003414(warp->scene, warp->x, warp->z);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  id = gPartyState.currentOwner;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  id = gAdventure.currentOwner;
   if (mode == 0)
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else

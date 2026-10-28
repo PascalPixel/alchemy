@@ -43,7 +43,7 @@ s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
 s32 Func_0200593c();
 extern u8 MsgAlhafra19[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 extern u8 MsgShield[];
 
 static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
@@ -162,10 +162,10 @@ void Func_02001388(void) {
   t70 = Value1(Object_GetById, 0x1c);
   FIELD_AT(t70, s32, 40) = 0x40000;
   Call1(FieldEvent_WaitFrames, 4);
-  if (FIELD_AT(gPartyState, s16, 598) == -1) {
+  if (FIELD_AT(gAdventure, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }
-  FIELD_AT(gPartyState, u8, 587) = 2;
+  FIELD_AT(gAdventure, u8, 587) = 2;
   Call2(Party_SetFields1eeAnd1f0, (s32)MsgShield, 0xb);
   Call2(Party_SetFields1f2And1f4, (s32)MsgShield, 0xb);
   Call2(Func_0200593c, 0xd, 6);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -18,7 +18,7 @@ s32 Func_020000e8(struct ObjectRuntime *self) {
   s8 *effect;
   struct ObjectRuntime *other;
 
-  Func_02001ba4(self, Func_02001d54(Object_GetById(gPartyState.currentOwner)));
+  Func_02001ba4(self, Func_02001d54(Object_GetById(gAdventure.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -31,12 +31,12 @@ s32 Func_020000e8(struct ObjectRuntime *self) {
   }
   if (self->action == 1)
     goto near;
-  other = Object_GetById(gPartyState.currentOwner);
+  other = Object_GetById(gAdventure.currentOwner);
   if (Func_02000038(&self->x, &other->x) <= 11)
     goto far;
   if (Func_02000070(self, self->linkedObject, 18) != 0)
     goto near;
-  if (Func_02000070(self, Object_GetById(gPartyState.currentOwner), 26) != 0)
+  if (Func_02000070(self, Object_GetById(gAdventure.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;

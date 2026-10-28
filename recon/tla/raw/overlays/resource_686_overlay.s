@@ -246,7 +246,7 @@ Func_0200015c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200832c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008330:
 	.4byte gData_02003040
 .L_02008334:
@@ -443,7 +443,7 @@ Func_02000418:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020085ac:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020085b0:
 	.4byte Effect_AdvanceMotion
 .L_020085b4:
@@ -589,7 +589,7 @@ Func_02001264:
 .L_020092b2:
 	pop {r5, r6, pc}
 .L_020092b4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020092b8:
 	.4byte 0x000000bd
 .L_020092bc:
@@ -878,7 +878,7 @@ Func_02001420:
 .L_020094e0:
 	.4byte Func_020012c4
 .L_020094e4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020094e8:
 	movs r3, #160
 	lsls r3, r3, #14
@@ -1413,7 +1413,7 @@ Func_0200160c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009980:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009984:
 	.4byte Data_02004030
 .L_02009988:
@@ -1860,7 +1860,7 @@ Func_020019a0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009d14:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009d18:
 	.4byte Data_02004030
 .L_02009d1c:
@@ -2246,7 +2246,7 @@ Func_02002438:
 	b .L_ja_0200ab02
 	.2byte 0x0000
 .L_ja_0200a544:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_0200a548:
 	.4byte 0x000000bd
 .L_ja_0200a54c:
@@ -2657,7 +2657,7 @@ Func_02002438:
 .L_ja_0200a8b8:
 	.4byte 0x000000c0
 .L_ja_0200a8bc:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_0200a8c0:
 	ldr r3, .L_ja_0200ab10
 	cmp r2, r3
@@ -3324,7 +3324,7 @@ Func_02002438:
 	b .L_it_0200ad34
 	.2byte 0x0000
 .L_it_0200a74c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_it_0200a750:
 	.4byte 0x000000bd
 .L_it_0200a754:
@@ -3717,7 +3717,7 @@ Func_02002438:
 .L_it_0200aaa0:
 	.4byte 0x000000c0
 .L_it_0200aaa4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_it_0200aaa8:
 	subs r6, #1
 .L_it_0200aaaa:
@@ -4037,7 +4037,7 @@ Func_02002438:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_it_0200ad40:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_it_0200ad44:
 	.4byte 0x000000c1
 .L_it_0200ad48:
@@ -4421,7 +4421,7 @@ Func_02002438:
 	b .L_0200ad2a
 	.2byte 0x0000
 .L_0200a74c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200a750:
 	.4byte 0x000000bd
 .L_0200a754:
@@ -4847,7 +4847,7 @@ Func_02002438:
 .L_0200aae0:
 	.4byte 0x000000c0
 .L_0200aae4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200aae8:
 	ldr r3, .L_0200ad38
 	cmp r2, r3

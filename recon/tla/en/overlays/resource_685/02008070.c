@@ -34,7 +34,7 @@ void Func_02001774(void);
 void Func_02001868(void);
 
 s32 Func_020004d4(void) {
-  struct PartyState *party;
+  struct Adventure *party;
   s32 scene;
   s32 *type = &((struct EventTransition *)Ram_HeapSlots->eventWork)->type;
 
@@ -43,7 +43,7 @@ s32 Func_020004d4(void) {
 #else
   *type = 513;
 #endif
-  party = &gPartyState;
+  party = &gAdventure;
   if (party->scene != (s32)&SceneId_Ov685Room1)
     Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
   Func_020035ac(0);

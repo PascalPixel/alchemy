@@ -319,7 +319,7 @@ Func_080ccec8:
 .L_080cd160:
 	.4byte 0x00000dc4
 .L_080cd164:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080cd168:
 	.4byte 0x00000005
 .L_080cd16c:
@@ -710,7 +710,7 @@ Func_080ccec8:
 	bl EventRuntime_RunMessage
 	b .L_080cd4d4
 .L_080cd49c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080cd4a0:
 	.4byte 0x00000e1a
 .L_080cd4a4:
@@ -822,7 +822,7 @@ Func_080ccec8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080cd578:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080cd57c:
 	.4byte gObject_LinkedMotionScript
 .L_080cd580:

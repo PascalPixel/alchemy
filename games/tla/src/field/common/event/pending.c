@@ -1,6 +1,6 @@
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "item.h"
 
 void EventRuntime_RunMessage(s32 actor, s32 message) {
@@ -22,15 +22,15 @@ void EventRuntime_ResolvePendingActions(s32 skip) {
     EventRuntime_ExecutePackedAction(0x2090);
   if (state->pendingSecond != 0 && !(skip & 2))
     EventRuntime_ExecutePackedAction(0x209b);
-  if (gPartyState.pendingThird != 0 && !(skip & 4))
+  if (gAdventure.pendingThird != 0 && !(skip & 4))
     EventRuntime_ExecutePackedAction(0x208b);
 }
 
 s32 EventRuntime_GetControlledOwner(void) {
-  struct PartyState *state = &gPartyState;
+  struct Adventure *state = &gAdventure;
   s32 actor;
 
-  /* FAKEMATCH: load the party state's address before the default owner. */
+  /* FAKEMATCH: load the adventure's address before the default owner. */
   asm("");
   actor = 8;
   if (state->ownerOverride == 0)

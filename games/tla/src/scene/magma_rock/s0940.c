@@ -1,6 +1,6 @@
 #include "magma_rock.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "object_runtime.h"
 #include "call.h"
@@ -19,16 +19,16 @@ void Func_02000940(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  if (gPartyState.scene == (s32)&SceneId_Ov691Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov691Room1) {
     Func_02003aa4(98, 18, 4, 3, 78, 21);
     Func_02003aa4(98, 24, 4, 3, 78, 24);
     Func_02003c14(gData_02003d98);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {
-    if (gPartyState.entrance <= 3) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov691Room2) {
+    if (gAdventure.entrance <= 3) {
       Func_02003c14(gData_02003dac);
-    } else if (gPartyState.entrance <= 7) {
+    } else if (gAdventure.entrance <= 7) {
       Func_02003c14(gData_02003dd2);
-    } else if (gPartyState.entrance <= 11) {
+    } else if (gAdventure.entrance <= 11) {
       Call6((void (*)())Func_02003aa4, 79, 46, 2, 1, 79, 36);
       Func_02003c14(gData_02003de4);
     } else {

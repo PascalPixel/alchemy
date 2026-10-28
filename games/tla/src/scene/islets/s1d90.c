@@ -36,13 +36,13 @@ void Func_02001db0(void) {
   ((void (*)())Func_02003e64)();
   Call1((void (*)())Func_02003fa4, 0);
   Call2((void (*)())Object_SetModeById, 19, 1);
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, gPartyState.currentOwner,
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, gAdventure.currentOwner,
         216, 184);
-  Call2((void (*)())Func_02003fac, gPartyState.currentOwner, 9);
+  Call2((void (*)())Func_02003fac, gAdventure.currentOwner, 9);
   Call1((void (*)())Func_02003f24, (s32)MsgThankYouSo);
   Call3((void (*)())ObjectMotion_Launch, 9, 2, 10);
   Call3((void (*)())ObjectMotion_Launch, 9, 4, 10);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x8000, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Object_GetById(9)->actionFlags &= ~1;
@@ -53,9 +53,9 @@ void Func_02001db0(void) {
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 232, 186);
   Call1((void (*)())FieldEvent_WaitFrames, 1);
   Object_GetById(9)->actionFlags |= 1;
-  Call2((void (*)())Func_02003f3c, gPartyState.currentOwner, 0x4000);
-  Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 28);
-  leader = Object_GetById(gPartyState.currentOwner);
+  Call2((void (*)())Func_02003f3c, gAdventure.currentOwner, 0x4000);
+  Call2((void (*)())Object_SetModeById, gAdventure.currentOwner, 28);
+  leader = Object_GetById(gAdventure.currentOwner);
   item = Object_GetById(20);
   item->motionFlags = 0;
   Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
@@ -66,7 +66,7 @@ void Func_02001db0(void) {
   Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);
   ((void (*)())Func_02003fbc)();
   Call3((void (*)())Func_02003edc, 20, 0, 0);
-  Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 1);
+  Call2((void (*)())Object_SetModeById, gAdventure.currentOwner, 1);
   ((void (*)())Func_02003fb4)();
   Call2((void (*)())Func_02003f3c, 9, 0xb000);
   Call1((void (*)())GameFlag_SetBit, 0xaa2);

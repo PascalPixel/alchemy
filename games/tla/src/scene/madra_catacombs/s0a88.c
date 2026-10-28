@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -85,11 +85,11 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 
 void Func_02000a88(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   struct ObjectRuntime *object;
   s32 cell;
 
-  /* FAKEMATCH: a one-pass block loads the party state before its offset is
+  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
    * built (one reordered row). */
   do {
   } while (0);

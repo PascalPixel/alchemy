@@ -4,7 +4,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
 
@@ -37,46 +37,46 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 s32 Func_02004e64(void);
 
 s32 Func_020019cc(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   volatile u16 level;
   s32 message = (s32)MsgGaiaRockInside09;
 
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
   Call2((void (*)())UiText_ShowPositionedMessageAndWait, message, 1);
-  Call3((void (*)())Func_02004f2c, gPartyState.currentOwner, 0x100, 0);
+  Call3((void (*)())Func_02004f2c, gAdventure.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
     Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
-          gPartyState.currentOwner, 0x1b8, 0x148);
-    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+          gAdventure.currentOwner, 0x1b8, 0x148);
+    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
   }
-  Call2((void (*)())Func_02004ec4, 11, gPartyState.currentOwner);
+  Call2((void (*)())Func_02004ec4, 11, gAdventure.currentOwner);
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
-        gPartyState.currentOwner, 0x1d6, 0x162);
+        gAdventure.currentOwner, 0x1d6, 0x162);
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 11, 0x1be, 0x162);
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 11);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000,
         0);
   Call3((void (*)())ObjectMotion_ArmCallback, 11, 0, 0);
   Func_02004f0c(message + 1);
   Call2((void (*)())Func_02004f14, 11, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000,
         0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gPartyState.currentOwner,
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, gAdventure.currentOwner,
         3);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000,
         0);
   Call3((void (*)())ObjectMotion_ArmCallback, 11, 0xc000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
-        gPartyState.currentOwner, 0x1d2, 0x156);
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+        gAdventure.currentOwner, 0x1d2, 0x156);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
   Call2((void (*)())UiText_ShowPositionedMessageAndWait, message + 2, 1);
   Call3((void (*)())Func_02004e24, 0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
@@ -110,7 +110,7 @@ s32 Func_020019cc(void) {
   Call1((void (*)())GameFlag_SetBit, 0x9ba);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 11, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     Call3((void (*)())ObjectMotion_ResetAndSetPosition, 11,
           ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);

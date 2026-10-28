@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "io_reg.h"
 #include "iowrite.h"
@@ -52,9 +52,9 @@ s32 Func_02000854(void) {
     Func_02001498();
     Func_020015a0(17, 0);
   }
-  if (gPartyState.entrance == 3 || gPartyState.entrance == 6 ||
-      gPartyState.entrance == 7)
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+  if (gAdventure.entrance == 3 || gAdventure.entrance == 6 ||
+      gAdventure.entrance == 7)
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
   if (GameFlag_Test(0xa00)) {
     Func_02000b28(8);
     Func_02000b28(9);

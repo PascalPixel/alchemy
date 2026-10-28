@@ -4,7 +4,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 
 void Func_02000e68(s32 unused, s32 id) {
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room2) {
     s32 row = 12;
 
     Func_02001848(98, 3, 3, 3, 97, row);
@@ -13,7 +13,7 @@ void Func_02000e68(s32 unused, s32 id) {
   /* FAKEMATCH: the native reads the scene again here; without the barrier the
    * read is moved up both paths */
   __asm__("" : : : "memory");
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room3) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room3) {
     if (id == 12) {
       YampiDesertCave_Call1848(102, 15, 1, 1, 103, 15);
       YampiDesertCave_Call1848(43, 14, 1, 1, 39, 16);
@@ -36,7 +36,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02000f10(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room2) {
     s32 row = object->z >> 20;
 
     if (row == 13) {
@@ -53,7 +53,7 @@ void Func_02000f10(s32 unused, s32 id) {
   /* FAKEMATCH: the native reads the scene again here; without the barrier the
    * read is moved up both paths */
   __asm__("" : : : "memory");
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room3) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room3) {
     if (id == 12) {
       s32 column;
 

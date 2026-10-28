@@ -13,7 +13,7 @@ void Func_02000ecc(s32 unused, s32 id) {
 
     Func_02003d7c();
     Func_02003eac(0);
-    ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0x4000, 0);
+    ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
     Func_02003ef4(0x22d);
     Object_SetModeById(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);

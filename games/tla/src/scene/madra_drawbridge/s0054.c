@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 void Func_020002b8(void);
@@ -21,7 +21,7 @@ void Func_02000054(void) {
   Func_02000340(0);
   Func_02000300((s32)MsgMadraGoingToOsenia);
   UiText_OpenMessageAtObject(8, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(8, 3);
     Func_02000310(8, 0, 2);
   } else {

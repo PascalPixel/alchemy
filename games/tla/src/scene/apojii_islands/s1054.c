@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020003e8(void);
@@ -18,14 +18,14 @@ void Func_02001054(void) {
   Func_02001e04(0, 0x200, 8, 9);
   Func_02001dec(170);
   Func_02000f98();
-  if (gPartyState.entrance == 3)
+  if (gAdventure.entrance == 3)
     Func_02001500();
   do {
   } while (0);
-  if (gPartyState.entrance == 4)
+  if (gAdventure.entrance == 4)
     Func_02001500();
   do {
   } while (0);
-  if (gPartyState.entrance == 5)
+  if (gAdventure.entrance == 5)
     Func_02001500();
 }

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 s32 Object_GetById();
@@ -37,7 +37,7 @@ void Func_02000620(void) {
     Call4(Func_02000384, 2, 33, 54, value);
   }
   leader =
-      (struct ObjectRuntime *)Value1(Object_GetById, gPartyState.currentOwner);
+      (struct ObjectRuntime *)Value1(Object_GetById, gAdventure.currentOwner);
   if ((leader->y >> 19) == 26)
     Call6(Func_02003b80, 70, 67, 1, 1, 33, 54);
   Func_02003bd0();

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWorkRoute {
   u8 unk000[0x1ac];
@@ -72,9 +72,9 @@ static __inline__ void Show(s32 kind, s32 frames) {
 }
 
 void Func_02000060(s32 arg) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   /* FAKEMATCH: pinned to r6 and assigned after the barrier, the countdown's
-   * copy follows gPartyState's address, as native; as a plain parameter, 2
+   * copy follows gAdventure's address, as native; as a plain parameter, 2
    * instructions differ in tla-en. */
   register s32 countdown asm("r6");
 
@@ -92,8 +92,8 @@ void Func_02000060(s32 arg) {
 }
 
 void Func_020000b0(s32 arg) {
-  struct PartyState *party = &gPartyState;
-  /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gPartyState's
+  struct Adventure *party = &gAdventure;
+  /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gAdventure's
    * address before the countdown's copy (differ 2 without them). */
   register s32 countdown asm("r6");
 

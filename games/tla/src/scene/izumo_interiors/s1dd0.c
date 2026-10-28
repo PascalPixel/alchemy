@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 s32 Event_AskYesNoWithActorAnimation();
@@ -39,12 +39,12 @@ void Func_02001dd0(void) {
   Func_020021c4();
   Call1(Func_020022bc, 0);
   Call1(Func_02002244, (s32)&MsgAhCouldIt);
-  Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 144, 0x218);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+  Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 144, 0x218);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Call1(FieldEvent_WaitFrames, 15);
   Value3((s32 (*)())Func_0200226c, 15, 0x100, 60);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 15, 0);
-  t9 = Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
+  t9 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
   if (t9 != 0)
     goto L_02009e3a;
   Call1(Func_02002244, ((s32)&MsgAhCouldIt + 1));
@@ -80,7 +80,7 @@ L_02009e48:
   Call3(ObjectMotion_SetAngleToward, 15, 24, 0);
   Call1(FieldEvent_WaitFrames, 30);
   Call2(Func_02002254, 15, 0);
-  Call3(ObjectMotion_SetAngleToward, 15, gPartyState.currentOwner, 0);
+  Call3(ObjectMotion_SetAngleToward, 15, gAdventure.currentOwner, 0);
   Call1(FieldEvent_WaitFrames, 60);
   Call2(Func_02002254, 15, 0);
   Call1(FieldEvent_WaitFrames, 30);
@@ -92,8 +92,8 @@ L_02009e48:
   Call1(FieldEvent_WaitFrames, 60);
   Call3(ObjectMotion_Launch, 24, 4, 20);
   Call1(FieldEvent_WaitFrames, 60);
-  Call3(ObjectMotion_SetAngleToward, 15, gPartyState.currentOwner, 0);
-  Call3(ObjectMotion_SetAngleToward, 24, gPartyState.currentOwner, 0);
+  Call3(ObjectMotion_SetAngleToward, 15, gAdventure.currentOwner, 0);
+  Call3(ObjectMotion_SetAngleToward, 24, gAdventure.currentOwner, 0);
   Call1(FieldEvent_WaitFrames, 60);
   Call2(Func_02002254, 15, 0);
   Call3(ObjectMotion_Launch, 24, 2, 20);
@@ -101,7 +101,7 @@ L_02009e48:
   Func_020021cc();
   Func_020021c4();
   Call1(Func_020022bc, 0);
-  Call3(ObjectMotion_SetAngleToward, gPartyState.currentOwner, 15, 0);
+  Call3(ObjectMotion_SetAngleToward, gAdventure.currentOwner, 15, 0);
   Call1(FieldEvent_WaitFrames, 60);
   Call2(ObjectMotion_SetVariantCallback, 15, 2);
   Call1(FieldEvent_WaitFrames, 30);

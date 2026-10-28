@@ -4,22 +4,22 @@ void Func_02000af4(void) {
   struct LemurianShipObject *leader;
 
   if (!GameFlag_Test(0x983)) {
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     Func_02002c68();
     Func_02002da8(0);
-    LemurianShip_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-    LemurianShip_ObjWalk(gPartyState.currentOwner, 812, 72);
+    LemurianShip_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+    LemurianShip_ObjWalk(gAdventure.currentOwner, 812, 72);
     Func_02002de0(243);
-    LemurianShip_ObjEmoteWait(gPartyState.currentOwner, 0x102);
+    LemurianShip_ObjEmoteWait(gAdventure.currentOwner, 0x102);
     Func_02002c48(0, 0x20000, 0x10000);
     FieldEvent_WaitFrames(20);
     Func_02002c48(0, 0, 0);
     LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
     leader->field22 = 2;
     FieldEvent_WaitFrames(20);
-    ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
-    LemurianShip_ObjSpeed(gPartyState.currentOwner, 0x33333, 0x19999);
-    LemurianShip_ObjCommit(gPartyState.currentOwner, 812, 88);
+    ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+    LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x33333, 0x19999);
+    LemurianShip_ObjCommit(gAdventure.currentOwner, 812, 88);
     FieldEvent_WaitFrames(20);
     Func_02002de0(232);
     LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
@@ -31,11 +31,11 @@ void Func_02000af4(void) {
 void Func_02000bf0(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
   ObjectMotion_SetVariantCallback(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2f8);
 }
@@ -43,11 +43,11 @@ void Func_02000bf0(s32 id) {
 void Func_02000c50(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
   ObjectMotion_SetVariantCallback(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2f9);
 }
@@ -55,11 +55,11 @@ void Func_02000c50(s32 id) {
 void Func_02000cb0(s32 id) {
   Func_02002c68();
   Func_02002da8(0);
-  ObjectMotion_SetAngleToward(id, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
   ObjectMotion_SetVariantCallback(id, 2);
   LemurianShip_ObjEmoteWait(id, 0x102);
   FieldEvent_WaitFrames(20);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Func_02002d78(11, 0);
   GameFlag_SetBit(id + 0x2ff);
 }
@@ -102,7 +102,7 @@ void Func_02000d44(void) {
    * state address before it builds the field offset (2 differ without it). */
   do {
   } while (0);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
   Func_02002d78(11, 1);
   GameFlag_SetBit(0x30f);

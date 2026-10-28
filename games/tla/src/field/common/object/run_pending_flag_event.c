@@ -11,7 +11,7 @@
 #include "types.h"
 #include "system.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -38,7 +38,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         struct ObjectRuntime *object;
 
         GameFlag_ClearBit(flag);
-        id = gPartyState.currentOwner;
+        id = gAdventure.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
@@ -60,7 +60,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080d5fd4(void) {
-  struct ObjectRuntime *object = ObjectTable_Get(gPartyState.currentOwner);
+  struct ObjectRuntime *object = ObjectTable_Get(gAdventure.currentOwner);
   u8 *metadata =
       ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 

@@ -2,7 +2,7 @@
 #define TLA_FIELD_SCENE_H
 
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct SceneRecord {
   s16 resourceId;

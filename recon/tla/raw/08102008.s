@@ -1042,7 +1042,7 @@ Func_08102008:
 .L_08102858:
 	.4byte .L_08102628
 .L_0810285c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_08102860:
 	movs r3, #132
 	lsls r3, r3, #6
@@ -1468,7 +1468,7 @@ Func_08102008:
 	b .L_08102fd4
 	.2byte 0x0000
 .L_08102bc8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_08102bcc:
 	.4byte gInput
 .L_08102bd0:

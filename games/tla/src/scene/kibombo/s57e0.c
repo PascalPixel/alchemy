@@ -12,15 +12,15 @@ void Func_020057e0(void) {
   gData_02007948[0] = PALETTE_WORD(169);
   gData_02007948[1] = PALETTE_WORD(167);
   gData_02007948[2] = PALETTE_WORD(166);
-  if (gPartyState.entrance == 10) {
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  if (gAdventure.entrance == 10) {
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+    Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
     Func_02003c84();
-  } else if (gPartyState.entrance == 11) {
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  } else if (gAdventure.entrance == 11) {
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+    Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
     Func_02003c14();
   } else {
     Event_StartScreenTransition();

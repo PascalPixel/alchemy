@@ -18,7 +18,7 @@ void Func_020004e0(void) {
   Func_02003b08(0);
   ObjectMotion_EnableActionAndResetMotion(11);
   ShrineOfTheSeaGod_Jump(11, 0x100, 20);
-  ObjectMotion_SetAngleToward(11, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(11, gAdventure.currentOwner, 0);
   Func_02003a70((s32)MsgFieldStartledCompanion);
   Func_02003a80(11, 0);
   Func_02003a80(11, 0);

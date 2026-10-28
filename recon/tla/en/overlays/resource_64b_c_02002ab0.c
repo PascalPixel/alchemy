@@ -4,7 +4,7 @@
 // and places its pool at the end; the -1 arguments go through Call4.
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "call.h"
 
@@ -58,8 +58,8 @@ void Func_02002ab0(void) {
   boat->scaleY = 0x13333;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   WaitFrames(1);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
   ObjectMotion_SetSpeedParameters(10, 0x6666, 0x3333);
@@ -82,7 +82,7 @@ void Func_02002ab0(void) {
   Func_02004cf0(5, 0);
   Func_02004e30(78);
   Func_02004e30(162);
-  Func_02004cf0(gPartyState.currentOwner, 0);
+  Func_02004cf0(gAdventure.currentOwner, 0);
   Func_02004cf0(8, 0);
   Func_02004e30(61);
   Func_02004db0();
@@ -114,8 +114,8 @@ void Func_02002ab0(void) {
   Func_02004c88(4, 0x0e550000, 0x1df00000);
   Func_02004c88(5, 0x0e490000, 0x1dc50000);
   Func_02004c88(6, 0x0e770000, 0x1de30000);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 0);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   WaitFrames(1);
   Func_02004da8();

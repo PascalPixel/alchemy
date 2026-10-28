@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -12,7 +12,7 @@ void Func_02004a1c(void);
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
 /// the active party; when it is 0, the current owner gets 1 PP back. The loop
-/// is the listing's goto loop, which the loop pass leaves alone (gPartyState
+/// is the listing's goto loop, which the loop pass leaves alone (gAdventure
 /// reloaded each pass); its first test reads pp, which still holds the
 /// index's 0.
 void Func_0200050c(void) {
@@ -25,10 +25,10 @@ void Func_0200050c(void) {
   register s32 i asm("r5");
 
   {
-    /* FAKEMATCH(temporary): gPartyState's address loaded before the field's
+    /* FAKEMATCH(temporary): gAdventure's address loaded before the field's
      * offset, through an empty asm on it (barrier); as
-     * gPartyState.renderMode = 7, 2 of 42 instructions differ in tla-en. */
-    struct PartyState *state = &gPartyState;
+     * gAdventure.renderMode = 7, 2 of 42 instructions differ in tla-en. */
+    struct Adventure *state = &gAdventure;
 
     __asm__ __volatile__("" : "+r"(state));
     state->renderMode = 7;
@@ -43,10 +43,10 @@ void Func_0200050c(void) {
   loop:
     // One member's PP.
     {
-      /* FAKEMATCH(pin): gPartyState's address in r2, loaded before the
+      /* FAKEMATCH(pin): gAdventure's address in r2, loaded before the
        * table's offset through an empty asm on it (barrier); unpinned, 6 of
        * 42 instructions differ in tla-en, and without the asm, 2. */
-      register struct PartyState *state asm("r2") = &gPartyState;
+      register struct Adventure *state asm("r2") = &gAdventure;
 
       __asm__ __volatile__("" : "+r"(state));
       pp += ((struct BattleUnit *)Unit_Get(state->activeOwners[i]))->pp;
@@ -56,5 +56,5 @@ void Func_0200050c(void) {
       goto loop;
   }
   if (pp == 0)
-    Unit_AddPp(gPartyState.currentOwner, 1);
+    Unit_AddPp(gAdventure.currentOwner, 1);
 }

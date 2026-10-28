@@ -1,5 +1,5 @@
 // Draft, differ 2 of 158 under -mthumb-slow-loads: the compiler issues
-// gPartyState's load (ldr r5) before lsls r2, r2, #1 and the add into the event
+// gAdventure's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them, as in overlay 65e's Func_02000340.
 // Adopted in 78b8a48d42, when it matched without the option; back on the
 // listing since.
@@ -20,10 +20,10 @@ s32 Func_02000580(void) {
   s32 turn;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_0200087c(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov660Room1) {
-    if (GameFlag_Test(0x91b) || gPartyState.entrance == 99) {
+  if (gAdventure.scene == (s32)&SceneId_Ov660Room1) {
+    if (GameFlag_Test(0x91b) || gAdventure.entrance == 99) {
       Func_0200081c(19, 0, 0);
       Func_0200081c(20, 0, 0);
       ObjectMotion_EnableActionAndSetCallback(18, 3);
@@ -64,7 +64,7 @@ s32 Func_02000580(void) {
       Func_02000894(18, turn);
       ObjectDispatch_SetSingleChildFlags(Object_GetById(18), 0);
     }
-    if (gPartyState.entrance == 99 && !GameFlag_Test(0x91b))
+    if (gAdventure.entrance == 99 && !GameFlag_Test(0x91b))
       Func_02000710();
   }
   if (GameFlag_Test(0x91b))

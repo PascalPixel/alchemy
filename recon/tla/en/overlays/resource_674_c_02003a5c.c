@@ -3,7 +3,7 @@
 // Map_FillCellRectByte2), whose draft holds its notes.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
 
@@ -36,7 +36,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 void Func_02003a5c(struct PushTarget target, s32 id, void (*callback)(void)) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *object = Object_GetById(id);
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
@@ -51,28 +51,28 @@ void Func_02003a5c(struct PushTarget target, s32 id, void (*callback)(void)) {
   width = (Abs(box[0]) + Abs(box[2])) >> 4;
   height = (Abs(box[1]) + Abs(box[3])) >> 4;
   Func_02003790(0, cell.x, cell.z, width, height, 0);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x1999);
-  Object_SetModeById(gPartyState.currentOwner, 8);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x1999);
+  Object_SetModeById(gAdventure.currentOwner, 8);
   WaitFrames(15);
-  ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner,
+  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner,
                                             (target.x - start.x) >> 17,
                                             (target.z - start.z) >> 17);
-  Object_GetById(gPartyState.currentOwner)->update = Func_02003d0c;
+  Object_GetById(gAdventure.currentOwner)->update = Func_02003d0c;
   WaitFrames(4);
   Func_02003de4(object, 2);
   Func_02003ffc(239);
   ObjectMotion_SetSpeedParameters(id, 0x8000, 0x1999);
   Func_02003e0c(object, target.x, target.y, target.z);
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x4ccc, 0x1999);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x1999);
   ObjectMotion_OffsetPositionAndResetMotion(
-      gPartyState.currentOwner, (s32)(gData_02004094[0] << 16) >> 31,
+      gAdventure.currentOwner, (s32)(gData_02004094[0] << 16) >> 31,
       (s32)(gData_02004094[0] << 16) >> 17);
   if (callback != 0)
     callback();
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

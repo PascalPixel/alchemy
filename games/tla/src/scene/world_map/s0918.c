@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -35,21 +35,21 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
 
-/// Back to the map: actor 8's position is kept in the party state.
+/// Back to the map: actor 8's position is kept in the adventure.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *leader = Object_GetById(8);
 
   Func_02004c20();
   Func_02004db8(0);
-  if (gPartyState.renderMode == 8)
+  if (gAdventure.renderMode == 8)
     Func_0200050c();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gPartyState.savedX = leader->x;
-  gPartyState.savedZ = leader->z;
-  gPartyState.unk280 = 0;
-  gPartyState.ownerOverride = 0;
+  gAdventure.savedX = leader->x;
+  gAdventure.savedZ = leader->z;
+  gAdventure.unk280 = 0;
+  gAdventure.ownerOverride = 0;
   GameFlag_ClearBit(0x176);
   Func_02004e30(123);
   Func_02004d40(work->scene);

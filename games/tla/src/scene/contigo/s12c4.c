@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -46,7 +46,7 @@ static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 void Func_020012c4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Test_(0xfc7) == 0) {
@@ -54,11 +54,11 @@ void Func_020012c4(void) {
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Func_0200406c();
       Func_02004204_(0);
-      Func_0200417c_(gPartyState.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion_(gPartyState.currentOwner, 0,
+      Func_0200417c_(gAdventure.currentOwner, 0x102);
+      ObjectMotion_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
       Func_02004074();
     }
   }

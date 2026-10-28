@@ -1,5 +1,5 @@
 // Differ 12 of 438 (was 18): the flag loop's counter also holds the entrance
-// (i = gPartyState.entrance), which raises its allocation priority over the
+// (i = gAdventure.entrance), which raises its allocation priority over the
 // flag number, so the loop takes the native's registers; but the entrance
 // then lives in r5 where the native compares it in r3, the four compares
 // differing. A one-pass block after the name stores keeps the counter's zero
@@ -28,7 +28,7 @@
 #include "system.h"
 #include "types.h"
 #include "flag_call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -89,13 +89,13 @@ s32 Func_0200145c(void) {
   void *callback;
 
   Flag_Set(0x17e);
-  gPartyState.packedEvents[0] = 0;
-  gPartyState.packedEvents[1] = 0;
+  gAdventure.packedEvents[0] = 0;
+  gAdventure.packedEvents[1] = 0;
   gData_020022bc = 0;
   gData_020022b8 = 0;
   ((struct LobbyEventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
   Sound_LoadPresetParameters(2);
-  Func_02001414(gPartyState.linkTallies[6]);
+  Func_02001414(gAdventure.linkTallies[6]);
   Map_CopyCells(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   WaitFrames(1);
@@ -113,7 +113,7 @@ s32 Func_0200145c(void) {
     if (Func_02000f6c(i))
       Flag_Set(0x2f0 + i);
   }
-  i = gPartyState.entrance;
+  i = gAdventure.entrance;
   if (i == 8) {
     s32 wins;
     s32 msg;
@@ -124,8 +124,8 @@ s32 Func_0200145c(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    gPartyState.linkTallies[0]++;
-    gPartyState.linkTallies[3]++;
+    gAdventure.linkTallies[0]++;
+    gAdventure.linkTallies[3]++;
     wins = (s8)Flag_GetByte(0x3f8);
     msg = wins * 2 + 2;
     if (msg > 14)
@@ -138,7 +138,7 @@ s32 Func_0200145c(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
     Func_02001a64((s32)MsgNotBadWould + msg);
     UiText_OpenMessageAtObject(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -150,11 +150,11 @@ s32 Func_0200145c(void) {
       Flag_SetByte(0x3f8, -1);
       /* FAKEMATCH: one scalar holds the row address, then its score, as in ☀️'s
        * entrance 9 */
-      score = (u32)&gPartyState.linkTallies[3];
+      score = (u32)&gAdventure.linkTallies[3];
       Func_020019e4(*(u16 *)score, 5);
       score = *(u16 *)score;
-      if (gPartyState.linkTallies[2] < score) {
-        gPartyState.linkTallies[2] = score;
+      if (gAdventure.linkTallies[2] < score) {
+        gAdventure.linkTallies[2] = score;
         Func_02001a64((s32)MsgYouWonBattle);
         UiText_OpenMessageAtObject(8, 0);
         Func_02001400();
@@ -165,21 +165,21 @@ s32 Func_0200145c(void) {
       LinkLobby_WriteSlotValue(0);
     }
     Func_02001a1c();
-  } else if (gPartyState.entrance == 9) {
-    gPartyState.linkTallies[1]++;
+  } else if (gAdventure.entrance == 9) {
+    gAdventure.linkTallies[1]++;
     Func_02001a14();
     Func_02001ab4(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
     /* FAKEMATCH: one scalar holds the row address, then its score, as in ☀️'s
      * entrance 9 */
-    score = (u32)&gPartyState.linkTallies[3];
+    score = (u32)&gAdventure.linkTallies[3];
     Func_020019e4(*(u16 *)score, 5);
     score = *(u16 *)score;
-    if (gPartyState.linkTallies[2] < score) {
-      gPartyState.linkTallies[2] = score;
+    if (gAdventure.linkTallies[2] < score) {
+      gAdventure.linkTallies[2] = score;
       Func_02001a64((s32)MsgYouWonBattle);
       UiText_OpenMessageAtObject(8, 0);
       Func_02001400();
@@ -187,12 +187,12 @@ s32 Func_0200145c(void) {
       Func_02001a64((s32)MsgYouWonBattleI);
       UiText_OpenMessageAtObject(8, 0);
     }
-    gPartyState.linkTallies[3] = 0;
+    gAdventure.linkTallies[3] = 0;
     Flag_Clear(0x173);
     Flag_SetByte(0x3f8, -1);
     LinkLobby_WriteSlotValue(0);
     Func_02001a1c();
-  } else if (gPartyState.entrance == 10) {
+  } else if (gAdventure.entrance == 10) {
     s32 v;
 
     Func_02001a14();
@@ -211,11 +211,11 @@ s32 Func_0200145c(void) {
       LinkLobby_WriteSlotValue(0);
       LinkLobby_WriteSlotValue(4);
     } else {
-      gPartyState.linkTallies[4]++;
-      v = gPartyState.linkTallies[7] + 1;
-      gPartyState.linkTallies[7] = v;
+      gAdventure.linkTallies[4]++;
+      v = gAdventure.linkTallies[7] + 1;
+      gAdventure.linkTallies[7] = v;
       /* FAKEMATCH: reuse the other score branches' address slot, as ☀️ does */
-      score = (u32)&gPartyState.linkTallies[6];
+      score = (u32)&gAdventure.linkTallies[6];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;
       Func_02001414(*(u16 *)score);
@@ -224,7 +224,7 @@ s32 Func_0200145c(void) {
       Flag_Set(0x305);
     }
     Func_02001a1c();
-  } else if (gPartyState.entrance == 11) {
+  } else if (gAdventure.entrance == 11) {
     s32 v;
 
     Func_02001a14();
@@ -234,8 +234,8 @@ s32 Func_0200145c(void) {
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
     if ((v = Flag_IsSet(0x173)) == 0) {
-      gPartyState.linkTallies[5]++;
-      gPartyState.linkTallies[7] = v;
+      gAdventure.linkTallies[5]++;
+      gAdventure.linkTallies[7] = v;
       Func_020013ec();
     }
     Flag_Set(0x304);
@@ -245,17 +245,17 @@ s32 Func_0200145c(void) {
     Func_02001914();
     Flag_Clear(0x172);
     Flag_SetByte(0x3f8, -1);
-    if (gPartyState.unk244[6] != 0) {
+    if (gAdventure.unk244[6] != 0) {
       Func_02001a14();
       Func_02001ab4(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+      ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgNoteYouCan);
       Func_02001a74(8, 0);
       Func_02001a1c();
     }
-    gPartyState.unk244[6] = 0;
+    gAdventure.unk244[6] = 0;
     gAutoSleepEnabled = 0;
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
@@ -263,7 +263,7 @@ s32 Func_0200145c(void) {
   callback = Func_02000134;
   Scheduler_AddOrUpdateCallback(callback, 0x480);
   Func_02001944(callback, 1);
-  if (gPartyState.entrance != 8 || !Flag_IsSet(0x173)) {
+  if (gAdventure.entrance != 8 || !Flag_IsSet(0x173)) {
     Func_02001a04(1);
     DjinnRecovery_CountDownTwenty();
   }

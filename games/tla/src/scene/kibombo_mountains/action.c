@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);

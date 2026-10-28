@@ -5,7 +5,7 @@
 
 void Func_02001b50(void) {
   struct ObjectRuntime *lift;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 x = leader->x;
   s32 z = leader->z;
   s32 cellX = x >> 20;
@@ -20,7 +20,7 @@ void Func_02001b50(void) {
     return;
   if (cellX == 27 && cellZ == 12) {
     lift = Object_GetById(13);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
     Object_SetModeById(13, 4);
     leader->motionFlags = riding;
@@ -30,7 +30,7 @@ void Func_02001b50(void) {
   }
   if (cellX == 37 && cellZ == 14) {
     lift = Object_GetById(14);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
     Object_SetModeById(14, 4);
     leader->motionFlags = 0;
@@ -44,7 +44,7 @@ void Func_02001b50(void) {
   }
   Object_SetModeById(13, 0);
   Object_SetModeById(14, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);

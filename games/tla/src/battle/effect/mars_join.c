@@ -1,7 +1,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "motobj.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct EffectVector {
@@ -61,7 +61,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *slotState;
 
   djinni = Object_GetById(djinniId);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (djinni == NULL)
     return;
 
@@ -120,9 +120,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
+  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.

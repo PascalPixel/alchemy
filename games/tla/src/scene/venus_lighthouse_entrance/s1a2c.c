@@ -27,7 +27,7 @@ s32 Func_020029a4();
 void Func_020028bc(void);
 extern u8 MsgWhyDoI[];
 extern char SceneId_VenusLighthouseEntrance;
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02001a2c(void) {
   Func_020028b4();
@@ -70,8 +70,8 @@ void Func_02001a2c(void) {
   Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_VenusLighthouseEntrance, 0x63);
   Call2(Party_SetFields1f2And1f4, (s32)&SceneId_VenusLighthouseEntrance, 0x62);
   {
-    u8 *party = (u8 *)gPartyState;
-    /* FAKEMATCH: the native schedule loads the party state address before it
+    u8 *party = (u8 *)gAdventure;
+    /* FAKEMATCH: the native schedule loads the adventure's address before it
      * builds the field offset. */
     __asm__ volatile("" : "+l"(party));
     FIELD_AT(party, u8, 587) = 2;

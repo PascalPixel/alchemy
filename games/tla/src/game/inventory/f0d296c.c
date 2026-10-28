@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 extern char MsgFoundItem;
@@ -27,7 +27,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     // Four messages on: "But <protagonist>'s party can't carry any more".
     UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundItem + 4, 1);
     Object_GetById(actor)->scaleX = 0x10000;
-    ObjectMotion_SetAngleToward(gPartyState.currentOwner, actor, 0);
+    ObjectMotion_SetAngleToward(gAdventure.currentOwner, actor, 0);
     EventRuntime_Wait(20);
     return -1;
   }

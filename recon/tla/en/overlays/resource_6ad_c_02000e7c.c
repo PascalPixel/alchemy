@@ -66,7 +66,7 @@ extern u8 gData_02005c4c[];
 extern u8 gData_02005c5a[];
 extern u8 gData_02005c60[];
 extern u8 gData_02005c6e[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 s32 Func_02000e7c(void) {
   s32 v_r5, v_r6, v_r8, v_r7, v_r10, v_r0, t0, t1, t2, t6;
@@ -76,13 +76,13 @@ s32 Func_02000e7c(void) {
   s32 t111, t112, t113, t114, t115, t116, t117, t118, t119, t120;
   s32 t121;
 
-  t0 = FIELD_AT((s32)gPartyState, s16, 480);
-  t1 = FIELD_AT((s32)gPartyState, s16, 482);
+  t0 = FIELD_AT((s32)gAdventure, s16, 480);
+  t1 = FIELD_AT((s32)gAdventure, s16, 482);
   t2 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t2, s32, 428) = 0x204;
   Call1((void (*)())GameFlag_SetBit, 0x112);
   Func_020025b0();
-  v_r10 = (s32)gPartyState;
+  v_r10 = (s32)gAdventure;
   v_r7 = t1;
   v_r8 = 0x204;
   v_r6 = 0x3000000;
@@ -276,7 +276,7 @@ L_0200924e:
   if (v_r7 != 13)
     goto L_0200927c;
 L_0200926e:
-  t90 = FIELD_AT((s32)gPartyState, s32, 532);
+  t90 = FIELD_AT((s32)gAdventure, s32, 532);
   Call1((void (*)())Func_020056b0, t90);
 L_0200927c:
   if (v_r7 == 3)
@@ -290,7 +290,7 @@ L_0200927c:
   if (v_r7 != 14)
     goto L_0200929e;
 L_02009290:
-  t92 = FIELD_AT((s32)gPartyState, s32, 532);
+  t92 = FIELD_AT((s32)gAdventure, s32, 532);
   Call1((void (*)())Func_020056b8, t92);
 L_0200929e:
   if (v_r7 == 16)
@@ -365,7 +365,7 @@ L_02009362:
   t112 = Value1((s32 (*)())Object_GetById, 16);
   FIELD_AT(t112, s32, 20) = v_r5;
 L_0200939a:
-  t113 = FIELD_AT((s32)gPartyState, s32, 532);
+  t113 = FIELD_AT((s32)gAdventure, s32, 532);
   t114 = Value1((s32 (*)())Object_GetById, t113);
   t115 = FIELD_AT(t114, u8, 35);
   FIELD_AT(t114, u8, 35) = (t115 | 64);

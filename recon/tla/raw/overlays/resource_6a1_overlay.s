@@ -237,7 +237,7 @@ Func_02000410:
 .L_02008518:
 	.4byte 0x00000001
 .L_0200851c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008520:
 	.4byte 0x0003ffff
 .L_02008524:
@@ -341,7 +341,7 @@ Func_02000410:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_020085f8:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008628,"ax",%progbits
 	.global Func_02000628
 	.thumb_func
@@ -398,7 +398,7 @@ Func_02000628:
 	bl ObjectDispatch_SetAnimationSpeed
 	b .L_020087d2
 .L_02008690:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008694:
 	adds r0, r6, #0
 	movs r1, #16
@@ -535,7 +535,7 @@ Func_02000628:
 .L_020087a4:
 	.4byte 0xffe00000
 .L_020087a8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020087ac:
 	.4byte IwramMulQ16
 .L_020087b0:
@@ -1340,7 +1340,7 @@ Func_02000dac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008eb8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008ebc:
 	.4byte gData_020022d0
 .L_02008ec0:
@@ -1663,7 +1663,7 @@ Func_02000ec8:
 	bx r3
 	.2byte 0x0000
 .L_02009168:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200916c:
 	.4byte gData_020022dc
 .L_02009170:
@@ -2266,7 +2266,7 @@ Func_020018f4:
 .L_02009b28:
 	.4byte IwramClearWords
 .L_02009b2c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009b30:
 	.4byte 0x11111111
 .L_02009b34:
@@ -2357,7 +2357,7 @@ Func_02001c30:
 .L_02009cdc:
 	.4byte 0x00008000
 .L_02009ce0:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009ce4:
 	movs r3, #1
 	mov r1, r8
@@ -2423,7 +2423,7 @@ Func_02001c30:
 .L_02009d68:
 	.4byte 0xffff6667
 .L_02009d6c:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02009dc6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009dc8,"ax",%progbits
@@ -2601,7 +2601,7 @@ Func_02001dc8:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02009f4c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009f50:
 	.4byte Effect_AdvanceMotion
 .L_02009f54:
@@ -2697,7 +2697,7 @@ Func_02001f60:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a008:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200a00c:
 	.4byte gData_02002bf8
 	.section .bss,"aw",%nobits

@@ -18,7 +18,7 @@ s32 Func_0200086c(void) {
     /* FAKEMATCH: the party address pinned to r3 for the first scene read;
      * unpinned, gcse merges both scene reads and 26 instructions differ in
      * tla-en. */
-    register struct PartyState *party asm("r3") = &gPartyState;
+    register struct Adventure *party asm("r3") = &gAdventure;
 
     scene = party->scene;
   }
@@ -36,7 +36,7 @@ s32 Func_0200086c(void) {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
     Call2((void (*)())ObjectMotion_SetActionVariant, 11, 2);
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov677Room2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov677Room2) {
     Call1((void (*)())Func_02000a48, 0);
     Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
     Object_GetById(12)->collisionFlags |= 4;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
@@ -1029,7 +1029,7 @@ void Func_02003274(void) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 0x1a, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 0x1a, 2);
   {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
     if (leader != NULL)
       Call3((void (*)())ObjectMotion_ResetAndSetPosition, 0x1a,

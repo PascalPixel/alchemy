@@ -8,7 +8,7 @@ void Func_02001a9c(void);
 void Func_02002820(void) {
   struct LemurianShipObject *object;
 
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
   if (LemurianShip_FlagCheck(0x93f)) {
     object = Object_GetById(64);
@@ -32,7 +32,7 @@ void Func_02002820(void) {
     Object_SetPartAttribute(Object_GetById(64), 0);
     LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
     LemurianShip_CamSet(0x80000, 0x100000, 0xf80000, 0x1000000);
-    Camera_FollowActor(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gAdventure.currentOwner, 0);
     Func_02002c10();
     LemurianShip_WaitFrames(1);
   }

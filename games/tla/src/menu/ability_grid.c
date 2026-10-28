@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_unit.h"
 #include "render_input.h"
 
@@ -29,7 +29,7 @@ s32 Func_08041350(void) {
   s32 row = 0;
   u8 *work;
   s16 left;
-  struct PartyState *party;
+  struct Adventure *party;
   struct RenderInput *window;
   s32 result;
   s32 column;
@@ -119,18 +119,18 @@ done:
     ability = gData_080aa170[column][row];
     owner = Party_FindOwnerWithActionFar(ability);
     if (owner == -1)
-      owner = gPartyState.currentOwner;
+      owner = gAdventure.currentOwner;
     if (ability == 0) {
       if (result == 0)
         *(u16 *)(events + 0x166) = 0;
       if (result == 1)
-        gPartyState.packedEvents[0] = 0;
+        gAdventure.packedEvents[0] = 0;
       if (result == 2) {
-        /* FAKEMATCH: the one-pass block loads gPartyState's address before
+        /* FAKEMATCH: the one-pass block loads gAdventure's address before
          * it starts the field's offset; without it the offset comes first
          * (differ 2). */
         do {
-          party = &gPartyState;
+          party = &gAdventure;
         } while (0);
         party->packedEvents[1] = 0;
       }
@@ -139,11 +139,11 @@ done:
       if (result == 0)
         *(u16 *)(events + 0x166) = owner;
       if (result == 1)
-        gPartyState.packedEvents[0] = owner;
+        gAdventure.packedEvents[0] = owner;
       if (result == 2) {
         /* FAKEMATCH: as above (differ 2 without it). */
         do {
-          party = &gPartyState;
+          party = &gAdventure;
         } while (0);
         party->packedEvents[1] = owner;
       }

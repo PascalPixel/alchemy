@@ -24,7 +24,7 @@ void Func_02000350(s32 actor) {
   Func_0200350c((s32)MsgAllRightI);
   Func_02003524(actor, 0);
   object = Object_GetById(actor);
-  Func_02003624(object, Object_GetById(gPartyState.currentOwner));
+  Func_02003624(object, Object_GetById(gAdventure.currentOwner));
 }
 
 void Func_0200038c(s32 actor) {
@@ -46,10 +46,10 @@ void Func_020003ec(void) {
 
   Func_02003424(50, 97, 1, 4, 41, 77);
   Func_0200341c(46, 33, 1, 4, 41, 13);
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   x = object->x >> 20;
   z = object->z >> 20;
-  if (gPartyState.scene == (s32)&SceneId_Ov685Room4 && x == 41 &&
+  if (gAdventure.scene == (s32)&SceneId_Ov685Room4 && x == 41 &&
       (u32)(z - 13) <= 4)
-    Func_020034d4(gPartyState.currentOwner, 0x2980000, 0x1180000);
+    Func_020034d4(gAdventure.currentOwner, 0x2980000, 0x1180000);
 }

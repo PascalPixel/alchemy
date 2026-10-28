@@ -157,6 +157,6 @@ Func_080d8c10:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d8d38:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d8d3c:
 	.4byte IwramMulQ16

@@ -10,7 +10,7 @@
 // Left: registers from the start (the native keeps the leader in r7 and the ride in r6, the motion and priority pointers in r11 and r9, the offsets in r8 and r10 and the rider on the stack), and the rising loop builds its priority pointer each pass.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "input.h"
 
 extern s32 gFrameCount;
@@ -36,7 +36,7 @@ void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02001560(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *ride = leader->linkedObject;
   struct ObjectRuntime *rider, *dust;
   u8 *riding, *motion, *priority;
@@ -152,10 +152,10 @@ void Func_02001560(void) {
     OverlayObject_WaitUntilIdle(leader);
     Func_02003b60(dust);
   }
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   GameFlag_ClearBit(0x250);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();
   WaitFrames(10);
   Func_02003bd0();

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 MsgFixingThisWill[];
 extern const u8 MsgFortuneTeller2[];
@@ -14,11 +14,11 @@ void Func_0200071c(s32 index, s32 flags);
 void Func_02000098(s32 index) {
   Func_020006e4();
   Func_0200072c(0);
-  if (gPartyState.entrance == 99)
+  if (gAdventure.entrance == 99)
     Func_02000714(index + (s32)MsgFixingThisWill);
-  else if (gPartyState.entrance == 98)
+  else if (gAdventure.entrance == 98)
     Func_02000714(index + (s32)MsgFortuneTeller2);
-  else if (gPartyState.entrance == 97)
+  else if (gAdventure.entrance == 97)
     Func_02000714(index + (s32)MsgConfirmGraphic2);
   else
     Func_02000714(index + (s32)MsgPiers2);

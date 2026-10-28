@@ -46,7 +46,7 @@ void Func_02001ba8(void) {
       Func_02001d40();
       WaitFrames(1);
     }
-  } else if (gPartyState.entrance == 2) {
+  } else if (gAdventure.entrance == 2) {
     Func_02000be8();
   }
 }

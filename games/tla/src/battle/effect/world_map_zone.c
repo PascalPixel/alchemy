@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 /// A world map encounter rule, ended by kind -1.
 struct TerrainRule {
@@ -26,9 +26,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   s32 behavior;
   u32 kind;
   s32 zone;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
-  /* FAKEMATCH(empty asm): the barrier clobbering r1 loads gPartyState before
+  /* FAKEMATCH(empty asm): the barrier clobbering r1 loads gAdventure before
    * renderMode's offset is built in r1; as a plain declaration, 2 of 74
    * instructions differ in tla-en. */
   asm("" : "+l"(party) : : "r1");

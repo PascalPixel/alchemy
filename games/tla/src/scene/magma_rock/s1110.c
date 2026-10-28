@@ -1,6 +1,6 @@
 #include "magma_rock.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "object_runtime.h"
 
@@ -20,7 +20,7 @@ void Func_02000fcc(struct ObjectRuntime *object);
 void Func_02001110(s32 mode) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   s16 *table = gData_02003d9e;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
   if (party->scene == (s32)&SceneId_Ov691Room2) {
     if (party->entrance <= 3)

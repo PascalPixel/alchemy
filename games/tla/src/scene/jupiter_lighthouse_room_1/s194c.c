@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct JupiterLighthouseRoom8Puzzle {
   s16 unk00;
@@ -24,7 +24,7 @@ void Func_02001abc(void);
 void Func_02001704(void);
 
 void Func_0200194c(s32 x, s32 z, s32 effect) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
   s32 dx = GameFlag_GetByte(gData_020023a0.flag);
   s32 dz = GameFlag_GetByte(gData_020023a0.flag + 8);

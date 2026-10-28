@@ -17,7 +17,7 @@ extern u8 gData_02003234[];
 extern u8 gData_02003254[];
 
 u8 *Func_02000038(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov656Room1)
     return gData_02003084;
@@ -27,7 +27,7 @@ u8 *Func_02000038(void) {
 }
 
 u8 *Func_02000078(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov656Room1)
     return gData_02003234;

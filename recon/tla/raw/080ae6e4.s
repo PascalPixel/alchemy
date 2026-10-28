@@ -158,4 +158,4 @@ Func_080ae6e4:
 .L_080ae828:
 	.4byte gData_02001000
 .L_080ae82c:
-	.4byte gPartyState
+	.4byte gAdventure

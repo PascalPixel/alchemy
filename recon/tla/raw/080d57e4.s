@@ -155,7 +155,7 @@ Func_080d57e4:
 .L_080d5918:
 	.4byte 0x00000000
 .L_080d591c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d5920:
 	.4byte gInput
 .L_080d5924:

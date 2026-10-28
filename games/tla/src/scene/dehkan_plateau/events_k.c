@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -188,7 +188,7 @@ struct AnimationFacing {
 
 void Func_020030c0(void) {
   ObjectMotion_SetActionVariant(
-      64, ((struct AnimationFacing *)Object_GetById(gPartyState.currentOwner)
+      64, ((struct AnimationFacing *)Object_GetById(gAdventure.currentOwner)
                ->animation)
               ->facing);
 }

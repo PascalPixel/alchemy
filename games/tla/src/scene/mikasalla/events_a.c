@@ -64,18 +64,18 @@ void Func_0200009c(void) {
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
   asm("");
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
   {
     s32 mode = 2;
 
     /* FAKEMATCH: the mode passes through an asm so that it is set before the
      * owner id is loaded (differ 2 without it). */
     __asm__("" : "+l"(mode));
-    Object_SetModeById(gPartyState.currentOwner, mode);
+    Object_SetModeById(gAdventure.currentOwner, mode);
   }
   if (index != 4) {
-    ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -8);
+    ObjectMotion_CenterOnColumn_(gAdventure.currentOwner, 2, -8);
     FieldEvent_WaitFrames(10);
   }
   Func_020006b8(*choice);
@@ -92,7 +92,7 @@ extern s32 gData_020012ac[];
 extern s32 gData_020010d8[];
 
 s32 *Func_0200015c(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
     return gData_020012ac;

@@ -63,12 +63,12 @@ void Func_02000524(void) {
       Call2((void (*)())Func_02000a60, 14, 0xc000);
       ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 1);
       Call3((void (*)())ObjectMotion_ResetAndSetPosition,
-            gPartyState.currentOwner, 488, 408);
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-      YallamInteriors_ObjArm(gPartyState.currentOwner, 0, 0);
+            gAdventure.currentOwner, 488, 408);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+      YallamInteriors_ObjArm(gAdventure.currentOwner, 0, 0);
       Call3((void (*)())ObjectMotion_ResetAndSetPosition, 14, 504, 408);
       ObjectMotion_CommitCurrentPositionAndActivate(14);
-      ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
+      ObjectMotion_SetAngleToward(14, gAdventure.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
         YallamInteriors_ObjSpeed(14, 0x6666, 0x3333);

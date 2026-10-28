@@ -33,7 +33,7 @@ void Func_02002de0(void) {
 }
 
 void Func_02002e60(void) {
-  struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
+  struct KibomboObject *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's
    * height before it builds the limit (2 differ without it). */

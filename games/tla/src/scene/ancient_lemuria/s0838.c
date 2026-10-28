@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -350,7 +350,7 @@ void Func_02000838(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
-  if ((s8)gPartyState.counter274 <= 4) {
+  if ((s8)gAdventure.counter274 <= 4) {
     result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
     if (result == 0) {
       Call1((void (*)())FieldEvent_WaitFrames, 25);
@@ -494,7 +494,7 @@ void Func_02000838(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 7, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -502,7 +502,7 @@ void Func_02000838(void) {
   Call3((void (*)())Func_0200195c, 7, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 11, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(11, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

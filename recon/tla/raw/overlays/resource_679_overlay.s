@@ -685,7 +685,7 @@ Func_020011a8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020092f4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020092f8:
 	.4byte 0x0000009e
 .L_020092fc:

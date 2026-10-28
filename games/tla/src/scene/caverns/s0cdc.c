@@ -23,12 +23,12 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     *flags = mask;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     {
-      struct PartyState *party = &gPartyState;
+      struct Adventure *party = &gAdventure;
       s32 x = position[1];
       s32 z = position[5];
       s32 owner = party->currentOwner;
 
-      /* FAKEMATCH: the one-pass block keeps the party state's address loaded
+      /* FAKEMATCH: the one-pass block keeps the adventure's address loaded
        * before the position (plain call: differ 2; owner read without the party
        * pointer: differ 12). */
       do {
@@ -45,7 +45,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 }
 
 void Func_02000cdc(void) {
-  struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
+  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 x;
 

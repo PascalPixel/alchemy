@@ -1,5 +1,5 @@
 // Draft of the international editions' VenusLighthouse_Start, differ 2 of 76
-// under -mthumb-slow-loads: the compiler issues gPartyState's load (ldr r1)
+// under -mthumb-slow-loads: the compiler issues gAdventure's load (ldr r1)
 // before the event work's add and lsls r2, r2, #2; the native issues it after
 // them. The Japanese form, without the saved scene and entrance, still matches
 // in scene_events.c. Adopted in every edition in 7ea8af9935, when it matched
@@ -17,7 +17,7 @@
 #include "field_scene.h"
 #include "field_event.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "edition.h"
@@ -34,10 +34,10 @@ struct AerieEventWork {
 
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
-  if (gPartyState.entrance == ENTRANCE_OPENING) {
+  if (gAdventure.entrance == ENTRANCE_OPENING) {
     // The international editions also save this scene and entrance 22.
-    gPartyState.savedScene = (s32)&SceneId_VenusLighthouse;
-    gPartyState.savedEntrance = 22;
+    gAdventure.savedScene = (s32)&SceneId_VenusLighthouse;
+    gAdventure.savedEntrance = 22;
     Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Func_02000b2c();

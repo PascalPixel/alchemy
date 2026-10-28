@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 
-void Party_PlaySavedMusic(void) { Audio_PlayCue(gPartyState.cue); }
+void Party_PlaySavedMusic(void) { Audio_PlayCue(gAdventure.cue); }

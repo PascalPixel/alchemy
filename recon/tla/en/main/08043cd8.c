@@ -13,11 +13,11 @@
 // order only: the native finishes the name pointer and stores it before it
 // builds the level pointer after the file list window is made, stores the
 // cleared redraw flag before it builds the file's offset, and loads
-// gPartyState before it builds 0x225 at both glow restores.
+// gAdventure before it builds 0x225 at both glow restores.
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "uiwindow.h"
 #include "input.h"
 #include "dma.h"
@@ -216,7 +216,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        Func_0803f9c0(gPartyState.unk220[5], gPartyState.unk220[6]);
+        Func_0803f9c0(gAdventure.unk220[5], gAdventure.unk220[6]);
         Func_080f8080(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         UiWork_Finalize(djinnWindow, 2);
@@ -277,7 +277,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   UiWork_Finalize(fileList, 2);
   Scheduler_ScheduleCallbackA();
   Runtime_ReleaseHeapBlock(220);
-  Func_0803f9c0(gPartyState.unk220[5], gPartyState.unk220[6]);
+  Func_0803f9c0(gAdventure.unk220[5], gAdventure.unk220[6]);
   WaitFrames(1);
 done:
   return result;

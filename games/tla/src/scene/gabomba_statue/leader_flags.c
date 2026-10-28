@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "mem.h"
 #include "resource.h"
 
@@ -12,8 +12,8 @@ void GameFlag_ClearBit(s32 flag);
 void Func_020055cc(const u8 *data, void *buffer);
 
 void Func_02003868(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-  if (gPartyState.entrance == 1) {
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  if (gAdventure.entrance == 1) {
     GameFlag_SetBit(0xa27);
     GameFlag_ClearBit(0xa28);
   }

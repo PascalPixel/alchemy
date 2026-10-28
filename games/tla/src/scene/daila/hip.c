@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 void Daila_TalkHip(void) {
@@ -23,7 +23,7 @@ void Daila_TalkHip(void) {
 }
 
 void Func_02000340(s32 keeper) {
-  u16 facing = Engine_ActorGet(gPartyState.currentOwner)->facing;
+  u16 facing = Engine_ActorGet(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
    * facing before it builds the quadrant offset (2 differ without it). */

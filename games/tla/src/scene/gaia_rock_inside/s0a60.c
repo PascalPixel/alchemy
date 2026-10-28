@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
@@ -32,15 +32,15 @@ void WaitFrames(s32 frames);
 
 /// Return the table for the current room.
 const void *Func_020009e8(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov681Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov681Room2)
     return gData_02005a54;
-  if (gPartyState.scene == (s32)&SceneId_Ov681Room3)
+  if (gAdventure.scene == (s32)&SceneId_Ov681Room3)
     return gData_02005afc;
-  if (gPartyState.scene == (s32)&SceneId_Ov681Room4)
+  if (gAdventure.scene == (s32)&SceneId_Ov681Room4)
     return gData_02005b8c;
-  if (gPartyState.scene == (s32)&SceneId_Ov681Room5)
+  if (gAdventure.scene == (s32)&SceneId_Ov681Room5)
     return gData_02005c7c;
-  if (gPartyState.entrance > 8)
+  if (gAdventure.entrance > 8)
     return gData_020059a0;
   return gData_02005970;
 }

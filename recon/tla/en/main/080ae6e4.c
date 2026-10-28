@@ -9,7 +9,7 @@
 // owners 0 to 3 join, the djinn are set and the eight units recomputed, flag
 // 34 set; then for each element a random djinni still unowned (plus 1, or 0
 // for none) is stored at gData_02001000 + 0x1950, five Func_080ae6c8 calls
-// follow, and the coins at 0x28c of the party state are added to the coins.
+// follow, and the coins at 0x28c of the adventure are added to the coins.
 // The native recomputes element * 20 from the counter each pass and steps
 // the djinn flag base by 7; written as i * 7 and i * 20 agscc
 // strength-reduces both (differ 18), so the base is a counter k and an empty
@@ -20,7 +20,7 @@
 // every register: differ 73), the asm on i with i * 7 (differ 105), k
 // stepped in the inner loop (differ 37).
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -82,5 +82,5 @@ void Func_080ae6e4(void) {
   Func_080ae6c8(203, 1);
   Func_080ae6c8(206, 0);
   Func_080ae6c8(207, 2);
-  gPartyState.coins += *(s32 *)&gPartyState.unk284[8];
+  gAdventure.coins += *(s32 *)&gAdventure.unk284[8];
 }

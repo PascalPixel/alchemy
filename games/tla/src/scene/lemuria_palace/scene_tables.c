@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct DoorStep {
@@ -44,10 +44,10 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_020020cc(0);
   Func_02002124(158);
   Func_02001fb4(step->script, step->x, step->z);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2,
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 2;
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  Call3((void (*)())ObjectMotion_CenterOnColumn, gAdventure.currentOwner, 2,
         -8);
   FieldEvent_WaitFrames(10);
   Func_020020b4(countdown);

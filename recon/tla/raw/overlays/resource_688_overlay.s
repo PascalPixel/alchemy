@@ -164,7 +164,7 @@ Func_02000190:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02008304:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008308:
 	.4byte 0x000000c7
 	.section .text.x02008310,"ax",%progbits

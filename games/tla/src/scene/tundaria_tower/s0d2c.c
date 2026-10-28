@@ -29,7 +29,7 @@ void Func_02000d2c(void) {
     object->terrainId = 0;
   }
   Func_02003178();
-  if (gPartyState.scene == (s32)&SceneId_Ov68fRoom6) {
+  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X; as
      * object->x, 10 of 76 instructions differ in tla-en. */
     struct ObjectRuntime *o = object;

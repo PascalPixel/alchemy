@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "flag_call.h"
 
@@ -9,7 +9,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Camera_FollowActor(s32 id, s32 a);
 
 void Func_020024c8(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   /* FAKEMATCH: one zero for the velocity store and, through a 64-bit copy, the
    * call's argument clears r1 after the owner's load (one reordered pair;
    * alchemy permute). */
@@ -27,7 +27,7 @@ void Func_020024c8(void) {
     {
       s64 flags = zero;
 
-      Camera_FollowActor(gPartyState.currentOwner, flags);
+      Camera_FollowActor(gAdventure.currentOwner, flags);
     }
   }
 }

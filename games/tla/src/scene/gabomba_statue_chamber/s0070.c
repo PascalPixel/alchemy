@@ -1,7 +1,7 @@
 #include "gabomba_statue_chamber.h"
 
 u8 *Func_02000070(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
     return gData_020020f8;
@@ -11,7 +11,7 @@ u8 *Func_02000070(void) {
 }
 
 u8 *Func_020000b0(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
     return gData_02002470;

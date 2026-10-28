@@ -95,7 +95,7 @@ void Func_02000900(void) {
 }
 
 void Func_02000944(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 frame;
   s32 delta;
 
@@ -104,7 +104,7 @@ void Func_02000944(void) {
   (void)&object;
   Func_02005608();
   ObjectDispatch_SetSingleChildFlags(object, 0);
-  Object_SetModeById(gPartyState.currentOwner, 28);
+  Object_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   frame = 0;
 step:
@@ -124,7 +124,7 @@ step:
   /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots'
    * address; plainly sched2 builds the address first (differ 2). */
   do {
-    Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+    Object_GetById(gAdventure.currentOwner)->animationKind = 0;
   } while (0);
   SCENE_WORK->unk1ac = 521;
   Event_FinishScreenTransition();

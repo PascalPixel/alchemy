@@ -243,7 +243,7 @@ Func_0200015c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200832c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008330:
 	.4byte gData_02002148
 .L_02008334:
@@ -2185,7 +2185,7 @@ Func_02001108:
 .L_02009410:
 	.4byte Func_020010a8
 .L_02009414:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009418:
 	.4byte 0x000000c6
 	.section .text.x02009650,"ax",%progbits
@@ -2920,7 +2920,7 @@ Func_02001cdc:
 .L_02009d64:
 	.4byte 0x00005ccb
 .L_02009d68:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009d6c:
 	.4byte 0x000000c5
 .L_02009d70:
@@ -3087,7 +3087,7 @@ Func_02001cdc:
 .L_02009ebc:
 	.4byte gData_020026c0
 .L_02009ec0:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009ec4:
 	.4byte Func_02001650
 	.section .bss,"aw",%nobits

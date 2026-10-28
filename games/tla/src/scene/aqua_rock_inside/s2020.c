@@ -1,7 +1,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
@@ -41,8 +41,8 @@ void Func_02001ea0(struct ObjectRuntime *object);
 /// their flags (or dims those still empty), opens what the story has opened and
 /// arms the room's water and cell handlers by entrance.
 s32 Func_02002020(void) {
-  s32 scene = gPartyState.scene;
-  s32 entrance = gPartyState.entrance;
+  s32 scene = gAdventure.scene;
+  s32 entrance = gAdventure.entrance;
   struct ObjectRuntime *object;
 
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x204;

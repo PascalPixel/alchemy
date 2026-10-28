@@ -45,7 +45,7 @@ void Func_02004d98(void);
 
 s32 Func_02001930(void) {
   if (Flag_IsSet(0xa30))
-    Func_02004c88(gPartyState.map +
+    Func_02004c88(gAdventure.map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   return 0;

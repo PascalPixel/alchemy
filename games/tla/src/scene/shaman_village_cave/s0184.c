@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "call.h"
 
@@ -28,7 +28,7 @@ void ObjectMotion_ArmCallback();
 /// away from the leader with a hop, and back along z.
 void Func_02000184(void) {
   struct ObjectRuntime *object = Object_GetById(17);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 leaderX = leader->x >> 19;
   s32 leaderZ = leader->z >> 19;
   s32 objectX = object->x >> 19;

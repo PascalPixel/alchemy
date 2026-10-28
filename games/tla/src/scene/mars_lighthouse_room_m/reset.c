@@ -51,7 +51,7 @@ void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct ObjectRuntime *object);
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_02003118(struct ObjectRuntime *object, s32 value);
 void Func_020032b8(s32 value);

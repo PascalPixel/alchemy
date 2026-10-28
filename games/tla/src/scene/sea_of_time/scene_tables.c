@@ -20,7 +20,7 @@ extern const u8 gData_020021e4[];
 extern const u8 gData_02002214[];
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov687Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov687Room2)
     return (const struct ScenePlacement *)gData_02002214;
   return (const struct ScenePlacement *)gData_020021e4;
 }

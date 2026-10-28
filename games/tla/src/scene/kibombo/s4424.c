@@ -11,8 +11,8 @@ void Func_02004424(void) {
 
   Func_02005a9c();
   Func_02005c3c(0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   Func_020032b0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 1152);

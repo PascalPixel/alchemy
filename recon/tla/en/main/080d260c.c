@@ -14,7 +14,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ItemHead {
   u8 unk00[3];
@@ -93,7 +93,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
       Audio_PlayCue(83);
-      if (owner == gPartyState.currentOwner) {
+      if (owner == gAdventure.currentOwner) {
         UiText_DrawQuantity(item, 2);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
       } else {
@@ -109,7 +109,7 @@ s32 PartyInventory_GiveItem(s32 item) {
   Audio_PlayCue(83);
   UiText_DrawQuantity(item, 2);
   UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
-  if (owner != gPartyState.currentOwner) {
+  if (owner != gAdventure.currentOwner) {
     UiText_DrawQuantity(item, 2);
     UiText_DrawQuantity(owner, 1);
     UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived + 1, 1);

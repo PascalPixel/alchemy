@@ -33,14 +33,14 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gPartyState.scene == (s32)&SceneId_Ov690Room4)
+  if (gAdventure.scene == (s32)&SceneId_Ov690Room4)
     CopyCells(33, 30, 23, 14, 1, 2);
   else
     CopyCells(27, 29, 40, 16, 1, 2);
   Func_020021b0(158);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  CenterOn(gPartyState.currentOwner, 2, -4);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  CenterOn(gAdventure.currentOwner, 2, -4);
   FieldEvent_WaitFrames(6);
   Func_02002110(2);
   Event_FinishScreenTransition();

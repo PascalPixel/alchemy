@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -66,7 +66,7 @@ void ObjectMotion_SetVariantCallback();
 void Engine_ActorSetAttachedEffect();
 
 void Func_02002304(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 a3000, aD000, a4000, a8000;
 
   Engine_EventStart();
@@ -83,10 +83,10 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_ActorSetAnimation, 6, 19);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
   a8000 = 0x8000;
-  Call4((void (*)())Func_02003230, gPartyState.currentOwner, 0x1380000,
+  Call4((void (*)())Func_02003230, gAdventure.currentOwner, 0x1380000,
         0xe60000, a8000);
-  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 41);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Call2((void (*)())Engine_ActorSetAnimation, gAdventure.currentOwner, 41);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   Call1((void (*)())Task_Wait, 1);
   Event_StartScreenTransition();
@@ -194,25 +194,25 @@ void Func_02002304(void) {
   Call1((void (*)())Object_RefreshSelectorById, 6);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 4);
   Call3((void (*)())Func_02003298, 6, 0, 20);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, gPartyState.currentOwner, 2);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, gAdventure.currentOwner, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, a4000, 0);
   Call3((void (*)())Func_02003298, 0x1005, 0, 20);
-  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x105, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, gAdventure.currentOwner, 0x105, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call1((void (*)())Object_RefreshSelectorById, 6);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 3);
   Call2((void (*)())Engine_EventShowMessage, 6, 0);
-  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x105, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, gPartyState.currentOwner, 2);
+  Value3((s32 (*)())Engine_ActorShowEmote, gAdventure.currentOwner, 0x105, 0);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, gAdventure.currentOwner, 2);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 8, 0x102);
   Call3((void (*)())Func_02003298, 8, 0, 20);
-  Call2((void (*)())ObjectMotion_SetVariantCallback, gPartyState.currentOwner,
+  Call2((void (*)())ObjectMotion_SetVariantCallback, gAdventure.currentOwner,
         3);
   Value3((s32 (*)())Engine_ActorShowEmote, 10, 0x100, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 20);
   Call2((void (*)())Engine_EventShowMessage, 10, 0);
-  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 42);
+  Call2((void (*)())Engine_ActorSetAnimation, gAdventure.currentOwner, 42);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x5000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
@@ -220,30 +220,30 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_EventShowMessage, 0x2008, 0);
   Value3((s32 (*)())Engine_ActorShowEmote, 5, 0x109, 40);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= 254;
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= 254;
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
-        gPartyState.currentOwner, 314, 226);
-  Call3((void (*)())ObjectMotion_Launch, gPartyState.currentOwner, 4, 0);
-  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+        gAdventure.currentOwner, 314, 226);
+  Call3((void (*)())ObjectMotion_Launch, gAdventure.currentOwner, 4, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, gAdventure.currentOwner, 1);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   leader->scaleX = 0x10000;
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
-  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000,
+  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x6000,
         40);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
         40);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xa000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xa000,
         80);
   Call2((void (*)())Engine_EventShowMessage, 0x2008, 0);
-  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x101, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 20);
+  Value3((s32 (*)())Engine_ActorShowEmote, gAdventure.currentOwner, 0x101, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
   Call2((void (*)())Engine_EventShowMessage, 10, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
@@ -260,12 +260,12 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_EventShowMessage, 8, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 8, 3);
   Call2((void (*)())Engine_ActorSetAnimation, 5, 3);
-  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 3);
+  Call2((void (*)())Engine_ActorSetAnimation, gAdventure.currentOwner, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 368, 256);
@@ -276,7 +276,7 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_EventShowMessage, 0x5006, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x2000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 400, 264);
   Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
@@ -288,13 +288,13 @@ void Func_02002304(void) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.currentOwner,
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
         0xcccc, 0x6666);
   leader->action = 0;
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_020035bc);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, gData_02003534);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback,
-        gPartyState.currentOwner, gData_02003600);
+        gAdventure.currentOwner, gData_02003600);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, gData_02003578);
   do
     Task_Wait(1);

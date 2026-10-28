@@ -12,7 +12,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s32 gData_02002b88[3];
 
@@ -33,7 +33,7 @@ void Func_02002254(void);
 void Func_020022dc(s32 a);
 
 void Func_020000d0(s32 kind) {
-  s32 owner = gPartyState.currentOwner;
+  s32 owner = gAdventure.currentOwner;
   struct ObjectRuntime *leader = Object_GetById(owner);
   struct ObjectRuntime *effect;
   s32 i;

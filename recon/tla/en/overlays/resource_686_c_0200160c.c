@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 
 struct AnkohlRuinsFloatWork {
@@ -46,7 +46,7 @@ void Func_02002e24(s32 a, s32 b, s32 c);
 void Func_02002eec(s32 cue);
 
 void Func_0200160c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
   s32 level;
@@ -57,7 +57,7 @@ void Func_0200160c(void) {
   s16 n;
   s32 top;
 
-  Object_SetModeById(gPartyState.currentOwner, 0);
+  Object_SetModeById(gAdventure.currentOwner, 0);
   level = work->level >> 19;
   leader->motionFlags = 0;
   Func_02002e24(0x40000, 0x40000, 0x10000);

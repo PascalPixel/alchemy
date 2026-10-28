@@ -5,7 +5,7 @@ void Func_02001688(void) {
   struct ObjectRuntime *b = Object_GetById(10);
   struct ObjectRuntime *c = Object_GetById(9);
   struct ObjectRuntime *d = Object_GetById(11);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 value = (s16)a->unk66;
 
   switch (value) {
@@ -36,7 +36,7 @@ void Func_02001688(void) {
   Func_020006bc(10);
   Func_020006bc(9);
   Func_020006bc(11);
-  Func_020006bc(gPartyState.currentOwner);
+  Func_020006bc(gAdventure.currentOwner);
 }
 
 void Func_02001730(void) {
@@ -62,7 +62,7 @@ void Func_02001730(void) {
   gData_02002fc0[3].mode = (s16)object->unk66;
   gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   gData_02002fc0[4].action = object->action;
   gData_02002fc0[4].mode = (s16)object->unk66;
   gData_02002fc0[4].byte98 = BYTE_AT(object, 98);

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "tla_edition.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct InputState {
   u32 held;
@@ -39,8 +39,8 @@ s16 Menu_RunSelection(void) {
 
   work = 0;
   mode = 0;
-  primary = gPartyState.primary;
-  secondary = gPartyState.secondary;
+  primary = gAdventure.primary;
+  secondary = gAdventure.secondary;
   work = UiWindow_Create(0, 7, 30, 5, 2);
   Menu_DrawSelectionRow(work, primary, &secondary);
   UiTextResource_Initialize(&object, &resource);

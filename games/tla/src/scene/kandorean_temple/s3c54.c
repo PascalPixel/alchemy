@@ -33,8 +33,8 @@ void Func_02003c8c(void) {
   }
   Object_SetModeById_(14, 5);
   Scheduler_AddOrUpdateCallback(Func_02001c8c, 0x480);
-  if ((gPartyState.entrance >= 4 && gPartyState.entrance <= 6) ||
-      gPartyState.entrance == 14) {
+  if ((gAdventure.entrance >= 4 && gAdventure.entrance <= 6) ||
+      gAdventure.entrance == 14) {
     if (GameFlag_Test_(0x84a)) {
       /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
        * (one reordered row as a plain argument). */
@@ -51,8 +51,8 @@ void Func_02003c8c(void) {
    * state's address in r5 across the tests; the native loads it again for each
    * (differ 16 without). */
   asm("" ::: "memory");
-  if ((gPartyState.entrance >= 1 && gPartyState.entrance <= 3) ||
-      gPartyState.entrance == 9) {
+  if ((gAdventure.entrance >= 1 && gAdventure.entrance <= 3) ||
+      gAdventure.entrance == 9) {
     if (GameFlag_Test_(0x212))
       Func_02001f3c();
     if (GameFlag_Test_(0x849)) {
@@ -69,20 +69,20 @@ void Func_02003c8c(void) {
     } else {
       Func_02003e8c();
     }
-  } else if (gPartyState.entrance == 6) {
+  } else if (gAdventure.entrance == 6) {
     if (GameFlag_Test_(0x849) == 0)
       Func_020044d4();
-  } else if (gPartyState.entrance == 13) {
+  } else if (gAdventure.entrance == 13) {
     Func_020046d8();
-  } else if (gPartyState.entrance == 14) {
+  } else if (gAdventure.entrance == 14) {
     if (GameFlag_Test_(0x849) == 0)
       Func_0200482c();
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
-  /* FAKEMATCH: as above, the barrier makes this test load the party state's
+  /* FAKEMATCH: as above, the barrier makes this test load the adventure's
    * address again. */
   asm("" ::: "memory");
-  if (gPartyState.entrance >= 8 && gPartyState.entrance <= 9)
+  if (gAdventure.entrance >= 8 && gAdventure.entrance <= 9)
     GameFlag_ClearBit_(0x12f);
 #endif
 }

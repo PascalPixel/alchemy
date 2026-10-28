@@ -2,7 +2,7 @@
 /// Party: raise a character to a specified level.
 
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_unit.h"
 
 struct LevelUpResult;

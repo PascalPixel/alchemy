@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "flag_call.h"
 #include "call.h"
@@ -13,7 +13,7 @@ void Func_0200129c(s32 id, s32 x, s32 z);
 void Func_0200115c(void) {
   if (!Flag_IsSet(0x230)) {
     struct ObjectRuntime *object = Object_GetById(9);
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
     s32 other;
 
     Flag_Set(0x230);
@@ -28,6 +28,6 @@ void Func_0200115c(void) {
     /* FAKEMATCH: the native loads the second argument before the owner; a
      * direct call and a forwarding inline load the owner first. */
     __asm__ volatile("" : "+r"(other));
-    Object_LinkPair(gPartyState.currentOwner, other, 0);
+    Object_LinkPair(gAdventure.currentOwner, other, 0);
   }
 }

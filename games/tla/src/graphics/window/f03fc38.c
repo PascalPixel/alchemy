@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "callback_scheduler.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct OptionMarkerOutput {
   u8 unk00[14];
@@ -40,15 +40,15 @@ void Func_0803fc38(void) {
   work = (struct OptionWork *)Runtime_AllocateBlock(208, 0x628);
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
-  work->option[0] = gPartyState.paletteGlow[0];
+  work->option[0] = gAdventure.paletteGlow[0];
   work->optionCount[0] = 24;
-  work->option[1] = gPartyState.paletteGlow[1];
+  work->option[1] = gAdventure.paletteGlow[1];
   work->optionCount[1] = 15;
-  work->option[2] = gPartyState.eventMode;
+  work->option[2] = gAdventure.eventMode;
   work->optionCount[2] = 3;
-  work->option[3] = gPartyState.battleFxEnabled;
+  work->option[3] = gAdventure.battleFxEnabled;
   work->optionCount[3] = 2;
-  work->option[4] = gPartyState.unk244[6];
+  work->option[4] = gAdventure.unk244[6];
   work->optionCount[4] = 2;
   Scheduler_AddOrUpdateCallback(
       GraphicsPalette_LoadSelectionResourcesAndAdvance, 0x480);

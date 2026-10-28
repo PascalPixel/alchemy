@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "bg_scroll.h"
 #include "field_sprite.h"
 #include "system/dma.h"
@@ -146,7 +146,7 @@ row:
   Call2((void (*)())Func_02005f0c, 0x10000, 0);
   Call2((void (*)())Func_02005f04, 0x10003, 0);
   Func_02005f14(60);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02005ee4();
   Call2((void (*)())Func_02005ed4, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd80000, -1, 0xe00000, 1);
@@ -198,7 +198,7 @@ fade:
   Func_02001084(Object_GetById(8), 8, 0);
   Func_02005d34();
   Func_02005d2c();
-  Func_02005e04(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02005e04(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   /* FAKEMATCH(barrier): DISPCNT's address built after the blend store;

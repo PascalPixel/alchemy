@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -24,7 +24,7 @@ void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 /// moves a leader standing on that cell aside, and sets flag 0x30a, or 0x9bf
 /// once flag 0x927 is set.
 void Func_02000b6c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
   if (Value3(Func_02004dec, 2, 152 << 18, 200 << 17) == 0) {
@@ -32,11 +32,11 @@ void Func_02000b6c(void) {
     Func_02004e5c();
     Func_02004fcc(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
-      Call2(Func_02004f34, gPartyState.currentOwner, 258);
-      ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16,
+      Call2(Func_02004f34, gAdventure.currentOwner, 258);
+      ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
     }
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x30a);

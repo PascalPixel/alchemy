@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
@@ -36,7 +36,7 @@ void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
     kind = (s32)gData_080f373c;
     break;
   case 6:
-    object->linkedObject = Object_GetById(gPartyState.currentOwner);
+    object->linkedObject = Object_GetById(gAdventure.currentOwner);
     kind = (s32)gData_080f3750;
     break;
   case 7:

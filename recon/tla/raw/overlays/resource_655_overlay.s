@@ -216,7 +216,7 @@ Func_020001d0:
 .L_020082f0:
 	.4byte gMapShapeGrid
 .L_020082f4:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x020082f8,"ax",%progbits
 	.global Func_020002f8
 	.thumb_func
@@ -388,7 +388,7 @@ Func_020002f8:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02008488:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008584,"ax",%progbits
 	.balign 4
 	.global Func_02000584
@@ -549,7 +549,7 @@ Func_02000584:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_020086e0:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020086e4:
 	.4byte 0xfdff0000
 .L_020086e8:
@@ -759,7 +759,7 @@ Func_02000708:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020088f0:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008974,"ax",%progbits
 	.global Func_02000974
 	.thumb_func
@@ -892,7 +892,7 @@ Func_02000974:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008a80:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008a84:
 	.4byte 0xfff80000
 .L_02008a88:
@@ -1036,7 +1036,7 @@ Func_02000aa8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008ba8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008bac:
 	.4byte gData_02003e30
 .L_02008bb0:
@@ -1255,7 +1255,7 @@ Func_02000c64:
 .L_02008d70:
 	.4byte gMapShapeGrid
 .L_02008d74:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008d78,"ax",%progbits
 	.global Func_02000d78
 	.thumb_func
@@ -1397,7 +1397,7 @@ Func_02000d78:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008e90:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008e94:
 	.4byte gMapShapeGrid
 .L_02008e98:
@@ -1801,7 +1801,7 @@ Func_02001a30:
 	bl Func_02003be0
 	b .L_02009cf4
 .L_02009c90:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009c94:
 	.4byte 0x00000022
 .L_02009c98:
@@ -1883,7 +1883,7 @@ Func_02001a30:
 .L_02009d34:
 	.4byte gData_02004052
 .L_02009d38:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009d3c:
 	.4byte 0x00000022
 .L_02009d40:
@@ -2077,7 +2077,7 @@ Func_02001a30:
 .L_02009eb8:
 	.4byte gData_02004420
 .L_02009ebc:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009ec0:
 	.4byte 0xfffffc00
 .L_02009ec4:
@@ -2328,7 +2328,7 @@ Func_02002a5c:
 .L_0200ab0c:
 	.4byte 0x00000000
 .L_0200ab10:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200ab14:
 	ldr r3, [r6, #24]
 	ldr r2, .L_0200ab5c
@@ -2561,7 +2561,7 @@ Func_02002c14:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0200adc8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200adcc:
 	.4byte gData_02004420
 .L_0200add0:
@@ -2857,7 +2857,7 @@ Func_02003284:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b51c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200b520:
 	.4byte gData_02003fc4
 .L_0200b524:
@@ -3149,7 +3149,7 @@ Func_0200369c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b760:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200b764,"ax",%progbits
 	.global Func_02003764
 	.thumb_func
@@ -3333,7 +3333,7 @@ Func_02003764:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200b8f8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200b8fc:
 	.4byte Effect_AdvanceMotion
 .L_0200b900:

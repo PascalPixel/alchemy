@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "frame.h"
@@ -16,7 +16,7 @@ struct SaveGameWords {
   u32 playTime;
 };
 
-#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gPartyState)
+#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gAdventure)
 
 extern u8 gData_02000000[];
 extern u32 gData_02001000;
@@ -40,8 +40,8 @@ s32 SaveState_BuildSummaryHeader(void) {
   SAVE_GAME_WORDS->buildStamp = Runtime_GetBuildStampTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000 = gFrameWaitCount;
-  gPartyState.unk244[6] = gAutoSleepEnabled;
-  owner = Unit_Get(gPartyState.currentOwner);
+  gAdventure.unk244[6] = gAutoSleepEnabled;
+  owner = Unit_Get(gAdventure.currentOwner);
   destination = summary->name;
   source = owner->name;
   for (i = 11; i >= 0; i--)
@@ -49,9 +49,9 @@ s32 SaveState_BuildSummaryHeader(void) {
   summary->level = owner->level;
   summary->playTime = SAVE_GAME_WORDS->playTime;
   summary->area =
-      Scene_GetAreaNameIndexFar(gPartyState.scene, gPartyState.entrance);
+      Scene_GetAreaNameIndexFar(gAdventure.scene, gAdventure.entrance);
   summary->classId = owner->classIndex;
-  summary->coins = gPartyState.coins;
+  summary->coins = gAdventure.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -60,9 +60,9 @@ s32 SaveState_BuildSummaryHeader(void) {
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;
-  summary->paletteGlow = gPartyState.unk220[5];
-  summary->paletteGlowSub = gPartyState.unk220[6];
-  summary->sendFlag = gPartyState.unk22d[2];
+  summary->paletteGlow = gAdventure.unk220[5];
+  summary->paletteGlowSub = gAdventure.unk220[6];
+  summary->sendFlag = gAdventure.unk22d[2];
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_Test(i))

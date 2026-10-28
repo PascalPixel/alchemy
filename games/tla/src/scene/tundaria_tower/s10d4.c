@@ -1,7 +1,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ReflectionSprite {
   u8 unk00[2];
@@ -20,7 +20,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 
 void Func_020010d4(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ReflectionAnimation *leaderAnimation = leader->animation;
   struct ReflectionAnimation *animation = object->animation;
 

@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct Spot {
   s16 x;
@@ -32,7 +32,7 @@ void Func_02001c1c(struct SpotState *state, struct Spot *spot);
 void Func_02001c8c(struct SpotState *state, struct Spot *spot);
 
 s32 Func_02001fbc(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02002ce0;

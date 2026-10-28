@@ -3,7 +3,7 @@
 // copies the received flags and units in. Left: the native keeps the link
 // mask in r5 and orders the signature stores inside the wait loop.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "game/edition.h"
@@ -129,6 +129,6 @@ receive:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
-  Func_02002310(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   return 1;
 }

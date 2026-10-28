@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -64,12 +64,12 @@ void Func_02001368(void) {
 
   Func_02000708(gData_02003f52);
   Func_020012d8();
-  y = Object_GetById(gPartyState.currentOwner)->y;
+  y = Object_GetById(gAdventure.currentOwner)->y;
   /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test
    * starts the constant first (one pair of instructions swapped). */
   __asm__ volatile("");
   if (y < 0x80000) {
-    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
 }

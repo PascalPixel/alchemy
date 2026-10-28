@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_dispatch.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void WaitFrames(s32 frames);
 
@@ -24,13 +24,13 @@ void Func_08023510(struct DispatchObject *object, s32 argument) {
   object->argument = argument;
 }
 
-/// Starts the dispatch script for the party state's render mode, waiting a
+/// Starts the dispatch script for the adventure's render mode, waiting a
 /// frame first in mode 9.
 void Func_08023524(struct DispatchObject *object) {
   const s32 *script;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
-  /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
+  /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the field
    * offset 0x212 in r2; the empty asm holds r2 until the address is loaded.
    * Plainly the offset is started first (differ 2). */
   asm("" : "+l"(party) : : "r2");

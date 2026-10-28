@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -51,7 +51,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       }
       object->scaleX = 0x10000;
       object->scaleY = 0x10000;
-      object->angle = Object_GetById(gPartyState.currentOwner)->angle + 0x8000;
+      object->angle = Object_GetById(gAdventure.currentOwner)->angle + 0x8000;
       Func_02000ebc(scene, entrance);
     }
   }

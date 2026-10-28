@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -561,7 +561,7 @@ void Func_020013f0(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 12, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -569,7 +569,7 @@ void Func_020013f0(void) {
   Call3((void (*)())Func_02002874, 12, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 5, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -577,7 +577,7 @@ void Func_020013f0(void) {
   Call3((void (*)())Func_02002874, 5, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 6, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

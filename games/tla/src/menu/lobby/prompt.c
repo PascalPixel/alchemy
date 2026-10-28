@@ -9,7 +9,7 @@
 #include "types.h"
 #include "input.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 void Func_020019e4(s32 value, s32 digits);
@@ -32,7 +32,7 @@ s32 Func_02000e4c(s32 id) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(id, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(id, gAdventure.currentOwner, 0);
   Func_02001a64((s32)MsgChooseYourParameters);
   Func_02001a74(id, 0);
   window = UiWindow_Create(0, 0, 6, 4, 2);

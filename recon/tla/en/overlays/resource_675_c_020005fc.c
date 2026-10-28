@@ -12,7 +12,7 @@
 // 4 minutes found nothing below 16.
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "call.h"
 
@@ -61,10 +61,10 @@ loop:
   index >>= 1;
   Call3((void (*)())Func_0200122c, gData_020019ec[index].value,
         gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion,
-        gPartyState.currentOwner, 0, -4);
+        gAdventure.currentOwner, 0, -4);
   FieldEvent_WaitFrames(6);
   Func_020012cc(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();

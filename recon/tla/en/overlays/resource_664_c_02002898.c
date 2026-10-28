@@ -7,7 +7,7 @@
 // loads the branch addresses early; this draft reloads them.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
@@ -36,7 +36,7 @@ void Func_02002898(void) {
   gData_02006c0c = cell;
   gData_020073dc = 1;
   gData_020073e0 = 2;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov664Room1 || scene == (s32)&SceneId_Ov664Room2) {
     gData_020073e4 = x;
     gData_020073e8 = z - y + 64;

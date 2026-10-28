@@ -12,7 +12,7 @@
 #include "field_sprite.h"
 #include "input.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 void Audio_PlayCue(s32 cue);
@@ -28,7 +28,7 @@ struct EventWorkGrab {
 };
 
 s32 Func_080d5aa0(void) {
-  struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = ObjectTable_Get(gAdventure.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   s32 position[3];
   u32 angle;
@@ -60,6 +60,6 @@ s32 Func_080d5aa0(void) {
   Object_SetPosition(leader, position[0], position[1], position[2]);
   Object_CommitPosition(leader);
   sprite->priority = ((u8 *)leader)[98];
-  gPartyState.renderMode = 0;
+  gAdventure.renderMode = 0;
   return 1;
 }

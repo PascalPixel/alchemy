@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 #define EVENT_WORD(offset)                                                     \
@@ -51,7 +51,7 @@ s32 UiText_OpenMessageAtObject();
     struct ObjectRuntime *leader_;                                             \
     Call3(ObjectMotion_SetSpeedParameters, (id), 0x13333, 0x9999);             \
     Call2(Object_SetModeById, (id), 2);                                        \
-    leader_ = Object_GetById(gPartyState.currentOwner);                        \
+    leader_ = Object_GetById(gAdventure.currentOwner);                        \
     if (leader_ != 0)                                                          \
       Call3(ObjectMotion_ResetAndSetPosition, (id),                            \
             ((s16 *)&leader_->x)[1], ((s16 *)&leader_->z)[1]);                 \
@@ -413,7 +413,7 @@ void Func_02000658(void) {
   WALK_TO_LEADER(5);
   WALK_TO_LEADER(6);
   WALK_TO_LEADER(13);
-  Call2(Camera_FollowActor, gPartyState.currentOwner, 1);
+  Call2(Camera_FollowActor, gAdventure.currentOwner, 1);
   Func_020014c0();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;

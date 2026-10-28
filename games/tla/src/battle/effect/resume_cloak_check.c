@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void FieldEffect_CheckCloakTile(void);
 
@@ -9,10 +9,10 @@ void FieldEffect_ResumeCloakCheck(void) {
   s8 *flag;
 
   /* FAKEMATCH: the one-pass block's end is a scheduling barrier: the native
-   * loads the party state's address before it builds the offset 0x26d (one
+   * loads the adventure's address before it builds the offset 0x26d (one
    * reordered row, differ 2 without). */
   do {
-    state = gPartyState;
+    state = gAdventure;
   } while (0);
   flag = (s8 *)state + 0x26d;
   if (*flag != 0)

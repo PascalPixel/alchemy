@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
@@ -36,7 +36,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
 
   result = Party_CountActiveOwners();
   if (bestNo < result) {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
     owners = party->activeOwners;
     count = result;

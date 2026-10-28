@@ -17,7 +17,7 @@
 // names stand for 0xdc4, 0xdef, 0xe0f to 0xe1c, 0xde5 and 0x15b5.
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "scene_ids.h"
 
@@ -167,7 +167,7 @@ s32 Func_080ccec8(s32 id) {
       if (silent == 0)
         UiText_ShowPositionedMessageAndWaitFar(
             found + (s32)&MsgCheckedContainer, 1);
-      if (gPartyState.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
+      if (gAdventure.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
           !GameFlag_Test(flag)) {
         UiText_DrawQuantity(contents, 2);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerHint, 1);
@@ -223,15 +223,15 @@ s32 Func_080ccec8(s32 id) {
         work = Ram_HeapSlots->eventWork;
         ObjectEvent_Spring(index);
         if (flag != -1)
-          gPartyState.pendingDjinnEvent = flag | 0x1000;
+          gAdventure.pendingDjinnEvent = flag | 0x1000;
         if (contents > 7)
           *(u16 *)(work + 356) =
               Encounter_GetEnemyGroupAtSlot(105, contents - 8);
         else
           *(u16 *)(work + 356) = Encounter_GetEnemyGroupAtSlot(104, contents);
-        gPartyState.battleRule24b = 2;
+        gAdventure.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
-        Audio_PlayCue(gPartyState.sceneCue);
+        Audio_PlayCue(gAdventure.sceneCue);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerMonster, 1);
         goto done;
       }
@@ -297,7 +297,7 @@ s32 Func_080ccec8(s32 id) {
       Func_080cf350(shown);
       Audio_PlayCue(83);
       UiText_DrawQuantity(contents, 2);
-      if (slot == gPartyState.currentOwner) {
+      if (slot == gAdventure.currentOwner) {
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundItem, 3);
       } else {
         UiText_DrawQuantity(slot, 1);
@@ -326,7 +326,7 @@ s32 Func_080ccec8(s32 id) {
     }
   }
 
-  if (gPartyState.pausedObject == id) {
+  if (gAdventure.pausedObject == id) {
     paused = 1;
     talk = Func_080ccd78(7, id);
     if (talk == NULL) {
@@ -354,10 +354,10 @@ s32 Func_080ccec8(s32 id) {
     ObjectDispatch_SetAnimationSpeedFar(object, 0);
     savedAngle = object->angle;
     if ((u8)placement->kind <= 1 || placement->kind == 3) {
-      leader = Object_GetById(gPartyState.currentOwner);
+      leader = Object_GetById(gAdventure.currentOwner);
       Object_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
                                           leader->z);
-      Object_LinkPair(id, gPartyState.currentOwner, 0);
+      Object_LinkPair(id, gAdventure.currentOwner, 0);
     }
   }
   if (talk->script < 0x10000) {
@@ -370,7 +370,7 @@ s32 Func_080ccec8(s32 id) {
   if (!paused) {
     if (object->script[object->step] == 17) {
       if (placement->kind == 3) {
-        object->linkedObject = Object_GetById(gPartyState.currentOwner);
+        object->linkedObject = Object_GetById(gAdventure.currentOwner);
         object->actionFlags |= 1;
         Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
       } else if (placement->kind == 1) {
@@ -384,8 +384,8 @@ s32 Func_080ccec8(s32 id) {
   result = 0;
 resume:
   if (paused) {
-    BattleEffect_ResumeObject(gPartyState.pausedObject);
-    gPartyState.pausedObject = -1;
+    BattleEffect_ResumeObject(gAdventure.pausedObject);
+    gAdventure.pausedObject = -1;
   }
   return result;
 }

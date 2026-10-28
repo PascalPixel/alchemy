@@ -24,6 +24,6 @@ void Func_02002084(s32 fade) {
   }
   Func_02001ff0_(100, 50);
   Blend_SetAlpha(0xc07);
-  if (gPartyState.entrance == 6)
+  if (gAdventure.entrance == 6)
     Scheduler_AddOrUpdateCallback(Func_02001eb8, 0x480);
 }

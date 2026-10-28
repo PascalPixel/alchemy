@@ -26,12 +26,12 @@ void Func_020016c8(void) { Func_0200142c(Object_GetById(15)); }
 
 void Func_020016d8(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   struct ShrineOfTheSeaGodObject *pillar = Object_GetById(15);
 
   Func_020039d8();
   Func_02003b08(0);
-  ShrineOfTheSeaGod_ObjWalk(gPartyState.currentOwner, 328, 216);
+  ShrineOfTheSeaGod_ObjWalk(gAdventure.currentOwner, 328, 216);
   Func_02001340(leader, pillar);
   ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 19, 13);
   ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 19, 33);
@@ -46,17 +46,17 @@ void Func_020016d8(void) {
   ObjectMotion_SetActionVariant(11, 1);
   Object_GetById(11)->priorityFlags &= ~2;
   leader->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
-  ShrineOfTheSeaGod_ObjSpeed(gPartyState.currentOwner, 0x9999, 0x1999);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 328, 224);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 321, 256);
+  ShrineOfTheSeaGod_ObjSpeed(gAdventure.currentOwner, 0x9999, 0x1999);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 328, 224);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 321, 256);
   Func_02003a30(21, 0, 0);
   Func_02003a30(22, 0, 0);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 321, 320);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 321, 400);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 321, 480);
-  ShrineOfTheSeaGod_ObjCommit(gPartyState.currentOwner, 321, 536);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 321, 320);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 321, 400);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 321, 480);
+  ShrineOfTheSeaGod_ObjCommit(gAdventure.currentOwner, 321, 536);
   Func_02003b48(161);
   ObjectMotion_SetActionVariant(9, 2);
   Object_GetById(9)->priorityFlags |= 2;

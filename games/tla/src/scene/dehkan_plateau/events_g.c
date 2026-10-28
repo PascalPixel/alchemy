@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -172,7 +172,7 @@ void Func_020021e8(void) {
   Func_02003cf8()->motionFlags = 0;
   Camera_SetBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
-  Actor_FaceToward(24, gPartyState.currentOwner, 0);
+  Actor_FaceToward(24, gAdventure.currentOwner, 0);
   Actor_SetTurn(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
@@ -197,7 +197,7 @@ void Func_020022e0(void) {
   Func_02003d78(0);
   Camera_SetBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
-  Actor_FaceToward(24, gPartyState.currentOwner, 0);
+  Actor_FaceToward(24, gAdventure.currentOwner, 0);
   Actor_SetTurn(24, 0x100, 40);
   Actor_Get(24)->motionFlags = 0;
   Actor_SetVariant(24, 1);
@@ -216,7 +216,7 @@ void Func_02002390(void) {
   Func_02003d78(0);
   Camera_SetBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
-  Actor_FaceToward(25, gPartyState.currentOwner, 0);
+  Actor_FaceToward(25, gAdventure.currentOwner, 0);
   Actor_SetTurn(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 168, 104);
@@ -235,11 +235,11 @@ void Func_02002390(void) {
 void Func_02002458(void) {
   Func_02003c28();
   Func_02003d78(0);
-  Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 25);
+  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 25);
   Func_02003cf8()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
-  Actor_FaceToward(25, gPartyState.currentOwner, 0);
+  Actor_FaceToward(25, gAdventure.currentOwner, 0);
   Actor_SetTurn(25, 0x100, 20);
   Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);

@@ -6,7 +6,7 @@
 // camera shaken and sets that flag.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_02004e38(void);
@@ -39,7 +39,7 @@ void Func_0200447c(const u16 *table) {
 
   if (Func_02004e38() != 0)
     return;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   partner = Object_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;

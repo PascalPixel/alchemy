@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "call.h"
 
@@ -33,12 +33,12 @@ void Func_02000120(void) {
   Func_02001108(0);
   Func_02001098(MsgAreWeSetting);
   UiText_OpenMessageAtObject(18, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Object_SetModeById(18, 3);
     Func_020010a8(18, 0);
-    gPartyState.ownerOverride = 1;
+    gAdventure.ownerOverride = 1;
     /* FAKEMATCH: the flag test forwards through call.h's Value1; called
-     * directly, the party state's offsets take r3 instead of r2 (differ 22,
+     * directly, the adventure's offsets take r3 instead of r2 (differ 22,
      * found by alchemy permute). */
     if (Value1(GameFlag_Test, 0x9d0)) {
       GameFlag_SetBit(0x8df);
@@ -50,7 +50,7 @@ void Func_02000120(void) {
     Func_020010a8(18, 0);
     Call3(ObjectMotion_SetSpeedParameters, 18, 0x19999, 0xcccc);
     Object_SetModeById(18, 2);
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     if (object != NULL)
       ObjectMotion_ResetAndSetPosition(18, *(s16 *)((u8 *)object + 10),
                                        *(s16 *)((u8 *)object + 18));

@@ -10,12 +10,12 @@
 s32 Func_0200014c(struct ObjectRuntime *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   struct ObjectRuntime *leader;
   s32 force = 0;
 
-  /* FAKEMATCH(barrier): holding the party state's address with r2 clobbered
-   * loads it before the owner offset is built; as Object_GetById(gPartyState.
+  /* FAKEMATCH(barrier): holding the adventure's address with r2 clobbered
+   * loads it before the owner offset is built; as Object_GetById(gAdventure.
    * currentOwner), 4 of 82 instructions differ in tla-en. */
   asm("" : "+l"(party) : : "r2");
   leader = Object_GetById(party->currentOwner);
@@ -41,7 +41,7 @@ s32 Func_0200014c(struct ObjectRuntime *object) {
     else
       target = Object_GetById(9);
     if (Func_02000088(object, target, 24, 0) == 0) {
-      leader = Object_GetById(gPartyState.currentOwner);
+      leader = Object_GetById(gAdventure.currentOwner);
       if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Func_02000088(object, leader, 24, force);

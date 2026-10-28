@@ -34,11 +34,11 @@ void Func_02003e8c(void) {
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   Call1((void (*)())WaitFrames, 1);
-  Call3((void (*)())Func_02005230, gPartyState.currentOwner, 0x1900000,
+  Call3((void (*)())Func_02005230, gAdventure.currentOwner, 0x1900000,
         0x31c0000);
   Call1((void (*)())WaitFrames, 1);
   Event_StartScreenTransition();
-  Call3((void (*)())ObjectMotion_SetPositionAndReset, gPartyState.currentOwner,
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, gAdventure.currentOwner,
         400, 752);
   Call2((void (*)())Func_020052d8, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1b40000, 0x480000, 0x2980000,

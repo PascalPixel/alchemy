@@ -6,7 +6,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -47,7 +47,7 @@ s32 Func_02002340(s32 a0, s32 a1, s32 a2, s32 a3) {
       v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, r1, r2;
   s32 stack[3];
 
-  r6 = (s32)&gPartyState;
+  r6 = (s32)&gAdventure;
   r5 = FIELD_AT(r6, s16, 480);
   r7 = FIELD_AT(r6, s16, 482);
   r8 = 0x3000000;
@@ -374,7 +374,7 @@ L_0200a944:
     goto L_0200a94c;
   goto L_0200aafe;
 L_0200a94c:
-  v30 = Object_GetById(FIELD_AT((s32)(s32)&gPartyState, s32, 532));
+  v30 = Object_GetById(FIELD_AT((s32)(s32)&gAdventure, s32, 532));
   FIELD_AT(v30, u8, 35) = 32 | (FIELD_AT(v30, u8, 35));
   Value3((s32 (*)())Func_02003420, 10, 6, 4);
   Value3((s32 (*)())Func_02003420, 11, 3, 4);

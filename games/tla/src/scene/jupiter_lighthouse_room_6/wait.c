@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s32 gData_020023c0;
 extern s16 gData_0200242a;

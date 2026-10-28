@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"

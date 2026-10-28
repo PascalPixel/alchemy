@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
@@ -31,8 +31,8 @@ void Func_02000178(s32 a, s32 b);
 void Func_02000180(s32 a, s32 b);
 
 const struct ScenePlacement *Func_0200004c(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov683 &&
-      (u16)(gPartyState.entrance - 8) <= 1)
+  if (gAdventure.scene == (s32)&SceneId_Ov683 &&
+      (u16)(gAdventure.entrance - 8) <= 1)
     return (const struct ScenePlacement *)gData_020003a8;
   return (const struct ScenePlacement *)gData_02000228;
 }
@@ -42,8 +42,8 @@ void Func_0200008c(s32 value) { Func_02000178(25, value); }
 void Func_02000098(s32 value) { Func_02000180(10, value); }
 
 const struct SceneEvent *Func_020000a4(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov683 &&
-      (u16)(gPartyState.entrance - 8) <= 1)
+  if (gAdventure.scene == (s32)&SceneId_Ov683 &&
+      (u16)(gAdventure.entrance - 8) <= 1)
     return (const struct SceneEvent *)gData_02000780;
   if (GameFlag_Test(0x97f))
     return (const struct SceneEvent *)gData_020005ac;
@@ -59,12 +59,12 @@ s32 Func_020000fc(void) {
 #endif
 
   /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
-   * party state's address loads just before the store; as one assignment, 2
+   * adventure's address loads just before the store; as one assignment, 2
    * of 32 instructions differ in tla-en. */
   __asm__("");
   *effect = value;
-  if (gPartyState.scene == (s32)&SceneId_Ov683 &&
-      (u16)(gPartyState.entrance - 8) <= 1)
+  if (gAdventure.scene == (s32)&SceneId_Ov683 &&
+      (u16)(gAdventure.entrance - 8) <= 1)
     Func_0200014c();
   return 0;
 }

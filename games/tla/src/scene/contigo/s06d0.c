@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -20,7 +20,7 @@ s32 Func_020006d0(struct ObjectRuntime *self) {
   s8 *effect;
   struct ObjectRuntime *other;
 
-  Func_0200402c(self, Func_02004254(Object_GetById(gPartyState.currentOwner)));
+  Func_0200402c(self, Func_02004254(Object_GetById(gAdventure.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -30,7 +30,7 @@ s32 Func_020006d0(struct ObjectRuntime *self) {
   }
   if (BYTE_AT(self, 99) == 1)
     goto near;
-  other = Object_GetById(gPartyState.currentOwner);
+  other = Object_GetById(gAdventure.currentOwner);
   if (Func_02000620(&self->x, &other->x) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
@@ -39,7 +39,7 @@ s32 Func_020006d0(struct ObjectRuntime *self) {
     other = Object_GetById(14);
   if (Func_02000658(self, other, 18) != 0)
     goto near;
-  if (Func_02000658(self, Object_GetById(gPartyState.currentOwner), 26) != 0)
+  if (Func_02000658(self, Object_GetById(gAdventure.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 struct WarpTarget {
@@ -243,7 +243,7 @@ void Func_02000468(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
 void Func_02000488(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
 
 void Func_020004a8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (GameFlag_Test(0xfbb) == 0) {
@@ -251,11 +251,11 @@ void Func_020004a8(void) {
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Func_02001bcc();
       Func_02001d04(0);
-      Func_02001cac(gPartyState.currentOwner, 0x102);
-      ObjectMotion_OffsetPositionAndResetMotion_(gPartyState.currentOwner, 16,
+      Func_02001cac(gAdventure.currentOwner, 0x102);
+      ObjectMotion_OffsetPositionAndResetMotion_(gAdventure.currentOwner, 16,
                                                  0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
       Func_02001bd4();
     }
   }

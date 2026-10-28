@@ -6,8 +6,8 @@
 // Draft, differ 2 of 170: the scene setup of overlay 669, written from the
 // listing (its ☀️ twin by shape, CottageRoomsA_Initialize in
 // scene/cottage_rooms_a.c, is a different scene). Left: one scheduling
-// swap at the start: the native loads gPartyState's address before it stores
-// the screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the
+// swap at the start: the native loads gAdventure's address before it stores
+// the screen effect (ldr r5, =gAdventure; adds r2, #93; str r2, [r3]); the
 // draft stores first. In sched2 the 0x209 add ranks 7 (its store anti-depends
 // into the next constant) and the pool load 6, one below. Measured: one-pass
 // blocks around the y step or the priority bit (4), a party pointer (4), an
@@ -18,7 +18,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct EventWork1ac {
@@ -43,11 +43,11 @@ s32 Func_02000250(void) {
   struct ObjectRuntime *object;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  if (gPartyState.entrance == 99) {
+  if (gAdventure.entrance == 99) {
     GameFlag_SetBit(0x8aa);
     GameFlag_SetBit(0x8ab);
-    gPartyState.secondary = 3;
-    gPartyState.entrance = 3;
+    gAdventure.secondary = 3;
+    gAdventure.entrance = 3;
     Func_02000c5c();
   }
   if (GameFlag_Test(0x8a7)) {

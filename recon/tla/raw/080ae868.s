@@ -228,6 +228,6 @@ Func_080ae868:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080aea28:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080aea2c:
 	.4byte Data_080b1290

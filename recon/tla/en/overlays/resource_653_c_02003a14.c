@@ -24,6 +24,6 @@ void Func_02003a14(void) {
   gData_02006294 = 0;
   map->mode = 1;
   Func_02005338(0);
-  if (gPartyState.entrance == 1 || gPartyState.entrance == 2)
+  if (gAdventure.entrance == 1 || gAdventure.entrance == 2)
     GameFlag_ClearBit(0x12f);
 }

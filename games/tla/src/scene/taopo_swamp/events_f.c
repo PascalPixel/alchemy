@@ -86,7 +86,7 @@ extern const u8 gData_020034e8[];
 extern const u8 gData_02003560[];
 
 const struct SceneEvent *Scene_GetEvents(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov678Room1)
     return (const struct SceneEvent *)gData_02003038;

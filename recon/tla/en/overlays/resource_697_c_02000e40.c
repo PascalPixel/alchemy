@@ -19,7 +19,7 @@ void Func_02000d70(void);
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 fromX = object->x >> 20;
   s32 fromZ = object->z >> 20;
   s32 toX = fromX;
@@ -55,7 +55,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Func_02005880();
   Func_020059e8(0);
-  Object_SetModeById(gPartyState.currentOwner, 8);
+  Object_SetModeById(gAdventure.currentOwner, 8);
   FieldEvent_WaitFrames(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
@@ -66,12 +66,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   targetZ = (toZ << 20) + 0x80000;
   Func_020057f8(object, (toX << 20) + 0x80000, 0, targetZ);
   FieldEvent_WaitFrames(6);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x4ccc, 0x3333);
-  ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, dx << 3,
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x4ccc, 0x3333);
+  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, dx << 3,
                                             dz << 3);
   FieldEvent_WaitFrames(24);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   Func_02005800(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);

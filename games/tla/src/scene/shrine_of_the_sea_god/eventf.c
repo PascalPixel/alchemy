@@ -52,7 +52,7 @@ s32 Func_02002ec4(void) {
 
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
     Func_02003094();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
@@ -157,7 +157,7 @@ void Func_02003094(void) {
 
 void Func_020030fc(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   struct ShrineOfTheSeaGodObject *object = Object_GetById(11);
   s32 x = object->x;
   u8 *flags = &object->collisionFlags;
@@ -261,7 +261,7 @@ void Func_0200338c(void) {
   struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
   u8 *flags = &object->priorityFlags;
 
-  if ((u16)(gPartyState.entrance - 2) <= 1) {
+  if ((u16)(gAdventure.entrance - 2) <= 1) {
     ObjectMotion_SetActionVariant(13, 3);
     /* FAKEMATCH: the native ties the flag or to the constant's register. */
     *flags = *flags + 2 - (*flags & 2);
@@ -292,7 +292,7 @@ void Func_0200338c(void) {
       block->state = moved;
       ShrineOfTheSeaGod_ObjPlace(14, 392 << 16, 296 << 16);
     }
-    Object_LinkObjectAndSetCallback(14, gPartyState.currentOwner);
+    Object_LinkObjectAndSetCallback(14, gAdventure.currentOwner);
   } else if (GameFlag_Test(0x877)) {
     /* FAKEMATCH: the function-scope angle temporary preserves its early
      * constant construction; a direct argument through the unbound helper
@@ -305,7 +305,7 @@ void Func_0200338c(void) {
 void Func_02003504(void) {
   s32 open;
 
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
   open = GameFlag_Test(0x301);
   if (open) {

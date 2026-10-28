@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
@@ -163,10 +163,10 @@ void BattleEffect_Run(void) {
   else if (animation == FIELD_FX_PAUSE) {
     // Let the object stopped last time go, then stop the nearest one that
     // has an event to run; with none, play the fallback transition.
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     s32 paused;
 
-    /* FAKEMATCH: ⚓️ loads the party state before it builds the field offset
+    /* FAKEMATCH: ⚓️ loads the adventure before it builds the field offset
      * (differ 4 without the barrier). */
     asm volatile("");
     paused = party->pausedObject;
@@ -261,12 +261,12 @@ void BattleEffect_DispatchRequestKind(void) {
   else if (animation == FIELD_FX_WAVE) {
     // A wave still running from the last cast is reset first; a target that
     // is not the paused object stops walking while the wave runs.
-    struct PartyState *party;
+    struct Adventure *party;
 
     if (*(s8 *)(event + 0xca4) != 0)
       Func_080dd950();
-    party = &gPartyState;
-    /* FAKEMATCH: ⚓️ loads the party state before it builds the field offset
+    party = &gAdventure;
+    /* FAKEMATCH: ⚓️ loads the adventure before it builds the field offset
      * (differ 2 without the barrier). */
     asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
@@ -274,9 +274,9 @@ void BattleEffect_DispatchRequestKind(void) {
     Func_080dc978(scene->firstObjectId, targetId);
   } else if (animation == FIELD_FX_PAUSE) {
     // Let the object stopped last time go, then stop the target.
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: ⚓️ loads the party state before it builds the field offset
+    /* FAKEMATCH: ⚓️ loads the adventure before it builds the field offset
      * (differ 4 without the barrier). */
     asm volatile("");
     if (party->pausedObject != -1) {

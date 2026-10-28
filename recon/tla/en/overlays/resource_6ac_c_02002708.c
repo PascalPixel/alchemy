@@ -73,7 +73,7 @@ void Func_02002708(void) {
   event->field164 = 0;
   Func_02002368(-10, 0);
   Func_02003218(0x70000, 0xe000);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Call1((void (*)())GameFlag_SetBit, 0x106);
   Func_020031e0();

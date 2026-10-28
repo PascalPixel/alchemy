@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "io_reg.h"
 
 struct CellTargetEntry;
@@ -35,7 +35,7 @@ void Event_WaitTransitionFrames(void);
 #include "iowrite.h"
 
 void Func_020016c4(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
@@ -45,12 +45,12 @@ void Func_020016c4(struct CellTarget *table, struct CellTargetEntry *entry) {
   FieldEvent_WaitFrames(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
-  Object_SetModeById(gPartyState.currentOwner, 28);
+  Object_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   x = 0;
   do {
@@ -62,7 +62,7 @@ void Func_020016c4(struct CellTarget *table, struct CellTargetEntry *entry) {
     WaitFrames(1);
     x++;
   } while (x <= 39);
-  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  Object_GetById(gAdventure.currentOwner)->animationKind = 0;
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

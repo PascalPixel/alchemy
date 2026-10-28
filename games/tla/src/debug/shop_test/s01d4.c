@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "flag_call.h"
 
 extern const u8 MsgAhSoYou[];

@@ -14,12 +14,12 @@ void Func_02002e04(s32 id) {
 }
 
 void Func_02002e34(s32 entrance) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 i;
 
   Func_02003d7c();
   Func_02003eac(0);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   leader->motionFlags = 0;
   /* FAKEMATCH: the native clears the motion flags before it addresses the
    * priority flags (differ 2 without the barrier). */

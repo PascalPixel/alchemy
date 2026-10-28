@@ -111,7 +111,7 @@ Func_02000454:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_02008538:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200853c,"ax",%progbits
 	.balign 4
 	.global Func_0200053c
@@ -451,7 +451,7 @@ Func_020006a8:
 .L_020087e4:
 	.4byte gData_02001220
 .L_020087e8:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200887c,"ax",%progbits
 	.balign 4
 	.global Func_0200087c

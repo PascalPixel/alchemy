@@ -7,7 +7,7 @@ void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 
 void Func_02001dd4(void) {
   struct ObjectRuntime *partner = Object_GetById(8);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 dx;
   s32 dz;
   s32 near;

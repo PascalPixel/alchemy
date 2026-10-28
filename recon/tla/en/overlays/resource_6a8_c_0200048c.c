@@ -1,4 +1,4 @@
-// Draft of Scene_GetPlacements, differ 19 of 87: GCSE (PRE) keeps gPartyState's
+// Draft of Scene_GetPlacements, differ 19 of 87: GCSE (PRE) keeps gAdventure's
 // address in r5 across the flag tests and reuses it for the second scene read;
 // the native loads it again from the pool after the join. Tried: one local read
 // twice, nested ifs, one-pass blocks around either read, the flag inline layer
@@ -6,7 +6,7 @@
 // dead condition).
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -23,12 +23,12 @@ extern struct ScenePlacement gData_020054a4[];
 extern struct ScenePlacement gData_0200551c[];
 
 const struct ScenePlacement *Func_0200048c(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1 && GameFlag_Test(0x9c5) &&
       !GameFlag_Test(0x9cc))
     return gData_02004b2c;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
     return gData_02004c4c;
   if (scene == (s32)&SceneId_Ov6a8Room3) {

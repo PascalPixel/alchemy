@@ -1,5 +1,5 @@
 #include "sea_of_time.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_scene.h"
 #include "scene_ids.h"
 
@@ -103,9 +103,9 @@ void Func_020015ec(void) {
 }
 
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov687Room1)
+  if (gAdventure.scene == (s32)&SceneId_Ov687Room1)
     return (const struct SceneEvent *)gData_020022d0;
-  if (gPartyState.entrance <= 4)
+  if (gAdventure.entrance <= 4)
     return (const struct SceneEvent *)gData_0200242c;
   return (const struct SceneEvent *)gData_0200251c;
 }

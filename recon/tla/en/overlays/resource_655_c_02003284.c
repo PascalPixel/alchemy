@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "callback_scheduler.h"
 
@@ -98,9 +98,9 @@ void Func_02003284(void) {
   s32 zero;
 
   if (Flag_Test(265) == 0) {
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-    Actor_SetVariant(gPartyState.currentOwner, 2);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+    Actor_SetVariant(gAdventure.currentOwner, 2);
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
   Actor_SetVariant(8, 1);
   Actor_SetVariant(9, 1);

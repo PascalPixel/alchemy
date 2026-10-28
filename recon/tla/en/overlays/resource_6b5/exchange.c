@@ -12,7 +12,7 @@
 #include "system.h"
 #include "types.h"
 #include "io_reg.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "serial_runtime.h"
 
 s32 Func_0200039c(void);
@@ -25,7 +25,7 @@ s32 Func_02000538(u16 *dest) {
   if (cnt > 3)
     cnt = 3;
   for (i = 0; i < cnt; i++) {
-    u8 c = gPartyState.activeOwners[i];
+    u8 c = gAdventure.activeOwners[i];
 
     if (dest != 0) {
       *dest = c;

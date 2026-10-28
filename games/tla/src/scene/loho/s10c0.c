@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov6A6Room1;
 
@@ -20,7 +20,7 @@ static __inline__ void Func_02001350_(s32 id, s32 x, s32 z, u16 angle) {
 }
 
 s32 Func_020010c0(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov6A6Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov6A6Room1) {
     if (!GameFlag_Test(0x300))
       Object_SetWideSprite(64, 0);
     if (!GameFlag_Test(0x301))

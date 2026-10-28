@@ -8,7 +8,7 @@ void Func_02001880(void) {
   struct ShamanVillageObject *shaman;
   struct ShamanVillageObject *target;
 
-  owner = Object_GetById(gPartyState.currentOwner);
+  owner = Object_GetById(gAdventure.currentOwner);
   shaman = Object_GetById(15);
   Func_020048c4();
   Func_02004a24(0);
@@ -29,7 +29,7 @@ void Func_02001880(void) {
   Object_SetModeById(15, 3);
   Func_0200498c((s32)MsgShamanGuardsTakeOtherPath);
   Func_020049a4(15, 0);
-  ObjectMotion_SetAngleToward(gPartyState.currentOwner, 15, 0);
+  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 15, 0);
   ShamanVillage_ObjArm(17, 0x6000, 0);
   ShamanVillage_ObjTurn(15, 0xe000);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -47,7 +47,7 @@ void Func_02001880(void) {
   ShamanVillage_CamMove(0xe00000, -1, 0xc80000, 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02004c5c);
   ObjectMotion_EnableActionAndSetCallback(15, gData_02004cac);
   do {
@@ -59,13 +59,13 @@ void Func_02001880(void) {
   Func_02003040();
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   ShamanVillage_CamMove(0xe00000, -1, 0xa80000, 1);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
-  ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 184, 128);
+  ObjectMotion_ResetAndSetPositionInMode2(gAdventure.currentOwner, 184, 128);
   ShamanVillage_ObjWalk(15, 264, 128);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   WaitFrames(1);
-  Func_02004934(gPartyState.currentOwner, 0, 0);
+  Func_02004934(gAdventure.currentOwner, 0, 0);
   Func_02004934(15, 0, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -78,7 +78,7 @@ void Func_02001aa4(void) {
   struct ShamanVillageObject *shaman;
   struct ShamanVillageObject *target;
 
-  owner = Object_GetById(gPartyState.currentOwner);
+  owner = Object_GetById(gAdventure.currentOwner);
   shaman = Object_GetById(15);
   Func_020048c4();
   Func_02004a24(0);
@@ -99,7 +99,7 @@ void Func_02001aa4(void) {
   Object_SetModeById(15, 3);
   Func_0200498c((s32)MsgShamanGuardsTakeOtherPath);
   Func_020049a4(15, 0);
-  ObjectMotion_SetAngleToward(gPartyState.currentOwner, 15, 0);
+  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 15, 0);
   ShamanVillage_ObjArm(16, 0x2000, 0);
   ShamanVillage_ObjTurn(15, 0xa000);
   Motion_SetModeAndWaitAnimation(16, 3);
@@ -118,7 +118,7 @@ void Func_02001aa4(void) {
   owner->unk63 = 0;
   shaman->unk63 = 0;
   ObjectMotion_EnableActionAndSetCallback(15, gData_02004c5c);
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02004cac);
   do {
     WaitFrames(1);
@@ -129,14 +129,14 @@ void Func_02001aa4(void) {
   Func_02003040();
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   ShamanVillage_CamMove(0xe00000, -1, 0xa80000, 1);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
   ObjectMotion_ResetAndSetPositionInMode2(15, 184, 128);
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 264, 128);
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 264, 128);
   Object_SetModeById(15, 1);
   WaitFrames(1);
   Func_02004934(15, 0, 0);
-  Func_02004934(gPartyState.currentOwner, 0, 0);
+  Func_02004934(gAdventure.currentOwner, 0, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020048b4();

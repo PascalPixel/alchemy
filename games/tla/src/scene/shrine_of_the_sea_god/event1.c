@@ -20,11 +20,11 @@ void Func_02000ce8(void) {
   u32 i;
   s32 frames;
 
-  /* FAKEMATCH(barrier): the layer's address waits for gPartyState's; without
+  /* FAKEMATCH(barrier): the layer's address waits for gAdventure's; without
    * it, 2 of 142 instructions differ in tla-en. */
-  asm("" : "+l"(map) : "l"(&gPartyState));
+  asm("" : "+l"(map) : "l"(&gAdventure));
   layer = &map->layers[1];
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
@@ -33,7 +33,7 @@ void Func_02000ce8(void) {
   ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
   leader->motionFlags = 0;
   leader->y = -50 << 16;
   leader->height = -50 << 16;
@@ -67,7 +67,7 @@ loop:
   Call3((void (*)())Func_020039b8, 0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
   WaitFrames(1);
   Func_020039e0();
@@ -85,19 +85,19 @@ void Func_02000e38(void) {
   /* FAKEMATCH(barrier): the map pointer is ready before the layer offset; with
    * only the next barrier, 4 of 95 instructions differ in tla-en. */
   asm("" : "+l"(map));
-  /* FAKEMATCH(barrier): the layer's address waits for gPartyState's; with only
+  /* FAKEMATCH(barrier): the layer's address waits for gAdventure's; with only
    * the barrier above, 4 of 95 differ, and with neither 2, in tla-en. */
-  asm("" : "+l"(map) : "l"(&gPartyState));
+  asm("" : "+l"(map) : "l"(&gAdventure));
   layer = &map->layers[1];
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-  ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x4000, 20);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0x4000, 20);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
   object->motionFlags = 0;
   Func_02003b48(245);
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
@@ -188,7 +188,7 @@ void Func_02001038(void) {
 
 void Func_02001088(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   u32 id;
 
   for (id = 9; id <= 13;) {
@@ -209,7 +209,7 @@ void Func_02001088(void) {
 
 void Func_020010e8(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   s32 y;
 
   Func_02003b28();
@@ -217,14 +217,14 @@ void Func_020010e8(void) {
   /* FAKEMATCH: loads the leader height before it builds the threshold. */
   __asm__("");
   if (y < 0x100000)
-    ((u8 *)&gPartyState)[0x2c3] = 0;
+    ((u8 *)&gAdventure)[0x2c3] = 0;
   else
-    ((u8 *)&gPartyState)[0x2c3] = 1;
+    ((u8 *)&gAdventure)[0x2c3] = 1;
 }
 
 void Func_02001128(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   s32 y;
   s32 z;
 
@@ -259,9 +259,9 @@ void Func_020011a0(void) {
 }
 
 void Func_020011c0(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags &= ~0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~0x20;
 }
 
 void Func_020011e0(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
 }

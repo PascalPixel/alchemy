@@ -2,7 +2,7 @@
 // still rises above sub sp, as recorded below.
 // Near miss, differ 2 of 103: The Broken Seal's
 // StagedActor_PlacePairAtOffsetAndRun with this overlay's stubs. The native
-// order is sub sp; ldr r3, =gPartyState; str r1, [sp, #4]; str r2, [sp];
+// order is sub sp; ldr r3, =gAdventure; str r1, [sp, #4]; str r2, [sp];
 // movs r2, #133 ... adds r5, r0, #0. Plain (differ 4) dz is spilled first
 // and dx after the offset is built. With the loop note after the party
 // address and the id pinned to r5 after it (below) the spills and the id
@@ -14,7 +14,7 @@
 // r2 (dx moves to r8: differ 32); permute 3 minutes on the plain form found
 // nothing below 4.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct FieldActor {
   u8 unk00[8];
@@ -40,10 +40,10 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *actor;
   s32 x;
   s32 z;
-  struct PartyState *party;
+  struct Adventure *party;
   s32 *owner;
 
-  party = &gPartyState;
+  party = &gAdventure;
   do {
   } while (0);
   owner = &party->currentOwner;

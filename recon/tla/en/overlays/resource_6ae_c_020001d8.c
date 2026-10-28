@@ -9,7 +9,7 @@
 // flag 0xa3c as an enclosing if changes nothing.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u32 Data_0200eb60;
 extern const u8 gData_02005aa4[];
@@ -39,7 +39,7 @@ void Func_020001d8(void) {
 
   Func_02004ef0(gData_02005aa4, gData_02005ab4, gData_02005ae0,
                 gData_02005b0c);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x40;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
   i = 10;
 next:
   object = Object_GetById(i);

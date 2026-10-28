@@ -2,11 +2,11 @@
 #include "map.h"
 
 void Func_020020e4(void) {
-  struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
+  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 index = Func_020041e0(leader);
   struct MapCell *cell = map->layers[0].cells + index;
-  struct PartyState *party;
+  struct Adventure *party;
   s32 y;
 
   if (cell->collisionCode == 20) {
@@ -14,12 +14,12 @@ void Func_020020e4(void) {
     asm volatile(
         ""); /* FAKEMATCH: ⚓️ reads the height before it builds 0x100000 */
     if (y > 0x100000) {
-      gPartyState.unk2c3 = 1;
+      gAdventure.unk2c3 = 1;
       return;
     }
   }
-  party = &gPartyState;
-  /* FAKEMATCH: ⚓️ loads the party state address before it builds the field
+  party = &gAdventure;
+  /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the field
    * offset */
   asm volatile("");
   party->unk2c3 = 0;

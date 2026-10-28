@@ -187,7 +187,7 @@ Func_0810a2d8:
 .L_0810a480:
 	.4byte 0x0000126d
 .L_0810a484:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0810a488:
 	.4byte 0x0000126e
 .L_0810a48c:

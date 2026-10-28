@@ -4,7 +4,7 @@ extern const u8 gData_02001c1c[];
 extern const u8 gData_02001c28[];
 
 const u8 *Func_02000714(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gAdventure.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_02001c28;
   return gData_02001c1c;
 }
@@ -45,11 +45,11 @@ s32 Func_02000740(void) {
   s32 value = 0x204;
 
   /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
-   * party state's address loads just before the store; as one assignment, 2
+   * adventure's address loads just before the store; as one assignment, 2
    * of 110 instructions differ in tla-en. */
   __asm__("");
   *route = value;
-  if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov6b1Room1) {
     Func_02000b18();
     Func_02000bd4(2);
     SetObjectValue(9, 0);
@@ -58,7 +58,7 @@ s32 Func_02000740(void) {
     SetObjectValue(12, 3);
     SetObjectValue(13, 128);
     SetObjectValue(14, 129);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x40;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
     Object_GetById(9)->priorityFlags |= 0xc0;
     Object_GetById(10)->priorityFlags |= 0x80;
     Object_GetById(11)->priorityFlags |= 0x80;

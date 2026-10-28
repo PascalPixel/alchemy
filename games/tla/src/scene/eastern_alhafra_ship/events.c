@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -26,7 +26,7 @@ void Func_0200008c(void) {
   struct ObjectRuntime *object1;
 
   Call1((void (*)())GameFlag_SetBit, 0x901);
-  v5 = &gPartyState;
+  v5 = &gAdventure;
   v5 = (v5 + 0x214);
   object0 = Object_GetById(*(s32 *)((u8 *)v5 + 0));
   v6 = 192;

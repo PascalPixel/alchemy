@@ -1,12 +1,12 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_02002304(s32 x, s32 z, s32 a2, s32 a3);
 
 void Func_020006dc(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
-  /* FAKEMATCH: a one-pass block loads the party state before its offset is
+  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
    * built (one reordered row). */
   do {
   } while (0);

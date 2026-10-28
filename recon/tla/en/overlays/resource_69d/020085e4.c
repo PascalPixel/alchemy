@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -106,7 +106,7 @@ void Func_02000990(struct FieldActor *ball) {
   s32 t;
 
   work = Ram_HeapSlots->eventWork;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
     ObjectDispatch_SetAnimationSpeed(ball, 0);
@@ -141,7 +141,7 @@ void Func_02000990(struct FieldActor *ball) {
       leader->facing = ball->facing;
       leader->priorityFlags &= 254;
       ((struct EventHold *)work)->hold = 200;
-      gPartyState.renderMode = 0;
+      gAdventure.renderMode = 0;
       BYTE_AT(ball, 98) = 1;
       BYTE_AT(ball, 99) = 1;
     }

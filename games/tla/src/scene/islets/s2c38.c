@@ -3,9 +3,9 @@
 void Func_02002c38(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *spawned;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
-  /* FAKEMATCH: the listing loads the party state address before it builds the
+  /* FAKEMATCH: the listing loads the adventure's address before it builds the
    * entrance offset */
   asm volatile("" : "+l"(party));
   if (party->entrance == 2)

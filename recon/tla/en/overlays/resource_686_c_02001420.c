@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -58,8 +58,8 @@ L_0200945e:
   FIELD_AT(67108864, u16, 0) = (FIELD_AT(67108864, u16, 0)) | (32768);
   Scheduler_AddOrUpdateCallback((s32)Func_020012c4, 0x480);
   r0 = 0x10000;
-  ip = 482 + (s32)(s32)&gPartyState;
-  if ((u32)(((FIELD_AT(482 + (s32)(s32)&gPartyState, u16, 0)) - 1) << 16) >
+  ip = 482 + (s32)(s32)&gAdventure;
+  if ((u32)(((FIELD_AT(482 + (s32)(s32)&gAdventure, u16, 0)) - 1) << 16) >
       (u32)65536)
     goto L_0200953e;
   goto L_020094e8;

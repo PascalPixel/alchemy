@@ -8,7 +8,7 @@
 
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"

@@ -11,7 +11,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "frame.h"
 #include "field_effect.h"
 
@@ -73,7 +73,7 @@ void Func_0200057c(void) {
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
   MemFree(buffer);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   ObjectMotion_SetActionVariant(14, 1);
   *(volatile u16 *)0x04000008 = 0x40d;
   *(volatile u16 *)0x04000008 &= ~3;
@@ -116,7 +116,7 @@ void Func_0200057c(void) {
     }
     FieldEvent_WaitFrames(1);
   }
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_020049f4();
   Func_020049e4(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(168 << 16, -1, 212 << 17, 1);
@@ -203,14 +203,14 @@ void Func_0200057c(void) {
   REG_BLDCNT = 0;
   Func_020047d4();
   Func_020047bc();
-  Func_0200488c(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags &= ~32;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  Func_0200488c(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   Object_GetById(14)->priorityFlags |= 1;
   REG_DISPCNT |= 0x400;
   Func_0200482c();
   WaitFrames(1);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_020049f4();
   Func_0200484c(1, 5, 9, 1, 6, 29);
   GameFlag_SetBit(2380);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -30,7 +30,7 @@ static inline void Yallam_Offset(s32 id, s32 x, s32 z) {
 }
 
 void Func_0200038c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Yallam_02002598(26, 95, 2, 1, 26, 76, 2);
   if (GameFlag_Test(0xf62) == 0) {
@@ -38,10 +38,10 @@ void Func_0200038c(void) {
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Func_02002488();
       Func_02002590(0);
-      Func_02002550(gPartyState.currentOwner, 0x102);
-      Yallam_Offset(gPartyState.currentOwner, 16, 0);
+      Func_02002550(gAdventure.currentOwner, 0x102);
+      Yallam_Offset(gAdventure.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
       Func_02002490();
     }
   }
@@ -50,7 +50,7 @@ void Func_0200038c(void) {
 void Func_0200041c(void) { Yallam_02002598(67, 25, 3, 3, 106, 20, 1); }
 
 void Func_0200043c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Yallam_02002598(67, 25, 3, 3, 106, 20, 1);
   if (GameFlag_Test(0xf60) == 0) {
@@ -58,10 +58,10 @@ void Func_0200043c(void) {
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
       Func_02002488();
       Func_02002590(0);
-      Func_02002550(gPartyState.currentOwner, 0x102);
-      Yallam_Offset(gPartyState.currentOwner, 0, -16);
+      Func_02002550(gAdventure.currentOwner, 0x102);
+      Yallam_Offset(gAdventure.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
-      ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+      ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
       Func_02002490();
     }
   }

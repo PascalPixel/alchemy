@@ -1,7 +1,7 @@
 #include "local.h"
 
 const u8 *Func_020013b8(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
     return gData_02003220;

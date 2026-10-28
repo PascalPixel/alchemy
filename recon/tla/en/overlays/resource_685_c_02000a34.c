@@ -6,7 +6,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -113,7 +113,7 @@ s32 Func_02000a34(s32 value) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
     Call3((void (*)())Func_0200351c, 8, 0, 5);
   }
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x2000,
         0);
   Call2((void (*)())Func_02003534, 8, 0x5000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
@@ -145,15 +145,15 @@ s32 Func_02000a34(s32 value) {
     Call3((void (*)())Func_02000734, dim, bright, 48);
     Call1((void (*)())FieldEvent_WaitFrames, 10);
   }
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   object->actionFlags &= ~1;
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate,
-        gPartyState.currentOwner, 12, 12);
+        gAdventure.currentOwner, 12, 12);
   Call1((void (*)())FieldEvent_WaitFrames, 1);
-  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
-  Call2((void (*)())Func_02003534, gPartyState.currentOwner, 0x2000);
+  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Call2((void (*)())Func_02003534, gAdventure.currentOwner, 0x2000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
-  Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 22);
+  Call2((void (*)())Object_SetModeById, gAdventure.currentOwner, 22);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Object_SetModeById, 8, 7);
   Call1((void (*)())FieldEvent_WaitFrames, 60);
@@ -163,9 +163,9 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())Func_0200362c, 220);
   Call3((void (*)())Func_02000734, bright, dim, 48);
-  Call2((void (*)())ObjectMotion_SetVariantCallback, gPartyState.currentOwner,
+  Call2((void (*)())ObjectMotion_SetVariantCallback, gAdventure.currentOwner,
         3);
-  Call2((void (*)())Func_0200354c, gPartyState.currentOwner, 0x102);
+  Call2((void (*)())Func_0200354c, gAdventure.currentOwner, 0x102);
   Call1((void (*)())FieldEvent_WaitFrames, 50);
   Call3((void (*)())Func_02003544, 8, 0x101, 60);
   Call2((void (*)())Func_0200360c, 16, 0x1090);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003dba[];
 struct ObjectRuntime *Object_GetById(s32 id);

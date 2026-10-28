@@ -2,7 +2,7 @@
 #include "field_scene.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"

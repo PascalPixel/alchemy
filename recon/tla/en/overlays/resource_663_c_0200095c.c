@@ -17,7 +17,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -55,7 +55,7 @@ void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
 
 void Func_0200095c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct ObjectRuntime *gust, *spark, *target;
   struct EffectOptions dust, leaves;
@@ -210,7 +210,7 @@ void Func_0200095c(void) {
   }
   Func_02003b48(gust);
   FieldEvent_WaitFrames(30);
-  Func_02003c38(gPartyState.currentOwner, 1);
+  Func_02003c38(gAdventure.currentOwner, 1);
   Func_02003c30();
   Func_02003bd0();
 }

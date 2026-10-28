@@ -781,7 +781,7 @@ UiText_BuildRenderEntries:
 .L_0803b638:
 	.4byte 0x00000e58
 .L_0803b63c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0803b640:
 	mov r0, r10
 	mov lr, r9

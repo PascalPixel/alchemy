@@ -75,7 +75,7 @@ Func_0200014c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_ja_020081d4:
-	.4byte gPartyState
+	.4byte gAdventure
 	.endif
 	.section .text.x020086bc,"ax",%progbits
 	.balign 4
@@ -2139,7 +2139,7 @@ Func_02001944:
 .L_02009ce8:
 	.4byte 0x036e0000
 .L_02009cec:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009cf0:
 	.4byte gData_02002804
 .L_02009cf4:

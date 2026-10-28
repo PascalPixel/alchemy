@@ -1,12 +1,12 @@
 #include "ankohl_ruins.h"
 
 void Func_020011c0(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
 
   Func_02002e44();
   Func_02002edc(0);
-  Object_SetModeById(gPartyState.currentOwner, 0);
-  Func_02002e9c(gPartyState.currentOwner, 258);
+  Object_SetModeById(gAdventure.currentOwner, 0);
+  Func_02002e9c(gAdventure.currentOwner, 258);
   object->motionFlags = 0;
   object->actionFlags = 0;
   {
@@ -16,17 +16,17 @@ void Func_020011c0(void) {
     register s32 zero asm("r1");
 
     zero = 0;
-    ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, zero,
+    ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, zero,
                                               8);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
   /* FAKEMATCH: called as value-returning, the call sets its constants before
    * the owner as the native does (differ 2 as the void call). */
-  ((s32 (*)(s32, s32, s32))Func_02002e94)(gPartyState.currentOwner, 256, 0);
+  ((s32 (*)(s32, s32, s32))Func_02002e94)(gAdventure.currentOwner, 256, 0);
   FieldEvent_WaitFrames(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Func_02002eec(204);
-  Func_02000b30(gPartyState.currentOwner, 188);
+  Func_02000b30(gAdventure.currentOwner, 188);
   object->actionFlags = 1;
   Func_02002e4c();
 }

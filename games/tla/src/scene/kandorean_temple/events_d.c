@@ -21,7 +21,7 @@ void Func_020006b0(struct ObjectRuntime *object) {
 }
 
 void Func_02000710(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *steam;
 
   if ((gFrameCount & 7) == 0) {

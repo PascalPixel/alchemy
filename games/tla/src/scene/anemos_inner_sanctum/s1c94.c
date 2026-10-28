@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 struct EventWork154 {
@@ -58,7 +58,7 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   Func_020034b8(158);
-  if (gPartyState.scene == (s32)&SceneId_Ov6B0Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov6B0Room1) {
     Func_02003320_(gData_020043e4, 33, 7);
   } else {
     s32 index = work->value / 2 - 1;
@@ -66,9 +66,9 @@ loop:
     Func_02003320_(gData_02004410[index].data, gData_02004410[index].a,
                    gData_02004410[index].b);
   }
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 0, -4);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -4);
   FieldEvent_WaitFrames(6);
   Func_02003450(work->value);
   Event_FinishScreenTransition();

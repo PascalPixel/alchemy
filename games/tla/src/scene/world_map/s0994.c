@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -37,7 +37,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   struct ObjectRuntime *leader;
 
   Object_SetModeById(actor, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -84,7 +84,7 @@ void Func_02000994(void) {
   s32 seen;
 
   if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     x = object->x;
     z = object->z;
     Func_02004c20();
@@ -96,35 +96,35 @@ void Func_02000994(void) {
     z <<= 4;
     if (seen) {
       Func_02004df8_(0x16666, 6);
-      Func_02004c98(5, gPartyState.currentOwner);
+      Func_02004c98(5, gAdventure.currentOwner);
       WaitFrames(1);
       ObjectMotion_SetPositionAndReset_(5, x + 24, z - 12);
       ObjectMotion_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gPartyState.currentOwner, 0xe000);
+      Func_02004d00_(gAdventure.currentOwner, 0xe000);
       Func_02004da8();
       Func_02004cd8((s32)MsgWeShouldnT);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       WaitFrames(1);
-      ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
+      ObjectMotion_SetPositionAndReset_(gAdventure.currentOwner, 7312, 0x2000);
       Func_02004df8_(0x10000, 6);
     } else {
       Func_02004df8_(0x16666, 6);
-      Func_02004c98(5, gPartyState.currentOwner);
+      Func_02004c98(5, gAdventure.currentOwner);
       WaitFrames(1);
       z -= 12;
       ObjectMotion_SetPositionAndReset_(5, x + 24, z);
       ObjectMotion_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gPartyState.currentOwner, 0xe000);
+      Func_02004d00_(gAdventure.currentOwner, 0xe000);
       Func_02004da8();
       Func_02004cd8((s32)MsgYouReNot);
       Func_02004cf0(5, 0);
       Func_02004db0();
       ObjectMotion_ArmCallback_(5, 0x8000, 0);
-      Func_02004d10_(gPartyState.currentOwner, 258);
-      ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, x + 12, z);
-      Func_02004d00_(gPartyState.currentOwner, 0);
+      Func_02004d10_(gAdventure.currentOwner, 258);
+      ObjectMotion_SetPositionAndReset_(gAdventure.currentOwner, x + 12, z);
+      Func_02004d00_(gAdventure.currentOwner, 0);
       Object_SetModeById(5, 4);
       Func_02004da8();
       Func_02004cf0(5, 0);
@@ -135,7 +135,7 @@ void Func_02000994(void) {
       Func_02004db0();
       Actor_JoinLeader(5);
       WaitFrames(1);
-      ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
+      ObjectMotion_SetPositionAndReset_(gAdventure.currentOwner, 7312, 0x2000);
       Flag_Set(0x9b3);
       Func_02004df8_(0x10000, 6);
     }

@@ -8,7 +8,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 
 extern const u16 gData_02005f58[];
@@ -23,7 +23,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_02004bf4(s32 *step, s32 *id, s32 *footprint) {
   struct ObjectRuntime **objects =
       (struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 52);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *object;
   u32 index;
   u32 k;

@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 
 extern const s32 gData_02002a8c[];
@@ -24,7 +24,7 @@ void Func_02002170(struct ObjectRuntime *object, const s32 *script);
 
 void Func_02000628(struct ObjectRuntime *self) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -65,7 +65,7 @@ void Func_02000628(struct ObjectRuntime *self) {
             s32 delay = 200;
             *(u16 *)(work + 362) = delay;
           }
-          gPartyState.renderMode = 0;
+          gAdventure.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }

@@ -487,7 +487,7 @@ Func_0804bc08:
 .L_0804bfc8:
 	.4byte UpdateLinkSessionCountdown
 .L_0804bfcc:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0804bfd0:
 	.4byte gDebugMode
 .L_0804bfd4:

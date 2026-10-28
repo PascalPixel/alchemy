@@ -69,7 +69,7 @@ s32 Func_02000e04();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_02002a4c();
 extern u8 MsgChampa25[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02000e30(void) {
   s32 t0;
@@ -957,7 +957,7 @@ void Func_02000e30(void) {
   Call1(FieldEvent_WaitFrames, 0x14);
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2(Object_SetModeById, 5, 2);
-  t673 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+  t673 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t673 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(t673, s16, 10),
           FIELD_AT(t673, s16, 18));
@@ -966,7 +966,7 @@ void Func_02000e30(void) {
   Call3(Func_02002a9c, 5, 0, 0);
   Call3(ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2(Object_SetModeById, 6, 2);
-  t679 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+  t679 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t679 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 6, FIELD_AT(t679, s16, 10),
           FIELD_AT(t679, s16, 18));
@@ -975,7 +975,7 @@ void Func_02000e30(void) {
   Call3(Func_02002a9c, 6, 0, 0);
   Call3(ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2(Object_SetModeById, 7, 2);
-  t685 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+  t685 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t685 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 7, FIELD_AT(t685, s16, 10),
           FIELD_AT(t685, s16, 18));
@@ -984,7 +984,7 @@ void Func_02000e30(void) {
   Call3(Func_02002a9c, 7, 0, 0);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x13333, 0x9999);
   Call2(Object_SetModeById, 0x1c, 2);
-  t691 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+  t691 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t691 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 0x1c, FIELD_AT(t691, s16, 10),
           FIELD_AT(t691, s16, 18));

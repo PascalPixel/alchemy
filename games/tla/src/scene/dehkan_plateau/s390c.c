@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "callback_scheduler.h"
 
 extern const u8 gData_02003fb0[];
@@ -42,7 +42,7 @@ static __inline__ void Actor_SetPosition(struct ObjectRuntime *object, s32 x,
 }
 
 void Func_0200390c(void) {
-  struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
   s32 entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
@@ -59,7 +59,7 @@ void Func_0200390c(void) {
   }
   Func_02000038(gData_02003fb0);
   Func_020019b8();
-  entrance = gPartyState.entrance;
+  entrance = gAdventure.entrance;
   if (entrance > 10) {
     Func_02001804();
     GameFlag_SetBit(entrance + 789);
@@ -68,8 +68,8 @@ void Func_0200390c(void) {
     Func_02003c68(9, 0, 0);
   Func_020035ec();
   if (Flag_Test(265) == 0) {
-    if (gPartyState.entrance > 16) {
-      if (gPartyState.entrance == 37 && Flag_Test(0x871) == 0)
+    if (gAdventure.entrance > 16) {
+      if (gAdventure.entrance == 37 && Flag_Test(0x871) == 0)
         Func_02002c14();
       else
         Func_02003764();

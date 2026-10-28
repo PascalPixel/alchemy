@@ -7,11 +7,11 @@ s32 Func_020012d4(s32 cell);
   {                                                                            \
     s32 x_ = Func_020012d4(column);                                            \
     s32 z_ = Func_020012d4(row);                                               \
-    Func_02004090(gPartyState.currentOwner, x_ << 16, z_ << 16);               \
+    Func_02004090(gAdventure.currentOwner, x_ << 16, z_ << 16);               \
   }
 
 void Func_020012dc(void) {
-  struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
+  struct FieldActor *leader = Object_GetById(gAdventure.currentOwner);
   struct FieldActor *object = Object_GetById(64);
   s32 column = leader->x >> 20;
   s32 row = leader->z >> 20;

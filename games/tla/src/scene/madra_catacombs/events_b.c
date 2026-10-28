@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -124,7 +124,7 @@ void Func_020008f4(void) {
   struct ObjectRuntime *object;
 
   if (Func_020011fc() != 0) {
-    object = Object_GetById(Func_02001184(gPartyState.currentOwner));
+    object = Object_GetById(Func_02001184(gAdventure.currentOwner));
     Func_0200014c(gData_020013ca);
     Func_02001204();
     Func_020008d0(object);

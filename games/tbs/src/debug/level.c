@@ -18,7 +18,7 @@
 #include "level.h"
 #include "event_inline.h"
 #include "actor.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "types.h"
 #include "io_reg.h"
 #include "inventory.h"

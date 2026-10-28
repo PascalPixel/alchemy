@@ -56,7 +56,7 @@ s32 WaitFrames();
 extern u8 Func_020004c8[];
 extern u8 MsgThereSeemsTo[];
 extern u8 gData_02006338[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_0200065c(void) {
   s32 sp_[1];
@@ -158,7 +158,7 @@ L_02008848:
   FIELD_AT(v_r7, s32, 40) = 0x80000;
   Call4((void (*)())Func_02005784, v_r7, 0x2000000, 0x800000, 0x1260000);
   Call4((void (*)())Func_02005784, v_r6, 0x2000000, -1, 0x1260000);
-  t46 = FIELD_AT((s32)gPartyState, s32, 532);
+  t46 = FIELD_AT((s32)gAdventure, s32, 532);
   Call2((void (*)())Func_02005894, 7, t46);
   Call1((void (*)())WaitFrames, 1);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0xcccc, v_r9);
@@ -218,7 +218,7 @@ L_020089ca:
   Call1((void (*)())WaitFrames, 20);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 4, 0, -16);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 7, 0, -16);
-  v_r6 = ((s32)gPartyState + 0x214);
+  v_r6 = ((s32)gAdventure + 0x214);
   t74 = *(s32 *)v_r6;
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, t74);
   t76 = *(s32 *)v_r6;

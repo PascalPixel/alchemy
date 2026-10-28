@@ -11,12 +11,12 @@
 // Func_02000878); the reading costs 20 coins. The Japanese edition is the same
 // with its own message numbers. The calls whose constants the native builds
 // afresh go through CallN. Left: the native saves only r5 to r7 (the unit's
-// data in r5, MsgAreYouPrepared in r6, &gPartyState.currentOwner in r7),
+// data in r5, MsgAreYouPrepared in r6, &gAdventure.currentOwner in r7),
 // forms &unit and &slot at each call and reads the item as base plus offset,
 // where the draft keeps them in r8 to r11 and adds the slot to the base first.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 #include "lib/call.h"
 
@@ -70,7 +70,7 @@ void Func_02000390(void) {
   Func_02001148(10, 0);
   FieldEvent_WaitFrames(30);
 ask:
-  Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
     Func_02001138(MsgShallIGive);
     UiText_OpenMessageAtObject(10, 0);
@@ -142,7 +142,7 @@ read:
   FieldEvent_WaitFrames(15);
   Func_02001108(19, 0, 0);
   FieldEvent_WaitFrames(30);
-  Func_02001160(gPartyState.currentOwner, 258, 0);
+  Func_02001160(gAdventure.currentOwner, 258, 0);
   FieldEvent_WaitFrames(60);
   Func_020011a8(10);
   Func_02001160(10, 0x100, 60);

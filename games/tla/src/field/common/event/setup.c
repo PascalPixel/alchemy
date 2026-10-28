@@ -9,7 +9,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "callback_scheduler.h"
 #include "game_flags.h"
@@ -30,7 +30,7 @@ void EventRuntime_PrepareCurrentObject(void) {
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gPartyState.renderMode == 2)
+  if (gAdventure.renderMode == 2)
     Object_SetMode(object, 12);
   else
     Object_SetMode(object, 1);
@@ -53,7 +53,7 @@ void EventRuntime_Start(void) {
   Scheduler_AddOrUpdateCallback((s32)EventRuntime_UpdateWaitMode, 0x480);
   GameFlag_ClearBit(0x132);
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pointer handoff keeps its load before the destination
      * offset. */
     __asm__ volatile("" : "+r"(party));
@@ -65,7 +65,7 @@ void EventRuntime_Start(void) {
 void EventRuntime_End(void) {
   Scheduler_RemoveCallback((u32)EventRuntime_UpdateWaitMode);
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pointer handoff keeps its load before the override offset.
      */
     __asm__ volatile("" : "+r"(party));

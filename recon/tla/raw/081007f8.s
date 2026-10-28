@@ -415,7 +415,7 @@ BattleEffect_ApplyToTargets:
 	movs r7, #2
 	b .L_08100ca6
 .L_08100b8c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_08100b90:
 	.4byte .L_08100898
 .L_08100b94:

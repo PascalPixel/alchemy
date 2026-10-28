@@ -1,18 +1,18 @@
 // Draft, differ 62 of 158: the battle test menu, ☀️'s DebugBattle_RunMenu
 // (games/tbs/src/battle/battle.c) in ⚓️'s form: Down is read once on entry,
 // the first encounter is 69, Start calls Func_08118954 (empty), B marks the
-// later battles with gPartyState.battleRule24b = 5 instead of
+// later battles with gAdventure.battleRule24b = 5 instead of
 // Battle_SetStart, and the preset loads after A. Left: register choice and
 // pool placement: the native keeps all eight values in registers (gInput in
 // r5, the dead Down flag's r7 reused for 0x80, the A mask's 1 kept in r10 for
 // gData_03001110 = 1, loadedPreset in r11); here loadedPreset spills to the
 // stack and gInput moves to r9. The native also reaches battleRule24b as
-// gPartyState's address plus 0x24b loaded early, where here the sum is one
+// gAdventure's address plus 0x24b loaded early, where here the sum is one
 // pooled constant, and its literal pool sits at the end rather than inside
 // the loop.
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u8 gData_03001110;
 extern u16 Data_02000436;
@@ -88,7 +88,7 @@ restart:
         GameFlag_SetBit(366);
       GameFlag_SetBit(354);
       if (startModeSet)
-        gPartyState.battleRule24b = 5;
+        gAdventure.battleRule24b = 5;
       Func_081197f0(encounter);
       gData_03001110 = 1;
       Ui_LoadWindowGraphics();

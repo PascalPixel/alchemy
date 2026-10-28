@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);

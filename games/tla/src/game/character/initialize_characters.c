@@ -1,6 +1,6 @@
 #include "types.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct OwnerStart {
   u8 unk00[150];

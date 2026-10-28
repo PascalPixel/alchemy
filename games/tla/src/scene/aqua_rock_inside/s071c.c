@@ -5,7 +5,7 @@ void Func_0200071c(void) {
 
   Func_02003d7c();
   Func_02003eac(0);
-  ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0x4000, 0);
+  ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
   Func_02003ef4(0x22d);
   priority = 0x480;
   Scheduler_AddOrUpdateCallback(Func_020006d0, priority);

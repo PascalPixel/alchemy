@@ -1,5 +1,5 @@
 #include "garoh.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "call.h"
 
@@ -23,9 +23,9 @@ void Func_0200538c(void);
 s32 Func_02000aa8(void) {
   struct EventWork *work;
 
-  if (gPartyState.scene == (s32)&SceneId_Ov65FRoom4) {
+  if (gAdventure.scene == (s32)&SceneId_Ov65FRoom4) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  } else if (gPartyState.scene == (s32)&SceneId_Ov65FRoom5) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov65FRoom5) {
     ObjectMotion_SetActionVariant(13, 1);
     ObjectMotion_SetActionVariant(14, 1);
     if (GameFlag_Test(0x91f)) {
@@ -37,7 +37,7 @@ s32 Func_02000aa8(void) {
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
     Func_020052f4(0);
-    if (gPartyState.entrance == 6) {
+    if (gAdventure.entrance == 6) {
       work = Ram_HeapSlots->eventWork;
       work->screenEffect = 0x209;
       GameFlag_ClearBit(0x120);
@@ -48,16 +48,16 @@ s32 Func_02000aa8(void) {
     }
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-    if (gPartyState.scene == (s32)&SceneId_Ov65FRoom1) {
+    if (gAdventure.scene == (s32)&SceneId_Ov65FRoom1) {
       GameFlag_SetBit(0x919);
       Func_02000be4();
-    } else if (gPartyState.scene == (s32)&SceneId_Ov65FRoom2) {
+    } else if (gAdventure.scene == (s32)&SceneId_Ov65FRoom2) {
       Func_02000d30();
-    } else if (gPartyState.scene == (s32)&SceneId_Ov65FRoom3) {
+    } else if (gAdventure.scene == (s32)&SceneId_Ov65FRoom3) {
       Func_02000e00();
       if (GameFlag_Test(0x919)) {
-        gPartyState.savedScene = (s32)&SceneId_Ov660Room3;
-        gPartyState.savedEntrance = 2;
+        gAdventure.savedScene = (s32)&SceneId_Ov660Room3;
+        gAdventure.savedEntrance = 2;
       }
     }
   }

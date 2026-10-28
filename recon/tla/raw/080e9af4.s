@@ -338,4 +338,4 @@ Func_080e9af4:
 .L_080e9dac:
 	.4byte Func_080e9940
 .L_080e9db0:
-	.4byte gPartyState
+	.4byte gAdventure

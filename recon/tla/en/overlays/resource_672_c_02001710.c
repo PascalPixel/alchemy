@@ -28,7 +28,7 @@ void Func_02001710(void) {
   Func_02001010();
   Func_02001d40();
   GabombaStatueChamber_WaitFrames(1);
-  Call4(Func_02001e18, gPartyState.currentOwner, 0x1680000, 0xd80000, 0xe000);
+  Call4(Func_02001e18, gAdventure.currentOwner, 0x1680000, 0xd80000, 0xe000);
   Call4(Func_02001e18, 7, 0x1780000, 0xd80000, 0xe000);
   Call4(Func_02001e18, 11, 0x1680000, 0xc80000, 0);
   Call4(Func_02001e18, 5, 0x1980000, 0xd80000, 0xa000);
@@ -67,7 +67,7 @@ void Func_02001710(void) {
   Func_02001e88(5, 0x100, 20);
   GabombaStatueChamber_ObjArm(5, 0x8000, 0);
   UiText_OpenMessageAtObject(0x4005, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     GabombaStatueChamber_ObjTurn(7, 0);
     Object_SetModeById(7, 3);
     Func_02001e60(0x4007, 0);
@@ -92,7 +92,7 @@ void Func_02001710(void) {
   Func_02001e60(0x400b, 0);
   GabombaStatueChamber_ObjArm(7, 0x8000, 0);
   GabombaStatueChamber_ObjArm(7, 0x8000, 20);
-  Object_SetModeById(gPartyState.currentOwner, 3);
+  Object_SetModeById(gAdventure.currentOwner, 3);
   Object_SetModeById(7, 3);
   Object_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(6, 3);

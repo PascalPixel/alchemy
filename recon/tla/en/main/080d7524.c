@@ -12,7 +12,7 @@
 // cost an extra zero (differ 33).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "macros.h"
 
 struct DjinniSprite {
@@ -55,7 +55,7 @@ void Func_080d7524(s32 djinniId) {
   struct ObjectRuntime *copies[8];
 
   djinni = Object_GetById(djinniId);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
   EventRuntime_Start();
   WaitFrames(10);

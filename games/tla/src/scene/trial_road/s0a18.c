@@ -9,7 +9,7 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
   s32 other = gData_02005a88[(id - 18) & 3];
   struct ObjectRuntime *object = Object_GetById(id);
   struct ObjectRuntime *partner = Object_GetById(other);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   if (frame <= 10)
     object->scaleY = 0x10000 - (frame << 12);

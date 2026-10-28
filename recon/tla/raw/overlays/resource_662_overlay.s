@@ -516,7 +516,7 @@ Func_0200033c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008448:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200844c:
 	.4byte gData_02001968
 .L_02008450:
@@ -876,7 +876,7 @@ Func_02000458:
 	bx r3
 	.2byte 0x0000
 .L_02008744:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008748:
 	.4byte gData_02001974
 .L_0200874c:
@@ -982,7 +982,7 @@ Func_020007dc:
 .L_02008890:
 	.4byte 0x05000200
 .L_02008894:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008978,"ax",%progbits
 	.balign 4
 	.global Func_02000978
@@ -1401,7 +1401,7 @@ Func_02001418:
 	b .L_ja_02009594
 	.2byte 0x0000
 .L_ja_02009558:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_0200955c:
 	.4byte 0x0000004f
 .L_ja_02009560:
@@ -1500,7 +1500,7 @@ Func_02001418:
 .L_ja_02009618:
 	.4byte 0x00000003
 .L_ja_0200961c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_02009620:
 	.4byte 0x00000051
 .L_ja_02009624:
@@ -1847,7 +1847,7 @@ Func_02001418:
 	b .L_0200959c
 	.2byte 0x0000
 .L_02009560:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009564:
 	.4byte 0x0000004f
 .L_02009568:
@@ -1946,7 +1946,7 @@ Func_02001418:
 .L_02009620:
 	.4byte 0x00000003
 .L_02009624:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009628:
 	.4byte 0x00000051
 .L_0200962c:

@@ -6,7 +6,7 @@
 // ends the ride (Func_02000a20) and runs exit 5 or 6 (Func_020057c4). Left: the native keeps the speed in r6 and the actor in r5, shares one sign block per platform and orders the tests otherwise.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov671Room4;
 extern s32 gData_02005af0;
@@ -63,7 +63,7 @@ void Func_02000ad4(void) {
     }
     Func_020006ac(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gPartyState.scene != (s32)&SceneId_Ov671Room4)
+  if (gAdventure.scene != (s32)&SceneId_Ov671Room4)
     return;
   x = actor->x >> 20;
   if (actor->z >> 20 != 15)

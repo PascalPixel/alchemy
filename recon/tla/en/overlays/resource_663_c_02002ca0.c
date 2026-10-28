@@ -14,7 +14,7 @@
 // native addresses it from 0x040000b0; the beam's two halfwords are stored
 // from an s32 through an s16 pointer, so they are built with moves (as
 // halfword constants they come from the pool).
-// Left: register numbering: the native builds gPartyState's 0x214 offset and
+// Left: register numbering: the native builds gAdventure's 0x214 offset and
 // the leader's moves in r0 and r1 where the draft uses r1 and r2, loads the
 // Retreat scene's id earlier and keeps the 1 for the cell calls' stack
 // arguments in a fresh register; the leader reached through an inline
@@ -24,7 +24,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -57,7 +57,7 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001f7c(void);
 
-#define LEADER() Object_GetById(gPartyState.currentOwner)
+#define LEADER() Object_GetById(gAdventure.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
 
 /// An object that sways (Func_02001b54) from the given phase.
@@ -76,11 +76,11 @@ s32 Func_02002ca0(void) {
   s32 *beam;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
-  gPartyState.retreatScene = (s32)&SceneId_Ov663Room1;
-  gPartyState.retreatEntrance = 1;
+  gAdventure.retreatScene = (s32)&SceneId_Ov663Room1;
+  gAdventure.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gPartyState.scene == (s32)&SceneId_Ov663Room1) {
-    switch (gPartyState.entrance) {
+  if (gAdventure.scene == (s32)&SceneId_Ov663Room1) {
+    switch (gAdventure.entrance) {
     case 2:
     case 3:
     case 4:
@@ -133,8 +133,8 @@ s32 Func_02002ca0(void) {
       Object_SetPartAttribute(Object_GetById(8), 6);
     }
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov663Room2) {
-    switch (gPartyState.entrance) {
+  if (gAdventure.scene == (s32)&SceneId_Ov663Room2) {
+    switch (gAdventure.entrance) {
     case 3:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
@@ -200,8 +200,8 @@ s32 Func_02002ca0(void) {
       break;
     }
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov663Room3) {
-    switch (gPartyState.entrance) {
+  if (gAdventure.scene == (s32)&SceneId_Ov663Room3) {
+    switch (gAdventure.entrance) {
     case 1:
     case 2:
     case 3:
@@ -248,7 +248,7 @@ s32 Func_02002ca0(void) {
       Func_02002c24(0x480000);
     case 4:
     case 5:
-      ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
       break;
     case 8:
     case 9:
@@ -328,7 +328,7 @@ s32 Func_02002ca0(void) {
         leader->terrainId = 0;
         leader->terrainHeight = leader->y =
             Map_GetTerrainHeight(0, leader->x, leader->z - leader->y);
-        Camera_FollowActor(gPartyState.currentOwner, 0);
+        Camera_FollowActor(gAdventure.currentOwner, 0);
       }
       break;
     case 99:

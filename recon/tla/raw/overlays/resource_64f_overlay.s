@@ -138,7 +138,7 @@ Func_02000494:
 .L_020085d8:
 	.4byte MsgHaThatWas
 .L_020085dc:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020085e0:
 	.4byte 0x00000007
 .L_020085e4:

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 
@@ -31,12 +31,12 @@ void Func_080ca368(s32 scene, s32 entrance) {
 /// the rule's position to the party's saved position.
 void Func_080ca3f4(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
-  struct PartyState *party;
+  struct Adventure *party;
 
   if (GameFlag_Test(0x8de) == 0)
     return;
-  party = &gPartyState;
-  /* FAKEMATCH(one-pass block): the empty block loads gPartyState's address
+  party = &gAdventure;
+  /* FAKEMATCH(one-pass block): the empty block loads gAdventure's address
    * before ownerOverride's offset, as native; as plain statements, 2 of 73
    * instructions differ in tla-en. */
   do {

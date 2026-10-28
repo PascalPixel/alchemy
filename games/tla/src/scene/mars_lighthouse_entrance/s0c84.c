@@ -32,9 +32,9 @@ void Func_02000c84(void) {
   Func_020046b4();
   Func_02004dd0();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -49,9 +49,9 @@ void Func_02000cb4(void) {
   Func_020046b4();
   Func_02004dd0();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

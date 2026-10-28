@@ -6,10 +6,10 @@
 // back item 455 (MsgTradedHisMilk), which the party is given, and flags
 // 0xaa1 and 534 are set. Without the milk object 11 says
 // MsgTheWaterHere, or after the trade MsgIDonTLike or MsgIDonTWantTo.
-// Left: the native keeps the side flag on the stack and stores it as the zero for the update hooks, keeps the trader in r10, the item in r8, Func_02000df8 in r7 then r11, &gPartyState.currentOwner in r5 then r7 and the bit masks in r5 and r9, and shares the trader's last step's tail between the two sides.
+// Left: the native keeps the side flag on the stack and stores it as the zero for the update hooks, keeps the trader in r10, the item in r8, Func_02000df8 in r7 then r11, &gAdventure.currentOwner in r5 then r7 and the bit masks in r5 and r9, and shares the trader's last step's tail between the two sides.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 MsgSniffSniffI[], MsgTradedHisMilk[], MsgIDonTLike[],
     MsgIDonTWantTo[], MsgTheWaterHere[];
@@ -55,10 +55,10 @@ void Func_02000e38(void) {
   Func_02003e64();
   Func_02003fa4(0);
   if (PartyInventory_FindOwner(454) != -1) {
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     trader = Object_GetById(11);
     right = 0;
-    ObjectMotion_SetAngleToward(11, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(11, gAdventure.currentOwner, 0);
     trader->update = Func_02000df8;
     ObjectMotion_Launch(11, 4, 10);
     trader->update = 0;
@@ -66,54 +66,54 @@ void Func_02000e38(void) {
     Func_02003f2c(11, 0);
     if (leader->x > trader->x)
       right = 1;
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
     ObjectMotion_SetSpeedParameters(11, 0x19999, 0xcccc);
     if (right) {
       ObjectMotion_ArmCallback(11, 0, 0);
-      ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 296, 856);
-      Func_02003f3c(gPartyState.currentOwner, 0x8000);
+      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 296, 856);
+      Func_02003f3c(gAdventure.currentOwner, 0x8000);
       item = Func_02000da0(leader, 454);
       trader->update = Func_02000df8;
       Object_SetActionCallbackAndRefreshById(11, gData_020043f8);
     } else {
       ObjectMotion_ArmCallback(11, 0x8000, 0);
-      ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 856);
-      Func_02003f3c(gPartyState.currentOwner, 0);
+      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 856);
+      Func_02003f3c(gAdventure.currentOwner, 0);
       item = Func_02000da0(leader, 454);
       trader->update = Func_02000df8;
       Object_SetActionCallbackAndRefreshById(11, gData_02004300);
     }
     trader->update = 0;
     Func_02003f2c(11, 0);
-    Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
+    Object_LinkObjectAndSetCallback(11, gAdventure.currentOwner);
     if (item != 0) {
       item->collisionFlags = 9;
       Object_SetPositionAndResetMotion(item, 0x680000, 0, 0x3480000);
       if (right) {
         leader->update = Func_02000df8;
-        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 296, 840);
+        ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 296, 840);
         leader->update = 0;
-        Func_02003f3c(gPartyState.currentOwner, 0x8000);
+        Func_02003f3c(gAdventure.currentOwner, 0x8000);
         leader->update = Func_02000df8;
-        STEP(gPartyState.currentOwner, 0x120, 840);
+        STEP(gAdventure.currentOwner, 0x120, 840);
         Object_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
-        STEP(gPartyState.currentOwner, 296, 840);
+        STEP(gAdventure.currentOwner, 296, 840);
         leader->update = 0;
-        ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+        ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
         WaitFrames(1);
         trader->update = Func_02000df8;
         STEP(11, 292, 844);
       } else {
         leader->update = Func_02000df8;
-        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 840);
+        ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 840);
         leader->update = 0;
-        Func_02003f3c(gPartyState.currentOwner, 0);
+        Func_02003f3c(gAdventure.currentOwner, 0);
         leader->update = Func_02000df8;
-        STEP(gPartyState.currentOwner, 0x110, 840);
+        STEP(gAdventure.currentOwner, 0x110, 840);
         Object_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
-        STEP(gPartyState.currentOwner, 264, 840);
+        STEP(gAdventure.currentOwner, 264, 840);
         leader->update = 0;
-        ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+        ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
         WaitFrames(1);
         trader->update = Func_02000df8;
         STEP(11, 268, 844);
@@ -127,17 +127,17 @@ void Func_02000e38(void) {
     PartyInventory_Remove(454);
     PartyInventory_GiveItem(455, 0);
     Func_02003fbc();
-    Object_GetById(gPartyState.currentOwner)->angle = 0x4000;
+    Object_GetById(gAdventure.currentOwner)->angle = 0x4000;
     if (gift != 0) {
       Func_02003dfc(gift);
-      Object_SetModeById(gPartyState.currentOwner, 1);
+      Object_SetModeById(gAdventure.currentOwner, 1);
     }
     Func_02003f3c(11, 0xc000);
     GameFlag_SetBit(0xaa1);
     GameFlag_SetBit(534);
   } else {
     if (GameFlag_Test(0xaa1)) {
-      Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
+      Object_LinkObjectAndSetCallback(11, gAdventure.currentOwner);
       if (GameFlag_Test(534))
         Func_02003f24(MsgIDonTLike);
       else

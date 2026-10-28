@@ -13,7 +13,7 @@ s32 Func_02003d2c(struct ObjectRuntime *object, s32 *position);
 void Func_02000cc8(s32 id) {
   s32 slide = 1;
 
-  if (gPartyState.scene == (s32)&SceneId_Ov67cRoom5) {
+  if (gAdventure.scene == (s32)&SceneId_Ov67cRoom5) {
     s32 column = Object_GetById(8)->x >> 20;
 
     if (id == 77 && column == 17)
@@ -24,14 +24,14 @@ void Func_02000cc8(s32 id) {
   /* FAKEMATCH: the native reads the scene again here; without the barrier the
    * read is moved up both paths. */
   __asm__("" : : : "memory");
-  if (gPartyState.scene == (s32)&SceneId_Ov67cRoom6) {
+  if (gAdventure.scene == (s32)&SceneId_Ov67cRoom6) {
     if (id == 77 && Object_GetById(10)->x >> 20 == 9)
       slide = 0;
     if (id == 78 && Object_GetById(11)->x >> 20 == 13)
       slide = 0;
   }
   if (slide) {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
     s32 position[3];
     s32 result;
 

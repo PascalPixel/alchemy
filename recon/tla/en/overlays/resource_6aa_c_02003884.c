@@ -19,7 +19,7 @@ s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
 s32 WaitFrames();
 extern u8 Func_020031f8[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02003884(void) {
   s32 sp_[1];
@@ -30,7 +30,7 @@ void Func_02003884(void) {
   s32 t35, t36, t37, t38, t39, t40, t41, t44, t45, t47;
   s32 t48, t49, t50, t51, t52, t53, t58;
 
-  t0 = *(s32 *)((s32)gPartyState + 0x214);
+  t0 = *(s32 *)((s32)gAdventure + 0x214);
   t1 = ObjectTable_Get(t0);
   t2 = FIELD_AT(t1, u16, 6);
   FIELD_AT(sp_, s32, 16) = ((((t2 + 0x2000) & -0x4000) << 16) >> 16);

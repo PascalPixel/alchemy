@@ -10,7 +10,7 @@
 #include "lib/call.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "system/field_effect.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -36,7 +36,7 @@ void Func_02004e2c(void);
 s32 Func_02004e64(void);
 
 s32 Func_0200042c(void) {
-  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer, as in
    * overlay 671's draft. */
   register u32 i asm("r10");
@@ -78,16 +78,16 @@ s32 Func_0200042c(void) {
     i++;
   } while (i <= 16);
   Func_02005014(188);
-  Func_02004f34(gPartyState.currentOwner, 0x101);
-  Object_SetModeById(gPartyState.currentOwner, 49);
+  Func_02004f34(gAdventure.currentOwner, 0x101);
+  Object_SetModeById(gAdventure.currentOwner, 49);
   Call3((void (*)())Func_02004e24, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
   Func_02004e2c();
-  Func_02004f34(gPartyState.currentOwner, 0x100);
+  Func_02004f34(gAdventure.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   return Func_02004e64();
 }

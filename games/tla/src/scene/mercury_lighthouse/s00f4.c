@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
 
@@ -24,7 +24,7 @@ void Func_020000f4(void) {
 
   ObjectMotion_SetActionVariant(8, 3);
   ObjectMotion_SetActionVariant(9, 3);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   phase = gFrameCount & 15;
   if (phase == 0) {

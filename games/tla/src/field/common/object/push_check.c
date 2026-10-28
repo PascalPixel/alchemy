@@ -1,6 +1,6 @@
 #include "types.h"
 #include "edition.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -20,7 +20,7 @@ s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];
-  struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *target;
   struct ObjectRuntime *hit;
   s32 id;
@@ -47,7 +47,7 @@ s32 Func_080cdc74(void) {
   if (BYTE_AT(target, 98) != 0)
     return 0;
 #if LANGUAGE != LANGUAGE_JAPANESE
-  id = gPartyState.pausedObject;
+  id = gAdventure.pausedObject;
   if (id != 1 && target == Object_GetById(id))
     return 0;
 #endif

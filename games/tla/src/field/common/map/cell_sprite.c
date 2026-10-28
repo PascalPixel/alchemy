@@ -8,7 +8,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "vram_tab.h"
 
@@ -59,12 +59,12 @@ void CELL_SPRITE_DRAW(void) {
   if (table->current == -1)
     return;
   /* FAKEMATCH(one-pass): the entry's address in a one-pass block, so the
-   * party state's address loads before the constant that offsets it; as a
+   * adventure's address loads before the constant that offsets it; as a
    * plain statement, 2 of 136 instructions differ in tla-en. */
   do {
     entry = &table->entries[table->current];
   } while (0);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if ((leader->x >> 20) != entry->x || (leader->z >> 20) != entry->z)
     table->current = -1;
   {

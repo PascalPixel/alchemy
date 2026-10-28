@@ -14,7 +14,7 @@
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 
@@ -46,8 +46,8 @@ void Func_02000574(void) {
 
   if (GameFlag_Test(0x8de) == 0)
     return;
-  kind = Func_02004d68(gPartyState.currentOwner);
-  leader = Object_GetById(gPartyState.currentOwner);
+  kind = Func_02004d68(gAdventure.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   ship = Object_GetById(8);
   dx = (leader->x - ship->x) >> 16;
   dz = (leader->z - ship->z) >> 16;
@@ -56,13 +56,13 @@ void Func_02000574(void) {
     return;
   Func_02004c20();
   Func_02004db8(0);
-  gPartyState.renderMode = 7;
-  gPartyState.ownerOverride = 1;
+  gAdventure.renderMode = 7;
+  gAdventure.ownerOverride = 1;
   GameFlag_SetBit(0x176);
-  gPartyState.savedX = ship->x;
-  gPartyState.savedZ = ship->z;
+  gAdventure.savedX = ship->x;
+  gAdventure.savedZ = ship->z;
   do {
-  gPartyState.unk280 = ship->angle;
+  gAdventure.unk280 = ship->angle;
   } while (0);
   Func_02004e30(78);
   Func_02004b18(leader, 6);
@@ -80,7 +80,7 @@ void Func_02000574(void) {
   Func_02004b18(leader, 6);
   WaitFrames(6);
   leader->terrainHeight = 0;
-  Func_02004c88(gPartyState.currentOwner, 0, 0);
+  Func_02004c88(gAdventure.currentOwner, 0, 0);
   Func_02004dc8();
   Func_02004dc0();
   Func_02004c28();

@@ -12,7 +12,7 @@ s32 Func_02001dc0();
 s32 Object_GetById();
 s32 __divsi3();
 extern u8 gData_020023c4[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02001ffc(s32 p0) {
   s32 sp_[1];
@@ -22,7 +22,7 @@ void Func_02001ffc(s32 p0) {
   s32 t19, t20, t21, t22, t23, t24, t25, t26, t27, t28;
   s32 t29, t30, t31, t32, t33, t34, t35, t36;
 
-  t0 = FIELD_AT((s32)gPartyState, s32, 532);
+  t0 = FIELD_AT((s32)gAdventure, s32, 532);
   t1 = Object_GetById(t0);
   t2 = FIELD_AT(0x3000000, s32, 108);
   t3 = FIELD_AT(p0, s32, 68);
@@ -40,7 +40,7 @@ void Func_02001ffc(s32 p0) {
   FIELD_AT(p0, s32, 68) = v_r5;
   t10 = *(s32 *)sp_;
   v_r9 = t2;
-  v_r10 = (s32)gPartyState;
+  v_r10 = (s32)gAdventure;
   v_r8 = ((s32)gData_020023c4 + 0x188);
   v_r4 = t10;
   v_r6 = p0;

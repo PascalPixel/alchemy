@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void Func_080ca4a8(void);
@@ -24,8 +24,8 @@ struct EventWorkView {
 
 void Func_080c9e48(s32 search) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
-  s32 scene = gPartyState.scene;
-  s32 entrance = gPartyState.entrance;
+  s32 scene = gAdventure.scene;
+  s32 entrance = gAdventure.entrance;
   u8 *out = work->settings;
   u32 first = 0;
   u32 second = 0;

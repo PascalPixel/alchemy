@@ -94,7 +94,7 @@ Func_0804b7c0:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0804b870:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0804b874:
 	.4byte 0x00000c9a
 .L_0804b878:

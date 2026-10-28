@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 8 of 311 in tla-en, instruction
 // order and register choice. The same temporary as Func_080d50f8's (ground)
 // gives the native's registers (24 before). Left: as in Func_080d50f8, plus the
-// gPartyState pool load before the action flags' store, which an empty asm
+// gAdventure pool load before the action flags' store, which an empty asm
 // before ObjectMotion_SetPositionAndCommit fixes (differ 6).
 // Near miss, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
 // game's checks. On the ground, when the leader's map cell and the one north
@@ -21,7 +21,7 @@
 #include "types.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ClimbSprite {
@@ -44,7 +44,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 
 s32 Func_080d53b8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
   struct MapCell *ground;
@@ -57,7 +57,7 @@ s32 Func_080d53b8(void) {
   EventRuntime_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
-  if (gPartyState.renderMode == 0) {
+  if (gAdventure.renderMode == 0) {
     struct MapCell *cell;
     struct MapCell *north;
     s32 cellX = gridX >> 4;
@@ -86,7 +86,7 @@ s32 Func_080d53b8(void) {
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
-    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, gridX, gridZ);
+    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
     Object_SetMode(leader, 6);
     WaitFrames(4);
     Object_SetMode(leader, 7);
@@ -99,7 +99,7 @@ s32 Func_080d53b8(void) {
     leader->velocityY = result;
     Object_SetMode(leader, 12);
     WaitFrames(4);
-    gPartyState.renderMode = 2;
+    gAdventure.renderMode = 2;
     leader->actionFlags = 1;
     WaitFrames(8);
     leader->z = (leader->z & 0xfff00000) + 0x80000;
@@ -126,13 +126,13 @@ s32 Func_080d53b8(void) {
     Object_SetMode(leader, 11);
     Object_SetPosition(leader, gridX << 16, leader->y + 0x80000,
                        (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
     leader->motionFlags = 3;
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
     EventRuntime_Wait(4);
-    gPartyState.renderMode = 0;
+    gAdventure.renderMode = 0;
     leader->actionFlags = 1;
     leader->action = 0;
     leader->unk66 = 0;

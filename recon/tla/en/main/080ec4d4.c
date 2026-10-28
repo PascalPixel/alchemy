@@ -19,7 +19,7 @@
 // nearly every row.
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
 
@@ -224,13 +224,13 @@ void Func_080ec4d4(void) {
       if (tile == 15) {
         if (!GameFlag_Test(0x8de))
           continue;
-        if (gPartyState.ownerOverride != 0)
+        if (gAdventure.ownerOverride != 0)
           continue;
         name = -2;
-        placeX = ((s16 *)&gPartyState.savedX)[1] * 853 / 16384 - 269;
+        placeX = ((s16 *)&gAdventure.savedX)[1] * 853 / 16384 - 269;
         tile = 2;
         always = 0;
-        placeY = ((s16 *)&gPartyState.savedZ)[1] * 640 / 16384 - 112;
+        placeY = ((s16 *)&gAdventure.savedZ)[1] * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Test(x))
           continue;

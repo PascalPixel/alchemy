@@ -1,7 +1,7 @@
 #include "types.h"
 #include "edition.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 // Japanese keeps its own form of this function, still in its listing: it
@@ -26,11 +26,11 @@ s32 Func_020003bc(struct ObjectRuntime *actor) {
   struct ObjectRuntime *target;
 
   {
-    /* FAKEMATCH(pin): the party state's address pinned to r3 loads from the
+    /* FAKEMATCH(pin): the adventure's address pinned to r3 loads from the
      * pool before the leader's offset, as native; as
-     * Object_GetById(gPartyState.currentOwner), 2 of 85 instructions differ in
+     * Object_GetById(gAdventure.currentOwner), 2 of 85 instructions differ in
      * tla-en. */
-    register struct PartyState *party asm("r3") = &gPartyState;
+    register struct Adventure *party asm("r3") = &gAdventure;
 
     /* FAKEMATCH(barrier): the barrier of the pin above: it holds r2 until the
      * address is loaded. */
@@ -49,7 +49,7 @@ s32 Func_020003bc(struct ObjectRuntime *actor) {
   else
     target = Object_GetById(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Object_GetById(gPartyState.currentOwner);
+    target = Object_GetById(gAdventure.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);

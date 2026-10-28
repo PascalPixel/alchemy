@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -47,7 +47,7 @@ static __inline__ void Actor_Place(struct ObjectRuntime *object, s32 x, s32 y,
 
 /// Jumps down the hole.
 void Func_02001630(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct ObjectRuntime *leader;
@@ -58,20 +58,20 @@ void Func_02001630(void) {
   if (x == 29 && z == 10 && !(gInput.held & 0x40))
     return;
   work = Ram_HeapSlots->eventWork;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   Func_020056b4(leader);
   Func_0200580c(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
-  Actor_Walk(gPartyState.currentOwner, 472, 144);
-  Actor_Turn(gPartyState.currentOwner, 0xc000, 0);
-  Object_RefreshSelectorById(gPartyState.currentOwner);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Actor_SetSpeed(gAdventure.currentOwner, 0x10000, 0x8000);
+  Actor_Walk(gAdventure.currentOwner, 472, 144);
+  Actor_Turn(gAdventure.currentOwner, 0xc000, 0);
+  Object_RefreshSelectorById(gAdventure.currentOwner);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetModeById(gPartyState.currentOwner, 13);
+  Object_SetModeById(gAdventure.currentOwner, 13);
   Actor_Place(leader, 472 << 16, 0, 156 << 16);
   Func_02005664(leader);
-  Object_SetModeById(gPartyState.currentOwner, 10);
+  Object_SetModeById(gAdventure.currentOwner, 10);
   Func_02005854(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

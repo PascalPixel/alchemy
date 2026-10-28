@@ -31,20 +31,20 @@ void Func_020030bc(void) {
   ShamanVillage_CamMove(-1, -1, -1, 0);
   ShamanVillage_CamSpeed(0x6666, 0xccc);
   ShamanVillage_CamMove(0xa80000, -1, 0x2100000, 1);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 536);
-  Func_02004944(18, gPartyState.currentOwner);
-  Func_02004944(7, gPartyState.currentOwner);
-  Func_02004944(5, gPartyState.currentOwner);
-  Func_02004944(7, gPartyState.currentOwner);
-  Func_02004944(6, gPartyState.currentOwner);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 536);
+  Func_02004944(18, gAdventure.currentOwner);
+  Func_02004944(7, gAdventure.currentOwner);
+  Func_02004944(5, gAdventure.currentOwner);
+  Func_02004944(7, gAdventure.currentOwner);
+  Func_02004944(6, gAdventure.currentOwner);
   WaitFrames(1);
   ShamanVillage_ObjArm(6, 0xc000, 0);
   ShamanVillage_ObjSpeed(18, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x10000, 0x8000);
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02004f80);
   ObjectMotion_EnableActionAndSetCallback(5, gData_02004fc4);
   ObjectMotion_EnableActionAndSetCallback(18, gData_02004f3c);
@@ -94,7 +94,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjTurn(15, 0xe000);
   Object_SetModeById(15, 4);
   ShamanVillage_MessagePut(15, 0);
-  ShamanVillage_ObjArm(gPartyState.currentOwner, 0x4000, 0);
+  ShamanVillage_ObjArm(gAdventure.currentOwner, 0x4000, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
@@ -255,9 +255,9 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
-  result = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
+  result = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
   done = &object->unk63;
-  owner = gPartyState.currentOwner;
+  owner = gAdventure.currentOwner;
   if (result == 0) {
     ObjectMotion_WaitForAnimationChange(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
@@ -272,7 +272,7 @@ void Func_020030bc(void) {
   }
   ShamanVillage_ObjWalk(15, 212, 582);
   ShamanVillage_CamMove(0xa80000, -1, 0x1f40000, 1);
-  Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 15);
+  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 15);
   Object_LinkObjectAndSetCallback(18, 15);
   Object_LinkObjectAndSetCallback(5, 15);
   Object_LinkObjectAndSetCallback(7, 15);
@@ -286,7 +286,7 @@ void Func_020030bc(void) {
   do {
     WaitFrames(1);
   } while (*done == 0);
-  ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+  ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
   ObjectMotion_EnableActionAndResetMotion(18);
   ObjectMotion_EnableActionAndResetMotion(5);
   ObjectMotion_EnableActionAndResetMotion(7);
@@ -299,7 +299,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjPut(15, 0xe00000, 0x1180000, angle);
   ShamanVillage_ObjPut(16, 0xd00000, 0x1080000, angle);
   ShamanVillage_ObjPut(17, 0xf00000, 0x1080000, angle);
-  ShamanVillage_ObjArm(gPartyState.currentOwner, 0x8000, 0);
+  ShamanVillage_ObjArm(gAdventure.currentOwner, 0x8000, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
@@ -309,12 +309,12 @@ void Func_020030bc(void) {
   Object_SetModeById(5, 3);
   Object_SetModeById(7, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
-  ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+  ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
   ObjectMotion_EnableActionAndResetMotion(18);
   ObjectMotion_EnableActionAndResetMotion(5);
   ObjectMotion_EnableActionAndResetMotion(7);
   ObjectMotion_EnableActionAndResetMotion(6);
-  Object_GetById(gPartyState.currentOwner)->update = NULL;
+  Object_GetById(gAdventure.currentOwner)->update = NULL;
   Object_GetById(18)->update = NULL;
   Object_GetById(5)->update = NULL;
   Object_GetById(7)->update = NULL;

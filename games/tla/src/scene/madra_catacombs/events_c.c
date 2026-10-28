@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -127,16 +127,16 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Cue(158);
   Map_CopyCells(a, b, c, d, mode, f);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020010c4(object);
     object->angle = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_0200121c);
   Wait(12);
   Cue(123);
@@ -157,9 +157,9 @@ void Func_02000c94(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -171,9 +171,9 @@ void Func_02000cf4(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

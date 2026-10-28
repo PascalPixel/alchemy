@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -25,8 +25,8 @@ void Func_02001d68(void) {
   Object_SetModeById(9, 2);
   object->y = -0x400000;
   Func_020033e0_(9, 0x2d80000, 0x780000);
-  Func_020033e0_(gPartyState.currentOwner, 0x2d80000, 0x780000);
-  Object_GetById(gPartyState.currentOwner)->y = -0x300000;
+  Func_020033e0_(gAdventure.currentOwner, 0x2d80000, 0x780000);
+  Object_GetById(gAdventure.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
@@ -43,7 +43,7 @@ void Func_02001df4(void) {
   Func_02003488(0);
   object->motionFlags = 0;
   object->y = -0x400000;
-  Object_GetById(gPartyState.currentOwner)->y = -0x300000;
+  Object_GetById(gAdventure.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;

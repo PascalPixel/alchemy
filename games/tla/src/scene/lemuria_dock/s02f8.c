@@ -33,7 +33,7 @@ void Func_020002f8(void) {
 
 s32 Func_02000360(void) {
   SCENE_WORK->unk1ac = 256;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Scheduler_AddOrUpdateCallback(Func_020002f8, 0x480);
   Flag_Clear(0x12f);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */

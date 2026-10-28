@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_020059c0(void);
@@ -33,7 +33,7 @@ void Func_02004418(const u16 *table) {
 
   if (Func_020059c0() != 0)
     return;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;

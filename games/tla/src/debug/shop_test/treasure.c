@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 
@@ -17,7 +17,7 @@ void Func_020003b8(void) {
   s32 i;
 
   UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
-  gPartyState.coins = 777777;
+  gAdventure.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);
     Inventory_AddItem(4, 229);

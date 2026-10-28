@@ -14,7 +14,7 @@
 // instead of before it. Tried: alchemy permute, two jobs (best weighted
 // 255 at differ 18, by moving one statement).
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ItemUnit {
@@ -96,7 +96,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
     if (actor == 15) {
       actor = 0;
       for (i = 0; i < count; i++) {
-        obj = Unit_Get(gPartyState.activeOwners[i]);
+        obj = Unit_Get(gAdventure.activeOwners[i]);
         matches = 0;
         for (j = 0; j < 15; j++) {
           if ((obj->inventory[j] & 0x1ff) == itemId)
@@ -105,7 +105,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
 
         if (best < matches) {
           best = matches;
-          actor = gPartyState.activeOwners[i];
+          actor = gAdventure.activeOwners[i];
         }
       }
     } else {
@@ -162,8 +162,8 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
         if (i != 0)
           return 0;
 
-        gPartyState.scene = *(u16 *)&gPartyState.retreatScene;
-        gPartyState.entrance = *(u16 *)&gPartyState.retreatEntrance;
+        gAdventure.scene = *(u16 *)&gAdventure.retreatScene;
+        gAdventure.entrance = *(u16 *)&gAdventure.retreatEntrance;
         runtime->exit = 999;
       }
 

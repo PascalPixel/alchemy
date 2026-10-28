@@ -18,7 +18,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "callback_scheduler.h"
 #include "resource.h"
@@ -165,7 +165,7 @@ void Func_080e9af4(void) {
     /* FAKEMATCH: ⚓️ starts the render mode's offset after the gravity store;
      * plainly agscc starts it before (differ 4). */
     asm("");
-    gPartyState.renderMode = 10;
+    gAdventure.renderMode = 10;
     work->fading = 1;
     event->glowHeld = 1;
     event->glow = 112;

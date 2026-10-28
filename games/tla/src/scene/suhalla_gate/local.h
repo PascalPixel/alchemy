@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_scene.h"
 
 extern const struct SceneEntrance gSceneEntrances[];

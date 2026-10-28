@@ -50,7 +50,7 @@ void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct ObjectRuntime *object);
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_02003118(struct ObjectRuntime *object, s32 value);
 void Func_020032b8(s32 value);
@@ -67,7 +67,7 @@ void Func_0200170c(void);
 
 void Func_020002c8(void) {
   Func_020032b8(123);
-  Func_02003238(gPartyState.entrance);
+  Func_02003238(gAdventure.entrance);
 }
 
 void Func_020002e8(void) {

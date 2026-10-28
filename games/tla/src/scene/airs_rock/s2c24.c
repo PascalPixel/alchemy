@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "flag_call.h"
 
@@ -11,7 +11,7 @@ s32 Camera_FollowActor(s32 id, s32 a);
 s32 Func_02003b50(void);
 
 void Func_02002c24(s32 height) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
 
   if (!Flag_IsSet(0x109)) {
     object->motionFlags = 0;
@@ -19,9 +19,9 @@ void Func_02002c24(s32 height) {
     object->y += height;
     object->speedLimit = 0x10000;
     object->velocityY = 0;
-    gPartyState.renderMode = 2;
+    gAdventure.renderMode = 2;
     object->actionFlags = 1;
-    Camera_FollowActor(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gAdventure.currentOwner, 0);
     Func_02003b50();
     WaitFrames(1);
   }

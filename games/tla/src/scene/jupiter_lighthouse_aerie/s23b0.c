@@ -1,18 +1,18 @@
 #include "jupiter_lighthouse_aerie.h"
 
 void Func_020023b0(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
    * it copies the object to r10 (one reordered row). */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
@@ -27,7 +27,7 @@ void Func_020023b0(void) {
 /// one of the table's cells.
 void Func_02002438(struct JupiterLighthouseAerieWork *table,
                    struct JupiterLighthouseAerieEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

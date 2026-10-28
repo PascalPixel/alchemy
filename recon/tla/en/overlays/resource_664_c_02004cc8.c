@@ -8,7 +8,7 @@
 // constants, and the pool offsets that follow.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u32 gFrameCount;
 struct ObjectRuntime *Object_GetById(u32 id);
@@ -36,7 +36,7 @@ void Object_SetModeById(u32 id, s32 mode);
 void Func_02005d7c(struct ObjectRuntime *object);
 
 void Func_02004cc8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *prepared, *lift;
   u8 priorityFlags;
   s32 height;
@@ -66,7 +66,7 @@ void Func_02004cc8(void) {
   }
   Func_02005f94(288);
   FieldEvent_WaitFrames(10);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
@@ -82,7 +82,7 @@ void Func_02004cc8(void) {
   Func_02005d8c(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
   Func_02005d94(leader);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   Func_02005d5c(lift, 5);
   WaitFrames(12);
   Func_02005d7c(lift);

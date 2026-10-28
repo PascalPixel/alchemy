@@ -28,12 +28,12 @@ void Func_02003740(void) {
   Func_02003854(8);
   Func_02003854(9);
   Func_02003854(10);
-  if (gPartyState.entrance == 3 && GameFlag_Test(265) == 0)
+  if (gAdventure.entrance == 3 && GameFlag_Test(265) == 0)
     Func_02000994();
 }
 
 void Func_0200377c(void) {
-  if (gPartyState.entrance == 1 && GameFlag_Test(265) == 0)
+  if (gAdventure.entrance == 1 && GameFlag_Test(265) == 0)
     Func_02000ce8();
 }
 
@@ -89,7 +89,7 @@ s32 Func_02003894(void) {
 
   if (GameFlag_Test(0x340)) {
     struct ShrineOfTheSeaGodPartyExtra *party =
-        (struct ShrineOfTheSeaGodPartyExtra *)&gPartyState;
+        (struct ShrineOfTheSeaGodPartyExtra *)&gAdventure;
 
     /* FAKEMATCH: loads the party base before it builds the field offset. */
     __asm__("");

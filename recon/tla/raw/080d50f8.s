@@ -291,7 +291,7 @@ Func_080d50f8:
 	str r3, [r7, #16]
 	b .L_080d5398
 .L_080d5338:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d533c:
 	.4byte 0xfff00000
 .L_080d5340:

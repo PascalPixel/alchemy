@@ -50,7 +50,7 @@ void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct ObjectRuntime *object);
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_02003118(struct ObjectRuntime *object, s32 value);
 void Func_020032b8(s32 value);
@@ -69,9 +69,9 @@ void Func_02000abc(void) {
   Func_02001608();
   Func_020032a8();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: ⚓️ loads the party state before it builds the offset */
+    /* FAKEMATCH: ⚓️ loads the adventure before it builds the offset */
     asm volatile("" : "+l"(party));
     party[706] = 2;
   }

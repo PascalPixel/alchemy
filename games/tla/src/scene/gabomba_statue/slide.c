@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_020056b4(struct ObjectRuntime *object);
 void Func_020056bc(void);
@@ -19,9 +19,9 @@ void Func_020017dc(struct ObjectRuntime *actor) {
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
   asm("" : "+l"(acceleration));
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999,
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999,
                                   acceleration);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 376, 200);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 376, 200);
   Func_020056bc();
 }
 
@@ -35,9 +35,9 @@ void Func_02001820(struct ObjectRuntime *actor) {
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
   asm("" : "+l"(acceleration));
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999,
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999,
                                   acceleration);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 376, 136);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 376, 136);
   Func_020056bc();
 }
 
@@ -51,9 +51,9 @@ void Func_02001864(struct ObjectRuntime *actor) {
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
   asm("" : "+l"(acceleration));
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999,
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999,
                                   acceleration);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 440, 248);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 440, 248);
   Func_020056bc();
 }
 
@@ -67,8 +67,8 @@ void Func_020018a8(struct ObjectRuntime *actor) {
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
   asm("" : "+l"(acceleration));
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999,
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999,
                                   acceleration);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 440, 184);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 440, 184);
   Func_020056bc();
 }

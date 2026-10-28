@@ -45,14 +45,14 @@ next2:
   if (found < 2 && GameFlag_Test(0x93f) && GameFlag_Test(0x9e4) == 0)
     found += 4;
   Func_02002de0(158);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_0200397c[found].x, gData_0200397c[found].z,
                        1, 2);
   Func_02002c28(gData_0200397c[found].value, gData_0200397c[found].x,
                 gData_0200397c[found].z + 60);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -4);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -4);
   FieldEvent_WaitFrames(4);
   Func_02002d70(work->exit);
 }

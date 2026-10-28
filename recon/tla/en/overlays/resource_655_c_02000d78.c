@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -73,7 +73,7 @@ void Func_02000d78(u16 *list) {
   void *work = Ram_HeapSlots->eventWork;
 
   if (held == NULL) {
-    s32 id = Func_02003d18(gPartyState.currentOwner, 1);
+    s32 id = Func_02003d18(gAdventure.currentOwner, 1);
 
     if (id != -1)
       held = Object_GetById(id);

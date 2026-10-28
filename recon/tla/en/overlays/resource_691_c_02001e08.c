@@ -5,7 +5,7 @@
 // this form builds the address with add sp and swaps the two constants.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s16 gData_02003de4[];
 
@@ -19,7 +19,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001e08(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct { s32 x, y, z; } position;
   struct { s32 x, y, z; } *cell = (void *)&position;
   struct ObjectRuntime *object;

@@ -9,7 +9,7 @@
 // it last, and a few constants shared or rebuilt the other way.
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 #include "call.h"
@@ -139,7 +139,7 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
     FieldEvent_WaitFrames(10);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
-    gPartyState.battleRule24b = 2;
+    gAdventure.battleRule24b = 2;
     Party_SetFields1eeAnd1f0((s32)&SceneId_WorldMap, 73);
     Party_SetFields1f2And1f4((s32)&SceneId_WorldMap, 74);
     Func_02004db0();
@@ -191,7 +191,7 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
     FieldEvent_WaitFrames(10);
     FieldEvent_WaitFrames(40);
-    Func_02004d38(gPartyState.pair1ee[0], gPartyState.pair1ee[1]);
+    Func_02004d38(gAdventure.pair1ee[0], gAdventure.pair1ee[1]);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
     eastB = 0x4000;

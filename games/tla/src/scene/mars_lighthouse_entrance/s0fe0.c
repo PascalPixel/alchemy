@@ -8,7 +8,7 @@ void Func_02004d00(s32 id, s32 a1, s32 a2);
 void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
 
 void Func_02000fe0(const u8 *event) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 z = leader->z;
   // The leader's map column and, later, the frame count share one variable,
   // as the native's register shows.
@@ -18,10 +18,10 @@ void Func_02000fe0(const u8 *event) {
   GameFlag_SetByte(0x348, z >> 20);
   Func_02004ca8();
   Func_02004da0(0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   leader->update = 0;
-  Func_02004d00(gPartyState.currentOwner, 0x100, 0);
+  Func_02004d00(gAdventure.currentOwner, 0x100, 0);
   Func_02004bc0(leader, 27);
   ObjectDispatch_SetAnimationSpeed(leader, 48);
   WaitFrames(30);
@@ -44,7 +44,7 @@ void Func_02000fe0(const u8 *event) {
     REG_DISPCNT |= 0x8000;
     Func_02000df0();
   }
-  Object_SetModeById(gPartyState.currentOwner, 28);
+  Object_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   i = 0;
 next:
@@ -57,7 +57,7 @@ next:
   i++;
   if (i <= 39)
     goto next;
-  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  Object_GetById(gAdventure.currentOwner)->animationKind = 0;
   SCENE_WORK->unk1ac = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

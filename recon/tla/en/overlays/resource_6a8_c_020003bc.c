@@ -5,7 +5,7 @@
 // load, a pin on it and the locals assigned apart do not move the copy.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -25,7 +25,7 @@ s32 Func_020003bc(struct ObjectRuntime *actor) {
   else
     target = Object_GetById(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Object_GetById(gPartyState.currentOwner);
+    target = Object_GetById(gAdventure.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);

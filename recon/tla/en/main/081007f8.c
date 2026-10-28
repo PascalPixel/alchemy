@@ -5,7 +5,7 @@
 // permanent-stat effects of a menu action to one member or the whole party,
 // the twin of The Broken Seal's function of the same name
 // (games/tbs/src/menu/menu/use.c). ⚓️ takes the whole party's first target
-// from gPartyState.currentOwner and draws the changed Attack or Defense with
+// from gAdventure.currentOwner and draws the changed Attack or Defense with
 // UiText_DrawQuantity. The result message offset is kept in the menu work;
 // -1 reports that nothing changed.
 // Differ 38 of 501 (2026-10-19), instruction order only: the native spills
@@ -15,7 +15,7 @@
 // the other way round).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_unit.h"
 #include "battle_effect.h"
 
@@ -58,7 +58,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   partyResultShown = 0;
 
   if (targetId == 9)
-    target = Unit_Get(gPartyState.currentOwner);
+    target = Unit_Get(gAdventure.currentOwner);
   else
     target = Unit_Get(targetId);
 

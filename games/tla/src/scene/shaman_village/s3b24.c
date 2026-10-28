@@ -26,16 +26,16 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     ShamanVillage_SePlay(158);
   ShamanVillage_MapCopy(a, b, c, d, mode, f);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_02004834(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_0200483c(object);
     object->facing = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02004c08);
   ShamanVillage_WaitFrames(12);
   ShamanVillage_SePlay(123);

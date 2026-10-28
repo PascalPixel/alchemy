@@ -11,7 +11,7 @@
 // a word temporary for 0xf1f, the mask in a variable set before a one-pass
 // boundary after the x shift, a one-pass boundary after the WINOUT store and
 // the one around animationKind. Those devices need FAKEMATCH tags in the S2
-// form when the function is adopted. Tried: the owner through a PartyState
+// form when the function is adopted. Tried: the owner through a struct Adventure
 // pointer (44) or an s32 pointer (58), a byte-offset read of 0x214 (9), the
 // object declared after the mask, alchemy permute 8 minutes (8).
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
@@ -33,7 +33,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02001db8(struct PushEvent *event) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x;
   s32 z;
   s32 mask;
@@ -55,7 +55,7 @@ void Func_02001db8(struct PushEvent *event) {
     object->angle = 0x4000;
     object->motionFlags = zero;
   }
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   {
     /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
@@ -68,7 +68,7 @@ void Func_02001db8(struct PushEvent *event) {
   } while (0);
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
-  Object_SetModeById(gPartyState.currentOwner, 28);
+  Object_SetModeById(gAdventure.currentOwner, 28);
   FieldEvent_WaitFrames(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
@@ -79,7 +79,7 @@ void Func_02001db8(struct PushEvent *event) {
     WaitFrames(1);
   }
   do {
-    Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+    Object_GetById(gAdventure.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

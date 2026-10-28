@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "types.h"
 #include "edition.h"
 

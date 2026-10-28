@@ -7,10 +7,10 @@ s32 Func_02004e80(void);
 s32 Func_02004e88(void);
 
 void Func_02000ce4(s16 value) {
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_02004e70(151, 1);
-  party = &gPartyState;
+  party = &gAdventure;
   Func_02004e78(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
   Func_02004e80();

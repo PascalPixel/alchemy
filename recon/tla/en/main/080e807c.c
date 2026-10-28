@@ -13,7 +13,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "effect_sprite.h"
 #include "bg_scroll.h"
 
@@ -60,7 +60,7 @@ void Func_080eb298(struct EffectSprite *sprite, s32 *position);
 void Func_080e807c(void) {
   struct RingWork *work = Ram_HeapSlots->battleFxWork[0];
   struct RingEvent *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 *pos = position;
   struct RingMote *mote;

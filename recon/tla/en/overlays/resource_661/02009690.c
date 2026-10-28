@@ -39,7 +39,7 @@ extern u8 gData_0200468c[];
 extern u8 gData_020046dc[];
 extern u8 gData_02004718[];
 extern u8 MsgHeyLookUp[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02001690(void) {
   s32 v5;
@@ -69,7 +69,7 @@ void Func_02001690(void) {
   Call3(ObjectMotion_ArmCallback, 12, 0xd000, 0);
   Call3(ObjectMotion_ArmCallback, 13, 0xd000, 0);
   Call3(ObjectMotion_ArmCallback, 14, 0xd000, 0);
-  v6 = ((s32)gPartyState);
+  v6 = ((s32)gAdventure);
   v6 = (v6 + 0x214);
   Call3(Func_02004100, *(s32 *)(v6), 0x100, 0);
   Call3(ObjectMotion_ArmCallback, *(s32 *)(v6), 0x8000, 0);

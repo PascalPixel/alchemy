@@ -13,7 +13,7 @@ void Func_02004d48(void);
 void Func_02004f30(s32 sound);
 
 void Func_020011fc(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *target;
   s32 position[3];
   s32 stepX;

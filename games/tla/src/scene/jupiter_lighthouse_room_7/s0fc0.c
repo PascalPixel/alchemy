@@ -14,7 +14,7 @@ s32 Func_02000fc0(void) {
 
   Scene_SetArrivalFlags(0);
   Func_02001224(1);
-  if (gPartyState.entrance == 12) {
+  if (gAdventure.entrance == 12) {
     /* FAKEMATCH: the placements go through the call layer; called directly,
      * they share 0xa80000 and the z values in saved registers (differ 46). */
     Call3((void (*)())Func_02002ba4, 10, 0xa80000, 0x1080000);

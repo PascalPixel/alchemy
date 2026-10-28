@@ -20,7 +20,7 @@ void Func_0200538c(void) {
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     WaitFrames(10);
   }
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
   if (GameFlag_Test(0x86a))
     Func_020005e0();
   if (GameFlag_Test(0x204))

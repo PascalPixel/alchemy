@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -76,9 +76,9 @@ void Func_02000fc0(void) {
   Func_020057dc(0x7fff, 0);
   Func_020057ec(40);
   WaitFrames(80);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Func_02000f6c();
   WaitFrames(1);
   Func_020057dc(0x10000, 0);

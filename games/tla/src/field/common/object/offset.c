@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 #include "objdisp.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
   struct ObjectRuntime *object;
@@ -87,7 +87,7 @@ void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
 
   if (object != NULL) {
     ObjectMotion_SetSpeedParameters(objectId, 0xcccc, 0x6666);
-    ObjectMotion_MoveToObject(objectId, gPartyState.currentOwner);
+    ObjectMotion_MoveToObject(objectId, gAdventure.currentOwner);
     Object_SetPositionAndResetMotionFar(object, object->x, object->y,
                                         object->z - 0x10000);
     object->movementState = 0;

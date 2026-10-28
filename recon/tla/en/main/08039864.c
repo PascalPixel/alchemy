@@ -19,7 +19,7 @@
 #include "window.h"
 #include "glyph.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "frame.h"
 
 extern const u8 gUiText_SpeedDelays[];
@@ -41,7 +41,7 @@ void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 s32 Resource_ResetEntry(u32 slot);
 void Audio_PlayCue(s32 cue);
 
-#define TEXT_SPEED gPartyState.eventMode
+#define TEXT_SPEED gAdventure.eventMode
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
 s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {

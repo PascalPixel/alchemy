@@ -13,7 +13,7 @@ void Func_02005158(void);
 void Func_020053d8(s32 cue);
 
 void Func_0200306c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *statue = Object_GetById(9);
   struct ObjectRuntime *ride = Func_020052f0();
   s16 i;
@@ -77,7 +77,7 @@ fall:
   statue->priorityFlags |= 2;
   ObjectMotion_SetActionVariant(9, 3);
   Object_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   WaitFrames(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

@@ -21,7 +21,7 @@
 #include "mem.h"
 #include "unit.h"
 #include "character.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "runtime_interfaces.h"
 #include "item.h"
 #include "game_flags.h"

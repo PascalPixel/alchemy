@@ -53,7 +53,7 @@ s32 UiText_ShowPositionedMessageAndWait();
 s32 Unit_Get();
 s32 WaitFrames();
 extern u8 MsgWeHaveIgnited[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02000cd0(void) {
   s32 v_r7, v_r5, v_r6, t2, t4, t75, t77, t78, t79, t80;
@@ -224,7 +224,7 @@ L_020090f8:
   Call2((void (*)())Func_020058ec, 7, 0x4000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Func_02005904, 7, 0x102);
-  t129 = FIELD_AT((s32)gPartyState, s32, 532);
+  t129 = FIELD_AT((s32)gAdventure, s32, 532);
   Call2((void (*)())Func_02005904, t129, 0x102);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Func_020058fc(28, 0x108, 30);
@@ -273,7 +273,7 @@ L_02009260:
   Call2((void (*)())Object_SetModeById, 27, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_020058d4, 0x201b, 0, 0);
-  FIELD_AT((s32)gPartyState, u8, 587) = 2;
+  FIELD_AT((s32)gAdventure, u8, 587) = 2;
   Call2((void (*)())Party_SetFields1eeAnd1f0, 0x109, 10);
   Call2((void (*)())Party_SetFields1f2And1f4, 0x109, 10);
   Call1((void (*)())GameFlag_SetBit, 0x11b);

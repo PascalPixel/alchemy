@@ -2,7 +2,7 @@
 // resource_64e_c_0200038c.c (overlay 64e's Func_0200038c), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct StagedActor {
   u8 unk00[6];
@@ -48,7 +48,7 @@ void Func_020003b4(void) {
   u32 step;
   s32 rate;
 
-  lead = Object_GetById(gPartyState.currentOwner);
+  lead = Object_GetById(gAdventure.currentOwner);
   dir = lead->facing >> 12;
   step = gData_02004fec[dir];
   dst[0] = lead->x + (step & 0xffff0000);

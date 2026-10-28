@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_020056b4(struct ObjectRuntime *object);
 void Func_0200580c(s32 value);
@@ -21,7 +21,7 @@ static __inline__ void Actor_Cue(s32 id, s32 value) {
 void Func_02000a20(struct ObjectRuntime *object) {
   u32 i;
   s32 delta;
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_020056b4(object);
   Func_0200580c(0);
@@ -30,8 +30,8 @@ void Func_02000a20(struct ObjectRuntime *object) {
   object->y = 0x60000;
   object->z = 0xf741cf;
   object->angle = 0x4000;
-  party = &gPartyState;
-  /* FAKEMATCH: the native loads the party state's address among the stores
+  party = &gAdventure;
+  /* FAKEMATCH: the native loads the adventure's address among the stores
    * above and builds the owner's offset after them; the plain order builds the
    * offset before the angle store (differ 4). */
   asm volatile("" : "+l"(party));

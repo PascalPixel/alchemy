@@ -2,7 +2,7 @@
 #define TLA_SHRINE_OF_THE_SEA_GOD_H
 
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ShrineOfTheSeaGodObject {

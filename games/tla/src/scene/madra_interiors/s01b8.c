@@ -1,7 +1,7 @@
 #include "madra_interiors.h"
 
 void Func_020001b8(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -141,9 +141,9 @@ void Func_02000428(void) {
 }
 
 const u8 *Func_020004c4(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002c9c;
-  if (gPartyState.entrance == 20)
+  if (gAdventure.entrance == 20)
     return gData_02002bb8;
   if (FlagCheck(0x8ff))
     return gData_0200308c;

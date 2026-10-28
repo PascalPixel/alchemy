@@ -3,7 +3,7 @@
 // (three sites); alchemy permute (5 to 6 minutes) and an empty asm or one-pass
 // block after any one statement do not move it.
 // Near miss, differ 10 of 223, from the listing: the rooms' second setup.
-// Left: (1) the native loads gPartyState's address before it builds the
+// Left: (1) the native loads gAdventure's address before it builds the
 // 0x214 offset (a one-pass block fixes it but pulls the frame's sub sp
 // ahead); (2) it loads the map byte for the mode before it stores the
 // leader's priority flags (a bitfield view of the flags does not separate
@@ -26,7 +26,7 @@ void Func_020002f8(void) {
       (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *object;
 
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   map->mode17 = 1;
   Scheduler_AddOrUpdateCallback(Func_02000220, 0x480);
   if (GameFlag_Test(0x204))

@@ -1,9 +1,9 @@
 #include "local.h"
 
 void Func_020020bc(s32 entrance) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 mode;
-  s32 *owner = &gPartyState.currentOwner;
+  s32 *owner = &gAdventure.currentOwner;
 
   Func_02002998();
   Func_02002a48(0);
@@ -28,9 +28,9 @@ void Func_020020bc(s32 entrance) {
 }
 
 void Func_02002158(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 flag = GameFlag_Test(0x109);
-  s32 *owner = &gPartyState.currentOwner;
+  s32 *owner = &gAdventure.currentOwner;
   s32 offset;
 
   if (flag == 0) {

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -35,7 +35,7 @@ extern const u8 gData_02000a20[];
 extern const u8 gData_02000bac[];
 
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov65ERoom2)
+  if (gAdventure.scene == (s32)&SceneId_Ov65ERoom2)
     return (const struct SceneEvent *)gData_02000bac;
   return (const struct SceneEvent *)gData_02000a20;
 }

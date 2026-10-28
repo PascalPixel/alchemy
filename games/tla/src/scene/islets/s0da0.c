@@ -7,7 +7,7 @@ struct ObjectRuntime *Func_02000da0(struct ObjectRuntime *object, s32 value) {
       (struct ObjectRuntime *)Value4((s32 (*)())Func_02003df4, 489, object->x,
                                      object->y + 0x180000, object->z);
   if (spawned != 0) {
-    Object_SetModeById(gPartyState.currentOwner, 28);
+    Object_SetModeById(gAdventure.currentOwner, 28);
     spawned->motionFlags = 0;
     Func_02003e3c(spawned, value);
     ObjectDispatch_SetSingleChildFlags(spawned, 0);

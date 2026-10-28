@@ -3,7 +3,7 @@
 /// Outside the first room, sets the high byte of map cell (50, 13) on layer 2 to
 /// 0xff; then starts the room's effect.
 void Func_020011d4(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov67FRoom1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov67FRoom1) {
     Func_02001518(gData_02001654);
   } else {
     /* FAKEMATCH: the cell read through an s16 return type: ⚓️ masks the old
@@ -20,7 +20,7 @@ void Func_02001228(void) {
   Func_02001488();
   Func_020014e8(0);
   Func_02001520();
-  if (gPartyState.scene == (s32)&SceneId_Ov67FRoom2)
+  if (gAdventure.scene == (s32)&SceneId_Ov67FRoom2)
     Func_02000ee8(2, 50, 13, Func_02000eac(2, 50, 13) & 255);
   Func_02001490();
 }
@@ -34,7 +34,7 @@ void Func_02001270(void) {
 }
 
 u8 *Func_020012b0(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
     return gData_020018ec;

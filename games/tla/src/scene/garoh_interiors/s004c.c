@@ -1,7 +1,7 @@
 #include "garoh_interiors.h"
 
 const u8 *Func_0200004c(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov660Room1)
     return gData_02000964;
@@ -13,7 +13,7 @@ const u8 *Func_0200004c(void) {
 }
 
 void Func_0200009c(s32 actor) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */
@@ -33,7 +33,7 @@ void Func_0200009c(s32 actor) {
 }
 
 void Func_02000114(s32 actor) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */
@@ -53,7 +53,7 @@ void Func_02000114(s32 actor) {
 }
 
 void Func_0200018c(s32 actor) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */
@@ -83,7 +83,7 @@ void Func_0200018c(s32 actor) {
 }
 
 void Func_02000230(s32 actor) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */
@@ -108,7 +108,7 @@ static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
 }
 
 void Func_02000298(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s16 facing;
 
   u16 angle;
@@ -119,7 +119,7 @@ void Func_02000298(void) {
     angle = leader->angle;
   } while (0);
   facing = (angle + 0x2000) & ~0x3fff;
-  ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   if ((u16)facing == 0xc000) {
     Func_020008a4(8);
   } else {

@@ -29,7 +29,7 @@ s32 Func_02001dc0(struct ObjectRuntime *a, struct ObjectRuntime *b);
 
 void Func_02001e20(struct ObjectRuntime *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -47,7 +47,7 @@ void Func_02001e20(struct ObjectRuntime *object) {
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->animation)->unk12 += object->action;
   if (leader->y == leader->terrainHeight && Func_02001d5c(object, leader) &&
-      gPartyState.renderMode == 0) {
+      gAdventure.renderMode == 0) {
     if (object->unk4c != 0) {
       work->value68 = 0;
       {

@@ -7,7 +7,7 @@
 // returns to the leader.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_effect.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -103,7 +103,7 @@ void Func_02001d64(void) {
   Func_02004f30(288);
   FieldEvent_WaitFrames(40);
   GameFlag_SetBit(2552);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02004e20();
   WaitFrames(10);
   Func_02004d48();

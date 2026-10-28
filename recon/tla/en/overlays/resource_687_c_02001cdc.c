@@ -3,7 +3,7 @@
 // and builds the entrance offset in r0; the draft hoists them. Destined
 // for the head of scene/sea_of_time/fade.c as the overlay's start.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 extern u16 gData_020026c0[];
@@ -16,7 +16,7 @@ void Func_0200201c(s32 a, s32 b);
 
 s32 Func_02001cdc(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
-  if (gPartyState.scene == (s32)&SceneId_Ov687Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov687Room1) {
     gData_020022c8 = gFrameCount;
     gData_020022cc = 1;
     Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e,
@@ -32,10 +32,10 @@ s32 Func_02001cdc(void) {
         ((volatile u16 *)0x05000060)[i] = 0x5ccb;
       Scheduler_AddOrUpdateCallback(Func_02000c50, 0x480);
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov687Room2) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov687Room2) {
     gData_020022c8 = gFrameCount;
     gData_020022cc = 0;
-    if (gPartyState.entrance <= 4) {
+    if (gAdventure.entrance <= 4) {
       if (!GameFlag_Test(0x940)) {
         Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e,
                 (volatile u32 *)0x040000d4);
@@ -53,7 +53,7 @@ s32 Func_02001cdc(void) {
                 (volatile u32 *)0x040000d4);
         Func_0200201c(0x10000, 0);
       }
-      if (gPartyState.entrance == 4 && !GameFlag_Test(265))
+      if (gAdventure.entrance == 4 && !GameFlag_Test(265))
         Func_02001a14();
     } else {
       if (!GameFlag_Test(0xa95))

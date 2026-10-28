@@ -6,7 +6,7 @@
 // across the call, where this spills them to a 20-byte frame).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_unit.h"
 
 struct MarsLighthouseEventWork {
@@ -36,7 +36,7 @@ void Func_020024c0(void) {
   i = 0;
   if (i < count) {
   save:
-    hp[i] = Unit_Get(gPartyState.activeOwners[i])->hp;
+    hp[i] = Unit_Get(gAdventure.activeOwners[i])->hp;
     i++;
     if (i < count)
       goto save;
@@ -50,7 +50,7 @@ void Func_020024c0(void) {
   check:
     {
       struct BattleUnit *unit;
-      u8 *owner = &gPartyState.activeOwners[i];
+      u8 *owner = &gAdventure.activeOwners[i];
       unit = Unit_Get(*owner);
 
       if (unit->hp > 0) {

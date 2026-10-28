@@ -5,9 +5,9 @@ void Func_020032e0(void);
 void Func_02003610(void);
 
 void Func_020040cc(void) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   Event_StartScreenTransition();
@@ -58,9 +58,9 @@ void Func_02004294(void) {
   struct KibomboObject *object;
   s32 y;
 
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);

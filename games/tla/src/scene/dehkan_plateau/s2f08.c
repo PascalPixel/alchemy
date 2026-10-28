@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -187,13 +187,13 @@ static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
 void Func_02002f08(void) {
   Func_02003c28();
   Func_02003d78(0);
-  Actor_FaceToward(16, gPartyState.currentOwner, 0);
+  Actor_FaceToward(16, gAdventure.currentOwner, 0);
   Func_02003cc8(16, 0x100, 40);
   Func_02003cb0(16, 0);
   Pause(20);
   Motion_SetVarCbAndRefresh(16, 3);
   Actor_SetAngle(16, 0x8000);
-  Object_LinkObjectAndSetCallback(16, gPartyState.currentOwner);
+  Object_LinkObjectAndSetCallback(16, gAdventure.currentOwner);
   Func_02003cd0(16, 0x102);
   Pause(40);
   Func_02003c30();

@@ -1,7 +1,7 @@
 #include "lemurian_ship.h"
 
 void Func_020023f8(void) {
-  struct LemurianShipObject *leader = Object_GetById(gPartyState.currentOwner);
+  struct LemurianShipObject *leader = Object_GetById(gAdventure.currentOwner);
 
   ObjectMotion_SetActionVariant(8, leader->sprite->priority);
 }

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "field_event.h"
-#include "party_state.h"
+#include "adventure.h"
 
 #define ObjectDispatch_SetSingleChildFlags                                     \
   ((void (*)(void *, s32))ObjectDispatch_SetSingleChildFlags)
@@ -36,7 +36,7 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gPartyState.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
+  if (gAdventure.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
     return gScenePlacementsEntrance99;
   return gScenePlacements;
 }

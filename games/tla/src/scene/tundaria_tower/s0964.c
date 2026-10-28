@@ -31,7 +31,7 @@ void Func_02000964(void) {
   Func_02002f90(object, gData_02003370);
   ObjectMotion_CommitCurrentPositionAndActivate(8);
   GameFlag_SetBit(0x200);
-  Object_LinkObjectAndSetCallback(8, gPartyState.currentOwner);
+  Object_LinkObjectAndSetCallback(8, gAdventure.currentOwner);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
   MapCell_SetAttributes(0, 26, 33, 0xff00);

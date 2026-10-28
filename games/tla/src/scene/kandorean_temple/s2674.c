@@ -1,14 +1,14 @@
 #include "local.h"
 
 void Func_02002674(void) {
-  ((struct ObjectFlags23 *)Object_GetById(gPartyState.currentOwner))->flags |=
+  ((struct ObjectFlags23 *)Object_GetById(gAdventure.currentOwner))->flags |=
       32;
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
 }
 
 void Func_0200269c(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags &= ~32;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
 }
 
 void Func_020026cc(void) {
@@ -17,8 +17,8 @@ void Func_020026cc(void) {
   Camera_MoveWithinMapBounds(0x1480000, -1, 0xae0000, 1);
   Func_020052e8();
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 328, 174);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
   Func_020053d8(146);
   Object_SetModeById(11, 2);
@@ -37,7 +37,7 @@ void Func_020026cc(void) {
    * (r1 shifted before r2 is loaded) is one reordered pair. */
   do {
   } while (0);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov653Room3, 3);
   Func_02005300(9, 4);
   Func_020051c8();
@@ -57,7 +57,7 @@ s32 Func_02002854(void) {
   s32 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov653Room1)
     Func_0200290c();
   else if (scene == (s32)&SceneId_Ov653Room2)

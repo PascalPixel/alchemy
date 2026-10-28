@@ -25,7 +25,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 #include "uiwindow.h"
 
@@ -379,7 +379,7 @@ s32 Func_081039fc(u32 mode) {
             menu->cursor->active = 1;
           } while (0);
           Func_080f8ab4(2, 96);
-          gPartyState.eventMode = 1;
+          gAdventure.eventMode = 1;
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
           UiWork_FinalizeFar(window, 1);
@@ -411,7 +411,7 @@ s32 Func_081039fc(u32 mode) {
             menu->cursor->active = 1;
           } while (0);
           Func_080f8ab4(106, 56);
-          gPartyState.eventMode = 1;
+          gAdventure.eventMode = 1;
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
           UiWork_FinalizeFar(window, 1);

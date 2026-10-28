@@ -32,7 +32,7 @@ void Func_02002808(void) {
     Func_0200498c((s32)MsgShamanFortuneGreeting);
     Object_SetModeById(17, 5);
     Func_020049a4(17, 0);
-    ShamanVillage_ObjArm(gPartyState.currentOwner, 0xc000, 20);
+    ShamanVillage_ObjArm(gAdventure.currentOwner, 0xc000, 20);
     Func_020011f8();
     Object_SetModeById(17, 1);
     GameFlag_SetBit(0x203);
@@ -46,12 +46,12 @@ void Func_02002878(void) {
 }
 
 void Func_0200289c(void) {
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 304);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 304);
   ShamanVillage_ObjArm(16, 0x4000, 0);
   ShamanVillage_ObjArm(17, 0x4000, 0);
   ShamanVillage_ObjArm(15, 0x4000, 0);
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 368);
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 368);
   GameFlag_ClearBit(0x201);
 }

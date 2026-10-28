@@ -1,4 +1,4 @@
-// Near miss: Func_02000618 differs 14. With the first store and the party state
+// Near miss: Func_02000618 differs 14. With the first store and the adventure
 // address in a one-pass block (alchemy permute's), the address is loaded one
 // row early instead of late; the owner override store swaps r2 and r3 (offset
 // and value in r3, address in r2). Tried for the store: the field through the
@@ -6,7 +6,7 @@
 // (differ 14 to 25); 3 minutes of alchemy permute.
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "flag_call.h"
 
@@ -23,16 +23,16 @@ void Func_02000af8(s32 scene, s32 entrance);
 void Func_02000b08(void);
 
 s32 Func_02000618(void) {
-  struct PartyState *state;
+  struct Adventure *state;
 
   do {
     ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
-    state = &gPartyState;
+    state = &gAdventure;
   } while (0);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {
     GameFlag_SetBit(0x90a);
-    gPartyState.ownerOverride = 1;
+    gAdventure.ownerOverride = 1;
     Func_02000af8((s32)&SceneId_Ov6a7Room1, 4);
   }
   Func_02000b08();

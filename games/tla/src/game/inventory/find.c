@@ -19,8 +19,8 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   s16 *ownerCursor;
   s16 owner;
 
-  if (Inventory_Find(gPartyState.currentOwner, itemId) != -1)
-    return gPartyState.currentOwner;
+  if (Inventory_Find(gAdventure.currentOwner, itemId) != -1)
+    return gAdventure.currentOwner;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
   ownerIndex = 0;

@@ -1,12 +1,12 @@
 #include "scene.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void GameFlag_ClearBit();
 void Func_020018f4();
 void Func_020018ec();
 
 s32 Func_020007a4(void) {
-  s32 entrance = gPartyState.entrance;
+  s32 entrance = gAdventure.entrance;
 
   if (entrance == 1)
     GameFlag_SetBit(0x960);

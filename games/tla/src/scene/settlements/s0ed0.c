@@ -25,6 +25,6 @@ void Func_02000ed0(void) {
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 
 void Func_02000f00(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 2;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 2;
   Func_02002190(gData_0200226c);
 }

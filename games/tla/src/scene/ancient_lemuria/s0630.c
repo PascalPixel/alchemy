@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s16 gData_02001c30[];
 
@@ -64,7 +64,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 s32 Func_020006bc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
   Scheduler_AddOrUpdateCallback(Func_02000630, 0xc80);
-  if (gPartyState.entrance != 1)
+  if (gAdventure.entrance != 1)
     GameFlag_ClearBit(0x12f);
   else
     GameFlag_SetBit(0x12f);
@@ -75,7 +75,7 @@ s32 Func_020006bc(void) {
   }
   if (GameFlag_Test_(0x96d))
     Func_0200195c_(12, 312 << 16, 184 << 16);
-  if (gPartyState.entrance == 1 && !GameFlag_Test_(0x96d) &&
+  if (gAdventure.entrance == 1 && !GameFlag_Test_(0x96d) &&
       GameFlag_Test(0x96c)) {
     *(void (**)(void))(Object_GetById(13) + 108) = Func_02000048;
     *(u16 *)(Object_GetById(13) + 100) = 0;

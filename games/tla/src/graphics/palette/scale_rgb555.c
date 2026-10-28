@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "system.h"
 
 void Audio_PlayCue(s32 cue);
@@ -11,7 +11,7 @@ void ReelGame_Run(void);
 // As The Broken Seal's.
 s32 Runtime_BlankDisplayLoadValueAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomState = gPartyState.playTime;
+  gRandomState = gAdventure.playTime;
   Audio_PlayCue(709);
   ReelGame_Run();
   return 0;

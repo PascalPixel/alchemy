@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -79,7 +79,7 @@ void Func_020002cc(void) {
         0);
   Call1((void (*)())WaitFrames, 1);
   Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
-  Call4((void (*)())Func_02001fcc, gPartyState.currentOwner, 0x2280000,
+  Call4((void (*)())Func_02001fcc, gAdventure.currentOwner, 0x2280000,
         0x1780000, 0);
   /* FAKEMATCH: the two-instruction angle set before its call is built ahead
    * of the position arguments; as a constant argument, 4 instructions differ
@@ -112,9 +112,9 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002044, 7, 0xe000);
   Call1((void (*)())Func_0200201c, (s32)MsgTakeTheTiller);
   Call2((void (*)())Func_02002034, 7, 0);
-  Value3(Func_0200204c, gPartyState.currentOwner, 0x100, 0);
+  Value3(Func_0200204c, gAdventure.currentOwner, 0x100, 0);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-  Value3((s32 (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000,
+  Value3((s32 (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x6000,
          20);
   Call2((void (*)())Func_02002034, 7, 0);
   Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 5);
@@ -131,7 +131,7 @@ void Func_020002cc(void) {
   Value3(Func_0200204c, 5, 0x108, 20);
   Call2((void (*)())Func_02002034, 5, 0);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
     Value3(Func_0200204c, 9, 0x109, 20);
@@ -165,7 +165,7 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xc000, 0);
-  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000,
+  Call3((void (*)())ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000,
         0);
   Value3(Func_0200204c, 7, 0x101, 20);
   Call2((void (*)())Func_02002034, 7, 0);
@@ -181,8 +181,8 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gPartyState.renderMode = 7;
-  gPartyState.ownerOverride = 1;
+  gAdventure.renderMode = 7;
+  gAdventure.ownerOverride = 1;
   Call1((void (*)())GameFlag_SetBit, 0x8de);
   Call1((void (*)())Func_0200207c, 10);
 }
@@ -321,16 +321,16 @@ void Func_020006e4(void) {
 }
 
 void Func_02000b84(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
   AddCallback(Func_02000188, 0x480);
   AddCallback(Func_020001cc, 0x480);
-  if (gPartyState.entrance == 10)
+  if (gAdventure.entrance == 10)
     Func_020002cc();
   /* FAKEMATCH: the one-pass block keeps the second entrance test a load of its
    * own (ldrsh, cmp #20); without it the two tests share a halfword load and
    * compare shifted (differ 33). */
   do {
   } while (0);
-  if (gPartyState.entrance == 20)
+  if (gAdventure.entrance == 20)
     Func_020006e4();
 }

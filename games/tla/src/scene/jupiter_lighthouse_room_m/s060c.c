@@ -157,7 +157,7 @@ void Func_0200060c(void) {
     FieldEvent_WaitFrames(10);
   }
   FieldEvent_WaitFrames(20);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();
 }

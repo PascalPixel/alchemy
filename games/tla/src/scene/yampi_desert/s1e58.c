@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s32 gInput;
 
@@ -17,7 +17,7 @@ void Func_02001cc4(struct ObjectRuntime *object, s32 dx, s32 dz);
 
 void Func_02001e58(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 speed = 0x18000;
   struct MapWork *map;
   struct MapCell *here, *ahead, *under;
@@ -41,11 +41,11 @@ void Func_02001e58(void) {
   ObjectDispatch_SetAnimationSpeed(leader, 16);
   Map_DisableUpdateCallback();
   if ((u8)(under->collisionCode - 10) <= 4) {
-    if (gPartyState.renderMode == 5)
+    if (gAdventure.renderMode == 5)
       speed = 0;
     else
       ObjectDispatch_SetSingleChildFlags(
-          Object_GetById(gPartyState.currentOwner), 1);
+          Object_GetById(gAdventure.currentOwner), 1);
   }
   if (ahead->collisionCode == 255)
     speed = 0;

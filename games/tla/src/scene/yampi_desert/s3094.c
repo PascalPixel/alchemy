@@ -18,13 +18,13 @@ s32 Func_02003094(void) {
   s16 scene;
 
   Func_020021d4();
-  /* FAKEMATCH: a one-pass block loads the party state address before the
+  /* FAKEMATCH: a one-pass block loads the adventure's address before the
    * scene field offset; as plain statements, 2 instructions differ in tla-en.
    */
   do {
     gData_0200480c = 0;
   } while (0);
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
     Func_0200316c();
   else if (scene == (s32)&SceneId_Ov661Room2)

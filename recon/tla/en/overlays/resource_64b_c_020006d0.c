@@ -4,7 +4,7 @@
 // there), and its register choice differs (the party leader in r10).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 
@@ -31,7 +31,7 @@ void Func_02004c28(void);
 void Func_02004df8(s32 a, s32 b);
 
 void Func_020006d0(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *ship = Object_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 cell = GetWorldMapCollision(&ship->x);
@@ -76,12 +76,12 @@ void Func_020006d0(void) {
   Func_02004c20();
   Func_02004db8(0);
   Func_02004df8(0x10000, 10);
-  gPartyState.renderMode = 1;
-  gPartyState.ownerOverride = blocked;
+  gAdventure.renderMode = 1;
+  gAdventure.ownerOverride = blocked;
   GameFlag_ClearBit(0x176);
-  gPartyState.savedX = ship->x;
-  gPartyState.savedZ = ship->z;
-  gPartyState.unk280 = ship->angle;
+  gAdventure.savedX = ship->x;
+  gAdventure.savedZ = ship->z;
+  gAdventure.unk280 = ship->angle;
   leader->x = ship->x;
   flags = leader->motionFlags;
   leader->y = 0x40000;

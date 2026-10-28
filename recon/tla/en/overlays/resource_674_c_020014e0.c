@@ -9,14 +9,14 @@
 // sets the boat block's byte 661 to 99, puts the leader aboard
 // (Func_02001278) and sails off with objects 9 and 10 (Func_02003f7c(3));
 // before it, it says MsgIMSoVeryVery.
-// Left: the native keeps &gPartyState.currentOwner in r6 and the leader in r8,
+// Left: the native keeps &gAdventure.currentOwner in r6 and the leader in r8,
 // a 0 in r10 for the hooks and the glow's flags and the 0xfe mask in r11 (the
 // draft swaps r6 and r7 and keeps other constants), and lays the first answer's
 // refusal after the trade.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern const u8 MsgOhYouRe[], MsgIMSoVery[], MsgWantToGo[], MsgIMSoVeryVery[];
@@ -80,26 +80,26 @@ void Func_020014e0(void) {
   Func_02003e64();
   Func_02003fa4(0);
   if (PartyInventory_FindOwner(455) != -1) {
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (GameFlag_Test(513)) {
-      Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
+      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 318,
+      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 318,
             424);
       leader->update = 0;
-      ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+      ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
       Func_02003f3c(9, 0xd000);
       Func_02003f24(MsgOhYouRe);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      answer = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
+      answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
       if (answer == 0) {
-        Func_02003f3c(gPartyState.currentOwner, 0x8000);
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner,
+        Func_02003f3c(gAdventure.currentOwner, 0x8000);
+        Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner,
               0x19999, 0xcccc);
         leader->update = Func_02000df8;
-        STEP(gPartyState.currentOwner, 302, 424);
+        STEP(gAdventure.currentOwner, 302, 424);
         SHOW_ITEM();
         if (glow != 0) {
           glow->motionFlags = answer;
@@ -111,9 +111,9 @@ void Func_020014e0(void) {
           Func_02003de4(item, 1);
           Func_02003dec(item, gData_020044f0);
         }
-        STEP(gPartyState.currentOwner, 318, 424);
+        STEP(gAdventure.currentOwner, 318, 424);
         leader->update = (void *)answer;
-        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x6000, 0);
+        ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x6000, 0);
       } else {
         Func_02003fbc();
         Func_02003f24(MsgOhYouRe - 1);
@@ -122,18 +122,18 @@ void Func_020014e0(void) {
     } else {
       Func_02003f24(MsgIMSoVery);
       Func_02003f2c(9, 0);
-      Func_02003f54(gPartyState.currentOwner, 262, 20);
-      Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
+      Func_02003f54(gAdventure.currentOwner, 262, 20);
+      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 318,
+      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 318,
             424);
       leader->update = 0;
-      Func_02003f3c(gPartyState.currentOwner, 0x8000);
-      Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0x19999,
+      Func_02003f3c(gAdventure.currentOwner, 0x8000);
+      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
             0xcccc);
       leader->update = Func_02000df8;
-      STEP(gPartyState.currentOwner, 302, 424);
+      STEP(gAdventure.currentOwner, 302, 424);
       SHOW_ITEM();
       if (glow != 0) {
         glow->motionFlags = 0;
@@ -145,9 +145,9 @@ void Func_020014e0(void) {
         Func_02003de4(item, 1);
         Func_02003dec(item, gData_020044f0);
       }
-      STEP(gPartyState.currentOwner, 318, 424);
+      STEP(gAdventure.currentOwner, 318, 424);
       leader->update = 0;
-      ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+      ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
       Func_02003f54(9, 0x100, 20);
       Func_02003f3c(9, 0xb000);
       object = Object_GetById(9);
@@ -158,14 +158,14 @@ void Func_020014e0(void) {
       Func_02003f3c(9, 0xd000);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) != 0) {
+      if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) != 0) {
         Func_02003fbc();
         Func_02003f54(9, 265, 0);
         Func_02003f2c(9, 0);
         ObjectMotion_ArmCallback(9, 0x5000, 0);
-        Func_02003f3c(gPartyState.currentOwner, 0x8000);
+        Func_02003f3c(gAdventure.currentOwner, 0x8000);
         leader->update = Func_02000df8;
-        Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 302,
+        Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 302,
               424);
         leader->update = 0;
         if (item != 0)
@@ -176,24 +176,24 @@ void Func_020014e0(void) {
     }
     Func_0200129c(item);
   } else if (GameFlag_Test(0xaa5)) {
-    ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
     Func_02003f24(MsgWantToGo);
     Func_02003f2c(9, 0);
     Func_02003fc4();
-    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-      leader = Object_GetById(gPartyState.currentOwner);
+    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+      leader = Object_GetById(gAdventure.currentOwner);
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003f2c(9, 0);
       Runtime_AllocateBlock(88, 664)[661] = 99;
-      Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+      Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
       Func_02003f3c(9, 0x5000);
-      Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0x19999,
+      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
             0xcccc);
-      ObjectMotion_Launch(gPartyState.currentOwner, 6, 0);
-      ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 296, 452);
+      ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
+      ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 296, 452);
       leader->update = Func_02001278;
-      Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+      Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
       Object_SetModeById(9, 3);
       FieldEvent_WaitFrames(20);
       Func_02003f2c(9, 0);

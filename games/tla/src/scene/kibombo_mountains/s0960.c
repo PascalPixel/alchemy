@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern u8 MsgIsTheWay[];
@@ -60,7 +60,7 @@ void Func_02000960(void) {
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 27, 360, 312);
   Motion_SetModeAndWaitAnimation(11, 3);
   Func_0200110c(11, 0);
-  Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
+  Object_LinkObjectAndSetCallback(11, gAdventure.currentOwner);
   WaitFrames(30);
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);

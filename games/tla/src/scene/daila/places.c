@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
@@ -26,14 +26,14 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
 }
 
 s32 *Func_02000044(void) {
-  if (gPartyState.scene == (s32)&SceneId_Daila2)
+  if (gAdventure.scene == (s32)&SceneId_Daila2)
     return gData_02001068;
   else
     return gData_02001018;
 }
 
 s32 *Func_02000070(void) {
-  if (gPartyState.scene == (s32)&SceneId_Daila2)
+  if (gAdventure.scene == (s32)&SceneId_Daila2)
     return gData_02001238;
   else
     return gData_020010d0;
@@ -44,12 +44,12 @@ void Func_0200009c(void) {
 
   Engine_EventStart();
   Engine_EventResolvePendingActions(0);
-  Engine_ActorSetSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
-  Engine_ActorSetSpritePriority(gPartyState.currentOwner, 2);
-  Engine_ActorGet(gPartyState.currentOwner)->motionFlags = 0;
+  Engine_ActorSetSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
+  Engine_ActorSetSpritePriority(gAdventure.currentOwner, 2);
+  Engine_ActorGet(gAdventure.currentOwner)->motionFlags = 0;
   Engine_AudioPlayCue(123);
-  Engine_ActorSetAnimation(gPartyState.currentOwner, 2);
-  CenterAndWalk(gPartyState.currentOwner, 2, -6);
+  Engine_ActorSetAnimation(gAdventure.currentOwner, 2);
+  CenterAndWalk(gAdventure.currentOwner, 2, -6);
   Engine_EventWait(10);
   Engine_EventSetCountdown(work->exit);
   Engine_EventCloseScreen();
@@ -60,7 +60,7 @@ void Func_0200009c(void) {
 void Func_02000118(s32 mode) { ReturnHome(mode, 66, 0x300); }
 
 s32 *Func_02000128(void) {
-  if (gPartyState.scene == (s32)&SceneId_Daila2)
+  if (gAdventure.scene == (s32)&SceneId_Daila2)
     return gData_02001664;
   else
     return gData_02001490;

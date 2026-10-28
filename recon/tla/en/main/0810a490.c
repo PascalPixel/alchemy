@@ -13,7 +13,7 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ShopRuntime {
   u8 unk000[0x4ca];
@@ -53,12 +53,12 @@ void Func_0810a490(void *window, void *itemWindow) {
   u32 savedSelectedItem = shop->selectedItem;
   s32 memberIndex = 0;
   s32 unitId = 0;
-  s32 creditCost = Data_0810c38e[gPartyState.counterC];
+  s32 creditCost = Data_0810c38e[gAdventure.counterC];
   s32 redraw;
   s32 slot;
   s32 message;
 
-  if (creditCost > gPartyState.counterB)
+  if (creditCost > gAdventure.counterB)
     return;
   shop->selectedItem = 228;
   UiText_DrawQuantity(228, 2);

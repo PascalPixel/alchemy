@@ -40,7 +40,7 @@ void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 void Func_02001474(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   struct ShrineOfTheSeaGodObject *stone = Object_GetById(14);
   struct ShrineOfTheSeaGodSprite *sprite = stone->sprite;
   struct EffectOptions options;
@@ -49,7 +49,7 @@ void Func_02001474(void) {
 
   Func_020039d8();
   Func_02003b08(0);
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 408, 328);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 408, 328);
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
   GameFlag_SetBit(0x230);
@@ -93,7 +93,7 @@ void Func_02001474(void) {
     WaitFrames(1);
   }
   Func_020039c0();
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   leader->layer = 0;
   WaitFrames(10);

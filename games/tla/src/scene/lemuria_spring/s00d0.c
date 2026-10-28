@@ -16,11 +16,11 @@ s32 ObjectMotion_SetPositionAndReset();
 s32 ObjectMotion_ArmCallback();
 s32 Func_020001e4();
 s32 Func_02001388();
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_020000d0(void) {
   s32 t0;
-  s32 actor = FIELD_AT(gPartyState, s32, 532);
+  s32 actor = FIELD_AT(gAdventure, s32, 532);
 
   t0 = Value1(GameFlag_Test, 0x200);
   if (t0 == 0) {

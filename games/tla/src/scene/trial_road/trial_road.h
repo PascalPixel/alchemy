@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_scene.h"
 #include "scene_ids.h"
 
@@ -66,7 +66,7 @@ void Func_020059c8(void);
 s32 Func_02005a30(void);
 void Func_02005a38(void);
 
-struct PartyState254 {
+struct Adventure254 {
   u8 unk000[0x254];
   u16 value;
 };

@@ -15,7 +15,7 @@
 // Catacombs' Func_020008a0) cannot alias the stack and shows no gap, which
 // fits. No source form found to make it wait.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct StagedActor {
   u8 unk00[6];
@@ -61,7 +61,7 @@ void Func_0200038c(void) {
   u32 step;
   s32 rate;
 
-  lead = Engine_ActorGet(gPartyState.currentOwner);
+  lead = Engine_ActorGet(gAdventure.currentOwner);
   dir = lead->facing >> 12;
   step = gData_02001d8c[dir];
   dst[0] = lead->x + (step & 0xffff0000);

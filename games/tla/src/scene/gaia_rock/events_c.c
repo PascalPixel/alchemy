@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
@@ -122,9 +122,9 @@ void Func_020003fc(void) {
 }
 
 const struct SceneEntrance *Func_02000434(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
+  if (gAdventure.scene == (s32)&SceneId_Ov680Room1)
     return (const struct SceneEntrance *)gData_020013c8;
-  if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov680Room2)
     return (const struct SceneEntrance *)gData_020014b8;
   return (const struct SceneEntrance *)gData_02001554;
 }

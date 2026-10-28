@@ -311,7 +311,7 @@ Func_080cb2b8:
 	b .L_080cb538
 	.2byte 0x0000
 .L_080cb504:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080cb508:
 	.4byte 0x001fffff
 .L_080cb50c:

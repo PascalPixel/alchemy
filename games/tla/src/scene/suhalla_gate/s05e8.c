@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 extern char SceneId_VenusLighthouseEntrance;
@@ -18,14 +18,14 @@ void Func_020005e8(void) {
   struct ObjectRuntime *owner;
 
   ObjectMotion_Launch(8, 4, 0);
-  owner = Object_GetById(gPartyState.currentOwner);
+  owner = Object_GetById(gAdventure.currentOwner);
   if (owner != NULL)
     ObjectMotion_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
   FieldEvent_WaitFrames(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Func_02000a40(9, 3);
   Func_02000990();
 }

@@ -24,7 +24,7 @@ void Func_02003164(void) {
 
   map->value190 = 0;
   map->value194 = 0;
-  if (gPartyState.entrance == 11)
+  if (gAdventure.entrance == 11)
     GameFlag_ClearBit(0x12f);
   if (!GameFlag_Test(0x109)) {
     object->motionFlags = 0;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -15,7 +15,7 @@ s32 Func_02000f28(void) {
   struct ObjectRuntime *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
   Func_02001158(17);
   Func_02001158(18);
   ObjectMotion_SetActionVariant(10, 2);

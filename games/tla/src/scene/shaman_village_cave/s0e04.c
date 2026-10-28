@@ -55,12 +55,12 @@ s32 Func_02000e04(void) {
   Object_SetPartAttribute(Object_GetById(20), 0);
   Object_SetPartAttribute(Object_GetById(21), 2);
   if ((!GameFlag_Test(265) &&
-       (gPartyState.entrance == 20 || gPartyState.entrance == 21)) ||
+       (gAdventure.entrance == 20 || gAdventure.entrance == 21)) ||
       GameFlag_Test(0xa71)) {
     Func_020003cc();
-    if (!GameFlag_Test(265) && gPartyState.entrance == 20) {
+    if (!GameFlag_Test(265) && gAdventure.entrance == 20) {
       Func_02000a24();
-    } else if (!GameFlag_Test(265) && gPartyState.entrance == 21) {
+    } else if (!GameFlag_Test(265) && gAdventure.entrance == 21) {
       GameFlag_SetBit(0xa71);
       Func_0200087c();
     }

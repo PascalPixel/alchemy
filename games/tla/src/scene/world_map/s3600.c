@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 
@@ -19,7 +19,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
   struct ObjectRuntime *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gPartyState's address before it builds the
+  /* FAKEMATCH(barrier): ⚓️ loads gAdventure's address before it builds the
    * currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
@@ -28,7 +28,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Object_GetById(gPartyState.currentOwner);
+    owner = Object_GetById(gAdventure.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->x < target->x)
       work->countdown = thenValue;
@@ -47,7 +47,7 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
   struct ObjectRuntime *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gPartyState's address before it builds the
+  /* FAKEMATCH(barrier): ⚓️ loads gAdventure's address before it builds the
    * currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
@@ -56,7 +56,7 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Object_GetById(gPartyState.currentOwner);
+    owner = Object_GetById(gAdventure.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->z < target->z)
       work->countdown = thenValue;

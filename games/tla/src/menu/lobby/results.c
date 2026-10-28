@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "serial_runtime.h"
 #include "text/msg_ids.h"

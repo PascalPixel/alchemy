@@ -4,7 +4,7 @@ void Func_020013f8(void) {
   struct ObjectRuntime *object = Object_GetById(Func_02002a68());
 
   if (object != 0 && (object->animationKind & 15) == 1) {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     struct FieldSprite *sprite;
     s32 priority;
 

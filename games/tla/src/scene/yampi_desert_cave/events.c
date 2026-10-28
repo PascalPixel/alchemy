@@ -1,9 +1,9 @@
 #include "yampi_desert_cave.h"
 
 u32 *Func_02000d44(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room2)
     return (u32 *)gData_02001bd0;
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room3)
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room3)
     return (u32 *)gData_02001c18;
   return gData_02001b58;
 }
@@ -19,9 +19,9 @@ void Func_02000dac(void) {
   Func_02000898();
   Func_02001958();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -36,9 +36,9 @@ void Func_02000de0(void) {
   Func_02000898();
   Func_02001958();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -51,7 +51,7 @@ void Func_02000de0(void) {
 
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"

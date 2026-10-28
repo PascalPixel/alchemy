@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "bg_scroll.h"
 #include "field_sprite.h"
 #include "system/dma.h"
@@ -141,7 +141,7 @@ row:
   Call2((void (*)())Func_02003c58, 0x10000, 0);
   Call2((void (*)())Func_02003c50, 0x10003, 0);
   Func_02003c60(60);
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02003c30();
   Func_02003c20(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(0x2180000, -1, 0xd80000, 1);
@@ -157,7 +157,7 @@ row:
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  Object_GetById(gPartyState.currentOwner)->angle = 0x4000;
+  Object_GetById(gAdventure.currentOwner)->angle = 0x4000;
   WaitFrames(1);
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);
@@ -217,7 +217,7 @@ fade2:
   WaitFrames(70);
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02003bb8(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= 0x100;
   gBgScroll[0].x = 0;

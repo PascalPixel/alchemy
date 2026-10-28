@@ -1,7 +1,7 @@
 // Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
 // map setup for its three rooms: pillars, palette cycle, Retreat destination,
 // BG priorities and the chest follower. Left: register choice and the native
-// reloading gPartyState after room 1. Func_020018c8(10) goes through Call1
+// reloading gAdventure after room 1. Func_020018c8(10) goes through Call1
 // (86 to 85).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "object_runtime.h"
@@ -35,7 +35,7 @@ void Func_02001928(s32 value);
 s32 Func_02001418(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02001928(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room1) {
     Func_020007dc(gData_020019ec, gData_020019fc, gData_02001a28,
                   gData_02001a54);
     Func_020018c8(8);
@@ -48,20 +48,20 @@ s32 Func_02001418(void) {
       Func_020018a8(11, 0, 0);
       YampiDesertCave_Call1848(32, 13, 1, 1, 34, 13);
     }
-    if (gPartyState.entrance == 1) {
+    if (gAdventure.entrance == 1) {
       if (GameFlag_Test(0xa29)) {
-        gPartyState.retreatScene = (s32)&SceneId_Ov661Room1;
-        gPartyState.retreatEntrance = 1;
+        gAdventure.retreatScene = (s32)&SceneId_Ov661Room1;
+        gAdventure.retreatEntrance = 1;
       } else if (GameFlag_Test(0xa2a)) {
-        gPartyState.retreatScene = (s32)&SceneId_Ov661Room8;
-        gPartyState.retreatEntrance = 2;
+        gAdventure.retreatScene = (s32)&SceneId_Ov661Room8;
+        gAdventure.retreatEntrance = 2;
       } else if (GameFlag_Test(0xa2b)) {
-        gPartyState.retreatScene = (s32)&SceneId_Ov661Room9;
-        gPartyState.retreatEntrance = 2;
+        gAdventure.retreatScene = (s32)&SceneId_Ov661Room9;
+        gAdventure.retreatEntrance = 2;
       }
     }
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room2) {
     if (GameFlag_Test(0x303)) {
       Func_020018a8(8, 138 << 18, 216 << 16);
       YampiDesertCave_Call1848(32, 13, 1, 1, 34, 13);
@@ -72,8 +72,8 @@ s32 Func_02001418(void) {
     if (!GameFlag_Test(0x302))
       Object_SetWideSprite(64, 1);
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov662Room3) {
-    if ((u16)(gPartyState.entrance - 3) <= 2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov662Room3) {
+    if ((u16)(gAdventure.entrance - 3) <= 2) {
       REG_BG1CNT &= ~3;
       REG_BG1CNT |= 1;
       REG_BG2CNT &= ~3;

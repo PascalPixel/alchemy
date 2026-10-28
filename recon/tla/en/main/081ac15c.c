@@ -23,7 +23,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "bg_scroll.h"
 
 struct DiceParticle {
@@ -259,7 +259,7 @@ void LuckyDice_Run(void) {
   window = UiWindow_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
   UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  UiText_DrawNumberInWindowFar(gPartyState.coins, 6, sprites->coinsWindow, 0,
+  UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                0);
   window = UiWindow_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
@@ -371,7 +371,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         UiText_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
-        UiText_DrawNumberInWindowFar(gPartyState.coins, 6, sprites->coinsWindow,
+        UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
       }
       if (payoutTimer == 15) {
@@ -408,7 +408,7 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > 0xa00000) {
         diceWork->particles[1].y = 0xa00000;
       }
-      if ((u32)gPartyState.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+      if ((u32)gAdventure.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         break;
       }
@@ -422,11 +422,11 @@ void LuckyDice_Run(void) {
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
-        if ((u32)bet > (u32)gPartyState.coins) {
-          bet = gPartyState.coins;
+        if ((u32)bet > (u32)gAdventure.coins) {
+          bet = gAdventure.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        UiText_DrawNumberInWindowFar(gPartyState.coins, 6, sprites->coinsWindow,
+        UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
@@ -666,7 +666,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           Audio_PlayCue(93);
         } else {
@@ -681,13 +681,13 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
@@ -695,7 +695,7 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;

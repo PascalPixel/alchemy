@@ -4,7 +4,7 @@
 #include "motobj.h"
 #include "object_runtime.h"
 #include "objdisp.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "effect_slot.h"
 #include "ram_buffer.h"
 
@@ -138,7 +138,7 @@ void Func_080d85b8(struct EffectSlot *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = Object_GetById(gPartyState.currentOwner);
+  source = Object_GetById(gAdventure.currentOwner);
   statePointer = &effect->state;
   state = *statePointer;
 

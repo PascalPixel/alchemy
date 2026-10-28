@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -47,25 +47,25 @@ void Func_0200332c(void) {
   }
   x = pushed->x >> 19;
   z = pushed->z >> 19;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room1) {
     if (x == 103 && z == 41)
       GameFlag_SetBit(0xa8e);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room2) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room2) {
     if (x == 13 && z == 49)
       GameFlag_SetBit(0x898);
     else if (x == 41 && z == 49)
       GameFlag_SetBit(0x897);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room3) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room3) {
     if (x == 33 && z == 79)
       GameFlag_SetBit(0x89b);
     else if (x == 77 && z == 71)
       GameFlag_SetBit(0x89c);
     else if (x == 59 && z == 65)
       GameFlag_SetBit(0x89d);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room4) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room4) {
     if (x == 81 && z == 37)
       GameFlag_SetBit(0x89e);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room7) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room7) {
     Call4((void (*)())Func_02005df4, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())Func_02005df4, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
@@ -84,7 +84,7 @@ void Func_0200332c(void) {
       else
         ((u8 *)Object_GetById(14))[99] = 0;
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
     if (x == 35 && z == 59)
       GameFlag_SetBit(0x8d1);
     if (x == 45 && z == 105)
@@ -103,7 +103,7 @@ void Func_0200332c(void) {
       GameFlag_ClearBit(514);
     Func_0200062c(2, Object_GetById(8)->x >> 20, Object_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Object_GetById(9)->x >> 20, Object_GetById(9)->z >> 20, 0);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room9) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room9) {
     if (x == 45 && z == 33)
       GameFlag_SetBit(0x8d3);
     Func_0200062c(2, Object_GetById(10)->x >> 20, Object_GetById(10)->z >> 20,

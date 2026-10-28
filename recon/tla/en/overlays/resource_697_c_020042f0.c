@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -56,7 +56,7 @@ next:
   if (*table != 0xffff)
     goto next;
 done:
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
   if (object->y < height) {
     object->terrainHeight = height;

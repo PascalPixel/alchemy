@@ -1,11 +1,11 @@
 // Draft, differ 2 of 114 under -mthumb-slow-loads: the compiler issues
-// gPartyState's load (ldr r5) before lsls r2, r2, #1 and the add into the event
+// gAdventure's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them. Adopted in 573088529f, when it
 // matched without the option; back on the listing since.
 #include "types.h"
 #include "field_scene.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
@@ -19,9 +19,9 @@ void Func_020005e4(s32 id, s32 a, s32 b);
 
 s32 Func_02000340(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
-  if (gPartyState.scene == (s32)&SceneId_Ov65ERoom1) {
-    if (gPartyState.entrance == 5)
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
+  if (gAdventure.scene == (s32)&SceneId_Ov65ERoom1) {
+    if (gAdventure.entrance == 5)
       Func_02000454();
     else if (!GameFlag_Test(0x821) ||
              (GameFlag_Test(0xa39) && !GameFlag_Test(0x341)) ||
@@ -31,8 +31,8 @@ s32 Func_02000340(void) {
       Object_SetPartAttribute(Object_GetById(18), 4);
     return 0;
   }
-  if (gPartyState.scene == (s32)&SceneId_Ov65ERoom2) {
-    s32 entrance = gPartyState.entrance;
+  if (gAdventure.scene == (s32)&SceneId_Ov65ERoom2) {
+    s32 entrance = gAdventure.entrance;
 
     if (entrance == 1) {
       Object_GetById(8)->collisionFlags |= 4;

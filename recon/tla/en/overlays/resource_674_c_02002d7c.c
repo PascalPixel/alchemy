@@ -7,7 +7,7 @@
 // and 220, and walking in place at 130. Left: the native's loops are goto loops (the first stand loop is entered from both exits), keeps the owed counter's address in r8, and stores the wrapped step from a pool zero.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 extern u8 gSceneState[];
@@ -30,7 +30,7 @@ void Func_02002d7c(void) {
   }
   for (i = 11; i <= 18; i++)
     Object_GetById(i)->movementState = 0;
-  if (Object_GetById(gPartyState.currentOwner)->y < -0xc0000) {
+  if (Object_GetById(gAdventure.currentOwner)->y < -0xc0000) {
     work = Ram_HeapSlots->eventWork;
     for (i = 11; i <= 18; i++)
       Object_GetById(i)->movementState = 1;

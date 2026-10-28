@@ -2103,7 +2103,7 @@ BattleTarget_Execute:
 .L_08121438:
 	.4byte gHpDmgTable6
 .L_0812143c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_08121440:
 	.4byte 0x00000c80
 .L_08121444:

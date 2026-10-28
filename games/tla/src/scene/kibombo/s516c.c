@@ -2,7 +2,7 @@
 /// Kibombo's setup.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern u16 gData_02007948[4];
@@ -61,7 +61,7 @@ void Func_0200516c(void) {
     actor->z += -0x2a0000;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
     ObjectMotion_SetActionVariant(11, 1);
-    if (gPartyState.entrance == 19 && GameFlag_Test(7)) {
+    if (gAdventure.entrance == 19 && GameFlag_Test(7)) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);

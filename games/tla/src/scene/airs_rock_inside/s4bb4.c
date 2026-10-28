@@ -29,7 +29,7 @@ void Func_02004bb4(void) {
 
 /// The placement table for the current room.
 s32 *Func_02004c00(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov664Room1)
     return gData_02006c10;

@@ -4,7 +4,7 @@
 #include "frame.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "macros.h"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
@@ -29,7 +29,7 @@ void Func_080e87c4(void);
 
 void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
 
-/// unk26a from party_state.h.
+/// unk26a from adventure.h.
 struct PartyPauseView {
   u8 unk000[0x26a];
   s16 pausedObject;
@@ -42,8 +42,8 @@ void BattleEffect_ClearChildValueOnMismatch(void) {
     struct PartyPauseView *party;
 
     BattleEffect_FinishSceneAndReleaseHeapBlock();
-    party = (struct PartyPauseView *)&gPartyState;
-    /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
+    party = (struct PartyPauseView *)&gAdventure;
+    /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the field
      * offset; read as a plain field the offset's first half is scheduled ahead
      * of the load (differ 2) */
     asm volatile("");

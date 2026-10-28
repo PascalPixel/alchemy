@@ -8,7 +8,7 @@
 // pending event read as (s16) for the flags changes nothing.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ActorDescriptor {
   s16 action;
@@ -25,7 +25,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 
 void Func_080d784c(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   s32 flags = *(s16 *)&party->unk24c[8] & 0xf000;
   u32 scene = *(s16 *)&party->unk24c[8] & 0xfff;
   s32 id;

@@ -3,7 +3,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -65,7 +65,7 @@ struct EffectView {
 extern const u8 gData_02003e30[];
 
 void Func_02000aa8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 frame;
   u32 i;
 

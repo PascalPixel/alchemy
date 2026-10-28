@@ -40,7 +40,7 @@ void Func_02003b2c(void) {
     Func_02005178_(32, 30, 2, 1, 17, 25);
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
-  if (gPartyState.entrance == 3 || gPartyState.entrance == 4)
+  if (gAdventure.entrance == 3 || gAdventure.entrance == 4)
     GameFlag_ClearBit(0x12f);
 #endif
 }

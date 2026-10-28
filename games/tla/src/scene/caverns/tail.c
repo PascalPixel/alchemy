@@ -1,7 +1,7 @@
 #include "caverns.h"
 
 void Func_02000f50(void) {
-  if ((u16)(gPartyState.entrance - 5) <= 1) {
+  if ((u16)(gAdventure.entrance - 5) <= 1) {
     Call6((void (*)())Func_020010ac, 28, 0, 1, 1, 28, 5);
     Call6((void (*)())Func_020010ac, 36, 0, 1, 1, 36, 5);
   }

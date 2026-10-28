@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_LinkPair(s32 id, s32 other, s32 mode);
@@ -34,7 +34,7 @@ void Func_02000308(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgItHasBeen);
-    Object_LinkPair(18, gPartyState.currentOwner, 2);
+    Object_LinkPair(18, gAdventure.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgEveryoneSpoilsMe);
   }
@@ -60,7 +60,7 @@ void Func_02000398(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgWeAreThe);
-    Object_LinkPair(19, gPartyState.currentOwner, 2);
+    Object_LinkPair(19, gAdventure.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgAreThereOther);
   }

@@ -85,7 +85,7 @@ void Func_02000b40(void) {
     const s16 *table;
     u32 *keys;
 
-    Object_GetById(gPartyState.currentOwner);
+    Object_GetById(gAdventure.currentOwner);
     keys = &gInput.held;
     table = gData_02005f18;
     /* FAKEMATCH: the barrier loads the table's address before the direction
@@ -95,7 +95,7 @@ void Func_02000b40(void) {
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
       struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-      struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+      struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
       s32 position[3];
       s32 x;
       s32 z;

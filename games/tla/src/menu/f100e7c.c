@@ -4,7 +4,7 @@
 // (220, 0xcec), menu work and calls (Func_0810106c is the screen loop).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 struct ObjectSystemWork {
@@ -79,8 +79,8 @@ s32 Func_08100e7c(void) {
   s32 zero;
 
   menu = Runtime_AllocateHeapBlock(220, 0xcec);
-  savedEventMode = gPartyState.eventMode;
-  gPartyState.eventMode = 2;
+  savedEventMode = gAdventure.eventMode;
+  gAdventure.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -135,6 +135,6 @@ s32 Func_08100e7c(void) {
   MemFree(menu->backdrop);
   Runtime_ReleaseHeapBlock(220);
   Event_ClearInvalidPackedValuesFar();
-  gPartyState.eventMode = savedEventMode;
+  gAdventure.eventMode = savedEventMode;
   return 1;
 }

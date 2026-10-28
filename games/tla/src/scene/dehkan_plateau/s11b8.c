@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 extern const u8 gData_020045e0[];
@@ -18,7 +18,7 @@ extern const u8 gData_02005450[];
 extern const u8 gData_020055b8[];
 
 const u8 *Func_020011b8(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
     return gData_020045f8;
@@ -36,7 +36,7 @@ const u8 *Func_020011b8(void) {
 }
 
 const u8 *Func_02001240(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
     return gData_02004f1c;

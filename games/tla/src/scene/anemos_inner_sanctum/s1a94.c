@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -30,11 +30,11 @@ void Func_02001a94(void) {
   s32 column;
   s32 target[3];
 
-  if (gPartyState.entrance == 1) {
+  if (gAdventure.entrance == 1) {
     object = Object_GetById(8);
     GameFlag_SetBit(0x301);
     column = 11;
-  } else if (gPartyState.entrance == 3) {
+  } else if (gAdventure.entrance == 3) {
     object = Object_GetById(9);
     GameFlag_SetBit(0x302);
     column = 26;

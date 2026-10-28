@@ -6,7 +6,7 @@
 #include "edition.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 MsgWeDidItAgatio[];
 extern u32 gData_02004a6c[];
@@ -79,7 +79,7 @@ void Func_02001ed0(void) {
   Func_020047d4();
   Func_0200494c(0);
   Camera_MoveWithinMapBounds(0x2e10000, 0, 0xd10000, 0);
-  *(s32 *)((u8 *)((s32)&gPartyState + 0x214) + 0) = 4;
+  *(s32 *)((u8 *)((s32)&gAdventure + 0x214) + 0) = 4;
   Party_RemoveActiveOwner(0);
   Party_RemoveActiveOwner(2);
   Party_RemoveActiveOwner(5);
@@ -491,7 +491,7 @@ void Func_02001ed0(void) {
   Func_020047d4();
   Func_0200494c(0);
   Camera_MoveWithinMapBounds(0x2e10000, 0, 0xd10000, 0);
-  *(s32 *)((u8 *)((s32)&gPartyState + 0x214) + 0) = 4;
+  *(s32 *)((u8 *)((s32)&gAdventure + 0x214) + 0) = 4;
   Party_RemoveActiveOwner(0);
   Party_RemoveActiveOwner(2);
   Party_RemoveActiveOwner(5);

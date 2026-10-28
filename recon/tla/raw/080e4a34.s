@@ -415,6 +415,6 @@ Func_080e4a34:
 .L_080e4d90:
 	.4byte 0x06010000
 .L_080e4d94:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080e4d98:
 	.4byte Func_080e42d4

@@ -12,7 +12,7 @@ struct CueEvent {
   u16 cue;
 };
 
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
 s32 Func_080dbd48(s32 x, s32 z, s32 layer);
@@ -20,7 +20,7 @@ s32 Func_080e4244(struct ObjectRuntime *object);
 
 void Func_080e42d4(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
-  u8 *party = gPartyState;
+  u8 *party = gAdventure;
   struct ObjectRuntime *object = ObjectTable_Get(*(s32 *)(party + 532));
   s32 reason = 0;
 

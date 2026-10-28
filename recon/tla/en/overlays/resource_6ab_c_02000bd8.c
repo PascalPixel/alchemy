@@ -64,9 +64,9 @@ void Func_02000bd8(void) {
   Func_02004394(13, 0);
   Object_SetModeById(13, 10);
   if (!GameFlag_Test(0xa3a)) {
-    leader = Object_GetById(gPartyState.currentOwner);
-    Func_020043a4(gPartyState.currentOwner, 0x4000);
-    Object_SetModeById(gPartyState.currentOwner, 28);
+    leader = Object_GetById(gAdventure.currentOwner);
+    Func_020043a4(gAdventure.currentOwner, 0x4000);
+    Object_SetModeById(gAdventure.currentOwner, 28);
     object = Data_02004cec;
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
@@ -89,7 +89,7 @@ void Func_02000bd8(void) {
         goto next;
       Func_020042c4(4, i);
     }
-    Object_SetModeById(gPartyState.currentOwner, 1);
+    Object_SetModeById(gAdventure.currentOwner, 1);
     GameFlag_SetBit(0xa3a);
     Object_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     WaitFrames(1);

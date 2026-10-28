@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02003cd8(s32 cue);
@@ -17,7 +17,7 @@ void Func_02003c98(void);
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
 /// pixels on and plays cue 390 again.
 void Func_02000700(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 z = leader->z;
   u32 i;
 
@@ -31,7 +31,7 @@ void Func_02000700(void) {
   Func_02003b58(leader, leader->x, leader->y, z + 0xc0000);
   WaitFrames(6);
   Func_02003cd8(217);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x5000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x5000, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     leader->y += -0x20000;

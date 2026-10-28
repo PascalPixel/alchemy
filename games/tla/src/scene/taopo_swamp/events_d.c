@@ -10,8 +10,8 @@ void Func_0200065c(void) {
 
   Func_02002898();
   Func_02002968(0);
-  ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
-  Func_02002908(gPartyState.currentOwner, 256, 30);
+  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 8, 0);
+  Func_02002908(gAdventure.currentOwner, 256, 30);
   Camera_MoveWithinMapBounds(0x1980000, -1, 0x1380000, 1);
   Func_02002928();
   Func_02002910_(8, 257);
@@ -88,14 +88,14 @@ void Func_02000810(s32 id) {
   GameFlag_ClearBit(0x220);
   GameFlag_ClearBit(0x221);
   GameFlag_ClearBit(0x222);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   object = Object_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gPartyState.currentOwner, 0x102);
-    ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
+    Func_02002910_(gAdventure.currentOwner, 0x102);
+    ObjectMotion_CommitPositionAndActivate_(gAdventure.currentOwner, 0, 16);
     FieldEvent_WaitFrames_(2);
-    ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
+    ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames_(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
@@ -143,14 +143,14 @@ void Func_020009c0(s32 id) {
   GameFlag_ClearBit(0x221);
   GameFlag_ClearBit(0x222);
   GameFlag_SetByte(0x230, 0);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   object = Object_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gPartyState.currentOwner, 0x102);
-    ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
+    Func_02002910_(gAdventure.currentOwner, 0x102);
+    ObjectMotion_CommitPositionAndActivate_(gAdventure.currentOwner, 0, 16);
     FieldEvent_WaitFrames_(2);
-    ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
+    ObjectMotion_ArmCallback_(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames_(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);

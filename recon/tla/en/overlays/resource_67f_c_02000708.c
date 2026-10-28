@@ -9,7 +9,7 @@
 // row before the search's 0 argument.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -38,7 +38,7 @@ void Func_02000708(u16 *list) {
 
   if (Func_020014d8() != 0)
     return;
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   helper = Object_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;

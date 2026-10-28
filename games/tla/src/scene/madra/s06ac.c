@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "field_sprite.h"
 #include "flag_call.h"
@@ -45,10 +45,10 @@ s32 Func_020006ac(void) {
       Call3((void (*)())Func_02002b88, 26, 0, 0);
     }
   }
-  if (gPartyState.entrance == 9 && Flag_IsSet(0x913) == 0)
+  if (gAdventure.entrance == 9 && Flag_IsSet(0x913) == 0)
     Func_02000f80();
   if (Flag_IsSet(0x8ff) != 0 && Flag_IsSet(0x989) != 0) {
-    if (gPartyState.entrance == 7 && Flag_IsSet(0x98e) == 0) {
+    if (gAdventure.entrance == 7 && Flag_IsSet(0x98e) == 0) {
       Func_020019d8();
       Flag_Set(0x98e);
     }

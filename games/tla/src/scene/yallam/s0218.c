@@ -1,6 +1,6 @@
 #include "yallam.h"
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov676Room1;
 extern char SceneId_Ov676Room2;
@@ -9,10 +9,10 @@ extern const u8 gData_02002be4[];
 extern const u8 gData_02002bfc[];
 
 const u8 *Func_02000218(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov676Room1 &&
-      gPartyState.entrance == 15)
+  if (gAdventure.scene == (s32)&SceneId_Ov676Room1 &&
+      gAdventure.entrance == 15)
     return gData_02002bfc;
-  if (gPartyState.scene == (s32)&SceneId_Ov676Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov676Room2)
     return gData_02002be4;
   return gData_02002ac4;
 }
@@ -69,10 +69,10 @@ void Func_02000270(void) {
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
   asm("");
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
   {
-    s32 owner = gPartyState.currentOwner;
+    s32 owner = gAdventure.currentOwner;
 
     if (index == 7)
       Offset(owner, 0, -4);

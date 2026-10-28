@@ -2,7 +2,7 @@
 
 void Func_02000088(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct PartyState *party;
+  struct Adventure *party;
   u8 *flag;
 
   /* FAKEMATCH: ⚓️ loads the event work before it builds the flag's offset;
@@ -11,8 +11,8 @@ void Func_02000088(void) {
   asm volatile("");
   flag = work + 0xd38;
   *flag = 1;
-  party = &gPartyState;
-  /* FAKEMATCH: ⚓️ loads the party state's address before it builds the
+  party = &gAdventure;
+  /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the
    * entrance's offset; read as a plain field the offset's first half is
    * scheduled ahead of the load (differ 2). */
   asm volatile("" : "+l"(party));
@@ -82,7 +82,7 @@ void Func_020001a8(void) {
 }
 
 void Func_020001f0(s32 actor) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -98,7 +98,7 @@ void Func_020001f0(s32 actor) {
 }
 
 void Func_02000250(s32 actor) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -114,7 +114,7 @@ void Func_02000250(s32 actor) {
 }
 
 void Func_020002b0(s32 actor) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -130,7 +130,7 @@ void Func_020002b0(s32 actor) {
 }
 
 void Func_0200030c(s32 actor) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -182,9 +182,9 @@ void Func_02000368(void) {
   index -= 4;
   Func_02000534_(gData_0200064c[index].script, gData_0200064c[index].x,
                  gData_0200064c[index].z);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
-  Object_SetModeById(gPartyState.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Object_SetModeById(gAdventure.currentOwner, 2);
   Func_020005a4(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

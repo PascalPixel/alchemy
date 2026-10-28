@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
@@ -10,18 +10,18 @@ void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 struct ObjectRuntime *Func_02001b7c(void);
 
 void Func_02001474(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
    * it copies the object to r10 (one reordered row), as overlay 69C's twin. */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
@@ -49,7 +49,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_0200189c calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_020014fc(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

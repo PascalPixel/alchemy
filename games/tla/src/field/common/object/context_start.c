@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ContextAnimation {
   u8 unk00[0x1a];
@@ -35,11 +35,11 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   struct ObjectRuntime *object;
   struct ContextAnimation *context;
   struct ContextEffect *effect;
-  struct PartyState *party;
+  struct Adventure *party;
   s32 mode;
 
-  party = &gPartyState;
-  /* FAKEMATCH: the empty asm takes the party state's address before the
+  party = &gAdventure;
+  /* FAKEMATCH: the empty asm takes the adventure's address before the
    * argument is copied to r8 (differ 2 without it: the native loads the
    * address first). */
   asm("" : "=r"(mode) : "0"(animation), "r"(party));

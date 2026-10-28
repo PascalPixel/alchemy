@@ -47,7 +47,7 @@ s32 Object_LinkObjectAndSetCallback();
 s32 Object_SetModeById();
 s32 UiText_OpenMessageAtObject();
 extern u8 MsgGaroh14[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02002694(void) {
   s32 v5;
@@ -932,7 +932,7 @@ L_0200b71c:;
   Call1(FieldEvent_WaitFrames, 10);
   Call3(ObjectMotion_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Object_SetModeById, 9, 2);
-  p1 = (s32)gPartyState;
+  p1 = (s32)gAdventure;
   v5 = (p1 + 0x214);
   t20 = Value1(Object_GetById, *(s32 *)(v5));
   if (t20 == 0)
@@ -976,7 +976,7 @@ L_0200b83e:;
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 7);
   Call3(Func_0200520c, 7, 0, 0);
 L_0200b84e:;
-  p2 = (s32)gPartyState;
+  p2 = (s32)gAdventure;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
     Camera_FollowActor(a0, 1);

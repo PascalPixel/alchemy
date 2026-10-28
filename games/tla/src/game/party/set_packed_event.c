@@ -1,15 +1,15 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 Party_SetPackedEvent(s32 kind, s32 id, s32 second) {
   u32 packed = (kind << 10) | (id & 0x3fff);
 
   if (second == 0)
-    gPartyState.packedEvents[0] = packed;
+    gAdventure.packedEvents[0] = packed;
   else {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

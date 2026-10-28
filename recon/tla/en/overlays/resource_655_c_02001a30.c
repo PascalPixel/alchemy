@@ -8,7 +8,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -104,26 +104,26 @@ void Func_02003d78(s32 skip);
 
 void Func_02001a30(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 cellX = ((leader->x >> 20) << 1) + 1;
   s32 cellZ = ((leader->z >> 20) << 1) + 1;
   s32 n, flag;
   u16 *record;
   u32 i;
 
-  if (gPartyState.scene == SCENE(Ov655Room1)) {
+  if (gAdventure.scene == SCENE(Ov655Room1)) {
     n = work->exit - 11;
     flag = work->exit + 0x235;
     record = &gData_02004068[n * 6];
-  } else if (gPartyState.scene == SCENE(Ov655Room2)) {
+  } else if (gAdventure.scene == SCENE(Ov655Room2)) {
     n = work->exit - 14;
     flag = work->exit + 0x232;
     record = &gData_02004110[n * 6];
-  } else if (gPartyState.scene == SCENE(Ov655Room3)) {
+  } else if (gAdventure.scene == SCENE(Ov655Room3)) {
     n = work->exit - 12;
     flag = work->exit + 0x234;
     record = &gData_02004170[n * 6];
-  } else if (gPartyState.scene == SCENE(Ov655Room5)) {
+  } else if (gAdventure.scene == SCENE(Ov655Room5)) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
     record = &gData_020041b8[n * 6];
@@ -134,8 +134,8 @@ void Func_02001a30(void) {
   }
   Func_02003c28();
   Func_02003d78(0);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, cellX << 3,
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, cellX << 3,
                                     cellZ << 3);
   Object_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   FieldEvent_WaitFrames(4);
@@ -145,7 +145,7 @@ void Func_02001a30(void) {
     s16 scene;
 
     Func_02003df8(229);
-    scene = gPartyState.scene;
+    scene = gAdventure.scene;
     x = record[0];
     y = record[1];
     if (scene == SCENE(Ov655Room1))
@@ -159,7 +159,7 @@ void Func_02001a30(void) {
     index = record[2];
     toX = record[3];
     toZ = record[4];
-    scene = gPartyState.scene;
+    scene = gAdventure.scene;
     if (scene == SCENE(Ov655Room1)) {
       Func_02003be0(gData_02003ff2[index * 2], gData_02003ff2[index * 2 + 1],
                     toX, toZ, 1, 2);
@@ -179,19 +179,19 @@ void Func_02001a30(void) {
     FieldEvent_WaitFrames(12);
     leader->angle = 0x4000;
     leader->motionFlags = 0;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
-    scene = gPartyState.scene;
+    scene = gAdventure.scene;
     if (scene == SCENE(Ov655Room1)) {
-      ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
     } else if (scene == SCENE(Ov655Room2) || scene == SCENE(Ov655Room3)) {
-      ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
     } else if (scene == SCENE(Ov655Room5)) {
       if (gData_02004420 != NULL)
         ((struct FieldSprite *)gData_02004420->animation)->priority = 3;
-      ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
     }
-    Object_SetModeById(gPartyState.currentOwner, 28);
+    Object_SetModeById(gAdventure.currentOwner, 28);
     FieldEvent_WaitFrames(16);
     for (i = 0; i <= 39; i++) {
       if (i == 5)
@@ -210,7 +210,7 @@ void Func_02001a30(void) {
     s16 scene;
 
     Func_02003df8(161);
-    scene = gPartyState.scene;
+    scene = gAdventure.scene;
     y = record[1];
     x = record[0];
     if (scene == SCENE(Ov655Room1))
@@ -224,7 +224,7 @@ void Func_02001a30(void) {
     FieldEvent_WaitFrames(12);
     GameFlag_SetBit(flag);
     GameFlag_SetBit(0x201);
-    scene = gPartyState.scene;
+    scene = gAdventure.scene;
     if (scene == SCENE(Ov655Room5) || scene == SCENE(Ov655Room3)) {
       gData_0200567c = leader->x >> 20;
       gData_02005678 = leader->z >> 20;

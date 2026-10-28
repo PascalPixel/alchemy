@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -66,9 +66,9 @@ struct EffectView {
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
-  Call2((void (*)())Func_02003c78, 8, gPartyState.currentOwner);
-  Call2((void (*)())Func_02003c78, 9, gPartyState.currentOwner);
-  Call2((void (*)())Func_02003c78, 10, gPartyState.currentOwner);
+  Call2((void (*)())Func_02003c78, 8, gAdventure.currentOwner);
+  Call2((void (*)())Func_02003c78, 9, gAdventure.currentOwner);
+  Call2((void (*)())Func_02003c78, 10, gAdventure.currentOwner);
   Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200056c, 8);
   Call1((void (*)())Func_0200056c, 9);

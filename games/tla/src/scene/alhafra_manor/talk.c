@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "scene_ids.h"
 #include "call.h"
@@ -51,10 +51,10 @@ void Func_020000b8(s32 actor) {
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     FieldEvent_WaitFrames(20);
-    Object_LinkObjectAndSetCallback(actor, gPartyState.currentOwner);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 760, 320);
+    Object_LinkObjectAndSetCallback(actor, gAdventure.currentOwner);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 760, 320);
     Call3((void (*)())ObjectMotion_ArmCallback, 14, 0x5000, 0);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
     FieldEvent_WaitFrames(10);
     Func_02001588((s32)&SceneId_WorldMap, 67);
   } else {
@@ -88,7 +88,7 @@ void Func_0200019c(void) {
   Func_02001538((s32)&MsgAlhafraManor18);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Call3((void (*)())Func_02001560, 18, 256, 60);
-  ObjectMotion_SetAngleToward(18, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(18, gAdventure.currentOwner, 0);
   Value3((s32 (*)())Func_02001560, 18, 263, 20);
   Func_02001548(18, 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
@@ -108,10 +108,10 @@ void Func_02000238(void) {
   Func_02001538((s32)&MsgAlhafraManor23);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Call3((void (*)())Func_02001560, 8, 256, 30);
-  Object_LinkObjectAndSetCallback(8, gPartyState.currentOwner);
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 304, 152);
+  Object_LinkObjectAndSetCallback(8, gAdventure.currentOwner);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 304, 152);
   ObjectMotion_ArmCallback(8, 0, 0);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x8000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x8000, 0);
   FieldEvent_WaitFrames(10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_WaitFrames(10);
@@ -139,7 +139,7 @@ void Func_02000370(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)((u8 *)work + 0x166) != 0) {
-    ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
   }
   GameFlag_SetBit(0x8bc);
@@ -156,7 +156,7 @@ void Func_02000370(void) {
   ObjectMotion_ArmCallback(9, 0xd000, 0);
   FieldEvent_WaitFrames(30);
   Func_02001548(9, 0, 10);
-  ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
   Func_02001548(9, 0, 10);
   Value3((s32 (*)())Func_02001560, 9, 258, 40);

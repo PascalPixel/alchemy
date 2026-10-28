@@ -13,7 +13,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct Spark {
@@ -66,7 +66,7 @@ void Func_02001538(void);
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work =
       Runtime_AllocateHeapBlockFar(220, sizeof(struct SparkWork));
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;
   s32 entry;

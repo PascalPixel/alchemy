@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -28,10 +28,10 @@ s32 Func_02000da0(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
-    count = &gPartyState.linkTallies[4];
+    count = &gAdventure.linkTallies[4];
     if (*count != 0) {
       UiWork_ClearValueNameTables();
       Func_020019e4(*count, 5);
@@ -43,7 +43,7 @@ s32 Func_02000da0(s32 actor) {
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gPartyState.linkTallies[7];
+    count = &gAdventure.linkTallies[7];
     if (*count != 0) {
       UiWork_ClearValueNameTables();
       Func_020019e4(*count, 5);

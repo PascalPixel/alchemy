@@ -461,7 +461,7 @@ Func_02004524:
 	bl FieldEvent_WaitFrames
 	pop {r5, pc}
 .L_0200c5c4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200c5c8:
 	.4byte Func_02002ccc
 .L_0200c5cc:
@@ -876,7 +876,7 @@ Func_02005898:
 	pop {pc}
 	.2byte 0x0000
 .L_ja_0200d964:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_0200d968:
 	.4byte 0x027a0000
 	.else
@@ -991,7 +991,7 @@ Func_02005898:
 .L_0200d982:
 	pop {pc}
 .L_0200d984:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200d988:
 	.4byte 0x027a0000
 .L_0200d98c:

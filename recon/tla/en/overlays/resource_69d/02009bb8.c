@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 struct LightTile {
@@ -31,7 +31,7 @@ void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
 
 s32 Func_02001bb8(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct LightPuzzle *puzzle = &gData_02002864;

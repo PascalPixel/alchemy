@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -48,13 +48,13 @@ void Func_020007ac(void) {
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Test(63)) {
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     Func_02001010();
     Func_02001108(0);
     moved = 0;
     if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
-      ObjectMotion_Launch(gPartyState.currentOwner, 6, 0);
-      Place(gPartyState.currentOwner, 104, 376);
+      ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
+      Place(gAdventure.currentOwner, 104, 376);
       moved = 1;
     }
     Func_02001060(14, 120 << 16, 376 << 16);
@@ -62,7 +62,7 @@ void Func_020007ac(void) {
     ObjectMotion_Launch(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)
-      Func_020010b8(gPartyState.currentOwner, 0);
+      Func_020010b8(gAdventure.currentOwner, 0);
     Func_02001018();
   }
 }

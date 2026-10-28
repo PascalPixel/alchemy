@@ -12,19 +12,19 @@ void Func_020030e8(s32 a);
 /// The leader turns to angle 0x4000 and takes mode 22, shows emote 0x102, then
 /// turns to 0xc000 and takes mode 5 and action 24.
 void Func_02000b3c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   Func_02003048();
   Func_02003148(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   leader->angle = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gPartyState.currentOwner, 22);
+  Object_SetModeById(gAdventure.currentOwner, 22);
   FieldEvent_WaitFrames(30);
-  Func_020030c8(gPartyState.currentOwner, 0x102);
-  Motion_SetVarCbAndRefresh(gPartyState.currentOwner, 2);
+  Func_020030c8(gAdventure.currentOwner, 0x102);
+  Motion_SetVarCbAndRefresh(gAdventure.currentOwner, 2);
   FieldEvent_WaitFrames(20);
   {
     s32 mode = 5;
@@ -34,12 +34,12 @@ void Func_02000b3c(void) {
      * before the owner's load; as Object_SetModeById(owner, 5), 2 of 75
      * instructions differ in tla-en. */
     asm("" : "+r"(mode) : : "memory");
-    Object_SetModeById(gPartyState.currentOwner, mode);
+    Object_SetModeById(gAdventure.currentOwner, mode);
   }
-  Object_SetActionById(gPartyState.currentOwner, 24);
+  Object_SetActionById(gAdventure.currentOwner, 24);
   FieldEvent_WaitFrames(40);
   Func_02003030(0x1300000, 0x3900000, 0, -12);
-  Object_GetById(gPartyState.currentOwner)->bounce = 0;
+  Object_GetById(gAdventure.currentOwner)->bounce = 0;
   Func_020030e8(11);
   Func_02003050();
 }

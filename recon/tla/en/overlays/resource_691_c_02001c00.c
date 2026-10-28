@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -41,7 +41,7 @@ s32 Func_02001c00(s32 a0, s32 a1, s32 a2, s32 a3) {
       v9, v10, r0;
   s32 stack[17];
 
-  r5 = (s32)&gPartyState;
+  r5 = (s32)&gAdventure;
   r5 = r5 + 532;
   /* sub (s32)stack, #68 */
   v0 = Object_GetById(FIELD_AT(r5, s32, 0));
@@ -81,7 +81,7 @@ L_02009c6c:
   if (r10 != 8)
     goto L_02009c6c;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, r2 - 2, 0);
-  FIELD_AT((s32)(s32)&gPartyState, u8, 530) = r5;
+  FIELD_AT((s32)(s32)&gAdventure, u8, 530) = r5;
   FIELD_AT(r7, u8, 85) = 3;
   FIELD_AT(r7, s32, 72) = 0xcccc;
   FIELD_AT(r7, s32, 68) = r5;
@@ -113,7 +113,7 @@ L_02009d02:
   }
   Call1((void (*)())Func_02003c54, 188);
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r7, 1);
-  r5 = (s32)&gPartyState;
+  r5 = (s32)&gAdventure;
   r5 = r5 + 532;
   Call2((void (*)())Object_SetModeById, FIELD_AT(r5, s32, 0), 22);
   Call3((void (*)())Func_02003ac4, 0x50000, 0x80000, 0x10000);

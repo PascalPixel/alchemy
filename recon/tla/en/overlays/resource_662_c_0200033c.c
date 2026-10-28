@@ -12,7 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
@@ -26,7 +26,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 
 struct ObjectRuntime *Func_0200033c(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime **entry;
   struct ObjectRuntime *object;
   u32 i, k;

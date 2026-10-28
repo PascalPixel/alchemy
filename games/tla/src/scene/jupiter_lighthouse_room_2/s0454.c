@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
@@ -14,7 +14,7 @@ void Func_020022bc(s32 a);
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
 void Func_02000454(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 i;
   s32 angle;
   s32 y;
@@ -25,9 +25,9 @@ void Func_02000454(void) {
     y = object->y;
   } while (0);
   if (y >= 0x200000) {
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
-    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
-    ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 216, 680);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
+    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
+    ObjectMotion_ResetAndSetPositionInMode2(gAdventure.currentOwner, 216, 680);
     ObjectDispatch_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {

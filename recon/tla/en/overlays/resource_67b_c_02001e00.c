@@ -10,13 +10,13 @@ struct EventWork1cc {
 
 void Func_02001e00(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
-  s32 owner = gPartyState.currentOwner;
+  s32 owner = gAdventure.currentOwner;
   struct ObjectRuntime *anchor = work->object;
   struct ObjectRuntime *leader = Object_GetById(owner);
   s32 position[3];
   s32 result;
 
-  if (gPartyState.scene != (s32)&SceneId_Ov67bRoom1 ||
+  if (gAdventure.scene != (s32)&SceneId_Ov67bRoom1 ||
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById();
@@ -48,5 +48,5 @@ void Func_0200042c(s32 mode, s32 id) {
     Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
   Func_02000200(mode, id);
   if (open)
-    Camera_FollowActor(gPartyState.currentOwner, 1);
+    Camera_FollowActor(gAdventure.currentOwner, 1);
 }

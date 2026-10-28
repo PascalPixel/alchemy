@@ -14,7 +14,7 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "bg_scroll.h"
 #include "animspr.h"
@@ -80,7 +80,7 @@ void Func_020042e0(void) {
   WaitFrames(1);
   Func_02004ad8();
   Func_02004ac8();
-  Func_02004bb8(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02004bb8(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }

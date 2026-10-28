@@ -5,7 +5,7 @@
 // from The Broken Seal's Encounter_CountStepsAndSelectFormation
 // (games/tbs/src/overworld/overworld/encounter.c); this game drops the
 // Jenna experience check, reads the cloak byte at 0x26d and the encounter
-// bias and threshold at 0x194 and 0x198 of the event work. gPartyState read
+// bias and threshold at 0x194 and 0x198 of the event work. gAdventure read
 // by field (the native keeps its address across Party_GetAverageLevelFar and
 // loads it again for the step count), the threshold at 0x198, Random16
 // unsigned (the draw's lsrs) and the zone test on its own (100 to 44). Left:
@@ -15,7 +15,7 @@
 // the native keeps in r2 and r0.
 #include "types.h"
 #include "iwram_call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct EncounterZone {
@@ -37,7 +37,7 @@ u32 Random16(void);
 void BattleEffect_SelectBattleCue(s32 zone, s32 group);
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
-#define ENCOUNTER_STEPS (gPartyState.encounterSteps)
+#define ENCOUNTER_STEPS (gAdventure.encounterSteps)
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct EncounterWork *work;
@@ -57,7 +57,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
     if (zone == 0)
       return 0;
-    if (gPartyState.cloaked != 0)
+    if (gAdventure.cloaked != 0)
       return 0;
     entry = gEncounter_EnemyGroupTable + zone;
     rate = entry->rate;
@@ -69,7 +69,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       level = 0;
     if (level > 5)
       level = 5;
-    if (level > 0 && gPartyState.avoidDistance != 0)
+    if (level > 0 && gAdventure.avoidDistance != 0)
       return 0;
     rate += level * 5;
 

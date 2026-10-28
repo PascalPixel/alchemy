@@ -4,7 +4,7 @@
 #include "motobj.h"
 #include "object_runtime.h"
 #include "objdisp.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "effect_slot.h"
 #include "ram_buffer.h"
 
@@ -134,7 +134,7 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   s32 y;
 
   other =
-      (struct DescendingOrbitObject *)Object_GetById(gPartyState.currentOwner);
+      (struct DescendingOrbitObject *)Object_GetById(gAdventure.currentOwner);
   raw = arg->timer - 1;
   arg->timer = raw;
   value = arg->timer;

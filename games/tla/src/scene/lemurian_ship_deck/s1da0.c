@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 extern const u8 MsgThenLetS[];
@@ -40,16 +40,16 @@ void Func_02001da0(void) {
     Object_GetById(7)->update = (void (*)(void))Func_02001d60;
     Func_020020b4_(7, 16, 0, 0x8000);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(7), 0);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
     Func_0200201c(MsgThenLetS);
     ObjectMotion_CommitCurrentPositionAndActivate(7);
     Object_GetById(7)->update = 0;
     Func_02002034(7, 0);
     Motion_SetModeAndWaitAnimation(4, 3);
-    Object_GetById(gPartyState.currentOwner)->update =
+    Object_GetById(gAdventure.currentOwner)->update =
         (void (*)(void))Func_02001d60;
     ObjectMotion_CommitPositionAndActivate(4, 0, 16);
-    Object_GetById(gPartyState.currentOwner)->update = 0;
+    Object_GetById(gAdventure.currentOwner)->update = 0;
     Object_GetById(7)->update = (void (*)(void))Func_02001d60;
     Object_SetModeById(7, 2);
     object = Object_GetById(4);

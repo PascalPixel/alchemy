@@ -7,7 +7,7 @@
 /// sprite the requested priority themselves before Object_SetSpritePriority,
 /// as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
@@ -29,7 +29,7 @@ extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
-  struct FieldEffect *party = Object_GetById(gPartyState.currentOwner);
+  struct FieldEffect *party = Object_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

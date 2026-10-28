@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "frame.h"
 #include "call.h"
 
@@ -25,7 +25,7 @@ void Func_020028b8(void);
 
 void Func_02000e58(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *linked = actor->linkedObject;
   struct ObjectRuntime *shadow;
   s32 facing;
@@ -84,8 +84,8 @@ void Func_02000e58(void) {
       goto settle;
   }
   Func_02002848(shadow);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   *(u16 *)(work + 0xd46) = 1;
   *(u16 *)(work + 0x154) = 0;
   Func_020028b8();

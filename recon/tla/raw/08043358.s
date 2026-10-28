@@ -193,7 +193,7 @@ SaveState_BuildSummaryHeader:
 .L_080434d4:
 	.4byte gData_02000000
 .L_080434d8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080434dc:
 	.4byte gFrameWaitCount
 .L_080434e0:

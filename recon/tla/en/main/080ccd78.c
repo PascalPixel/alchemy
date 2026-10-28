@@ -8,14 +8,14 @@
 // requirements. New in ⚓️: kinds 8 and 9 match any target, there is no
 // search-ignores-condition test, and the facing test alone is skipped while
 // Data_02000452 is 2. Left: instruction order and register choice only:
-// gPartyState's pool load goes to r6 in the native before the work slot's
+// gAdventure's pool load goes to r6 in the native before the work slot's
 // loads (r3 here), the -1 is built before the facing load, and
 // Data_02000452's address takes r1 against r3. Tried: the loop as a for
 // with (++event)->flags (differ 31); the 0xf000 mask inline without
 // assigning flags (differ 61, the facing tails no longer shared).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void *ObjectTable_Get(s32 id);
@@ -46,7 +46,7 @@ struct SceneEventEntry *Func_080ccd78(s32 kind, s32 target) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   struct SceneEventEntry *event = work->events;
   u32 facing =
-      ((struct FacingView *)ObjectTable_Get(gPartyState.currentOwner))->facing;
+      ((struct FacingView *)ObjectTable_Get(gAdventure.currentOwner))->facing;
   s32 flags;
 
   flags = event->flags;

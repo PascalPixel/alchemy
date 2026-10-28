@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_020032c4(void) {
-  s32 variant = Object_GetById(gPartyState.currentOwner)->sprite->priority;
+  s32 variant = Object_GetById(gAdventure.currentOwner)->sprite->priority;
 
   ObjectMotion_SetActionVariant(13, variant);
   ObjectMotion_SetActionVariant(14, variant);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 extern s32 gData_02005610[];
@@ -38,7 +38,7 @@ void Func_020011c8(void) {
       Object_RefreshSelectorById(9);
     Func_02000f00();
     Func_02004f0c((s32)MsgGaiaRockInside03);
-    ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(10);
     Func_02004f14(10, 0);
     Motion_SetModeAndWaitAnimation(10, 3);

@@ -6,11 +6,11 @@
 // 261, 265, 257) and talk in turn, each line the next of the event work's
 // halfword 0x1c4 (Func_0200118c), then object 9 joins the leader again;
 // sets flag 0x9ce.
-// Left: registers: the native saves only r8 to r10 (the statue in r6, a 0 shared by the glow's stores in r8, then 0x10000 in r6 for the follower's speed limit, &gPartyState.currentOwner in r5), where the draft also saves r11 and r7.
+// Left: registers: the native saves only r8 to r10 (the statue in r6, a 0 shared by the glow's stores in r8, then 0x10000 in r6 for the follower's speed limit, &gAdventure.currentOwner in r5), where the draft also saves r11 and r7.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern const u8 MsgByReachingThis[];
@@ -82,17 +82,17 @@ void Func_020009d4(void) {
   glow->z = 0;
   glow->update = 0;
   TALK();
-  ObjectMotion_ResetAndSetPosition(gPartyState.currentOwner, 166, 188);
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-  Func_020011d4(9, gPartyState.currentOwner);
+  ObjectMotion_ResetAndSetPosition(gAdventure.currentOwner, 166, 188);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Func_020011d4(9, gAdventure.currentOwner);
   follower->speedLimit = 0x10000;
   ObjectMotion_ResetAndSetPosition(9, 184, 188);
   ObjectMotion_CommitCurrentPositionAndActivate(9);
   Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
   Func_020011ec(9, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
-  Object_SetModeById(gPartyState.currentOwner, 3);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Object_SetModeById(gAdventure.currentOwner, 3);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   TALK();
   Func_020011fc(9, 258, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xb000, 0);
@@ -106,21 +106,21 @@ void Func_020009d4(void) {
   FieldEvent_WaitFrames(30);
   Func_020011ec(9, 0);
   TALK();
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
   FieldEvent_WaitFrames(10);
-  Func_020011fc(gPartyState.currentOwner, 257, 0);
+  Func_020011fc(gAdventure.currentOwner, 257, 0);
   Func_020011fc(9, 257, 0);
   FieldEvent_WaitFrames(60);
   TALK();
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xb000, 0);
-  Func_020011fc(gPartyState.currentOwner, 261, 0);
+  Func_020011fc(gAdventure.currentOwner, 261, 0);
   Func_020011fc(9, 261, 0);
   FieldEvent_WaitFrames(60);
   TALK();
   FieldEvent_WaitFrames(40);
-  Object_SetModeById(gPartyState.currentOwner, 3);
+  Object_SetModeById(gAdventure.currentOwner, 3);
   FieldEvent_WaitFrames(40);
   Object_SetModeById(9, 3);
   Func_020011ec(9, 0);
@@ -129,7 +129,7 @@ void Func_020009d4(void) {
   FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 4);
   Object_SetModeById(9, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -140,7 +140,7 @@ void Func_020009d4(void) {
   Func_02001264();
   Value2(Func_0200123c, 0x10000, 0);
   Func_0200124c(60);
-  Func_02001214(gPartyState.currentOwner, 1);
+  Func_02001214(gAdventure.currentOwner, 1);
   FieldEvent_WaitFrames(60);
   Func_020011a4();
 }

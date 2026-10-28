@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "battle_unit.h"
 
@@ -39,7 +39,7 @@ void Func_080e716c(void) {
 
   anchor = work->anchor;
   event = Ram_HeapSlots->eventWork;
-  unit = Unit_Get(gPartyState.currentOwner);
+  unit = Unit_Get(gAdventure.currentOwner);
 
   object = Object_GetById(id);
   if (object == NULL) {

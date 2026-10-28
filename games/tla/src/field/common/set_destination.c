@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 
 void Field_SetDestination(s16 scene, s16 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  gPartyState.scene = scene;
-  gPartyState.entrance = entrance;
+  gAdventure.scene = scene;
+  gAdventure.entrance = entrance;
   event->countdown = 999;
 }
 

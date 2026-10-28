@@ -7,7 +7,7 @@
 // its bitfield mask comes from r0 through a copy.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 extern const u8 gData_02001540[];
@@ -31,7 +31,7 @@ struct DustSprite {
 };
 
 void Func_02000974(s32 spread) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 frame = 0;
   u32 i;
 

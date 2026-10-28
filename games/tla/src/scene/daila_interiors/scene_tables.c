@@ -28,7 +28,7 @@ extern const u8 gData_020013fc[];
 extern const u8 gData_020014a4[];
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gPartyState.scene == (s32)&SceneId_DailaInteriors2)
+  if (gAdventure.scene == (s32)&SceneId_DailaInteriors2)
     return (const struct ScenePlacement *)gData_020013fc;
   if (GameFlag_Test(0x873))
     return (const struct ScenePlacement *)gData_020014a4;

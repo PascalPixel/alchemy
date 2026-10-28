@@ -17,9 +17,9 @@ extern const u8 gData_02000f5c[];
 extern const u8 gData_02000f8c[];
 
 const struct ScenePlacement *Func_02000040(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
+  if (gAdventure.scene == (s32)&SceneId_Ov680Room1)
     return (const struct ScenePlacement *)gData_02000f5c;
-  if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov680Room2)
     return (const struct ScenePlacement *)gData_02000f8c;
   return 0;
 }

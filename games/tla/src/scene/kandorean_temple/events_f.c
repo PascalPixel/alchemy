@@ -2,7 +2,7 @@
 #include "macros.h"
 
 void Func_02000b5c(void) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
 }
 
@@ -105,10 +105,10 @@ void Func_02000d64(void) {
                                     0xd80000);
   if (GameFlag_Test_(0x208)) {
     Object_SetModeById_(9, 4);
-    Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),
+    Object_SetPositionAndResetMotion_(Object_GetById(gAdventure.currentOwner),
                                       0xd80000, 0xc0000, 0xd80000);
     ObjectDispatch_SetSingleChildFlags_(
-        Object_GetById(gPartyState.currentOwner), 0);
+        Object_GetById(gAdventure.currentOwner), 0);
   }
   Object_GetById_(11)->scaleY = 0x10000;
   Object_SetPositionAndResetMotion_(Object_GetById_(11), 0xd80000, 0, 0xd80000);
@@ -135,10 +135,10 @@ void Func_02000e60(void) {
                                     0xf80000);
   if (GameFlag_Test_(0x209)) {
     Object_SetModeById_(10, 4);
-    Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),
+    Object_SetPositionAndResetMotion_(Object_GetById(gAdventure.currentOwner),
                                       0x1780000, 0xc0000, 0xf80000);
     ObjectDispatch_SetSingleChildFlags_(
-        Object_GetById(gPartyState.currentOwner), 0);
+        Object_GetById(gAdventure.currentOwner), 0);
   }
   Object_GetById_(12)->scaleY = 0x10000;
   Object_SetPositionAndResetMotion_(Object_GetById_(12), 0x1780000, 0,

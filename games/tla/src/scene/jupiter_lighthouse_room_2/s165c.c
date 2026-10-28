@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_effect.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const s32 *gData_02002b50[];
 
@@ -15,7 +15,7 @@ void Object_SetPartAttribute(struct FieldEffect *effect, s32 value);
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Object_GetById(gPartyState.currentOwner);
+  struct FieldActor *party = Object_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

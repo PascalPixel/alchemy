@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -12,12 +12,12 @@
 s32 GameFlag_Test(s32 flag);
 
 s32 Func_020002e0(void) {
-  struct PartyState *party;
+  struct Adventure *party;
   s32 mode;
 
   if (GameFlag_Test(324) == 0)
     return 0;
-  party = &gPartyState;
+  party = &gAdventure;
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
    * state's address before it builds the field's offset (2 differ without it).
    */

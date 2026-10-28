@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "daila.h"
 
@@ -43,12 +43,12 @@ s32 DailaInteriors_Start(void) {
   s32 value = 0x209;
 
   /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
-   * party state's address loads just before the store; as one assignment, 2
+   * adventure's address loads just before the store; as one assignment, 2
    * of 174 instructions differ in tla-en. */
   __asm__("");
   *effect = value;
-  if (gPartyState.scene == (s32)&SceneId_DailaInteriors1) {
-    if (gPartyState.entrance == 7) {
+  if (gAdventure.scene == (s32)&SceneId_DailaInteriors1) {
+    if (gAdventure.entrance == 7) {
       Func_02000c58();
     } else {
       if (GameFlag_Test(0x873)) {
@@ -57,13 +57,13 @@ s32 DailaInteriors_Start(void) {
         Object_SetModeById(25, 5);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(25), 0);
       }
-      Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
       Object_GetById(13)->priorityFlags |= 32;
       Object_GetById(19)->priorityFlags |= 32;
       Engine_ActorSetSpritePriority(19, 2);
       Object_GetById(19)->collisionFlags |= 4;
     }
-  } else if (gPartyState.scene == (s32)&SceneId_DailaInteriors2) {
+  } else if (gAdventure.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Engine_EventStart();
     Engine_EventResolvePendingActions(0);
@@ -95,7 +95,7 @@ s32 DailaInteriors_Start(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gPartyState.scene == (s32)&SceneId_DailaInteriors2 &&
+  if (gAdventure.scene == (s32)&SceneId_DailaInteriors2 &&
       GameFlag_Test(0x873)) {
     Func_02000ca4(0);
     Daila_CopyCells(29, 33, 10, 6, 10, 12);

@@ -11,7 +11,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "display_transition.h"
 
@@ -37,24 +37,24 @@ void EventRuntime_WaitDelay(void) {
 
 void EventRuntime_SetDestination(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct PartyState *party;
+  struct Adventure *party;
 
   event->countdown = 999;
   /* FAKEMATCH: materialize the party pointer before building the scene offset.
    */
-  asm volatile("" : "=r"(party) : "0"(&gPartyState));
+  asm volatile("" : "=r"(party) : "0"(&gAdventure));
   party->scene = scene;
   party->entrance = entrance;
 }
 
 void EventRuntime_SetSavedDestination(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct PartyState *party;
+  struct Adventure *party;
 
   event->countdown = 999;
   /* FAKEMATCH: materialize the party pointer before building the saved-scene
    * offset. */
-  asm volatile("" : "=r"(party) : "0"(&gPartyState));
+  asm volatile("" : "=r"(party) : "0"(&gAdventure));
   party->savedScene = scene;
   party->savedEntrance = entrance;
 }

@@ -1,7 +1,7 @@
 #include "mars_lighthouse_room_m.h"
 
 void Func_02001e38(struct ObjectRuntime *object) {
-  struct ObjectRuntime *target = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *target = Object_GetById(gAdventure.currentOwner);
   s32 vx;
   s32 vz;
   s32 rate;

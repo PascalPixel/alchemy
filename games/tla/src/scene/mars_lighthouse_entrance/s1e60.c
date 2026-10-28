@@ -89,7 +89,7 @@ s32 Func_02001f38(struct ObjectRuntime *a, struct ObjectRuntime *b) {
 }
 
 void Func_02001f90(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct SpriteParts *parts;

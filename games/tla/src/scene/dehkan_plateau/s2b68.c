@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02003df8(s32 cue);
@@ -21,7 +21,7 @@ void Func_02002b68(void) {
     Func_02003df8(229);
     Func_02003be0(64, 64, 15, 8, 1, 1);
     Func_02003be0(64, 66, 15, 72, 1, 2);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
   }
 }

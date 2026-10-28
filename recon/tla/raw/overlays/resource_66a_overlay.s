@@ -231,7 +231,7 @@ Func_020002f8:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02008510:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008514:
 	.4byte Func_02000220
 .L_02008518:
@@ -1269,7 +1269,7 @@ Func_02000818:
 .L_02009218:
 	.4byte gData_02001674
 .L_0200921c:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200929c,"ax",%progbits
 	.global Func_0200129c
 	.thumb_func

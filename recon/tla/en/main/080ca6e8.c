@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 #include "field_scene.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 // The field's event work (heap slot 0x6c): the placement tables spawned so
@@ -138,7 +138,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
         }
       }
     } else {
-      if (entry->sprite == gPartyState.currentOwner)
+      if (entry->sprite == gAdventure.currentOwner)
         continue;
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }

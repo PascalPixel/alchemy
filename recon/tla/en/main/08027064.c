@@ -14,7 +14,7 @@
 #include "input.h"
 #include "map.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
 
@@ -102,7 +102,7 @@ s32 Func_08027064(struct ObjectRuntime *object) {
   collision = 0;
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
   pushed = 0;
-  if (gInput.held & ((struct PartyKeys *)&gPartyState)->keys23c) {
+  if (gInput.held & ((struct PartyKeys *)&gAdventure)->keys23c) {
     object->speedLimit = 0x18000;
     object->acceleration = 0x4000;
     movementAnimation = 5;
@@ -327,7 +327,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (Unit_Get(gPartyState.currentOwner)->hp == 0)
+    if (Unit_Get(gAdventure.currentOwner)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {

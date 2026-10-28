@@ -87,7 +87,7 @@ struct BgScrollPair {
 
 extern const u16 gUi_BounceScales[32];
 extern struct BgScrollPair gBgScroll[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 s32 VramCache_AllocEntry(s32 size);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -153,7 +153,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       selectionUi->commandKinds[1] = 49;
       kindCount = 2;
     }
-    if (fleeAllowed > 0 && gPartyState[0x24b] != 2)
+    if (fleeAllowed > 0 && gAdventure[0x24b] != 2)
       selectionUi->commandKinds[kindCount++] = 4;
     selectionUi->commandKinds[kindCount++] = 7;
     selectionUi->commandKinds[kindCount] = -1;

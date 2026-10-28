@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -80,9 +80,9 @@ loop:
   work = (u8 *)&((struct EventWork154 *)work)->value;
   Func_02001448(158);
   Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  Offset_(gPartyState.currentOwner, 0, -4);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Offset_(gAdventure.currentOwner, 0, -4);
   Func_02001448(123);
   FieldEvent_WaitFrames(6);
   Func_020013d0(*(s16 *)work);

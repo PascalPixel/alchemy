@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 #include "daila.h"
@@ -61,7 +61,7 @@ s32 DailaInteriors_TalkMazeTreasure(void) {
 void DailaInteriors_StartLeaderEvent(void) {
   Engine_EventStart();
   Engine_EventResolvePendingActions(0);
-  Engine_ActorSetSpritePriority(gPartyState.currentOwner, 1);
+  Engine_ActorSetSpritePriority(gAdventure.currentOwner, 1);
 }
 
 extern const u8 gData_020016e4[];
@@ -71,7 +71,7 @@ extern const u8 gData_02001c18[];
 
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 flag = GameFlag_Test(0x873);
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   s32 id = (s32)&SceneId_DailaInteriors2;
 
   if (flag) {

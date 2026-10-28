@@ -60,7 +60,7 @@ s32 WaitFrames();
 extern u8 Func_020004a4[];
 extern u8 MsgWhatCouldHe[];
 extern u8 gData_020061d4[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   Func_02005714(a0, a1, a2);
@@ -76,7 +76,7 @@ void Func_02003ff4(void) {
 
   Func_0200560c();
   Call1(Func_02005784, 0);
-  v_r6 = ((s32)gPartyState + 0x214);
+  v_r6 = ((s32)gAdventure + 0x214);
   t2 = *(s32 *)v_r6;
   t3 = Value1(Object_GetById, t2);
   FIELD_AT(t3, u16, 6) = 0x4000;
@@ -299,7 +299,7 @@ L_0200c66c:
   if (v_r6 != 20)
     goto L_0200c72a;
   Call3(Func_020055c4, 0x20000, 0x20000, 0x10000);
-  v_r5 = ((s32)gPartyState + 0x214);
+  v_r5 = ((s32)gAdventure + 0x214);
   t195 = *(s32 *)v_r5;
   W_Func_02005714(t195, 0x100, 0);
   W_Func_02005714(5, 0x100, 0);
@@ -338,7 +338,7 @@ L_0200c72a:
   Call2(Func_02005704, 6, 0xa000);
   Call2(Func_020056f4, 6, 0);
   Call2(Func_020056f4, 19, 0);
-  v_r5 = ((s32)gPartyState + 0x214);
+  v_r5 = ((s32)gAdventure + 0x214);
   t228 = *(s32 *)v_r5;
   Call3(ObjectMotion_ArmCallback, t228, 0, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0, 0);

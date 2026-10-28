@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -86,8 +86,8 @@ void Func_020013b0(void) {
 void Func_020013fc(void) {
   Func_020002f8(gData_02003f80);
   Func_020013b0();
-  if (Object_GetById(gPartyState.currentOwner)->y < -0x180000) {
-    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  if (Object_GetById(gAdventure.currentOwner)->y < -0x180000) {
+    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   }
 }

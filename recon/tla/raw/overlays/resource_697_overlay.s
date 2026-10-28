@@ -111,7 +111,7 @@ Func_02000138:
 .L_02008210:
 	.4byte gData_020023c4 + 0x88
 .L_02008214:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008b7c,"ax",%progbits
 	.balign 4
 	.global Func_02000b7c
@@ -527,7 +527,7 @@ Func_02000e40:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009068:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02009262,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200929a,"ax",%progbits
@@ -1103,7 +1103,7 @@ Func_0200242c:
 .L_0200a4f0:
 	.4byte 0x00000001
 .L_0200a4f4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200a4f8:
 	.4byte 0x000000f7
 .L_0200a4fc:
@@ -1877,7 +1877,7 @@ Func_0200242c:
 .L_0200ab6c:
 	.4byte gData_02005bd6
 .L_0200ab70:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200ab74:
 	.4byte gData_020023c4 + 0x88
 .L_0200ab78:
@@ -3280,7 +3280,7 @@ Func_020042f0:
 .L_0200c410:
 	.4byte gMapShapeGrid
 .L_0200c414:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200c418,"ax",%progbits
 	.balign 4
 	.global Func_02004418
@@ -3453,7 +3453,7 @@ Func_02004418:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200c5a8:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200c5ac,"ax",%progbits
 	.balign 4
 	.global Func_020045ac
@@ -3715,7 +3715,7 @@ Func_020046a4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200c800:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200c804:
 	.4byte 0xfdff0000
 .L_0200c808:
@@ -3926,7 +3926,7 @@ Func_02004828:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200ca10:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200ca94,"ax",%progbits
 	.balign 4
 	.global Func_02004a94
@@ -4060,7 +4060,7 @@ Func_02004a94:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200cba0:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200cba4:
 	.4byte 0xfff80000
 .L_0200cba8:
@@ -4205,7 +4205,7 @@ Func_02004bc8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200ccc8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200cccc:
 	.4byte gData_02006284
 .L_0200ccd0:
@@ -4704,7 +4704,7 @@ Func_02004ddc:
 .L_0200d0f0:
 	.4byte gSceneState
 .L_0200d0f4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200d0f8:
 	.4byte 0xffff0000
 .L_0200d0fc:
@@ -5254,7 +5254,7 @@ Func_020051a0:
 .L_0200d51c:
 	.4byte gFrameCount
 .L_0200d520:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200d524:
 	.4byte 0x000fffff
 .L_0200d528:
@@ -5427,7 +5427,7 @@ Func_020055c4:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0200d678:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200d67c:
 	.4byte 0xf9a00000
 .L_0200d680:

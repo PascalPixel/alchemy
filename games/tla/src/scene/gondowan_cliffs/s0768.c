@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 extern u16 gData_02001ae0[];
@@ -13,9 +13,9 @@ void Scheduler_AddOrUpdateCallback();
 void Func_02000738(void);
 
 void Func_02000768(void) {
-  if (gPartyState.entrance == 99) {
-    gPartyState.renderMode = 7;
-    gPartyState.ownerOverride = 1;
+  if (gAdventure.entrance == 99) {
+    gAdventure.renderMode = 7;
+    gAdventure.ownerOverride = 1;
     Func_020012b4((s32)&SceneId_Ov66bRoom2, 1);
   }
   Func_020012fc();

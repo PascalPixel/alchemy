@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -208,7 +208,7 @@ L_02009354:
   r4 = 166;
   r4 = r4 << 1;
   r4 = r4 + 255;
-  FIELD_AT((s32)(s32)&gPartyState + r4, u8, 0) = 2;
+  FIELD_AT((s32)(s32)&gAdventure + r4, u8, 0) = 2;
   Call2((void (*)())Party_SetFields1eeAnd1f0, 198, 4);
   v7 = Func_0200200c(12, 6);
   v8 = Func_02001fb4();

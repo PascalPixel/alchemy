@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern s32 gData_02003274;
@@ -62,7 +62,7 @@ static __inline__ void Bring(s32 id) {
 /// frame for 16 frames, take their next state (Func_02000e04) and sound 80
 /// plays.
 void Func_020002b8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u32 pulseState;
   struct ObjectRuntime *a = Object_GetById(13);
   struct ObjectRuntime *b = Object_GetById(14);
@@ -76,7 +76,7 @@ void Func_020002b8(void) {
     return;
   GameFlag_SetBit(2560);
   Func_020029a8(0);
-  Func_02002940(gPartyState.currentOwner, 0xc000);
+  Func_02002940(gAdventure.currentOwner, 0xc000);
   /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
    * register spans the quickening loop and the pulse's address and zero take
    * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
@@ -141,7 +141,7 @@ quicken:
   WaitFrames(1);
   leader->update = 0;
   ObjectDispatch_SetAnimationSpeed(leader, 16);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   ObjectMotion_EnableActionAndSetCallback(23, gData_02002f94);
   ObjectMotion_EnableActionAndSetCallback(24, gData_02002f94);

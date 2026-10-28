@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020056b4(struct ObjectRuntime *object);
@@ -25,13 +25,13 @@ void Func_02001728(struct ObjectRuntime *actor) {
   Func_020056b4(actor);
   Func_0200580c(0);
   Func_02005854(581);
-  Actor_SetSpeed(gPartyState.currentOwner, 0x19999, 0x19999);
-  Actor_SetPosition(gPartyState.currentOwner, 152, 424);
+  Actor_SetSpeed(gAdventure.currentOwner, 0x19999, 0x19999);
+  Actor_SetPosition(gAdventure.currentOwner, 152, 424);
   Func_020056bc();
 }
 
 void Func_0200176c(void) {
-  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
   s32 speed;
 
   Func_020056b4(actor);
@@ -43,12 +43,12 @@ void Func_0200176c(void) {
    * already in a register here; the plain call loads the owner first (one
    * reordered pair, differ 2) */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeed(gPartyState.currentOwner, speed, 0x19999);
-  Actor_SetPosition(gPartyState.currentOwner, 152, 488);
+  Actor_SetSpeed(gAdventure.currentOwner, speed, 0x19999);
+  Actor_SetPosition(gAdventure.currentOwner, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_WaitFrames(8);
   Func_02005854(161);
-  Object_SetModeById(gPartyState.currentOwner, 22);
+  Object_SetModeById(gAdventure.currentOwner, 22);
   FieldEvent_WaitFrames(20);
   Func_020056bc();
 }

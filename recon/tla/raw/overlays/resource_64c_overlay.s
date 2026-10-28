@@ -434,7 +434,7 @@ Func_0200020c:
 .L_020083fc:
 	.4byte 0x050001c0
 .L_02008400:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008404:
 	.4byte gData_02003d34
 .L_02008408:
@@ -1701,7 +1701,7 @@ Func_02000d64:
 .L_02008f98:
 	.4byte IwramMulQ16
 .L_02008f9c:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02009064,"ax",%progbits
 	.global Func_02001064
 	.thumb_func
@@ -1900,7 +1900,7 @@ Func_02001400:
 .L_02009540:
 	.4byte 0x00000e00
 .L_02009544:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009548:
 	.4byte gWorldMapPackedTiles
 .L_0200954c:

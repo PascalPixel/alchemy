@@ -45,26 +45,26 @@ void Func_02004534(void) {
   } else {
     Call1(Func_02005ea4, (s32)MsgCheckedTheTablet);
     EVENT_WORK->messageId++;
-    Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xb333,
+    Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xb333,
           0x5999);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0xb333, 0x5999);
-    Call2(Func_02005e74, 6, gPartyState.currentOwner);
+    Call2(Func_02005e74, 6, gAdventure.currentOwner);
     Call1(FieldEvent_WaitFrames, 1);
-    Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.currentOwner,
+    Call3(ObjectMotion_ResetAndSetPositionInMode2, gAdventure.currentOwner,
           0x100, 0x88);
     Call3(ObjectMotion_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate,
-          gPartyState.currentOwner);
+          gAdventure.currentOwner);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
-    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Func_02005eac, 6, 0);
-    Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+    Call2(Object_SetModeById, gAdventure.currentOwner, 3);
     Call1(FieldEvent_WaitFrames, 0x1e);
-    Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x100,
+    Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 0x100,
           0x98);
-    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+    Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
@@ -85,14 +85,14 @@ void Func_02004534(void) {
     Call2(Func_02004138, 8, 6);
     Call2(UiText_DrawQuantityPairWithCue, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
-    Call3(Object_LinkPair, gPartyState.currentOwner, 6, 0);
+    Call3(Object_LinkPair, gAdventure.currentOwner, 6, 0);
     Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetModeById, 6, 3);
-    Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+    Call2(Object_SetModeById, gAdventure.currentOwner, 3);
     Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Object_SetModeById, 6, 2);
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     if (object != 0)
       Call3(ObjectMotion_ResetAndSetPosition, 6, FIELD_AT(object, s16, 10),
             FIELD_AT(object, s16, 18));
@@ -110,10 +110,10 @@ void Func_02004740(void) {
     UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 107);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 107);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02004534();
   }
@@ -126,9 +126,9 @@ void Func_020047b0(void) {
     UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 280, 136);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02004534();
   }
@@ -141,9 +141,9 @@ void Func_02004818(void) {
     UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 248, 136);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 264, 136);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
     FieldEvent_WaitFrames(10);
     Func_02004534();
   }

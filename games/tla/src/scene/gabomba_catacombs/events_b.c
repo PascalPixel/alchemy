@@ -3,7 +3,7 @@
 void Func_020008a0(struct ObjectRuntime *object, s32 dz);
 
 void Func_0200094c(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *steam;
 
   if ((gFrameCount & 7) == 0) {

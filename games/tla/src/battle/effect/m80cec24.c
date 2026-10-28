@@ -1,6 +1,6 @@
 #include "types.h"
 #include "macros.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 extern s16 Data_080f2204[];
@@ -9,7 +9,7 @@ extern s16 Data_080f2204[];
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *Func_080ceba8(void) {
-  s32 scene = gPartyState.scene;
+  s32 scene = gAdventure.scene;
   s16 *p = Data_080f2204;
   s16 *found = NULL;
   s32 header;

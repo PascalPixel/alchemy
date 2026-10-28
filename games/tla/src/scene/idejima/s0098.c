@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -80,7 +80,7 @@ void Func_020000f0(void) {
   actor->motionFlags = 3;
   Task_Wait(40);
   Call2(Engine_EventShowMessage, 8, 0);
-  ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   Call2(Engine_ActorSetAttachedEffect, 8, 0x102);
   Call1(FieldEvent_WaitFrames, 20);
   Call3(Func_02003298, 8, 0, 20);
@@ -93,16 +93,16 @@ void Func_020000f0(void) {
   Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndReset, 8, 0x1a0, 0x2a8);
   Call2(Engine_EventShowMessage, 8, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 20);
-  Call2(Engine_ActorSetAttachedEffect, gPartyState.currentOwner, 0x102);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 20);
+  Call2(Engine_ActorSetAttachedEffect, gAdventure.currentOwner, 0x102);
   Call1(FieldEvent_WaitFrames, 20);
   Call2(Engine_EventShowMessage, 8, 0);
-  ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   Call1(FieldEvent_WaitFrames, 20);
-  ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
+  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 8, 0);
   Call2(Engine_EventShowMessage, 8, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -144,16 +144,16 @@ void Func_020002b4(void) {
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 40);
   ObjectMotion_Launch(5, 4, 20);
   Engine_EventShowMessage(5, 0);
-  ObjectMotion_SetAngleToward(5, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(5, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetAngleToward(gPartyState.currentOwner, 5, 0);
+  ObjectMotion_SetAngleToward(gAdventure.currentOwner, 5, 0);
   Engine_ActorShowEmote(5, 0x108, 0);
   Engine_EventShowMessage(5, 0);
-  Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   FieldEvent_WaitFrames(40);
   Value3(Engine_ActorShowEmote, 5, 0x101, 0);
   Value2(UiText_OpenMessageAtObject, 5, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Engine_ActorSetAnimation(5, 3);
     Engine_EventShowMessage(5, 0);
   } else {
@@ -162,7 +162,7 @@ void Func_020002b4(void) {
   }
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
   Engine_ActorSetAnimation(5, 2);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (leader != 0)
     ObjectMotion_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

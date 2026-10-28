@@ -30,13 +30,13 @@ void Func_02001d3c(void) {
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
   FieldEvent_WaitFrames(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x26666, 0x13333);
-  ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 220);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x26666, 0x13333);
+  ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 220);
   FieldEvent_WaitFrames(1);
   {
-    u8 *flags = &Object_GetById(gPartyState.currentOwner)->actionFlags;
+    u8 *flags = &Object_GetById(gAdventure.currentOwner)->actionFlags;
 
     u32 value = *flags;
 
@@ -64,14 +64,14 @@ void Func_02001d3c(void) {
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   Func_020049fc()->motionFlags = 0;
   ShamanVillage_CamMove(0x780000, 0x320000, 0xe00000, 1);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 256);
-  ShamanVillage_ObjTurn(gPartyState.currentOwner, 0xc000);
-  ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x6666, 0x3333);
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
-  ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 264);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 256);
+  ShamanVillage_ObjTurn(gAdventure.currentOwner, 0xc000);
+  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x6666, 0x3333);
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 264);
   FieldEvent_WaitFrames(1);
-  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
+  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)

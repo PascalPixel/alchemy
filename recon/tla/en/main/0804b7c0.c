@@ -27,7 +27,7 @@ void UiText_CopyMessageString(s32, s16 *, s32);
 s32 UiText_CopyMessageString(s32, s16 *, s32);
 #endif
 
-extern u8 gGameState[];
+extern u8 gAdventure[];
 extern void *gBattleWork;
 extern volatile s32 gKeyState;
 extern void *gLinkCountdownWork;
@@ -41,8 +41,8 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
   s32 mode;
 
   state = Ram_HeapSlots->battleWork;
-  mode = gGameState[0x24B];
-  if (gGameState[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  mode = gAdventure[0x24B];
+  if (gAdventure[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {

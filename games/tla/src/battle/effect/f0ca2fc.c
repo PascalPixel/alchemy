@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const s16 gParty_PairResolveRules[];
 
@@ -8,7 +8,7 @@ extern const s16 gParty_PairResolveRules[];
 /// the table; an entrance of -1 takes any) and saves that row's scene and
 /// entrance.
 void Func_080ca2fc(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   s16 first;
   s16 second;
   const s16 *entry;

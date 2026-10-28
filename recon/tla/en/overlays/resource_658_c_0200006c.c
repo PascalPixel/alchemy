@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct MadraEventWork {
   u8 unk000[0x154];
@@ -61,9 +61,9 @@ next:
                   ((u16 *)&gData_02003308[index * 2 + 1])[0],
                   ((u16 *)&gData_02003308[index * 2 + 1])[1]);
   }
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -8);
   FieldEvent_WaitFrames(10);
   Func_02002c30(work->value154);
   Event_FinishScreenTransition();

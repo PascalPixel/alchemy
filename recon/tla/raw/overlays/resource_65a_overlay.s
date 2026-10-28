@@ -137,7 +137,7 @@ Func_02000038:
 .L_02008144:
 	.4byte gMapShapeGrid
 .L_02008148:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x0200814c,"ax",%progbits
 	.global Func_0200014c
 	.thumb_func
@@ -279,7 +279,7 @@ Func_0200014c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008264:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008268:
 	.4byte gMapShapeGrid
 .L_0200826c:

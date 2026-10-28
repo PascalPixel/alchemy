@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x1ac];
@@ -23,17 +23,17 @@ void Func_020034a8(void);
 void Func_02001938(void) {
   struct ObjectRuntime *object;
 
-  if (gPartyState.entrance == 1)
+  if (gAdventure.entrance == 1)
     object = Object_GetById(8);
-  else if (gPartyState.entrance == 3)
+  else if (gAdventure.entrance == 3)
     object = Object_GetById(9);
   else
     object = Object_GetById(10);
-  if (*(s16 *)((u8 *)Object_GetById(gPartyState.currentOwner) + 18) <= 247) {
+  if (*(s16 *)((u8 *)Object_GetById(gAdventure.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
     object->update = Func_020017b4;
-    object->unk4c = Object_GetById(gPartyState.currentOwner)->x;
-    object->acceleration = Object_GetById(gPartyState.currentOwner)->z;
+    object->unk4c = Object_GetById(gAdventure.currentOwner)->x;
+    object->acceleration = Object_GetById(gAdventure.currentOwner)->z;
     GameFlag_SetBit(0x200);
   }
 }

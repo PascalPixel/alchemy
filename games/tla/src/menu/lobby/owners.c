@@ -1,9 +1,9 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 /// Writes up to three active party owners to out, ending the list with 0xff.
 void Func_02000538(u16 *out) {
-  struct PartyState *party;
+  struct Adventure *party;
   s32 count = Party_CountActiveOwners();
   s32 i;
 
@@ -14,7 +14,7 @@ void Func_02000538(u16 *out) {
    * the owner index (differ 24). */
   if (i >= count)
     goto done;
-  party = &gPartyState;
+  party = &gAdventure;
 next:
   {
     u8 owner = party->activeOwners[i];

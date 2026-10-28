@@ -87,7 +87,7 @@ Func_0200012c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020081dc:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x020081e4,"ax",%progbits
 	.global Func_020001e4
 	.thumb_func
@@ -416,7 +416,7 @@ Func_020001e4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_ja_0200849c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_020084a0:
 	.4byte 0x000013ae
 .L_ja_020084a4:
@@ -754,7 +754,7 @@ Func_020001e4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200847c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008480:
 	.4byte MsgWhatWillYou
 .L_02008484:

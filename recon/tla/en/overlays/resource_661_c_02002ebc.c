@@ -8,11 +8,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern char SceneId_Ov661Room10;
-/// gPartyState.currentOwner by its own address.
+/// gAdventure.currentOwner by its own address.
 extern s32 Data_02000454;
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -92,7 +92,7 @@ void Func_02002ebc(void) {
   monster->gravity = 0xe666;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
   ObjectMotion_SetPositionAndCommit(8, 232, 184);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
   Func_02004140(10, 0);
 }

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -55,23 +55,23 @@ static __inline__ void Actor_Place(struct ObjectRuntime *object, s32 x, s32 y,
 }
 
 void Func_020011bc(s32 x, s32 z) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *leader = Object_GetById(party->currentOwner);
 
   Func_020056b4(leader);
   Func_0200580c(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
-  Actor_Walk(gPartyState.currentOwner, x, z);
-  Actor_Turn(gPartyState.currentOwner, 0xc000, 0);
-  Object_RefreshSelectorById(gPartyState.currentOwner);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Actor_SetSpeed(gAdventure.currentOwner, 0x10000, 0x8000);
+  Actor_Walk(gAdventure.currentOwner, x, z);
+  Actor_Turn(gAdventure.currentOwner, 0xc000, 0);
+  Object_RefreshSelectorById(gAdventure.currentOwner);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  Object_SetModeById(gPartyState.currentOwner, 13);
+  Object_SetModeById(gAdventure.currentOwner, 13);
   Actor_Place(leader, x << 16, 0xfff40000, z << 16);
   Func_02005664(leader);
-  Object_SetModeById(gPartyState.currentOwner, 10);
+  Object_SetModeById(gAdventure.currentOwner, 10);
   Func_02005854(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

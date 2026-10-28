@@ -54,7 +54,7 @@ s32 UiText_OpenMessageAtObject();
 s32 WaitFrames();
 s32 __divsi3();
 extern u8 MsgGaroh28[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02003878(void) {
   s32 v5;
@@ -1274,7 +1274,7 @@ L_0200cfbc:;
   Call1(FieldEvent_WaitFrames, 20);
   Call3(ObjectMotion_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Object_SetModeById, 9, 2);
-  p1 = (s32)gPartyState;
+  p1 = (s32)gAdventure;
   v5 = (p1 + 0x214);
   t27 = Value1(Object_GetById, *(s32 *)(v5));
   if (t27 == 0)
@@ -1320,7 +1320,7 @@ L_0200d0ea:;
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 7);
   Call3(Func_0200520c, 7, 0, 0);
 L_0200d0fa:;
-  p2 = (s32)gPartyState;
+  p2 = (s32)gAdventure;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
     /* FAKEMATCH: the native loads the first argument before the others; the

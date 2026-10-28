@@ -4,7 +4,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
@@ -21,7 +21,7 @@ s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020046e8(s32 spread) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;

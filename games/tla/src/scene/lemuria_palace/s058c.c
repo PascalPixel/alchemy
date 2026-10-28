@@ -1,7 +1,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -75,7 +75,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 16, -24, 0);
   Call2((void (*)())Func_0200207c, 16, 0x5000);
   {
-    s32 party = (s32)&gPartyState;
+    s32 party = (s32)&gAdventure;
 
     r5_1 = party + 532;
   }
@@ -765,7 +765,7 @@ L_02009988:
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 17, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 17, 2);
   {
-    s32 party = (s32)&gPartyState;
+    s32 party = (s32)&gAdventure;
 
     r5_5 = party + 532;
   }

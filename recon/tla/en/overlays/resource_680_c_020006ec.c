@@ -6,7 +6,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -44,7 +44,7 @@ s32 Func_020006ec(s32 a0, s32 a1, s32 a2, s32 a3) {
       v11, r0, r1, v12, v13, v14, v15, v16;
   s32 stack[2];
 
-  r6 = (s32)&gPartyState;
+  r6 = (s32)&gAdventure;
   r8 = 0x3000000;
   r5 = 174;
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 428) = 0x204;

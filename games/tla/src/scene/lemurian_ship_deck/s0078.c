@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 #include "flag_call.h"
@@ -52,9 +52,9 @@ void Func_02000078(void) {
       Func_020020d4(158);
       Func_02001f2c_(51, 38, 70, 22, 1, 2);
     }
-    Object_SetModeById(gPartyState.currentOwner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-    ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -4);
+    Object_SetModeById(gAdventure.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_CenterOnColumn(gAdventure.currentOwner, 2, -4);
     FieldEvent_WaitFrames(8);
     Func_020020d4(123);
     Func_0200207c(*(s16 *)(work + 0x154));

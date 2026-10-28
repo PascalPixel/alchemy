@@ -12,7 +12,7 @@
 #include "object_dispatch.h"
 #include "types.h"
 #include "system.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "animspr.h"
 
 #define ObjectDispatch_SetAnimationSpeedFar                                 \
@@ -30,12 +30,12 @@ void BattleEffect_PauseObject(s32 id) {
 
   object = ObjectTable_Get(id);
   if (object != NULL) {
-    gPartyState.savedCallback = (u32)object->update;
-    gPartyState.savedByte = 0;
+    gAdventure.savedCallback = (u32)object->update;
+    gAdventure.savedByte = 0;
     if (object->kind == 1) {
       entry = object->target.animation->entries[0];
       if (entry != NULL) {
-        gPartyState.savedByte = entry->param;
+        gAdventure.savedByte = entry->param;
       }
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
@@ -49,9 +49,9 @@ void BattleEffect_ResumeObject(s32 id) {
 
   if (object != NULL) {
     if (object->update == BattleEffect_SetRandomTableValueOnObject) {
-      object->update = (void *)gPartyState.savedCallback;
-      gPartyState.savedCallback = 0;
-      Animation_ApplyChildValuesFar(object, (s8)gPartyState.savedByte);
+      object->update = (void *)gAdventure.savedCallback;
+      gAdventure.savedCallback = 0;
+      Animation_ApplyChildValuesFar(object, (s8)gAdventure.savedByte);
     }
     object->value5b = 0;
     ObjectDispatch_SetAnimationSpeedFar(object, 16);

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -175,7 +175,7 @@ void Func_020017a0(void) {
   u8 *flags;
 
   if ((Object_GetById(20)->x >> 20) == 38) {
-    flags = &Object_GetById(gPartyState.currentOwner)->motionFlags;
+    flags = &Object_GetById(gAdventure.currentOwner)->motionFlags;
     Func_02003c28();
     Func_02003d78(0);
     *flags = 0;

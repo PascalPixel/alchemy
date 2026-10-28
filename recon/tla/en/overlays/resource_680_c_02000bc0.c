@@ -5,7 +5,7 @@
 // Measured against its copies: overlay 681's Func_02004af0 (differ 163 of 218).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 extern const u8 gData_020016cc[];
@@ -34,7 +34,7 @@ void Func_02000e7c(void);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000bc0(s32 id, s32 flag) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 gravity = leader->gravity;
   struct ObjectRuntime *pillar;
   s32 i;
@@ -75,7 +75,7 @@ dust:
   Func_02000f24(0x24e);
   Func_02000f24(217);
   Func_02000e54(0x20000, 0x20000, 0xe666);
-  Func_02000ebc(gPartyState.currentOwner, 0x101);
+  Func_02000ebc(gAdventure.currentOwner, 0x101);
   Func_02000e24(leader, 40);
   FieldEvent_WaitFrames(40);
   Func_02000f24(204);
@@ -93,7 +93,7 @@ fall:
   }
   Func_02000f24(188);
   leader->gravity = gravity;
-  Func_02000ebc(gPartyState.currentOwner, 0);
+  Func_02000ebc(gAdventure.currentOwner, 0);
   Func_02000e24(leader, 38);
   Func_02000e54(0x10000, 0x40000, 0x10000);
   WaitFrames(10);
@@ -106,7 +106,7 @@ fall:
   Func_02000e24(leader, 1);
   leader->velocityY = 0x40000;
   WaitFrames(20);
-  gPartyState.renderMode = 0;
+  gAdventure.renderMode = 0;
   Func_02000e7c();
   GameFlag_SetBit(flag);
 }

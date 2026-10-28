@@ -324,7 +324,7 @@ Func_080d53b8:
 .L_080d5648:
 	.4byte 0xfff00000
 .L_080d564c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d5650:
 	bl EventRuntime_End
 	movs r0, #0

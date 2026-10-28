@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 #include "io_reg.h"
 
@@ -32,9 +32,9 @@ void Func_020019a8(void) {
   struct FieldSprite *sprite;
   s32 position[3];
 
-  if (gPartyState.entrance == 1)
+  if (gAdventure.entrance == 1)
     object = Object_GetById(8);
-  else if (gPartyState.entrance == 3)
+  else if (gAdventure.entrance == 3)
     object = Object_GetById(9);
   else
     object = Object_GetById(10);

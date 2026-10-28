@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_work.h"
 
 u8 *Item_Get(u32);
@@ -36,7 +36,7 @@ void BattleSpoils_Clear(void) {
 
   battle = Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
-  gPartyState.tally25c = 0;
+  gAdventure.tally25c = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;

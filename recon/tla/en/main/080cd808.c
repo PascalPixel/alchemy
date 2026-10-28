@@ -16,7 +16,7 @@
 // test or the load, the message as u8 or u32, the sums the other way round
 // (all 22).
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct SceneEvent {
   s32 flags;
@@ -73,7 +73,7 @@ s32 Func_080cd808(s32 id) {
       goto done;
     }
     if (GameFlag_IsConditionActive(condition))
-      ((void (*)(s32))event->result)(gPartyState.currentOwner);
+      ((void (*)(s32))event->result)(gAdventure.currentOwner);
     if (GameFlag_Test(0x142))
       UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchEmpty, 1);
     goto done;

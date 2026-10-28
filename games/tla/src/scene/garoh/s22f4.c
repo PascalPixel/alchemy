@@ -26,7 +26,7 @@ s32 Camera_FollowActor();
 s32 Object_GetById();
 s32 Object_SetModeById();
 extern u8 MsgGaroh13[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_020022f4(void) {
   s32 v5;
@@ -124,7 +124,7 @@ void Func_020022f4(void) {
     Call3(Func_0200520c, 8, 0, a2);
   }
   Call1(FieldEvent_WaitFrames, 30);
-  v5 = ((s32)gPartyState);
+  v5 = ((s32)gAdventure);
   v5 = (v5 + 0x214);
   {
     s32 a0 = *(s32 *)(v5);

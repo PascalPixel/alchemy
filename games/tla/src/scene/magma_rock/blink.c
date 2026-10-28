@@ -3,7 +3,7 @@
 #include "map.h"
 #include "frame.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void Func_02003bac(s32 a, s32 b);
 void Func_02003bb4(s32 owner, u16 value);

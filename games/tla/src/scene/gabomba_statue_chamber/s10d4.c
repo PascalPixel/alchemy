@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 #include "field_sprite.h"
 
@@ -73,9 +73,9 @@ void Func_020010d4(void) {
         0, 0x10c0000);
   Call1(WaitFrames, 1);
   /* FAKEMATCH(temporary): the leader read before the first turn is built; as
-   * gPartyState.currentOwner in the call, 34 of 640 instructions differ in
+   * gAdventure.currentOwner in the call, 34 of 640 instructions differ in
    * tla-en. */
-  owner = gPartyState.currentOwner;
+  owner = gAdventure.currentOwner;
   Call4(Func_02001e18, owner, 0x1680000, 0xb80000, turnA = 0xe000);
   Call4(Func_02001e18, 7, 0x1780000, 0xb80000, turnA);
   Call4(Func_02001e18, 11, 0x1680000, 0xa80000, turnA);
@@ -115,7 +115,7 @@ void Func_020010d4(void) {
   Call1(WaitFrames, 40);
   Call2(Object_SetModeById, 9, 2);
   Call2(Object_SetModeById, 10, 2);
-  Call2(Object_LinkObjectAndSetCallback, gPartyState.currentOwner, 13);
+  Call2(Object_LinkObjectAndSetCallback, gAdventure.currentOwner, 13);
   Call2(Object_LinkObjectAndSetCallback, 5, 13);
   Call2(Object_LinkObjectAndSetCallback, 6, 13);
   Call2(Object_LinkObjectAndSetCallback, 7, 13);
@@ -135,7 +135,7 @@ void Func_020010d4(void) {
   Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xa80000, 1);
   Call3(ObjectMotion_SetSpeedParameters, 13, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndCommit, 13, 392, 0xa0);
-  Call1(ObjectMotion_EnableActionAndResetMotion, gPartyState.currentOwner);
+  Call1(ObjectMotion_EnableActionAndResetMotion, gAdventure.currentOwner);
   Call1(ObjectMotion_EnableActionAndResetMotion, 5);
   Call1(ObjectMotion_EnableActionAndResetMotion, 6);
   Call1(ObjectMotion_EnableActionAndResetMotion, 7);
@@ -166,7 +166,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 0x400b, 0);
   Call2(Func_02001e70, 11, 0x3000);
   Call2(Func_02001e60, 0x400b, 0);
-  Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
+  Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
   Call1(Func_02001f10, 0);
   {
     /* FAKEMATCH(temporary): the turn built before the other arguments; as a
@@ -178,7 +178,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 12, 0);
   Call2(Object_SetModeById, 6, 1);
   Call1(WaitFrames, 1);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0x4000, 0);
@@ -189,7 +189,7 @@ void Func_020010d4(void) {
   Call3(ObjectMotion_SetPositionAndReset, 12, 404, 220);
   Call3(ObjectMotion_Launch, 12, 4, 10);
   Value2(UiText_OpenMessageAtObject, 12, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
       0) {
     Call2(Func_02001e90, 12, 258);
     Call1(FieldEvent_WaitFrames, 20);
@@ -209,7 +209,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e90, 12, 258);
   Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02001e60, 12, 0);
-  Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+  Call2(Object_SetModeById, gAdventure.currentOwner, 3);
   Call2(Object_SetModeById, 5, 3);
   Call2(Object_SetModeById, 6, 3);
   Call2(Object_SetModeById, 7, 3);

@@ -4,7 +4,7 @@
 void Func_02001250(s32 show, s32 first, u32 count);
 
 void Func_02001200(s32 show) {
-  if (gPartyState.scene == (s32)&SceneId_ShrineOfTheSeaGod6)
+  if (gAdventure.scene == (s32)&SceneId_ShrineOfTheSeaGod6)
     Func_02001250(show, 9, 3);
 }
 
@@ -35,12 +35,12 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 }
 
 void Func_02001290(void) {
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   GameFlag_SetBit(0x20a);
 }
 
 void Func_020012b4(void) {
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
   GameFlag_ClearBit(0x20a);
 }

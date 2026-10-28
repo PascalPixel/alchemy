@@ -9,7 +9,7 @@ extern s32 gData_02004104[];
 void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
 
 s32 *Func_02000478(void) {
-  s32 scene = gPartyState.scene;
+  s32 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)
     return gData_02003d20;

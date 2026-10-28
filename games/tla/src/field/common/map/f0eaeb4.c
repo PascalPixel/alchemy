@@ -1,13 +1,13 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y);
 
 struct ObjectRuntime *Func_080eaeb4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 position[3];
   s32 angle = ((leader->angle >> 12) + 2) & 12;
   struct ObjectRuntime *found;

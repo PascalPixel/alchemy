@@ -16,7 +16,7 @@
 // rippled (Func_080e446c) and copied to sprite VRAM while 33 particles play.
 // On frame 60 it takes animation 251 with its sprite flags reset, its mode
 // returns, the effect target is shown and followed and its height and motion
-// flags are restored. Afterwards the party state's renderMode becomes 9 when the
+// flags are restored. Afterwards the adventure's renderMode becomes 9 when the
 // event mode is 3, else 5, the owner's action clears, 0xd4a becomes 3,
 // and Func_080e42d4 runs as a callback unless 0xd48 was set, in which case
 // Func_080e4730 follows.
@@ -24,7 +24,7 @@
 #include "object_runtime.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char ResourceId_DustPuffA;
 
@@ -175,13 +175,13 @@ void Func_080e4a34(void) {
     ripple += 3;
   }
   if (event->mode == 3)
-    gPartyState.renderMode = 9;
+    gAdventure.renderMode = 9;
   else
-    gPartyState.renderMode = 5;
+    gAdventure.renderMode = 5;
   owner->action = 0;
   owner->unk66 = 0;
   event->phase = 3;
-  gPartyState.pendingThird = 1;
+  gAdventure.pendingThird = 1;
   if (event->standing == 0)
     Scheduler_AddOrUpdateCallback(Func_080e42d4, 0x480);
   ObjectGroup_SetActionForOthers(owner, 0, 16);

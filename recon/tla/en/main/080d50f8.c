@@ -21,7 +21,7 @@
 #include "types.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ClimbSprite {
@@ -44,7 +44,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 
 s32 Func_080d50f8(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 gridX;
   s16 spriteFlags;
@@ -60,7 +60,7 @@ s32 Func_080d50f8(void) {
   EventRuntime_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
-  if (gPartyState.renderMode == 0) {
+  if (gAdventure.renderMode == 0) {
     struct ObjectRuntime *entry;
     struct MapCell *cell;
     struct MapCell *south;
@@ -102,10 +102,10 @@ s32 Func_080d50f8(void) {
     }
 
     // Step to the middle of the tile, face north and climb down a tile.
-    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, gridX, gridZ);
+    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
     leader->speedLimit = 0x10000;
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    Object_RefreshSelectorById(gPartyState.currentOwner);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Object_RefreshSelectorById(gAdventure.currentOwner);
     leader->actionFlags = 1;
     leader->motionFlags = 0;
     spriteFlags &= 0xfe;
@@ -113,8 +113,8 @@ s32 Func_080d50f8(void) {
     Object_SetMode(leader, 13);
     Object_SetPosition(leader, gridX << 16, leader->y - 0x100000,
                        (gridZ << 16) + 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-    gPartyState.renderMode = 2;
+    ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+    gAdventure.renderMode = 2;
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
     // Let go of the wall and fall.
@@ -125,7 +125,7 @@ s32 Func_080d50f8(void) {
     spriteFlags |= 1;
     ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
     EventRuntime_Wait(6);
-    gPartyState.renderMode = 0;
+    gAdventure.renderMode = 0;
     leader->actionFlags = 1;
     leader->angle = 0xc000;
     leader->action = 0;

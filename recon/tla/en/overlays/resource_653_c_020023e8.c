@@ -17,7 +17,7 @@ void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
 
 void Func_020023e8(void) {
-  s16 angle = *(s16 *)&Object_GetById(gPartyState.currentOwner)->angle;
+  s16 angle = *(s16 *)&Object_GetById(gAdventure.currentOwner)->angle;
   struct ObjectRuntime *object;
   struct FieldSprite *sprite;
 
@@ -27,7 +27,7 @@ void Func_020023e8(void) {
   ((void (*)())ObjectMotion_ArmCallback)(12, 0);
   Func_02005280((s32)&MsgKandoreanTemple08);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call3((void (*)())ObjectMotion_SetAngleToward, gPartyState.currentOwner, 12,
+  Call3((void (*)())ObjectMotion_SetAngleToward, gAdventure.currentOwner, 12,
         0);
   Call2((void (*)())Object_SetModeById, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
@@ -35,11 +35,11 @@ void Func_020023e8(void) {
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Call2((void (*)())Object_SetModeById, 12, 4);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gPartyState.currentOwner,
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, gAdventure.currentOwner,
         3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, (u16)angle, 10);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, (u16)angle, 10);
   if (gData_020062ac != 0)
     Func_02005330(gData_020062ac, 3);
   Call2((void (*)())PartyInventory_GiveItem, 198, 0);
@@ -79,7 +79,7 @@ void Func_020023e8(void) {
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 496, 394);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 432, 394);
   Call2((void (*)())Object_LinkObjectAndSetCallback, 12,
-        gPartyState.currentOwner);
+        gAdventure.currentOwner);
   Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
   Call1((void (*)())GameFlag_SetBit, 0x84a);
   Func_020051c8();

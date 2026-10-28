@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 #include "field_event.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -58,12 +58,12 @@ void Func_02002c64(void) {
   Task_Wait(1);
   Call4(Camera_MoveWithinMapBounds, 0x1800000, -1, 0x2d80000, 0);
   Task_Wait(1);
-  Engine_ActorSetAnimation(gPartyState.currentOwner, 41);
+  Engine_ActorSetAnimation(gAdventure.currentOwner, 41);
   Task_Wait(1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   Task_Wait(1);
-  Call3(Func_02003228, gPartyState.currentOwner, 0x1800000, 0x2d80000);
+  Call3(Func_02003228, gAdventure.currentOwner, 0x1800000, 0x2d80000);
   Call3(Func_02003228, 11, 0x1800000, 0x2be0000);
   Task_Wait(1);
   Func_02003180();
@@ -74,67 +74,67 @@ void Func_02002c64(void) {
   Task_Wait(10);
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Motion_SetVarCbAndRefresh(gPartyState.currentOwner, 2);
+  Motion_SetVarCbAndRefresh(gAdventure.currentOwner, 2);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Engine_ActorSetAnimation(gPartyState.currentOwner, 42);
+  Engine_ActorSetAnimation(gAdventure.currentOwner, 42);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Engine_ActorSetAnimation(gPartyState.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Engine_ActorSetAnimation(gAdventure.currentOwner, 1);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      1);
   Task_Wait(1);
-  ObjectMotion_Launch(gPartyState.currentOwner, 4, 20);
+  ObjectMotion_Launch(gAdventure.currentOwner, 4, 20);
   Engine_EventSetMessage((s32)MsgIdejimaCheckForInjuries);
   Value2(UiText_OpenMessageAtObject, 11, 0);
   Task_Wait(1);
-  answer = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
-  leader = gPartyState.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
+  leader = gAdventure.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(leader);
-    Engine_ActorSetAnimation(gPartyState.currentOwner, 45);
+    Engine_ActorSetAnimation(gAdventure.currentOwner, 45);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gPartyState.currentOwner, 46);
+    Engine_ActorSetAnimation(gAdventure.currentOwner, 46);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
     Task_Wait(1);
-    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gPartyState.currentOwner, 47);
+    Engine_ActorSetAnimation(gAdventure.currentOwner, 47);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
-    Engine_ActorSetAnimation(gPartyState.currentOwner, 48);
+    Engine_ActorSetAnimation(gAdventure.currentOwner, 48);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(50);
     FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
     Task_Wait(1);
-    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   } else {
     ObjectMotion_WaitForAnimationChange(leader);
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x6666, 0x3333);
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 384, 746);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x6666, 0x3333);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 384, 746);
     FelixWake_EndStep();
     FieldEvent_WaitFrames(20);
     FelixWake_StartStep();
     Engine_EventShowMessage(11, 0);
-    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   }
   Func_02003228(11, 0, 0);
   GameFlag_ClearBit(0x12f);

@@ -5,8 +5,8 @@ gData_02000000:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gPartyState
-gPartyState:
+	.global gAdventure
+gAdventure:
 	.space 0x0000000c
 	.global Data_0200024c
 Data_0200024c:

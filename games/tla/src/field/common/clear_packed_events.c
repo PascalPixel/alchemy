@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "owner_state.h"
 #include "text/msg_ids.h"
 
@@ -26,10 +26,10 @@ struct OwnerVitals {
 };
 
 void Event_ClearValidPackedIds(void) {
-  if (Event_ValidatePackedId(gPartyState.packedEvents[0]))
-    gPartyState.packedEvents[0] = 0;
-  if (Event_ValidatePackedId(gPartyState.packedEvents[1]))
-    gPartyState.packedEvents[1] = 0;
+  if (Event_ValidatePackedId(gAdventure.packedEvents[0]))
+    gAdventure.packedEvents[0] = 0;
+  if (Event_ValidatePackedId(gAdventure.packedEvents[1]))
+    gAdventure.packedEvents[1] = 0;
 }
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max) {
@@ -68,12 +68,12 @@ void Party_RemoveOwnerRestored(s32 owner) {
   standing = 0;
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
-    vitals = Unit_Get(gPartyState.activeOwners[i]);
+    vitals = Unit_Get(gAdventure.activeOwners[i]);
     if (vitals->hp != 0)
       standing++;
   }
   if (standing == 0) {
-    vitals = Unit_Get(gPartyState.currentOwner);
+    vitals = Unit_Get(gAdventure.currentOwner);
     vitals->hp = 1;
     vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
     if (vitals->hpRatio == 0 && vitals->hp != 0)

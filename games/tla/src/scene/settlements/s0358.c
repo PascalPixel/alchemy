@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov690Room1;
 extern char SceneId_Ov690Room2;
@@ -21,7 +21,7 @@ extern u8 gData_020027dc[];
 extern u8 gData_02002854[];
 
 u8 *Func_02000358(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
     return gData_020024dc;

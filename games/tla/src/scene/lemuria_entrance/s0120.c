@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWorkRoute {
   u8 unk000[0x1ac];
@@ -63,9 +63,9 @@ void Func_02000120(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
-      struct PartyState *state = &gPartyState;
+      struct Adventure *state = &gAdventure;
 
-      /* FAKEMATCH: a one-pass block loads the party state before its offset is
+      /* FAKEMATCH: a one-pass block loads the adventure before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -75,7 +75,7 @@ void Func_02000120(void) {
     Object_SetModeById(8, 7);
     Func_02000564();
   } else {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
     party->currentOwner = 4;
     party->renderMode = 0;

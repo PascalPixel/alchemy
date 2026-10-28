@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -15,7 +15,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
 
 void Func_080cdd80(void) {
   s32 position[3];
-  struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *target;
   s32 terrain;
   s32 result;

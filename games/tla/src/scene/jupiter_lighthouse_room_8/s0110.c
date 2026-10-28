@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct JupiterLighthouseRoom8EventWork {
   u8 unk000[0x1ac];
@@ -33,9 +33,9 @@ s32 Func_02000110(void) {
   Func_02000af0(14);
   Func_02000af0(15);
   Func_020018f4(33, 0x280, 0x380, 0, 1);
-  if (gPartyState.entrance == 13)
+  if (gAdventure.entrance == 13)
     Func_02002010(19, 0, 0x204);
-  else if (gPartyState.entrance == 14)
+  else if (gAdventure.entrance == 14)
     Func_02002010(-20, -22, 0x204);
   return 0;
 }

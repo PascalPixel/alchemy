@@ -109,7 +109,7 @@ void Func_020012c4(void) {
   carry:
     if (GameFlag_Test(0x209) == 0)
       goto count;
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     leader->y = statue->y + 0x40000;
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
@@ -129,10 +129,10 @@ void Func_020012c4(void) {
     Object_GetById(10)->priorityFlags |= 2;
     ObjectMotion_SetActionVariant(10, 3);
     if (GameFlag_Test(0x209)) {
-      leader = Object_GetById(gPartyState.currentOwner);
+      leader = Object_GetById(gAdventure.currentOwner);
       Object_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
       ObjectDispatch_SetSingleChildFlags(
-          Object_GetById(gPartyState.currentOwner), 1);
+          Object_GetById(gAdventure.currentOwner), 1);
     }
     goto count;
   }

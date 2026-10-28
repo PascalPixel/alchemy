@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -274,7 +274,7 @@ L_020089e4:
   Value1((s32 (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 12, 2);
-  object3 = Object_GetById(gPartyState.currentOwner);
+  object3 = Object_GetById(gAdventure.currentOwner);
   if (object3 == 0)
     goto L_02008a36;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 12,

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "motobj.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -95,9 +95,9 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
+  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
   WaitFrames(40);
   Audio_PlayCue(164);
   WaitFrames(100);

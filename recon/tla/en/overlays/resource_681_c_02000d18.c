@@ -3,7 +3,7 @@
 // placed and the flag is set.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct CellPoint {
   s16 x;
@@ -57,13 +57,13 @@ void Func_02000d18(void) {
   if (count <= 0)
     return;
   guard = Object_GetById(15);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   Func_02004e5c();
   Func_02004fcc(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = 0x20000;
-    Func_02004f2c(gPartyState.currentOwner, 0x100, 0);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+    Func_02004f2c(gAdventure.currentOwner, 0x100, 0);
+    ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                             gData_020051b8);
   }
   ObjectMotion_EnableActionAndSetCallback(15, gData_02005118);

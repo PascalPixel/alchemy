@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "edition.h"
 
 // The Japanese overlay has no such function.
@@ -16,7 +16,7 @@ void Func_02004e80(s32 from, s32 to) {
   struct ObjectRuntime *found = Object_GetById(from);
   struct ObjectRuntime *object;
   struct ObjectRuntime *target;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
   party->savedByte = 0;
   object = found;

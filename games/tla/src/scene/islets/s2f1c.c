@@ -18,8 +18,8 @@ void Func_02002f1c(void) {
   s32 angle;
   s32 i;
 
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
-  if (gPartyState.entrance == 2)
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+  if (gAdventure.entrance == 2)
     GameFlag_ClearBit(0x12f);
   i = 11;
   do {
@@ -69,7 +69,7 @@ void Func_02002f1c(void) {
 void Func_020030b4(void) {
   struct ObjectRuntime *spawned;
 
-  if (gPartyState.entrance == 3)
+  if (gAdventure.entrance == 3)
     GameFlag_ClearBit(0x12f);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
   Object_SetModeById(10, 4);

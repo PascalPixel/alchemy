@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -155,7 +155,7 @@ static __inline__ void Turn(s32 id, s32 a) {
 }
 
 void Func_02000108(s32 arg) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -173,7 +173,7 @@ void Func_02000108(s32 arg) {
 }
 
 void Func_0200018c(s32 arg) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -191,7 +191,7 @@ void Func_0200018c(s32 arg) {
 }
 
 void Func_02000210(s32 arg) {
-  s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
+  s32 angle = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));

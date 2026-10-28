@@ -1,6 +1,6 @@
 #include "types.h"
 #include "uiwindow.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 s16 *Scene_FindActorPlacement(s32 action);
@@ -30,7 +30,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   while (UiWork_IsCompleteFar() == 0)
     WaitFrames(1);
 
-  WaitFrames((2 - gPartyState.eventMode) * 3);
+  WaitFrames((2 - gAdventure.eventMode) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;
@@ -52,13 +52,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
     Object_SetModeById(actor, 4);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
     UiWork_FinalizePendingCoreFar();
-    if (gPartyState.eventMode != 2)
+    if (gAdventure.eventMode != 2)
       Object_WaitUntilChildValueDiffers(actor, 4);
   } else {
     Object_SetModeById(actor, 3);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
     UiWork_FinalizePendingCoreFar();
-    if (gPartyState.eventMode != 2)
+    if (gAdventure.eventMode != 2)
       Object_WaitUntilChildValueDiffers(actor, 3);
   }
 

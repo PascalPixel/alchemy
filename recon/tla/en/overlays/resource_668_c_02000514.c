@@ -8,7 +8,7 @@
 // again. Left: the native keeps object 16 in r10 and the address of the push state's stacked half in r8, and builds 0xc000 in r2; the falling loop and the six cell clears are close.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct PushState {
   s32 x;
@@ -41,7 +41,7 @@ void Func_02000514(void) {
   struct ObjectRuntime *gate = Object_GetById(15);
   struct ObjectRuntime *block = Object_GetById(16);
   struct PushState push;
-  u32 facing = (Object_GetById(gPartyState.currentOwner)->angle + 0x2000) &
+  u32 facing = (Object_GetById(gAdventure.currentOwner)->angle + 0x2000) &
                0xc000;
   s32 i;
 
@@ -78,7 +78,7 @@ void Func_02000514(void) {
       Func_02004c9c(240);
       Object_SetModeById(15, 8);
       FieldEvent_WaitFrames(60);
-      Camera_FollowActor(gPartyState.currentOwner, 1);
+      Camera_FollowActor(gAdventure.currentOwner, 1);
       Func_02004a9c();
     }
   }

@@ -34,9 +34,9 @@ void Func_02000590(void) {
     Func_02004ca8();
     Func_02004da0(0);
     Func_02004dd0();
-    WORD_AT(Object_GetById(gPartyState.currentOwner), 108) = 0;
-    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 0);
-    Func_02004cd8_(gPartyState.currentOwner, 0x2b00000, 0x1680000);
+    WORD_AT(Object_GetById(gAdventure.currentOwner), 108) = 0;
+    Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 0);
+    Func_02004cd8_(gAdventure.currentOwner, 0x2b00000, 0x1680000);
     Camera_SetBounds(0x2b00000, -1, 0x1680000, 1);
     Func_02004d20();
     Func_02004dc8();
@@ -50,9 +50,9 @@ void Func_02000590(void) {
     Func_020046b4();
     Func_02004dd0();
     {
-      u8 *party = (u8 *)&gPartyState;
+      u8 *party = (u8 *)&gAdventure;
 
-      /* FAKEMATCH: a one-pass block loads the party state before its offset is
+      /* FAKEMATCH: a one-pass block loads the adventure before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -68,9 +68,9 @@ void Func_02000648(void) {
   Func_020046b4();
   Func_02004dd0();
   {
-    u8 *party = (u8 *)&gPartyState;
+    u8 *party = (u8 *)&gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

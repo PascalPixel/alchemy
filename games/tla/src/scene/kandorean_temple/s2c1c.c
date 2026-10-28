@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -95,8 +95,8 @@ L_0200ad0a:
   t39 = Value1((s32 (*)())GameFlag_Test, 0x109);
   if (t39 != 0)
     goto L_0200adda;
-  if (FIELD_AT(&gPartyState, s16, 482) != 3) {
-    p_r3 = FIELD_AT(&gPartyState, s16, 482);
+  if (FIELD_AT(&gAdventure, s16, 482) != 3) {
+    p_r3 = FIELD_AT(&gAdventure, s16, 482);
     goto L_0200add2;
   }
   Func_0200306c();
@@ -115,11 +115,11 @@ L_0200adda:
   t44 = Value1((s32 (*)())GameFlag_Test, 0x109);
   if (t44 != 0)
     goto L_0200ae24;
-  if (FIELD_AT(&gPartyState, s16, 482) != 5)
+  if (FIELD_AT(&gAdventure, s16, 482) != 5)
     goto L_0200ae24;
   Func_02002ec4();
 L_0200ae24:
   Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020019d4, 0x480);
-  Call2((void (*)())ObjectMotion_SetActionVariant, gPartyState.currentOwner, 2);
+  Call2((void (*)())ObjectMotion_SetActionVariant, gAdventure.currentOwner, 2);
   Call1((void (*)())Func_02005338, 0);
 }

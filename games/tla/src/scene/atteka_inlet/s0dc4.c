@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 struct MapBits {
@@ -47,14 +47,14 @@ static __inline__ void Func_02001068_(s32 id, s32 x, s32 z, s32 speed) {
 
 void Func_02000dc4(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
-  struct PartyState *party;
+  struct Adventure *party;
 
   GameFlag_SetBit(0x9b4);
   if (!GameFlag_Test(0x9ad))
     Func_02001060(65, 0, 0);
   map->mode = 1;
-  party = &gPartyState;
-  /* FAKEMATCH: the native loads the party state's address before it starts the
+  party = &gAdventure;
+  /* FAKEMATCH: the native loads the adventure's address before it starts the
    * field offset; unforced the offset starts first (differ 2). */
   asm volatile("" : "+l"(party));
   Object_GetById(party->currentOwner)->priorityFlags |= 32;
@@ -82,7 +82,7 @@ void Func_02000dc4(void) {
 }
 
 void Func_02000ed0(void) {
-  if (gPartyState.entrance == 3)
+  if (gAdventure.entrance == 3)
     GameFlag_ClearBit(0x12f);
   if (GameFlag_Test(0x9b2)) {
     Func_02001060(9, 0, 0);

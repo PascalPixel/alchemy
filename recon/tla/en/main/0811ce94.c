@@ -15,7 +15,7 @@
 #include "battle_party.h"
 #include "battle_escape.h"
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 s32 __divsi3(s32, s32);
@@ -36,7 +36,7 @@ s32 BattleEscape_CheckSuccess(void) {
   s32 unitIndex;
   s32 chance;
   struct BattleEscapeState *escapeState;
-  struct PartyState *party;
+  struct Adventure *party;
 
   escaped = 0;
   escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
@@ -63,9 +63,9 @@ s32 BattleEscape_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  party = &gPartyState;
-  /* FAKEMATCH(barrier): the party state's address loaded before 0x24b is
-   * built; as gPartyState.battleRule24b, 8 of 126 instructions differ in
+  party = &gAdventure;
+  /* FAKEMATCH(barrier): the adventure's address loaded before 0x24b is
+   * built; as gAdventure.battleRule24b, 8 of 126 instructions differ in
    * tla-en. */
   __asm__ volatile("" : "+l"(party));
   if (party->battleRule24b == 2) {

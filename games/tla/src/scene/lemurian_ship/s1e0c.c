@@ -14,7 +14,7 @@ void Func_02001dc8(s32 id);
   }
 
 void Func_02001e0c(void) {
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_02003010);
   Object_GetById(8)->priorityFlags |= 32;
   ObjectMotion_SetActionVariant(8, 1);
@@ -134,6 +134,6 @@ void Func_02001e0c(void) {
     Func_02001944(14, 20);
     Flag_Clear(0x227);
   }
-  if (gPartyState.entrance == 26 && !GameFlag_Test(0x109))
+  if (gAdventure.entrance == 26 && !GameFlag_Test(0x109))
     Func_020019ac();
 }

@@ -9,7 +9,7 @@
 // Messages from MsgInnWelcome ("Welcome to our inn.").
 #include "types.h"
 #include "shop.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 // The inn work block, as this function reads it.
@@ -79,7 +79,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   if (Func_08108630(0) != 0) {
     Func_081084f4(messageBase + INN_MESSAGE_GOODBYE);
     UiWork_FinalizeFar(state->window, 2);
-  } else if ((u32)amount > gPartyState.coins) {
+  } else if ((u32)amount > gAdventure.coins) {
     Func_081084f4(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
     UiWork_FinalizeFar(state->window, 2);
   } else {

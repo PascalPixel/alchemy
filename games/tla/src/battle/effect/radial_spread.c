@@ -1,7 +1,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EffectVector {
   s32 x;
@@ -34,7 +34,7 @@ void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect) {
   s32 magnitude;
   s32 angle;
 
-  source = Object_GetById(gPartyState.currentOwner);
+  source = Object_GetById(gAdventure.currentOwner);
   state = effect->state;
 
   if (state == 0) {

@@ -30,7 +30,7 @@ struct Target {
   struct Vec pos;
 };
 
-extern s32 gGameState[];
+extern s32 gAdventure[];
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);
@@ -41,7 +41,7 @@ void BattleEffect_RunAngledApproachPhases(struct Actor *actor) {
   struct Target *target;
   struct Vec pos;
 
-  target = Object_GetById(gGameState[133]);
+  target = Object_GetById(gAdventure[133]);
   if (actor->phase == 0) {
     actor->yaw += 1;
     actor->pitch += 1;

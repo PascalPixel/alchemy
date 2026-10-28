@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "call.h"
@@ -38,7 +38,7 @@ s32 Func_0200079c(void) {
   Item_AdjustCounter(130, 1);
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
-  gPartyState.eventMode = 2;
+  gAdventure.eventMode = 2;
   Object_SetModeById(15, 2);
   Object_SetModeById(16, 2);
   Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
@@ -52,7 +52,7 @@ s32 Func_0200079c(void) {
     Call3((void (*)())Func_02000e74, 19, 200 << 16, 200 << 16);
   Func_02000dc4(Object_GetById(19), 50);
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
     if (party->entrance == 6)
       Func_02000f04(party->currentOwner);

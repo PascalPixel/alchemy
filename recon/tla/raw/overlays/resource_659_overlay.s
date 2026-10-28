@@ -263,7 +263,7 @@ Func_02000624:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_0200879c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020087a0:
 	.4byte 0x0000002d
 .L_020087a4:

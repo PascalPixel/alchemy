@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 void Object_Destroy(struct ObjectRuntime *object);
@@ -11,7 +11,7 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(
   s32 y;
   s32 limit;
   s32 scale;
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->linkedObject;

@@ -21,7 +21,7 @@ s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b) {
 /// of the objects the vent work lists.
 void VENT_BOUNCE(struct ObjectRuntime *object) {
   struct VentWork *work = VENT_WORK;
-  struct ObjectRuntime *other = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *other = Object_GetById(gAdventure.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct FieldSprite *sprite;

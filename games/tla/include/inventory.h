@@ -4,7 +4,7 @@
 #include "item.h"
 
 #include "owner_state.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 Inventory_Count(s32 owner);
 s32 Inventory_CountItem(s32 owner, s32 item);

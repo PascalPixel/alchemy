@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
@@ -32,7 +32,7 @@ void Func_02001abc(void) {
 
   Func_0200406c();
   Func_02004204(0);
-  if ((u32)gPartyState.coins < price) {
+  if ((u32)gAdventure.coins < price) {
     Func_0200412c((s32)MsgContigo03);
     UiText_OpenMessageAtObject(14, 0);
     return;
@@ -40,12 +40,12 @@ void Func_02001abc(void) {
   Func_0200412c((s32)MsgContigo01);
   Func_0200403c(price, 5);
   UiText_OpenMessageAtObject(14, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
      * the coins; as a plain store, 6 instructions differ in tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
-    *state = gPartyState.coins;
+    *state = gAdventure.coins;
     Func_0200422c();
     Func_02004144(14, 0);
     GameFlag_SetBit(0x109);
@@ -66,19 +66,19 @@ void Func_02001b84(void) {
 
   Func_0200406c();
   Func_02004204(0);
-  if ((u32)gPartyState.coins < price) {
+  if ((u32)gAdventure.coins < price) {
     Func_0200412c((s32)MsgContigo34);
     UiText_OpenMessageAtObject(14, 0);
     return;
   }
   Func_0200412c((s32)MsgContigo23);
   UiText_OpenMessageAtObject(8, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
      * the coins; as a plain store, 6 instructions differ in tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
-    *state = gPartyState.coins;
+    *state = gAdventure.coins;
     Func_0200422c();
     Func_02004144(8, 0);
     GameFlag_SetBit(0x109);

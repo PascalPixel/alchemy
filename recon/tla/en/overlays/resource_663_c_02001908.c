@@ -7,12 +7,12 @@
 // 0x104 clear it carries the leader along; it moves 1.5 pixels a frame along
 // its angle, upward when its angle is 0xc000. The counter's 200 goes through
 // an s32 (as a halfword constant it comes from the pool). Left: registers from
-// the start (the native keeps the shot in r6, gPartyState in r7 and the event
+// the start (the native keeps the shot in r6, gAdventure in r7 and the event
 // work in r8; this draft the shot in r7 and the work in r6), which moves
 // nearly every row; the code is the native's otherwise.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -30,7 +30,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 void Func_02001908(struct ObjectRuntime *shot) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime **objects;
   struct ObjectRuntime *other, *launcher;
@@ -39,7 +39,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
 
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gPartyState.renderMode == 5) {
+      gAdventure.renderMode == 5) {
     ObjectDispatch_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -58,7 +58,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
   hit = (u8 *)shot + 0x62;
   if (*hit == 0) {
     near = 0;
-    if (gPartyState.renderMode == 2) {
+    if (gAdventure.renderMode == 2) {
       if (Func_020018d8(&leader->x, &shot->x) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
@@ -79,7 +79,7 @@ void Func_02001908(struct ObjectRuntime *shot) {
 
         *counter = value;
       }
-      gPartyState.renderMode = 0;
+      gAdventure.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;
     }

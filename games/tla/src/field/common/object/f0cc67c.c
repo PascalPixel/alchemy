@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_scene.h"
@@ -18,7 +18,7 @@ s32 GameFlag_Test(s32 flag);
 /// returns 0 when there is none; without, it takes the first row.
 s32 Func_080cc67c(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 entrance = gPartyState.entrance;
+  s32 entrance = gAdventure.entrance;
   const struct SceneEntrance *entry = gOverlayArea.entrances();
   s32 found = 0;
   s32 left;
@@ -37,11 +37,11 @@ s32 Func_080cc67c(s32 findEntrance) {
   }
 
   if (!GameFlag_Test(0x109)) {
-    gPartyState.x = entry->x << 16;
-    gPartyState.y = entry->y << 16;
-    gPartyState.z = entry->z << 16;
-    gPartyState.heading = entry->facing;
-    gPartyState.turn = 0;
+    gAdventure.x = entry->x << 16;
+    gAdventure.y = entry->y << 16;
+    gAdventure.z = entry->z << 16;
+    gAdventure.heading = entry->facing;
+    gAdventure.turn = 0;
   }
 
   left = entry->cameraLeft;

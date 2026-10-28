@@ -187,7 +187,7 @@ Func_0200038c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008504:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008508:
 	.4byte gData_02001d8c
 .L_0200850c:
@@ -278,7 +278,7 @@ VenusLighthouse_Start:
 	pop {pc}
 	.2byte 0x0000
 .L_02008b20:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008b24:
 	.4byte SceneId_VenusLighthouse
 	.endif

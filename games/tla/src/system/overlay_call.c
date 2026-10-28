@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -47,11 +47,11 @@ void *Func_080cce94(s32 id) {
      stopped object's load; held in a plain local it is copied right after
      the call (differ 2) */
   register void *found asm("r0") = Func_080ccd78(0, id);
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   void *event;
   s32 stopped;
 
-  /* FAKEMATCH: the barrier loads the party state's address before the
+  /* FAKEMATCH: the barrier loads the adventure's address before the
      field offset is built (differ 2 without it) */
   asm volatile("");
   stopped = party->pausedObject;

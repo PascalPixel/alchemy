@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -144,12 +144,12 @@ void Func_0200112c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 24, 0xc000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 25, 0xe000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  Value2((s32 (*)())Func_02004b9c, gPartyState.currentOwner, 1);
+  Value2((s32 (*)())Func_02004b9c, gAdventure.currentOwner, 1);
   ((void (*)())Func_02004b94)();
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 5, 2);
-  object0 = Object_GetById(gPartyState.currentOwner);
+  object0 = Object_GetById(gAdventure.currentOwner);
   if (object0 == 0)
     goto L_020094c6;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5,
@@ -159,7 +159,7 @@ L_020094c6:
   Call3((void (*)())Func_02004b04, 5, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 6, 2);
-  object1 = Object_GetById(gPartyState.currentOwner);
+  object1 = Object_GetById(gAdventure.currentOwner);
   if (object1 == 0)
     goto L_02009504;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6,
@@ -169,7 +169,7 @@ L_02009504:
   Call3((void (*)())Func_02004b04, 6, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 26, 2);
-  object2 = Object_GetById(gPartyState.currentOwner);
+  object2 = Object_GetById(gAdventure.currentOwner);
   if (object2 == 0)
     goto L_02009550;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26,
@@ -177,7 +177,7 @@ L_02009504:
 L_02009550:
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 26);
   Call3((void (*)())Func_02004b04, 26, 0, 0);
-  Call2((void (*)())Camera_FollowActor, gPartyState.currentOwner, 1);
+  Call2((void (*)())Camera_FollowActor, gAdventure.currentOwner, 1);
   ((void (*)())Func_02004b94)();
   ((void (*)())Func_02004a9c)();
   return;
@@ -243,7 +243,7 @@ L_02009604:
     goto L_02009716;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 7, 2);
-  object4 = Object_GetById(gPartyState.currentOwner);
+  object4 = Object_GetById(gAdventure.currentOwner);
   if (object4 == 0)
     goto L_02009706;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7,
@@ -254,7 +254,7 @@ L_02009706:
 L_02009716:
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 5, 2);
-  object5 = Object_GetById(gPartyState.currentOwner);
+  object5 = Object_GetById(gAdventure.currentOwner);
   if (object5 == 0)
     goto L_0200974c;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5,
@@ -264,7 +264,7 @@ L_0200974c:
   Call3((void (*)())Func_02004b04, 5, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 6, 2);
-  object6 = Object_GetById(gPartyState.currentOwner);
+  object6 = Object_GetById(gAdventure.currentOwner);
   if (object6 == 0)
     goto L_0200978a;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6,
@@ -274,7 +274,7 @@ L_0200978a:
   Call3((void (*)())Func_02004b04, 6, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 26, 2);
-  object7 = Object_GetById(gPartyState.currentOwner);
+  object7 = Object_GetById(gAdventure.currentOwner);
   if (object7 == 0)
     goto L_020097c8;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26,
@@ -381,7 +381,7 @@ L_02009a2e:
     goto L_02009ac2;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 7, 2);
-  object4 = Object_GetById(gPartyState.currentOwner);
+  object4 = Object_GetById(gAdventure.currentOwner);
   if (object4 == 0)
     goto L_02009ab2;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7,
@@ -392,7 +392,7 @@ L_02009ab2:
 L_02009ac2:
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 5, 2);
-  object5 = Object_GetById(gPartyState.currentOwner);
+  object5 = Object_GetById(gAdventure.currentOwner);
   if (object5 == 0)
     goto L_02009af8;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5,
@@ -402,7 +402,7 @@ L_02009af8:
   Call3((void (*)())Func_02004b04, 5, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 6, 2);
-  object6 = Object_GetById(gPartyState.currentOwner);
+  object6 = Object_GetById(gAdventure.currentOwner);
   if (object6 == 0)
     goto L_02009b36;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6,
@@ -412,7 +412,7 @@ L_02009b36:
   Call3((void (*)())Func_02004b04, 6, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
   Call2((void (*)())Object_SetModeById, 26, 2);
-  object7 = Object_GetById(gPartyState.currentOwner);
+  object7 = Object_GetById(gAdventure.currentOwner);
   if (object7 == 0)
     goto L_02009b74;
   Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26,

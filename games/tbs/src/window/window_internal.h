@@ -68,7 +68,7 @@
 #include "unit.h"
 #include "settings_menu.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "save.h"
 #include "irq.h"
 #include "status_screen.h"

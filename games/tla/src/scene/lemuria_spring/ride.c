@@ -1,6 +1,6 @@
 #include "types.h"
 #include "callback_scheduler.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct SpringPoint {
   s32 x;
@@ -106,7 +106,7 @@ start:
   /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
    * meet; plain, PRE copies it onto the cue's path (differ 2). */
   if (*(volatile s32 *)&gData_02001820 == 16) {
-    Object_SetModeById(gPartyState.currentOwner, 39);
+    Object_SetModeById(gAdventure.currentOwner, 39);
     ride->hold = 0;
     ride->velocity.x = 0x14ccc;
     ride->velocity.y = 0x40000;

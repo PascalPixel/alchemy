@@ -52,7 +52,7 @@
 #include "heap.h"
 #include "keystate.h"
 #include "unit.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "fixed_math.h"

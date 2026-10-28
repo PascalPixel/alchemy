@@ -14,7 +14,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 extern const u8 gData_02005944[];
@@ -145,7 +145,7 @@ void Func_02002a64(void) {
   Func_0200580c(0);
   Camera_SetBounds(-1, -1, -1, 0);
   speed = 0xc000;
-  Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
+  Actor_Slide(gAdventure.currentOwner, 174 << 17, 156 << 17, speed);
   Actor_Slide(7, 165 << 17, 156 << 17, speed);
   {
     s32 slow = 0xb000;
@@ -170,20 +170,20 @@ void Func_02002a64(void) {
   cue = 0x6007;
   Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
-  Actor_Turn(gPartyState.currentOwner, 0, 0);
+  Actor_Turn(gAdventure.currentOwner, 0, 0);
   Actor_Turn(5, 0x8000, 0);
   Actor_Turn(7, 0, 0);
   Func_02005774_(6, 0x8000);
   Object_SetModeById(6, 3);
   Func_02005764_(0x4006, 0);
   UiText_OpenMessageAtObject(0x6005, 0);
-  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
     Func_0200578c(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_Walk(7, 340, 296);
     Actor_Walk(7, 354, 296);
     Actor_Walk(7, 364, 308);
-    Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
+    Actor_Turn(gAdventure.currentOwner, 0xe000, 0);
     Func_02005774_(7, 0x6000);
     Func_02005764(0x6007, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -193,7 +193,7 @@ void Func_02002a64(void) {
     Actor_Walk(7, 340, 296);
     Actor_Walk(7, 354, 296);
     Actor_Walk(7, 364, 308);
-    Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
+    Actor_Turn(gAdventure.currentOwner, 0xe000, 0);
     Func_02005774_(7, 0x6000);
     Object_SetModeById(7, 3);
     Func_02005764(cue, 0);
@@ -223,13 +223,13 @@ void Func_02002a64(void) {
   Func_0200578c_ArgsFirst(7, 261, 0);
   Actor_Turn(6, 0x2000, 0);
   Actor_Turn(5, 0xa000, 0);
-  Actor_Turn(gPartyState.currentOwner, 0, 80);
+  Actor_Turn(gAdventure.currentOwner, 0, 80);
   Func_0200578c_ArgsFirst(7, 261, 40);
   Func_02005774_(7, 0);
   Func_02005764_(0x4007, 0);
   Actor_Turn(5, 0x8000, 0);
   Func_02005774_(6, 0x8000);
-  Object_SetModeById(gPartyState.currentOwner, 3);
+  Object_SetModeById(gAdventure.currentOwner, 3);
   Object_SetModeById(23, 3);
   Object_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(6, 3);

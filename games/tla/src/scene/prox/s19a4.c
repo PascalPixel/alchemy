@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -61,16 +61,16 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Map_CopyCells(a, b, c, d, mode, f);
     FieldEvent_WaitFrames(20);
   }
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Object_GetById(gPartyState.currentOwner);
+    object = Object_GetById(gAdventure.currentOwner);
     cell = object->x >> 16;
     Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020043fc(object);
     object->angle = 0xc000;
   }
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_020046f8);
   Wait(12);
   Cue(123);

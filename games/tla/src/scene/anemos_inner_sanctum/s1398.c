@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x154];
@@ -44,7 +44,7 @@ static __inline__ struct ObjectRuntime *Create(s32 type, s32 x, s32 y, s32 z) {
 /// 0x207.
 void Func_02001398(void) {
   struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *object;
   s32 all;
   s32 i;
@@ -53,7 +53,7 @@ void Func_02001398(void) {
   s32 z;
   s32 scene;
 
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   x = leader->x;
   z = leader->z;
   if (scene == (s32)&SceneId_Ov6B0Room4)
@@ -85,7 +85,7 @@ next:
     FieldEvent_WaitFrames(10);
     Func_02003420(0xcccc, 0x1999);
     id = 9;
-    if (gPartyState.scene == (s32)&SceneId_Ov6B0Room4)
+    if (gAdventure.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
     Func_02003438(id, 1);
     Func_02003430();

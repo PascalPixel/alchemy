@@ -16,13 +16,13 @@ s32 Func_0200004c(struct ObjectRuntime *object) {
 }
 
 const u8 *Func_02000058(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom4)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006530;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom2)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom2)
     return gData_02006a0c;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom1)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom1)
     return gData_02006710;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom3)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom3)
     return gData_02006890;
   return gData_02006518;
 }
@@ -36,7 +36,7 @@ void Func_020000bc(void) {
 }
 
 void Func_020000d0(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   u32 facing = object->angle;
 
   if (facing == 0 || facing == 0x8000) {
@@ -59,7 +59,7 @@ void Func_020000d0(void) {
       }
     }
   }
-  if (Func_020055f8(gPartyState.currentOwner) != -1)
+  if (Func_020055f8(gAdventure.currentOwner) != -1)
     Func_02005688();
 }
 

@@ -2,7 +2,7 @@
 // items and their counts into clear data, sized by the password kind. Left:
 // loop forms (the native indexes its tables) and register choice.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u16 gData_02002700[];
 extern s32 gData_020026f0[];
@@ -152,9 +152,9 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = *(u16 *)((u8 *)&gPartyState + 18);
-    out[166] = *(u32 *)((u8 *)&gPartyState + 16) >> 8;
-    out[167] = *(u32 *)((u8 *)&gPartyState + 16);
+    out[165] = *(u16 *)((u8 *)&gAdventure + 18);
+    out[166] = *(u32 *)((u8 *)&gAdventure + 16) >> 8;
+    out[167] = *(u32 *)((u8 *)&gAdventure + 16);
   }
   if (mode != 2) {
     u8 *p = out + 8 + (mode != 0);

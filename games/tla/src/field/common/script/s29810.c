@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "input.h"
 #include "flag_call.h"
 
@@ -42,7 +42,7 @@ s32 Func_08029838(s32 arg) {
   if (work == NULL)
     return 0;
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
     /* FAKEMATCH: the pressed keys are read again for each of the three tests;
      * through a plain pointer one read serves all three (differ 38). */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;

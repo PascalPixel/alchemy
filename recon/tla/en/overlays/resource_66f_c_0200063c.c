@@ -10,13 +10,13 @@
 // Func_02001124 through Call2 and the placements through Call3 (all direct:
 // differ 76), and the raised lift is its own block-local pointer so it can stay
 // in r0 (differ 34 to 6). Three scheduling ties remain, each broken the other
-// way by sched2: gPartyState's load before the priority flags' orrs, and twice
+// way by sched2: gAdventure's load before the priority flags' orrs, and twice
 // the terrain query's r0 = 0 before its x and z loads (here the loads have more
 // dependents and win the tie). Measured: the terrain query through Value3, both
 // drops to the ground through one inline helper (no change).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
@@ -44,7 +44,7 @@ s32 Func_0200063c(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
   Object_GetById(Func_02001184())->priorityFlags |= 0x20;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov66fRoom1) {
     ObjectMotion_SetActionVariant(18, 1);
     ObjectMotion_SetActionVariant(19, 1);
@@ -115,7 +115,7 @@ s32 Func_0200063c(void) {
     Func_020004f4(15, 8, 17);
     Func_020004f4(16, 22, 33);
     Func_020004f4(17, 22, 33);
-    if (!GameFlag_Test(0x109) && gPartyState.entrance == 8)
+    if (!GameFlag_Test(0x109) && gAdventure.entrance == 8)
       Func_02000af0();
   }
   return 0;

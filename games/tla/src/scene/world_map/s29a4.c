@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct EventWork {
@@ -49,8 +49,8 @@ void Func_020029a4(void) {
   actor->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
   WaitFrames(1);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
   ObjectMotion_SetSpeedParameters_(8, 0x6666, 0x3333);

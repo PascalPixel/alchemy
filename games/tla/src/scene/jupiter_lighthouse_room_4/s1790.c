@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
@@ -12,18 +12,18 @@ void FieldEvent_WaitFrames(s32 frames);
 struct FieldActor *Func_02001ea8(void);
 
 void Func_02001790(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads x and
    * z before it copies the object to r10 (one reordered row). */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
@@ -51,7 +51,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_02001bb8 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02001818(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

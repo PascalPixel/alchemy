@@ -4,7 +4,7 @@
 #include "io_reg.h"
 #include "iowrite.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 void WaitFrames(s32 frames);
@@ -19,7 +19,7 @@ void Func_080d5c70(s32 unused) {
   s32 c;
 
   work = Ram_HeapSlots->eventWork;
-  Audio_PlayCue(gPartyState.sceneCue);
+  Audio_PlayCue(gAdventure.sceneCue);
   Audio_PlayCue(298);
   Audio_PlayCue(147);
   if (work->controlMode == 3) {

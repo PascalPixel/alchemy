@@ -1,7 +1,7 @@
 #include "caverns.h"
 
 const u8 *Func_02000374(void) {
-  s32 scene = gPartyState.scene;
+  s32 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
     return gData_02001358;

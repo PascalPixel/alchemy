@@ -2,7 +2,7 @@
 // units, flags, Djinn, items and their counts. Left: loop forms (the native
 // indexes its tables where this steps pointers) and register choice.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 
 extern s32 gData_020026a0[];
@@ -136,7 +136,7 @@ void Func_020018e0(s32 mode, u8 *in) {
         }
       }
     }
-    *(u32 *)((u8 *)&gPartyState + 16) = in[165] << 16 | in[166] << 8 | in[167];
+    *(u32 *)((u8 *)&gAdventure + 16) = in[165] << 16 | in[166] << 8 | in[167];
   }
   for (i = 0; i != 4; i++) {
     Unit_UpdateClass(gData_020026a0[i]);

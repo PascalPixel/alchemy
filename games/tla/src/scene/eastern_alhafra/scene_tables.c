@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern u8 gData_02004d0c[];
@@ -101,7 +101,7 @@ void Func_02000190(s32 unused, s32 id) {
   s32 x;
   s32 z;
 
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   object = Object_GetById(id);
   object->motionFlags = 0;
   if (id == 10) {

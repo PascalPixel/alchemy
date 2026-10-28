@@ -3,7 +3,7 @@
 // derives one from another.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "event_work.h"
@@ -15,10 +15,10 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 void Func_02000ab4(void) {
-  if (gPartyState.renderMode == 2) {
+  if (gAdventure.renderMode == 2) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     s32 code = map->layers[2].cells[x + z * 128].collisionCode;

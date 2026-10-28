@@ -9,11 +9,11 @@ void Func_02001218(void) {
   }
   Func_02005a9c();
   Func_02005c3c(0);
-  Func_02005b1c(7, gPartyState.currentOwner);
+  Func_02005b1c(7, gAdventure.currentOwner);
   ObjectMotion_SetActionVariant(
-      7, Object_GetById(gPartyState.currentOwner)->sprite->priority);
+      7, Object_GetById(gAdventure.currentOwner)->sprite->priority);
   WaitFrames(1);
-  Kibombo_ObjArm(gPartyState.currentOwner, 0xa000, 0);
+  Kibombo_ObjArm(gAdventure.currentOwner, 0xa000, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 62, 444);
   Kibombo_ObjTurn(7, 0x2000);
@@ -23,7 +23,7 @@ void Func_02001218(void) {
   Kibombo_ObjWalk(7, 56, 420);
   Kibombo_ObjWalk(7, 40, 344);
   Func_02005b0c(7, 0, 0);
-  Kibombo_ObjPlace(gPartyState.currentOwner, 80, 510);
+  Kibombo_ObjPlace(gAdventure.currentOwner, 80, 510);
   Kibombo_Wait(10);
   Func_02005bc4(5);
   GameFlag_ClearBit(0x92e);

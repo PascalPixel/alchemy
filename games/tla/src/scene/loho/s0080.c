@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov6A6Room2;
 extern char MsgLoho23;
@@ -26,7 +26,7 @@ struct EventWork15a {
 };
 
 const u8 *Func_02000080(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_02001a80;
   return gData_02001900;
 }

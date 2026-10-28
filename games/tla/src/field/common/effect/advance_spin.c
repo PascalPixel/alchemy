@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_effect.h"
 
 void *Object_GetById(s32 id);
@@ -14,7 +14,7 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   s32 velocityZ;
   s32 scaleRateX;
 
-  Object_GetById(gPartyState.currentOwner);
+  Object_GetById(gAdventure.currentOwner);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
   effect->y += effect->velocity.y;

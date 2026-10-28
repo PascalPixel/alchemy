@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "serial_runtime.h"
 #include "text/msg_ids.h"
@@ -43,7 +43,7 @@ s32 Func_02001130(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
     Flag_Test(0x2f4);
     base = GameFlag_Test(actor + 0x2f0);
@@ -124,7 +124,7 @@ s32 Func_0200122c(s32 actor) {
     ObjectMotion_SetVariantCallback(14, 1);
     Object_SetModeById(14, 4);
     FieldEvent_WaitFrames(15);
-    ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
+    ObjectMotion_SetAngleToward(14, gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(5);
     UiText_OpenMessageAtObject(14, 0);
   }
@@ -136,7 +136,7 @@ s32 Func_02001304(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(actor, gAdventure.currentOwner, 0);
   if (!Flag_Test(0x204)) {
     if (Party_CountActiveOwners() == 8)
       message = (s32)MsgUpToThree;
@@ -155,11 +155,11 @@ s32 Func_02001304(s32 actor) {
 }
 
 s32 Func_02001388(s32 id) {
-  struct PartyState *gs;
+  struct Adventure *gs;
 
   Func_02001a14();
   Func_02001ab4(0);
-  gs = &gPartyState;
+  gs = &gAdventure;
   ObjectMotion_SetAngleToward(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
     Func_020019e4(gs->linkTallies[2], 5);

@@ -4,7 +4,7 @@
 // Draft of overlay 6b5's Func_02000864 (0x02008864), ported from ☀️'s
 // EV10_TOUCH: differ 4 of 329. Devices in place, each measured: the 0x173
 // test's result kept while the scene symbol is loaded once for both
-// branches; a one-pass block loading gPartyState before the battle rule's
+// branches; a one-pass block loading gAdventure before the battle rule's
 // offset; the copy loop as a goto loop with its bound in a variable and the
 // byte read ahead of the increments (as ☀️'s do/while or a for loop, loop.c
 // hoists and strength-reduces the destination, differ 18-20). Left: after
@@ -23,7 +23,7 @@
 #include "system.h"
 #include "types.h"
 #include "flag_call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "serial_runtime.h"
 #include "callback_scheduler.h"
@@ -134,7 +134,7 @@ s32 Func_02000864(void) {
     WaitFrames(8);
     Func_02001994(5);
     if (Flag_IsSet(0x173)) {
-      ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+      ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
       Func_02001a64((s32)MsgGoodLuck2);
       UiText_OpenMessageAtObject(8, 0);
       WaitFrames(45);
@@ -183,7 +183,7 @@ s32 Func_02000864(void) {
       Party_SetFields1f2And1f4(scene, 11);
     }
     {
-      struct PartyState *party = &gPartyState;
+      struct Adventure *party = &gAdventure;
 
       do {
       } while (0);

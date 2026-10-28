@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -78,7 +78,7 @@ L_0200b6f2:
   t29 = Value1((s32 (*)())GameFlag_Test, 0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = Value1((s32 (*)())Object_GetById, gPartyState.currentOwner);
+  t30 = Value1((s32 (*)())Object_GetById, gAdventure.currentOwner);
   v_r5 = t30;
   Call3((void (*)())Func_02005714, 11, 0, 0);
   Call3((void (*)())Func_02005714, 12, 0, 0);
@@ -109,7 +109,7 @@ L_0200b78e:
   table = gData_02005d8c;
   Call4((void (*)())Func_020048a4, 19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Call2((void (*)())Object_SetModeById, 15, 5);
-  if (FIELD_AT(&gPartyState, s16, 482) != 2)
+  if (FIELD_AT(&gAdventure, s16, 482) != 2)
     goto L_0200b7c0;
   Func_020027cc();
   goto L_0200b856;
@@ -117,8 +117,8 @@ L_0200b7c0:
   t50 = Value1((s32 (*)())GameFlag_Test, 0x8f6);
   if (t50 != 0)
     goto L_0200b7e4;
-  if (FIELD_AT(&gPartyState, s16, 482) != 1) {
-    p_r3 = FIELD_AT(&gPartyState, s16, 482);
+  if (FIELD_AT(&gAdventure, s16, 482) != 1) {
+    p_r3 = FIELD_AT(&gAdventure, s16, 482);
     goto L_0200b7dc;
   }
   Func_0200253c();

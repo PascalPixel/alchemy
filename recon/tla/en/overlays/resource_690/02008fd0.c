@@ -48,7 +48,7 @@ void Func_02000fd0(void) {
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
     ObjectMotion_CommitCurrentPositionAndActivate(10);
     FieldEvent_WaitFrames(10);
-    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
     Speed(10, 0x26666, 0x13333);
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 80);
     ObjectMotion_CommitCurrentPositionAndActivate(10);

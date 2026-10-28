@@ -11,7 +11,7 @@ void Func_020054e0(void) {
     Func_020036e0(1, 5);
   }
   WaitFrames(1);
-  entrance = gPartyState.entrance;
+  entrance = gAdventure.entrance;
   if (entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);

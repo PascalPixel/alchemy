@@ -1,6 +1,6 @@
 #include "types.h"
 #include "dma.h"
-#include "party_state.h"
+#include "adventure.h"
 
 u8 *Runtime_AllocateBlock();
 void *Runtime_AllocateHeapBlock();
@@ -22,6 +22,6 @@ void Func_080d1cc0(s32 object) {
   Scheduler_AddOrUpdateCallback(Func_080d1ae4, 0x480);
   Runtime_ReleaseHeapBlock(56);
   if (object == 0)
-    object = ObjectTable_Get(gPartyState.currentOwner);
+    object = ObjectTable_Get(gAdventure.currentOwner);
   *(s32 *)(work + 24) = object;
 }

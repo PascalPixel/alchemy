@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -33,9 +33,9 @@ void Func_02000c8c(void) {
   Func_02001108(0);
   Func_02001128(158);
   Func_02000ff0_(51, 38, 70, 22, 1, 2);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-  ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -4);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  ObjectMotion_CenterOnColumn_(gAdventure.currentOwner, 2, -4);
   FieldEvent_WaitFrames(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -86,7 +86,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 void Func_02003764(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   u32 i;
 
@@ -124,16 +124,16 @@ void Func_02003764(void) {
                   velocity[2], 0x01090001, &options);
   }
   Func_02003df8(188);
-  Func_02003cd0(gPartyState.currentOwner, 0x101);
-  Object_SetModeById(gPartyState.currentOwner, 49);
+  Func_02003cd0(gAdventure.currentOwner, 0x101);
+  Object_SetModeById(gAdventure.currentOwner, 49);
   Call3((void (*)())Func_02003c00, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
   Func_02003c08();
-  Func_02003cd0(gPartyState.currentOwner, 0x100);
+  Func_02003cd0(gAdventure.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02003c30();
 }

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "call.h"
 
@@ -33,7 +33,7 @@ void Func_02000d80(void) {
 }
 
 void Func_02000da8(s32 id) {
-  s32 owner = gPartyState.currentOwner;
+  s32 owner = gAdventure.currentOwner;
 
   Func_02001084();
   Func_02001164(0);
@@ -52,7 +52,7 @@ void Func_02000da8(s32 id) {
 }
 
 void Func_02000e28(s32 id) {
-  s32 owner = gPartyState.currentOwner;
+  s32 owner = gAdventure.currentOwner;
 
   Func_02001084();
   Func_02001164(0);
@@ -71,7 +71,7 @@ void Func_02000e28(s32 id) {
 }
 
 void Func_02000ea8(void) {
-  struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *guard = Object_GetById(14);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
@@ -82,7 +82,7 @@ void Func_02000ea8(void) {
 }
 
 void Func_02000ef4(void) {
-  struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *guard = Object_GetById(15);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <

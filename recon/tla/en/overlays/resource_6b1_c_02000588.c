@@ -27,7 +27,7 @@ static __inline__ void MoveTo(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 }
 
 void Func_02000588(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 shift = 0x1300000;
   s32 i;
 
@@ -38,11 +38,11 @@ void Func_02000588(void) {
     return;
   if (Func_02000c8c(object->terrainId, object->x, object->z) != 77)
     return;
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
                 (object->z & 0xfff00000) + 0x80000);
   {
-    s32 id = gPartyState.currentOwner;
+    s32 id = gAdventure.currentOwner;
 
     if (shift > 0)
       ObjectMotion_ArmCallback(id, 0xc000, 0);

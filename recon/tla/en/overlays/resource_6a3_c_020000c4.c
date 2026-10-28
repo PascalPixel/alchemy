@@ -106,7 +106,7 @@ copy:
   Func_020049c4(144);
   Func_0200475c_(0x50000, 0x70000, 0x10000);
   Func_0200475c_(-1, -1, 0xe666);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
   ObjectMotion_Launch(4, 6, 0);
   Object_GetById(4)->actionFlags &= ~1;
   ObjectMotion_OffsetPositionAndReset(4, -16, 0);
@@ -126,7 +126,7 @@ fade:
   Func_0200492c(60);
   Func_020046b4();
   Func_020046a4();
-  Func_02004784(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02004784(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;

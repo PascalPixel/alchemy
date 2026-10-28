@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -90,7 +90,7 @@ void Func_02003d00(s32 exit);
 void Func_02003d78(s32 skip);
 
 void Func_02002c14(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *helper = Object_GetById(9);
 
   Func_02003c28();
@@ -117,7 +117,7 @@ void Func_02002c14(void) {
     gData_02004420->acceleration = 0x19999;
     gData_02004420->velocityY = 0x80000;
   }
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
   ObjectMotion_SetSpeedParameters(9, 0x19999, 0xcccc);
   leader->velocityY = 0x60000;
   helper->velocityY = 0x60000;
@@ -128,7 +128,7 @@ void Func_02002c14(void) {
   Func_02003bd8(leader);
   FieldEvent_WaitFrames(20);
   Func_02003cc8(9, 0x103, 0);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
   ObjectMotion_ArmCallback(9, 0x8000, 60);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 296, 104);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 296, 80);

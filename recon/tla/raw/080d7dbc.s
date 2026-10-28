@@ -220,6 +220,6 @@ BattleEffect_UpdatePhasedRadialParticle:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d7f78:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d7f7c:
 	.4byte gVBlankCount

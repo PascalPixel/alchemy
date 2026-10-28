@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char MsgLoho17;
 extern char MsgLoho19;
@@ -15,7 +15,7 @@ void Func_02001430(s32 a, s32 b);
 void Func_02001438(s32 id);
 
 void Func_02000d4c(void) {
-  Object_GetById(gPartyState.currentOwner);
+  Object_GetById(gAdventure.currentOwner);
   if (GameFlag_Test(800)) {
     Func_02001430(30, 8);
   } else {
@@ -28,7 +28,7 @@ void Func_02000d4c(void) {
 }
 
 void Func_02000da4(s32 actor) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */

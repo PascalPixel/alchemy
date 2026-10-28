@@ -2,9 +2,9 @@
 #include "edition.h"
 
 const u8 *Func_0200004c(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002828;
-  if (gPartyState.entrance == 20)
+  if (gAdventure.entrance == 20)
     return gData_02002750;
   if (FlagCheck(0x8ff))
     return gData_02002480;
@@ -31,7 +31,7 @@ void Func_020000a4(void) {
 }
 
 void Func_020000fc(void) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load. */

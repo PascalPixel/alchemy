@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 65: the native loads the party state address between
+// Near miss, differ 2 of 65: the native loads the adventure's address between
 // building 0 and storing it to the motion flags (movs r3, #0; ldr r5; strb r3);
 // this draft stores first. A scene-layer call and a plain party->currentOwner
 // leave the same order; the address taken at the top moves the load above the
@@ -10,11 +10,11 @@
 #include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 
 void Func_02002d6c(struct FieldActor *object, s32 x, s32 z, s32 mode) {
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_02004040();
   Func_020041b8(0);
-  party = &gPartyState; /* FAKEMATCH: the party state address is taken before
+  party = &gAdventure; /* FAKEMATCH: the adventure's address is taken before
                            the flag store, where the native loads it; taken in
                            the call below, the store comes first */
   object->motionFlags = 0;

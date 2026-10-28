@@ -24,7 +24,7 @@ extern u8 Func_02004080[];
 extern u8 IwramMulQ16[];
 extern u8 gData_02005f38[];
 extern u8 gInput[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02004140(void) {
   s32 sp_[1];
@@ -37,7 +37,7 @@ void Func_02004140(void) {
   s32 t59, t60, t61, t62, t63, t66, t68, t69, t70, t71;
   s32 t72, t73, t74, t75, t80;
 
-  t0 = FIELD_AT((s32)gPartyState, s32, 532);
+  t0 = FIELD_AT((s32)gAdventure, s32, 532);
   t1 = Value1((s32 (*)())ObjectTable_Get, t0);
   v_r7 = t1;
 L_0200c160:

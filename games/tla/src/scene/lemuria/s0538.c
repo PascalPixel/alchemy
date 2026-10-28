@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 void Func_02001d74(void);
@@ -9,11 +9,11 @@ s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
 
 void Func_02000538(void) {
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_02001d74();
   Func_02001ccc((s32)&SceneId_Ov68b, 2);
-  party = &gPartyState;
+  party = &gAdventure;
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
    * state's address before it builds the field's offset (2 differ without it).
    */

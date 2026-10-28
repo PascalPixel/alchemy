@@ -9,10 +9,10 @@ void Func_02002e18(void) {
     Func_02004204(0);
     Contigo_CamSpeed(0xcccc, 0x1999);
     Contigo_CamMove(0xa00000, -1, 0x1700000, 1);
-    Contigo_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-    Contigo_ObjWalk(gPartyState.currentOwner, 158, 394);
+    Contigo_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+    Contigo_ObjWalk(gAdventure.currentOwner, 158, 394);
     Contigo_ObjTurn(8, 0x5000, 0);
-    Contigo_ObjMoveTo(2, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(2, gAdventure.currentOwner);
     WaitFrames(1);
     Contigo_ObjSpeed(2, 0xcccc, 0x6666);
     Contigo_ObjWalk(2, 144, 374);
@@ -47,7 +47,7 @@ void Func_02002e18(void) {
     Contigo_MessagePut(0x1002, 0);
     Contigo_Jump(8, 265, 20);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjMoveTo(0, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(0, gAdventure.currentOwner);
     WaitFrames(1);
     Contigo_Jump(0, 256, 0);
     Contigo_ObjSpeed(0, 0x13333, 0x9999);
@@ -56,10 +56,10 @@ void Func_02002e18(void) {
     Contigo_MessagePut(0, 0);
     Contigo_Jump(8, 256, 0);
     Contigo_ObjTurn(8, 0x3000, 0);
-    Contigo_ObjMoveTo(9, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(9, gAdventure.currentOwner);
     WaitFrames(1);
-    Contigo_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-    Contigo_ObjAction(gPartyState.currentOwner, gData_02004ac0);
+    Contigo_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+    Contigo_ObjAction(gAdventure.currentOwner, gData_02004ac0);
     Contigo_ObjSpeed(9, 0xcccc, 0x6666);
     Contigo_ObjWalk(9, 182, 378);
     Contigo_ObjWalk(9, 182, 360);
@@ -72,7 +72,7 @@ void Func_02002e18(void) {
     Contigo_ObjModeWait(8, 3);
     Contigo_MessagePut(0x1008, 0);
     Contigo_Jump(9, 257, 0);
-    Contigo_Jump(gPartyState.currentOwner, 257, 0);
+    Contigo_Jump(gAdventure.currentOwner, 257, 0);
     Contigo_Jump(0, 257, 0);
     Contigo_Jump(2, 257, 40);
     Contigo_ObjFace(8, 0x5000);
@@ -81,8 +81,8 @@ void Func_02002e18(void) {
     Contigo_ObjFace(8, 0);
     Contigo_ObjModeWait(8, 3);
     Contigo_ObjTurn(2, 0xa000, 0);
-    Contigo_ObjTurn(gPartyState.currentOwner, 0x2000, 40);
-    Contigo_ObjTurn(gPartyState.currentOwner, 0, 0);
+    Contigo_ObjTurn(gAdventure.currentOwner, 0x2000, 40);
+    Contigo_ObjTurn(gAdventure.currentOwner, 0, 0);
     Contigo_ObjFace(2, 0xe000);
     Contigo_MessagePut(0x1002, 0);
     Contigo_Jump(8, 259, 0);
@@ -96,7 +96,7 @@ void Func_02002e18(void) {
     Contigo_ObjEmote(8, 258);
     Contigo_ObjFace(8, 0x3000);
     Contigo_MessagePut(0x1008, 0);
-    Contigo_Jump(gPartyState.currentOwner, 256, 0);
+    Contigo_Jump(gAdventure.currentOwner, 256, 0);
     Contigo_Jump(0, 256, 0);
     Contigo_Jump(2, 256, 0);
     Contigo_Jump(9, 256, 40);
@@ -106,12 +106,12 @@ void Func_02002e18(void) {
     Contigo_ObjTurn(0, 0xe000, 0);
     Contigo_ObjTurn(9, 0x5000, 0);
     Contigo_ObjTurn(2, 0xa000, 0);
-    Contigo_ObjTurn(gPartyState.currentOwner, 0x2000, 40);
+    Contigo_ObjTurn(gAdventure.currentOwner, 0x2000, 40);
     Contigo_ObjEmote(0, 258);
     Contigo_Wait(20);
     Contigo_ObjFace(0, 0xa000);
     Contigo_MessagePut(0, 0);
-    Contigo_ObjTurn(gPartyState.currentOwner, 0, 0);
+    Contigo_ObjTurn(gAdventure.currentOwner, 0, 0);
     Contigo_ObjTurn(9, 0x8000, 0);
     Contigo_ObjTurn(2, 0xe000, 0);
     Contigo_Jump(8, 265, 0);
@@ -126,7 +126,7 @@ void Func_02002e18(void) {
     Contigo_ObjTurn(8, 0, 80);
     Contigo_Jump(9, 261, 40);
     Contigo_Jump(0, 257, 0);
-    Contigo_Jump(gPartyState.currentOwner, 257, 0);
+    Contigo_Jump(gAdventure.currentOwner, 257, 0);
     Contigo_Jump(2, 257, 40);
     Contigo_Jump(9, 262, 0);
     Contigo_MessagePut(0x8009, 0);
@@ -141,7 +141,7 @@ void Func_02002e18(void) {
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(2, 257, 0);
     Contigo_ObjTurn(2, 0xa000, 0);
-    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
       Contigo_ObjFace(2, 0xe000);
       Contigo_ObjMode(2, 3);
       Contigo_MessagePut(0x1002, 0);
@@ -157,7 +157,7 @@ void Func_02002e18(void) {
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(0, 257, 0);
     Contigo_ObjTurn(0, 0xa000, 0);
-    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
       Contigo_ObjFace(0, 0xe000);
       Contigo_ObjMode(0, 3);
       Contigo_MessagePut(0x1000, 0);
@@ -199,7 +199,7 @@ void Func_02002e18(void) {
     Contigo_ObjFace(9, 0x8000);
     Contigo_ObjMode(9, 3);
     Contigo_MessagePut(9, 0);
-    Contigo_ObjModeWait(gPartyState.currentOwner, 3);
+    Contigo_ObjModeWait(gAdventure.currentOwner, 3);
     Contigo_ObjSpeed(2, 0x13333, 0x9999);
     Contigo_ObjSpeed(0, 0x13333, 0x9999);
     Contigo_ObjSpeed(9, 0x13333, 0x9999);

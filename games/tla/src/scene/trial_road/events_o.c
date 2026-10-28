@@ -1,11 +1,11 @@
 #include "trial_road.h"
 
 void Func_020011c0(void) {
-  Object_GetById(gPartyState.currentOwner)->terrainId = 2;
+  Object_GetById(gAdventure.currentOwner)->terrainId = 2;
 }
 
 void Func_020011dc(void) {
-  Object_GetById(gPartyState.currentOwner)->terrainId = 0;
+  Object_GetById(gAdventure.currentOwner)->terrainId = 0;
 }
 
 void Func_020011f8(void) {

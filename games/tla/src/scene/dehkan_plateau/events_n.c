@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -182,5 +182,5 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id) {
 void Func_02000bc0(s32 a, s32 b, s32 owner);
 
 void Func_02000c4c(s32 a, s32 b) {
-  Func_02000bc0(a, b, gPartyState.currentOwner);
+  Func_02000bc0(a, b, gAdventure.currentOwner);
 }

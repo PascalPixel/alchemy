@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_080f1140[];
 
@@ -10,15 +10,15 @@ void WaitFrames(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
 void BattleEffect_RunVisibilityTransition(void) {
-  struct PartyState *party;
+  struct Adventure *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
     EventRuntime_PrepareCurrentObject();
     Func_080d46a4(0x9d89, 6);
     while (gInput.held & 0x200)
       WaitFrames(1);
-    party = &gPartyState;
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    party = &gAdventure;
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

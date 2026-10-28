@@ -25,7 +25,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 const struct SceneEvent *Scene_GetEvents(void) {
-  switch (gPartyState.entrance) {
+  switch (gAdventure.entrance) {
   case 1:
   case 3:
     return gIdejimaEventsEntrance1;

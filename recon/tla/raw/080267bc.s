@@ -422,7 +422,7 @@ Func_080267bc:
 	b .L_08026ccc
 	.2byte 0x0000
 .L_08026b10:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_08026b14:
 	.4byte gInput
 .L_08026b18:
@@ -775,4 +775,4 @@ Func_080267bc:
 .L_08026dc8:
 	.4byte 0xfffff000
 .L_08026dcc:
-	.4byte gPartyState
+	.4byte gAdventure

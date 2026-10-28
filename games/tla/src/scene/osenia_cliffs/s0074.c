@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u32 gData_020001b0[];
 
@@ -27,7 +27,7 @@ s32 Func_02000074(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
   Scheduler_AddOrUpdateCallback(Func_020000fc, 0x480);
   {
-    u8 *flags = (u8 *)Object_GetById(gPartyState.currentOwner) + 35;
+    u8 *flags = (u8 *)Object_GetById(gAdventure.currentOwner) + 35;
     u32 value = *flags;
     u32 bit = 32;
 

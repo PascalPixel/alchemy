@@ -5,7 +5,7 @@
 // layer 1 and flags 0x206 and 0x207 are set. Left: the native writes the blend after building both halves, with the count in r1, and tests the 352 frames against 351 where this draft compares with 352.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"
 
@@ -32,12 +32,12 @@ void Func_02000d3c(void) {
   Func_02001da0();
   Func_02001ee8(0);
   Func_02001d60();
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 0, -8);
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-  Func_02001e70(gPartyState.currentOwner, 0x4000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  ObjectMotion_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -8);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  Func_02001e70(gAdventure.currentOwner, 0x4000);
   Func_02001f10(308);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
   step = 1;
   i = 0;
 climb:
@@ -53,12 +53,12 @@ climb:
   i++;
   if (i <= 351)
     goto climb;
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   Func_02001f10(298);
   WaitFrames(1);
   Func_02001f10(125);
   FieldEvent_WaitFrames(20);
-  Object_GetById(gPartyState.currentOwner)->terrainId = 1;
+  Object_GetById(gAdventure.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);
   Func_02001da8();

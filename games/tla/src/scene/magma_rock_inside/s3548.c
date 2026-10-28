@@ -13,7 +13,7 @@ void Func_02003548(void) {
    * being shared with the script calls, which build it again after the scene
    * test (a direct call: differ 56). */
   Call1((void (*)())GameFlag_SetBit, 0x302);
-  if (gPartyState.scene == (s32)&SceneId_Ov692Room4) {
+  if (gAdventure.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 
     /* FAKEMATCH: the native loads the first script before it builds 0x302;
@@ -42,9 +42,9 @@ void Func_02003548(void) {
 }
 
 void Func_02003630(struct ObjectRuntime *arg) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   /* FAKEMATCH: the object pinned to r5 and assigned after the barrier is
-   * copied after gPartyState's address loads; as a plain parameter, 2
+   * copied after gAdventure's address loads; as a plain parameter, 2
    * instructions differ in tla-en. */
   register struct ObjectRuntime *object asm("r5");
   struct ObjectRuntime *owner;

@@ -13,7 +13,7 @@ void Func_02000954(void) {
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
     ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(32, 0);
-    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
       Func_02000814();
     } else {
       Func_02000d60(message - 1);
@@ -41,7 +41,7 @@ s32 Func_020009d0(void) {
     Object_SetModeById(29, 6);
     Object_SetModeById(30, 6);
     Object_SetModeById(31, 5);
-    if (gPartyState.entrance == 8 && GameFlag_Test(0x928) &&
+    if (gAdventure.entrance == 8 && GameFlag_Test(0x928) &&
         !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Event_StartScreenTransition();
       Func_020006a4();

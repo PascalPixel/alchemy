@@ -5,7 +5,7 @@
 // (the native keeps the Djinni in r6, the owner in r7 and the two home
 // coordinates in r9 and r8) and the order of the coordinate setup.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "flag_call.h"
 
@@ -72,7 +72,7 @@ void Func_02004e30(s32 cue);
 
 void Func_02001e34(void) {
   struct ObjectRuntime *djinni = Object_GetById(9);
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 x = (leader->x - 0x27880000) / 2 + 0x27880000;
   s32 z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
   s32 owner;
@@ -96,7 +96,7 @@ void Func_02001e34(void) {
     Party_AddActiveOwner(4);
     Party_AddActiveOwner(5);
     Party_AddActiveOwner(6);
-    owner = gPartyState.currentOwner;
+    owner = gAdventure.currentOwner;
     Func_02004bf8(1);
     Flag_Set(0x16e);
     Func_02004c20();

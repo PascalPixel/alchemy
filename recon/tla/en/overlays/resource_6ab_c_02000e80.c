@@ -48,7 +48,7 @@ s32 WaitFrames();
 extern u8 Data_02004cec[];
 extern u8 Func_02001424[];
 extern u8 MsgMarsStar09[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02000e80(void) {
   s32 v_r8, v_r7, v_r0, v_r5, v_r6, v_r11, v_r9, v_r10, t0, t7;
@@ -96,7 +96,7 @@ L_02008ea2:
   Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02008f48:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  v_r6 = ((s32)gPartyState + 0x214);
+  v_r6 = ((s32)gAdventure + 0x214);
   t18 = *(s32 *)v_r6;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, t18, 0xcccc, 0x6666);
   t20 = *(s32 *)v_r6;
@@ -183,7 +183,7 @@ L_0200905c:
   Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02009112:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
-  v_r7 = ((s32)gPartyState + 0x214);
+  v_r7 = ((s32)gAdventure + 0x214);
   t71 = *(s32 *)v_r7;
   ObjectMotion_SetSpeedParameters(t71, 0xcccc, 0x6666);
   t73 = *(s32 *)v_r7;
@@ -220,7 +220,7 @@ L_02009112:
   Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
   Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
-  t107 = FIELD_AT((s32)gPartyState, s16, 506);
+  t107 = FIELD_AT((s32)gAdventure, s16, 506);
   Call2((void (*)())Func_02004294, (t107 + 19), v_r11);
   *(u16 *)v_r11 = v_r8;
   Call2((void (*)())Func_02004404, 0x10000, 0);
@@ -231,7 +231,7 @@ L_02009112:
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   t115 = *(s32 *)v_r9;
   v_r0 = t115;
-  v_r10 = (s32)gPartyState;
+  v_r10 = (s32)gAdventure;
   if (v_r0 == 0)
     goto L_0200932e;
   FIELD_AT(v_r0, u8, 85) = 3;

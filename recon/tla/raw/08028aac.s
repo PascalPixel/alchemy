@@ -813,7 +813,7 @@ Func_08028aac:
 .L_080290e4:
 	.4byte gFrameCount
 .L_080290e8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080290ec:
 	.4byte gInput
 .L_080290f0:

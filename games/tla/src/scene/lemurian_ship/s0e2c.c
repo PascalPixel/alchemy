@@ -18,7 +18,7 @@ void Func_02000e2c(void) {
     if (column == 35) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Object_GetById(gPartyState.currentOwner);
+        leader = Object_GetById(gAdventure.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
         FieldEvent_WaitFrames(20);
@@ -28,7 +28,7 @@ void Func_02000e2c(void) {
         object->motionFlags = done;
         ObjectMotion_SetActionVariant(8, 3);
         if (object->z > leader->z)
-          ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           WaitFrames(1);
@@ -38,8 +38,8 @@ void Func_02000e2c(void) {
         FieldEvent_WaitFrames(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
-          ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-          Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+          Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
         }
         Func_02002c70();
       }
@@ -52,7 +52,7 @@ void Func_02000e2c(void) {
     if (column == 29) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Object_GetById(gPartyState.currentOwner);
+        leader = Object_GetById(gAdventure.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
         FieldEvent_WaitFrames(20);
@@ -62,7 +62,7 @@ void Func_02000e2c(void) {
         object->motionFlags = done;
         ObjectMotion_SetActionVariant(9, 3);
         if (object->z > leader->z)
-          ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           WaitFrames(1);
@@ -72,8 +72,8 @@ void Func_02000e2c(void) {
         FieldEvent_WaitFrames(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {
-          ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-          Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+          ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+          Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
         }
         Func_02002c70();
       }

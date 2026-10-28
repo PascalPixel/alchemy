@@ -2,7 +2,7 @@
 // the event delay store
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 #include "callback_scheduler.h"
 #include "text/msg_ids.h"
@@ -63,7 +63,7 @@ void Func_020001b0(void) {
 
   Func_02000568();
   Func_020005f8(0);
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   WaitFrames(1);
   gData_020007e4 = 0;
   Scheduler_AddOrUpdateCallback(Func_020000f4, 1152);

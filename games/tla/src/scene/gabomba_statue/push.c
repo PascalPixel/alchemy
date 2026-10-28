@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s32 gData_02005af0;
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -100,10 +100,10 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   Camera_SetSpeed(0x10000, 0x2000);
   Func_02005714(39, 164 << 17, 148 << 17);
   FieldEvent_WaitFrames(30);
-  Actor_Turn(gPartyState.currentOwner, 0x2000, 0);
+  Actor_Turn(gAdventure.currentOwner, 0x2000, 0);
   FieldEvent_WaitFrames(15);
-  Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 39);
-  Func_0200578c(gPartyState.currentOwner, 257, 30);
+  Object_LinkObjectAndSetCallback(gAdventure.currentOwner, 39);
+  Func_0200578c(gAdventure.currentOwner, 257, 30);
   Camera_FollowActor(39, 1);
   FieldEvent_WaitFrames(30);
   Object_GetById(39)->priorityFlags |= 0x20;
@@ -113,7 +113,7 @@ void Func_02000cf0(struct ObjectRuntime *object) {
   Actor_Walk(39, 280, 216);
   Actor_Walk(39, 280, 184);
   FieldEvent_WaitFrames(20);
-  ObjectMotion_SetAngleToward(39, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(39, gAdventure.currentOwner, 0);
   FieldEvent_WaitFrames(10);
   Func_02005854(262);
   {

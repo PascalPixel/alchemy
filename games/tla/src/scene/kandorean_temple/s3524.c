@@ -3,7 +3,7 @@
 void Func_02003524(void) {
   Func_020051c0();
   Func_02005370(0);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -20,20 +20,20 @@ void Func_02003574(void) {
 }
 
 void Func_02003584(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   u32 i;
   s32 delta;
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_020051c0();
   Func_02005370(0);
   object->motionFlags = 0;
-  ObjectMotion_SetActionVariantValue(gPartyState.currentOwner, 1);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectMotion_SetActionVariantValue(gAdventure.currentOwner, 1);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   object->angle = 0;
   {
-    s32 *owner = &gPartyState.currentOwner;
+    s32 *owner = &gAdventure.currentOwner;
     /* FAKEMATCH: the mode pinned to r1 and read by an asm is set before the
      * owner is loaded; as a plain constant, the owner's load comes first (one
      * reordered row in tla-en). */
@@ -48,9 +48,9 @@ void Func_02003584(void) {
     WaitFrames_(1);
   }
   FieldEvent_WaitFrames_(20);
-  party = &gPartyState;
+  party = &gAdventure;
   object->angle = 0x4000;
-  /* FAKEMATCH: the barrier loads the party state's address among the angle's
+  /* FAKEMATCH: the barrier loads the adventure's address among the angle's
    * stores and builds the owner's offset after them; as plain C, 4
    * instructions differ in tla-en. */
   asm volatile("" : "+l"(party));

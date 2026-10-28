@@ -240,7 +240,7 @@ Func_0200047c:
 .L_02008584:
 	.4byte 0x00000001
 .L_02008588:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200858c:
 	.4byte 0x0003ffff
 .L_02008590:
@@ -344,7 +344,7 @@ Func_0200047c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008664:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02008694,"ax",%progbits
 	.global Func_02000694
 	.thumb_func
@@ -401,7 +401,7 @@ Func_02000694:
 	bl ObjectDispatch_SetAnimationSpeed
 	b .L_0200883e
 .L_020086fc:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008700:
 	adds r0, r6, #0
 	movs r1, #16
@@ -538,7 +538,7 @@ Func_02000694:
 .L_02008810:
 	.4byte 0xffe00000
 .L_02008814:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008818:
 	.4byte IwramMulQ16
 .L_0200881c:
@@ -1389,7 +1389,7 @@ Func_02001250:
 .L_02009484:
 	.4byte IwramClearWords
 .L_02009488:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_0200948c:
 	.4byte 0x11111111
 .L_02009490:
@@ -1480,7 +1480,7 @@ Func_0200158c:
 .L_02009638:
 	.4byte 0x00008000
 .L_0200963c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009640:
 	movs r3, #1
 	mov r1, r8
@@ -1546,7 +1546,7 @@ Func_0200158c:
 .L_020096c4:
 	.4byte 0xffff6667
 .L_020096c8:
-	.4byte gPartyState
+	.4byte gAdventure
 	.section .text.x02009722,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009724,"ax",%progbits
@@ -1724,7 +1724,7 @@ Func_02001724:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020098a8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020098ac:
 	.4byte Effect_AdvanceMotion
 .L_020098b0:
@@ -1820,7 +1820,7 @@ Func_020018bc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009964:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009968:
 	.4byte gData_02002530
 	.section .bss,"aw",%nobits

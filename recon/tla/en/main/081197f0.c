@@ -62,14 +62,14 @@ struct EncounterWork {
   u8 unk866[0x16];
 };
 
-struct PartyStateView {
+struct AdventureView {
   u8 unk000[0x20e];
   s16 sceneCue;
   u8 unk210[0x3b];
   u8 battleStart;
 };
 
-extern struct PartyStateView gPartyState;
+extern struct AdventureView gAdventure;
 extern s32 gBattleRandomSeed;
 extern volatile u16 gLinkStatus;
 extern u8 gCpuLoadDisplayEnabled;
@@ -210,7 +210,7 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
-    gPartyState.battleStart = 4;
+    gAdventure.battleStart = 4;
   }
   if (battle->twoSided != 0) {
     gBattleRandomSeed = 0;
@@ -234,7 +234,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   }
   Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0x47f);
 
-  cue = gPartyState.sceneCue;
+  cue = gAdventure.sceneCue;
   if (cue != 0) {
     Audio_PlayCue(cue);
     if (GameFlag_Test(0x16c) != 0) {
@@ -270,12 +270,12 @@ s32 Func_081197f0(s32 enemyGroup) {
   battle->encounterMode = 0;
   if (GameFlag_Test(0x16e) != 0) {
     battle->encounterMode = 1;
-  } else if (gPartyState.battleStart == 0) {
+  } else if (gAdventure.battleStart == 0) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = 1;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
-  } else if (gPartyState.battleStart == 6) {
+  } else if (gAdventure.battleStart == 6) {
     battle->encounterMode = 2;
   }
   Func_08125d74(enemyCount, enemyGroup);
@@ -469,7 +469,7 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Func_08124cc0();
   DjinnRecovery_CountDown();
-  gPartyState.battleStart = 0;
+  gAdventure.battleStart = 0;
   Scheduler_RemoveCallback(Func_0811b9fc);
   Func_081263f0();
   return result;

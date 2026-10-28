@@ -229,7 +229,7 @@ Func_020000b8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008270:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02008274:
 	.4byte gData_020022d8
 .L_02008278:
@@ -636,7 +636,7 @@ Func_02000fd0:
 .L_020091ac:
 	.4byte 0xfffe0000
 .L_020091b0:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_020091b4:
 	.4byte 0x00026666
 .L_020091b8:
@@ -1024,7 +1024,7 @@ Func_02001770:
 	bne .L_02009874
 	b .L_02009a0a
 .L_02009830:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009834:
 	.4byte 0xfff00000
 .L_02009838:
@@ -1314,7 +1314,7 @@ Func_02001a1c:
 .L_ja_02009a10:
 	.4byte 0x00000000
 .L_ja_02009a14:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_ja_02009a18:
 	.4byte gData_02002ce8
 .L_ja_02009a1c:
@@ -1689,7 +1689,7 @@ Func_02001a1c:
 .L_02009a78:
 	.4byte 0x00000000
 .L_02009a7c:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009a80:
 	.4byte gData_02002ce8
 .L_02009a84:
@@ -2090,7 +2090,7 @@ Func_02001d3c:
 .L_02009da4:
 	.4byte 0xffffc000
 .L_02009da8:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_02009dac:
 	.4byte 0xfff00000
 .L_02009db0:

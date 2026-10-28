@@ -8,7 +8,7 @@ void Func_02001bec(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_WaitFrames(20);
-  Object_SetModeById(gPartyState.currentOwner, 28);
+  Object_SetModeById(gAdventure.currentOwner, 28);
   object = Func_02001b70();
   PartyInventory_GiveItem(209, 0);
   if (object != 0) {
@@ -16,7 +16,7 @@ void Func_02001bec(void) {
     WaitFrames(1);
     Func_02003fc8(object);
   }
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   GameFlag_SetBit(0x88c);
   Func_02004048();
 }

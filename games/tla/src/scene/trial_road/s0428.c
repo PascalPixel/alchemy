@@ -8,13 +8,13 @@ void TrialRoad_Idle(void);
 s32 Func_020000fc(s32 value);
 
 void Func_02000428(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
 
   Func_02005880();
   Func_020059e8(0);
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner,
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner,
                                    ((leader->x >> 20) << 4) + 8,
                                    ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();

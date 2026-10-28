@@ -1,5 +1,5 @@
 // Draft, differ 2 of 161 under -mthumb-slow-loads: the compiler issues
-// gPartyState's load (ldr r5) before lsls r2, r2, #1 and the add into the event
+// gAdventure's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them, as in its twin, overlay 65e's
 // Func_02000340. Adopted in 3c40e77e72, when it matched without the option;
 // back on the listing since.
@@ -7,7 +7,7 @@
 #include "field_scene.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -78,9 +78,9 @@ s32 Func_02000624(void) {
   void *event;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   Func_02001e80(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!FlagCheck(0x821)) {
@@ -95,9 +95,9 @@ s32 Func_02000624(void) {
       Func_02001d20(2, 46, 16, 10, 16, 0);
     }
   }
-  if (gPartyState.entrance == 20)
+  if (gAdventure.entrance == 20)
     Func_02000570();
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room2) {
+  if (gAdventure.scene == (s32)&SceneId_Ov659Room2) {
     if (FlagCheck(0x8ab)) {
       ActorPlace(10, 0, 0);
     } else {

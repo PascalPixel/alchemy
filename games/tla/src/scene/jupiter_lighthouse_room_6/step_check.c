@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern s32 gData_020023c0;
 extern s16 gData_0200242a;
@@ -21,11 +21,11 @@ void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value) {
-  if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
+  if (Object_GetById(gAdventure.currentOwner)->y == 0 && Func_020018bc(value))
     Func_02001ba4(13);
 }
 
 void Func_02000084(s32 value) {
-  if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
+  if (Object_GetById(gAdventure.currentOwner)->y == 0 && Func_020018bc(value))
     Func_02001ba4(14);
 }

@@ -4,7 +4,7 @@
 // first; the swap stays.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov676Room1;
 

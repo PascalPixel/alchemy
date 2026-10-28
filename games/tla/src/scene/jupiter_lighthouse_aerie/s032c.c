@@ -7,7 +7,7 @@
 // if around a do-while.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -47,7 +47,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+      ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(66, 39, 1, 1, 70, 10);
@@ -80,7 +80,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+      ObjectMotion_EnableActionAndResetMotion(gAdventure.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(68, 39, 1, 1, 121, 10);

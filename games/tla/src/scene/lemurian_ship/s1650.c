@@ -17,14 +17,14 @@ void Func_02001650(void) {
   LemurianShip_SePlay(78);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  LemurianShip_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-  LemurianShip_ObjWalk(gPartyState.currentOwner, 808, 208);
+  LemurianShip_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+  LemurianShip_ObjWalk(gAdventure.currentOwner, 808, 208);
   LemurianShip_CamSpeed(0xcccc, 0x1999);
   LemurianShip_CamMove(0x3280000, -1, 0xb00000, 1);
-  Func_02002cd8(7, gPartyState.currentOwner);
-  Func_02002cd8(6, gPartyState.currentOwner);
-  Func_02002cd8(5, gPartyState.currentOwner);
-  Func_02002cd8(8, gPartyState.currentOwner);
+  Func_02002cd8(7, gAdventure.currentOwner);
+  Func_02002cd8(6, gAdventure.currentOwner);
+  Func_02002cd8(5, gAdventure.currentOwner);
+  Func_02002cd8(8, gAdventure.currentOwner);
   LemurianShip_WaitFrames(1);
   LemurianShip_ObjSpeed(7, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
@@ -40,7 +40,7 @@ void Func_02001650(void) {
   LemurianShip_MessagePut(7, 0);
   Object_SetModeById(7, 3);
   LemurianShip_MessagePut(7, 0);
-  Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
   LemurianShip_ObjWalk(7, 808, 148);
   Motion_SetVarCbAndRefresh(7, 2);
   ObjectMotion_SetActionVariant(7, 1);
@@ -53,7 +53,7 @@ void Func_02001650(void) {
   LemurianShip_SePlay(251);
   LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
   LemurianShip_CamMove(0x3280000, -1, 0x1c00000, 0);
-  LemurianShip_ObjPlace(gPartyState.currentOwner, 0x3280000, 0x1e00000);
+  LemurianShip_ObjPlace(gAdventure.currentOwner, 0x3280000, 0x1e00000);
   LemurianShip_ObjPlace(7, 0x3280000, 0x1a40000);
   LemurianShip_ObjPlace(6, 0x3100000, 0x1d40000);
   LemurianShip_ObjPlace(5, 0x3400000, 0x1d40000);
@@ -83,6 +83,6 @@ void Func_02001650(void) {
   GameFlag_SetBit(0x93e);
   GameFlag_SetBit(0x932);
   GameFlag_SetBit(0x93f);
-  gPartyState.ownerOverride = 1;
+  gAdventure.ownerOverride = 1;
   Func_02002d70(90);
 }

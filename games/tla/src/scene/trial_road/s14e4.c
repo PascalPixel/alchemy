@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "frame.h"
 #include "field_effect.h"
 
@@ -13,11 +13,11 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 void Func_020014e4(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct EffectOptions options;
   s32 velocity[3];
 
-  if (gPartyState.renderMode == 4)
+  if (gAdventure.renderMode == 4)
     return;
   leader->z += 0x10000;
   if ((gFrameCount & 7) != 0)

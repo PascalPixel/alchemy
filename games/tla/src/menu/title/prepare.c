@@ -7,7 +7,7 @@
 #include "vram_tab.h"
 #include "input.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 struct TitleSprite {
@@ -51,8 +51,8 @@ s32 Func_0200005c(void) {
   s32 wait;
   s32 limit;
 
-  if (gPartyState.entrance == 10) {
-    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+  if (gAdventure.entrance == 10) {
+    Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
     Func_02000644(75);
     Func_0200031c(0);
     WaitFrames(120);
@@ -77,7 +77,7 @@ s32 Func_0200005c(void) {
     Func_02000604((s32)&SceneId_Title, 2);
     return 0;
   }
-  if (gPartyState.entrance == 8) {
+  if (gAdventure.entrance == 8) {
     Func_02000644(68);
     Func_0200061c(1);
     Func_02000644(78);
@@ -89,7 +89,7 @@ s32 Func_0200005c(void) {
     return 0;
   }
   Func_020005bc((s32)&ResourceId_FarCall00B);
-  if (gPartyState.entrance == 1) {
+  if (gAdventure.entrance == 1) {
     for (;;) {
       Func_02000644(0);
       Func_0200062c(0);
@@ -122,10 +122,10 @@ s32 Func_0200005c(void) {
     }
     Func_02000604((s32)&SceneId_Ov64a, 1);
   } else {
-    if (gPartyState.entrance == 2) {
+    if (gAdventure.entrance == 2) {
       Func_02000644(40);
       Func_0200063c(0);
-      Func_020005dc(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+      Func_020005dc(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
       Func_020005e4();
       Func_02000604((s32)&SceneId_VenusLighthouse, 99);
     }
@@ -133,10 +133,10 @@ s32 Func_0200005c(void) {
      * for the third test on both paths; as plain C, 74 instructions differ in
      * tla-en. */
     __asm__ volatile("" : : : "memory");
-    if (gPartyState.entrance == 3) {
+    if (gAdventure.entrance == 3) {
       Func_02000644(75);
       Func_02000624(0);
-      Func_020005dc(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+      Func_020005dc(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
       Func_020005ec();
       Func_02000604((s32)&SceneId_Ov650, 13);
     }

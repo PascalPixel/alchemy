@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
@@ -47,12 +47,12 @@ void Func_0200225c(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gPartyState.currentOwner);
+  Func_02004ec4(12, gAdventure.currentOwner);
   Call3(ObjectMotion_ResetAndSetPosition, 12, 528, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
   WaitFrames(30);
@@ -87,7 +87,7 @@ void Func_0200225c(void) {
     Func_02005014(564);
     Object_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -111,7 +111,7 @@ void Func_0200225c(void) {
     FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -135,12 +135,12 @@ void Func_020024b8(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gPartyState.currentOwner);
+  Func_02004ec4(12, gAdventure.currentOwner);
   Call3(ObjectMotion_ResetAndSetPosition, 12, 672, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(9, gAdventure.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(9, 5);
   WaitFrames(30);
@@ -175,7 +175,7 @@ void Func_020024b8(void) {
     Func_02005014(564);
     Object_SetModeById(9, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -199,7 +199,7 @@ void Func_020024b8(void) {
     FieldEvent_WaitFrames(30);
     Object_SetModeById(9, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -223,12 +223,12 @@ void Func_02002718(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(14, gPartyState.currentOwner);
+  Func_02004ec4(14, gAdventure.currentOwner);
   Call3(ObjectMotion_ResetAndSetPosition, 14, 336, 396);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(14);
   FieldEvent_WaitFrames(45);
-  ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
+  ObjectMotion_SetAngleToward(8, gAdventure.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
   WaitFrames(30);
@@ -263,7 +263,7 @@ void Func_02002718(void) {
     Func_02005014(564);
     Object_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -287,7 +287,7 @@ void Func_02002718(void) {
     FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
     FieldEvent_WaitFrames(30);
-    leader = Object_GetById(gPartyState.currentOwner);
+    leader = Object_GetById(gAdventure.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));

@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -34,9 +34,9 @@ void Func_020046a4(const u16 *table) {
   s32 shape;
   s32 height;
 
-  Func_020058f0(8, gPartyState.currentOwner);
-  Func_020058f0(9, gPartyState.currentOwner);
-  Func_020058f0(10, gPartyState.currentOwner);
+  Func_020058f0(8, gAdventure.currentOwner);
+  Func_020058f0(9, gAdventure.currentOwner);
+  Func_020058f0(10, gAdventure.currentOwner);
   Task_Wait(1);
   Func_0200468c(8);
   Func_0200468c(9);

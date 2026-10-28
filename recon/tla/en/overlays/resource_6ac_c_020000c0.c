@@ -15,7 +15,7 @@ extern u8 gData_020036c4[];
 extern u8 gData_0200393c[];
 extern u8 gData_0200397c[];
 extern u8 gIoWriteQueue[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_020000c0(void) {
   s32 v_r2, v_r11, v_r10, v_r7, v_r0, v_r9, v_r8, v_r5, v_r6, v_r4;
@@ -23,7 +23,7 @@ void Func_020000c0(void) {
   s32 t13, t14, t15, t16, t17, t18, t19, t20, t21, t22;
   s32 t23, t24, t25;
 
-  t0 = FIELD_AT((s32)gPartyState, s16, 482);
+  t0 = FIELD_AT((s32)gAdventure, s16, 482);
   t1 = FIELD_AT(0x3000000, s32, 108);
   t2 = FIELD_AT(t1, s16, 358);
   v_r11 = t0;

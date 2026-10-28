@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern char SceneId_Ov6B0Room4;
@@ -25,12 +25,12 @@ void Func_020034b8(s32 cue);
 /// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
 /// transition finishes.
 void Func_02001518(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *object;
 
   Func_02003398();
   Func_02003488(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov6B0Room4) {
+  if (gAdventure.scene == (s32)&SceneId_Ov6B0Room4) {
     object = Object_GetById(8);
     Func_02003450(13);
   } else {
@@ -41,9 +41,9 @@ void Func_02001518(void) {
     s32 x = ((leader->x >> 20) << 4) + 8;
     s32 z = ((leader->z >> 20) << 4) + 8;
 
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, x, z);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, x, z);
   }
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 10);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 10);
   FieldEvent_WaitFrames(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;

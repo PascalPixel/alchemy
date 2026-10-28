@@ -73,9 +73,9 @@ s32 Func_02003678(void) {
   s32 i;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov692Room1) {
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02000800(8, gData_02005074, 768);
     if (!GameFlag_Test(768)) {
       CLOSED_BLEND();
@@ -90,7 +90,7 @@ s32 Func_02003678(void) {
       Object_GetById(15)->z = 132 << 17;
     Func_02004ed8(gData_020054fc);
     Func_02000880(gData_02005500);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Raise(16);
     if (GameFlag_Test(768))
       Func_020034bc();
@@ -104,7 +104,7 @@ s32 Func_02003678(void) {
     Func_02004ec0();
     Func_02004ec8(0, 13, 14);
     Func_02000880(gData_02005500);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Raise(9);
     Func_02000800(10, gData_020050d4, 769);
     Func_02000800(12, gData_02005134, 769);
@@ -114,9 +114,9 @@ s32 Func_02003678(void) {
       CLOSED_BLEND();
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     Func_02004e60(0);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02000880(gData_0200550c);
-    if (gPartyState.entrance <= 7) {
+    if (gAdventure.entrance <= 7) {
       Func_02000800(10, gData_0200519c, 769);
       Func_02000800(12, gData_020051fc, 769);
       if (GameFlag_Test(769)) {
@@ -157,7 +157,7 @@ s32 Func_02003678(void) {
     }
   } else if (scene == (s32)&SceneId_Ov692Room5) {
     Func_02004e60(0);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     Func_02004f08(10, 1);
     Func_02004f08(11, 1);
     Raise(8);
@@ -171,7 +171,7 @@ s32 Func_02003678(void) {
     }
   } else if (scene == (s32)&SceneId_Ov692Room6) {
     Func_02004e60(0);
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
     if (GameFlag_Test(2549)) {
       Func_02004ce8(46, 74, 1, 1, 46, 73);
       Object_GetById(9)->x = 190 << 18;

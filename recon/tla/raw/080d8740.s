@@ -254,6 +254,6 @@ Func_080d8740:
 .L_080d8970:
 	.4byte ObjectMotion_MoveHalfwayTowardTargetCopy
 .L_080d8974:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d8978:
 	.4byte Func_080d85b8

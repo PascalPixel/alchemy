@@ -3,7 +3,7 @@
 // pages of 50 and its check before the clear data is loaded. Left: register
 // choice and the frame throughout.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "iwram_call.h"
 #include "dma.h"
 
@@ -103,7 +103,7 @@ s32 Func_02000e44(void) {
   u16 *palette = (u16 *)0x050001c0;
 
   Func_02002208();
-  Func_02002310(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
+  Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
   palette[4] = 0x6318;
@@ -288,7 +288,7 @@ s32 Func_02000e44(void) {
             while (!(gInput[1] & 1));
             Func_02002408(112);
             Func_02002350();
-            gPartyState.currentOwner = 0;
+            gAdventure.currentOwner = 0;
             Party_RemoveActiveOwner(4);
             Party_RemoveActiveOwner(5);
             Party_RemoveActiveOwner(6);
@@ -301,8 +301,8 @@ s32 Func_02000e44(void) {
             UiWork_Finalize(box, 2);
             UiWork_Finalize(grid, 2);
             UiWork_Finalize(window, 2);
-            Func_02002310(gPartyState.paletteGlow[0],
-                          gPartyState.paletteGlow[1]);
+            Func_02002310(gAdventure.paletteGlow[0],
+                          gAdventure.paletteGlow[1]);
             Func_02002408(74);
             WaitFrames(6);
             Func_020022f8(0);

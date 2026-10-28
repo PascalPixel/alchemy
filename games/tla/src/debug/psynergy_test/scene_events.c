@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern u8 gData_020017b0[];
 extern u8 gData_02001860[];
@@ -27,10 +27,10 @@ void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 
 void Func_02000660(void) {
-  struct PartyState *party;
+  struct Adventure *party;
 
   Func_02000f14(249, 40, 168);
-  party = &gPartyState;
+  party = &gAdventure;
   /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset.
    */
   __asm__ volatile("" : "+l"(party));
@@ -77,10 +77,10 @@ void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
   Func_02000c4c(Object_GetById(actor), gData_02001860);
-  Func_02000c4c(Object_GetById(gPartyState.currentOwner), gData_020017b0);
+  Func_02000c4c(Object_GetById(gAdventure.currentOwner), gData_020017b0);
   WaitFrames(100);
   Func_02000d4c(Object_GetById(actor));
-  Func_02000d4c(Object_GetById(gPartyState.currentOwner));
+  Func_02000d4c(Object_GetById(gAdventure.currentOwner));
 }
 
 const struct SceneEvent *Scene_GetEvents(void) { return gSceneEvents; }

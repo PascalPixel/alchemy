@@ -19,7 +19,7 @@ s32 Object_GetById();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_0200101c();
 extern u8 MsgIAmTheGuardian[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_02000a8c(void) {
   s32 t12;
@@ -36,13 +36,13 @@ void Func_02000a8c(void) {
   Call2(Func_02001034, 0x10000, 0);
   Call1(Func_02001044, 0x3c);
   Call1(FieldEvent_WaitFrames, 0x3c);
-  t12 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+  t12 = Value1(Object_GetById, FIELD_AT(gAdventure, s32, 532));
   if (t12 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
   Call1(FieldEvent_WaitFrames, 0x14);
-  FIELD_AT(gPartyState, u16, 596) = 0x19bb;
-  FIELD_AT(gPartyState, u8, 587) = 2;
+  FIELD_AT(gAdventure, u16, 596) = 0x19bb;
+  FIELD_AT(gAdventure, u8, 587) = 2;
   Call2(Func_0200101c, 0x67, 0);
 }

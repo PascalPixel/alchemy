@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "event_work.h"
 #include "call.h"
 
@@ -21,7 +21,7 @@ s32 Func_02000104(void) {
   work->screenEffect = 256;
   ((struct EventFlags *)work)->unkd37 = 0;
   ((struct EventFlags *)work)->unkd36 = 0;
-  gPartyState.eventMode = 2;
+  gAdventure.eventMode = 2;
   Func_020005e0();
   Value3((s32 (*)())Func_020005e8, 0, 10, 11);
   Object_SetModeById(9, 4);

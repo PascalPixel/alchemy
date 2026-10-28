@@ -89,13 +89,13 @@ void Func_02000df8(void) {
 }
 
 const u8 *Func_02000e04(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom4)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006b98;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom2)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom2)
     return gData_02006f64;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom1)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom1)
     return gData_02006d78;
-  if (gPartyState.scene == (s32)&SceneId_Ov6adRoom3)
+  if (gAdventure.scene == (s32)&SceneId_Ov6adRoom3)
     return gData_02006e38;
   return gData_02006b8c;
 }

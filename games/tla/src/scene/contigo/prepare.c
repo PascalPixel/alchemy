@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 struct SpriteAttributes {
@@ -17,7 +17,7 @@ void Func_020039d4(void);
 void Func_02003a8c(void);
 
 s32 Func_02003698(void) {
-  s32 scene = gPartyState.scene;
+  s32 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
     Func_02003720();
@@ -34,7 +34,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_020036f0(void) {
   if (Object_GetById(65) != 0) {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *owner = Object_GetById(gAdventure.currentOwner);
 
     ObjectMotion_SetActionVariant(
         65, ((struct SpriteAttributes *)owner->animation)->priority);

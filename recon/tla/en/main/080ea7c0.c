@@ -19,7 +19,7 @@
 // the same list, and the leader is lifted onto the terrain if below it.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ActorFlag {
@@ -72,7 +72,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
     }
   }
   Func_080eaa14(list);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

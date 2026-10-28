@@ -24,11 +24,11 @@ void Func_020003ac(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_02000a00((s32)MsgWaahhhItS);
-  ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 472, 320);
+  ObjectMotion_ResetAndSetPositionInMode2(gAdventure.currentOwner, 472, 320);
   Camera_MoveWithinMapBounds(0x1c80000, -1, 0x1180000, 1);
   Func_02000a30();
-  ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xa000, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(gAdventure.currentOwner);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xa000, 0);
   FieldEvent_WaitFrames(10);
   ObjectMotion_Launch(8, 6, 20);
   FieldEvent_WaitFrames(20);
@@ -49,7 +49,7 @@ void Func_020003ac(void) {
   ObjectMotion_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gPartyState.battleRule24b = 2;
+  gAdventure.battleRule24b = 2;
   Func_02000a40(9, 1);
   Func_02000990();
 }

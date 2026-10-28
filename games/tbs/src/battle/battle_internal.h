@@ -48,7 +48,7 @@
 #include "tbs_edition.h"
 #include "serial_runtime.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_command.h"
 #include "resource.h"
 #include "heap.h"

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02000f10[];
 extern const u8 gData_02000ebc[];
@@ -16,7 +16,7 @@ void Func_020006a4(void);
 void Func_020006ac(void);
 
 const u8 *Func_02000138(void) {
-  if (gPartyState.entrance > 94)
+  if (gAdventure.entrance > 94)
     return gData_02000f10;
   return gData_02000ebc;
 }

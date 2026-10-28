@@ -8,7 +8,7 @@
 // Func_02001690) and the rooms' scenes by entrance (Ov664Room1's entrance
 // 11 runs Func_0200505c before flag 265, entrance 16 drops the leader in;
 // Ov664Room2's entrance 3 Func_02004cc8). Returns 0.
-// Left: the native saves only r5 and r6 and reloads gPartyState from the pool
+// Left: the native saves only r5 and r6 and reloads gAdventure from the pool
 // for each later entrance test in Ov664Room1, where the draft keeps it in r5
 // across the calls (saving r7 and r8 too) and shares the tests' loads; the rest
 // is branch offsets.
@@ -16,7 +16,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
@@ -62,24 +62,24 @@ s32 Func_020051f8(void) {
   s32 i, z;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
   GameFlag_SetBit(0x300);
   GameFlag_SetBit(0x89f);
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room1) {
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room1) {
     Func_02002770();
-    if (gPartyState.entrance == 16 && !GameFlag_Test(265)) {
-      Object_GetById(gPartyState.currentOwner)->terrainId = 1;
+    if (gAdventure.entrance == 16 && !GameFlag_Test(265)) {
+      Object_GetById(gAdventure.currentOwner)->terrainId = 1;
       WaitFrames(8);
       Func_02005d84();
       WaitFrames(1);
     }
-    if (gPartyState.entrance <= 11 || gPartyState.entrance == 16) {
+    if (gAdventure.entrance <= 11 || gAdventure.entrance == 16) {
       Scheduler_AddOrUpdateCallback(Func_02004f3c, 0x480);
       REG_BLDALPHA = 0x1008;
       REG_BLDCNT = 0x3f10;
       Func_02004eb0();
     }
-    if (gPartyState.entrance > 13) {
+    if (gAdventure.entrance > 13) {
       if (GameFlag_Test(0xa8e))
         Call3(Func_02005e6c, 12, 0x3380000, 0x1480000);
       Func_02005f6c(gData_02006050);
@@ -107,9 +107,9 @@ s32 Func_020051f8(void) {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
-    if (gPartyState.entrance == 11 && !GameFlag_Test(265))
+    if (gAdventure.entrance == 11 && !GameFlag_Test(265))
       Func_0200505c();
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room2) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     Func_02002770();
@@ -126,9 +126,9 @@ s32 Func_020051f8(void) {
       Call6(Func_02005d9c, 68, 84, 12, 77, 3, 6);
     }
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
-    if (gPartyState.entrance == 3 && !GameFlag_Test(265))
+    if (gAdventure.entrance == 3 && !GameFlag_Test(265))
       Func_02004cc8();
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room3) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
     Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
@@ -156,7 +156,7 @@ s32 Func_020051f8(void) {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room4) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room4) {
     Func_02005f54();
     Call3(Func_02005f5c, 0, 11, 12);
     Call3(Func_02005f5c, 1, 13, 14);
@@ -184,7 +184,7 @@ s32 Func_020051f8(void) {
     if (GameFlag_Test(0x89e))
       Call3(Func_02005e6c, 9, 0x2880000, 0x1280000);
     Func_02005f6c(gData_02006064);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room5) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room5) {
     GameFlag_SetBit(324);
     Func_02002770();
     for (i = 0; i != 6; i++) {
@@ -199,7 +199,7 @@ s32 Func_020051f8(void) {
     Object_GetById(8)->terrainHeight = 0x100000;
     object->y = 0x100000;
     Object_SetActionCallback(Object_GetById(8), 9);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room6) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room6) {
     Func_02002770();
     Func_02005f54();
     Call3(Func_02005f5c, 0, 11, 12);
@@ -225,7 +225,7 @@ s32 Func_020051f8(void) {
       Object_GetById(8)->terrainHeight = 0xffe00000;
       Call6(Func_02005dac, 19, 0x10, 1, 1, 19, 18);
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room7) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room7) {
     Func_02002770();
     ((u8 *)Object_GetById(12))[98] = 1;
     ((u8 *)Object_GetById(13))[98] = 1;
@@ -249,7 +249,7 @@ s32 Func_020051f8(void) {
       Call6(Func_02005dac, 38, 98, 1, 1, 38, 99);
       Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
     Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
@@ -271,7 +271,7 @@ s32 Func_020051f8(void) {
     else
       Func_02001084(Object_GetById(11), 8, 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
-  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room9) {
+  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room9) {
     Func_02002770();
     if (GameFlag_Test(0x8d3))
       Call3(Func_02005e6c, 9, 0x1680000, 0x1080000);

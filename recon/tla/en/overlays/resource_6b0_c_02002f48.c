@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_effect.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -37,7 +37,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 }
 
 void Func_02002f48(void) {
-  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
    * plain local, 22 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
@@ -79,15 +79,15 @@ void Func_02002f48(void) {
     i++;
   } while (i <= 16);
   Func_020034b8(188);
-  Func_02003410(gPartyState.currentOwner, 0x101);
-  Object_SetModeById(gPartyState.currentOwner, 49);
+  Func_02003410(gAdventure.currentOwner, 0x101);
+  Object_SetModeById(gAdventure.currentOwner, 49);
   SetWorkTriple(0x50000, 0x50000, 0x10000);
   SetWorkTriple(-1, -1, 0xe666);
   Func_02003370();
-  Func_02003410(gPartyState.currentOwner, 0x100);
+  Func_02003410(gAdventure.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_WaitFrames(10);
-  Object_SetModeById(gPartyState.currentOwner, 1);
+  Object_SetModeById(gAdventure.currentOwner, 1);
   Func_020033a0();
 }

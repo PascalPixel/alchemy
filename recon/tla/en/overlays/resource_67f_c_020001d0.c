@@ -6,7 +6,7 @@
 // overlay 691's Func_02002d08 (differ 94 of 130).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 
@@ -56,7 +56,7 @@ void Func_020001d0(u16 *list) {
       list += 2;
     } while (list[0] != 0xffff);
   }
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

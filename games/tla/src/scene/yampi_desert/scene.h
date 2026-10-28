@@ -2,7 +2,7 @@
 #define TLA_YAMPI_DESERT_SCENE_H
 
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "scene_ids.h"

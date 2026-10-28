@@ -67,4 +67,4 @@ Func_080b11f8:
 .L_080b1274:
 	.4byte gData_020023c4
 .L_080b1278:
-	.4byte gPartyState
+	.4byte gAdventure

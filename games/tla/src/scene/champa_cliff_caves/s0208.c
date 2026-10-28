@@ -25,8 +25,8 @@ void Func_02000208(void) {
   s32 msg;
 
   warp = &gData_02003d10;
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 168, 424);
-  Func_02003534(gPartyState.currentOwner, 0);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 168, 424);
+  Func_02003534(gAdventure.currentOwner, 0);
   Func_0200362c(158);
   Func_02003414(warp->scene, warp->x, warp->z);
   Object_GetById(8)->motionFlags = 0;

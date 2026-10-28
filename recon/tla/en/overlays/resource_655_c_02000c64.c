@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -95,7 +95,7 @@ void Func_02000c64(u16 *list) {
     list++;
     *shapes = shape;
   }
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

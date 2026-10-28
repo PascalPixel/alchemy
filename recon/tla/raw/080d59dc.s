@@ -90,7 +90,7 @@ Func_080d59dc:
 .L_080d5a90:
 	.4byte 0x00000000
 .L_080d5a94:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080d5a98:
 	pop {r3}
 	mov r8, r3

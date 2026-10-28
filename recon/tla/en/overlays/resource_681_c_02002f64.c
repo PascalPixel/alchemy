@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -211,8 +211,8 @@ L_0200c0d2:
 L_0200c0f8:
   r1 = 0x1e2;
   r2 = 0;
-  r3 = FIELD_AT((s32)(s32)&gPartyState, s16, 482);
-  if ((FIELD_AT((s32)(s32)&gPartyState, s16, 482)) == 3)
+  r3 = FIELD_AT((s32)(s32)&gAdventure, s16, 482);
+  if ((FIELD_AT((s32)(s32)&gAdventure, s16, 482)) == 3)
     goto L_0200c10a;
   goto L_0200c24c;
 L_0200c10a:

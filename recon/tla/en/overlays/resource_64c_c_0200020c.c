@@ -9,7 +9,7 @@
 #include "io_write_queue.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 #include "bg_scroll.h"
@@ -89,7 +89,7 @@ void Func_0200020c(s32 stage) {
   MAP_WORD(map, 0x11c) = 0xd000;
   Iwram_ClearWords((void *)0x050001c0, 32);
   WaitFrames(1);
-  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  Object_GetById(gAdventure.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds(gData_02003d34[stage][0] << 16, -1,

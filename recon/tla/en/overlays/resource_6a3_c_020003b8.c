@@ -47,7 +47,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
 }
 
 void Func_020003b8(s32 unused, s32 id) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *object = Object_GetById(id);
   s32 x;
   s32 i;
@@ -71,39 +71,39 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_0200494c(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x10000, 0x8000);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x10000, 0x8000);
     x = leader->x >> 20;
     if (x == 64) {
-      ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1032, 232);
-      ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1000, 232);
+      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1032, 232);
+      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
     } else if (x == 63) {
-      ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1000, 232);
+      ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
     }
-    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1000, 248);
-    Func_020048b4_(gPartyState.currentOwner, 0);
+    ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 1000, 248);
+    Func_020048b4_(gAdventure.currentOwner, 0);
     Func_02004924(0x10000, 0);
     Func_0200491c(0x10003, 0);
     Func_0200492c(60);
     FieldEvent_WaitFrames(50);
-    Func_020048b4_(gPartyState.currentOwner, 0x6000);
+    Func_020048b4_(gAdventure.currentOwner, 0x6000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4_(gPartyState.currentOwner, 0x2000);
+    Func_020048b4_(gAdventure.currentOwner, 0x2000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4_(gPartyState.currentOwner, 0x6000);
+    Func_020048b4_(gAdventure.currentOwner, 0x6000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4_(gPartyState.currentOwner, 0x2000);
+    Func_020048b4_(gAdventure.currentOwner, 0x2000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4_(gPartyState.currentOwner, 0x4000);
+    Func_020048b4_(gAdventure.currentOwner, 0x4000);
     FieldEvent_WaitFrames(20);
-    Func_020048cc(gPartyState.currentOwner, 257, 50);
-    Func_020048b4_(gPartyState.currentOwner, 0);
+    Func_020048cc(gAdventure.currentOwner, 257, 50);
+    Func_020048b4_(gAdventure.currentOwner, 0);
     FieldEvent_WaitFrames(20);
-    Object_SetModeById(gPartyState.currentOwner, 22);
+    Object_SetModeById(gAdventure.currentOwner, 22);
     FieldEvent_WaitFrames(40);
     Func_02002efc(0);
     Func_020000c4();
-    Object_SetModeById(gPartyState.currentOwner, 1);
-    Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
+    Object_SetModeById(gAdventure.currentOwner, 1);
+    Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
     ObjectMotion_SetVariantCallback(4, 3);
     Func_020048d4(4, 258);
     FieldEvent_WaitFrames(40);

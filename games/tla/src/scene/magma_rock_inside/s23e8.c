@@ -21,11 +21,11 @@ void Func_020023e8(void) {
   FieldEvent_WaitFrames(8);
   Func_02004cd8(75, 67, 15, 19, width, height);
   FieldEvent_WaitFrames(15);
-  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
-  Object_GetById(gPartyState.currentOwner)->speedLimit =
-      Object_GetById(gPartyState.currentOwner)->acceleration = 0x8000;
+  Object_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Object_GetById(gAdventure.currentOwner)->speedLimit =
+      Object_GetById(gAdventure.currentOwner)->acceleration = 0x8000;
   Func_02004f30(123);
-  ObjectMotion_ResetAndSetPositionInMode2_(gPartyState.currentOwner, 248, 328);
+  ObjectMotion_ResetAndSetPositionInMode2_(gAdventure.currentOwner, 248, 328);
   FieldEvent_WaitFrames(5);
   Func_02004e28(1);
   Func_02004d48();

@@ -7,7 +7,7 @@
 // to 513. Left: the native mixes the call layer (each -1 and the emote's arguments built at the call) with direct calls that share 0, 0xcccc, 0x19999 and 0x5000 in high registers; registers differ from the start (the leader in r7, the guide in r11).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "edition.h"
 
@@ -56,7 +56,7 @@ void Func_02003f7c(s32 countdown);
 void GameFlag_SetBit(s32 flag);
 
 void Func_0200129c(struct ObjectRuntime *gift) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *guide = Object_GetById(9);
   struct ActionScript script = gData_02004004;
 
@@ -86,15 +86,15 @@ void Func_0200129c(struct ObjectRuntime *gift) {
   PartyInventory_Remove(455);
   Func_02003f2c(9, 0);
   Runtime_AllocateBlock(88, 664)[661] = 99;
-  Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
+  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
   leader->update = Func_02000df8;
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 312, 446);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 312, 446);
   leader->update = 0;
-  ObjectMotion_Launch(gPartyState.currentOwner, 6, 0);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 296, 452);
+  ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 296, 452);
   leader->update = Func_02001278;
-  Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+  Object_SetPartAttribute(Object_GetById(gAdventure.currentOwner), 15);
   Object_SetModeById(9, 3);
   FieldEvent_WaitFrames(20);
   Func_02003f2c(9, 0);

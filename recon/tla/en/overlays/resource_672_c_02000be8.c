@@ -5,7 +5,7 @@
 // out (frames 33 to 95 counted down); then cues 298 and 125 and flag 0x206.
 // Left: the first loop's registers and the order of the layer updates; the second loop is close.
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"
 
@@ -51,11 +51,11 @@ rise:
   WaitFrames(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
-  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 328, 184);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
+  ObjectMotion_SetPositionAndReset(gAdventure.currentOwner, 328, 184);
   FieldEvent_WaitFrames(20);
   Func_02001f10(308);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
   if (i != 0) {
   sink:
     if ((u32)(i - 33) <= 62) {
@@ -71,7 +71,7 @@ rise:
     if (i != 0)
       goto sink;
   }
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   Func_02001f10(298);
   WaitFrames(1);
   Func_02001f10(125);

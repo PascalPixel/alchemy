@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 void Camera_MoveWithinMapBounds();
@@ -35,11 +35,11 @@ void Func_020027e0(void) {
   actor = (struct ObjectRuntime *)Value1((s32 (*)())Object_GetById, 25);
   Func_02003c28();
   Call1(Func_02003d78, 0);
-  Call2(Object_LinkObjectAndSetCallback, gPartyState.currentOwner, 25);
+  Call2(Object_LinkObjectAndSetCallback, gAdventure.currentOwner, 25);
   ((struct ObjectRuntime *)Value0((s32 (*)())Func_02003cf8))->motionFlags = 0;
   Call4(Camera_MoveWithinMapBounds, 0x2680000, -1, 0x1180000, 1);
   Func_02003cf0();
-  Call3(ObjectMotion_SetAngleToward, 25, gPartyState.currentOwner, 0);
+  Call3(ObjectMotion_SetAngleToward, 25, gAdventure.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Func_02003cc8(25, 0x100, 40);
   Call2(ObjectMotion_SetActionVariant, 25, 1);
@@ -70,7 +70,7 @@ void Func_020027e0(void) {
   Call2(ObjectMotion_SetActionVariant, 25, 1);
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2c8, 200);
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2c8, 168);
-  Call1(ObjectMotion_EnableActionAndResetMotion, gPartyState.currentOwner);
+  Call1(ObjectMotion_EnableActionAndResetMotion, gAdventure.currentOwner);
   Call2(Func_02003cb0, 25, 0);
   Call3(ObjectMotion_SetSpeedParameters, 25, 0x20000, 0x10000);
   Call1(Func_02003df8, 153);

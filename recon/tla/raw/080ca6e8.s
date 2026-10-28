@@ -381,6 +381,6 @@ Event_SpawnObjectTable:
 .L_080ca9c0:
 	.4byte gData_02001000
 .L_080ca9c4:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080ca9c8:
 	.4byte IwramMulQ16

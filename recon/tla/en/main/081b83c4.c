@@ -20,7 +20,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "bg_scroll.h"
 
 struct DiceParticle {
@@ -320,7 +320,7 @@ void Func_081b83c4(void) {
   window = UiWindow_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
   UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  UiText_DrawNumberInWindowFar(gPartyState.coins, 6, sprites->coinsWindow, 0,
+  UiText_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                0);
   window = UiWindow_CreateFar(18, 3, 12, 3, 6);
   sprites->betWindow = window;
@@ -331,8 +331,8 @@ void Func_081b83c4(void) {
   UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                   sprites->helpWindow, 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
-  if ((u32)bet > (u32)gPartyState.coins)
-    bet = gPartyState.coins;
+  if ((u32)bet > (u32)gAdventure.coins)
+    bet = gAdventure.coins;
   UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
   Audio_PlayCue(1);
 
@@ -350,7 +350,7 @@ void Func_081b83c4(void) {
 
     if (state == 0) {
       if (frame > 17) {
-        if ((u32)gPartyState.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+        if ((u32)gAdventure.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
           UiWork_FinalizeFar(sprites->helpWindow, 1);
           break;
         }
@@ -365,11 +365,11 @@ void Func_081b83c4(void) {
           Audio_PlayCue(302);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * 10;
-          if ((u32)bet > (u32)gPartyState.coins)
-            bet = gPartyState.coins;
+          if ((u32)bet > (u32)gAdventure.coins)
+            bet = gAdventure.coins;
           UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           state = 2;
           timer = 0;
@@ -406,11 +406,11 @@ void Func_081b83c4(void) {
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         if (round == 0) {
           bet = Party_GetAverageLevelFar() * 10;
-          if ((u32)bet > (u32)gPartyState.coins)
-            bet = gPartyState.coins;
+          if ((u32)bet > (u32)gAdventure.coins)
+            bet = gAdventure.coins;
           UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, round);
         }
       } else {
@@ -685,14 +685,14 @@ void Func_081b83c4(void) {
           if (winnings > 0) {
             Audio_PlayCue(105);
             Party_AdjustCoinsFar(winnings);
-            UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+            UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Audio_PlayCue(105);
           Party_AdjustCoinsFar(1);
-          UiText_DrawNumberInWindowFar(gPartyState.coins, 6,
+          UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           bet--;
           UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);

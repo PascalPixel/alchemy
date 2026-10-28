@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 
 struct FieldPosition {
@@ -65,7 +65,7 @@ s32 Func_080267bc(struct ObjectRuntime *object) {
   collision = 0;
   pushed = 0;
   movementAnimation = 2;
-  if (gInput.held & ((struct PartyKeys *)&gPartyState)->keys23c) {
+  if (gInput.held & ((struct PartyKeys *)&gAdventure)->keys23c) {
     object->speedLimit = 0x10000;
     object->acceleration = 0xccc;
     movementAnimation = 5;
@@ -271,7 +271,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (Unit_Get(gPartyState.currentOwner)->hp == 0)
+    if (Unit_Get(gAdventure.currentOwner)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {

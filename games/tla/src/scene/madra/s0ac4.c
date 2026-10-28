@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -154,7 +154,7 @@ void Func_02000ac4(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(25);
   SetPos(4, 472, 426);
   FieldEvent_WaitFrames(10);
-  ArmCallbackAndRefresh(gPartyState.currentOwner, 0xc000);
+  ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
   ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -262,7 +262,7 @@ void Func_02000ac4(void) {
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_WaitFrames(30);
   Object_SetModeById(32, 2);
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   if (object != NULL)
     ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
@@ -448,7 +448,7 @@ void Func_020014fc(void) {
   CommitPos(24, -3, 8);
   SetPos(4, 472, 426);
   FieldEvent_WaitFrames(10);
-  ArmCallbackAndRefresh(gPartyState.currentOwner, 0xc000);
+  ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
   ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -564,7 +564,7 @@ void Func_020014fc(void) {
   FieldEvent_WaitFrames(10);
   GameFlag_SetBit(0x914);
   Object_SetModeById(32, 2);
-  object = Object_GetById(gPartyState.currentOwner);
+  object = Object_GetById(gAdventure.currentOwner);
   if (object != NULL)
     ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
@@ -43,15 +43,15 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
 void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
-  struct PartyState *party;
+  struct Adventure *party;
 
   phase = caster->phase;
-  /* FAKEMATCH(one-pass): the step's advance and the party state's address in
+  /* FAKEMATCH(one-pass): the step's advance and the adventure's address in
    * a one-pass block; as elapsedFrames = (s16)caster->step++ with
-   * gPartyState.map, 4 of 43 instructions differ in tla-en. */
+   * gAdventure.map, 4 of 43 instructions differ in tla-en. */
   do {
     elapsedFrames = (s16)caster->step++;
-    party = &gPartyState;
+    party = &gAdventure;
   } while (0);
 
   if (party->map == (s32)&SceneId_Ov64a) {
@@ -66,9 +66,9 @@ void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
 }
 
 void FieldEvent_ShowStatusMessage(void) {
-  gPartyState.avoidDistance = 0;
+  gAdventure.avoidDistance = 0;
   Func_080cb82c();
-  if (gPartyState.avoidByItem == 0) {
+  if (gAdventure.avoidByItem == 0) {
     UiText_DrawQuantity(150, 4);
     UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
   } else {
@@ -136,8 +136,8 @@ void BattleEffect_RunEffect16(void) {
     id = slot << 16;
     tiles = gData_080ed90c;
     VramCache_Load(id >> 16, 0x100, tiles);
-    gPartyState.avoidDistance = 0x09600000;
-    gPartyState.avoidByItem = GameFlag_Test(0x145);
+    gAdventure.avoidDistance = 0x09600000;
+    gAdventure.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);
     object->callback = BattleEffect_UpdatePairedArcSpawner;
     object->phase = zero;

@@ -7,7 +7,7 @@
        ->v)
 
 #include "call.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "owner_state.h"
 s32 Func_020059c4();
 s32 Object_GetById();
@@ -51,9 +51,9 @@ void Func_02001b04(s32 clearStatus) {
   count = Party_CountActiveOwners();
   for (n = 0; n < count; n++) {
     {
-      struct PartyState *party = &gPartyState;
+      struct Adventure *party = &gAdventure;
 
-      /* FAKEMATCH: the barrier loads the party state before the owner list's
+      /* FAKEMATCH: the barrier loads the adventure before the owner list's
        * offset, as in the main image's Func_080ae16c (differ 2 without). */
       asm volatile("");
       member = Unit_Get(party->activeOwners[n]);

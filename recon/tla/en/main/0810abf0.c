@@ -11,7 +11,7 @@
 // the work in r7, here chooseAgain takes r7 and the work r6.
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ShopCursorAnchor {
@@ -126,7 +126,7 @@ s32 Func_0810abf0(void) {
         chooseAgain = 1;
         continue;
       }
-      if ((u32)price > gPartyState.coins) {
+      if ((u32)price > gAdventure.coins) {
         Audio_PlayCue(113);
         Func_0810a9fc(messageBase + 1);
         chooseAgain = 1;

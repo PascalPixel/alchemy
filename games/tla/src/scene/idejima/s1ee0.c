@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "call.h"
@@ -49,11 +49,11 @@ void Func_02001ee0(void) {
   Call3((void (*)())Func_02003228, 6, 0x1bc0000, 0xd40000);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 19);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
-  Call3((void (*)())Func_02003228, gPartyState.currentOwner, 0x1b00000,
+  Call3((void (*)())Func_02003228, gAdventure.currentOwner, 0x1b00000,
         0xea0000);
-  Object_GetById(gPartyState.currentOwner)->scaleX = 0xffff0000;
-  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 41);
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  Object_GetById(gAdventure.currentOwner)->scaleX = 0xffff0000;
+  Call2((void (*)())Engine_ActorSetAnimation, gAdventure.currentOwner, 41);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
   Call3((void (*)())Func_02003228, 10, 0x1880000, 0xac0000);
   Task_Wait(1);

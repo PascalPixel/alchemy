@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov66aRoom1;
 extern char SceneId_Ov66aRoom2;

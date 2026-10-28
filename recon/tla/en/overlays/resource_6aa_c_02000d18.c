@@ -9,7 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "vram_tab.h"
 
@@ -27,7 +27,7 @@ void Func_02000d18(void) {
   s32 cameraZ = camera[1] & 0xffff0000;
   s32 originY = map->origin[1];
   s32 tile = gResourceTableEntries[gData_020068a2].offset >> 5;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   s32 y, z, depth, sx, sy;
   u32 *word;
 

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -14,7 +14,7 @@ void Func_02001e70(s32 id, s32 x, s32 z);
 s32 Func_020004fc(void) {
   Scene_SetArrivalFlags(0);
   Func_020006a0(0);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x40;
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
   if (GameFlag_Test(0xa00)) {
     Func_02000724(8);
     Func_02000724(9);

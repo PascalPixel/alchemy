@@ -10,7 +10,7 @@
 // (mov r3, sp) each pass; pinning count and delta as well gives r7 to two
 // values at once (13), a form that does not hold delta.
 #include "../../../../games/tla/include/types.h"
-#include "../../../../games/tla/include/party_state.h"
+#include "../../../../games/tla/include/adventure.h"
 
 void Func_02000160(s32 owner, s32 delta);
 

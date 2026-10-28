@@ -2,7 +2,7 @@
 // Func_02000f6c (LinkLobby_PartyContains), differ 26 of 33, and Func_02001414
 // (LinkLobby_DrawThreeDigitValue), differ 12 of 32: the same source is strength
 // reduced in ☀️, but the ⚓️ listing shows loops loop.c left alone. In 0f6c the
-// party state address and the 0x218 offset are rebuilt inside the loop and the
+// adventure's address and the 0x218 offset are rebuilt inside the loop and the
 // byte is addressed as base + (i + 0x218); in 1414 the constant 1 for the two
 // stack arguments is rebuilt inside the loop instead of living in r7.
 // A loop built from if and goto comes to differ 9 for 0f6c (only the shape of
@@ -20,7 +20,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "serial_runtime.h"
 #include "text/msg_ids.h"
@@ -69,10 +69,10 @@ s32 Func_02000f6c(s32 id) {
     count = max;
   }
   for (i = 0; i < count; i++) {
-    if (gPartyState.activeOwners[i] == 0xff) {
+    if (gAdventure.activeOwners[i] == 0xff) {
       return 0;
     }
-    if (gPartyState.activeOwners[i] == id) {
+    if (gAdventure.activeOwners[i] == id) {
       return 1;
     }
   }

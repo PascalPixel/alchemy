@@ -5,8 +5,8 @@
 void Func_02000994(void) {
   s16 scene;
 
-  BYTE_AT(Object_GetById(gPartyState.currentOwner), 34) = 2;
-  scene = gPartyState.scene;
+  BYTE_AT(Object_GetById(gAdventure.currentOwner), 34) = 2;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
     Func_02000918((u16 *)gData_02004768);
   else if (scene == (s32)&SceneId_Ov661Room3)

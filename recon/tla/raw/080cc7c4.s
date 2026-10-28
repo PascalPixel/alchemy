@@ -226,7 +226,7 @@ Func_080cc7c4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080cc978:
-	.4byte gPartyState
+	.4byte gAdventure
 .L_080cc97c:
 	.4byte gData_0202e000
 .L_080cc980:

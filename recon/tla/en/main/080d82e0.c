@@ -13,7 +13,7 @@
 #include "motobj.h"
 #include "object_runtime.h"
 #include "objdisp.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "effect_slot.h"
 #include "ram_buffer.h"
 
@@ -149,7 +149,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   s32 scale;
   s32 position[3];
 
-  leader = (struct CaptureObject *)Object_GetById(gPartyState.currentOwner);
+  leader = (struct CaptureObject *)Object_GetById(gAdventure.currentOwner);
   djinni = (struct CaptureObject *)Object_GetById(arg);
   if (djinni == NULL)
     return;
@@ -172,9 +172,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
   Object_SetMode((struct ObjectRuntime *)djinni, 3);
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
+  Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
   WaitFrames(30);
   Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 

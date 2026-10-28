@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
@@ -25,15 +25,15 @@ void Func_02004ab8(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(186);
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
     // left from a position read, because the other warps give theirs as
     // constants.
-    Object_GetById(gPartyState.currentOwner);
-    Object_GetById(gPartyState.currentOwner);
+    Object_GetById(gAdventure.currentOwner);
+    Object_GetById(gAdventure.currentOwner);
     x = 148;
     z = 632;
     break;
@@ -58,7 +58,7 @@ void Func_02004ab8(void) {
     z = 188;
     break;
   }
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, x, z);
-  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, x, z);
+  Object_GetById(gAdventure.currentOwner)->actionFlags |= 1;
   Func_02005e1c();
 }

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct DisplayBlock {
@@ -24,10 +24,10 @@ void Func_080cb8a4(void) {
 }
 
 void *Func_080cb8e8(void) {
-  struct PartyState *party = &gPartyState;
+  struct Adventure *party = &gAdventure;
   void **event;
 
-  /* FAKEMATCH: the party state address is loaded first; without the barrier the
+  /* FAKEMATCH: the adventure's address is loaded first; without the barrier the
    * two constants beside it are begun before it (2 differ) */
   asm volatile("" : "+l"(party));
   event = Ram_HeapSlots->eventWork;

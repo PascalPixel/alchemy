@@ -14,15 +14,15 @@ struct MapBits {
 s32 Func_02000fb8(void) {
   s32 *effect;
   s16 scene;
-  struct PartyState *party;
+  struct Adventure *party;
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
   /* FAKEMATCH: as below. */
   asm("");
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
-  party = &gPartyState;
+  party = &gAdventure;
   *effect = 0x202;
-  /* FAKEMATCH: the empty asm takes the party state, so its address loads before
+  /* FAKEMATCH: the empty asm takes the adventure, so its address loads before
    * the 0x202 store and the scene's offset starts after it, as in the native
    * (plain: differ 2; the store before the party pointer: differ 2). */
   asm("" : : "r"(party));

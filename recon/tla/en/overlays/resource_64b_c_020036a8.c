@@ -5,13 +5,13 @@
 // Func_02000d64). Left: the native spills the four view bounds and i to the
 // stack, loads the first placement's kind and gData_02006c08 before the
 // bounds' if (so in the block before it) and keeps the work pointer in r9;
-// it reaches gPartyState's fields from its address plus a built offset (a
-// rematerialized &gPartyState, as from a local pointer under pressure).
+// it reaches gAdventure's fields from its address plus a built offset (a
+// rematerialized &gAdventure, as from a local pointer under pressure).
 // Register allocation differs throughout. Tried: slot initialized at its
 // declaration (281), a local party pointer (289).
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "event_work.h"
 #include "iwram_call.h"
@@ -104,7 +104,7 @@ void Func_020036a8(void) {
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
         }
-        if (gPartyState.ownerOverride == 0) {
+        if (gAdventure.ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
           s32 reach, dz;
@@ -116,7 +116,7 @@ void Func_020036a8(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gPartyState.renderMode == 9)
+              if (gAdventure.renderMode == 9)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

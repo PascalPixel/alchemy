@@ -6,7 +6,7 @@
 // Left: as overlay 663's draft: registers from the start (the native keeps the leader in r7 and the ride in r6, the motion and priority pointers in r11 and r9, the offsets in r8 and r10 and the rider on the stack).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "input.h"
 
 extern char SceneId_Ov664Room1;
@@ -34,7 +34,7 @@ void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02000988(void) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *ride = leader->linkedObject;
   struct ObjectRuntime *rider, *dust;
   u8 *riding, *motion, *priority;
@@ -61,7 +61,7 @@ void Func_02000988(void) {
     WaitFrames(1);
   }
   Func_02005f94(0x120);
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room1 && leader->x >> 19 == 39) {
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room1 && leader->x >> 19 == 39) {
     Func_02005efc(16);
     Func_02005e1c();
     return;
@@ -160,8 +160,8 @@ void Func_02000988(void) {
     OverlayObject_WaitUntilIdle(leader);
     Func_02005d94(dust);
   }
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   Func_02005ee4();
   GameFlag_ClearBit(0x250);
   WaitFrames(10);

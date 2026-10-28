@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x1ac];
@@ -48,9 +48,9 @@ void Func_02000328(void) {
   Func_02003468(16);
   WaitFrames(16);
   {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
      * built (one reordered row). */
     do {
     } while (0);

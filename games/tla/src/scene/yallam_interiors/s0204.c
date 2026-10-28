@@ -1,7 +1,7 @@
 #include "yallam_interiors.h"
 
 u8 *Func_02000204(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
     return gData_02000ea8;
@@ -30,7 +30,7 @@ void Func_02000244(void) {
 }
 
 void Func_0200029c(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -48,7 +48,7 @@ void Func_0200029c(s32 actor) {
 }
 
 void Func_020002fc(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -66,7 +66,7 @@ void Func_020002fc(s32 actor) {
 }
 
 void Func_0200035c(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -84,7 +84,7 @@ void Func_0200035c(s32 actor) {
 }
 
 void Func_020003bc(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */
@@ -103,7 +103,7 @@ void Func_020003bc(s32 actor) {
 }
 
 void Func_02000424(s32 actor) {
-  u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
+  u16 facing = Object_GetById(gAdventure.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing
    * before it builds the quadrant offset (2 differ without it). */

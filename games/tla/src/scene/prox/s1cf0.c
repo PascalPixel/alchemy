@@ -56,7 +56,7 @@ void Func_02001cf0(void) {
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call1(ObjectMotion_EnableActionAndResetMotion, 0x14);
   Call1(WaitFrames, 1);
-  Call3(Func_020044cc, gPartyState.currentOwner, 0xb80000, 0x1e40000);
+  Call3(Func_020044cc, gAdventure.currentOwner, 0xb80000, 0x1e40000);
   /* FAKEMATCH: the three facings are locals set before their first placement;
    * as constants each placement rebuilds them and the later turns cannot share
    * them (differ 76). */
@@ -80,16 +80,16 @@ void Func_02001cf0(void) {
   Call2(Func_02004534, 0x1a, 0);
   Call2(Object_SetModeById, 0, 3);
   Call2(Object_SetModeById, 0x1b, 3);
-  Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
+  Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
   Call3(ObjectMotion_ArmCallback, 0x1a, 0x5000, 0);
   Prox_Jump(0x1a, 0x108, 0x14);
   Call2(Func_02004534, 0x1a, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 0, 0, 0x14);
-  Prox_Jump(gPartyState.currentOwner, 0x108, 0);
+  Prox_Jump(gAdventure.currentOwner, 0x108, 0);
   Prox_Jump(0, 0x108, 0x28);
   Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
-  Call2(Func_0200454c, gPartyState.currentOwner, 0xc000);
+  Call2(Func_0200454c, gAdventure.currentOwner, 0xc000);
   Call2(Func_02004534, 0, 0);
   Call2(Func_02004564, 0x19, 0x102);
   Call1(FieldEvent_WaitFrames, 0x14);
@@ -140,8 +140,8 @@ void Func_02001cf0(void) {
   Call2(Func_0200454c, 0, 0);
   Prox_Jump(0, 0x108, 0);
   Prox_MessageOpen(0x4000, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-  t83 = Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 0);
+  t83 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
   if (t83 == 0) {
     Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
     Call2(Func_02004534, 0x1a, 0);
@@ -161,15 +161,15 @@ void Func_02001cf0(void) {
   Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
   Call2(Func_0200454c, 0x1b, 0x8000);
   Call2(Func_02004534, 0x401b, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
   Call2(Func_0200454c, 0, 0);
-  Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+  Call2(Object_SetModeById, gAdventure.currentOwner, 3);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Func_02004534, 0x4000, 0);
   Call2(Func_02004564, 0x1a, 0x102);
   Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Func_02004534, 0x1a, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0);
   Call2(Func_0200454c, 0x19, 0x8000);
@@ -180,17 +180,17 @@ void Func_02001cf0(void) {
   Call2(Func_02004534, 0x1b, 0);
   Call2(Object_SetModeById, 0x1b, 4);
   Call2(Func_02004534, 0x1b, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0, 0);
   Call3(ObjectMotion_ArmCallback, 0, 0, 0);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
-  Prox_Jump(gPartyState.currentOwner, 0x101, 0);
+  Prox_Jump(gAdventure.currentOwner, 0x101, 0);
   Prox_Jump(0, 0x101, 0);
   Prox_Jump(0x1a, 0x101, 0);
   Prox_Jump(0x19, 0x101, 0x28);
   Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
   Call2(Func_02004534, 0x1b, 0);
   Call2(Object_SetModeById, 0, 3);
-  Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+  Call2(Object_SetModeById, gAdventure.currentOwner, 3);
   Call2(Object_SetModeById, 0x1a, 3);
   Call2(Object_SetModeById, 0x19, 3);
   Call3(ObjectMotion_ArmCallback, 0x1b, 0x8000, 0);
@@ -200,14 +200,14 @@ void Func_02001cf0(void) {
   Call3(Func_0200452c, 0x1a, 0, 0x14);
   Call2(Func_02004534, 5, 0);
   Call2(Func_02004564, 0x1b, 0x102);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 0, 0x4000, 0);
   Call2(Func_0200454c, 0x1b, 0x5000);
   Call2(Func_02004534, 0x401b, 0);
   Call2(Func_0200454c, 0, 0);
   Prox_MessageOpen(0x4000, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-  t144 = Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 0);
+  t144 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
   if (t144 == 0) {
     Call2(Func_0200456c, 0x26666, 0x4ccc);
     Call4(Camera_MoveWithinMapBounds, 0xb80000, -1, 0x2000000, 1);
@@ -236,7 +236,7 @@ void Func_02001cf0(void) {
   Call2(Func_0200456c, 0x13333, 0x2666);
   Call4(Camera_MoveWithinMapBounds, 0xac0000, -1, 0x2080000, 1);
   Call2(Object_LinkObjectAndSetCallback, 0, 0x11);
-  Call2(Object_LinkObjectAndSetCallback, gPartyState.currentOwner, 0x11);
+  Call2(Object_LinkObjectAndSetCallback, gAdventure.currentOwner, 0x11);
   Call2(Object_LinkObjectAndSetCallback, 0x1b, 0x11);
   Call3(ObjectMotion_SetSpeedParameters, 0x11, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetPositionAndReset, 0x11, 0x8c, 0x1de);
@@ -244,7 +244,7 @@ void Func_02001cf0(void) {
   Call3(ObjectMotion_SetPositionAndReset, 0x11, 0xa0, 0x230);
   Call3(ObjectMotion_SetPositionAndReset, 0x11, 0xbe, 0x280);
   Call1(ObjectMotion_EnableActionAndResetMotion, 0);
-  Call1(ObjectMotion_EnableActionAndResetMotion, gPartyState.currentOwner);
+  Call1(ObjectMotion_EnableActionAndResetMotion, gAdventure.currentOwner);
   Call1(ObjectMotion_EnableActionAndResetMotion, 0x1b);
   Call1(WaitFrames, 1);
   Call3(Func_020044cc, 0x11, 0, 0);
@@ -254,7 +254,7 @@ void Func_02001cf0(void) {
   Call3(ObjectMotion_SetPositionAndReset, 0, 0xa8, 0x1e4);
   Call2(Func_0200454c, 0, 0);
   Call2(Func_02004534, 0x4000, 0);
-  Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
+  Call3(ObjectMotion_ArmCallback, gAdventure.currentOwner, 0x8000, 0);
   Call2(Func_0200454c, 0x1b, 0x8000);
   Call2(Func_02004534, 0x401b, 0);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
@@ -262,16 +262,16 @@ void Func_02001cf0(void) {
   Call2(Func_02004534, 0x19, 0);
   Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0);
-  Call2(Func_0200454c, gPartyState.currentOwner, 0xc000);
+  Call2(Func_0200454c, gAdventure.currentOwner, 0xc000);
   Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
   Call2(Func_02004534, 0x1a, 0);
   Call2(Object_SetModeById, 0, 3);
-  Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+  Call2(Object_SetModeById, gAdventure.currentOwner, 3);
   Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
   Call3(ObjectMotion_SetSpeedParameters, 0, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x19999, 0xcccc);
   Call2(Object_SetModeById, 0, 2);
-  t202 = Value1(Object_GetById, gPartyState.currentOwner);
+  t202 = Value1(Object_GetById, gAdventure.currentOwner);
   if (t202 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 0, FIELD_AT(t202, s16, 10),
           FIELD_AT(t202, s16, 18));
@@ -279,7 +279,7 @@ void Func_02001cf0(void) {
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0);
   Call3(Func_020044cc, 0, 0, 0);
   Call2(Object_SetModeById, 0x1b, 2);
-  t207 = Value1(Object_GetById, gPartyState.currentOwner);
+  t207 = Value1(Object_GetById, gAdventure.currentOwner);
   if (t207 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 0x1b, FIELD_AT(t207, s16, 10),
           FIELD_AT(t207, s16, 18));

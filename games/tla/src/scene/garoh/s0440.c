@@ -1,5 +1,5 @@
 #include "garoh.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;
@@ -32,7 +32,7 @@ void Func_020052c4(s32 value);
 
 /// Return the table for the current room.
 const void *Func_02000440(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
     if (Flag_IsSet(0x91b))
@@ -102,10 +102,10 @@ loop:
   } while (0);
   Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a,
                  gData_02005de0[index].b);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
   {
-    s32 owner = gPartyState.currentOwner;
+    s32 owner = gAdventure.currentOwner;
 
     if (index == 5)
       OffsetPosition_(owner, 0, -4);

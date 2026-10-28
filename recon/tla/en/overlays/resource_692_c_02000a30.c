@@ -33,7 +33,7 @@ void Func_02000a30(void) {
   Func_02004d40();
   Func_02004e90(0);
   Func_02004ee8();
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov692Room6) {
     Func_020006dc(gData_02005528);
     if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
@@ -85,7 +85,7 @@ void Func_02000a30(void) {
   }
   x = object->x >> 20;
   z = object->z >> 20;
-  scene = gPartyState.scene;
+  scene = gAdventure.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
     if (z == 16)
       GameFlag_SetBit(2544);

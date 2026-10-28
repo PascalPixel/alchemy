@@ -9,7 +9,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "input.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 
 extern u8 gData_02001300[];
@@ -144,7 +144,7 @@ void Func_02000224(void) {
   s32 i;
 
   UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
-  gPartyState.coins = 777777;
+  gAdventure.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);
     Inventory_AddItem(4, 229);

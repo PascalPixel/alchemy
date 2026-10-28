@@ -58,15 +58,15 @@ next2:
   if (i < 10)
     goto next2;
   Func_02002de0(158);
-  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  ObjectMotion_SetActionVariant(gAdventure.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_02003904[found].x, gData_02003904[found].z,
                        1, 2);
   Func_02002c28(gData_02003904[found].value, gData_02003904[found].x,
                 gData_02003904[found].z + 60);
-  Object_SetModeById(gPartyState.currentOwner, 2);
-  LemurianShip_ObjSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
+  Object_SetModeById(gAdventure.currentOwner, 2);
+  LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
   {
-    s32 owner = gPartyState.currentOwner;
+    s32 owner = gAdventure.currentOwner;
 
     if (found == 12)
       LemurianShip_ObjOffset(owner, 0, -4);

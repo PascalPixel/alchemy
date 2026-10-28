@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -13,7 +13,7 @@ void Func_02001184(void) {
   struct ObjectRuntime *object0;
   s32 result1;
 
-  object0 = Object_GetById(gPartyState.currentOwner);
+  object0 = Object_GetById(gAdventure.currentOwner);
   result1 = Value3((s32 (*)())Func_02000eac, 2, (object0->x >> 20),
                    (object0->z >> 20));
   if ((result1 >> 8) != 232)
@@ -26,7 +26,7 @@ L_020091b2:
 void Func_020011b8(void) {
   struct ObjectRuntime *object0;
 
-  object0 = Object_GetById(gPartyState.currentOwner);
+  object0 = Object_GetById(gAdventure.currentOwner);
   object0->terrainId = 0;
   return;
 }

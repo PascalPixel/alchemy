@@ -84,13 +84,13 @@ void Func_02004534(void) {
     Func_02004934(18, 0, 0);
     Func_02004934(19, 0, 0);
   }
-  if ((gPartyState.entrance == 30 || gPartyState.entrance == 31) &&
+  if ((gAdventure.entrance == 30 || gAdventure.entrance == 31) &&
       !GameFlag_Test(0x109)) {
     Func_020048ac(1);
     Func_020048c4();
     Func_02004a24(0);
-    Object_SetModeById(gPartyState.currentOwner, 41);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    Object_SetModeById(gAdventure.currentOwner, 41);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        0);
     WaitFrames(1);
     Event_StartScreenTransition();
@@ -106,7 +106,7 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_stand;
     }
-    Object_SetModeById(gPartyState.currentOwner, 42);
+    Object_SetModeById(gAdventure.currentOwner, 42);
     FieldEvent_WaitFrames(10);
     i = 0;
     goto test_turn;
@@ -118,14 +118,14 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_turn;
     }
-    ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
-    Object_SetModeById(gPartyState.currentOwner, 1);
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
-    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 813, 120);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+    ObjectMotion_Launch(gAdventure.currentOwner, 4, 0);
+    Object_SetModeById(gAdventure.currentOwner, 1);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x19999, 0xcccc);
+    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 813, 120);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                        1);
     Func_020048cc();
-    if (gPartyState.entrance == 30) {
+    if (gAdventure.entrance == 30) {
       GameFlag_SetBit(0x9fe);
       GameFlag_SetBit(0x94d);
     }

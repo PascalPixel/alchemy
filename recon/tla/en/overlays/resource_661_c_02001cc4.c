@@ -9,7 +9,7 @@
 // second test's mask (a one-pass block around the sprite store leaves 2).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
@@ -37,9 +37,9 @@ struct DustSprite {
 };
 
 void Func_02001cc4(struct ObjectRuntime *object, s32 dx, s32 dz) {
-  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gAdventure.currentOwner),
                                      0);
-  if (gPartyState.renderMode != 5) {
+  if (gAdventure.renderMode != 5) {
     u32 odd = gFrameCount & 1;
 
     if (odd == 0) {

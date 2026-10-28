@@ -9,7 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "frame.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -33,7 +33,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
 
 void Func_02000538(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *actor = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *linked = actor->linkedObject;
   struct ObjectRuntime *shadow;
   s32 facing;
@@ -92,8 +92,8 @@ void Func_02000538(void) {
       goto settle;
   }
   Func_02001ba0(shadow);
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gPartyState.currentOwner, 1);
+  Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gAdventure.currentOwner, 1);
   *(u16 *)(work + 0xd46) = 1;
   *(u16 *)(work + 0x154) = 0;
   Func_02001bf0();

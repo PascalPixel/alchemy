@@ -6,7 +6,7 @@
 // overlay 691's Func_020030bc (differ 92 of 150).
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 #include "map.h"
 
@@ -29,9 +29,9 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
-  Func_020014a8(8, gPartyState.currentOwner);
-  Func_020014a8(9, gPartyState.currentOwner);
-  Func_020014a8(10, gPartyState.currentOwner);
+  Func_020014a8(8, gAdventure.currentOwner);
+  Func_020014a8(9, gAdventure.currentOwner);
+  Func_020014a8(10, gAdventure.currentOwner);
   WaitFrames(1);
   Func_0200056c(8);
   Func_0200056c(9);

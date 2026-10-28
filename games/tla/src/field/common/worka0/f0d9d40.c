@@ -1,7 +1,7 @@
 #include "worka0.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "party_state.h"
+#include "adventure.h"
 
 struct WobbleEvent {
   u8 unk000[362];
@@ -29,9 +29,9 @@ void Func_080d9d40(void) {
   s32 i = 0;
 
   if (!GameFlag_Test(260) && event->counter > 12) {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: loads gPartyState's address before the render mode's offset
+    /* FAKEMATCH: loads gAdventure's address before the render mode's offset
      * is built; without it the offset comes first (differ 2). */
     asm volatile("" : "+l"(party));
     if (party->renderMode == 0) {

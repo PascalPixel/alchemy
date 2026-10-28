@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_ids.h"
 
 void Func_02003c28(void);
@@ -22,8 +22,8 @@ void Func_02002ff4(void) {
 
   Func_02003c28();
   Func_02003d78(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov655Room1)
-    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+  if (gAdventure.scene == (s32)&SceneId_Ov655Room1)
+    ObjectMotion_SetActionVariant(gAdventure.currentOwner, 3);
   Func_02003df8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -31,7 +31,7 @@ void Func_02002ff4(void) {
 }
 
 s32 Func_0200304c(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
     Func_020030e4();

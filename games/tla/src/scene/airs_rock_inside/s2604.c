@@ -18,23 +18,23 @@ void Map_DisableUpdateCallback(void);
 void Func_020004d4(struct FieldActor *object);
 
 u32 *Func_02002604(void) {
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room1)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room1)
     return gData_02006564;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room2)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room2)
     return gData_0200663c;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room3)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room3)
     return gData_020066b4;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room4)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room4)
     return gData_0200675c;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room5)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room5)
     return gData_020068ac;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room6)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room6)
     return gData_020068f4;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room7)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room7)
     return gData_020069e4;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room8)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room8)
     return gData_02006aec;
-  if (gPartyState.scene == (s32)&SceneId_Ov664Room9)
+  if (gAdventure.scene == (s32)&SceneId_Ov664Room9)
     return gData_02006bac;
   return gData_0200654c;
 }

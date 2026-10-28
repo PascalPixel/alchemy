@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern const u8 gData_02003f52[];
 extern const u8 gData_02003fa0[];
@@ -52,10 +52,10 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 
 void Func_02003164(void) {
   if (Flag_Test(265) == 0) {
-    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-    if (gPartyState.entrance == 5) {
-      ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
-      Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+    Object_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+    if (gAdventure.entrance == 5) {
+      ObjectMotion_SetActionVariant(gAdventure.currentOwner, 2);
+      Object_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
     }
   }
   Func_02000584(gData_02003f52);

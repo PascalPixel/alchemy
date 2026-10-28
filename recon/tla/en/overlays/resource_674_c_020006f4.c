@@ -9,13 +9,13 @@
 // flag 513. Without the item object 10 says MsgYupANice after the trade or
 // MsgIVeBeenFeeling before it.
 // Left: register choice through the body (the native keeps
-// &gPartyState.currentOwner in r7, -1 in r5, the messages' bases in r9 and r10
+// &gAdventure.currentOwner in r7, -1 in r5, the messages' bases in r9 and r10
 // and the bit masks in r5 and r2), and the first answer's refusal sits after
 // its trade.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "call.h"
 
 extern const u8 MsgAreYouGiving[], MsgOhThatRed[], MsgYupANice[],
@@ -72,7 +72,7 @@ void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
     item = (struct ObjectRuntime *)Value4(Func_02003df4, 489, trader->x,       \
                                           trader->y + 0x180000, trader->z);    \
     if (item != 0) {                                                           \
-      Object_SetModeById(gPartyState.currentOwner, 28);                        \
+      Object_SetModeById(gAdventure.currentOwner, 28);                        \
       item->motionFlags = 0;                                                   \
       Func_02003e3c(item, 454);                                                \
       FieldEvent_WaitFrames(20);                                               \
@@ -93,20 +93,20 @@ void Func_020006f4(void) {
       Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       Func_02003f64(0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
-      ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
+      ObjectMotion_SetAngleToward(10, gAdventure.currentOwner, 0);
       Func_02003f24(MsgAreYouGiving);
       Func_02003f2c(10, 0);
       Func_02003f74();
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-        Object_GetById(gPartyState.currentOwner);
-        Object_LinkObjectAndSetCallback(10, gPartyState.currentOwner);
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
+      if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+        Object_GetById(gAdventure.currentOwner);
+        Object_LinkObjectAndSetCallback(10, gAdventure.currentOwner);
+        Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
               0x6666);
-        Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 98,
+        Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 98,
               168);
-        Func_02003f3c(gPartyState.currentOwner, 0xc000);
-        ObjectMotion_Launch(gPartyState.currentOwner, 4, 10);
+        Func_02003f3c(gAdventure.currentOwner, 0xc000);
+        ObjectMotion_Launch(gAdventure.currentOwner, 4, 10);
         item = (struct ObjectRuntime *)Value4(Func_02003df4, 489, 0x680000,
                                               0x180000, 0xa00000);
         if (item != 0) {
@@ -118,7 +118,7 @@ void Func_020006f4(void) {
         FieldEvent_WaitFrames(10);
         Func_02003fbc();
         ObjectMotion_EnableActionAndResetMotion(10);
-        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
+        ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
         Func_02003f54(10, 264, 20);
         Func_02003f24(MsgAreYouGiving + 1);
         Func_02003f2c(0x800a, 0);
@@ -136,12 +136,12 @@ void Func_020006f4(void) {
       Func_02003f64(0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
       ObjectMotion_ArmCallback(10, 0x5000, 0);
-      Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
+      Call3(ObjectMotion_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
             0x6666);
-      Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 120,
+      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 120,
             190);
-      Func_02003f3c(gPartyState.currentOwner, 0);
-      STEP(gPartyState.currentOwner, 132, 190);
+      Func_02003f3c(gAdventure.currentOwner, 0);
+      STEP(gAdventure.currentOwner, 132, 190);
       item = (struct ObjectRuntime *)Value4(Func_02003df4, 489, 0x8c0000, 0,
                                             0xbe0000);
       if (item != 0) {
@@ -150,22 +150,22 @@ void Func_020006f4(void) {
         item->motionFlags = 0;
         item->unk5c[0] = 1;
       }
-      STEP(gPartyState.currentOwner, 120, 190);
+      STEP(gAdventure.currentOwner, 120, 190);
       ObjectMotion_ArmCallback(10, 0x3000, 0);
       ObjectMotion_Launch(10, 4, 10);
       Func_02003f2c(10, 0);
-      Object_LinkObjectAndSetCallback(10, gPartyState.currentOwner);
-      STEP(gPartyState.currentOwner, 132, 190);
+      Object_LinkObjectAndSetCallback(10, gAdventure.currentOwner);
+      STEP(gAdventure.currentOwner, 132, 190);
       Object_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
-      STEP(gPartyState.currentOwner, 120, 190);
+      STEP(gAdventure.currentOwner, 120, 190);
       FieldEvent_WaitFrames(20);
-      Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 98,
+      Call3(ObjectMotion_SetPositionAndReset, gAdventure.currentOwner, 98,
             168);
-      ObjectMotion_Launch(gPartyState.currentOwner, 4, 10);
+      ObjectMotion_Launch(gAdventure.currentOwner, 4, 10);
       Object_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
       FieldEvent_WaitFrames(10);
       Func_02003fc4();
-      Func_02003f3c(gPartyState.currentOwner, 0x4000);
+      Func_02003f3c(gAdventure.currentOwner, 0x4000);
       UiText_ShowPositionedMessageAndWait(MsgOhThatRed + 2, 1);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003fbc();
@@ -173,10 +173,10 @@ void Func_020006f4(void) {
       Func_02003f24(MsgOhThatRed + 3);
       Func_02003f2c(10, 0);
       ObjectMotion_EnableActionAndResetMotion(10);
-      Func_02003f3c(gPartyState.currentOwner, 0);
+      Func_02003f3c(gAdventure.currentOwner, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-        Object_GetById(gPartyState.currentOwner);
+      if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+        Object_GetById(gAdventure.currentOwner);
         Func_02003fbc();
         Func_02003f54(10, 264, 20);
         Func_02003f24(MsgOhThatRed + 4);
@@ -185,7 +185,7 @@ void Func_020006f4(void) {
       given:
         if (item != 0) {
           Func_02003dfc(item);
-          Object_SetModeById(gPartyState.currentOwner, 1);
+          Object_SetModeById(gAdventure.currentOwner, 1);
         }
         Func_02003fbc();
         GameFlag_SetBit(0xaa3);
@@ -194,11 +194,11 @@ void Func_020006f4(void) {
         Func_02003f54(10, 265, 20);
         Func_02003f24(MsgOhThatRed + 7);
         Func_02003f2c(0x800a, 0);
-        Func_02003f3c(gPartyState.currentOwner, 0xc000);
-        ObjectMotion_Launch(gPartyState.currentOwner, 4, 10);
+        Func_02003f3c(gAdventure.currentOwner, 0xc000);
+        ObjectMotion_Launch(gAdventure.currentOwner, 4, 10);
         if (item != 0)
           Func_02003dfc(item);
-        Func_02003f3c(gPartyState.currentOwner, 0x4000);
+        Func_02003f3c(gAdventure.currentOwner, 0x4000);
         GameFlag_SetBit(513);
       }
     }

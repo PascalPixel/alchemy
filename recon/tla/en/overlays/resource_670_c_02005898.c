@@ -21,7 +21,7 @@ void Func_02005898(void) {
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Func_02003288();
-  if (gPartyState.entrance == 9) {
+  if (gAdventure.entrance == 9) {
     if (GameFlag_Test(0x8ef)) {
       Func_02005b0c(10, 0, 0);
       if (GameFlag_Test(0x8ee)) {
@@ -72,6 +72,6 @@ void Func_02005898(void) {
     object->z = z + 0x80000;
   }
   Object_SetModeById(16, 6);
-  if (gPartyState.entrance == 14)
+  if (gAdventure.entrance == 14)
     GameFlag_SetBit(0x8ee);
 }

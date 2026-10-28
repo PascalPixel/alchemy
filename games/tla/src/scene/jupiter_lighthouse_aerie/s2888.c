@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct JupiterLighthouseAerieWork *work =
       (struct JupiterLighthouseAerieWork *)gData_02003488;

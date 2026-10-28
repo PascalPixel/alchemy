@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_event.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -18,9 +18,9 @@ void Func_02000060(void) {
 
 void Func_02000080(void) {
   if (gData_02005a3c == 0) {
-    struct PartyState *party = &gPartyState;
+    struct Adventure *party = &gAdventure;
 
-    /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
+    /* FAKEMATCH: ⚓️ loads the adventure's address before it builds the field
      * offset; plain field tests and a local pointer build the offset first */
     asm volatile("" : "+l"(party));
     if (party->renderMode == 10) {

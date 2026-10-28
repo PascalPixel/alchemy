@@ -4,7 +4,7 @@
 // (68, 680), linked to it, and flag 2535 is set.
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "field_effect.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -61,16 +61,16 @@ void Func_020015ac(void) {
   object->velocityY = 0xc0000;
   ObjectMotion_SetPositionAndCommit(17, 40, 680);
   FieldEvent_WaitFrames(10);
-  leader = Object_GetById(gPartyState.currentOwner);
+  leader = Object_GetById(gAdventure.currentOwner);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    ObjectMotion_Launch(gPartyState.currentOwner, 6, 0);
-    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000,
+    ObjectMotion_Launch(gAdventure.currentOwner, 6, 0);
+    ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000,
                                     0x10000);
-    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 68, 680);
+    ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 68, 680);
   }
   Func_0200401c(0, 0, 0);
-  Object_LinkPair(gPartyState.currentOwner, 17, 0);
+  Object_LinkPair(gAdventure.currentOwner, 17, 0);
   FieldEvent_WaitFrames(10);
   GameFlag_SetBit(2535);
   Func_02004074();

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "flag_call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -87,8 +87,8 @@ void Func_02000110(void) {
   Object_GetById(12)->priorityFlags |= 1;
   ObjectMotion_SetPositionAndReset(12, 136, 200);
   FieldEvent_WaitFrames(3);
-  Object_SetModeById(gPartyState.currentOwner, 1);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xe000, 0);
+  Object_SetModeById(gAdventure.currentOwner, 1);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0xe000, 0);
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
@@ -97,7 +97,7 @@ void Func_02000110(void) {
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0, 0);
   Hop(0, 16);
   Hop(16, 0);
   Hop(16, 0);

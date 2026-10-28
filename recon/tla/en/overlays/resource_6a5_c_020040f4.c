@@ -21,7 +21,7 @@ s32 ObjectDispatch_SetSingleChildFlags();
 s32 Object_GetById();
 s32 WaitFrames();
 extern u8 gFrameCount[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_020040f4(void) {
   s32 v_r9, v_r10, v_r7, v_r6, v_r5, v_r8, v_r0, v_r1, v_r2, v_r3;
@@ -31,7 +31,7 @@ void Func_020040f4(void) {
   s32 t41;
 
   t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = *(s32 *)((s32)gPartyState + 0x214);
+  t1 = *(s32 *)((s32)gAdventure + 0x214);
   t2 = Object_GetById(t1);
   t3 = FIELD_AT(t2, s32, 104);
   Func_02005814();
@@ -130,7 +130,7 @@ L_0200c280:
     goto L_0200c280;
 L_0200c292:
   Func_0200578c(v_r7, v_r1, v_r2);
-  v_r5 = ((s32)gPartyState + 0x214);
+  v_r5 = ((s32)gAdventure + 0x214);
   t38 = *(s32 *)v_r5;
   t39 = Object_GetById(t38);
   t40 = *(u8 *)(t39 + 35);

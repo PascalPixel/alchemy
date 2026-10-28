@@ -1,7 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "object_runtime.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "ram_buffer.h"
 
 struct Wanderer {
@@ -125,19 +125,19 @@ void Func_0200253c(void) {
   FieldEvent_WaitFrames(40);
   Func_02005754(MsgGabombaFocusEnergies);
   Func_02005764_(24, 0);
-  Func_02005724(23, gPartyState.currentOwner);
-  Func_02005724(5, gPartyState.currentOwner);
-  Func_02005724(6, gPartyState.currentOwner);
-  Func_02005724(7, gPartyState.currentOwner);
+  Func_02005724(23, gAdventure.currentOwner);
+  Func_02005724(5, gAdventure.currentOwner);
+  Func_02005724(6, gAdventure.currentOwner);
+  Func_02005724(7, gAdventure.currentOwner);
   WaitFrames(1);
-  Actor_SetSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_SetSpeed(23, 0xcccc, 0x6666);
   ObjectMotion_EnableActionAndSetCallback(23, gData_02005ba4);
   WaitFrames(10);
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02005af4);
   ObjectMotion_EnableActionAndSetCallback(5, gData_02005b1c);
   ObjectMotion_EnableActionAndSetCallback(7, gData_02005b60);
@@ -156,18 +156,18 @@ void Func_0200253c(void) {
   FieldEvent_WaitFrames(20);
   Actor_Turn(6, 0x2000, 0);
   Actor_Turn(5, 0xa000, 0);
-  Actor_Turn(gPartyState.currentOwner, 0xa000, 0);
+  Actor_Turn(gAdventure.currentOwner, 0xa000, 0);
   Actor_Turn(7, 0x2000, 40);
   Object_GetById(7)->angle = 0x4000;
-  Object_GetById(gPartyState.currentOwner)->angle = 0x4000;
+  Object_GetById(gAdventure.currentOwner)->angle = 0x4000;
   Object_GetById(6)->angle = 0x4000;
   Object_GetById(5)->angle = 0x4000;
   Object_GetById(7)->actionFlags &= 0xfe;
-  Object_GetById(gPartyState.currentOwner)->actionFlags &= 0xfe;
+  Object_GetById(gAdventure.currentOwner)->actionFlags &= 0xfe;
   Object_GetById(6)->actionFlags &= 0xfe;
   Object_GetById(5)->actionFlags &= 0xfe;
   Actor_Place(7, 400, 272);
-  Actor_Place(gPartyState.currentOwner, 420, 272);
+  Actor_Place(gAdventure.currentOwner, 420, 272);
   Actor_Place(6, 444, 272);
   Actor_Place(5, 468, 272);
   FieldEvent_WaitFrames(20);
@@ -186,7 +186,7 @@ void Func_020027cc(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Func_02005854(78);
   speed = 0x4000;
-  Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
+  Actor_Slide(gAdventure.currentOwner, 174 << 17, 156 << 17, speed);
   Actor_Slide(7, 165 << 17, 156 << 17, speed);
   {
     s32 slow = 0x3000;
@@ -211,12 +211,12 @@ void Func_020027cc(void) {
   Func_020057dc_(0x10000, 0);
   Func_020057ec(10);
   WaitFrames(20);
-  Func_0200578c_(gPartyState.currentOwner, 256, 0);
+  Func_0200578c_(gAdventure.currentOwner, 256, 0);
   Func_0200578c_ArgsFirst(5, 256, 0);
   Func_0200578c_ArgsFirst(6, 256, 0);
   Func_0200578c_ArgsFirst(7, 256, 0);
   Func_0200578c_ArgsFirst(23, 256, 0);
-  Actor_Turn(gPartyState.currentOwner, 0xc000, 0);
+  Actor_Turn(gAdventure.currentOwner, 0xc000, 0);
   Actor_Turn(5, 0xc000, 0);
   Actor_Turn(6, 0xc000, 0);
   Actor_Turn(7, 0xc000, 0);
@@ -228,7 +228,7 @@ void Func_020027cc(void) {
   Object_SetPartAttribute(Object_GetById(10), 3);
   Object_SetPartAttribute(Object_GetById(9), 0);
   WaitFrames(8);
-  ((struct Wanderer *)Object_GetById(gPartyState.currentOwner))->timer =
+  ((struct Wanderer *)Object_GetById(gAdventure.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
   ((struct Wanderer *)Object_GetById(7))->timer =
       (Random16Far() * 40 >> 16) + 10;
@@ -238,7 +238,7 @@ void Func_020027cc(void) {
       (Random16Far() * 40 >> 16) + 10;
   ((struct Wanderer *)Object_GetById(23))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
+  ObjectMotion_EnableActionAndSetCallback(gAdventure.currentOwner,
                                           gData_02005c74);
   ObjectMotion_EnableActionAndSetCallback(7, gData_02005c74);
   ObjectMotion_EnableActionAndSetCallback(5, gData_02005ca0);

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
@@ -52,46 +52,46 @@ void Func_020007d8(void) {
   Func_020012e4(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 552, 488);
-  Func_02001254(5, gPartyState.currentOwner);
-  Object_LinkObjectAndSetCallback(5, gPartyState.currentOwner);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 568, 480);
-  Object_LinkObjectAndSetCallback(6, gPartyState.currentOwner);
-  Func_02001254(6, gPartyState.currentOwner);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 584, 472);
-  Object_LinkObjectAndSetCallback(22, gPartyState.currentOwner);
-  Func_02001254(22, gPartyState.currentOwner);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 608, 472);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 552, 488);
+  Func_02001254(5, gAdventure.currentOwner);
+  Object_LinkObjectAndSetCallback(5, gAdventure.currentOwner);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);
+  Object_LinkObjectAndSetCallback(6, gAdventure.currentOwner);
+  Func_02001254(6, gAdventure.currentOwner);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
+  Object_LinkObjectAndSetCallback(22, gAdventure.currentOwner);
+  Func_02001254(22, gAdventure.currentOwner);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 608, 472);
   Func_0200128c((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Func_02001294(22, 0);
-  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x8000, 10);
+  ObjectMotion_ArmCallback(gAdventure.currentOwner, 0x8000, 10);
   ObjectMotion_Launch(5, 6, 15);
   ObjectMotion_Launch(5, 6, 23);
   Func_02001294(5, 0);
   ObjectMotion_EnableActionAndResetMotion(6);
   ObjectMotion_SetAngleToward(6, 5, 0);
   Func_02001294(6, 0);
-  Object_LinkObjectAndSetCallback(6, gPartyState.currentOwner);
-  GondowanCliffs_ObjEmote(gPartyState.currentOwner, 258);
+  Object_LinkObjectAndSetCallback(6, gAdventure.currentOwner);
+  GondowanCliffs_ObjEmote(gAdventure.currentOwner, 258);
   FieldEvent_WaitFrames(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
-  Object_SetModeById(gPartyState.currentOwner, 3);
+  Object_SetModeById(gAdventure.currentOwner, 3);
   Object_SetModeById(6, 3);
   Object_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_WaitFrames(30);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 584, 472);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
   Func_0200124c(22, 0, 0);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 568, 480);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);
   Func_0200124c(6, 0, 0);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 552, 488);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 552, 488);
   Func_0200124c(5, 0, 0);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 528, 488);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Func_0200131c(123);
-  GondowanCliffs_ObjWalk(gPartyState.currentOwner, 512, 488);
+  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
   Func_020012bc(1);
 }

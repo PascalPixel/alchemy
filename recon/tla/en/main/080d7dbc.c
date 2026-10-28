@@ -8,7 +8,7 @@
 #include "motobj.h"
 #include "object_runtime.h"
 #include "objdisp.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "effect_slot.h"
 #include "ram_buffer.h"
 
@@ -131,7 +131,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct EffectVector position;
   s32 state;
 
-  owner = (struct EffectOwner *)Object_GetById(gPartyState.currentOwner);
+  owner = (struct EffectOwner *)Object_GetById(gAdventure.currentOwner);
   state = effect->state;
 
   if (state == 0) {

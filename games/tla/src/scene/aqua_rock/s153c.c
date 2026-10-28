@@ -7,7 +7,7 @@ void Func_02001d30(struct ObjectRuntime *object);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_0200153c(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 saved = object->motionFlags;
   s32 i;
   s32 angle;
@@ -18,7 +18,7 @@ void Func_0200153c(void) {
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = -0x400000;
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
+  ObjectMotion_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
   for (i = 23; i >= 0; i--) {
     object->y += 0x20000;
     angle = object->angle;
@@ -33,6 +33,6 @@ void Func_0200153c(void) {
   object->motionFlags = saved;
   object->velocityY = 0xc0000;
   ObjectDispatch_SetSingleChildFlags(object, 1);
-  ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 680, 912);
+  ObjectMotion_SetPositionAndCommit(gAdventure.currentOwner, 680, 912);
   Func_020029a0();
 }

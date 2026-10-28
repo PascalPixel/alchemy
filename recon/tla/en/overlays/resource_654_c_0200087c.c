@@ -13,7 +13,7 @@ void Func_0200087c(void) {
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
-      Object_GetById(gPartyState.currentOwner);
+      Object_GetById(gAdventure.currentOwner);
   struct ShrineOfTheSeaGodObject *camera = Func_02003ad0();
   struct ShrineOfTheSeaGodObject *object8 = Object_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Object_GetById(9);

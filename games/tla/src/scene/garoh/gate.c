@@ -1,5 +1,5 @@
 #include "garoh.h"
-#include "party_state.h"
+#include "adventure.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;
@@ -57,7 +57,7 @@ void Func_020009a4(void) {
 
 /// Return the table for the current room.
 const void *Func_020009dc(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
     if (Flag_IsSet(0x91b))

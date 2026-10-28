@@ -6,7 +6,7 @@
 
 #include "item.h"
 #include "game/unit.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "farcall.h"
 
 /// The item the battle spoils could not fit in the inventory. It is

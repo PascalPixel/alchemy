@@ -10,7 +10,7 @@ s32 Func_02000478(struct ObjectRuntime *object) {
 }
 
 const u8 *Func_020004a4(void) {
-  s16 scene = gPartyState.scene;
+  s16 scene = gAdventure.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
     return gData_02002f04;

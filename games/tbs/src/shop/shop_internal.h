@@ -22,7 +22,7 @@
 #include "edition.h"
 #include "types.h"
 #include "heap_slots.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "battle_system.h"
 #include "actor.h"
 #include "dma.h"

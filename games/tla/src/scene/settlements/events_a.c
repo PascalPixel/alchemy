@@ -34,13 +34,13 @@ void Func_0200043c(s32 actor) {
 void Func_02000488(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
 void Func_020004a8(void) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *object = Object_GetById(gAdventure.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
   if (x == 5 && z == 17) {
-    ObjectMotion_Launch(gPartyState.currentOwner, 2, 0);
-    SetPosCommit(gPartyState.currentOwner, 88, 296);
+    ObjectMotion_Launch(gAdventure.currentOwner, 2, 0);
+    SetPosCommit(gAdventure.currentOwner, 88, 296);
   }
   Func_020021a0(5, 70, 9, 7, 5, 43, 1);
   Func_02002018(4, 25, 5, 17, 1, 1);

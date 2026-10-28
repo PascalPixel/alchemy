@@ -3,7 +3,7 @@
 #include "window.h"
 #include "callback_scheduler.h"
 #include "ram_buffer.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "scene.h"
 #include "edition.h"
 
@@ -31,11 +31,11 @@ void UiTimedNotice_Create(void) {
   s32 x;
   s32 resource;
   struct UiWindow *window;
-  struct PartyState *state;
+  struct Adventure *state;
 
   work = TIMED_NOTICE_WORK;
-  state = &gPartyState;
-  /* FAKEMATCH: Without it the party state's address loads after the 8 (differ
+  state = &gAdventure;
+  /* FAKEMATCH: Without it the adventure's address loads after the 8 (differ
    * 2); keep the load before it. */
   __asm__("" : : "r"(state));
   x = 8;

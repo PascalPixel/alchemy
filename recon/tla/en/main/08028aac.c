@@ -22,7 +22,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "party_state.h"
+#include "adventure.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
 
@@ -296,7 +296,7 @@ update_object:
   }
 
   flightWork = Ram_HeapSlots->eventWork;
-  if (gInput.held & (gPartyState.keys230 | gPartyState.unk232)) {
+  if (gInput.held & (gAdventure.keys230 | gAdventure.unk232)) {
     flightWork->climbing = 1;
     object->y += 0x2000;
   } else {

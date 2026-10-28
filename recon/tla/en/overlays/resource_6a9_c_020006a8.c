@@ -15,7 +15,7 @@ s32 Map_GetTerrainHeight();
 s32 Object_GetById();
 s32 Vector_AddPolarOffsetFar();
 extern u8 gData_02001220[];
-extern u8 gPartyState[];
+extern u8 gAdventure[];
 
 void Func_020006a8(void) {
   s32 sp_[1];
@@ -46,7 +46,7 @@ void Func_020006a8(void) {
   Call1((void (*)())Func_0200053c, 1);
   goto L_020087a2;
 L_020086f2:
-  t6 = FIELD_AT((s32)gPartyState, s32, 532);
+  t6 = FIELD_AT((s32)gAdventure, s32, 532);
   t7 = Value1((s32 (*)())Object_GetById, t6);
   t8 = FIELD_AT(t7, u16, 6);
   t9 = FIELD_AT(t7, s32, 8);

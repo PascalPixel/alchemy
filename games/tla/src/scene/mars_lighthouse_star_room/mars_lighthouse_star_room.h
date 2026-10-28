@@ -28,7 +28,7 @@ static __inline__ struct ObjectRuntime *ObjectCreate_(s32 kind, s32 x, s32 y,
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_020041e4(kind, x, y, z);
 }
-#include "party_state.h"
+#include "adventure.h"
 #include "field_sprite.h"
 #include "tla_edition.h"
 

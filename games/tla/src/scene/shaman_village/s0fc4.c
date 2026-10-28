@@ -27,8 +27,8 @@ void Func_02000fc4(void) {
       Func_0200487c(price, 5);
       Func_0200487c(price, 5);
       UiText_OpenMessageAtObject(12, 0);
-      if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-        if ((u32)gPartyState.coins < price) {
+      if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+        if ((u32)gAdventure.coins < price) {
           Object_SetModeById(13, 6);
           FieldEvent_WaitFrames(20);
           Object_SetModeById(13, 5);

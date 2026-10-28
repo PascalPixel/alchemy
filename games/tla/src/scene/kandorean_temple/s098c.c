@@ -26,7 +26,7 @@ void Func_0200098c(s32 *position, s32 value) {
 s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b);
 
 void Func_02000a0c(struct ObjectRuntime *object) {
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *leader = Object_GetById(gAdventure.currentOwner);
   struct ObjectRuntime *other = Object_GetById(12);
   s32 vx = object->bounce;
   s32 vz;

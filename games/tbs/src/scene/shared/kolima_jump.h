@@ -2,7 +2,7 @@
 /// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
 /// the hop east onto the scene's third placed actor.
 #include "types.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "actor.h"
 #include "scene.h"
 #include "adventure.h"

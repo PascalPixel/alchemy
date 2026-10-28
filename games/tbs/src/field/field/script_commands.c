@@ -106,7 +106,7 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 /// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
 /// moves on; with n = SC_FOREVER it always jumps. Counts in
 /// interpreter->repeatCount and clears it when the loop ends, so loops do not
-/// nest. The engine's own scripts (actor_script.c) end with
+/// nest. The field's own scripts (actor_script.c) end with
 /// SC_LOOP(SC_FOREVER, SC_TOP).
 s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;

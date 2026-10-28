@@ -1,6 +1,6 @@
 #include "types.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

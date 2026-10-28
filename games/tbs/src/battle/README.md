@@ -498,7 +498,7 @@ where one family of functions ends and the next begins.
 To the rest of the game a battle is one more sequence: the field leaves for it
 through an exit and comes back to the same spot
 ([Battle](../../battle.md#starting-a-battle)). While it runs the battle
-borrows the engine's [tasks](../../glossary.md#task), heap and actors, the
+borrows the system's [tasks](../../glossary.md#task) and heap, the field's actors, the
 window code for its menus and status window, and the
 [game rules](../game/README.md) for its tables and arithmetic, which sit in
 another [bank](../../glossary.md#bank) and are reached by far calls. The

@@ -17,7 +17,7 @@ typedef struct
 
 /*
  * Registered-parameter selection is stateful. Ignore the initial bend-range
- * preamble, but retain subsequent changes as engine controls.
+ * preamble, but retain subsequent changes as driver controls.
  */
 static SequenceEvent
 midiControl(const MidiEvent *e, int parameter[2], bool preamble)

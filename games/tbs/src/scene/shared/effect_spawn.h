@@ -118,7 +118,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   }
 
 #ifdef EFFECT_SPAWN_RESIDENT
-/// The resident version uses far calls to the engine.
+/// The resident version uses far calls into the main image.
 EFFECT_SPAWN(FieldEffect_SpawnResident, Actor_CreateFar,
              Actor_SelectAnimationFar, Actor_StartScriptFar)
 #else

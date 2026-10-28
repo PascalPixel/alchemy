@@ -8,7 +8,7 @@ events the scene plays. That code is a scene
 [overlay](../../glossary.md#overlay): a piece of code unpacked into one 32 KB
 area of RAM when the party arrives, and replaced when it leaves.
 [Running a scene](../overworld/README.md) runs the scene and asks the overlay what
-to do; the overlay drives the engine back through its
+to do; the overlay drives the main image back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of
 main-image functions it may call. Each overlay has a generated page of its
 own, listed in [Places](../field/scenes.s) in
@@ -20,12 +20,12 @@ and a recording of each event.
 
 ![Isaac walks out of the north door of a house in Vale; the room fades out and Vale fades in with him standing outside the same door](https://alchemy.pascalpixel.com/guides/map/arrive.gif)
 
-The engine knows nothing about any one scene. It asks the scene's code six
+The main image knows nothing about any one scene. It asks the scene's code six
 questions, always the same ones, and the answers are the scene. In the
 recording, the house's code says where its north door leads, and Vale's code
 says where the party then stands and who else is there.
 
-When the party arrives, the engine asks what can happen here (the
+When the party arrives, the field asks what can happen here (the
 triggers, kept for the whole visit), where the party arrives (the
 [entrances](../../glossary.md#entrance)), who stands where (the
 [actor](../../glossary.md#actor) templates), and whether
@@ -251,7 +251,7 @@ frame), a task (a function the scene runs once a frame) or an update routine
 this exit, waits until the event has finished.
 
 An event is plain C written in the calls of `event_layer.h`,
-`event_inline.h` and `engine_call.h`. A step that takes time runs the
+`event_inline.h` and `system_call.h`. A step that takes time runs the
 game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
 explains it). A task is added with `Task_AddFrame`.
 
@@ -360,7 +360,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Words used here
 
-- **position**: pixels, x east, y up and z south; the engine keeps them in
+- **position**: pixels, x east, y up and z south; the field keeps them in
   16.16 fixed point (`PIXELS(n)`), and a cell is 16 by 16 pixels.
 - **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
   through `FACING_SOUTH` to `FACING_NORTHEAST`.

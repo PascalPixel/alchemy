@@ -1,5 +1,5 @@
 /// @file
-/// Actor scripts: the ones the engine starts itself, and the command
+/// Actor scripts: the ones the field starts itself, and the command
 /// table.
 
 #include "unit/field/actor_script.h"

@@ -1,7 +1,7 @@
 /*
  * sequence.c
  *
- * Encode sound-engine commands and derive their running status.
+ * Encode sound-driver commands and derive their running status.
  * Events carry named commands and editable arguments. The encoder validates
  * their arity and range, then omits status or note parameters only when the
  * previous emitted state makes them redundant.
@@ -75,7 +75,7 @@ durationCode(int64_t n)
 	for (unsigned i = 0; i < 49; i++)
 		if (durations[i] == n)
 			return i;
-	fail("duration %lld is not in the engine's duration table", (long long) n);
+	fail("duration %lld is not in the sound driver's duration table", (long long) n);
 }
 
 SequenceEvent
@@ -224,7 +224,7 @@ encodeEvent(Assembly *assembly, const SequenceEvent *event, int *running)
 			*running = opcode;
 	}
 }
-/* Derive the engine's running status from editable MIDI events, not markers. */
+/* Derive the sound driver's running status from editable MIDI events, not markers. */
 /*
  * Forget inherited note parameters across control-flow boundaries. A called
  * pattern or branch can change the state seen by the following command.

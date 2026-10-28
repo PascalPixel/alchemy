@@ -4,7 +4,7 @@
  * Read standard MIDI tracks while retaining order and absolute ticks.
  * Track parsing expands MIDI running status but keeps metadata and channel
  * payloads intact. The sequence converter decides which events have meaning
- * to the sound engine.
+ * to the sound driver.
  */
 #include "midi.h"
 

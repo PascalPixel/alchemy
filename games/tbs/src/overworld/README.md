@@ -11,7 +11,7 @@ outside a battle, the commands events are written in,
 world R brings up on the World Map. Lucky Wheels, played in Tolbi's game room, is here
 too, in another [bank](../../glossary.md#bank).
 
-The engine underneath, which moves everything and draws the maps, is
+The code underneath, which moves everything and draws the maps, is
 [Field](../field/README.md), where the [actors](../../glossary.md#actor) and
 the [actor scripts](../../glossary.md#actor-script) they run are described under
 [everything that moves runs a

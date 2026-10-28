@@ -1,7 +1,7 @@
 # The Lost Age: field
 
 This folder holds The Lost Age's scene table and, in `shared/`, the field
-engine code its scenes use: the object script interpreter (`shared/script/`),
+code its scenes use: the object script interpreter (`shared/script/`),
 the map's cells and animation (`shared/map/`), field objects
 (`shared/object/`), events, effects and the camera. In ☀️ the same code is
 spread over [Field](../../../tbs/src/field/README.md) and
@@ -10,7 +10,7 @@ works; this page says only what differs here.
 
 ## What differs from ☀️
 
-- **Grouping.** ⚓️'s folder is by family of the engine, not by ☀️'s objects:
+- **Grouping.** ⚓️'s folder is by family of the field's code, not by ☀️'s objects:
   the script interpreter, the map code and the field objects are subfolders
   of `shared/`, one function or small family to a file. `work9c/` and
   `worka0/` are named for the offset of the heap slot their code works in

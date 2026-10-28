@@ -17,8 +17,8 @@ typedef s32 (*ScriptCommand)(struct Actor *);
 
 /// The whole 0x70-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field
 /// is one work value (enum ActorScriptValue in actor_script.h), reached through
-/// gActorScript_OperandHandlerTable, and named for what the engine keeps
-/// there. The types are the widths the handlers read, not the engine's own.
+/// gActorScript_OperandHandlerTable, and named for what the field keeps
+/// there. The types are the widths the handlers read, not the field's own.
 struct ScriptOperands {
   u32 scriptAddress; ///< SW_SCRIPT; an add steps it by whole words
   u16 cursor;        ///< SW_CURSOR, compared as signed

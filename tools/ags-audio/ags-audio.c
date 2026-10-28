@@ -1,7 +1,7 @@
 /*
  * ags-audio.c
  *
- * Encode editable sounds for the engine.
+ * Encode editable sounds for the sound driver.
  * WAV parsing validates mono PCM and optional tuning/loop metadata before
  * writing the native sample header. Wave-RAM inputs are already 16-byte
  * patterns and pass through after their size is checked.
@@ -98,7 +98,7 @@ readWave(const Buffer *input)
 	return wave;
 }
 
-/* Convert the WAV tuning into the engine's rate at MIDI note 60. */
+/* Convert the WAV tuning into the sound driver's rate at MIDI note 60. */
 static uint32_t
 samplePitch(const Wave *wave)
 {

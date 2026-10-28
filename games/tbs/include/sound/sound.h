@@ -20,7 +20,7 @@ extern const u16 gPcmSamplesPerVBlankTable[];
 extern const u8 gNoiseTable[];
 extern u32 gFreqTable[];
 extern u8 gScaleTable[];
-/// The sound engine's work, which m4aSoundInit sets up through
+/// The sound driver's work, which m4aSoundInit sets up through
 /// SoundInit.
 extern struct SoundInfo gSoundInfo;
 /// The 16 work bytes every music player shares (MusicPlayerInfo.workBytes), so

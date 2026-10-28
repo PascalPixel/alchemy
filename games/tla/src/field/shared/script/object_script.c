@@ -2,7 +2,7 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// Field object scripts: the ones the engine starts by itself, the command
+// Field object scripts: the ones the field starts by itself, the command
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 

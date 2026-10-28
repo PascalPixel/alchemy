@@ -57,7 +57,7 @@
 
 #include "script_operands.h"
 #include "adventure.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/mogall_forest.h"

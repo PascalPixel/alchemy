@@ -19,12 +19,12 @@ void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
 void ObjectMotion_CenterOnColumn(s32 actor, s32 a, s32 b);
 
 static inline void LemurianShip_ObjOffset(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   ObjectMotion_OffsetPositionAndResetMotion(actor, a, b);
 }
 
 static inline void LemurianShip_ObjCenter(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   ObjectMotion_CenterOnColumn(actor, a, b);
 }
 

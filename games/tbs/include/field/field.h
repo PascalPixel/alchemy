@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_FIELD_H
 
 /// @file
-/// The field engine's shared routines, globals and actor scripts.
+/// The field's shared routines, globals and actor scripts.
 
 #include "types.h"
 #include "edition.h"

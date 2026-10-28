@@ -34,7 +34,7 @@ void Func_02003298(s32 actor, s32 value);
 void Func_02000c5c(void);
 
 static __inline__ void EasternAlhafraShip_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer, as
+  /* FAKEMATCH: scene calls reach the main image through one inline layer, as
    * cutscene.c's Call3. */
   Call3((void (*)())Func_02003198, actor, x, z);
 }

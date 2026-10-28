@@ -164,8 +164,8 @@ equivalent (an index or a pointer form, a macro or its expansion, a cast), that
 site keeps the equivalent, untagged, with a short `//` note beside it saying
 what the plain spelling would change. The patterns below are the ones that
 recur, each with one example; the sites themselves carry the rest. They use the
-engine's words: a [heap slot](../glossary.md#heap-slot) is one of the numbered
-words of `gHeapSlots` that hold a system's working block, and an `Actor`
+system's words: a [heap slot](../glossary.md#heap-slot) is one of the numbered
+words of `gHeapSlots` that hold a mechanism's working block, and an `Actor`
 is the struct an [actor](../glossary.md#actor) is read through.
 
 ### Indexes, pointers and casts
@@ -309,7 +309,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   declaration: with the exact prototype in scope the arguments are set up in
   another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
-  unit headers under `UBFIX`, and `event_layer.h` gathers the engine routines
+  unit headers under `UBFIX`, and `event_layer.h` gathers the main-image routines
   the scenes call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
@@ -324,7 +324,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 
 ### Heap slots
 
-The engine keeps each system's working state in a
+The system keeps each mechanism's working state in a
 [heap](../glossary.md#heap-and-pools) block whose pointer sits in a numbered
 slot of `gHeapSlots`, and many of those slots also have a name of their own
 (`gFieldWork`, `gPaletteFadeWork` and so on), so the same block can be reached

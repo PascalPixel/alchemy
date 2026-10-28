@@ -239,7 +239,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
   }
   Event_WaitFrames(16);
   Import_EventSetExitRequest(work->stepTrigger);
-  // Restore the layer entries before returning control to the field engine.
+  // Restore the layer entries before returning control to the field.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
   Event_End();

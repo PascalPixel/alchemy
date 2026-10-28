@@ -30,7 +30,7 @@
 #include "dma.h"
 #include "ram_buffer.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"

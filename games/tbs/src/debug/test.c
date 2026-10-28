@@ -20,7 +20,7 @@
 #include "system.h"
 #include "edition.h"
 #include "menu_test.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "types.h"
 #include "io_reg.h"
 #include "inventory.h"

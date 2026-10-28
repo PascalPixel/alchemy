@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_ENGINE_CALL_H
-#define ALCHEMY_ENGINE_CALL_H
+#ifndef ALCHEMY_SYSTEM_CALL_H
+#define ALCHEMY_SYSTEM_CALL_H
 
 /// @file
-/// The engine call layer: one typed inline for each of the thirteen main-image
+/// The system call layer: one typed inline for each of the thirteen main-image
 /// routines below that the scene, menu and debug overlays import; every overlay
 /// call of them goes through it.
 ///

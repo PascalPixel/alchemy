@@ -1344,7 +1344,7 @@ struct ActorTemplate gVault_ActorTemplates[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_MIND_READ), (s32)gVault_WomanWantingTheRoofFixedRoute,
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     // XXX (no evidence): what this ivy was for; it stands above the map's top
-    // edge where no camera shows it, is not solid, and only the engine's passes
+    // edge where no camera shows it, is not solid, and only the field's passes
     // over every actor touch it (render probe vault-ivy).
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },

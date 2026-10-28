@@ -2,8 +2,8 @@
 #define ALCHEMY_CREATE_CONFIGURED_ACTOR_H
 
 /// @file
-/// The engine calls a scene uses to create an overlay actor and set its sprite
-/// flags.
+/// The main-image calls a scene uses to create an overlay actor and set its
+/// sprite flags.
 
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"

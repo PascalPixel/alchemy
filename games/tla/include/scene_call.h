@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-// Scene forwarding. ⚓️'s scene files reach the engine through their own static
-// inline wrappers, one per engine call, as ☀️'s scene layer (field_event.h)
+// Scene forwarding. ⚓️'s scene files reach the main image through their own static
+// inline wrappers, one per imported call, as ☀️'s scene layer (field_event.h)
 // does. The wrapper's parameters keep each call's own constants and stack
 // arguments in their own registers; called directly, nearby calls share a
 // constant in one register or reuse r3 for each stack argument. Every wrapper

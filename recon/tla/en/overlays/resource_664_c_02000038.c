@@ -18,7 +18,7 @@ struct AirsRockInsideEntry {
 u32 Random16Far(void);
 
 static inline u32 Random16Far_(void) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   return Random16Far();
 }
 s32 Func_02005f64(struct FieldActor *object);

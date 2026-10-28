@@ -15,7 +15,7 @@ void Func_02003990(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z);
 void Func_02003a90(s32 actor, s32 angle);
 
 static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   Func_02003a90(actor, angle);
 }
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);

@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-/// One in the engine's signed 16.16 fixed-point format.
+/// One in the game's signed 16.16 fixed-point format.
 #define Q16_ONE (1 << 16)
 
 /// The sine of `angle`, a whole turn being 0x10000, in 16.16, read from

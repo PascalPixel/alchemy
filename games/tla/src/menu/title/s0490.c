@@ -16,7 +16,7 @@ void Fade_ToBlack(s32 vblanks);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH: forwarding through the inline keeps the buffer address a
-   * constant of each call, as ☀️'s engine call layer does (called directly, the
+   * constant of each call, as ☀️'s system call layer does (called directly, the
    * address is kept in r5). */
   Resource_DecodeType01(source, destination);
 }

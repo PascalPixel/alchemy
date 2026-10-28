@@ -28,7 +28,7 @@ void Func_02000a80(void);
 
 static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y,
                                                  s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer (direct,
+  /* FAKEMATCH: scene calls reach the main image through one inline layer (direct,
    * differ 2). */
   return Func_02003fec(type, x, y, z);
 }

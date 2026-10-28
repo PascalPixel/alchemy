@@ -2,7 +2,7 @@
 #define DEBUG_H
 
 /// @file
-/// The engine calls the debug menus import, and their palette swatch tiles.
+/// The main-image calls the debug menus import, and their palette swatch tiles.
 
 #include "unit/overworld/overworld.h"
 #include "unit/menu/menu.h"

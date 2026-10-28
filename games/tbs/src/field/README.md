@@ -1,6 +1,6 @@
 # Field
 
-The field engine runs everything outside a battle that moves or is drawn: it
+The field runs everything outside a battle that moves or is drawn: it
 keeps track of the [party](../../glossary.md#the-party), the townspeople, the
 camera and even footprints, moves each of them a little every
 [frame](../../glossary.md#frame), decides whether the ground ahead can be
@@ -8,7 +8,7 @@ walked on, and draws the [map](../../glossary.md#map), a town as three flat
 layers or the world map tilted into perspective. It decides nothing about any
 one [scene](../../glossary.md#scene).
 
-Three other folders hold the rest. The loop that drives the engine is in
+Three other folders hold the rest. The loop that drives it is in
 `overworld`, whose page is [Running a scene](../overworld/README.md); the folder
 is named after the [bank](../../glossary.md#bank) it fills. Each scene's own
 code, its [events](../../glossary.md#event) included, is an
@@ -66,7 +66,7 @@ a frame, repeat", the camera's "follow the leader, wait a frame, repeat", and
 a footprint's "wait 120 frames, disappear"; the leader leaves one every 18
 frames of walking or 12 of running on the maps that show them.
 
-After the scripts, the engine moves each actor that isn't frozen: towards
+After the scripts, the field moves each actor that isn't frozen: towards
 the point its script aims it at, following the ground up and down, floating,
 and refusing to let solid actors overlap. In a battle a simpler update
 replaces it, which moves the first 14 actors and runs no scripts.
@@ -102,7 +102,7 @@ s32 gVault_BoyRoundTheWellRoute[] = {
 ```
 
 A loop jumps back to a numbered label rather than to a place in the list, so
-a script never needs to know where its own commands are; the engine searches the
+a script never needs to know where its own commands are; the field searches the
 script for the label each time. `SC_END` leaves the actor standing idle,
 and only `SC_RELEASE` gives its place back. A scene can also give one actor a
 function of its own, an update routine, that runs every frame before its script, even
@@ -313,7 +313,7 @@ is in [Maps](../map/README.md#the-world-maps-data).
 
 ### One actor, a few views
 
-All 64 actors are the same 112 bytes, and the engine reads them as
+All 64 actors are the same 112 bytes, and the field reads them as
 `struct Actor`: the script commands, the motion loop, the cameras, the
 battle and the field effects all take one. Scenes read the same actor as
 `struct Actor`, and a field effect as `struct FieldEffect`, with their fields
@@ -330,7 +330,7 @@ field-for-field copy that differs only where its reader does, as
 
 ### Actor scripts without addresses
 
-A jump stores a label number, not a place in the list, and the engine
+A jump stores a label number, not a place in the list, and the field
 searches for the label each time. A script is therefore a plain list of
 numbers that C can write, with nothing to fix up when it is built, at the cost
 of a search on every jump and a reach of 1,024 numbers.
@@ -354,8 +354,8 @@ one family of functions ends and the next begins.
 
 [Running a scene](../overworld/README.md) owns the scene loop: it starts the
 actor system, loads the map and the overlay, places the actors and
-handles requests, and this engine supplies the actors, actor scripts and ground
-checks it uses. Overlays reach the engine through their
+handles requests, and the field supplies the actors, actor scripts and ground
+checks it uses. Overlays reach the field through their
 [import tables](../../glossary.md#entry-table-and-import-table): nine scenes
 ask for the ground's height, and six rewrite a cell's
 [metatile behavior](../../glossary.md#metatile-behavior). The battle uses the

@@ -93,14 +93,14 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 
 static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
-  /* FAKEMATCH: the rectangle copy reaches the engine through one inline layer.
+  /* FAKEMATCH: the rectangle copy reaches the main image through one inline layer.
    */
   Func_02003998(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
-  /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
+  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
   Func_020039a8(a, b, c, d, e, f);
 }
 

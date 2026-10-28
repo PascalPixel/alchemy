@@ -59,7 +59,7 @@
 
 #include "script_operands.h"
 #include "adventure.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/bilibin_cave.h"

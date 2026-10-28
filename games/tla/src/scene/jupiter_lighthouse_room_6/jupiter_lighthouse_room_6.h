@@ -99,7 +99,7 @@ void Event_StartScreenTransition(void);
 
 static inline void JupiterLighthouseRoom6_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                            s32 f) {
-  /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
+  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
   Func_02001b04(a, b, c, d, e, f);
 }
 

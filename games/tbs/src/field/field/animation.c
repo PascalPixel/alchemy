@@ -317,7 +317,7 @@ void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
 /// Starts animation flags & 0x7f on every anim of a sprite (bit 7 keeps
 /// each anim's place and timer), unless the sprite plays it already. The
 /// first anim's animation also sets the sprite's offsets. Returns 0.
-/// The engine's usual way to change what a sprite plays: called by the
+/// The field's usual way to change what a sprite plays: called by the
 /// actor dispatch and the player control, and as
 /// Sprite_StartAnimFar by the battle, the shops, the menus,
 /// the battle animations, field Psynergy and the events.

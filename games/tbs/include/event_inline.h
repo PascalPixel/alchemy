@@ -21,7 +21,7 @@
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "farcall.h"
 
 /// Turns two actors toward each other, as a conversation between them
@@ -127,7 +127,7 @@ static inline void FieldActor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
   Actor_SetPositionAndCommit(actorId, x, z);
 }
 
-/// Task_AddFrame (engine_call.h) under a second name.
+/// Task_AddFrame (system_call.h) under a second name.
 static inline s32 Task_AddOrUpdateFrame(TaskFunc callback, s32 priority) {
   return Task_AddFrame(callback, priority);
 }

@@ -51,7 +51,7 @@
 #include "adventure.h"
 #include "ability_ids.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "display_transition.h"

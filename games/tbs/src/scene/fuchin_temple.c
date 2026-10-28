@@ -63,7 +63,7 @@
 #include "script_operands.h"
 #include "types.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"

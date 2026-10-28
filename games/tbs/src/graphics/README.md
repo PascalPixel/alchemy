@@ -33,7 +33,7 @@ The placing is a short assembly file, usually beside its picture: the
 grassland is `battle_bg/grassland.s`, which places `Battle_GrasslandBackdrop`.
 A `.tsv` beside a picture holds its packing options, such as a font's first
 letter. A sprite's `.tsv` in `sprite/` also holds its animations, one line
-each, written as the commands the field engine reads: `frame 55 6` shows
+each, written as the commands the field reads: `frame 55 6` shows
 frame 55 for 6 frames, and `loop`, `play 1` or `hold` says what follows the
 last frame.
 
@@ -124,10 +124,10 @@ since all memory is cleared before the next scene.
 Each line is drawn by `Credits_DrawEnteringLine` and `Credits_DrawLine`, set
 up by `Credits_InitTextSprites`; the text is `gCredits_Lines`.
 
-## Running outside the engine's frame
+## Running outside the system's frame
 
 For their length the credits run the screen themselves: they set aside the
-engine's usual task list and its copy of the sprite list, send their own
+system's usual task list and its copy of the sprite list, send their own
 sprites, and switch off the debug displays and the idle sleep. When they end
 they put the display back as the next screen expects it.
 

@@ -182,7 +182,7 @@ u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
 s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void FreeHeapSlot(s32 slot);
-/// The engine encodes either a movement type or an actor-script address.
+/// The field encodes either a movement type or an actor-script address.
 static inline void Actor_SetScript(s32 actorId, const s32 *script) {
   Actor_SetMovementTypeById(actorId, (s32)script);
 }

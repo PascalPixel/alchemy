@@ -59,7 +59,7 @@
 #include "adventure.h"
 #include "djinn_ids.h"
 #include "version.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/vale_cave.h"

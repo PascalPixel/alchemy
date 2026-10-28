@@ -8,20 +8,20 @@ void Func_020010dc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 void WaitFrames(s32 frames);
 
 static inline void MadraCatacombs_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct
+  /* FAKEMATCH: scene calls reach the main image through one inline layer; as direct
    * calls the coordinates are shared in callee-saved registers (119 differ). */
   Func_02001134(actor, x, z);
 }
 
 static inline void MadraCatacombs_CopyAttributes(s32 a, s32 b, s32 c, s32 d,
                                                  s32 e, s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer; as a
+  /* FAKEMATCH: scene calls reach the main image through one inline layer; as a
    * direct call its stack arguments take other registers. */
   Func_020010dc(a, b, c, d, e, f);
 }
 
 static inline void MadraCatacombs_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer, as the
+  /* FAKEMATCH: scene calls reach the main image through one inline layer, as the
    * draft of this function had it. */
   WaitFrames(frames);
 }

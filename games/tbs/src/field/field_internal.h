@@ -85,7 +85,7 @@ enum AnimationCommand {
   ANIMCMD_BLANK = 255     ///< show nothing for `arg`
 };
 
-/// The engine's pool sizes, and an anim's timer step at normal speed.
+/// The field's pool sizes, and an anim's timer step at normal speed.
 enum {
   RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.frameCaches
   ACTOR_COUNT = 64,        ///< gActors, HEAP_SLOT_ACTORS

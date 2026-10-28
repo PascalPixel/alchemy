@@ -63,7 +63,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "event_layer.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "scene_tables.h"
 #include "scene.h"
 #include "edition.h"
@@ -1207,7 +1207,7 @@ struct Trigger gLunpaReopenedTriggers[] = {
 struct Trigger gGateTriggers[] = {
     { TRIGGER_EXIT, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
     // XXX (no evidence): where the third road was meant to lead; gGateExits
-    // has no row for it, so the engine sends it to LunpaFortressGroundFloor's
+    // has no row for it, so the field sends it to LunpaFortressGroundFloor's
     // default entrance.
     { TRIGGER_EXIT, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Lunpa_CastCloak) },

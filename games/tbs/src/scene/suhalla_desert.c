@@ -58,7 +58,7 @@
 #include "flags.h"
 #include "version.h"
 #include "adventure.h"
-#include "engine_call.h"
+#include "system_call.h"
 #include "unit/scene/suhalla_desert.h"
 #include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"

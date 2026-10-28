@@ -55,8 +55,8 @@ integer(const char *s, bool sign, unsigned max)
 }
 
 /*
- * An animation script is a list of commands, two bytes each, which the field
- * engine reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
+ * An animation script is a list of commands, two bytes each, which the
+ * field reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
  * An anim line names them, separated by commas:
  *
  *   frame N D   show frame N for D frames (N below 239)
@@ -70,7 +70,7 @@ integer(const char *s, bool sign, unsigned max)
  *   end         blank the sprite and stop
  *   command C A a command with no name here, C, with argument A
  *
- * hold and end take an optional argument, which the engine ignores.
+ * hold and end take an optional argument, which the field ignores.
  */
 static const struct
 {
@@ -117,7 +117,7 @@ animationScript(const char *text)
 				code = animationCommands[j].code;
 		if (code == 256)
 			fail("unknown animation command: %s", commands.items[i]);
-		// The engine jumps to a byte offset; the text counts commands.
+		// The field jumps to a byte offset; the text counts commands.
 		if (!strcmp(name, "jump"))
 		{
 			if (!argument || argument >= commands.len || argument > 127)

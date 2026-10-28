@@ -1,5 +1,5 @@
 /// @file
-/// The field object: the engine of the field and the world map. It draws and
+/// The field object: the code under the field and the world map. It draws and
 /// animates sprites, keeps the 64 actors and runs their scripts, moves
 /// the player by the keys, loads, draws and scrolls the maps, and answers what
 /// the ground is like under a point. field_internal.h holds what the parts

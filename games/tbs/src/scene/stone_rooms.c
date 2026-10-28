@@ -235,7 +235,7 @@ static void StoneRooms_LeaveForVault(void) {
 /// Opens the map through a window transition and lets the party reach the
 /// jail's occupants across the bars.
 ///
-/// Called by the engine once the actors are placed. Coming in through
+/// Called by the field once the actors are placed. Coming in through
 /// Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
 /// FLAG_SHOW_AREA_NAME, so no area name is shown; otherwise it adds
 /// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.

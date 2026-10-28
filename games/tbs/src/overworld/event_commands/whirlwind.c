@@ -69,7 +69,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
 /// now and then turning sharply; after 101 frames it hands over to the
 /// shared particle script. FieldEffect_CircleAnchor switches a particle to it.
-/// While it wanders, the engine's own motion lifts the particle (the velocity
+/// While it wanders, the field's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
 void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
@@ -120,7 +120,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
   effect->z.fixed = anchor->z.fixed + dz;
   effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
   if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
-    // The engine integrates height after this update routine. Supply upward
+    // The field integrates height after this update routine. Supply upward
     // speed and gravity here; the wandering update routine only changes x and
     // z.
     effect->update = FieldEffect_WanderAroundAnchor;

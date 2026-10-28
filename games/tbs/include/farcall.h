@@ -2,7 +2,7 @@
 #define ALCHEMY_FARCALL_H
 
 /// @file
-/// Public interfaces to the engine's code banks. Each bank exposes a stable
+/// Public interfaces to the main image's code banks. Each bank exposes a stable
 /// jump table, so another bank can reach its routines beyond Thumb's call
 /// range. These headers declare ordinary functions; the ordered assembly tables
 /// in src/cartridge/far_call own the entry names and the routines they jump to.

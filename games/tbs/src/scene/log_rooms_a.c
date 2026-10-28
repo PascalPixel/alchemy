@@ -499,7 +499,7 @@ static void LogRoomsA_TalkToInnkeeper(void) {
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
 ///
-/// Reached through FIELD_RAISED_TRIGGER_MENUS, which the engine raises in place
+/// Reached through FIELD_RAISED_TRIGGER_MENUS, which the field raises in place
 /// of a menu or a shortcut while FLAG_MENUS_RAISE_TRIGGER is set.
 static void LogRoomsA_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
@@ -2100,7 +2100,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 /// for the story so far, and plays the loft's events: the tied-up villager, the
 /// rematch, and the defeat or victory.
 ///
-/// Called by the engine once the actors are placed, by entrance.
+/// Called by the field once the actors are placed, by entrance.
 /// At the inn, after the thieves are jailed, places the Bone and starts
 /// Vault_UpdateBoneProximityFlag. After a lost battle
 /// (LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES) takes

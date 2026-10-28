@@ -79,7 +79,7 @@ struct Actor {
   /// fixed-point pixels per frame (0x10000 when created); also scales a
   /// floating actor's bob.
   s32 gravity;
-  /// Zeroed by FieldActor_Create and not read by the engine; scene code keeps a
+  /// Zeroed by FieldActor_Create and not read by the field; scene code keeps a
   /// resting height, a sway or a countdown here.
   s32 riseBaseY;
   /// Its sprite, by spriteStorageKind.
@@ -88,7 +88,7 @@ struct Actor {
     void **sprites;        ///< ACTOR_SPRITE_GROUP: four, empty ones null
   };
   /// Zero hides sprites; one draws a single sprite, two draws a group. The
-  /// engine reads the low four bits (enum ActorSpriteKind); SC_SHOW_SPRITE and
+  /// field reads the low four bits (enum ActorSpriteKind); SC_SHOW_SPRITE and
   /// SC_HIDE_SPRITES set 1 and 0.
   u8 spriteStorageKind;
   /// ActorMotionFlag bits; none is free flight in 3D, and
@@ -113,8 +113,8 @@ struct Actor {
   /// Nonzero skips steering, terrain, gravity and floating; its velocity
   /// still moves it.
   u8 frozen;
-  u8 riseCounter; ///< not read by the engine; scene code's own counter
-  u8 riseEnabled; ///< not read by the engine; scene code's own state
+  u8 riseCounter; ///< not read by the field; scene code's own counter
+  u8 riseEnabled; ///< not read by the field; scene code's own state
   /// Two halfwords whose meaning depends on what runs the actor.
   union {
     struct {

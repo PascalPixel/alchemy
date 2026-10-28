@@ -18,7 +18,7 @@ s32 Math_Sine(s32 angle);
 void Func_020048d4(s32 actor, s32 emote);
 
 static inline void ObjEmote(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
   Func_020048d4(actor, emote);
 }
 

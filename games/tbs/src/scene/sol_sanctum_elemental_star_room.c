@@ -2461,12 +2461,12 @@ s8 gSolSanctum_RingDirection[][3] = {
 };
 
 s32 gSolSanctumRing_MaxScales[] = {
-    3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 3 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5,
-    3 * Q16_ONE / 5, 7 * Q16_ONE / 10,
+    3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 4 * Q16_ONE / 5,
+    3 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 3 * Q16_ONE / 5, 7 * Q16_ONE / 10,
 };
 
 s32 gSolSanctumRing_ScaleSteps[] = {
-    655, 458, 655, 458, 655, 458, 655, 655,
-    524, 655,
+    10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
+    7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 8 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
 };
 // clang-format on

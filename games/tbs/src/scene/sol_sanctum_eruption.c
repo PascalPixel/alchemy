@@ -1511,11 +1511,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Import_EventSetExitRequest(
       SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
-  // FLAG_SYSTEM_FIRST marks nothing: it is set nowhere else and read nowhere,
-  // by no table, script or function, and render probe flag-reads, watching
-  // every flag test and every byte and nibble read in the maps after the
+  // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
+  // table, script or function, and render probe flag-reads, watching every
+  // flag test and every byte and nibble read in the maps after the
   // eruption, sees none.
-  GameFlag_Set(FLAG_SYSTEM_FIRST);
+  GameFlag_Set(0x100);
 }
 
 /// Places an actor before the star, facing south, and draws it above the

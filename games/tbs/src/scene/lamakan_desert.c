@@ -716,7 +716,7 @@ static void HeatGauge_CountStep(void) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = PIXELS(2) - ((((z >> 20) & 1) * 5) << 16);
+      dx = PIXELS(2) - PIXELS(((z >> 20) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }

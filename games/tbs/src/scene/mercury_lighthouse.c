@@ -2830,7 +2830,7 @@ static void MercuryLighthouse_RideLift(void) {
 
   liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];
-  liftSpeed = PIXELS(61) / 100;
+  liftSpeed = 0x9c28;
   liftLayer->offsetY = PIXELS(1161);
   liftLayer->speedY = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;

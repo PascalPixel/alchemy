@@ -1689,7 +1689,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     }
     if ((i & 3) == 3)
       speed += PIXELS(1) / 10;
-    if (speed > PIXELS(3) / 2 - 1)
+    if (speed >= PIXELS(3) / 2)
       speed = PIXELS(3) / 2;
     wait(1);
   }

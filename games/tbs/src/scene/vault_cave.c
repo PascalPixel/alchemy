@@ -777,7 +777,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
     struct Actor *fallingActor =
         Actor_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
-    if ((u32)(fallingActor->y.fixed - 1) <= PIXELS(16) - 2) {
+    if (fallingActor->y.fixed > 0 && fallingActor->y.fixed < PIXELS(16)) {
       s32 fallingRow = TILE(fallingActor->z.fixed);
       s32 fallingColumn = TILE(fallingActor->x.fixed);
       s32 subjectRow = TILE(subject->z.fixed);
@@ -823,7 +823,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
-        if (fallingActor->y.fixed <= PIXELS(1) - 1) {
+        if (fallingActor->y.fixed < PIXELS(1)) {
           VaultCave_SpawnPuffs(fallingActor);
           fallingActor->y.fixed = PIXELS(255);
           fallingActor->gravity = 0;
@@ -877,7 +877,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
           (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
       if (stateValue != 0) {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed > PIXELS(33) - 1) {
+          if (fallingActor->y.fixed >= PIXELS(33)) {
             continue;
           }
         }
@@ -887,7 +887,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
         Sound_Play(SE_DRIP);
       } else {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed > PIXELS(1) - 1) {
+          if (fallingActor->y.fixed >= PIXELS(1)) {
             continue;
           }
         }

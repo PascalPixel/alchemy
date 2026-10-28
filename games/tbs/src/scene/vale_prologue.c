@@ -1070,7 +1070,7 @@ static void ValePrologue_ThirdRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= PIXELS(693) - 1) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(693)) {
             ValePrologue_GaretCommentsOnBlockedPath(62, 669);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 627);
           } else {
@@ -1139,7 +1139,7 @@ static void ValePrologue_FourthRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           leader = Actor_GetById(ACTOR_PARTY_LEADER);
-          if (leader->z.fixed <= PIXELS(1146) - 1) {
+          if (leader->z.fixed < PIXELS(1146)) {
             ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {

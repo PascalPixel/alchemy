@@ -6,7 +6,7 @@
 
 #define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 mode);
 
 static inline void FillWords(void *destination, s32 size, u32 value) {
@@ -33,14 +33,14 @@ void UiWork_DrawByAttributes(struct UiWindow *window) {
   window->duration = 0;
   if (8 & flags) {
     if (0x20 & flags) {
-      UiWindow_DrawFrame(x, y, width, height);
+      UiWindow_DrawBorder(x, y, width, height);
       FillWords((void *)0x06002500, 0xF00, 0x44444444);
     } else {
       FillWords((void *)0x06002500, 0xF00, 0);
     }
     Func_0803a2b0(x, y, width, height, 0);
   } else {
-    UiWindow_DrawFrame(x, y, width, height);
+    UiWindow_DrawBorder(x, y, width, height);
   }
   work->dirty = 1;
 }

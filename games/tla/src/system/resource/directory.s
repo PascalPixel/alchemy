@@ -479,7 +479,7 @@ Resource_DirectoryTable:
 	resource , Shop_CursorPictureF
 	resource , Shop_CursorPictureG
 	resource , Shop_CursorPictureH
-	resource WindowFrameFlash, Ui_WindowFrameFlash
+	resource WindowBorderFlash, Ui_WindowBorderFlash
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
 	resource , Ui_Flags

@@ -666,7 +666,7 @@ void Menu_DrawModeLabel(void) {
 // help only when coming from Password. Spanish and Italian, which take the
 // French updates (TBS_PATCH_3), keep the others' form, so the test is on
 // the language. The player sees no difference: French draws the help as
-// window sprites, so the empty frame the others redraw has nothing to clear,
+// window sprites, so the empty window the others redraw has nothing to clear,
 // and with two methods and the menu opening on Password, every move to Cable
 // comes from Password. XXX (no evidence): why French alone was rewritten; both
 // forms draw the same screens, so nothing the game shows tells them apart.

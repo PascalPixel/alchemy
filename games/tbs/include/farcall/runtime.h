@@ -61,7 +61,7 @@ s32 OamMatrix_AllocFromTransformFar(struct AffineTransform *source);
 /// Links a sprite entry into depth slot `slot` (0 to 255) for this frame's OAM
 /// list; the entry's first word becomes its link.
 void Oam_AddSpriteAtDepthFar(void *slot_entry, s32 slot);
-/// Loads the window font, frame tiles and palette, and the basic sprite
+/// Loads the window font, border tiles and palette, and the basic sprite
 /// palettes, as modes that replace them must put them back.
 void Window_LoadGraphicsFar(void);
 /// Returns the ROM address of resource `index` from the resource directory.

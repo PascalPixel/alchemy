@@ -45,7 +45,7 @@ that reads it is the same.
 
 A window grows out of its centre over a few frames when it opens and shrinks
 back when it closes. The code that opened it waits until it is full size
-before writing in it. Its frame and blue filling are tiles of one
+before writing in it. Its border and blue filling are tiles of one
 [background layer](../../glossary.md#background-layer), in front of the three
 the scene uses; what it carries (letters, portraits, the hand) are sprites riding
 on it.
@@ -117,7 +117,7 @@ closing mark, waits for a button and closes.
 
 The window system runs once a frame as a [task](../../glossary.md#task): it
 grows and shrinks the windows, lets each of the three text printers type its
-share, and moves the window sprites. `Message_OpenWindow` (`window/frames.c`)
+share, and moves the window sprites. `Message_OpenWindow` (`window/borders.c`)
 is the whole path for one message, and shows the order every caller follows:
 
 ```c
@@ -273,7 +273,7 @@ so renaming one changes other folders too.
 
 ## Limits
 
-- The screen is 30 by 20 tiles; a frame narrower or shorter than 2 tiles, or
+- The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles, or
   wider or taller than 30, is not drawn, and nothing stops a window running
   off the bottom.
 - Twelve windows at once in Japanese and eight in the international editions.

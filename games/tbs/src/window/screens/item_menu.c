@@ -40,7 +40,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
 // of the four would settle it.
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
-/// the frame's top and bottom tees to tiles 0x200, 0x201, 0x210 and 0x211 as
+/// the border's top and bottom tees to tiles 0x200, 0x201, 0x210 and 0x211 as
 /// they open.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
@@ -89,7 +89,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   cursorHandle = VramCache_AllocEntry(128);
   messageWindow = Window_Create(0, 5, 30, 4,
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                                    WINDOW_FLAG_FRAMED_CANVAS);
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
@@ -109,10 +109,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_FRAME_TOP_TEE, 0x200);
-  Vram_CopyTile(WINDOW_TILE_FRAME_TOP_TEE, 0x201);
-  Vram_CopyTile(WINDOW_TILE_FRAME_BOTTOM_TEE, 0x210);
-  Vram_CopyTile(WINDOW_TILE_FRAME_BOTTOM_TEE, 0x211);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x200);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x201);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x210);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x211);
 
   sprite = &cursorStorage;
   for (;;) {

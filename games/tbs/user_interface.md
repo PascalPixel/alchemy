@@ -138,7 +138,7 @@ the scene's events, none of which exist while the menu runs.
 ## Limits
 
 - The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles, or
-  wider or taller than 30, draws no frame.
+  wider or taller than 30, draws no border.
 - Eight windows at once (twelve in Japanese), three text printers, 64 window
   sprites and eight message blanks; a ninth blank is dropped.
 - The text buffer holds 512 letter codes (256 in Japanese).

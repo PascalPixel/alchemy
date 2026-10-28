@@ -31,7 +31,7 @@ enum {
   WINDOW_FLAG_TEXT_CANVAS = 0x8,
   /// the canvas has a frame and a filled background; without it the canvas is
   /// transparent and frameless
-  WINDOW_FLAG_FRAMED_CANVAS = 0x20,
+  WINDOW_FLAG_BORDERED_CANVAS = 0x20,
   WINDOW_FLAG_OUTLINED_TEXT = 0x40, ///< the canvas text gets an outline
   /// when a new page resizes the window, its bottom edge stays put
   WINDOW_FLAG_ANCHOR_BOTTOM = 0x80,
@@ -111,15 +111,15 @@ enum TextColor {
 /// the corners are one rounded tile, flipped for each corner.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
-  WINDOW_TILE_FRAME_TOP_LEFT = WINDOW_TILE(0x10),
-  WINDOW_TILE_FRAME_TOP = WINDOW_TILE(0x11),
-  WINDOW_TILE_FRAME_TOP_RIGHT = WINDOW_TILE(0x12),
-  WINDOW_TILE_FRAME_BOTTOM_LEFT = WINDOW_TILE(0x13),
-  WINDOW_TILE_FRAME_BOTTOM = WINDOW_TILE(0x14),
-  WINDOW_TILE_FRAME_BOTTOM_RIGHT = WINDOW_TILE(0x15),
-  WINDOW_TILE_FRAME_LEFT = WINDOW_TILE(0x16),
-  WINDOW_TILE_FRAME_RIGHT = WINDOW_TILE(0x17),
-  WINDOW_TILE_FRAME_ROUND_CORNER = WINDOW_TILE(0x1c),
+  WINDOW_TILE_BORDER_TOP_LEFT = WINDOW_TILE(0x10),
+  WINDOW_TILE_BORDER_TOP = WINDOW_TILE(0x11),
+  WINDOW_TILE_BORDER_TOP_RIGHT = WINDOW_TILE(0x12),
+  WINDOW_TILE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x13),
+  WINDOW_TILE_BORDER_BOTTOM = WINDOW_TILE(0x14),
+  WINDOW_TILE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x15),
+  WINDOW_TILE_BORDER_LEFT = WINDOW_TILE(0x16),
+  WINDOW_TILE_BORDER_RIGHT = WINDOW_TILE(0x17),
+  WINDOW_TILE_BORDER_ROUND_CORNER = WINDOW_TILE(0x1c),
   WINDOW_TILE_WINDOW_FILL = WINDOW_TILE(0x20),
   // Divider lines (Window_DrawDividerLine) and their joins.
   WINDOW_TILE_DIVIDER_TEE_DOWN =
@@ -133,19 +133,19 @@ enum {
   WINDOW_TILE_DIVIDER_CROSS = WINDOW_TILE(0x0d),
   WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(0x0e),
   WINDOW_TILE_DIVIDER_VERTICAL = WINDOW_TILE(0x0f),
-  WINDOW_TILE_FRAME_TOP_TEE =
+  WINDOW_TILE_BORDER_TOP_TEE =
       WINDOW_TILE(0x18), ///< the top edge meeting a line
-  WINDOW_TILE_FRAME_BOTTOM_TEE =
+  WINDOW_TILE_BORDER_BOTTOM_TEE =
       WINDOW_TILE(0x19), ///< the bottom edge meeting a line
-  WINDOW_TILE_FRAME_LEFT_TEE =
+  WINDOW_TILE_BORDER_LEFT_TEE =
       WINDOW_TILE(0x1a), ///< the left edge meeting a line
-  WINDOW_TILE_FRAME_RIGHT_TEE =
+  WINDOW_TILE_BORDER_RIGHT_TEE =
       WINDOW_TILE(0x1b), ///< the right edge meeting a line
-  /// In battle, the bottom frame tiles' lower rows, which
+  /// In battle, the bottom border tiles' lower rows, which
   /// WindowSystem_InitBattle copies to tiles 128 to 130.
-  WINDOW_TILE_BATTLE_FRAME_BOTTOM_LEFT = WINDOW_TILE(0x80),
-  WINDOW_TILE_BATTLE_FRAME_BOTTOM = WINDOW_TILE(0x81),
-  WINDOW_TILE_BATTLE_FRAME_BOTTOM_RIGHT = WINDOW_TILE(0x82),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x80),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(0x81),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x82),
 };
 
 /// The tilemap entry flip bits.
@@ -339,9 +339,9 @@ void Text_ScrollCanvasUp(s32 step);
 void TextPrinter_RunAll(void);
 s32 TextPrinter_Step(struct TextPrinter *printer);
 void Window_UpdateZooms(void);
-void Window_DrawZoomFrame(void *windowArg, s32 savePosition);
+void Window_DrawZoomBorder(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
-void Window_DrawFrame(s32 x, s32 y, u32 width, u32 height);
+void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
 s32 TextPrinter_AllFinished(void);

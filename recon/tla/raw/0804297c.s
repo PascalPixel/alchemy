@@ -189,7 +189,7 @@ PartyStatus_Draw:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_DrawFrame
+	bl UiWindow_DrawBorder
 	mov r0, r9
 	mov r1, r10
 	bl Func_080426e0

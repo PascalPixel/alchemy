@@ -85,7 +85,7 @@ s32 DjinnMenu_Run(void) {
   savedMessageSpeed = gAdventure.messageSpeed;
   gAdventure.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = gActorSystemWork->suspended = 1;
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
   backdrop = AllocEwram(0x2130);
@@ -127,7 +127,7 @@ s32 DjinnMenu_Run(void) {
   IconMenu_ReleaseArrows();
   WaitFrames(1);
   ItemMenu_Close();
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   gActorSystemWork->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
@@ -474,9 +474,9 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
   } while (bankIndex <= 2);
 }
 
-/// The tile of BG character block 1 the backdrop's frame tile is copied to;
+/// The tile of BG character block 1 the backdrop's border tile is copied to;
 /// the preview screens blink it.
-#define DJINN_BACKDROP_FRAME_TILE 150
+#define DJINN_BACKDROP_BORDER_TILE 150
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
 /// drawn in TEXT_COLOR_YELLOW, and Psynergy it takes away, in TEXT_COLOR_RED.
@@ -504,8 +504,9 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 0x1000));
-  Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
-                  gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1) +
+                      DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP,
+                  gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
   Dma_Set((const void *)Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
@@ -848,7 +849,7 @@ s32 DjinnMenu_ShowHelp(void) {
     {
       struct Window *window = printer->window;
 
-      window->frame = 0;
+      window->zoomStep = 0;
       window->duration = 0;
       window->state = 0;
     }
@@ -1946,7 +1947,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 #undef DJINN_PREVIEW_ARROW_X
 #undef DJINN_PREVIEW_PP_X
 #undef DJINN_RESELECT_PAIR_ENTRY
-#undef DJINN_BACKDROP_FRAME_TILE
+#undef DJINN_BACKDROP_BORDER_TILE
 #undef DJINN_PREVIEW_GAINED
 #undef DJINN_PREVIEW_LOST
 #undef DJINN_ENTRY_SET

@@ -158,7 +158,7 @@ void Window_CloseAll(s32 unused) {
     do {
       pollWindow = printer->window;
       if (pollWindow != 0) {
-        if (pollWindow->frame == 0 && pollWindow->duration == 0) {
+        if (pollWindow->zoomStep == 0 && pollWindow->duration == 0) {
           flag = pollWindow->flags;
           // flag is 0 here: the printer is set free.
           if (flag == 0)
@@ -205,14 +205,14 @@ void Window_StepSwellEffect(struct TextPrinter *printer) {
   if (effect != WINDOW_ANIMATION_SWELL)
     return;
 
-  Window_DrawFrame(x - 1, y - 1, width + 2, height + 2);
+  Window_DrawBorder(x - 1, y - 1, width + 2, height + 2);
   printer->countdown--;
   if (printer->countdown != 0)
     return;
 
   printer->window->animation = 0;
   Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
-  Window_DrawFrame(x, y, width, height);
+  Window_DrawBorder(x, y, width, height);
 }
 
 /// Empties the table of message arguments.
@@ -335,7 +335,7 @@ void TextPrinter_CloseFinishedWindows(void) {
   i = 0;
   do {
     window = printer->window;
-    if (window != NULL && window->frame == 0 && window->duration == 0 &&
+    if (window != NULL && window->zoomStep == 0 && window->duration == 0 &&
         window->flags != 0 && window->state != 0) {
       Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }

@@ -38,7 +38,7 @@ s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);
 void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void Palette_LightenBankHighlight(s32);
-void UiWindow_DrawFrameFar(s32, s32, s32, s32);
+void UiWindow_DrawBorderFar(s32, s32, s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
 /// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
@@ -113,7 +113,7 @@ s32 Func_080fb780(s32 value) {
 #if LANGUAGE == LANGUAGE_JAPANESE
   menu->unk21c = 1;
 #else
-  UiWindow_DrawFrameFar(13, 0, 17, 10);
+  UiWindow_DrawBorderFar(13, 0, 17, 10);
 #endif
 
   return counter;

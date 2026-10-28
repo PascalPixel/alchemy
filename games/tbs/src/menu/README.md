@@ -240,5 +240,5 @@ its preview redraws it as it closes (a
 [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in `djinn_preview.c`). That
 reads the window's place through `NULL`, which on this console is the BIOS.
 Code outside the BIOS reading it gets the last BIOS instruction fetched
-instead; read as a width, that value is over 30 tiles, so `Window_DrawFrame`
+instead; read as a width, that value is over 30 tiles, so `Window_DrawBorder`
 draws nothing.

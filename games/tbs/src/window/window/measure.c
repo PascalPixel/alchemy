@@ -47,8 +47,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   if (*windowWidth == 0 && *windowHeight == 0)
     return;
 
-  // Pixels to tiles, with room for the frame and a margin: + 19 is the two
-  // frame tiles (16) and 3, so a width rounds up to the next tile only past
+  // Pixels to tiles, with room for the border and a margin: + 19 is the two
+  // border tiles (16) and 3, so a width rounds up to the next tile only past
   // 4 pixels into it. Lines are 15 pixels, so 1 to 4 lines are 3, 5, 7 and 9
   // tiles tall.
   if (!(flags & 2)) {

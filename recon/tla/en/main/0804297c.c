@@ -57,7 +57,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void Func_080426e0(struct UiWindow *window, u32 flags);
 void UiWindow_BuildLayoutBounds(s32 flags);
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 struct StatusUnit *Unit_Get(s32 owner);
 void Func_08041f70(s32 nibble);
 void UiText_DrawPrefixedNumberAtOffset(s32 value, struct UiWindow *window,
@@ -122,7 +122,7 @@ void PartyStatus_Draw(s32 flags) {
     window->width = layout->width;
     window->height = layout->height;
     window->x = layout->x;
-    UiWindow_DrawFrame(layout->x, layout->y, layout->width, layout->height);
+    UiWindow_DrawBorder(layout->x, layout->y, layout->width, layout->height);
     Func_080426e0(window, flags);
   }
 

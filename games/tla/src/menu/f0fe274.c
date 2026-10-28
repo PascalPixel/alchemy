@@ -23,7 +23,7 @@ struct OwnerMenuState {
   u16 page;
 };
 
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 unused);
@@ -71,7 +71,7 @@ s32 Func_080fe274(void) {
   heap = Ram_HeapSlots;
   transition = heap->displayTransition;
   heap->objectSystem->suspended = 1;
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   saved = *(u16 *)&transition->active;
   transition->active = 17;
@@ -104,7 +104,7 @@ s32 Func_080fe274(void) {
   RenderOutput_ClearListFar(state->statusWindow);
   MenuIcon_ReleaseObjects();
   Scheduler_DisableOverlayCallbacksWithFlags();
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Func_08038290();
   UiWork_SetAltFlagAndClearTableFar(0);
@@ -114,7 +114,7 @@ s32 Func_080fe274(void) {
   MemFree(palette);
   ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 1;
   ItemMenu_Close();
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(220);
   heap->objectSystem->suspended = 0;
   transition->active = saved;

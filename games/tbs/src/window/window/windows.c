@@ -154,10 +154,10 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   WindowSprite_InitializeFreeList();
   Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartBattleUpdate(loadGlyphTiles);
-  // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM, 129);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_RIGHT, 130);
+  // Tiles 128 to 130 take the lower rows of the bottom border tiles.
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
   // Tiles 128 to 130 are also the first three text tiles. Attribute 4 is
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
@@ -281,8 +281,8 @@ void Window_DrawOpened(struct Window *window) {
   width = window->width;
   // Canvas windows need both pixel storage and their tilemap rectangle.
   if (WINDOW_FLAG_TEXT_CANVAS & flags) {
-    if (WINDOW_FLAG_FRAMED_CANVAS & flags) {
-      Window_DrawFrame(x, y, width, height);
+    if (WINDOW_FLAG_BORDERED_CANVAS & flags) {
+      Window_DrawBorder(x, y, width, height);
       Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
                       TEXT_CANVAS_BACKGROUND_WORD);
     } else {
@@ -290,7 +290,7 @@ void Window_DrawOpened(struct Window *window) {
     }
     Window_MapTextCanvasTiles(x, y, width, height, 0);
   } else {
-    Window_DrawFrame(x, y, width, height);
+    Window_DrawBorder(x, y, width, height);
   }
   work->dirty = 1;
 }
@@ -330,8 +330,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
     }
-    if (attrs & WINDOW_FLAG_FRAMED_CANVAS) {
-      found->flags |= WINDOW_FLAG_FRAMED_CANVAS;
+    if (attrs & WINDOW_FLAG_BORDERED_CANVAS) {
+      found->flags |= WINDOW_FLAG_BORDERED_CANVAS;
     }
     if (attrs & WINDOW_FLAG_OUTLINED_TEXT) {
       found->flags |= WINDOW_FLAG_OUTLINED_TEXT;
@@ -344,13 +344,13 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     }
     if (attrs & WINDOW_FLAG_INSTANT) {
       found->flags |= WINDOW_FLAG_INSTANT;
-      found->frame = 0;
+      found->zoomStep = 0;
       found->duration = 1;
       Window_DrawOpened(found);
     } else {
       // Zoom open over eight frames, and wait until it is open.
       found->duration = WINDOW_OPEN_FRAMES;
-      found->frame = WINDOW_OPEN_FRAMES - 1;
+      found->zoomStep = WINDOW_OPEN_FRAMES - 1;
       Window_WaitZoom(found);
       WaitFrames(1);
     }
@@ -401,7 +401,7 @@ void Window_Close(struct Window *window, s32 instant) {
     window->animation = zero;
     window->state = zero;
     window->flags = zero;
-    window->frame = zero;
+    window->zoomStep = zero;
     window->duration = zero;
     window->previousX = zero;
     window->previousY = zero;
@@ -410,12 +410,12 @@ void Window_Close(struct Window *window, s32 instant) {
   } else {
     // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
     // instant is 0 here.
-    window->frame = instant;
+    window->zoomStep = instant;
     window->duration = WINDOW_CLOSE_FRAMES;
   }
 }
 
-/// Clears a window's contents: redraws its empty frame and releases the render
+/// Clears a window's contents: redraws it empty and releases the render
 /// window sprites it carries. A text canvas window is left alone.
 void WindowSprite_PrepareForRedraw(struct Window *window) {
   if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
@@ -424,9 +424,9 @@ void WindowSprite_PrepareForRedraw(struct Window *window) {
   }
 }
 
-/// Redraws a window's empty frame at its current rectangle.
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window) {
-  Window_DrawFrame(window->x, window->y, window->width, window->height);
+  Window_DrawBorder(window->x, window->y, window->width, window->height);
 }
 
 /// Releases every window sprite in a list and empties it. sprites is the list,

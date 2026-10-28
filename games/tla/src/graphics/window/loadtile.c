@@ -12,13 +12,13 @@ struct Rect_0803cba8 {
   u16 state;
 };
 
-extern char ResourceId_WindowFrameFlash;
+extern char ResourceId_WindowBorderFlash;
 
 void Func_0803a1c0(s32 x, s32 y, s32 width, s32 height);
 
 void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset) {
   u8 *source =
-      (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowFrameFlash) + offset;
+      (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash) + offset;
   struct Rect_0803cba8 *rect = *window;
   s32 x = rect->x;
   s32 y = rect->y;
@@ -35,7 +35,7 @@ struct Window_0803cbf8 {
   u16 timer;
 };
 
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 
 void Func_0803cbf8(struct Window_0803cbf8 *window) {
   if (window->rect->state == 4) {
@@ -52,11 +52,11 @@ void Func_0803cbf8(struct Window_0803cbf8 *window) {
     if (window->timer == 2) {
       struct Rect_0803cba8 *rect = window->rect;
 
-      UiWindow_DrawFrame(rect->x, rect->y, rect->width, rect->height);
+      UiWindow_DrawBorder(rect->x, rect->y, rect->width, rect->height);
     }
     window->timer--;
     if (window->timer == 0) {
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowFrameFlash),
+      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
               (void *)0x06000100, 0x84000040, (volatile u32 *)0x040000d4);
       window->rect->state = 0;
     }

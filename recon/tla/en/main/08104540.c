@@ -49,7 +49,7 @@ struct DjinnMenuWork {
 };
 
 extern char MsgCurrentStatus[];
-extern u8 gMenu_BackdropFrameTile[];
+extern u8 gMenu_BackdropBorderTile[];
 
 void RenderOutput_ClearListFar(void *window);
 void RenderOutput_PrepareForRedrawFar(s32 window);
@@ -175,7 +175,7 @@ s32 Func_08104540(void) {
       redraw = 0;
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropFrameTile, 32);
+        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
       else
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }

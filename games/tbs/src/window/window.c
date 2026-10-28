@@ -16,8 +16,8 @@
 /// spellings the parts use. Where to start:
 ///
 ///   Windows         windows.c: Window_Create, Window_Close;
-///                   frames.c: Window_DrawFrame, Window_UpdateZooms
-///   Messages        frames.c: Message_OpenWindow,
+///                   borders.c: Window_DrawBorder, Window_UpdateZooms
+///   Messages        borders.c: Message_OpenWindow,
 ///                   FieldMessage_Show; typing.c:
 ///                   TextPrinter_Step; decode.c:
 ///                   Message_Decode
@@ -32,7 +32,7 @@
 // The parts, in ROM order (src/README.md, "Objects and parts").
 #include "window/windows.c"
 #include "window/typing.c"
-#include "window/frames.c"
+#include "window/borders.c"
 #include "window/glyphs.c"
 #include "window/decode.c"
 #include "window/measure.c"

@@ -123,9 +123,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
         cell = (u16 *)(((window->y + row) * 32 + (window->x + column)) * 2 +
                        (u32)work->tilemap);
         if (row == 0)
-          *cell = WINDOW_TILE_FRAME_TOP_TEE;
+          *cell = WINDOW_TILE_BORDER_TOP_TEE;
         else if (row == rows - 1)
-          *cell = WINDOW_TILE_FRAME_BOTTOM_TEE;
+          *cell = WINDOW_TILE_BORDER_BOTTOM_TEE;
         else
           *cell = WINDOW_TILE_DIVIDER_VERTICAL;
       }
@@ -135,12 +135,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   if (work->battleMode) {
     cell = work->tilemap + (window->y + window->height - 1) * 32 + window->x;
     column = 1;
-    *cell++ = WINDOW_TILE_BATTLE_FRAME_BOTTOM_LEFT;
+    *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
     while (column < lastColumn) {
       column++;
-      *cell++ = WINDOW_TILE_BATTLE_FRAME_BOTTOM;
+      *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
     }
-    *cell = WINDOW_TILE_BATTLE_FRAME_BOTTOM_RIGHT;
+    *cell = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;
   }
   work->dirty = 1;
 }
@@ -294,7 +294,7 @@ void PartyStatus_Draw(s32 flags) {
     window->width = layout->width;
     window->height = layout->height;
     window->x = layout->x;
-    Window_DrawFrame(layout->x, layout->y, layout->width, layout->height);
+    Window_DrawBorder(layout->x, layout->y, layout->width, layout->height);
     Window_DrawColumnBorders(window, flags);
   }
 

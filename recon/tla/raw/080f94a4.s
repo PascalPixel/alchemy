@@ -34,7 +34,7 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl UiWindow_DrawFrameFar
+	bl UiWindow_DrawBorderFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0
@@ -127,7 +127,7 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl UiWindow_DrawFrameFar
+	bl UiWindow_DrawBorderFar
 	bl Menu_ResetTwoResourceEntries
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock

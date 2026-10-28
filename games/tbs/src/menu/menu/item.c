@@ -108,7 +108,7 @@ s32 ItemMenu_Run(void) {
   screen = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_ACTOR_SYSTEM];
   ((struct ActorSystemWork *)cache[0])->suspended = 1;
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
@@ -146,7 +146,7 @@ s32 ItemMenu_Run(void) {
   process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_ACTOR_SYSTEM];
   ((struct WindowWork *)*process)->holdTilemapUpload = 1;
   ItemMenu_Close();
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
   FreeHeapSlot(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)cache[0])->suspended = 0;
@@ -2140,7 +2140,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #endif
   }
 #if LANGUAGE != LANGUAGE_JAPANESE
-  Window_DrawFrameFar(13, 0, 17, 10);
+  Window_DrawBorderFar(13, 0, 17, 10);
 #endif
 
   return counter;

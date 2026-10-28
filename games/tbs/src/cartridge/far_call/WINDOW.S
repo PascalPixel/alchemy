@@ -131,7 +131,7 @@ FarCall_WindowTable:
 	export WindowSprite_GetPointerTilesFar, WindowSprite_GetPointerTiles
 	export Message_OpenDecodedFar, Message_OpenDecoded
 	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
-	export Window_DrawFrameFar, Window_DrawFrame
+	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
 	export Link_DrawPageArrowsFar, Link_DrawPageArrows
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage

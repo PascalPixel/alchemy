@@ -41,7 +41,7 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void MemFree(void *block);
 s32 GameFlag_Test(s32 flag);
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 mode);
 void Scheduler_EnableOverlayCallbacksWithFlags(void);
@@ -82,7 +82,7 @@ s32 Func_08100e7c(void) {
   savedEventMode = gAdventure.eventMode;
   gAdventure.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
   backdrop = Runtime_BumpAllocateAlternatePool(0x2130);
@@ -123,7 +123,7 @@ s32 Func_08100e7c(void) {
   Menu_ResetTwoResourceEntries();
   WaitFrames(1);
   ItemMenu_Close();
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   Ram_HeapSlots->objectSystem->suspended = 0;
   Func_08038290();
   UiWork_SetAltFlagAndClearTableFar(0);

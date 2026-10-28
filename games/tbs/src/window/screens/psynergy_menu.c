@@ -48,7 +48,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   unit = Unit_GetFar(unitId);
   messageWindow = Window_Create(0, 5, 30, 4,
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                                    WINDOW_FLAG_FRAMED_CANVAS);
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
@@ -68,10 +68,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_FRAME_TOP_TEE, 0x200);
-  Vram_CopyTile(WINDOW_TILE_FRAME_TOP_TEE, 0x201);
-  Vram_CopyTile(WINDOW_TILE_FRAME_BOTTOM_TEE, 0x210);
-  Vram_CopyTile(WINDOW_TILE_FRAME_BOTTOM_TEE, 0x211);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x200);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x201);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x210);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x211);
 
   iconSprite = &cursor;
   for (;;) {

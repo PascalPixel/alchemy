@@ -254,7 +254,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       out->active = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= 0xff) {
-    // Past the frame's top-left tile, and only inside the tilemap.
+    // Past the border's top-left tile, and only inside the tilemap.
     x++;
     y++;
     pos = (win->y + y) * 32 + (win->x + x);
@@ -325,7 +325,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
       line = (win->y + y) * 32;
       switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
-      case WINDOW_TILE_FRAME_TOP:
+      case WINDOW_TILE_BORDER_TOP:
         tile -= 0xc0;
         break;
       case WINDOW_TILE_DIVIDER_HORIZONTAL:
@@ -349,7 +349,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 /// Writes value into a window's tilemap at tile (x, y) of its interior, with
 /// the palette mode names (TILEMAP_ENTRY_), or as it is for
-/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the frame's
+/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the border's
 /// top row, where the menus put their page numbers and arrows
 /// (menu/menu/shared.c); a place beyond the bottom or right frame, or outside
 /// the tilemap, is ignored. The entry is not uploaded until the tilemap is

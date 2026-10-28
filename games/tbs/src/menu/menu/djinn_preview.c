@@ -478,8 +478,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
 
-    // Blink the backdrop's frame tile: 0x060052c0 is tile 150 of BG character
-    // block 1 (DJINN_BACKDROP_FRAME_TILE), drawn and filled with colour 4 in
+    // Blink the backdrop's border tile: 0x060052c0 is tile 150 of BG character
+    // block 1 (DJINN_BACKDROP_BORDER_TILE), drawn and filled with colour 4 in
     // turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
@@ -488,7 +488,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       tile = (void *)0x060052c0;
       fill = TEXT_CANVAS_BACKGROUND_WORD;
       if ((frame & 4) != 0) {
-        Iwram_CopyWords(tile, gMenu_BackdropFrameTile, 32);
+        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
       } else {
         Iwram_FillWords(tile, 32, fill);
       }
@@ -674,7 +674,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropFrameTile, 32);
+        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
       else
         Iwram_FillWords((void *)0x060052c0, 32, TEXT_CANVAS_BACKGROUND_WORD);
     }

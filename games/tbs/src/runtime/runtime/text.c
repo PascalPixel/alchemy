@@ -179,7 +179,7 @@ void DebugText_Clear(void) {
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
-/// Loads the window font and frame tiles into BG character block 0, the window
+/// Loads the window font and border tiles into BG character block 0, the window
 /// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).

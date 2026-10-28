@@ -1375,7 +1375,7 @@ Func_081039fc:
 .L_08104524:
 	.4byte IwramMulQ16
 .L_08104528:
-	.4byte gMenu_BackdropFrameTile
+	.4byte gMenu_BackdropBorderTile
 .L_0810452c:
 	.4byte IwramCopyWords
 .L_08104530:

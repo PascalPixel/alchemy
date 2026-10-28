@@ -18,7 +18,7 @@ struct OwnerMenuState {
   u16 page;
 };
 
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
@@ -35,7 +35,7 @@ s32 Func_080fe184(void) {
   s32 index;
 
   Ram_HeapSlots->objectSystem->suspended = 1;
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
 

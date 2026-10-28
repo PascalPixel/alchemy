@@ -4,7 +4,7 @@
 /// A text window draws its text into a canvas of 4bpp tiles in VRAM
 /// (TEXT_CANVAS_VRAM, mapped by Window_MapTextCanvasTiles). The canvas tiles
 /// run down columns: each column of tiles is as tall as the window's interior,
-/// which is the window height less its two frame rows. Glyph_Draw and
+/// which is the window height less its two border rows. Glyph_Draw and
 /// ScanlineWindow_FillSpans copy these routines into RAM for each call.
 
 #include "unit/window/glyph_arm.h"
@@ -27,7 +27,7 @@
 #define SCREEN_TILE_COLUMNS 30
 
 /// Sets one pixel in the column-major text canvas. windowHeight includes the
-/// two frame rows; doubledPixelRow is twice the row within a tile.
+/// two border rows; doubledPixelRow is twice the row within a tile.
 /// repeatedColor holds the colour index in all four nibbles.
 static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
                                            u32 doubledPixelRow, u8 *canvas,
@@ -307,7 +307,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 /// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
 /// to the second halfword of its pair in scanlineBounds. A row without a frame
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
-/// one pixel on that side, so the window follows the frame's rounded corners.
+/// one pixel on that side, so the window follows the border's rounded corners.
 /// Each frame of a window transition calls it, through
 /// ScanlineWindow_FillSpans (screens/outputs.c).
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
@@ -337,11 +337,11 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
 
       if (tile == 0)
         continue;
-      // The first frame tile establishes the left edge and a one-tile span.
-      // A later right frame tile extends that span.
+      // The first border tile establishes the left edge and a one-tile span.
+      // A later right border tile extends that span.
       if (foundLeftEdge == 0) {
         switch (tile) {
-        case WINDOW_TILE_FRAME_TOP_LEFT:
+        case WINDOW_TILE_BORDER_TOP_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left + 1;
@@ -350,7 +350,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           bottomRight = right;
           foundLeftEdge++;
           break;
-        case WINDOW_TILE_FRAME_BOTTOM_LEFT:
+        case WINDOW_TILE_BORDER_BOTTOM_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left;
@@ -363,9 +363,9 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
         // too. Window tile 7, taken as either side, is blank in every
         // edition's window tiles and no code places it, so it never matches.
         case 0xf007:
-        case WINDOW_TILE_FRAME_LEFT:
+        case WINDOW_TILE_BORDER_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case WINDOW_TILE_FRAME_LEFT_TEE:
+        case WINDOW_TILE_BORDER_LEFT_TEE:
 #endif
           left = tileColumn * 8;
           right = left + 8;
@@ -377,20 +377,20 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
         }
       } else {
         switch (tile) {
-        case WINDOW_TILE_FRAME_TOP_RIGHT:
+        case WINDOW_TILE_BORDER_TOP_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = tileColumn * 8 + 7;
           bottomRight = right;
           break;
-        case WINDOW_TILE_FRAME_BOTTOM_RIGHT:
+        case WINDOW_TILE_BORDER_BOTTOM_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = right;
           bottomRight = tileColumn * 8 + 7;
           break;
         case 0xf007:
-        case WINDOW_TILE_FRAME_RIGHT:
+        case WINDOW_TILE_BORDER_RIGHT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case WINDOW_TILE_FRAME_RIGHT_TEE:
+        case WINDOW_TILE_BORDER_RIGHT_TEE:
 #endif
           bottomRight = tileColumn * 8 + 8;
           right = bottomRight;

@@ -54,7 +54,7 @@ s32 PsynergyMenu_Run(void) {
 
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 1;
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
@@ -86,7 +86,7 @@ s32 PsynergyMenu_Run(void) {
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       1;
   ItemMenu_Close();
-  Window_DrawFrameFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, 30, 20);
   FreeHeapSlot(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;

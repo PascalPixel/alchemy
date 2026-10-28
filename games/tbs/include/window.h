@@ -23,7 +23,7 @@ enum WindowBattleMode {
   WINDOW_BATTLE_MESSAGE = 2,
 };
 
-/// A window: a framed rectangle of the tilemap with its window sprites, its
+/// A window: a bordered rectangle of the tilemap with its window sprites, its
 /// opening or closing animation and the rectangle it last drew.
 struct Window {
   struct WindowSpriteList sprites; ///< the sprites the window carries
@@ -42,7 +42,7 @@ struct Window {
   u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
   /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
   /// duration while closing.
-  u16 frame;
+  u16 zoomStep;
   s16 duration;       ///< frames of the zoom under way; 0 when none
   u16 previousX;      ///< tiles
   u16 previousY;      ///< tiles
@@ -52,7 +52,7 @@ struct Window {
 
 STATIC_ASSERT(sizeof(struct Window) == 0x24);
 STATIC_ASSERT(offsetof(struct Window, width) == 8);
-STATIC_ASSERT(offsetof(struct Window, frame) == 0x18);
+STATIC_ASSERT(offsetof(struct Window, zoomStep) == 0x18);
 STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
 /// A text printer, one of three, which types decoded text into a window a few
@@ -121,13 +121,13 @@ struct WindowWork {
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 0x80 to 0xFF, then 0x200 to 0x27F): bit 0 once
   /// allocated, bit 1 while the tilemap shows it, 0 when free. The first
-  /// three hold the bottom frame tiles' lower rows and are 4.
+  /// three hold the bottom border tiles' lower rows and are 4.
   u8 textTileState[256];
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 0x200 to 0x27F
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
-  /// Set while Mind Read shows thoughts: round frame corners, colour 8 text
+  /// Set while Mind Read shows thoughts: round border corners, colour 8 text
   /// with no shadow, and latched button presses to dismiss text.
   u8 mindRead;
   u8 battleMode;        ///< enum WindowBattleMode

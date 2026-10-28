@@ -90,7 +90,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
 /// frame; the Djinn preview blinks it, drawing it and a fill of the window
 /// background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four frames.
-extern const u8 gMenu_BackdropFrameTile[];
+extern const u8 gMenu_BackdropBorderTile[];
 #ifndef OWN_Menu_ColonString
 /// The colon the debug menus' scene and flag rows draw
 /// (window/screens/debug.c): `:`.

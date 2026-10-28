@@ -36,7 +36,7 @@ struct UiWindow {
   s16 previousHeight;
 };
 
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 
 // Draw the frame partway through opening or closing.
 void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
@@ -91,7 +91,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
   scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
   height = scratch[2] >> 15;
 
-  UiWindow_DrawFrame(x, y, width, height);
+  UiWindow_DrawBorder(x, y, width, height);
   if (savePosition != 0) {
     window->previousX = x;
     window->previousY = y;

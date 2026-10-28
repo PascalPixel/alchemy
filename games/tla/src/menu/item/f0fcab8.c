@@ -20,7 +20,7 @@ struct ObjectSystemWork {
   u16 suspended;
 };
 
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
 s32 Party_ListActiveOwnersFar(s16 *owners);
@@ -54,7 +54,7 @@ s32 Func_080fcab8(void) {
 
   screen = Runtime_AllocateHeapBlock(220, 0xcec);
   Ram_HeapSlots->objectSystem->suspended = 1;
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
@@ -78,7 +78,7 @@ s32 Func_080fcab8(void) {
   RenderOutput_ClearListFar(screen->statusWindow);
   Ram_HeapSlots->windowTiles[6] = 1;
   ItemMenu_Close();
-  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  UiWindow_DrawBorderFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
   WaitFrames(1);

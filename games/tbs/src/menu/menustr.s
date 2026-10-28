@@ -211,8 +211,8 @@ gMenu_PatternRowMasks:
 	.4byte 0x05055050, 0x00000505
 	.4byte 0x05055050, 0x00050505
 	.4byte 0x05055050, 0x05050505
-	.global gMenu_BackdropFrameTile
-gMenu_BackdropFrameTile:
+	.global gMenu_BackdropBorderTile
+gMenu_BackdropBorderTile:
 	.incbin "games/tbs/src/menu/backdrop.4bpp"
 	.ifdef TBS_EDITION_ES
 	.global gDjinnMenu_TextLevel

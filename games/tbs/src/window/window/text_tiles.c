@@ -427,10 +427,10 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
         case WINDOW_TILE_DIVIDER_TEE_RIGHT:
         case WINDOW_TILE_DIVIDER_TEE_LEFT:
         case WINDOW_TILE_DIVIDER_CROSS:
-        case WINDOW_TILE_FRAME_TOP_TEE:
+        case WINDOW_TILE_BORDER_TOP_TEE:
           break;
-        case WINDOW_TILE_FRAME_TOP:
-          tile = WINDOW_TILE_FRAME_TOP_TEE;
+        case WINDOW_TILE_BORDER_TOP:
+          tile = WINDOW_TILE_BORDER_TOP_TEE;
           break;
         case WINDOW_TILE_DIVIDER_TEE_UP:
           tile = WINDOW_TILE_DIVIDER_CROSS;
@@ -448,10 +448,10 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
         case WINDOW_TILE_DIVIDER_TEE_RIGHT:
         case WINDOW_TILE_DIVIDER_TEE_LEFT:
         case WINDOW_TILE_DIVIDER_CROSS:
-        case WINDOW_TILE_FRAME_BOTTOM_TEE:
+        case WINDOW_TILE_BORDER_BOTTOM_TEE:
           break;
-        case WINDOW_TILE_FRAME_BOTTOM:
-          tile = WINDOW_TILE_FRAME_BOTTOM_TEE;
+        case WINDOW_TILE_BORDER_BOTTOM:
+          tile = WINDOW_TILE_BORDER_BOTTOM_TEE;
           break;
         case WINDOW_TILE_DIVIDER_TEE_DOWN:
           tile = WINDOW_TILE_DIVIDER_CROSS;
@@ -501,10 +501,10 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
         case WINDOW_TILE_DIVIDER_TEE_UP:
         case WINDOW_TILE_DIVIDER_TEE_RIGHT:
         case WINDOW_TILE_DIVIDER_CROSS:
-        case WINDOW_TILE_FRAME_LEFT_TEE:
+        case WINDOW_TILE_BORDER_LEFT_TEE:
           break;
-        case WINDOW_TILE_FRAME_LEFT:
-          tile = WINDOW_TILE_FRAME_LEFT_TEE;
+        case WINDOW_TILE_BORDER_LEFT:
+          tile = WINDOW_TILE_BORDER_LEFT_TEE;
           break;
         case WINDOW_TILE_DIVIDER_TEE_LEFT:
           tile = WINDOW_TILE_DIVIDER_CROSS;
@@ -522,10 +522,10 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
         case WINDOW_TILE_DIVIDER_TEE_UP:
         case WINDOW_TILE_DIVIDER_TEE_LEFT:
         case WINDOW_TILE_DIVIDER_CROSS:
-        case WINDOW_TILE_FRAME_RIGHT_TEE:
+        case WINDOW_TILE_BORDER_RIGHT_TEE:
           break;
-        case WINDOW_TILE_FRAME_RIGHT:
-          tile = WINDOW_TILE_FRAME_RIGHT_TEE;
+        case WINDOW_TILE_BORDER_RIGHT:
+          tile = WINDOW_TILE_BORDER_RIGHT_TEE;
           break;
         case WINDOW_TILE_DIVIDER_TEE_RIGHT:
           tile = WINDOW_TILE_DIVIDER_CROSS;

@@ -46,8 +46,8 @@ s32 Window_IsClosedFar(struct Window *window);
 /// window starts typing: bit 0 makes halting speech, broken off with an
 /// ellipsis after the first word.
 void Message_SetDecodeFlagsFar(s32 flags);
-/// Redraws a window's empty frame and releases the sprites it carries, leaving
-/// a text canvas alone.
+/// Redraws a window empty (its border and fill) and releases the sprites it
+/// carries, leaving a text canvas alone.
 void WindowSprite_PrepareForRedrawFar(struct Window *window);
 /// Clears every tile a pixel rectangle inside a window touches to the window's
 /// fill.
@@ -200,13 +200,13 @@ void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
 /// Writes each scan line's window frame extent into a page of the screen
 /// transition's window table, as a window transition runs.
 void ScanlineWindow_FillSpansFar(void *dst);
-/// Redraws a window's empty frame at its current rectangle.
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 /// Releases every sprite in a list of window sprites, or a window's, and
 /// empties it; NULL is ignored.
 void WindowSprite_ClearListFar(void *work);
 /// Writes value into a window's tilemap at tile (x, y) of its interior, with
-/// the palette mode names (TILEMAP_ENTRY_); y -1 is the frame's top row.
+/// the palette mode names (TILEMAP_ENTRY_); y -1 is the border's top row.
 void Window_SetTilemapEntryFar(struct Window *window, s32 value, s32 x, s32 y,
                                u32 mode);
 #ifdef UBFIX
@@ -329,7 +329,7 @@ s32 Message_OpenDecodedFar(struct Window *window, s32 argument);
 s32 Save_CountRecordsExcludingFlaggedFar(s32 flag);
 /// Draws an empty window frame at tile (x, y), width by height tiles, and frees
 /// the text tiles it covers.
-void Window_DrawFrameFar(s32 x, s32 y, u32 width, u32 height);
+void Window_DrawBorderFar(s32 x, s32 y, u32 width, u32 height);
 /// Erases a window's rectangle from the tilemap and frees the text tiles it
 /// showed.
 void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);

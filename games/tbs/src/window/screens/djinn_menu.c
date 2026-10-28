@@ -93,7 +93,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   alreadySelected = 0;
   messageWindow = Window_Create(0, 4, 30, 4,
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                                    WINDOW_FLAG_FRAMED_CANVAS);
+                                    WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
   listWindow = Window_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -160,7 +160,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         messageWindow =
             Window_Create(0, 4, 30, 4,
                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                              WINDOW_FLAG_FRAMED_CANVAS);
+                              WINDOW_FLAG_BORDERED_CANVAS);
         Text_FillCanvasBackground();
       }
       redraw = 0;
@@ -247,7 +247,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         messageWindow =
             Window_Create(0, 4, 30, 4,
                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                              WINDOW_FLAG_FRAMED_CANVAS);
+                              WINDOW_FLAG_BORDERED_CANVAS);
         work->holdTilemapUpload = (u8)previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
@@ -325,9 +325,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(
-            listWindow, WINDOW_TILE_FRAME_TOP,
+            listWindow, WINDOW_TILE_BORDER_TOP,
             listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
-        Window_SetTilemapEntry(listWindow, WINDOW_TILE_FRAME_TOP_RIGHT,
+        Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
       Window_MarkTilemapRow(work, listWindow->y - 1);

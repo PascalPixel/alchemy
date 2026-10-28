@@ -804,7 +804,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->timerWindow =
           (s32)Window_Create(0, 16, 30, 4,
                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                                 WINDOW_FLAG_FRAMED_CANVAS);
+                                 WINDOW_FLAG_BORDERED_CANVAS);
       Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {

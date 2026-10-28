@@ -37,7 +37,7 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                           u16 *spacing, u32 flags);
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 s32 Resource_ResetEntry(u32 slot);
 void Audio_PlayCue(s32 cue);
 
@@ -162,7 +162,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
             window->width = newWidth;
             window->height = newHeight;
           }
-          UiWindow_DrawFrame((s16)window->x, (s16)window->y, window->width,
+          UiWindow_DrawBorder((s16)window->x, (s16)window->y, window->width,
                              window->height);
         }
         channel->x = channel->startX;

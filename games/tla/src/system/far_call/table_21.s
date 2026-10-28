@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global UiWindow_DrawFrameFar
+	.global UiWindow_DrawBorderFar
 	.thumb_func
-UiWindow_DrawFrameFar:
-	overlay_veneer UiWindow_DrawFrame
+UiWindow_DrawBorderFar:
+	overlay_veneer UiWindow_DrawBorder
 	.global UiWindow_EraseBorderRectFar
 	.thumb_func
 UiWindow_EraseBorderRectFar:

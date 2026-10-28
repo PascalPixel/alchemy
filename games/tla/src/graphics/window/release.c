@@ -11,7 +11,7 @@
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void UiWindow_DrawFrame(s16 x, s16 y, u16 width, u16 height);
+void UiWindow_DrawBorder(s16 x, s16 y, u16 width, u16 height);
 
 void UiWork_Finalize(struct UiWindow *work, s32 release) {
   u16 zero;
@@ -60,5 +60,5 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *work) {
 }
 
 void RenderOutput_RedrawSavedRect(struct UiWindow *window) {
-  UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
+  UiWindow_DrawBorder(window->x, window->y, window->width, window->height);
 }

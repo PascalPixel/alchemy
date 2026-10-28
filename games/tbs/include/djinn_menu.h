@@ -59,7 +59,7 @@ struct DjinnMenuWork {
   /// Never given a window, so NULL from Window_InitializeWork on; the preview
   /// still redraws it, which reads the window's place from the BIOS. Outside
   /// the BIOS that returns the last BIOS instruction fetched, whose low half
-  /// as a width is over 30, so Window_DrawFrame draws nothing.
+  /// as a width is over 30, so Window_DrawBorder draws nothing.
   struct Window *unopenedWindow;
   struct Window *infoWindow; ///< ItemMenuWork's; not named here
   struct Window *listWindow;

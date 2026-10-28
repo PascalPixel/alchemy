@@ -381,7 +381,7 @@ Func_08039864:
 	ldrsh r1, [r5, r4]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl UiWindow_DrawFrame
+	bl UiWindow_DrawBorder
 .L_08039b76:
 	ldrh r3, [r6, #30]
 	movs r5, #152

@@ -62,7 +62,7 @@ gUi_HpRowString:
 gUi_PpRowString:
 	.asciz "EP    /"
 	.endif
-@ The frame tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here
+@ The border tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here
 	.global gData_08105948
 gData_08105948:
 	.incbin "games/tla/src/menu/backdrop.4bpp"
@@ -175,8 +175,8 @@ gMenu_PatternRowMasks:
 	.4byte 0x05055050, 0x00000505
 	.4byte 0x05055050, 0x00050505
 	.4byte 0x05055050, 0x05050505
-	.global gMenu_BackdropFrameTile
-gMenu_BackdropFrameTile:
+	.global gMenu_BackdropBorderTile
+gMenu_BackdropBorderTile:
 	.incbin "games/tla/src/menu/backdrop.4bpp"
 	.ifdef TLA_EDITION_ES
 	.global gDjinnMenu_TextLevel

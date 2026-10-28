@@ -64,7 +64,7 @@ struct DjinnMenuWork {
   struct DjinnMenuBackdrop *backdrop;
 };
 
-extern u8 gMenu_BackdropFrameTile[];
+extern u8 gMenu_BackdropBorderTile[];
 extern char ResourceId_ShopGemTiles;
 
 s32 UiWindow_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
@@ -112,7 +112,7 @@ void Func_08101638(void) {
   FillWords_(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   FillWords_((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
-  CopyWords_(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropFrameTile, 32);
+  CopyWords_(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
   Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);

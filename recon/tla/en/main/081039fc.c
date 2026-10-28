@@ -98,7 +98,7 @@ extern u8 MsgDjinnCompareTrade[];
 extern u8 MsgDjinnPsyHelp[];
 extern u8 MsgDjinnStatusHelp[];
 extern u8 MsgDjinnCompareConfirm[];
-extern u8 gMenu_BackdropFrameTile[];
+extern u8 gMenu_BackdropBorderTile[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -539,7 +539,7 @@ s32 Func_081039fc(u32 mode) {
     Func_080f8a44(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
       if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropFrameTile, Iwram_CopyWords, (void *)0x060052c0,
+        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWords, (void *)0x060052c0,
                   32);
       else
         FillWords(Iwram_FillWords, (void *)0x060052c0, 32, 0x44444444);

@@ -628,7 +628,7 @@ main	rom_main_02	recon/tla/de/rom	.rom.00039f54	de
 main	rom_main_02	recon/tla/raw/08039f94	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00039f28	ja
 main	rom_main_02	games/tla/src/graphics/window/fill_halfwords_dma	.text
-main	rom_main_02	games/tla/src/graphics/window/draw_frame	.text
+main	rom_main_02	games/tla/src/graphics/window/draw_border	.text
 main	rom_main_02	games/tla/src/graphics/window/f03a2b0	.text
 main	rom_main_02	games/tla/src/graphics/window/is_complete	.text
 main	rom_main_02	games/tla/src/graphics/window/runtime_counters	.text
@@ -5383,7 +5383,7 @@ main	rom_tail_02	games/tla/src/graphics/field/walk_path_i	.rodata
 main	rom_tail_02	games/tla/src/graphics/field/walk_path_j	.rodata
 main	rom_tail_02	games/tla/src/graphics/lettering/banner	.rodata
 main	rom_tail_02	games/tla/src/graphics/shop/cursor	.rodata
-main	rom_tail_02	games/tla/src/graphics/ui/window_frame_flash	.rodata
+main	rom_tail_02	games/tla/src/graphics/ui/window_border_flash	.rodata
 main	rom_tail_02	games/tla/src/graphics/ui/icons	.rodata
 main	rom_tail_02	games/tla/src/graphics/ui/command_icons	.rodata
 main	rom_tail_02	games/tla/src/graphics/ui/flags	.rodata

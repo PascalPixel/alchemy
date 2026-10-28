@@ -24,7 +24,7 @@ extern char ResourceId_ResourceFarCalls;
 /// A second row that also holds FarCall_ResourceTable; the sprite viewer
 /// passes it when Select is pressed without B.
 extern char ResourceId_ResourceFarCallsAlternate;
-/// The window font and frame tiles, 256 tiles of 4 bits a pixel.
+/// The window font and border tiles, 256 tiles of 4 bits a pixel.
 /// Window_LoadGraphics copies them into BG character block 0, and the
 /// window text routines draw their glyphs from here.
 extern char ResourceId_WindowTiles;

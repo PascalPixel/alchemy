@@ -1,21 +1,21 @@
 /// @file
-/// Window zoom and frames, and opening and waiting on message windows.
+/// Window zoom and borders, and opening and waiting on message windows.
 // Part of window.c.
 
 #include "../window_internal.h"
 
 /// Scratch values for a step of a window's zoom: the scaled part of a side,
-/// the scaled duration and their ratio. A local of Window_DrawZoomFrame.
+/// the scaled duration and their ratio. A local of Window_DrawZoomBorder.
 struct WindowZoomScratch {
-  s32 scaledPart;     ///< frame (or frames left) times a side in tiles, << 16
+  s32 scaledPart; ///< zoom step (or steps left) times a side in tiles, << 16
   s32 scaledDuration; ///< the zoom's duration << 17
   s32 result; ///< scaledPart / scaledDuration, 16.16 fixed point (in tiles)
 };
 
 /// The per-frame window update: steps each window's zoom while it opens or
 /// closes, draws it in full once open, and frees its slot once closed. The
-/// first step of WindowSystem_Update. A window opens over 8 frames (frame 7
-/// down to 0, then the full draw) and closes over 4 (frame 0 up to its
+/// first step of WindowSystem_Update. A window opens over 8 frames (zoom step 7
+/// down to 0, then the full draw) and closes over 4 (zoom step 0 up to its
 /// duration).
 void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
@@ -32,21 +32,21 @@ loop:
   if (window->flags != 0) {
     // Opening: zoom out one step a frame, then draw the window in full, which
     // clears the duration.
-    if ((s16)window->frame != 0) {
-      Window_DrawZoomFrame(window, 0);
-      window->frame = (s16)window->frame - 1;
+    if ((s16)window->zoomStep != 0) {
+      Window_DrawZoomBorder(window, 0);
+      window->zoomStep = (s16)window->zoomStep - 1;
     } else if (window->duration != 0) {
       Window_DrawOpened(window);
     }
   } else if (window->duration != 0) {
     // Closing: zoom in one step a frame, then erase it and free its slot. Each
     // step erases the rectangle the step before drew (previousX and its kin).
-    if ((s16)window->frame != window->duration) {
+    if ((s16)window->zoomStep != window->duration) {
       Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
                              (s16)window->previousWidth,
                              (s16)window->previousHeight);
-      Window_DrawZoomFrame(window, 1);
-      window->frame++;
+      Window_DrawZoomBorder(window, 1);
+      window->zoomStep++;
       dirty = 1;
       state->dirty = dirty;
     } else {
@@ -63,7 +63,7 @@ loop:
       window->animation = 0;
       window->state = 0;
       window->flags = 0;
-      window->frame = 0;
+      window->zoomStep = 0;
       window->duration = 0;
       window->previousX = 0;
       window->previousY = 0;
@@ -78,13 +78,13 @@ loop:
     goto loop;
 }
 
-/// Draws the frame of a zooming window at its size for this frame: the window
-/// grows from its centre as frame counts down to 0. With savePosition set (when
+/// Draws a zooming window at its size for this frame: the window grows from
+/// its centre as zoomStep counts down to 0. With savePosition set (when
 /// closing) the drawn rectangle is remembered, for the next frame to erase.
-void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
+void Window_DrawZoomBorder(void *windowArg, s32 savePosition) {
   struct Window *window = windowArg;
   struct WindowZoomScratch scratch;
-  s32 frame;
+  s32 step;
   s32 duration;
   s32 remaining;
   s32 x;
@@ -92,14 +92,14 @@ void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
   s32 width;
   s32 height;
 
-  frame = (s16)window->frame;
+  step = (s16)window->zoomStep;
   duration = window->duration;
-  remaining = duration - frame;
+  remaining = duration - step;
   // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point. The left edge
-  // moves in by frame / duration of half the width (result >> 16), and the
-  // width is (duration - frame) / duration of the whole (result >> 15, twice
+  // moves in by step / duration of half the width (result >> 16), and the
+  // width is (duration - step) / duration of the whole (result >> 15, twice
   // the half); the same for the top and the height.
-  scratch.scaledPart = (frame * window->width) << 16;
+  scratch.scaledPart = (step * window->width) << 16;
   scratch.scaledDuration = duration << 17;
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
@@ -110,7 +110,7 @@ void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   width = scratch.result >> 15;
 
-  scratch.scaledPart = (frame * window->height) << 16;
+  scratch.scaledPart = (step * window->height) << 16;
   scratch.scaledDuration = window->duration << 17;
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
@@ -121,7 +121,7 @@ void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   height = scratch.result >> 15;
 
-  Window_DrawFrame(x, y, width, height);
+  Window_DrawBorder(x, y, width, height);
   if (savePosition != 0) {
     window->previousX = x;
     window->previousY = y;
@@ -140,12 +140,12 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
   return dst;
 }
 
-/// Draws an empty window: a frame around a filled interior, at tile (x, y) of
+/// Draws an empty window: a border around a filled interior, at tile (x, y) of
 /// width by height tiles, and frees the text tiles the rectangle showed. Sizes
 /// outside 2 to 30 tiles draw nothing; the caller keeps the rectangle within
 /// the tilemap's 20 rows, as nothing here checks it. While WindowWork.mindRead
 /// is set (Mind Read) every corner is the one round tile, flipped to fit.
-void Window_DrawFrame(s32 x, s32 y, u32 width, u32 height) {
+void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
   u32 row;
@@ -155,41 +155,41 @@ void Window_DrawFrame(s32 x, s32 y, u32 width, u32 height) {
   Window_ClearTextTilesInRect(x, y, width, height);
   // The top edge.
   if (canvas->mindRead != 0)
-    *cursor++ = WINDOW_TILE_FRAME_ROUND_CORNER;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER;
   else
-    *cursor++ = WINDOW_TILE_FRAME_TOP_LEFT;
+    *cursor++ = WINDOW_TILE_BORDER_TOP_LEFT;
   cursor = Memory_FillHalfwordsDma(
-      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FRAME_TOP), width - 2);
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_TOP), width - 2);
   if (canvas->mindRead != 0)
-    *cursor++ = WINDOW_TILE_FRAME_ROUND_CORNER | TILE_HFLIP;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
-    *cursor++ = WINDOW_TILE_FRAME_TOP_RIGHT;
+    *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
   cursor += 32 - width;
   // The sides and the fill between them.
   for (row = 1; row < height - 1; row++) {
-    *cursor++ = WINDOW_TILE_FRAME_LEFT;
+    *cursor++ = WINDOW_TILE_BORDER_LEFT;
     if (width != 2)
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
-    *cursor++ = WINDOW_TILE_FRAME_RIGHT;
+    *cursor++ = WINDOW_TILE_BORDER_RIGHT;
     cursor += 32 - width;
   }
   // The bottom edge.
   if (canvas->mindRead != 0)
-    *cursor++ = WINDOW_TILE_FRAME_ROUND_CORNER | TILE_VFLIP;
+    *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_VFLIP;
   else
-    *cursor++ = WINDOW_TILE_FRAME_BOTTOM_LEFT;
+    *cursor++ = WINDOW_TILE_BORDER_BOTTOM_LEFT;
   cursor = Memory_FillHalfwordsDma(
-      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FRAME_BOTTOM), width - 2);
+      cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_BOTTOM), width - 2);
   if (canvas->mindRead != 0)
-    *cursor = WINDOW_TILE_FRAME_ROUND_CORNER | TILE_HFLIP | TILE_VFLIP;
+    *cursor = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP | TILE_VFLIP;
   else
-    *cursor = WINDOW_TILE_FRAME_BOTTOM_RIGHT;
+    *cursor = WINDOW_TILE_BORDER_BOTTOM_RIGHT;
   canvas->dirty = 1;
 }
 
 /// Maps the text canvas tiles into the interior of a window at tile (x, y).
-/// With fullWidth set the canvas covers the side frame columns too. The canvas
+/// With fullWidth set the canvas covers the side border columns too. The canvas
 /// has 120 tiles, so the interior (rows times columns) must not exceed it:
 /// a full-width battle window of 30 by 6 tiles uses all of them.
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
@@ -395,7 +395,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
   s32 printer = 0;
-  /* FAKEMATCH(dead): an unused array for the frame's 8 bytes above the
+  /* FAKEMATCH(dead): an unused array for the stack frame's 8 bytes above the
    * outgoing arguments; as no array, 2 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
 

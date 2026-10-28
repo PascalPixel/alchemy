@@ -201,7 +201,7 @@ enum StatusPanelKind {
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
 // The information side's text: outside Japanese it is drawn character by
-// character into the window's tiles, so clearing it redraws the empty frame;
+// character into the window's tiles, so clearing it redraws the empty window;
 // the Japanese edition decodes it into the text canvas (Text_DrawMessage),
 // so clearing it releases the canvas's window sprites. Both follow the text
 // system, so the test is on the language.

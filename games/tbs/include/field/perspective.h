@@ -23,12 +23,12 @@ struct WorldMapView {
   s32 scaleY; ///< 0x400000 at load
   s32 limitX; ///< 0x1fe00000 at load
   s32 limitY; ///< 0x1fe00000 at load
-  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tileset
-  /// animations are then neither suspended nor resumed.
+  /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
+  /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unused[3]; ///< no code names it
   /// Screen rows, 0 and 159 at load and 200 and 255 from
-  /// WorldMap_StartStillView; each frame copies them to shownTop and
+  /// WorldMap_StartStillPicture; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
   ///@{
   u16 windowTop;

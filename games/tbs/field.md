@@ -182,7 +182,7 @@ menu or an event opens, the game draws the current view into an ordinary
 still picture, so that the windows can use the layer the tilt was using.
 
 `WorldMap_BuildScanlineTable` works out each line's scale and
-`WorldMap_StartStillView` makes the still picture.
+`WorldMap_StartStillPicture` makes the still picture.
 [The field bank](src/field/README.md#the-world-map-in-perspective) works through the
 lines, [Maps](src/map/README.md#the-world-maps-data) the World Map's
 data, and [Running a scene](src/overworld/README.md#the-world-picture) the

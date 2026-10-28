@@ -564,7 +564,7 @@ fail:
 /// chosen.
 /// @param offset added to each of the red, green and blue values (held in 0
 /// to 31)
-void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
+void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bankIndex;
   s32 sourceBank;
   s32 colorIndex;
@@ -647,7 +647,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   // Last round's guards end; palettes 14 and 4 take 15 and 5 eight steps
   // brighter; the camera takes the command view.
   BattleUnit_ResetGuardLevels();
-  Palette_CopyBanksWithBrightnessOffset(8);
+  Palette_CopyWithBrightnessOffset(8);
   GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
   firstStrike = &battle->firstStrike;
   BattleCamera_SetCommandView(0);

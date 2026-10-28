@@ -25,7 +25,7 @@ void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fa368(s32 a, s32 b, s32 c, s32 d);
-void Palette_LightenBankHighlight(s32 palette);
+void Palette_LightenHighlight(s32 palette);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_CancelSoundReset(void);
@@ -60,7 +60,7 @@ s32 Func_080fcab8(void) {
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
   Func_080fa368(0, 3, 0, 7);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
-  Palette_LightenBankHighlight(14);
+  Palette_LightenHighlight(14);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
 
   Menu_CancelSoundReset();

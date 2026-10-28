@@ -1063,13 +1063,13 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   return 0;
 }
 
-/// Copies WINDOW_PALETTE into background palette bank and lightens its
+/// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
 /// WINDOW_BACKGROUND_COLOR by 9 steps in each channel: the highlight colour of
 /// the menu's selected rows. Each screen sets up HIGHLIGHT_PALETTE as it opens,
 /// and again after the Details window has borrowed it (ItemMenu_ShowDetails);
-/// only Item_PrepareUsePalette, which nothing calls, uses bank 13.
-void Palette_LightenBankHighlight(s32 bank) {
-  u16 *palette = (u16 *)&BG_PLTT_COLOR(bank, 0);
+/// only Item_PrepareUsePalette, which nothing calls, uses palette 13.
+void Palette_LightenHighlight(s32 paletteNumber) {
+  u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
   u32 green;
   u32 blue;
@@ -1131,7 +1131,7 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 }
 
 /// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
-/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenBankHighlight):
+/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight):
 /// palette is the new palette number. Only bit 12 of each map entry is cleared
 /// before it is set, so this works between those two palettes. (x, y) and the
 /// size are in tiles inside the window's border; the rectangle is clipped to
@@ -1194,7 +1194,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// element icons (window tiles 1 to 4) in HIGHLIGHT_PALETTE, so
 /// ItemMenu_ShowDetails calls this first, as do ItemMenu_OpenDetail and
 /// Item_PrepareUsePalette, which nothing calls. It replaces the row highlight
-/// until Palette_LightenBankHighlight(HIGHLIGHT_PALETTE) makes it again.
+/// until Palette_LightenHighlight(HIGHLIGHT_PALETTE) makes it again.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);

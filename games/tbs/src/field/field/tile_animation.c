@@ -9,8 +9,8 @@
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. TilesetAnim_StartAll
 /// adds it as a task (priority TASK_PASS_FRAME); the world map's still
-/// view (WorldMap_StartStillView) suspends it. Moves each tileset animation's
-/// cursor and timer in the map work.
+/// view (WorldMap_StartStillPicture) suspends it. Moves each tileset
+/// animation's cursor and timer in the map work.
 void TilesetAnim_Update(void) {
   // Each tileset animation is written (gridState->animations + channelIndex):
   // as gridState->animations[channelIndex], 78 of 119 instructions differ in
@@ -147,17 +147,17 @@ void TilesetAnim_StartAll(const u16 *script) {
     Task_Add(TilesetAnim_Update, TASK_PASS_FRAME);
 }
 
-/// Suspends the tileset animations, unless the world map's still view is shown.
-/// Menu_SuspendFieldTasks (menu/menu/shared.c) calls it
-/// through TilesetAnim_SuspendAllFar.
+/// Suspends the tileset animations, unless the world map's still picture is
+/// shown. Menu_SuspendFieldTasks (menu/menu/shared.c) calls it through
+/// TilesetAnim_SuspendAllFar.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
-/// Resumes the tileset animations, unless the world map's still view is shown.
-/// Menu_ResumeFieldTasks (menu/menu/shared.c) calls it
-/// through TilesetAnim_ResumeAllFar.
+/// Resumes the tileset animations, unless the world map's still picture is
+/// shown. Menu_ResumeFieldTasks (menu/menu/shared.c) calls it through
+/// TilesetAnim_ResumeAllFar.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
@@ -291,10 +291,10 @@ UNUSED void PaletteCycle_Initialize(void) {
 }
 
 /// Unused: adds a palette cycle: colorCount colours of background palette
-/// paletteBank from firstColor, rotated by one every delay + 1 frames. Returns
-/// 0, or -1 when all four cycles are taken. The cycle keeps a copy of the
-/// colours as they were, which every step rotates from.
-UNUSED s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
+/// paletteNumber from firstColor, rotated by one every delay + 1 frames.
+/// Returns 0, or -1 when all four cycles are taken. The cycle keeps a copy of
+/// the colours as they were, which every step rotates from.
+UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
                             s16 colorCount) {
   struct PaletteCycleWork *paletteQueue;
   struct PaletteCycle *cycle;
@@ -306,10 +306,11 @@ UNUSED s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
   cycleIndex = paletteQueue->count;
   if (cycleIndex > 3)
     return -1;
-  // 16 colours to a palette bank; the cycle saves the colours as they are
+  // 16 colours to a palette; the cycle saves the colours as they are
   // now, one halfword each.
   cycle = &paletteQueue->entries[cycleIndex];
-  paletteColors = (u16 *)BG_PLTT + (((u16)paletteBank << 4) + (u16)firstColor);
+  paletteColors =
+      (u16 *)BG_PLTT + (((u16)paletteNumber << 4) + (u16)firstColor);
   colorCount16 = colorCount;
   cycle->position = 0;
   cycle->timer = 0;

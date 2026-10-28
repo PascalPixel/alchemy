@@ -37,7 +37,7 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
 void Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Scheduler_DisableOverlayCallbacksWithFlags(void);
-void Palette_LightenBankHighlight(s32 bank);
+void Palette_LightenHighlight(s32 paletteNumber);
 void UiWork_SetAltFlagAndClearTableFar(s32 flag);
 s32 Party_SumDjinnCountsFar(s32 owner);
 void Func_081051a8(void);
@@ -83,7 +83,7 @@ s32 Func_080fe274(void) {
   Func_080fee04(0, 3, 0, 7);
   CopyWords_(palette, (void *)0x05000000, 64);
   CopyWords_(tiles, (void *)0x06004000, 0x2800);
-  Palette_LightenBankHighlight(14);
+  Palette_LightenHighlight(14);
   Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);

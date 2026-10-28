@@ -52,7 +52,7 @@ s32 Party_ListActiveOwnersFar(u16 *owners);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns);
 void Menu_SetFirstObjectRowCoordinates(s32 offset);
-void Palette_LightenBankHighlight(s32 bank);
+void Palette_LightenHighlight(s32 paletteNumber);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 frame);
 void Func_081051a8(void);
 s32 Func_0810106c(void);
@@ -109,7 +109,7 @@ s32 Func_08100e7c(void) {
   Resource_LoadPairedBlocksIfAvailable();
   Func_080fa368(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
-  Palette_LightenBankHighlight(14);
+  Palette_LightenHighlight(14);
   menu->helpWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   menu->pairEntry = 255;
   zero = 0;

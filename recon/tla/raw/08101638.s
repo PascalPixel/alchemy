@@ -104,7 +104,7 @@ Func_08101638:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #8
-	bl Graphics_AdjustPaletteBank
+	bl Graphics_AdjustPalettes
 	ldrh r3, [r6]
 	movs r2, #160
 	lsls r2, r2, #19

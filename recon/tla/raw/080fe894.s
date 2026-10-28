@@ -51,7 +51,7 @@ Func_080fe894:
 	cmp r2, #0
 	bge .L_080fe8e4
 	movs r0, #14
-	bl Palette_LightenBankHighlight
+	bl Palette_LightenHighlight
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19

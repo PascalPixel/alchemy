@@ -111,8 +111,8 @@ void Actor_SetMoveTargetFar(struct Actor *actor, s32 x, s32 y, s32 z);
 /// Waits until an actor reaches its target, giving up after 600 frames
 /// (ten seconds) with the actor still moving.
 void Actor_WaitForMoveFar(void *actor);
-/// Puts the world map's default cells back after the still view and returns to
-/// the perspective view, without reloading the area's palette or tiles.
+/// Puts the world map's default cells back after the still picture and returns
+/// to the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
 /// Plays a map edit, as doors and other changing scenery are drawn:
 /// each entry's cell picture numbers go to the destination, then it waits that
@@ -182,8 +182,8 @@ s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
 void Actor_RegisterSpriteMetadataFar(struct Actor *actor, s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or event can use the window and VBlank.
-void WorldMap_StartStillViewFar(void);
-/// Reloads the world map area's palette and tiles after the still view and
+void WorldMap_StartStillPictureFar(void);
+/// Reloads the world map area's palette and tiles after the still picture and
 /// returns to the perspective view.
 void WorldMap_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
@@ -219,10 +219,10 @@ void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);
 /// the command icons' colours are.
 void SpriteColor_RemapPixelsFar(u8 *buf, s32 cnt);
 /// Pauses the tileset animations while a menu is open, unless the world map's
-/// still view is shown.
+/// still picture is shown.
 void TilesetAnim_SuspendAllFar(void);
 /// Restarts the tileset animations when a menu closes, unless the world map's
-/// still view is shown.
+/// still picture is shown.
 void TilesetAnim_ResumeAllFar(void);
 /// Returns the first solid actor an actor at `values` would overlap, as
 /// ActorScript_CheckOverlapFar tests, or NULL; Move's field Psynergy uses it to

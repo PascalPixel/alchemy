@@ -369,7 +369,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
   // BG1's map (screen block 5) is filled with tile 0x7f of WINDOW_PALETTE, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
-  // tile numbers a word, for the still view WorldMap_StartStillView shows.
+  // tile numbers a word, for the still picture WorldMap_StartStillPicture
+  // shows.
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01a901a8;
@@ -439,8 +440,8 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
   // DISPCNT_MODE_2 (the affine ground) for the load's rows 0 to 159;
-  // DISPCNT_MODE_0 for WorldMap_StartStillView's 200 and 255, which show the
-  // still view on BG1.
+  // DISPCNT_MODE_0 for WorldMap_StartStillPicture's 200 and 255, which show the
+  // still picture on BG1.
   windowTop = perspective->shownTop;
   mode = 0;
   if (windowTop < 200) {
@@ -624,7 +625,7 @@ void WorldMap_UpdateView(void) {
 /// Called through WorldMap_UpdateCurrentTileBlockFar when the world map
 /// starts, by WorldMap_LoadGraphics for the second graphics set, and by
 /// WorldMap_LoadAreaGraphics and WorldMap_LoadDefaultCellsAndUpdateBlock after
-/// the still view.
+/// the still picture.
 void WorldMap_UpdateCurrentTileBlock(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 firstQuarterX = 0;
@@ -699,9 +700,9 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 }
 
 /// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM. The
-/// picture is the still view WorldMap_StartStillView draws: 0x2580 words, 240
+/// picture is the one WorldMap_StartStillPicture draws: 0x2580 words, 240
 /// by 160 pixels at a byte each, shown as 256-colour tiles on screen block 6.
-/// Set as gVBlankCallback by WorldMap_StartStillView.
+/// Set as gVBlankCallback by WorldMap_StartStillPicture.
 void WorldMap_PresentStillPicture(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
@@ -713,14 +714,14 @@ void WorldMap_PresentStillPicture(void) {
 /// saves BG1's tiles, draws the current affine frame into pixels and hands
 /// the window and VBlank to it.
 ///
-/// Called through WorldMap_StartStillViewFar by WorldMap_Freeze
+/// Called through WorldMap_StartStillPictureFar by WorldMap_Freeze
 /// when a menu or event starts on the world map, and by the world map's
 /// lighthouse transition. Sets animationActive, suspends the tileset
 /// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
 /// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
 /// gVBlankCallback to WorldMap_PresentStillPicture. WorldMap_LoadAreaGraphics
 /// undoes it.
-void WorldMap_StartStillView(void) {
+void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
   struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
@@ -740,7 +741,7 @@ void WorldMap_StartStillView(void) {
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM. Restores
 /// BG1CNT as WorldMap_InitializePerspective set it, and the 32 KB of char
-/// blocks 2 and 3 the still view overwrote, from gBgTileBuffer. Set as
+/// blocks 2 and 3 the still picture overwrote, from gBgTileBuffer. Set as
 /// gVBlankCallback by WorldMap_LoadAreaGraphics and
 /// WorldMap_LoadDefaultCellsAndUpdateBlock.
 void WorldMap_ShowBg1FromBuffer(void) {
@@ -749,7 +750,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000, REG_DMA3);
 }
 
-/// Reloads the world map area's palette and tiles after the still view, puts
+/// Reloads the world map area's palette and tiles after the still picture, puts
 /// the default cells back and returns to the perspective view.
 ///
 /// Called through WorldMap_LoadAreaGraphicsFar by
@@ -794,7 +795,7 @@ void WorldMap_LoadAreaGraphics(void) {
   WaitFrames(1);
 }
 
-/// Puts the default world map cells back after the still view and returns to
+/// Puts the default world map cells back after the still picture and returns to
 /// the perspective view, without reloading the area's palette or tiles. Called
 /// three times by WorldMap_ShowEndingEvent, each time after its messages.
 /// Unlike WorldMap_LoadAreaGraphics it leaves animationActive set, which only

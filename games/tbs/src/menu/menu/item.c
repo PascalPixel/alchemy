@@ -114,7 +114,7 @@ s32 ItemMenu_Run(void) {
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   // XXX (no evidence): why the Japanese edition leaves the field's tasks
@@ -2117,7 +2117,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   WaitFrames(1);
   Window_CloseFar((void *)window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   // As PsynergyMenu_InitializeEntryActors schedules it.
   {
     s32 priority = TASK_PASS_FRAME;

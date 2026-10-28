@@ -37,7 +37,7 @@ void ItemMenu_DrawItemDetails(s32, s32);
 s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);
 void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
-void Palette_LightenBankHighlight(s32);
+void Palette_LightenHighlight(s32);
 void UiWindow_DrawBorderFar(s32, s32, s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
@@ -99,7 +99,7 @@ s32 Func_080fb780(s32 value) {
   UiWork_FinalizeFar(window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
   UiWindow_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);
-  Palette_LightenBankHighlight(14);
+  Palette_LightenHighlight(14);
   {
     s32 priority = 0x480;
 

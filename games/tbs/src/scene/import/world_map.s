@@ -26,7 +26,7 @@
 	.set import.WorldMap_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.WorldMap_SetWindowCellTile, 1
 	.set import.Actor_SetSpriteFlags, 1
-	.set import.WorldMap_StartStillView, 1
+	.set import.WorldMap_StartStillPicture, 1
 	.set import.WorldMap_LoadAreaGraphics, 1
 	.set import.Anim_ApplyChildValues, 1
 	.set import.FieldMessage_Show, 1

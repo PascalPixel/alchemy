@@ -168,7 +168,7 @@ s32 StatusScreen_Run(void) {
 #if !TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
 #endif
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   // The first sprite palette into background palettes 0 and 1, for the
   // element icons drawn as window tiles: palette 0, for the highlighted row,
   // takes HIGHLIGHT_PALETTE's WINDOW_BACKGROUND_COLOR as its
@@ -450,7 +450,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
   }
   // The highlight palette, and the first sprite palette into background
   // palettes 0 and 1, as StatusScreen_Run sets them.
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),

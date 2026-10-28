@@ -2780,7 +2780,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
 
   WaitFrames(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
-  WorldMap_StartStillView();
+  WorldMap_StartStillPicture();
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
   FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],

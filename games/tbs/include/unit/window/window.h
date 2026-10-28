@@ -53,7 +53,7 @@ enum {
 /// The BG palette of the windows and their text, the UI palette.
 #define WINDOW_PALETTE 15
 /// The BG palette the menus keep for their selected row or page: a copy of
-/// WINDOW_PALETTE with its background lightened (Palette_LightenBankHighlight),
+/// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
 /// which the item icons borrow (Palette_LoadIconsIntoHighlight).
 #define HIGHLIGHT_PALETTE 14
 /// The window palette's background colour, behind its text; in
@@ -396,7 +396,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 enum TilemapEntryMode {
   TILEMAP_ENTRY_PLAIN, ///< as given, palette bits included
   TILEMAP_ENTRY_NONE,  ///< nothing
-  /// In HIGHLIGHT_PALETTE, the highlight Palette_LightenBankHighlight makes for
+  /// In HIGHLIGHT_PALETTE, the highlight Palette_LightenHighlight makes for
   /// the selected row or page.
   TILEMAP_ENTRY_HIGHLIGHT,
   TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE

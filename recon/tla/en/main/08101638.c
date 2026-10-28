@@ -72,7 +72,7 @@ s32 UiWindow_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
 void WaitFrames(s32 frames);
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 void *Palette_GetBasicObjColors(void);
-void Graphics_AdjustPaletteBank(s32 bank);
+void Graphics_AdjustPalettes(s32 bank);
 void Func_081019a4(void *list);
 void RenderOutput_ClearListFar(struct MenuWindow *window);
 struct MenuIcon *UiIcon_CreateWithResourceVariant(struct MenuWindow *window,
@@ -118,7 +118,7 @@ void Func_08101638(void) {
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
-  Graphics_AdjustPaletteBank(8);
+  Graphics_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
   Func_081019a4(backdrop);

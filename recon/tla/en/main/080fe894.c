@@ -53,7 +53,7 @@ struct CharacterMenuState {
 extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[];
 
 void *Unit_Get(s32 owner);
-void Palette_LightenBankHighlight(s32 bank);
+void Palette_LightenHighlight(s32 paletteNumber);
 s32 GameFlag_Test(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
@@ -89,7 +89,7 @@ s32 Func_080fe894(void) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
   }
-  Palette_LightenBankHighlight(14);
+  Palette_LightenHighlight(14);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);

@@ -6,10 +6,10 @@
 #include "../menu_internal.h"
 
 /// Copies the first sprite palette into background palette 14 and makes a
-/// highlight palette in bank 13. Nothing calls it.
+/// highlight palette in palette 13. Nothing calls it.
 void Item_PrepareUsePalette(void) {
   Palette_LoadIconsIntoHighlight();
-  Palette_LightenBankHighlight(13);
+  Palette_LightenHighlight(13);
 }
 
 /// Nothing calls it.

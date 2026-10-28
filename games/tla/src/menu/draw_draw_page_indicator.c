@@ -11,8 +11,8 @@
 #include "dma.h"
 #include "io_reg.h"
 
-void Palette_LightenBankHighlight(s32 bank) {
-  u16 *palette = (u16 *)(0x05000000 + (bank << 5));
+void Palette_LightenHighlight(s32 paletteNumber) {
+  u16 *palette = (u16 *)(0x05000000 + (paletteNumber << 5));
   u32 red;
   u32 green;
   u32 blue;

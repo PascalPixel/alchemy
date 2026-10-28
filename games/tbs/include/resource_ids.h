@@ -255,7 +255,8 @@ extern char ResourceId_CrystalSheet;
 /// (perspective->tiles).
 extern char ResourceId_PerspectiveDataA;
 /// The world map cells WorldMap_InitializePerspective decodes into
-/// Ram_MapGridCellBuffer, and that the still views put back on their way out.
+/// Ram_MapGridCellBuffer, and that the still pictures put back on their way
+/// out.
 extern char ResourceId_DefaultGridCells;
 /// Colosso's first opponent's recorded path, played by the Azart match.
 extern char ResourceId_OpponentPathA;

@@ -241,7 +241,7 @@ s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);
 #ifndef OWN_Map_PrepareActors
 #endif
-void WorldMap_StartStillView(void);
+void WorldMap_StartStillPicture(void);
 #ifndef OWN_Actor_Destroy
 #endif
 

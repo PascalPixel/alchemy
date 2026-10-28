@@ -508,7 +508,7 @@ void WorldMap_Freeze(void) {
       state->step = 0;
     }
     work->camera->paused = 1;
-    WorldMap_StartStillViewFar();
+    WorldMap_StartStillPictureFar();
   }
 }
 

@@ -184,7 +184,7 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries);
 s32 Battle_BuildOpponentActions(struct BattleAction *entries);
 void BattleTurnOrder_Sort(struct BattleAction *entries, s32 count);
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count);
-void Palette_CopyBanksWithBrightnessOffset(s32 offset);
+void Palette_CopyWithBrightnessOffset(s32 offset);
 s32 Battle_GatherActions(struct BattleAction *actions);
 s32 Battle_GetTaggedSlotValue(s32 taggedPlace);
 s32 Battle_FindTaggedSlotByValue(u32 unitId);

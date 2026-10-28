@@ -113,7 +113,7 @@ s32 DjinnMenu_Run(void) {
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstActorRowCoordinates(0);
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
   zero = 0;
@@ -420,15 +420,15 @@ s32 DjinnMenu_RunScreen(void) {
 /// Palette 7's copy is 12 darker instead. Menu_OpenBackdropScreen calls it
 /// with 8: 14 becomes the row highlight, 4 the highlighted element icons and
 /// 6 the dimmed text behind the help (DjinnMenu_ShowHelp).
-void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
-  s32 bankIndex;
-  s32 bank;
+void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
+  s32 copyIndex;
+  s32 paletteNumber;
   s32 colorIndex;
   s32 mask;
   s32 paletteIndex;
 
-  bank = 15;
-  bankIndex = 0;
+  paletteNumber = 15;
+  copyIndex = 0;
   mask = 31;
   do {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
@@ -438,7 +438,7 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
       s32 red;
       s32 adjustedColor;
 
-      paletteIndex = bank * 16 + colorIndex;
+      paletteIndex = paletteNumber * 16 + colorIndex;
       color = ((u16 *)BG_PLTT)[paletteIndex];
       blue = (color >> 10) & mask;
       green = (color >> 5) & mask;
@@ -464,14 +464,14 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
       // Into the palette before this one.
       ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
-    if (bankIndex == 0) {
-      bank = 5;
+    if (copyIndex == 0) {
+      paletteNumber = 5;
     } else {
-      bank = 7;
+      paletteNumber = 7;
       brightnessDelta = -12;
     }
-    bankIndex++;
-  } while (bankIndex <= 2);
+    copyIndex++;
+  } while (copyIndex <= 2);
 }
 
 /// The tile of BG character block 1 the backdrop's border tile is copied to;
@@ -489,7 +489,7 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
 /// BASIC_COLORS_PALETTE gets the basic sprite colours, with
 /// TEXT_BACKGROUND_COLOR the window background, for the element icons
 /// (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
-/// DjinnMenu_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
+/// DjinnMenu_AdjustPalettes(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
   // The sole caller ignores this wrapper's result. Plain void changes the
@@ -514,7 +514,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
-  DjinnMenu_AdjustPaletteBank(8);
+  DjinnMenu_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 #ifdef UBFIX

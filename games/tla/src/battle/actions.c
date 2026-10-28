@@ -22,16 +22,16 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
-/// Copies BG palette banks 15 to 14 and 5 to 4, adjusting brightness.
+/// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
 /// offset: amount added to each RGB component, clamped to 0-31.
-void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
+void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 n;
-  s32 bank;
+  s32 paletteNumber;
   s32 col;
   s32 mask;
   s32 idx;
 
-  bank = 15;
+  paletteNumber = 15;
   n = 0;
   mask = 31;
   do {
@@ -42,7 +42,7 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       s32 r;
       s32 val;
 
-      idx = bank * 16 + col;
+      idx = paletteNumber * 16 + col;
       color = ((u16 *)0x05000000)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
@@ -65,10 +65,10 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       val = b << 10;
       val |= g << 5;
       val |= r;
-      ((s16 *)0x04ffffe0)[idx] = val; // Into the preceding bank.
+      ((s16 *)0x04ffffe0)[idx] = val; // Into the preceding palette.
     }
     n++;
-    bank = 5;
+    paletteNumber = 5;
   } while (n <= 1);
 }
 
@@ -97,7 +97,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   }
 
   BattleUnit_ResetGuardLevels();
-  Palette_CopyBanksWithBrightnessOffset(8);
+  Palette_CopyWithBrightnessOffset(8);
   // Flag set while commands are being selected.
   GameFlag_SetBit(363);
   mode = &work->encounterMode;

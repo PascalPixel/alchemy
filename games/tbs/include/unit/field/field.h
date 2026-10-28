@@ -407,7 +407,7 @@ void WorldMap_UpdateView(void);
 void WorldMap_UpdateCurrentTileBlock(void);
 void WorldMap_PreloadCurrentTileBlock(void);
 void WorldMap_PresentStillPicture(void);
-void WorldMap_StartStillView(void);
+void WorldMap_StartStillPicture(void);
 void WorldMap_ShowBg1FromBuffer(void);
 void WorldMap_LoadAreaGraphics(void);
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void);
@@ -423,7 +423,7 @@ void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
 
 void PaletteCycle_Initialize(void);
-s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
+s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
                      s16 colorCount);
 void PaletteCycle_Stop(void);
 void PaletteCycle_Start(void);

@@ -710,7 +710,7 @@ void TitlePaletteFade_Update(void) {
   u16 *currentComponents;
   u16 *packedColors;
   s32 remaining;
-  u16 *paletteBank;
+  u16 *pagePalettes;
   s32 blueMask;
 
   if (work->duration == 0)
@@ -736,14 +736,14 @@ void TitlePaletteFade_Update(void) {
     currentComponents += 3;
   }
   work->page ^= 1;
-  paletteBank = work->packed[work->page];
+  pagePalettes = work->packed[work->page];
   {
-    u16 *backgroundColors = paletteBank;
+    u16 *backgroundColors = pagePalettes;
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
                         DMA_COPY_WORDS(0x80));
   }
-  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(paletteBank + 256),
+  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + 256),
                       DMA_COPY_WORDS(0x80));
 }
 

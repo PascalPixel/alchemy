@@ -6,14 +6,14 @@
 /// Adds d to the RGB components of the 16 colours of BG palettes 15, 5 and 7,
 /// clamped to 0-31, and writes palettes 14, 4 and 6. Palette 7 uses -12
 /// instead of d.
-void Graphics_AdjustPaletteBank(s32 d) {
+void Graphics_AdjustPalettes(s32 d) {
   s32 n;
-  s32 bank;
+  s32 paletteNumber;
   s32 col;
   s32 mask;
   s32 idx;
 
-  bank = 15;
+  paletteNumber = 15;
   n = 0;
   mask = 31;
   do {
@@ -24,7 +24,7 @@ void Graphics_AdjustPaletteBank(s32 d) {
       s32 r;
       s32 v;
 
-      idx = bank * 16 + col;
+      idx = paletteNumber * 16 + col;
       color = ((u16 *)0x05000000)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
@@ -51,9 +51,9 @@ void Graphics_AdjustPaletteBank(s32 d) {
           v; // 16 colors earlier (the preceding palette).
     }
     if (n == 0) {
-      bank = 5;
+      paletteNumber = 5;
     } else {
-      bank = 7;
+      paletteNumber = 7;
       d = -12;
     }
     n++;

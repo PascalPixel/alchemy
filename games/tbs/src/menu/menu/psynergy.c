@@ -60,7 +60,7 @@ s32 PsynergyMenu_Run(void) {
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
-  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();

@@ -72,7 +72,7 @@ FarCall_FieldTable:
 	overlay_veneer Actor_SetSpriteScale
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
-	export WorldMap_StartStillViewFar, WorldMap_StartStillView
+	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Anim_ApplyChildValuesFar, Anim_ApplyChildValues
 	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes

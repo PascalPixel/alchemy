@@ -32,8 +32,8 @@ extern void *gFieldEffectWork;
 /// animations reuse the memory as a particle array.
 extern struct Particle gMapGridCellBuffer[];
 /// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
-/// loaded, and the world map's still view keeps a copy of 8 KB of char block
-/// 1's tiles in it (WorldMap_StartStillView).
+/// loaded, and the world map's still picture keeps a copy of 8 KB of char block
+/// 1's tiles in it (WorldMap_StartStillPicture).
 extern u8 gDecodeBuffer[];
 /// 16 KB of EWRAM at 0x02018000, where the battle's actor sprite buffers
 /// start, 16 KB a slot; the map's cells fill it while a map is loaded.

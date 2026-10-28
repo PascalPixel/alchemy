@@ -69,7 +69,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode);
 void Menu_CopyListOrder(s32 mode, u8 *order);
 s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
                           s32 *page);
-void Palette_LightenBankHighlight(s32 bank);
+void Palette_LightenHighlight(s32 paletteNumber);
 void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
                                s32 pageSize, s32 selectedPage, s32 rightEdge);
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
@@ -246,7 +246,7 @@ s32 Menu_WrapIndex(s32 value, s32 modulus);
 s32 Menu_SetFirstActorRowCoordinates(s32 yOffset);
 s32 DjinnMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
-void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta);
+void DjinnMenu_AdjustPalettes(s32 brightnessDelta);
 #ifdef UBFIX
 typedef void MenuBackdropResult;
 #else

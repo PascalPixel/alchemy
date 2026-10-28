@@ -1,5 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void Func_020019dc(void) {
   ShrineOfTheSeaGod_CopyRect(42, 1, 15, 14, 1, 2);
@@ -21,14 +22,14 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 272, 336);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0xc000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   ShrineOfTheSeaGod_ObjPlace(14, 272 << 16, 336 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
   ShrineOfTheSeaGod_ObjTurn(14, 0, 0);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x8000, 40);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   ShrineOfTheSeaGod_ObjTurn(14, 0xd000, 0);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0xc000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(288 << 16, -1, 126 << 16, 1);
@@ -67,7 +68,7 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(264 << 16, -1, 320 << 16, 1);
   Func_02003ac8();
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x8000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0, 20);
   ShrineOfTheSeaGod_ObjMode(gMainRoutineWork.currentOwner, 3);
   ShrineOfTheSeaGod_ObjModeWait(14, 3);

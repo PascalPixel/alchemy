@@ -1,4 +1,5 @@
 #include "shaman_village.h"
+#include "scene_tables.h"
 
 void Func_0200482c(void);
 void Func_02004060(void);
@@ -14,7 +15,7 @@ void Func_02003f78(void) {
   Actor_GetById(15)->facing = 0x8000;
   Actor_GetById(16)->facing = 0x8000;
   Actor_GetById(17)->facing = 0x8000;
-  Camera_MoveWithinMapBounds(0xe00000, -1, 0x1180000, 0);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 0);
   wait(1);
   Func_0200482c();
   wait(1);

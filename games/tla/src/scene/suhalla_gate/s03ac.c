@@ -25,10 +25,10 @@ void Func_020003ac(void) {
   Func_02000a70(0);
   Func_02000a00((s32)MsgWaahhhItS);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
-  Camera_MoveWithinMapBounds(0x1c80000, -1, 0x1180000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
   Func_02000a30();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   FieldEvent_Wait(10);
   Actor_Jump(8, 6, 20);
   FieldEvent_Wait(20);

@@ -22,7 +22,7 @@ void Func_02000448(void) {
 
 void Func_02000464(void) {
   Func_020005bc_(65, 0, 0);
-  Func_02000574_(27, 0x680000, 0x680000);
+  Func_02000574_(27, PIXELS(104), PIXELS(104));
 }
 
 s32 Func_02000480(void) {

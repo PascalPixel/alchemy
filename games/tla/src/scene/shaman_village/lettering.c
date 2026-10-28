@@ -41,7 +41,8 @@ void Func_02002fb0(s32 graphic) {
     graphic = 4;
   Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_LetteringBanner),
                 buffer);
-  Dma_Set(buffer + palette, (void *)0x050003e0, 0x84000008, REG_DMA3);
+  Dma_Set(buffer + palette, (void *)&OBJ_PLTT_COLOR(15, 0),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 32 / 4, REG_DMA3);
   Vram_Load(
       gData_02005158[0], 0x400,
       (u8 *)((graphic << 10) + (s32)buffer + 32 * LETTERING_PALETTE_ROWS));

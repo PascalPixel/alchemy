@@ -43,7 +43,7 @@ s32 Func_02000988(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     if (GameFlag_Test(0x204)) {
       Func_020020c0(9, 0, 0);
-      Place(21, 0xb80000, 0xb80000);
+      Place(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);
     }

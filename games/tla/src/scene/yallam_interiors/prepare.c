@@ -24,9 +24,9 @@ s32 Func_0200086c(void) {
   }
   if (scene == (s32)&SceneId_Ov677Room1) {
     if (Flag_IsSet(0x301)) {
-      Call3((void (*)())Func_020009f8, 14, 0x2580000, 0x1680000);
-      Call3((void (*)())Func_020009f8, 16, 0x2780000, 0x15a0000);
-      Call3((void (*)())Actor_ArmCallback, 16, 0x4000, 0);
+      Call3((void (*)())Func_020009f8, 14, PIXELS(600), PIXELS(360));
+      Call3((void (*)())Func_020009f8, 16, PIXELS(632), PIXELS(346));
+      Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH, 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       Call3((void (*)())Func_020009f8, 17, 0, 0);
 #endif

@@ -76,7 +76,7 @@ s32 Func_02002614(void) {
         } while (0);
         REG_BLDALPHA = alpha;
       }
-      REG_BLDCNT = 0x3f10;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Func_020018e0, 0x480);
       Func_02004414(0);
       Func_02004414(1);

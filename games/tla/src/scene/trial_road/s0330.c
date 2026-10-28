@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -39,8 +40,8 @@ s32 Func_02000330(void) {
         (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
         (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
   Call1((void (*)())Func_02005a68, 229);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
   Call2((void (*)())FieldMessage_Show, v_r5, 13);
   v_r5 = (v_r5 + 1);
@@ -51,8 +52,8 @@ s32 Func_02000330(void) {
               gMainRoutineWork.currentOwner, 1);
   if (t9 != 0)
     goto L_02008400;
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 22);
   Call1((void (*)())FieldEvent_Wait, 10);

@@ -12,7 +12,7 @@ void Func_0200065c(void) {
   Func_02002968(0);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   Func_02002908(gMainRoutineWork.currentOwner, 256, 30);
-  Camera_MoveWithinMapBounds(0x1980000, -1, 0x1380000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(312), 1);
   Func_02002928();
   Func_02002910_(8, 257);
   speed = 0x8000;
@@ -95,7 +95,7 @@ void Func_02000810(s32 id) {
     Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
     Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait_(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
@@ -150,7 +150,7 @@ void Func_020009c0(s32 id) {
     Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
     Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait_(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);

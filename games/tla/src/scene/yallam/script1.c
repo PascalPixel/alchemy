@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
@@ -34,7 +35,7 @@ void Func_0200038c(void) {
 
   Yallam_02002598(26, 95, 2, 1, 26, 76, 2);
   if (GameFlag_Test(0xf62) == 0) {
-    Yallam_020024f8(66, 0x1a80000, 0xe80000);
+    Yallam_020024f8(66, PIXELS(424), PIXELS(232));
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Func_02002488();
       Func_02002590(0);
@@ -54,7 +55,7 @@ void Func_0200043c(void) {
 
   Yallam_02002598(67, 25, 3, 3, 106, 20, 1);
   if (GameFlag_Test(0xf60) == 0) {
-    Yallam_020024f8(64, 0x2a80000, 0x1580000);
+    Yallam_020024f8(64, PIXELS(680), PIXELS(344));
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
       Func_02002488();
       Func_02002590(0);

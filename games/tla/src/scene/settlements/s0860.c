@@ -67,7 +67,7 @@ void Func_02000860(void) {
     } while (0);
     REG_BLDALPHA = alpha;
   }
-  REG_BLDCNT = 0x3f10;
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;
 

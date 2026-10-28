@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "scene_tables.h"
 
 void Func_02002fc8(void);
 
@@ -13,9 +14,9 @@ void Func_02000de4(void) {
       s32 owner = gMainRoutineWork.currentOwner;
 
       if (angle < 0)
-        Func_02003088(owner, 0x3680000, 0x2580000);
+        Func_02003088(owner, PIXELS(872), PIXELS(600));
       else
-        Func_02003088(owner, 0x3680000, 0x2780000);
+        Func_02003088(owner, PIXELS(872), PIXELS(632));
     }
   }
 }

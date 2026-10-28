@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -33,8 +34,8 @@ void Func_02001d14(void) {
 
   t1 = Value1(Actor_GetById, 8);
   v7 = t1;
-  Call3(Actor_ArmCallback, 8, 0x8000, 0);
-  Call3(Actor_ArmCallback, 10, 0x8000, 0);
+  Call3(Actor_ArmCallback, 8, FACING_WEST, 0);
+  Call3(Actor_ArmCallback, 10, FACING_WEST, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
   Call3(Actor_ArmCallback, 11, 0xb000, 0);
   Call2(Func_02002548, gMainRoutineWork.currentOwner, 0);
@@ -84,7 +85,7 @@ L_02009de8:
   Call3(Actor_Jump, 11, 4, 40);
   v5 = (s32)&gMainRoutineWork;
   v5 = (v5 + 0x214);
-  Call3(Actor_ArmCallback, FIELD_AT(v5, s32, 0), 0x4000, 0);
+  Call3(Actor_ArmCallback, FIELD_AT(v5, s32, 0), FACING_SOUTH, 0);
   Call3(Actor_ArmCallback, 8, 0xd000, 0);
   Call3(Actor_ArmCallback, 10, 0xd000, 0);
   Call3(Actor_ArmCallback, 9, 0xd000, 0);

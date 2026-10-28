@@ -29,19 +29,19 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(141),
-    SCENE_EXIT_IF(1, 139, 1, 0xffffffff),
-    SCENE_EXIT_IF(2, 139, 2, 0xffffffff),
-    SCENE_EXIT_IF(3, 139, 7, 0xffffffff),
-    SCENE_EXIT_IF(4, 139, 4, 0xffffffff),
+    SCENE_EXIT_IF(1, 139, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 139, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(3, 139, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(4, 139, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(142),
-    SCENE_EXIT_IF(1, 139, 3, 0xffffffff),
-    SCENE_EXIT_IF(2, 139, 6, 0xffffffff),
-    SCENE_EXIT_IF(3, 139, 5, 0xffffffff),
+    SCENE_EXIT_IF(1, 139, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 139, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(3, 139, 5, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
-u32 gData_02000c8c[] = {
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_02000c8c[] = {
+    {SCENE_TABLE_END},
 };
 // clang-format on
 

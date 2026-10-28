@@ -1,4 +1,5 @@
 #include "local.h"
+#include "scene_tables.h"
 
 struct ShamanVillageCaveSceneWork {
   u8 unk000[0x1ac];
@@ -50,7 +51,7 @@ s32 Func_02000e04(void) {
     Func_02001060_(8, 42, 1, 1, 6, 42);
   }
   if (GameFlag_Test(518))
-    ShamanVillageCave_ObjPlace(17, 0x1480000, 0x3180000);
+    ShamanVillageCave_ObjPlace(17, PIXELS(328), PIXELS(792));
   Actor_SetPartAttribute(Actor_GetById(19), 1);
   Actor_SetPartAttribute(Actor_GetById(20), 0);
   Actor_SetPartAttribute(Actor_GetById(21), 2);

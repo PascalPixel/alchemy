@@ -68,7 +68,7 @@ void Func_020000a8(void) {
   Call1((void (*)())Func_02000ac0, (s32)MsgShipIceWallFirstApproach);
   object1 = Actor_GetById(8);
   Call1((void (*)())Func_02000a30, (s32)object1);
-  Call2((void (*)())Func_02000ad8, 8, 0xc000);
+  Call2((void (*)())Func_02000ad8, 8, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 5);
   Call3((void (*)())Func_02000ad0, 5, 0, 5);
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
@@ -92,12 +92,13 @@ void Func_02000108(void) {
   Call1((void (*)())Func_02000a30, (s32)object1);
   Call1((void (*)())FieldEvent_Wait, 5);
   Call3((void (*)())Func_02000ad0, 5, 0, 5);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1d00000, -1, 0xb00000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(176),
+        1);
   ((void (*)())Func_02000af0)();
   Call1((void (*)())FieldEvent_Wait, 5);
-  Call3((void (*)())Func_02000ab0, 11, 0x1980000, 0x1200000);
-  Call3((void (*)())Func_02000ab0, 5, 0x1980000, 0x1200000);
-  Call3((void (*)())Func_02000ab0, 6, 0x1980000, 0x1200000);
+  Call3((void (*)())Func_02000ab0, 11, PIXELS(408), PIXELS(288));
+  Call3((void (*)())Func_02000ab0, 5, PIXELS(408), PIXELS(288));
+  Call3((void (*)())Func_02000ab0, 6, PIXELS(408), PIXELS(288));
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
   Call3((void (*)())Func_02000ad0, 6, 0, 5);
   Call3((void (*)())Func_02000ad0, 11, 0, 5);

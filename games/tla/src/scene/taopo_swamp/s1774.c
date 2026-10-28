@@ -4,6 +4,7 @@
 #include "main_routine_work.h"
 #include "call.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov678Room1, SceneId_Ov678Room2, SceneId_Ov678Room3,
     SceneId_Ov678Room4, SceneId_Ov678Room5, SceneId_Ov678Room6,
@@ -93,9 +94,9 @@ s32 Func_02001774(void) {
     if (GameFlag_Test(0x310))
       Func_020028d0(8, 0, 0);
     if (GameFlag_Test(0xa6d))
-      Call3(Func_020028d0, 9, 0x1180000, 0xe80000);
+      Call3(Func_020028d0, 9, PIXELS(280), PIXELS(232));
     if (GameFlag_Test(0xa6e))
-      Call3(Func_020028d0, 10, 0x1d80000, 0xf80000);
+      Call3(Func_020028d0, 10, PIXELS(472), PIXELS(248));
     Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
   } else if (scene == (s32)&SceneId_Ov678Room6) {
     *effect = 516;
@@ -121,7 +122,7 @@ s32 Func_02001774(void) {
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (GameFlag_Test(0xa6f)) {
-      Call3(Func_020028d0, 9, 0x1080000, 0x1a80000);
+      Call3(Func_020028d0, 9, PIXELS(264), PIXELS(424));
       piece->terrainHeight = 0;
       piece->y = 0;
       Call6(Func_02002840, 15, 26, 1, 1, 16, 26);
@@ -157,7 +158,7 @@ s32 Func_02001774(void) {
       GameFlag_SetBit(825);
     } else if (GameFlag_Test(826)) {
       Actor_SetModeById(8, 3);
-      Call3(Func_020028d0, 8, 0xb80000, 0x1580000);
+      Call3(Func_020028d0, 8, PIXELS(184), PIXELS(344));
       Actor_GetById(8)->collisionFlags = 0;
       Actor_GetById(8)->priorityFlags |= 2;
       Actor_SetSpritePriority(8, 3);
@@ -167,7 +168,7 @@ s32 Func_02001774(void) {
       GameFlag_SetBit(828);
     } else if (GameFlag_Test(829)) {
       Actor_SetModeById(9, 3);
-      Call3(Func_020028d0, 9, 0x1f80000, 0xb80000);
+      Call3(Func_020028d0, 9, PIXELS(504), PIXELS(184));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Func_02002840, 30, 13, 1, 1, 31, 11);
@@ -176,9 +177,9 @@ s32 Func_02001774(void) {
     *effect = 516;
     piece = Actor_GetById(19);
     if (GameFlag_Test(0x330)) {
-      Call3(Func_020028d0, 19, 0x1e00000, 0xf80000);
+      Call3(Func_020028d0, 19, PIXELS(480), PIXELS(248));
       if (!GameFlag_Test(265))
-        Call3(Func_020028d0, 10, 0x1b80000, 0xe80000);
+        Call3(Func_020028d0, 10, PIXELS(440), PIXELS(232));
       Call6(Func_02002838, 47, 50, 2, 14, 29, 1);
       Call6(Func_02002838, 50, 59, 13, 5, 18, 15);
     } else {
@@ -189,7 +190,7 @@ s32 Func_02001774(void) {
       GameFlag_SetBit(818);
     } else if (GameFlag_Test(819)) {
       Actor_SetModeById(9, 3);
-      Call3(Func_020028d0, 9, 0x780000, 0xf80000);
+      Call3(Func_020028d0, 9, PIXELS(120), PIXELS(248));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Func_02002840, 7, 17, 1, 1, 7, 15);
@@ -202,7 +203,7 @@ s32 Func_02001774(void) {
       Call6(Func_02002840, 27, 14, 1, 1, 27, 13);
       if (GameFlag_Test(822)) {
         Actor_SetModeById(10, 3);
-        Call3(Func_020028d0, 10, 0x1980000, 0x1080000);
+        Call3(Func_020028d0, 10, PIXELS(408), PIXELS(264));
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         Call6(Func_02002840, 25, 18, 1, 1, 25, 16);

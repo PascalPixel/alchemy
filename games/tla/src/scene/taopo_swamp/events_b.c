@@ -11,7 +11,7 @@ void Func_02000334(void) {
 
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
   if (GameFlag_Test_(0xf99) == 0) {
-    Func_020028d0_(64, 0x1080000, 0x2980000);
+    Func_020028d0_(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Func_02002898();
       Func_02002968_(0);

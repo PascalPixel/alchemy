@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "scene_tables.h"
 
 extern const u8 MsgCanTWe[];
 
@@ -6,7 +7,7 @@ void Func_020004e0(void) {
   Func_020040c8((s32)MsgCanTWe);
   Actor_SetModeById(12, 4);
   Func_020040d0(12, 0);
-  Scene_ArmCallback(13, 0x8000, 20);
+  Scene_ArmCallback(13, FACING_WEST, 20);
   Actor_SetModeById(13, 4);
   Func_020040d0(13, 0);
   Scene_ArmCallback(13, 0, 20);

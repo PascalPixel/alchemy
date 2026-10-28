@@ -1,4 +1,5 @@
 #include "shaman_village.h"
+#include "scene_tables.h"
 
 void Func_02001cc8(void) {
   struct ShamanVillageObject *object = Actor_GetById(14);
@@ -29,7 +30,7 @@ void Func_02001d3c(void) {
   Import_SoundPlay(158);
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
   FieldEvent_Wait(20);
-  ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
+  ShamanVillage_ObjPlace(15, PIXELS(120), PIXELS(194));
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x26666, 0x13333);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
@@ -56,17 +57,17 @@ void Func_02001d3c(void) {
   Actor_ResetAndSetPositionInMode2(16, 104, 212);
   ShamanVillage_ObjWalk(17, 136, 212);
   Actor_SetModeById(16, 1);
-  ShamanVillage_ObjArm(16, 0x4000, 0);
-  ShamanVillage_ObjArm(17, 0x4000, 0);
+  ShamanVillage_ObjArm(16, FACING_SOUTH, 0);
+  ShamanVillage_ObjArm(17, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(15, 1);
   Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
   ShamanVillage_MessagePut(15, 0);
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   Func_020049fc()->motionFlags = 0;
-  ShamanVillage_CamMove(0x780000, 0x320000, 0xe00000, 1);
+  ShamanVillage_CamMove(PIXELS(120), 0x320000, PIXELS(224), 1);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 120, 256);
-  ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, 0xc000);
+  ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, FACING_NORTH);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 120, 264);

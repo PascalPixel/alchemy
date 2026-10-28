@@ -1,6 +1,7 @@
 #include "shaman_village.h"
 #include "input.h"
 #include "io_reg.h"
+#include "scene_tables.h"
 
 void Func_020048ac(s32 mode);
 void Func_02002878(void);
@@ -15,12 +16,12 @@ struct IoReg16 {
 void Func_020043f8(void) {
   if (!GameFlag_Test(0x109)) {
     if (GameFlag_Test(0x9fe)) {
-      ShamanVillage_ObjPlace(16, 0x680000, 0xc80000);
-      ShamanVillage_ObjPlace(17, 0x880000, 0xc80000);
+      ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(200));
+      ShamanVillage_ObjPlace(17, PIXELS(136), PIXELS(200));
     } else if (GameFlag_Test(0x94f) && !GameFlag_Test(0x9e1)) {
-      ShamanVillage_ObjPlace(15, 0x780000, 0xd00000);
-      ShamanVillage_ObjPlace(16, 0x680000, 0xd40000);
-      ShamanVillage_ObjPlace(17, 0x880000, 0xd40000);
+      ShamanVillage_ObjPlace(15, PIXELS(120), PIXELS(208));
+      ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(212));
+      ShamanVillage_ObjPlace(17, PIXELS(136), PIXELS(212));
       wait(1);
     }
   }
@@ -48,7 +49,7 @@ void Func_020043f8(void) {
     __asm__("" : "+l"(alpha) : : "r2");
     REG_BLDALPHA = alpha;
   }
-  REG_BLDCNT = 0x3f10;
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;
 
@@ -77,8 +78,8 @@ void Func_02004534(void) {
      */
     s32 angle = 0x3000;
 
-    ShamanVillage_ObjPut(8, 0x580000, 0x5c0000, angle);
-    ShamanVillage_ObjPlace(11, 0x9c0000, 0x480000);
+    ShamanVillage_ObjPut(8, PIXELS(88), PIXELS(92), angle);
+    ShamanVillage_ObjPlace(11, PIXELS(156), PIXELS(72));
   } else {
     Func_02004934(17, 0, 0);
     Func_02004934(18, 0, 0);

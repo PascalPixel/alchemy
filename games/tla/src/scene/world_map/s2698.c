@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "text/msg_ids.h"
 #include "task.h"
+#include "scene_tables.h"
 
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
@@ -72,7 +73,7 @@ void Func_02002698(void) {
   Func_02004cf0(9, 0);
   Func_02004db0();
   Func_02004b78_(0x70000, 0x70000, 0x10000);
-  Camera_MoveWithinMapBounds_(0x07c40000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(PIXELS(1988), -1, PIXELS(7553), 1);
   Func_02004df8_(0x9999, 60);
   Func_02004d30();
   FieldEvent_Wait(30);
@@ -91,7 +92,7 @@ void Func_02002698(void) {
   wait(4);
   Func_02002640(64, 128, 32, 0);
   wait(4);
-  Camera_MoveWithinMapBounds_(0x08040000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(PIXELS(2052), -1, PIXELS(7553), 1);
   Func_02004d30();
   Func_02004da8();
   Func_02004b78_(0x30000, 0x30000, 0x10000);
@@ -104,7 +105,7 @@ void Func_02002698(void) {
   Func_02002640(0, 160, 32, 0);
   wait(20);
   Func_02002640(32, 160, 32, 0);
-  Camera_MoveWithinMapBounds_(0x08640000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(PIXELS(2148), -1, PIXELS(7553), 1);
   Func_02004d30();
   Func_02004da8();
   Func_02004cf0(8, 0);

@@ -1,5 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 #include "call.h"
+#include "scene_tables.h"
 
 void Func_02002f88(s32 actor);
 void Func_02003b18(void);
@@ -29,15 +30,15 @@ void Func_02003598(void) {
   if (GameFlag_Test(0x231)) {
     Func_020039a8(0, 0, 3, 1, 19, 13);
     Func_020039a8(40, 0, 2, 1, 19, 33);
-    Actor_SetPositionAndResetMotion(Actor_GetById(15), 0x1400000, -0x150000,
-                                     0x2160000);
+    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(320), -PIXELS(21),
+                                     PIXELS(534));
     Actor_SetSpritePriority(15, 3);
   }
   if (GameFlag_Test(0x232)) {
     Func_020039a8(0, 0, 3, 1, 24, 22);
     Func_020039a8(40, 0, 2, 1, 24, 24);
-    Actor_SetPositionAndResetMotion(Actor_GetById(16), 0x1900000, -0x150000,
-                                     0x1860000);
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(400), -PIXELS(21),
+                                     PIXELS(390));
     Actor_SetSpritePriority(16, 3);
   }
   Func_02003b18();

@@ -4,6 +4,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 void FieldEvent_Wait();
 void Event_StartScreenTransition();
@@ -73,11 +74,11 @@ void Func_02000a24(void) {
   Call1(GameFlag_SetBit, 0xa72);
   Func_02001080();
   Call1(Func_020011e0, 0);
-  Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0x1110000, 0);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(273), 0);
   Call1(Func_02001138, (s32)MsgTheseGuysWere);
-  Call4(Func_020010f0, 4, 0xb80000, 0xe50000, angle);
-  Call4(Func_020010f0, 0, 0xc80000, 0xdd0000, angle);
-  Call4(Func_020010f0, 18, 0xd00000, 0xed0000, angle);
+  Call4(Func_020010f0, 4, PIXELS(184), PIXELS(229), angle);
+  Call4(Func_020010f0, 0, PIXELS(200), PIXELS(221), angle);
+  Call4(Func_020010f0, 18, PIXELS(208), PIXELS(237), angle);
   Call2(Actor_SetModeById, 20, 8);
   Call2(Actor_SetModeById, 19, 8);
   Call2(Actor_SetModeById, 21, 8);
@@ -135,12 +136,12 @@ void Func_02000a24(void) {
   Call2(Motion_SetModeAndWaitAnimation, 19, 3);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_02001148, 19, 0, 5);
-  Call2(Func_02001158, 0, 0x4000);
+  Call2(Func_02001158, 0, FACING_SOUTH);
   Call1(FieldEvent_Wait, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 264, 30)
-  Call3(Actor_ArmCallback, 0, 0xe000, 0);
+  Call3(Actor_ArmCallback, 0, FACING_NORTHEAST, 0);
   Call3(Func_02001148, 20, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */

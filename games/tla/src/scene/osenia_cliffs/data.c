@@ -15,8 +15,8 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(54),
-    SCENE_EXIT_IF(1, 2, 12, 0xffffffff),
-    SCENE_EXIT_IF(2, 2, 13, 0xffffffff),
+    SCENE_EXIT_IF(1, 2, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 2, 13, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

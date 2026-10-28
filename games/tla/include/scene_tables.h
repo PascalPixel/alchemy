@@ -56,6 +56,9 @@ struct SceneEntrance {
   ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
 #define SCENE_EXIT_IF(exit, scene, entrance, flag)                             \
   (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
+/// An exit's flag word of -1 stands for no flag: Scene_TakeExit takes the
+/// exit whatever the flags hold.
+#define EXIT_FLAG_NONE 0xffffffff
 #define SCENE_EXITS_END 0x1ff
 
 /// Actor placements.

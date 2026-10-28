@@ -89,6 +89,6 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
     Object_SetMode(obj, 0);
     obj->field5e = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleEffect_CommonParticleScript);
+                                 gBattleEffect_SharedParticleScript);
   }
 }

@@ -48,13 +48,13 @@
 /// leaves
 ///   for the plaza again; the night ends in vale_plaza.c.
 ///
-/// Every way out goes through Vale_RequestBackdropExit (common/vale.h), which
+/// Every way out goes through Vale_RequestBackdropExit (shared/vale.h), which
 /// stops the lightning first, and each door plays its opening cells before it;
 /// gValeStormyNight_Exits gives each exit's destination. Two cells start a
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "script_operands.h"
-#include "common.h"
+#include "adventure.h"
 #include "unit/import.h"
 #include "unit/scene/vale_stormy_night.h"
 #include "unit/scene/shared/effect_psynergy.h"
@@ -695,7 +695,7 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gCommon.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
+  if (gAdventure.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -720,7 +720,7 @@ s32 ValeStormyNight_Initialize(void) {
   }
   WaitFrames(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gCommon.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
+      gAdventure.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValeStormyNight_DoraSendsIsaacToThePlaza();
     return 0;
   }
@@ -2941,7 +2941,7 @@ static void ValeStormyNight_CycleActorPalettes(struct Actor *actor) {
 #include "shared/effect_vertical.h"
 
 /// Spawns a pair of Psynergy sparks on an elder, one rising and one falling
-/// (common/effect_vertical.h), with SE_JUMP.
+/// (shared/effect_vertical.h), with SE_JUMP.
 static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;

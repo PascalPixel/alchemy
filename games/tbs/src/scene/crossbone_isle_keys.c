@@ -33,7 +33,7 @@
 ///   runs to whichever spot the leader steps toward unless Halt holds it.
 ///   Talked to while Halt holds it, Bane joins the party.
 
-#include "common.h"
+#include "adventure.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "heap_slots.h"
@@ -233,7 +233,7 @@ static void CrossboneIsleKeys_BaneJoins(void) {
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gCommon.sceneId;
+  s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomEntrances;
@@ -252,7 +252,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 selector = gCommon.sceneId;
+  s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomActorTemplates;
@@ -443,7 +443,7 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-    if (gCommon.haltedActor != ACTOR_BANE) {
+    if (gAdventure.haltedActor != ACTOR_BANE) {
       targetByteOffset = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_BANE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -471,7 +471,7 @@ static void CrossboneIsleKeys_HaltBane(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 selector = gCommon.sceneId;
+  s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomTriggers;
@@ -684,7 +684,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct FieldWork *work = gFieldWork;
 
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
-      gCommon.cloaked == 0 && gCommon.haltedActor != ACTOR_FIRST_STATUE &&
+      gAdventure.cloaked == 0 && gAdventure.haltedActor != ACTOR_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     work->raisedTrigger = RAISED_FIRST_CHASE;
@@ -725,8 +725,9 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct FieldWork *work = gFieldWork;
 
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
-      gCommon.cloaked == 0 && gCommon.haltedActor != ACTOR_SECOND_STATUE &&
-      column == 10 && (u32)(row - 16) <= 2) {
+      gAdventure.cloaked == 0 &&
+      gAdventure.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
+      (u32)(row - 16) <= 2) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedTrigger, RAISED_SECOND_CHASE);
   }
@@ -766,7 +767,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   s32 row = leader->z.fixed / PIXELS(16);
   s32 pursuerId = pursuerIndex + ACTOR_THIRD_STATUE;
 
-  if (gCommon.haltedActor == pursuerId)
+  if (gAdventure.haltedActor == pursuerId)
     return;
   if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
@@ -805,7 +806,7 @@ UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
 static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
   struct Actor *leader;
 
-  if (gCommon.haltedActor != ACTOR_THIRD_STATUE) {
+  if (gAdventure.haltedActor != ACTOR_THIRD_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Actor_SetSpeed(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
@@ -834,7 +835,7 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
   struct Actor *leader;
   s32 leaderColumn;
 
-  if (gCommon.haltedActor != ACTOR_FOURTH_STATUE) {
+  if (gAdventure.haltedActor != ACTOR_FOURTH_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Actor_SetSpeedParameters(ACTOR_FOURTH_STATUE, PIXELS(17) / 10,
@@ -876,7 +877,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
-  struct Common *state = &gCommon;
+  struct Adventure *state = &gAdventure;
 
   if (state->haltedActor != ACTOR_FIFTH_STATUE &&
       Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
@@ -1286,13 +1287,13 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gCommon.sceneId == (s32)&SceneId_CrossboneIsleKeys) {
+  if (gAdventure.sceneId == (s32)&SceneId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gCommon.sceneId == (s32)&SceneId_CrossboneIsleStatues) {
+  if (gAdventure.sceneId == (s32)&SceneId_CrossboneIsleStatues) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gCommon.sceneId == (s32)&SceneId_CrossboneIsleBane) {
+  if (gAdventure.sceneId == (s32)&SceneId_CrossboneIsleBane) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;

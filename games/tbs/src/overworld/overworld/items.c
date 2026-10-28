@@ -17,8 +17,8 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing = ((struct Actor *)Actor_Lookup(gCommon.leaderActorId))->facing;
-  s32 actorAhead = Field_FindNearbyTalkTarget(gCommon.leaderActorId);
+  s32 facing = ((struct Actor *)Actor_Lookup(gAdventure.leaderActorId))->facing;
+  s32 actorAhead = Field_FindNearbyTalkTarget(gAdventure.leaderActorId);
   s32 tileAhead;
 
   item &= 0x1ff;
@@ -64,7 +64,7 @@ s32 Field_FindItemTrigger(s32 item) {
 /// the item. Returns 0 when the scene's event ran or Retreat was declined, else
 /// -1, the item's own action included; SceneSequence_Run ignores it. Called by
 /// SceneSequence_Run for the item request (work->item and work->itemSlot).
-/// Retreat sets gCommon.sceneId and .entrance to the Retreat point and
+/// Retreat sets gAdventure.sceneId and .entrance to the Retreat point and
 /// raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
@@ -92,7 +92,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actorId == 15) {
       actorId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_GetFar(gCommon.party[partyIndex]);
+        unit = Unit_GetFar(gAdventure.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
           if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
@@ -101,7 +101,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          actorId = gCommon.party[partyIndex];
+          actorId = gAdventure.party[partyIndex];
         }
       }
     } else {
@@ -131,7 +131,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
     }
     if ((s32)trigger->value < 0x10000) {
-      s32 nearbyActorId = Field_FindNearbyTalkTarget(gCommon.leaderActorId);
+      s32 nearbyActorId = Field_FindNearbyTalkTarget(gAdventure.leaderActorId);
       Event_Start();
       Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(nearbyActorId, 0);
@@ -168,8 +168,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gCommon.sceneId = gCommon.retreatScene;
-        gCommon.entrance = gCommon.retreatEntrance;
+        gAdventure.sceneId = gAdventure.retreatScene;
+        gAdventure.entrance = gAdventure.retreatEntrance;
         work->exit = EXIT_KEEP_DESTINATION;
       }
 
@@ -213,8 +213,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing = ((struct Actor *)Actor_Lookup(gCommon.leaderActorId))->facing;
-  s32 actorAhead = Field_FindNearbyPsynergyTarget(gCommon.leaderActorId, group);
+  s32 facing = ((struct Actor *)Actor_Lookup(gAdventure.leaderActorId))->facing;
+  s32 actorAhead =
+      Field_FindNearbyPsynergyTarget(gAdventure.leaderActorId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -269,13 +270,13 @@ s32 Field_RunPsynergyEndEvents(s32 packed) {
   userId = ((u32)packed >> 10) & 0xF;
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gCommon.leaderActorId);
+  Actor_Lookup(gAdventure.leaderActorId);
   beforeEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), group, &target);
   afterEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, &target);
   FieldPsynergy_LoadResources(abilityId, 0);
-  FieldPsynergy_SetupActorPair(gCommon.leaderActorId, target);
+  FieldPsynergy_SetupActorPair(gAdventure.leaderActorId, target);
   Field_RunPsynergyEvent(beforeEvent, userId, target);
   Event_RunFieldPsynergy();
   FieldPsynergy_StopCasterUpdate();

@@ -13,7 +13,7 @@
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "common.h"
+#include "adventure.h"
 #include "scene.h"
 #include "battle_system.h"
 #include "battle.h"
@@ -96,7 +96,7 @@
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gCommon.pendingDjinni of Djinni 0 (requests.c, djinni.c): a Djinni
+/// gAdventure.pendingDjinni of Djinni 0 (requests.c, djinni.c): a Djinni
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
@@ -171,7 +171,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     fragment->gravity = 0x1999;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
-    Actor_StartScriptFar(fragment, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(fragment, gFieldEffect_SharedParticleScript);
   }
 }
 

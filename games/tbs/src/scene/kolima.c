@@ -54,7 +54,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "common.h"
+#include "adventure.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "unit/scene/kolima.h"
@@ -270,7 +270,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeEntrances;
@@ -284,7 +284,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneExitRegion *Kolima_GetRegions(void) {
-  if (gCommon.sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (gAdventure.sceneId == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -300,7 +300,7 @@ const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ActorTemplate *Kolima_GetActorTemplates(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -339,7 +339,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
 const struct Trigger *Kolima_GetTriggers(void) {
-  if (gCommon.sceneId == (s32)&SceneId_KolimaBridge) {
+  if (gAdventure.sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -508,7 +508,7 @@ s32 Kolima_Initialize(void) {
   u32 actorId;
   const s32 *table;
 
-  sceneId = gCommon.sceneId;
+  sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
     Kolima_RestoreBridgeState();
@@ -543,7 +543,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gCommon.entrance == KOLIMA_FROM_WORLD_MAP) {
+    if (gAdventure.entrance == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }

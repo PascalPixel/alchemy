@@ -37,9 +37,9 @@
 ///
 /// The rope bridge in the town's south-east spans a path that runs under it,
 /// and stepping onto either end of it or off its west end switches the cells
-/// beneath it between the deck and the path (common/vault_toggle.h).
+/// beneath it between the deck and the path (shared/vault_toggle.h).
 
-#include "common.h"
+#include "adventure.h"
 #include "animspr.h"
 #include "window.h"
 #include "unit/scene/vault.h"
@@ -903,7 +903,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gCommon.entrance <= VAULT_NORTH_UNUSED) {
+  if (gAdventure.entrance <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -913,7 +913,7 @@ s32 Scene_Initialize(void) {
           if (actor != 0) {
             Import_ActorSetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
-          if (gCommon.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
+          if (gAdventure.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(400), PIXELS(448));
           } else {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(224), PIXELS(162));
@@ -945,7 +945,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
-  if (gCommon.entrance == VAULT_FROM_SANCTUM) {
+  if (gAdventure.entrance == VAULT_FROM_SANCTUM) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -975,7 +975,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
-    if (gCommon.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
+    if (gAdventure.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Import_ActorSetPosition(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }

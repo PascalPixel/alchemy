@@ -15,7 +15,7 @@
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "common.h"
+#include "adventure.h"
 #include "scene.h"
 #include "battle_system.h"
 #include "battle.h"

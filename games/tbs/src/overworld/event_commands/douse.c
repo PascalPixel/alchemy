@@ -21,7 +21,7 @@ struct ActorDouseView {
   u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
   /// Frames its script waits before it runs on; 2 or 6 here, before
-  /// gFieldEffect_CommonParticleScript releases it.
+  /// gFieldEffect_SharedParticleScript releases it.
   s16 wait;
   u8 reserved60[0xc];
   void (*callback)(struct Actor *actor); ///< per-frame update
@@ -61,7 +61,7 @@ void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
   if (particle->y <= particle->altitude) {
     particle->wait = dropWait;
     Actor_StartScriptFar((struct Actor *)particle,
-                         gFieldEffect_CommonParticleScript);
+                         gFieldEffect_SharedParticleScript);
     p = NULL;
     particle->callback = NULL;
 
@@ -84,7 +84,7 @@ void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
       splashWait = 6;
       *pp = splashWait;
       Actor_StartScriptFar((struct Actor *)p,
-                           gFieldEffect_CommonParticleScript);
+                           gFieldEffect_SharedParticleScript);
     }
   }
 }
@@ -100,7 +100,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {
-    Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
   }
 }
 

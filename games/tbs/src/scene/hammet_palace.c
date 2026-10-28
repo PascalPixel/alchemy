@@ -36,7 +36,7 @@
 /// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE). Searching finds a turban,
 /// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
 /// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
-#include "common.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
 #include "unit/overworld/overworld.h"
@@ -140,7 +140,7 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 /// Selects Hammet Palace's entrances, or the fallback table for any
 /// other scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceEntrances;
@@ -155,7 +155,7 @@ const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 /// Applies actor template clipping before returning Hammet Palace's
 /// actor rows.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gCommon.sceneId == (s32)&SceneId_HammetPalace) {
+  if (gAdventure.sceneId == (s32)&SceneId_HammetPalace) {
     Scene_AssignViewFlags(gHammetPalaceActorTemplates);
     return gHammetPalaceActorTemplates;
   }
@@ -164,7 +164,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 
 /// Selects Hammet Palace's dialogue and doorway handlers.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceTriggers;
@@ -250,7 +250,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gCommon.sceneId == (u32)&SceneId_HammetPalace) {
+  if (gAdventure.sceneId == (u32)&SceneId_HammetPalace) {
     HammetPalace_SetUpEntrance();
   }
   return 0;
@@ -274,7 +274,7 @@ static void HammetPalace_SetUpEntrance(void) {
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
 
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.

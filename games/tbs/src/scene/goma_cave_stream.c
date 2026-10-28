@@ -27,7 +27,7 @@
 ///   river. It has no actors and only its two exits: back south into
 ///   SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-#include "common.h"
+#include "adventure.h"
 #include "unit/scene/goma_cave_stream.h"
 #include "unit/scene/shared/effect_spawn.h"
 #include "unit/overworld/overworld.h"
@@ -77,7 +77,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId);
 #include "shared/effect_spawn.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gCommon.sceneId == (s32)&SceneId_GomaCaveBridge) {
+  if (gAdventure.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeEntrances;
   }
   return gGomaCaveStreamEntrances;
@@ -88,7 +88,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gCommon.sceneId == (s32)&SceneId_GomaCaveBridge) {
+  if (gAdventure.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeActorTemplates;
   }
   return gGomaCaveStreamActorTemplates;
@@ -115,7 +115,7 @@ static void GomaCaveStream_MoveStump(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gCommon.sceneId == (s32)&SceneId_GomaCaveBridge) {
+  if (gAdventure.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeTriggers;
   }
   return gGomaCaveStreamTriggers;
@@ -130,8 +130,8 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gCommon.sceneId == (s32)&SceneId_GomaCaveStream) {
-    if (gCommon.entrance == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
+  if (gAdventure.sceneId == (s32)&SceneId_GomaCaveStream) {
+    if (gAdventure.entrance == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else {
       Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;

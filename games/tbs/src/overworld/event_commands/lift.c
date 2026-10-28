@@ -31,10 +31,10 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  // The caster's script starts 3 words into the common particle script, with
+  // The caster's script starts 3 words into the shared particle script, with
   // the target as its argument.
   caster->linkedActor = target;
-  Actor_StartScriptFar(caster, gFieldEffect_CommonParticleScript + 3);
+  Actor_StartScriptFar(caster, gFieldEffect_SharedParticleScript + 3);
 
   x = effectWork->x;
   pos[0] = x;
@@ -198,7 +198,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
-    Actor_StartScriptFar(impact, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(impact, gFieldEffect_SharedParticleScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.

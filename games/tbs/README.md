@@ -173,8 +173,9 @@ battle, or else to the last Sanctum.
 
 ### How a sequence finds its way back
 
-Sequences pass nothing to each other directly. Everything goes through common,
-`gCommon`, the one struct every sequence shares:
+Sequences pass nothing to each other directly. Everything goes through the
+[adventure](glossary.md#adventure), `gAdventure`, the one struct every sequence
+shares:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -187,7 +188,7 @@ Sequences pass nothing to each other directly. Everything goes through common,
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gCommon.sequenceResult` for the scene that comes back.
+result stays in `gAdventure.sequenceResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
 **Reference:** `ParentSequence_Run` · `Scene_ReturnFromSequence`

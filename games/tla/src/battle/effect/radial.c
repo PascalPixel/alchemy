@@ -7,7 +7,7 @@
 #include "field_scene.h"
 #include "field_effect.h"
 
-extern const u8 gBattleEffect_CommonParticleScript[];
+extern const u8 gBattleEffect_SharedParticleScript[];
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -83,7 +83,7 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   }
   if (++effect->timer == 101)
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
-                                 (u32)gBattleEffect_CommonParticleScript);
+                                 (u32)gBattleEffect_SharedParticleScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,

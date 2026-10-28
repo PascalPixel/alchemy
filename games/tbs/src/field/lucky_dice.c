@@ -113,7 +113,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "ram_buffer.h"
 #include "fixed_math.h"
 #include "ui.h"
-#include "common.h"
+#include "adventure.h"
 #include "map_grid_scroll.h"
 #include "battle_anim_work.h"
 #include "transform.h"
@@ -245,7 +245,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
 /// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gCommon.coins, resets the task table, and
+/// winnings into gAdventure.coins, resets the task table, and
 /// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
@@ -433,7 +433,7 @@ void LuckyDice_Run(void) {
   window = Window_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow, 0, 0);
+  Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
   // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
@@ -561,7 +561,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
-        Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow, 0,
+        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                    0);
       }
       if (payoutTimer == 15) {
@@ -602,7 +602,7 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > 0xa00000) {
         diceWork->particles[1].y = 0xa00000;
       }
-      if (gCommon.coins <
+      if (gAdventure.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
@@ -617,11 +617,11 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-        if ((u32)bet > gCommon.coins) {
-          bet = gCommon.coins;
+        if ((u32)bet > gAdventure.coins) {
+          bet = gAdventure.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow, 0,
+        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
                                    0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
@@ -896,8 +896,8 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow, 0,
-                                     0);
+          Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
+                                     0, 0);
           Sound_PlaySongFar(MUS_FANFARE_LARGE);
         } else {
           pairCount = 0;
@@ -912,22 +912,22 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow,
-                                       0, 0);
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow,
-                                       0, 0);
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
             Sound_PlaySongFar(MUS_FANFARE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            Text_DrawNumberInWindowFar(gCommon.coins, 6, sprites->coinsWindow,
-                                       0, 0);
+            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
             Sound_PlaySongFar(MUS_FANFARE_MEDIUM);

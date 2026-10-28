@@ -39,7 +39,7 @@
 ///   ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up to three lights,
 ///   each hop into the water spends one, and landing in it without one sinks
 ///   the leader back to the heart (the helpers of
-///   common/mercury_lighthouse_pillar.h). Dropping in from above
+///   shared/mercury_lighthouse_pillar.h). Dropping in from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
 ///   inscription's words appear.
@@ -69,7 +69,7 @@
 /// and the two from the twin pools, and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); elsewhere
 /// they are black until then. The lights the leader carries come back from
-/// their heap slot (common/mercury_lighthouse_lights.h) on a return after a
+/// their heap slot (shared/mercury_lighthouse_lights.h) on a return after a
 /// battle. MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_CHEST_FOUNTAIN,
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST
@@ -78,7 +78,7 @@
 
 #include "script_operands.h"
 #include "animspr.h"
-#include "common.h"
+#include "adventure.h"
 #include "heap_slots.h"
 #include "heap.h"
 #include "keystate.h"
@@ -433,8 +433,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       MB_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gCommon.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gCommon.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gAdventure.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gAdventure.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
@@ -443,7 +443,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each entrance restores its route or plays its one-time arrival.
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man event.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
@@ -479,7 +479,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       WaitFrames(1);
       MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     }
-    if (gCommon.entrance !=
+    if (gAdventure.entrance !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
     arrivalSeen = Event_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);

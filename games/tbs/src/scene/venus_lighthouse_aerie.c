@@ -55,7 +55,7 @@
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
 #include "script_operands.h"
-#include "common.h"
+#include "adventure.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse_aerie.h"
@@ -462,7 +462,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);
 
-  entrance = gCommon.entrance;
+  entrance = gAdventure.entrance;
 
   switch (entrance) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:

@@ -1,6 +1,6 @@
 /// @file
 /// The effect spawner each field overlay keeps its own copy of, the twin of The
-/// Broken Seal's EFFECT_SPAWN (map/common/effect_spawn.h) with default type
+/// Broken Seal's EFFECT_SPAWN (scene/shared/effect_spawn.h) with default type
 /// 285. The including file names its overlay's copy and the imports it calls:
 /// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
 /// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY give the

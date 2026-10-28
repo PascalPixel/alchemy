@@ -57,7 +57,7 @@
 
 #include "speaker.h"
 #include "flags.h"
-#include "common.h"
+#include "adventure.h"
 #include "unit/scene/sanctum.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -225,7 +225,7 @@ const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
 const struct ActorTemplate *Sanctum_GetActorTemplates(void) {
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
     return gSanctum_ValeActorTemplates;
@@ -257,7 +257,7 @@ const struct ActorTemplate *Sanctum_GetActorTemplates(void) {
 /// visits (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED).
 const struct Trigger *Sanctum_GetTriggers(void) {
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     return gSanctum_VaultTriggers;
@@ -299,7 +299,7 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
     Event_SetMessageId(MsgSanctumHealerMustWorriedAboutNever);
   }
 
-  if (gCommon.entrance == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gAdventure.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     Event_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
@@ -323,7 +323,7 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
     Event_SetMessageId(MsgSanctumChildHasAwakenedOurTeachings);
   }
 
-  if (gCommon.entrance == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gAdventure.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     Event_SetMessageId(MsgSanctumDirtyGoldenStatueCleanedUp);
   }
 
@@ -451,7 +451,7 @@ s32 Sanctum_Initialize(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   Event_WaitFrames(1);
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
@@ -2107,7 +2107,7 @@ static void Sanctum_TalkToHealerOnVisit(void) {
 
   Event_Start();
 
-  entrance = gCommon.entrance;
+  entrance = gAdventure.entrance;
 
   switch (entrance) {
   case SANCTUM_FROM_VAULT:

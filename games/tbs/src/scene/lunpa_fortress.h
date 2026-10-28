@@ -9,7 +9,7 @@
 #include "scene_tables.h"
 #include "system.h"
 
-#include "common.h"
+#include "adventure.h"
 #include "event_layer.h"
 #include "event_inline.h"
 

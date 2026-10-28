@@ -274,7 +274,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      if (donation > (u32)gCommon.coins) {
+      if (donation > (u32)gAdventure.coins) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;

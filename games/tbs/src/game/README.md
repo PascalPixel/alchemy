@@ -157,7 +157,7 @@ with a counter); `Item_AdjustCounter` changes them.
 Code in the other banks calls this one's functions by their far-call names,
 and a scene's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
-`gCommon`, the state of the game in progress, directly, as the save
+`gAdventure`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `abilities.c` beside its own tables,
 which choose how an ability is drawn ([Battle](../../battle.md)). The flags
 and the units are part of the save file.
@@ -178,9 +178,9 @@ and the units are part of the save file.
 
 - **unit id** and **unit**: a unit id is a number, and a unit the
   `struct Unit` `Unit_Get` returns for it, as the opening says. The
-  characters' units are kept in `gCommon.units` (`character_ids.h`).
+  characters' units are kept in `gAdventure.units` (`character_ids.h`).
 - **party**: the characters travelling together. `FLAG_IN_PARTY(character)`
-  says who is in it and `gCommon.party` lists them in order.
+  says who is in it and `gAdventure.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
 - **ability**: a row of `abilities.c`. Psynergy, a Djinni's and a summon's
@@ -223,13 +223,13 @@ Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
 `enemies.c` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
-Common's byte after the Speech option, `unusedAfterSpeech`, is set to 1
+The adventure's byte after the Speech option, `unusedAfterSpeech`, is set to 1
 by a new game and read by nothing in the game: the settings menu keeps only the
 window colour, message speed, Speech and auto-sleep, and no scene reaches the
-common by offset there. A cleared file sent by cable sends the 4,100
-bytes from `gSaveBuffer`, which hold the game flags and common, this
+adventure by offset there. A cleared file sent by cable sends the 4,100
+bytes from `gSaveBuffer`, which hold the game flags and the adventure, this
 byte included, to The Lost Age. The Lost Age does not read it either: its
-cable transfer copies the received flags over its own and the received common
+cable transfer copies the received flags over its own and the received adventure
 whole into its own, 32 bytes further on, then reads only the window
 colour back from the copy. The byte lands on one that The Lost Age's new game
 sets to 1 and that none of its code, in the main image or any overlay, loads.

@@ -166,7 +166,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       particle->motionFlags = 0;
       Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(particle, 7);
-      Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript + 1);
+      Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript + 1);
       Actor_SetSpriteFlagsFar(particle, 1);
 
       // Destination: 4 to 10 pixels from the Psynergy's position.

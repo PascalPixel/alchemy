@@ -44,7 +44,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
     }
   }
 }
@@ -87,7 +87,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
       spark->targetX = spark->x.fixed;
       Anim_ApplyChildValuesFar(spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      Actor_StartScriptFar(spark, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(spark, gFieldEffect_SharedParticleScript);
     }
   }
 }

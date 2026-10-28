@@ -33,7 +33,7 @@
 /// fiery rock burnt in it (render probe vault-revisit, the town before and
 /// after).
 
-#include "common.h"
+#include "adventure.h"
 #include "djinn_ids.h"
 #include "window.h"
 #include "unit/scene/vault_revisit.h"
@@ -637,7 +637,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's metatile behaviors
-/// (common/vault_toggle.h), creates the still actor of sprite 223 on the well
+/// (shared/vault_toggle.h), creates the still actor of sprite 223 on the well
 /// that shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and gives the two children round the well the update routine
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
@@ -686,16 +686,16 @@ s32 Scene_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gCommon.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gAdventure.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
-  if (gCommon.entrance == VAULT_REVISIT_FROM_SANCTUM)
+  if (gAdventure.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  if (gCommon.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+  if (gAdventure.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }

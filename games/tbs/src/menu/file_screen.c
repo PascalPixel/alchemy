@@ -39,7 +39,7 @@
 #include "mem.h"
 #include "window.h"
 #include "item.h"
-#include "common.h"
+#include "adventure.h"
 #include "text/msg_ids.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -195,7 +195,7 @@ static void FileScreen_LoadBackground(void) {
   {
     struct Actor *leader;
 
-    leader = Actor_GetById(gCommon.leaderActorId);
+    leader = Actor_GetById(gAdventure.leaderActorId);
     leader->motionFlags = 0;
   }
 }
@@ -373,12 +373,12 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gCommon.sceneType == SCENE_TYPE_TOWN) {
+  if (gAdventure.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
   // -1 unless the map is the world map: -d | d has its top bit set for any
   // d but 0.
-  mapDifference = gCommon.sceneId ^ (s32)&SceneId_WorldMap;
+  mapDifference = gAdventure.sceneId ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
@@ -450,7 +450,7 @@ s32 FileScreen_Run(void) {
   // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
-  if (gCommon.entrance == FILE_SCREEN_FROM_TITLE) {
+  if (gAdventure.entrance == FILE_SCREEN_FROM_TITLE) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
@@ -460,7 +460,7 @@ s32 FileScreen_Run(void) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
-      gCommon.sendFlag = 1;
+      gAdventure.sendFlag = 1;
       v7 = Save_ToChosenFile();
       if (v7 == -1) {
         goto L_ask;
@@ -484,7 +484,7 @@ menu_top:;
   // No backup memory: in debug mode, say so and turn idle sleep on.
   if (v6 < 0) {
     if (gDebugMode != 0) {
-      gCommon.idleSleepEnabled = 1;
+      gAdventure.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
       FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
@@ -510,8 +510,8 @@ menu_top:;
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
-    Common_InitializeDefaults();
-    WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
+    Adventure_InitializeDefaults();
+    WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
     v5 = 1;
     v7 = 0;
     for (;;) {
@@ -535,8 +535,8 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gCommon.sceneId = (s32)&SceneId_CottageRoomsB;
-    gCommon.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
+    gAdventure.sceneId = (s32)&SceneId_CottageRoomsB;
+    gAdventure.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
@@ -545,14 +545,14 @@ menu_top:;
   // corrupted, with the offer to restart there. The two chosen restarts set
   // flags that nothing reads.
   if (v6 == 1) {
-    struct Common *state;
+    struct Adventure *state;
 
     v6 = Save_LoadRecordIntoWork(1);
     if (v6 == -1) {
       goto menu_top;
     }
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
-    state = &gCommon;
+    state = &gAdventure;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
       state->sceneId = state->restartScene;
@@ -612,7 +612,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gCommon.leaderActorId = 0;
+    gAdventure.leaderActorId = 0;
     if (Event_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
@@ -624,7 +624,7 @@ menu_top:;
       Party_AddMember(2);
       Party_AddMember(3);
     }
-    WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
+    WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
     GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
@@ -642,7 +642,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
+    WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
   link_select:;
     v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {
@@ -1216,9 +1216,9 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = (u32)gCommon.coins >> 16;
-    out[166] = (u32)gCommon.coins >> 8;
-    out[167] = gCommon.coins;
+    out[165] = (u32)gAdventure.coins >> 16;
+    out[166] = (u32)gAdventure.coins >> 8;
+    out[167] = gAdventure.coins;
   }
 
   // The two larger forms include the packed base-stat rows. Each pass packs

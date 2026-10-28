@@ -67,7 +67,7 @@
 #include "edition.h"
 #include "tbs_edition.h"
 #include "actor.h"
-#include "common.h"
+#include "adventure.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "fixed_point_position.h"
@@ -555,7 +555,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Import_ActorSetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
-  if (gCommon.pendingDjinni == 0)
+  if (gAdventure.pendingDjinni == 0)
     work->raisedTrigger = RAISED_FORGE_JOINED;
 }
 
@@ -607,8 +607,8 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
     Actor_SetPosition(ACTOR_EAST_PILLAR, PIXELS(616), PIXELS(232));
-    if (gCommon.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
-        gCommon.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
+    if (gAdventure.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
+        gAdventure.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Actor_GetById(ACTOR_EAST_PILLAR)->layer = 2;
       actor = Actor_GetById(ACTOR_EAST_PILLAR);
       actor->y.fixed--;
@@ -617,7 +617,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  if (gCommon.entrance == ENTRANCE_STUMP_FALL) {
+  if (gAdventure.entrance == ENTRANCE_STUMP_FALL) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Actor_SetPosition(ACTOR_STUMP, PIXELS(384), PIXELS(192));
@@ -628,7 +628,7 @@ s32 Scene_Initialize(void) {
     GomaCavePillar_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.
-  if (gCommon.pendingDjinni != 0) {
+  if (gAdventure.pendingDjinni != 0) {
     gGomaCavePillar_WitnessFrames = 0;
     Task_AddFrame(GomaCavePillar_FidgetWhileForgeFights, TASK_PASS_FRAME);
   }

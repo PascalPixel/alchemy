@@ -1,6 +1,6 @@
 /// @file
 /// Sol Entrance and the first rooms of Sol Sanctum, two scenes one overlay
-/// serves, chosen by gCommon.sceneId in every entry point.
+/// serves, chosen by gAdventure.sceneId in every entry point.
 ///
 /// - Sol Entrance (SceneId_SolEntrance), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
@@ -45,7 +45,7 @@
 /// leader walks up to the door and stops, and searching it finds it "tightly
 /// locked" (render probe sol-entrance).
 
-#include "common.h"
+#include "adventure.h"
 #include "unit/field/field.h"
 #include "unit/import.h"
 #include "unit/scene/sol_sanctum_entrance.h"
@@ -195,7 +195,7 @@ void FieldEffect_InitializeSparkles();
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_Entrances;
@@ -222,11 +222,11 @@ const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gCommon.sceneId == (s32)&SceneId_SolSanctumReliefs) {
-    if (gCommon.entrance >= firstStatueRoomEntrance) {
-      if (gCommon.entrance >
+  if (gAdventure.sceneId == (s32)&SceneId_SolSanctumReliefs) {
+    if (gAdventure.entrance >= firstStatueRoomEntrance) {
+      if (gAdventure.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gCommon.entrance <=
+        if (gAdventure.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomActorTemplates;
         }
@@ -238,7 +238,7 @@ const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
     Scene_AssignViewFlags(table);
     return table;
   }
-  if (gCommon.sceneId == (s32)&SceneId_SolEntrance) {
+  if (gAdventure.sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_ActorTemplates;
   }
   return gSolSanctumEntrance_FallbackActorTemplates;
@@ -250,14 +250,14 @@ const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gCommon.sceneId == (s32)&SceneId_SolEntrance) {
+  if (gAdventure.sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_Triggers;
   }
-  if (gCommon.sceneId == (s32)&SceneId_SolSanctumReliefs) {
-    if (gCommon.entrance >= firstStatueRoomEntrance) {
-      if (gCommon.entrance >
+  if (gAdventure.sceneId == (s32)&SceneId_SolSanctumReliefs) {
+    if (gAdventure.entrance >= firstStatueRoomEntrance) {
+      if (gAdventure.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gCommon.entrance <=
+        if (gAdventure.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomTriggers;
         }
@@ -633,7 +633,7 @@ static void SolSanctumEntrance_PushStatue(void) {
       statue->velocityZ = stoppedVelocity;
       Actor_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
-      switch (gCommon.entrance) {
+      switch (gAdventure.entrance) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
@@ -658,7 +658,7 @@ static void SolSanctumEntrance_PushStatue(void) {
 /// Sets up Sol Entrance or Sol Sanctum. Called by SceneSequence_Run once the
 /// actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
@@ -721,7 +721,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     FieldEffect_InitializeSparkles();
   }
 
-  entrance = gCommon.entrance;
+  entrance = gAdventure.entrance;
   switch (entrance) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
@@ -739,8 +739,8 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gCommon.retreatScene = (s32)&SceneId_SolSanctumReliefs;
-    gCommon.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
+    gAdventure.retreatScene = (s32)&SceneId_SolSanctumReliefs;
+    gAdventure.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;

@@ -32,7 +32,7 @@ void FieldPsynergy_CheckCloakTile(void) {
   slot = (u32)&gFieldWork;
 #endif
   work = gFieldWork;
-  leader = Actor_Lookup(gCommon.leaderActorId);
+  leader = Actor_Lookup(gAdventure.leaderActorId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
@@ -95,7 +95,7 @@ void FieldPsynergy_EndCloak(void) {
   struct SpriteAnim *entry;
   u32 i;
 
-  actor = Actor_Lookup(gCommon.leaderActorId);
+  actor = Actor_Lookup(gAdventure.leaderActorId);
   animation = actor->sprite;
   entry = animation->entries[0];
 
@@ -125,13 +125,13 @@ void FieldPsynergy_EndCloak(void) {
   }
 
   animation->flags = SPRITE_FLAG_SHADOW;
-  gCommon.cloaked = 0;
+  gAdventure.cloaked = 0;
 }
 
 /// Starts the Cloak cell check if the leader is hidden. SceneSequence_Run calls
-/// it as a scene loads, since gCommon.cloaked outlives the scene.
+/// it as a scene loads, since gAdventure.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
-  if (gCommon.cloaked != 0) {
+  if (gAdventure.cloaked != 0) {
     Task_Add(FieldPsynergy_CheckCloakTile, TASK_PASS_FRAME);
   }
 }
@@ -142,12 +142,12 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 /// Abilities: Cloak (FIELD_PSYNERGY_CLOAK).
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
-/// shadow), and while gCommon.cloaked is set no random battles come
+/// shadow), and while gAdventure.cloaked is set no random battles come
 /// (Encounter_CountStepsAndSelectFormation). Called by FieldPsynergy_Run and
 /// FieldPsynergy_Dispatch.
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
-  struct Actor *leader = Actor_Lookup(gCommon.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   struct Sprite *animation = leader->sprite;
   struct SpriteAnim *entry = animation->entries[0];
   u32 n;
@@ -175,7 +175,7 @@ void FieldPsynergy_StartCloak(void) {
   // the check just raised (n is 0 here).
   check = FieldPsynergy_CheckCloakTile;
   Task_Add(check, TASK_PASS_FRAME);
-  gCommon.cloaked = 1;
+  gAdventure.cloaked = 1;
   check();
   if (work->psynergy == CLOAK_END) {
     FieldPsynergy_EndCloak();

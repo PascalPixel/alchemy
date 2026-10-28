@@ -35,7 +35,7 @@
 #include "text/msg_ids.h"
 #include "keystate.h"
 #include "node_chain.h"
-#include "common.h"
+#include "adventure.h"
 #include "songs.h"
 #include "item.h"
 #include "item_ids.h"

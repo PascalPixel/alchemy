@@ -3,6 +3,6 @@
 
 #include "static_assert.h"
 
-#include "common.h"
+#include "adventure.h"
 
 #endif

@@ -29,7 +29,7 @@
 #include "resource.h"
 #include "resource_ids.h"
 #include "dma.h"
-#include "common.h"
+#include "adventure.h"
 #include "frame.h"
 #include "save.h"
 #include "io_reg.h"

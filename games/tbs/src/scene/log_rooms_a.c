@@ -59,7 +59,7 @@
 /// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// log-rooms-a: the room has no GUESTS_ROOM cell once the flag is set).
 
-#include "common.h"
+#include "adventure.h"
 #include "flags.h"
 #include "animspr.h"
 #include "version.h"
@@ -210,7 +210,7 @@ enum {
 };
 
 // The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
-// (common/vault_spotflag.h) once the thieves are jailed means something else in
+// (shared/vault_spotflag.h) once the thieves are jailed means something else in
 // the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
@@ -308,7 +308,7 @@ const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   struct ActorTemplate *table;
 
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -534,7 +534,7 @@ static void LogRoomsA_SearchEmptyChest(void) {
 /// Returns the loft's events for the loft's three entrances, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct Trigger *Scene_GetTriggers(void) {
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -2110,7 +2110,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 

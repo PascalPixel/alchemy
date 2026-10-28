@@ -7,7 +7,7 @@
 ///   and Lucky Wheels; STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
 ///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into SceneId_Tolbi. The
 ///   Lucky Dice attendant asks ten coins for each level of the party's average
-///   level: the coin total is saved in common and the party goes
+///   level: the coin total is saved in the adventure and the party goes
 ///   to the Lucky Dice game, which returns to
 ///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
 ///   announce the coins won or lost, with a fanfare by the size of the win. The
@@ -64,7 +64,7 @@
 #include "heap_slots.h"
 #include "edition.h"
 #include "event_inline.h"
-#include "common.h"
+#include "adventure.h"
 #include "inventory.h"
 #include "menu_list.h"
 #include "iwram_call.h"
@@ -274,7 +274,7 @@ const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
 const struct ActorTemplate *TolbiSpring_GetActorTemplates(void) {
-  if (gCommon.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gAdventure.sceneId == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringActorTemplates;
   }
   return gTolbiSpringActorTemplatesOther;
@@ -312,7 +312,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
 /// visit, and the leader stands with their back to it to toss a coin or a
 /// Lucky Medal.
 static void TolbiSpring_TossCoinOrMedal(void) {
-  s32 leader = gCommon.leaderActorId;
+  s32 leader = gAdventure.leaderActorId;
 
   if (Event_GetFlag(FLAG_TOLBI_SPRING_RISEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_SPRING_RISEN);
@@ -349,7 +349,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct Trigger *TolbiSpring_GetTriggers(void) {
-  if (gCommon.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gAdventure.sceneId == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringTriggers;
   }
   return gTolbiSpringTriggersOther;
@@ -368,7 +368,7 @@ s32 TolbiSpring_Initialize(void) {
   s32 prizeIndex;
   s32 item;
 
-  if (gCommon.sceneId == (s32)&SceneId_TolbiSpring) {
+  if (gAdventure.sceneId == (s32)&SceneId_TolbiSpring) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
@@ -382,7 +382,7 @@ s32 TolbiSpring_Initialize(void) {
     Actor_GetById(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;
     Event_StartScreenTransition();
-    if (gCommon.entrance == TOLBI_SPRING_FROM_TOLBI) {
+    if (gAdventure.entrance == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
         Io_SetBlendControl(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND |
@@ -396,14 +396,14 @@ s32 TolbiSpring_Initialize(void) {
     }
     gOamCopyEnabled = 1;
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gCommon.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
+    if (gAdventure.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
                                  SPRITE_COLOR_GRB);
       Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
                                  SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
-    if (gCommon.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
+    if (gAdventure.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Event_Start();
       Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
@@ -415,7 +415,7 @@ s32 TolbiSpring_Initialize(void) {
       Event_WaitFrames(10);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 112);
       Event_WaitFrames(20);
-      coinChange = gCommon.coins - *(s32 *)gSceneLocalState;
+      coinChange = gAdventure.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
           Sound_PlaySong(MUS_FANFARE_LARGE);
@@ -437,9 +437,9 @@ s32 TolbiSpring_Initialize(void) {
       Event_End();
     }
     // Lucky Wheels returns item categories for the attendant to award.
-    if (gCommon.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
+    if (gAdventure.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      wonPrizes = gCommon.wonPrizes;
+      wonPrizes = gAdventure.wonPrizes;
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -466,7 +466,7 @@ s32 TolbiSpring_Initialize(void) {
             Event_WaitFrames(30);
           }
         }
-        gCommon.wonPrizes[0] = -2;
+        gAdventure.wonPrizes[0] = -2;
         Event_SetMessageId(MsgTolbiComeAgain);
         Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       }
@@ -624,7 +624,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 
   cost = Party_GetAverageLevel() * 10;
   Event_Start();
-  coins = gCommon.coins;
+  coins = gAdventure.coins;
   if (coins < cost) {
     Event_SetMessageId(MsgTolbiYaDontEnough);
     FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
@@ -664,13 +664,13 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 prizeIndex;
   s32 prizeRoll;
   s32 message;
-  struct Common *state;
+  struct Adventure *state;
 
   Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
-  state = &gCommon;
+  state = &gAdventure;
 prompt:
   coins = state->coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -746,7 +746,7 @@ prompt:
      * as a plain local, the marker takes fp, state r9, and 10 of 290
      * instructions differ in tbs-ja. */
     __asm__("" : "+r"(text));
-    state = &gCommon;
+    state = &gAdventure;
     coins = state->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
@@ -914,13 +914,13 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
     category = ((unsigned int)(Import_RandomNext() * 5) >> 16);
   }
 
-  previousVariant = gCommon.wonPrizes[8 + category];
+  previousVariant = gAdventure.wonPrizes[8 + category];
 
   variant = (previousVariant +
              (s32)((unsigned int)(Import_RandomNext() * 2) >> 16) + 4) %
             3;
 
-  gCommon.wonPrizes[8 + category] = variant;
+  gAdventure.wonPrizes[8 + category] = variant;
 
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
@@ -1483,7 +1483,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
-      Import_ActorSetAnimation(gCommon.leaderActorId, ANIM_LEADER_TOSS);
+      Import_ActorSetAnimation(gAdventure.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = 13 * PIXELS(1) / 10;
       toss->velocity.y = PIXELS(4);

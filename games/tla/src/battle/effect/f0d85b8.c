@@ -73,7 +73,7 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 gBattleEffect_CommonParticleScript[];
+extern const s32 gBattleEffect_SharedParticleScript[];
 
 struct CaptureObject {
   u8 unk00[8];

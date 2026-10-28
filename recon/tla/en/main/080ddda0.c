@@ -60,7 +60,7 @@ void FieldEffect_RunLiftOnTarget(void) {
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
   ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject,
-                               (u32)(gBattleEffect_CommonParticleScript + 12));
+                               (u32)(gBattleEffect_SharedParticleScript + 12));
 
   x = scene->x;
   position[0] = x;

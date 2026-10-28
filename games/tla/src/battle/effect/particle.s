@@ -45,10 +45,10 @@ Data_080f0e00:
 @ One word, 0x11, which no code names
 	.4byte 0x11
 
-@ The Broken Seal's gBattleEffect_CommonParticleScript: free; and from its
+@ The Broken Seal's gBattleEffect_SharedParticleScript: free; and from its
 @ second word, sync and free
-	.global gBattleEffect_CommonParticleScript
-gBattleEffect_CommonParticleScript:
+	.global gBattleEffect_SharedParticleScript
+gBattleEffect_SharedParticleScript:
 	.4byte 0x26
 	.global gData_080f0e58
 gData_080f0e58:

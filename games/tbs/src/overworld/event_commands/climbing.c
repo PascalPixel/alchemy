@@ -26,7 +26,7 @@
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
-  struct Actor *leader = Actor_GetById(gCommon.leaderActorId);
+  struct Actor *leader = Actor_GetById(gAdventure.leaderActorId);
   s32 result = -1;
   s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->motionFlags;
@@ -67,7 +67,7 @@ again:
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_SetPositionAndCommit(
-        gCommon.leaderActorId,
+        gAdventure.leaderActorId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
     Actor_SelectAnimationFar(leader, 6);
@@ -120,9 +120,9 @@ again:
 /// Called by Field_RunPushCell for a climbing spot (0xfd) with Down held,
 /// and imported by the scenes with ladders and climbable walls (Babi's
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
-/// gCommon.movementMode: 1 while the leader is on the wall, 0 off it.
+/// gAdventure.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
-  struct Actor *actor = Actor_GetById(gCommon.leaderActorId);
+  struct Actor *actor = Actor_GetById(gAdventure.leaderActorId);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -131,7 +131,7 @@ s32 Field_ClimbDown(void) {
 
   Event_Start();
 
-  if (gCommon.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gAdventure.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     // A wall goes down only where the cell below is the same climbing code.
@@ -152,18 +152,18 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      Actor_SetPositionAndCommit(gCommon.leaderActorId, gridX, gridZ);
+      Actor_SetPositionAndCommit(gAdventure.leaderActorId, gridX, gridZ);
       actor->speedLimit = Q16_ONE;
-      Actor_ArmCallback(gCommon.leaderActorId, FACING_NORTH, 0);
-      Actor_RefreshSelectorById(gCommon.leaderActorId);
+      Actor_ArmCallback(gAdventure.leaderActorId, FACING_NORTH, 0);
+      Actor_RefreshSelectorById(gAdventure.leaderActorId);
       actor->steeringFlags = ACTOR_FACES_MOTION;
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_SelectAnimationFar(actor, 13);
       Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - 0x100000,
                              (gridZ << 16) + 0x100000);
-      Actor_WaitForMoveById(gCommon.leaderActorId);
-      gCommon.movementMode = LEADER_MOVEMENT_CLIMB;
+      Actor_WaitForMoveById(gAdventure.leaderActorId);
+      gAdventure.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
     }
@@ -177,7 +177,7 @@ s32 Field_ClimbDown(void) {
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     Event_WaitFrames(6);
-    gCommon.movementMode = LEADER_MOVEMENT_WALK;
+    gAdventure.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->facing = FACING_NORTH;
   }
@@ -199,9 +199,9 @@ failure:
 /// Called by Field_RunPushCell for a climbing spot (0xfd) with Up held,
 /// and imported by the scenes with ladders and climbable walls (Babi's
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
-/// gCommon.movementMode as Field_ClimbDown does.
+/// gAdventure.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
-  struct Actor *actor = Actor_GetById(gCommon.leaderActorId);
+  struct Actor *actor = Actor_GetById(gAdventure.leaderActorId);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
@@ -214,7 +214,7 @@ s32 Field_ClimbUp(void) {
   if (actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = actor->sprite->flags;
 
-  if (gCommon.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gAdventure.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     if (TILE_CELLS[index].behavior == TILE_CELLS_NORTH[index].behavior) {
@@ -233,7 +233,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       actor->steeringFlags = 0;
-      Actor_SetPositionAndCommit(gCommon.leaderActorId, gridX, gridZ);
+      Actor_SetPositionAndCommit(gAdventure.leaderActorId, gridX, gridZ);
       Actor_SelectAnimationFar(actor, 6);
       WaitFrames(4);
       Actor_SelectAnimationFar(actor, 7);
@@ -246,7 +246,7 @@ s32 Field_ClimbUp(void) {
       actor->velocityY = 0;
       Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
       WaitFrames(4);
-      gCommon.movementMode = LEADER_MOVEMENT_CLIMB;
+      gAdventure.movementMode = LEADER_MOVEMENT_CLIMB;
       actor->steeringFlags = ACTOR_FACES_MOTION;
       WaitFrames(8);
     } else {
@@ -258,13 +258,13 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(actor, 11);
     Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + 0x80000,
                            (gridZ << 16) - 0x100000);
-    Actor_WaitForMoveById(gCommon.leaderActorId);
+    Actor_WaitForMoveById(gAdventure.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, spriteFlags);
     Event_WaitFrames(4);
-    gCommon.movementMode = LEADER_MOVEMENT_WALK;
+    gAdventure.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
   }
 

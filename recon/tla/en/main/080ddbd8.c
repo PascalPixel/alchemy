@@ -102,7 +102,7 @@ void Func_080ddbd8(void) {
       Animation_ApplyChildValuesFar(obj, 11);
       Object_SetMode(obj, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                   gBattleEffect_CommonParticleScript + 1);
+                                   gBattleEffect_SharedParticleScript + 1);
 
       pos[0] = work->x;
       pos[1] = work->y;

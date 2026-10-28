@@ -48,7 +48,7 @@
 #include "fixed_math.h"
 #include "keystate.h"
 #include "scene.h"
-#include "common.h"
+#include "adventure.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"

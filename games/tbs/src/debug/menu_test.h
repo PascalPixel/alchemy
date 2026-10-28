@@ -4,7 +4,7 @@
 #include "types.h"
 #include "keystate.h"
 #include "unit.h"
-#include "common.h"
+#include "adventure.h"
 #include "fx_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"

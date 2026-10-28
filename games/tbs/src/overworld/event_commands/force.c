@@ -137,7 +137,7 @@ void FieldPsynergy_Force(void) {
     if (copy != NULL) {
       WaitFrames(3);
       Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
-      Actor_StartScriptFar(copy, gFieldEffect_CommonParticleScript + 1);
+      Actor_StartScriptFar(copy, gFieldEffect_SharedParticleScript + 1);
     }
   }
 
@@ -169,7 +169,7 @@ void FieldPsynergy_Force(void) {
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunPsynergyEvent(event, gCommon.leaderActorId, eventTarget);
+    Field_RunPsynergyEvent(event, gAdventure.leaderActorId, eventTarget);
   WaitFrames(10);
   FieldPsynergy_FadeFromCastColor();
   WaitFrames(20);

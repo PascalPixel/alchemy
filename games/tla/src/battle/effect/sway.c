@@ -38,7 +38,7 @@ void BattleEffect_SwayParticle(struct SwayObject *object) {
 }
 
 /// The particle circles 10 pixels above the scene's position, its radius in
-/// pixels the frames it has left; at 0 it runs the common particle script.
+/// pixels the frames it has left; at 0 it runs the shared particle script.
 void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct OrbitVector pos;
@@ -73,7 +73,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   gBattleEffect_CommonParticleScript);
+                                   gBattleEffect_SharedParticleScript);
     }
   }
 }

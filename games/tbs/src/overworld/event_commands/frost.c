@@ -26,7 +26,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {
     particle->scaleY -= 0x1000;
     particle->scaleX = scale;
     if (scale <= 0x1000)
-      Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
   }
 }
 
@@ -181,7 +181,7 @@ void FieldPsynergy_Frost(void) {
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunPsynergyEvent(event, gCommon.leaderActorId, eventTarget);
+      Field_RunPsynergyEvent(event, gAdventure.leaderActorId, eventTarget);
     }
     WaitFrames(20);
   }

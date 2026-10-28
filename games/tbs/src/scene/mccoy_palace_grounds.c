@@ -27,7 +27,7 @@
 /// show bare (renders of tbs-en and tbs-fr); no exit or trigger answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 
-#include "common.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace_grounds.h"
 #include "unit/scene/shared/actor_orbit.h"
@@ -133,7 +133,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gAdventure.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorTemplates[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -166,7 +166,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gAdventure.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -318,7 +318,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gCommon.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gAdventure.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
   }
 

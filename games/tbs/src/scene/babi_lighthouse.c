@@ -3,7 +3,7 @@
 /// Lighthouse, entered from the World Map; SceneId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; SceneId_BabiLighthouseLuff and
 /// SceneId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// exit table, the other getters choose by gCommon.sceneId with the
+/// exit table, the other getters choose by gAdventure.sceneId with the
 /// road as the fallback, and BabiLighthouse_SetupMap restores the scene being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
@@ -46,7 +46,7 @@
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR), and beyond it lies the
 /// Tunnel Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
-#include "common.h"
+#include "adventure.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
@@ -312,7 +312,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryEntrances;
@@ -329,7 +329,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gCommon.sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (gAdventure.sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -339,7 +339,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryActorTemplates;
@@ -1206,7 +1206,7 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   s32 climbDirection = (leader->facing + 0x2000) & 0xc000;
   s32 climbResult = -1;
 
-  if (gCommon.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
+  if (gAdventure.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
     if (climbDirection == FACING_NORTH) {
       climbResult = Field_ClimbUp();
     }
@@ -1215,14 +1215,14 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
     }
   }
   if (climbResult != 0) {
-    if (gCommon.movementMode != 1) {
+    if (gAdventure.movementMode != 1) {
       BabiLighthouse_PushRoadPillar();
     }
   }
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryTriggers;
@@ -1310,7 +1310,7 @@ s32 BabiLighthouse_SetupMap(void) {
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;
-  struct Common *state;
+  struct Adventure *state;
   s32 x;
   s32 z;
   u8 zero;
@@ -1318,7 +1318,7 @@ s32 BabiLighthouse_SetupMap(void) {
   WaitFrames(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  state = &gCommon;
+  state = &gAdventure;
   sceneId = state->sceneId;
   if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
     state->retreatEntrance = 1;
@@ -1479,7 +1479,7 @@ s32 BabiLighthouse_SetupMap(void) {
       Actor_FaceDirection(ACTOR_RIGHT_DOOR, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
-    if (gCommon.entrance ==
+    if (gAdventure.entrance ==
         BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();

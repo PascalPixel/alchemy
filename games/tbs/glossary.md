@@ -257,8 +257,8 @@ pokeemerald, finds each entry saying what pret calls the nearest thing.
 One flow of the game, run from its start to its end: the scene sequence, the
 battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time, until it ends and names the
-next sequence in [common](#common); that handover is the transition. pret's DS
-decompilations call the nearest thing an application
+next sequence in the [adventure](#adventure); that handover is the transition.
+pret's DS decompilations call the nearest thing an application
 ([The front page](README.md#the-parent-sequence)).
 
 Evidence: Sega's word for one flow of a game, and the handover's (遷移); Camelot
@@ -273,14 +273,16 @@ starts the next ([The front page](README.md#the-parent-sequence)).
 
 Evidence: Sega's word for what runs its child sequences in turn.
 
-### Common
+### Adventure
 
 The one struct every sequence shares and that outlives each of them,
-`gCommon`: the party, the flags, where the party stands, the next sequence and
-what the last one reported. Save Game writes it to the cartridge. The name is
-FORTRAN's: a `COMMON` block was the memory shared by a program's parts, and what
-survived when one program chained to the next
+`gAdventure` (`struct Adventure`, `adventure.h`): the party, where it stands,
+the coins and play time, the options, the next sequence and what the last one
+reported. Save Game writes it to the cartridge with the game flags
 ([The front page](README.md#how-a-sequence-finds-its-way-back)).
+
+Evidence: the game's own word for what saving keeps, "Save your adventure?"
+(`MsgSaveAdventureQuestion`; ぼうけんを きろくしますか? in Japanese).
 
 ### Scene
 
@@ -409,7 +411,7 @@ them through one inline each in `event_inline.h`
 
 ### Destination
 
-The scene and entrance the parent sequence runs next (`gCommon.sceneId`
+The scene and entrance the parent sequence runs next (`gAdventure.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

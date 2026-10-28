@@ -68,7 +68,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
 /// now and then turning sharply; after 101 frames it hands over to the
-/// common particle script. FieldEffect_CircleAnchor switches a particle to it.
+/// shared particle script. FieldEffect_CircleAnchor switches a particle to it.
 /// While it wanders, the engine's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
@@ -97,7 +97,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    Actor_StartScriptFar(effect, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(effect, gFieldEffect_SharedParticleScript);
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it

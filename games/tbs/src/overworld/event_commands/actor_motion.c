@@ -109,7 +109,7 @@ void Actor_SetMovementType(struct Actor *actor, s32 action) {
     action = (s32)gMovementType_FollowLinkedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    actor->linkedActor = Actor_GetById(gCommon.leaderActorId);
+    actor->linkedActor = Actor_GetById(gAdventure.leaderActorId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

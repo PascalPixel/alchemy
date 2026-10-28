@@ -172,7 +172,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  if (gCommon.battleType == BATTLE_TYPE_NO_ESCAPE) {
+  if (gAdventure.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;

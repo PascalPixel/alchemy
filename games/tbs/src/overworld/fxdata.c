@@ -467,7 +467,7 @@ const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
 
 /// [0] only releases the actor, +1 waits for it to arrive and releases it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
-const s32 gFieldEffect_CommonParticleScript[] = {
+const s32 gFieldEffect_SharedParticleScript[] = {
     SC_RELEASE,
     SC_SYNC,
     SC_RELEASE,

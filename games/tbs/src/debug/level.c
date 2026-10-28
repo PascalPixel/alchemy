@@ -1,4 +1,4 @@
-#include "common.h"
+#include "adventure.h"
 #include "unit/debug/level.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -164,7 +164,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gCommon.leaderActorId);
+  unit = Unit_Get(gAdventure.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = MsgDebugRaiseEveryonesLevel;

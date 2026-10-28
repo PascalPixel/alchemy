@@ -266,7 +266,7 @@ void PartyStatus_Draw(s32 flags) {
   } else {
     count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
-      members[i] = gCommon.party[i];
+      members[i] = gAdventure.party[i];
     members[i] = 255;
   }
   count = i;

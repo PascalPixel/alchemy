@@ -12,7 +12,7 @@
 ///   Gates): the steps up to the fortress door, kept by two guards whom the
 ///   party gets past under Cloak.
 ///
-/// The getters choose by gCommon.sceneId, and the town's triggers also
+/// The getters choose by gAdventure.sceneId, and the town's triggers also
 /// by FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets:
 /// before it the townspeople live under Dodonpa's men (gLunpaSealedTriggers),
 /// after it they talk of the intruders (gLunpaReopenedTriggers). Both tables
@@ -52,7 +52,7 @@
 /// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY: the guards are marching
 ///   the party down.
 
-#include "common.h"
+#include "adventure.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "unit/scene/lunpa.h"
@@ -112,7 +112,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// so how did you get here?" (MsgLunpaGuardsCatchParty)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
-/// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
+/// How long an effect of shared/effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is released.
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, 0), SC_WAIT(1),
@@ -136,7 +136,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaEntrances;
@@ -150,7 +150,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaExits;
@@ -163,7 +163,7 @@ const u32 *Scene_GetExits(void) {
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaActorTemplates;
@@ -308,7 +308,7 @@ static void Lunpa_SearchWell(void) {
 /// The triggers of the Lunpa Fortress Gates, or the town's before and after
 /// Donpa's judgment.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 sceneId = gCommon.sceneId;
+  s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
@@ -428,7 +428,7 @@ static void Lunpa_AskAboutFortressCommotion(void) {
 static void Lunpa_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
-  if (gCommon.cloaked != 0) {
+  if (gAdventure.cloaked != 0) {
     Event_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
              GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
@@ -450,7 +450,7 @@ static void Lunpa_TalkToLeftGuard(void) {
 /// the party is cloaked, and after Donpa's judgment wonders how the warriors
 /// from Kalay got in.
 static void Lunpa_TalkToRightGuard(void) {
-  if (gCommon.cloaked != 0) {
+  if (gAdventure.cloaked != 0) {
     Event_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaRightGuardWondersHow);
@@ -467,7 +467,7 @@ static void Lunpa_TalkToRightGuard(void) {
 static void Lunpa_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
-  if (gCommon.cloaked == 0 && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
+  if (gAdventure.cloaked == 0 && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
       GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = Event_GetFlag(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
@@ -647,7 +647,7 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
 /// uncloaked, the guards step in front of the fortress door and the gateway
 /// closes.
 static void Lunpa_GuardsBlockGate(void) {
-  if (gCommon.cloaked == 0) {
+  if (gAdventure.cloaked == 0) {
     Event_Start();
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 2);
     Actor_ShowEmote(ACTOR_RIGHT_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 15);
@@ -775,7 +775,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
 
   work = gFieldWork;
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  if (gCommon.cloaked == 0 &&
+  if (gAdventure.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
@@ -924,7 +924,7 @@ static void Lunpa_LeaderSneaksOut(void) {
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
-  if (gCommon.sceneId == (s32)&SceneId_Lunpa) {
+  if (gAdventure.sceneId == (s32)&SceneId_Lunpa) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Lunpa_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -937,14 +937,15 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
   // Restore the gate's arrival event and active detection tasks separately.
-  if (gCommon.sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (gAdventure.sceneId == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gCommon.retreatEntrance = GATE_RETREAT_ENTRANCE;
-    if (gCommon.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
+    gAdventure.retreatEntrance = GATE_RETREAT_ENTRANCE;
+    if (gAdventure.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Lunpa_GuardsThrowIsaacOut();
     }
-    if (gCommon.entrance == LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
+    if (gAdventure.entrance ==
+            LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Lunpa_LeaderSneaksOut();
     }
@@ -953,7 +954,7 @@ s32 Scene_Initialize(void) {
       Task_AddFrame(Lunpa_WatchForFortressApproach, TASK_PASS_FRAME);
     }
 #if TBS_PATCH_4
-    if (gCommon.cloaked != 0)
+    if (gAdventure.cloaked != 0)
       Lunpa_CastCloak();
 #endif
     Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);

@@ -26,7 +26,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 /// it stands on moves it. Called by two scene overlays (Suhalla Desert, Lamakan
 /// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
-  struct Actor *leader = Actor_Lookup(gCommon.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   struct TreasureSpot *marker = gFieldWork->treasureSpots;
   s32 markerIndex = 0;
   s32 x;
@@ -214,7 +214,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   if (actor == 0)
     return;
 
-  leader = Actor_Lookup(gCommon.leaderActorId);
+  leader = Actor_Lookup(gAdventure.leaderActorId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
   actor->acceleration = 1 << 16;
@@ -237,7 +237,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = Actor_Lookup(gCommon.leaderActorId);
+    leader = Actor_Lookup(gAdventure.leaderActorId);
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
@@ -265,7 +265,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// free, heap block 17, taken for the icon, is not released (the scene change's
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
-  struct Actor *leader = Actor_Lookup(gCommon.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
@@ -390,7 +390,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   // The layout's treasure spots: (column, row, id) triples, ended by 0xff,
   // 0xff; the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
-  actor = Actor_Lookup(gCommon.leaderActorId);
+  actor = Actor_Lookup(gAdventure.leaderActorId);
   leaderColumn = actor->x.fixed >> 20;
   leaderRow = actor->z.fixed >> 20;
   if (markerData != 0) {

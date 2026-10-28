@@ -285,7 +285,7 @@ Two scenes that need the same piece of code each carry their own copy of it,
 because a scene's code can call only the main image, never another scene's.
 
 Only one overlay is loaded at a time, so the code several scenes need is written
-once in `common/` and compiled into each of them: the three Colosso finals
+once in `shared/` and compiled into each of them: the three Colosso finals
 share the friends' cheering spots, the stage guides, the race gauge and the
 opponent's recorded run; Vault and its houses share the walking villagers;
 Mercury Lighthouse's scenes share the pool's lights and the passages between
@@ -293,11 +293,11 @@ floors; and many scenes share the small field effects and the helpers that move
 actors. The ROM holds a copy in each overlay, alike but for the
 addresses they hold.
 
-A header in `common/` is code, not declarations: each scene includes it where
+A header in `shared/` is code, not declarations: each scene includes it where
 the code lies in that overlay, since the include decides where its bytes land,
 and including it twice in one scene would place it twice. A helper that some of
 the scenes including its header never call is `UNUSED`, so that a current GCC
-does not warn there. Renaming a function in `common/` renames it in every scene
+does not warn there. Renaming a function in `shared/` renames it in every scene
 that includes the header; each header's opening comment says what it holds.
 
 ## Design
@@ -389,7 +389,7 @@ where several share a style. A scene's functions are named for what the player
 sees; its messages are linker symbols made from their English text. Overlay
 numbers are their rows of the resource directory.
 
-Many functions in `common/` keep older descriptive names
+Many functions in `shared/` keep older descriptive names
 (`Actor_SetFlagBitByRelativeDepth`, `Scene_`); each takes its name with the
 scenes that call it, as those scenes are humanized.
 

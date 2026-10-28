@@ -29,7 +29,7 @@
 #include "script_operands.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "common.h"
+#include "adventure.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_entrance.h"
@@ -227,7 +227,7 @@ s32 KolimaForestEntrance_Initialize(void) {
   }
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
-  if (gCommon.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
+  if (gAdventure.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
     }

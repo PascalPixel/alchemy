@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_COMMON_H
-#define ALCHEMY_COMMON_H
+#ifndef ALCHEMY_ADVENTURE_H
+#define ALCHEMY_ADVENTURE_H
 
 /// @file
-/// Common, the state a save file keeps: play time, coins, the scene
+/// The adventure, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 
 #include "types.h"
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A scene's type (Scene.sceneType, copied to Common.sceneType).
+/// A scene's type (Scene.sceneType, copied to Adventure.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -18,7 +18,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gCommon.hazardMode: what advances the hazard count
+/// gAdventure.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MB_DESERT_SAND ground.
@@ -27,11 +27,11 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gCommon.hazardDamage's bit 8: its low byte is a percentage of
+/// gAdventure.hazardDamage's bit 8: its low byte is a percentage of
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gCommon.battleType: how the next battle starts (Battle_SetType); it
+/// gAdventure.battleType: how the next battle starts (Battle_SetType); it
 /// is set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that one
 /// stops the opening's first-strike and surprise rolls (Battle_Run).
 enum BattleType {
@@ -54,13 +54,13 @@ enum BattleType {
 /// The state a save file keeps: play time, coins, the scene and the leader's
 /// position, the active party and the options.
 ///
-/// It is the one gCommon in EWRAM, right after the 0x200 bytes of game
+/// It is the one gAdventure in EWRAM, right after the 0x200 bytes of game
 /// flags. Saving writes it whole in a file's first record, with the flags
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
-/// new game sets its defaults (Common_InitializeDefaults), and the
+/// new game sets its defaults (Adventure_InitializeDefaults), and the
 /// field, battle, menus and scenes read and write it directly.
-struct Common {
+struct Adventure {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
@@ -204,38 +204,38 @@ struct Common {
   struct Unit units[8];        ///< the characters
 };
 
-STATIC_ASSERT(offsetof(struct Common, buildStamp) == 0);
-STATIC_ASSERT(offsetof(struct Common, playTime) == 4);
-STATIC_ASSERT(offsetof(struct Common, idleSleepEnabled) == 0x22a);
-STATIC_ASSERT(offsetof(struct Common, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct Common, shopCredit) == 0x118);
-STATIC_ASSERT(offsetof(struct Common, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct Common, units) == 0x2c0);
-STATIC_ASSERT(sizeof(struct Common) == 0xd20);
-STATIC_ASSERT(offsetof(struct Common, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct Common, area) == 0x1cc);
-STATIC_ASSERT(offsetof(struct Common, dashKeys) == 0x21c);
-STATIC_ASSERT(offsetof(struct Common, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct Common, entrance) == 0x1c2);
-STATIC_ASSERT(offsetof(struct Common, special) == 0x1d6);
-STATIC_ASSERT(offsetof(struct Common, x) == 0x1dc);
-STATIC_ASSERT(offsetof(struct Common, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct Common, leaderActorId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct Common, party) == 0x1f8);
-STATIC_ASSERT(offsetof(struct Common, speech) == 0x20a);
-STATIC_ASSERT(offsetof(struct Common, messageSpeed) == 0x20c);
-STATIC_ASSERT(offsetof(struct Common, aKeys) == 0x210);
-STATIC_ASSERT(offsetof(struct Common, firstShortcutKeys) == 0x218);
-STATIC_ASSERT(offsetof(struct Common, secondShortcutKeys) == 0x21a);
-STATIC_ASSERT(offsetof(struct Common, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct Common, retreatEntrance) == 0x242);
-STATIC_ASSERT(offsetof(struct Common, cloaked) == 0x24c);
-STATIC_ASSERT(offsetof(struct Common, linkTallies) == 0x2a4);
-STATIC_ASSERT(offsetof(struct Common, startStamp) == 0x2b8);
+STATIC_ASSERT(offsetof(struct Adventure, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct Adventure, playTime) == 4);
+STATIC_ASSERT(offsetof(struct Adventure, idleSleepEnabled) == 0x22a);
+STATIC_ASSERT(offsetof(struct Adventure, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct Adventure, shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct Adventure, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct Adventure, units) == 0x2c0);
+STATIC_ASSERT(sizeof(struct Adventure) == 0xd20);
+STATIC_ASSERT(offsetof(struct Adventure, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct Adventure, area) == 0x1cc);
+STATIC_ASSERT(offsetof(struct Adventure, dashKeys) == 0x21c);
+STATIC_ASSERT(offsetof(struct Adventure, avoidDistance) == 0x244);
+STATIC_ASSERT(offsetof(struct Adventure, entrance) == 0x1c2);
+STATIC_ASSERT(offsetof(struct Adventure, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct Adventure, x) == 0x1dc);
+STATIC_ASSERT(offsetof(struct Adventure, movementMode) == 0x1f2);
+STATIC_ASSERT(offsetof(struct Adventure, leaderActorId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct Adventure, party) == 0x1f8);
+STATIC_ASSERT(offsetof(struct Adventure, speech) == 0x20a);
+STATIC_ASSERT(offsetof(struct Adventure, messageSpeed) == 0x20c);
+STATIC_ASSERT(offsetof(struct Adventure, aKeys) == 0x210);
+STATIC_ASSERT(offsetof(struct Adventure, firstShortcutKeys) == 0x218);
+STATIC_ASSERT(offsetof(struct Adventure, secondShortcutKeys) == 0x21a);
+STATIC_ASSERT(offsetof(struct Adventure, firstShortcut) == 0x220);
+STATIC_ASSERT(offsetof(struct Adventure, retreatEntrance) == 0x242);
+STATIC_ASSERT(offsetof(struct Adventure, cloaked) == 0x24c);
+STATIC_ASSERT(offsetof(struct Adventure, linkTallies) == 0x2a4);
+STATIC_ASSERT(offsetof(struct Adventure, startStamp) == 0x2b8);
 
-#ifndef OWN_gCommon
+#ifndef OWN_gAdventure
 /// The game's state (system/ewram.s).
-extern struct Common gCommon;
+extern struct Adventure gAdventure;
 #endif
 
 /// Sets the battle type.
@@ -243,7 +243,7 @@ extern struct Common gCommon;
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gCommon.battleType = (mode);                                               \
+    gAdventure.battleType = (mode);                                            \
   } while (0)
 
 #endif

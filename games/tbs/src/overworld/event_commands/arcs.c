@@ -19,7 +19,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   anchor = arc->linkedActor;
   frame = ++arc->timer;
   if (frame > 31) {
-    Actor_StartScriptFar(arc, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -41,7 +41,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
   anchor = arc->linkedActor;
   frame = ++arc->timer;
   if (frame > 31) {
-    Actor_StartScriptFar(arc, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);

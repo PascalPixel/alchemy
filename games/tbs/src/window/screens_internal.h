@@ -38,7 +38,7 @@
 #include "resource.h"
 #include "output.h"
 #include "glyph.h"
-#include "common.h"
+#include "adventure.h"
 #include "battle_work.h"
 #include "heap.h"
 #include "text_font.h"

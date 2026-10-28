@@ -82,7 +82,7 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 gBattleEffect_CommonParticleScript[];
+extern const s32 gBattleEffect_SharedParticleScript[];
 
 struct CaptureObject {
   u8 unk00[8];
@@ -258,7 +258,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
     ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
-                                 gBattleEffect_CommonParticleScript);
+                                 gBattleEffect_SharedParticleScript);
   }
 
   WaitFrames(15);

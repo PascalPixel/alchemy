@@ -49,7 +49,7 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "common.h"
+#include "adventure.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
@@ -328,7 +328,7 @@ const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void) {
 /// gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
-  struct Actor *actor = Actor_GetById(gCommon.leaderActorId);
+  struct Actor *actor = Actor_GetById(gAdventure.leaderActorId);
   s32 row = actor->z.fixed >> 20;
   s32 i;
   s32 kind;
@@ -412,7 +412,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 /// controlled actor and the camera west.
 static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
-  struct Common *state = &gCommon;
+  struct Adventure *state = &gAdventure;
   s32 id = state->leaderActorId;
   struct Actor *subject = work->camera;
   struct Actor *actor = Actor_GetById(id);
@@ -473,7 +473,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   struct Actor *rider;
   u8 *flags;
 
-  actorId = gCommon.leaderActorId;
+  actorId = gAdventure.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
@@ -506,7 +506,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
 static void ColosseumNavampaMatch_StepOffScales(void) {
   struct Actor *actor;
 
-  Import_ActorSetAnimation(gCommon.leaderActorId, 1);
+  Import_ActorSetAnimation(gAdventure.leaderActorId, 1);
 
   actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
   actor->motionFlags = 0;
@@ -623,7 +623,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 behavior;
 
-  actor = Actor_GetById(gCommon.leaderActorId);
+  actor = Actor_GetById(gAdventure.leaderActorId);
   x = actor->x.fixed >> 20;
   behavior = 23;
   z = actor->z.fixed >> 20;
@@ -692,11 +692,11 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = Actor_GetById(gCommon.leaderActorId);
+  rider = Actor_GetById(gAdventure.leaderActorId);
   log = Actor_GetById(ACTOR_LONG_LOG);
   steps = 0;
   angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
-  actorId = gCommon.leaderActorId;
+  actorId = gAdventure.leaderActorId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
@@ -842,12 +842,12 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  actorId = &gCommon.leaderActorId;
+  actorId = &gAdventure.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gCommon;
-  actorId =
-      (s32 *)&gameWords[offsetof(struct Common, leaderActorId) / sizeof(s16)];
+  gameWords = (s16 *)&gAdventure;
+  actorId = (s32 *)&gameWords[offsetof(struct Adventure, leaderActorId) /
+                              sizeof(s16)];
 #endif
   actor = Actor_GetById(*actorId);
   actor->acceleration = PIXELS(1);
@@ -872,12 +872,12 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  actorId = &gCommon.leaderActorId;
+  actorId = &gAdventure.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gCommon;
-  actorId =
-      (s32 *)&gameWords[offsetof(struct Common, leaderActorId) / sizeof(s16)];
+  gameWords = (s16 *)&gAdventure;
+  actorId = (s32 *)&gameWords[offsetof(struct Adventure, leaderActorId) /
+                              sizeof(s16)];
 #endif
   actor = Actor_GetById(*actorId);
   if (actor->x.fixed > PIXELS(664)) {
@@ -914,8 +914,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   s32 entrance;
 
   work = gFieldWork;
-  actorId = gCommon.leaderActorId;
-  entrance = gCommon.entrance;
+  actorId = gAdventure.leaderActorId;
+  entrance = gAdventure.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Event_Start();
     messageOffset = warriorId * 3;
@@ -1166,14 +1166,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gCommon.movementMode = LEADER_MOVEMENT_WALK;
+  gAdventure.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
   Actor_ConfigureSpriteColor(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
   // Entrances: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 6, PIXELS(1512),
                            PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
@@ -1593,7 +1593,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   struct Actor *eastPanAgain;
   s32 promptResult;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1657,7 +1657,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1713,7 +1713,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1776,7 +1776,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   s32 raisedHeight;
   s32 shiftedX;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1865,7 +1865,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
@@ -1908,7 +1908,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Event_ShowMessage(guideId, 0);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
-      gCommon.movementMode = LEADER_MOVEMENT_CLIMB;
+      gAdventure.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
@@ -1927,7 +1927,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 
-  if (gCommon.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gAdventure.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(actorId);
     return;
   }
@@ -2206,7 +2206,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   s16 *linkedItemActorId;
 
   opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
-  actor = Actor_GetById(gCommon.leaderActorId);
+  actor = Actor_GetById(gAdventure.leaderActorId);
   if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
@@ -2241,7 +2241,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }
-  MessageArgument_Push(gCommon.leaderActorId, 1);
+  MessageArgument_Push(gAdventure.leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   Actor_WaitForScriptEnd(actor);
   return opponentFinishedFirst;
@@ -2264,7 +2264,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gCommon.leaderActorId;
+  subjectHandle = gAdventure.leaderActorId;
   subject = Actor_GetById(subjectHandle);
 
   direction = subject->facing >> 12;

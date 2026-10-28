@@ -9,7 +9,7 @@
 /// second relief room. It places nobody; its one event besides the exits is
 /// the chest (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the
 /// second minotaur relief. Its setup, SolSanctumRooms_Initialize
-/// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
+/// (shared/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
 /// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
 ///
 /// The south exit leaves down stairs (EXIT_STYLE_STAIRS_DOWN): walking

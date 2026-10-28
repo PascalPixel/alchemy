@@ -22,7 +22,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s32 scale;
   struct Vector3 position;
 
-  leader = Actor_GetById(gCommon.leaderActorId);
+  leader = Actor_GetById(gAdventure.leaderActorId);
   djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
@@ -50,9 +50,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  Actor_ArmCallback(gCommon.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gAdventure.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Actor_SelectAnimationFar(Actor_GetById(gCommon.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gAdventure.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
@@ -145,7 +145,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
-    Actor_StartScriptFar(djinni, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(djinni, gFieldEffect_SharedParticleScript);
   }
 
   WaitFrames(15);
@@ -166,7 +166,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = Actor_GetById(gCommon.leaderActorId);
+  source = Actor_GetById(gAdventure.leaderActorId);
   statePointer = &effect->state;
   state = *statePointer;
 

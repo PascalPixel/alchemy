@@ -66,7 +66,7 @@
 /// or the terrain is in the way, and the water drops run as tasks
 /// started by Scene_Initialize.
 
-#include "common.h"
+#include "adventure.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
 #include "scene_ids.h"
@@ -234,7 +234,7 @@ enum VaultCaveMouthActorId {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Entrances;
@@ -254,7 +254,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Exits;
@@ -270,7 +270,7 @@ const u32 *Scene_GetExits(void) {
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_ActorTemplates;
@@ -419,7 +419,7 @@ static void VaultCave_ShowLockedDoor(void) {
 /// Selects the cave scene's examine triggers, movement checks and Psynergy
 /// callbacks.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gCommon.sceneId;
+  s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Triggers;
@@ -988,8 +988,8 @@ static void VaultCave_StartTimedFalls(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gCommon.sceneId == (s32)&SceneId_VaultCavePassage) {
-    switch (gCommon.entrance) {
+  if (gAdventure.sceneId == (s32)&SceneId_VaultCavePassage) {
+    switch (gAdventure.entrance) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
@@ -1012,11 +1012,11 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gCommon.sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (gAdventure.sceneId == (s32)&SceneId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       Actor_GetById(ACTOR_IVY)->scaleY = 0x18000;
     }
-    switch (gCommon.entrance) {
+    switch (gAdventure.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
@@ -1075,7 +1075,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_GetById(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
-  if (gCommon.sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (gAdventure.sceneId == (s32)&SceneId_VaultCaveMouth) {
     Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
       Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 2);
@@ -1088,7 +1088,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_NORTHERN_PILLAR)->collisionFlags |= 0x80;
     Actor_GetById(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
         0x80;
-    switch (gCommon.entrance) {
+    switch (gAdventure.entrance) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
@@ -1108,8 +1108,8 @@ s32 Scene_Initialize(void) {
   }
   // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
-  gCommon.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gCommon.retreatScene = (s32)&SceneId_VaultCavePassage;
+  gAdventure.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
+  gAdventure.retreatScene = (s32)&SceneId_VaultCavePassage;
   return 0;
 }
 

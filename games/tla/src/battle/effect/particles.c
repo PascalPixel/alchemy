@@ -43,6 +43,6 @@ void BattleEffect_SpawnFallingParticles(void) {
     Object_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleEffect_CommonParticleScript);
+                                 gBattleEffect_SharedParticleScript);
   }
 }

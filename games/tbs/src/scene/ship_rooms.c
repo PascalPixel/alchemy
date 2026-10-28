@@ -97,7 +97,7 @@
 #include "heap.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
-#include "common.h"
+#include "adventure.h"
 #include "unit/import.h"
 #include "unit/scene/ship_rooms.h"
 #include "unit/overworld/overworld.h"
@@ -702,7 +702,7 @@ static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
-  if (gCommon.sceneId == (s32)&SceneId_ShipRooms) {
+  if (gAdventure.sceneId == (s32)&SceneId_ShipRooms) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
@@ -724,7 +724,7 @@ const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 const struct ActorTemplate *ShipRooms_SelectActorTemplates(void) {
   u8 *templateBytes;
 
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -820,7 +820,7 @@ const struct ActorTemplate *ShipRooms_SelectActorTemplates(void) {
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct Trigger *ShipRooms_SelectTriggers(void) {
-  s32 entrance = gCommon.entrance;
+  s32 entrance = gAdventure.entrance;
 
   switch (entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -2299,7 +2299,7 @@ s32 ShipRooms_ApplyEntryState(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -2330,7 +2330,7 @@ s32 ShipRooms_ApplyEntryState(void) {
     }
     break;
   }
-  switch (gCommon.entrance) {
+  switch (gAdventure.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
     ShipRooms_SetUpHold();

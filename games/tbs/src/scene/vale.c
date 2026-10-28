@@ -72,7 +72,7 @@
 /// hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west, the pillar
 /// cycling its colour modes too, and sheds sparkles.
 
-#include "common.h"
+#include "adventure.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/vale.h"
@@ -421,8 +421,8 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ActorTemplate *Vale_GetActorTemplates(void) {
-  u8 *gameStateBytes = (u8 *)&gCommon;
-  if (((struct Common *)gameStateBytes)->entrance == VALE_FROM_TITLE)
+  u8 *gameStateBytes = (u8 *)&gAdventure;
+  if (((struct Adventure *)gameStateBytes)->entrance == VALE_FROM_TITLE)
     return gVale_RepairActorTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorTemplatesAfterKalay;
@@ -1550,8 +1550,8 @@ s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
 
-  if (gCommon.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gCommon)[517], ((u8 *)&gCommon)[518]);
+  if (gAdventure.entrance == VALE_FROM_TITLE) {
+    WindowColor_Apply(((u8 *)&gAdventure)[517], ((u8 *)&gAdventure)[518]);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1624,13 +1624,13 @@ s32 Vale_Initialize(void) {
           Actor_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
-        if (gCommon.entrance != VALE_FROM_TITLE &&
+        if (gAdventure.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           Task_AddFrame(Vale_SynchronizeAlephGuardPause, TASK_PASS_FRAME);
         }
       }
       if (!Event_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
-          gCommon.entrance == VALE_FROM_ROOF_MENDED) {
+          gAdventure.entrance == VALE_FROM_ROOF_MENDED) {
         Vale_RoofMended();
         GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }

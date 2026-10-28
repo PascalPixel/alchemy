@@ -56,7 +56,7 @@
 
 #include "speaker.h"
 #include "version.h"
-#include "common.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "unit/scene/tree_rooms.h"
 #include "unit/scene/shared/effect_spawn.h"
@@ -301,9 +301,9 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   struct Actor *actor;
   s32 spinFrame;
 
-  destinationColumn = (gCommon.x >> 20) + 64;
-  destinationRow = gCommon.z >> 20;
-  leaderActorId = gCommon.leaderActorId;
+  destinationColumn = (gAdventure.x >> 20) + 64;
+  destinationRow = gAdventure.z >> 20;
+  leaderActorId = gAdventure.leaderActorId;
   actor = Actor_GetById(leaderActorId);
   if (entrance == *sLastCocoon)
     return;
@@ -827,7 +827,7 @@ s32 TreeRooms_EnterRoom(void) {
   }
   Actor_ConfigureSpriteColor(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  if (gCommon.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
+  if (gAdventure.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Import_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
@@ -853,8 +853,8 @@ s32 TreeRooms_EnterRoom(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  entrance = gCommon.entrance;
-  leaderActorId = gCommon.leaderActorId;
+  entrance = gAdventure.entrance;
+  leaderActorId = gAdventure.leaderActorId;
   actor = Actor_GetById(leaderActorId);
   // Entrances 20, 30, 40 and 50: the leader falls on through the room,
   // to the entrance numbered ten lower. Entrance 10: the leader

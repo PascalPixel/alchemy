@@ -32,7 +32,7 @@
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
 /// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
-#include "common.h"
+#include "adventure.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace.h"
 #include "unit/overworld/overworld.h"
@@ -217,7 +217,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   struct ActorTemplate *templates;
 
-  if (gCommon.sceneId == (s32)&SceneId_McCoyPalace) {
+  if (gAdventure.sceneId == (s32)&SceneId_McCoyPalace) {
     templates = gMcCoyPalaceActorTemplates;
     Scene_AssignViewFlags(templates);
 
@@ -245,7 +245,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 
 /// What the party can talk to and search in the palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gCommon.sceneId == (s32)&SceneId_McCoyPalace) {
+  if (gAdventure.sceneId == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceTriggers;
   }
   return gMcCoyPalaceNoTriggers;
@@ -573,9 +573,9 @@ s32 Scene_Initialize(void) {
   // A first audience and a return visit have different greetings.
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
       GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    if (gCommon.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
+    if (gAdventure.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       McCoyPalace_AudienceWithMcCoy();
-    } else if (gCommon.entrance ==
+    } else if (gAdventure.entrance ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
                GameFlag_Get(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
       McCoyPalace_CaptainHintsAtBarricade();
@@ -584,7 +584,7 @@ s32 Scene_Initialize(void) {
     rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
-      if (gCommon.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
+      if (gAdventure.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
         if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
@@ -593,7 +593,8 @@ s32 Scene_Initialize(void) {
         }
       } else {
         // Restore the displayed chest row after reloading the treasure room.
-        if (gCommon.entrance == MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
+        if (gAdventure.entrance ==
+            MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
           if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
             if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();

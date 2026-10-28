@@ -71,14 +71,14 @@ void Event_WaitFrames(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(gCommon.leaderActorId);
+  actor = Actor_Lookup(gAdventure.leaderActorId);
   actor->speedLimit = Q16_ONE;
   actor->acceleration = 0x8000;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  if (gCommon.movementMode == LEADER_MOVEMENT_CLIMB) {
+  if (gAdventure.movementMode == LEADER_MOVEMENT_CLIMB) {
     Actor_SelectAnimationFar(actor, 0xC);
     return;
   }
@@ -112,7 +112,7 @@ void Event_Start(void) {
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gCommon.leaderActorId;
+  runtime->speaker = gAdventure.leaderActorId;
   runtime->messageWindow = 0;
 }
 
@@ -121,7 +121,7 @@ void Event_Start(void) {
 /// event that opens with Event_Start closes with it.
 void Event_End(void) {
   Task_Remove(Event_UpdateDebugSkip);
-  FieldCamera_FollowActor(gCommon.leaderActorId, 1);
+  FieldCamera_FollowActor(gAdventure.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -140,7 +140,7 @@ void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   WaitFrames(1);
   // XXX (no evidence): why the leader's actor is fetched and dropped; no
   // code calls this function, so no caller reads a result.
-  Actor_Lookup(gCommon.leaderActorId);
+  Actor_Lookup(gAdventure.leaderActorId);
 }
 
 /// Spawns the actors of an actor template table after the last
@@ -198,14 +198,14 @@ s32 Event_ValidatePackedId(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gCommon.firstShortcut or secondShortcut. Called whenever the party
+/// gAdventure.firstShortcut or secondShortcut. Called whenever the party
 /// or what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void Event_ClearInvalidPackedValues(void) {
-  if (Event_ValidatePackedId(gCommon.firstShortcut) != 0)
-    gCommon.firstShortcut = 0;
-  if (Event_ValidatePackedId(gCommon.secondShortcut) != 0)
-    gCommon.secondShortcut = 0;
+  if (Event_ValidatePackedId(gAdventure.firstShortcut) != 0)
+    gAdventure.firstShortcut = 0;
+  if (Event_ValidatePackedId(gAdventure.secondShortcut) != 0)
+    gAdventure.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -229,12 +229,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gCommon.party[partyIndex]);
+    vitals = Unit_GetFar(gAdventure.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gCommon.leaderActorId);
+    vitals = Unit_GetFar(gAdventure.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -244,7 +244,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// carries at most 30 of one item. When they are all full, says `Isaac's party
 /// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
 /// possible.` and returns -1; otherwise returns 0. SceneSequence_Run calls it
-/// before it gives gCommon.pendingItem with PartyInventory_GiveItem.
+/// before it gives gAdventure.pendingItem with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -252,7 +252,7 @@ s32 Party_CheckItemLimit(s32 item) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    heldQuantity += Inventory_CountItemFar(gCommon.party[partyIndex], item);
+    heldQuantity += Inventory_CountItemFar(gAdventure.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -344,7 +344,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlaySongFar(MUS_TREASURE_FOUND);
-      if (owner == gCommon.leaderActorId) {
+      if (owner == gAdventure.leaderActorId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -361,7 +361,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gCommon.leaderActorId) {
+    if (owner != gAdventure.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
@@ -509,13 +509,13 @@ void Event_WaitTransitionFrames(void) {
 
 /// Makes the event leave for the given entrance of the given scene:
 /// raises the exit request EXIT_KEEP_DESTINATION and writes
-/// gCommon.sceneId and entrance. Called by the Title, the File Screen,
+/// gAdventure.sceneId and entrance. Called by the Title, the File Screen,
 /// the Battle Arena, the debug battle command and five events (the Lemurian
 /// ship and the World Map among them).
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gCommon.sceneId = sceneId;
-  gCommon.entrance = entrance;
+  gAdventure.sceneId = sceneId;
+  gAdventure.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart
@@ -524,12 +524,12 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;
-  gCommon.restartScene = sceneId;
-  gCommon.restartEntrance = entrance;
+  gAdventure.restartScene = sceneId;
+  gAdventure.restartEntrance = entrance;
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gCommon's sceneId and entrance). Events reach it as
+/// for gAdventure's sceneId and entrance). Events reach it as
 /// Import_EventSetExitRequest (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

@@ -21,7 +21,7 @@ FarCall_GameTable:
 	export Ability_Get, Ability_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsPsynergyFar, Unit_KnowsPsynergy
-	export Common_InitializeDefaultsFar, Common_InitializeDefaults
+	export Adventure_InitializeDefaultsFar, Adventure_InitializeDefaults
 	overlay_veneer Unit_CheckLevelUp
 	overlay_veneer Party_InitializeCharacters
 	overlay_veneer Unit_LevelNoOp

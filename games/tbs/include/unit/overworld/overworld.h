@@ -17,7 +17,7 @@ struct ActorTemplate;
 struct Window;
 struct Actor;
 
-/// The exit request whose destination is already in gCommon.sceneId
+/// The exit request whose destination is already in gAdventure.sceneId
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random
 /// battles, Retreat and the event commands that set a destination
 /// (Event_SetDestination) raise it, and SceneSequence_Run returns it when
@@ -25,7 +25,7 @@ struct Actor;
 /// (parent_sequence.c, scene_sequence.c).
 #define EXIT_KEEP_DESTINATION 999
 
-/// gCommon.movementMode: how the scene sequence hands the party leader
+/// gAdventure.movementMode: how the scene sequence hands the party leader
 /// back to the player (SceneSequence_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the World Map or a layered map.
@@ -38,7 +38,7 @@ enum LeaderMovementMode {
 
 /// ParentSequence_Run's mode: where the game starts.
 enum GameStart {
-  GAME_START_TITLE = 0,            ///< the Title, with a fresh common
+  GAME_START_TITLE = 0,            ///< the Title, with a fresh adventure
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
   GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
 };

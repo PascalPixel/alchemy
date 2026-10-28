@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -29,7 +30,7 @@ void Func_02001770(void) {
       /* FAKEMATCH: ⚓️ starts 0x4000 before the other arguments and shifts it
        * after them; plain constants build it third (differ 2). */
       asm volatile("" : "+l"(y));
-      Func_020044d4(20, 0x1980000, 0x910000, y << 7);
+      Func_020044d4(20, PIXELS(408), PIXELS(145), y << 7);
     }
     wait(1);
     Actor_Jump(20, 4, 20);

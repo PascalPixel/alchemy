@@ -5,6 +5,7 @@
 #include "text/msg_ids.h"
 #include "scene_ids.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 void FieldEvent_Wait();
 void Func_02001080();
@@ -74,11 +75,11 @@ void Func_02000430(void) {
   Call4(Func_020011f0, 18, 8, 16, 0xc000);
   Call1(Actor_WaitForMoveById, 0);
   Call1(Actor_WaitForMoveById, 18);
-  Call3(Actor_ArmCallback, 0, 0x4000, 0);
+  Call3(Actor_ArmCallback, 0, FACING_SOUTH, 0);
   Call1(FieldEvent_Wait, 20);
-  Call3(Actor_ArmCallback, 0, 0xc000, 0);
-  Call3(Actor_ArmCallback, 4, 0xc000, 0);
-  Call3(Actor_ArmCallback, 18, 0xc000, 0);
+  Call3(Actor_ArmCallback, 0, FACING_NORTH, 0);
+  Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
+  Call3(Actor_ArmCallback, 18, FACING_NORTH, 0);
   Call1(FieldEvent_Wait, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
@@ -89,18 +90,18 @@ void Func_02000430(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(4, 256, 40)
-  Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0xb10000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(177), 1);
   Func_02001180();
   angle = 0x4000;
-  Call4(Func_020010f0, 19, 0xc70000, 0x820000, angle);
+  Call4(Func_020010f0, 19, PIXELS(199), PIXELS(130), angle);
   Call3(Actor_ResetAndSetPositionInMode2, 19, 231, 199);
   Call1(FieldEvent_Wait, 20);
-  Call4(Func_020010f0, 20, 0xc70000, 0x820000, angle);
+  Call4(Func_020010f0, 20, PIXELS(199), PIXELS(130), angle);
   Call3(Actor_ResetAndSetPositionInMode2, 20, 220, 191);
   Call1(FieldEvent_Wait, 20);
-  Call4(Func_020010f0, 21, 0xc70000, 0x820000, angle);
+  Call4(Func_020010f0, 21, PIXELS(199), PIXELS(130), angle);
   Call3(Actor_ResetAndSetPositionInMode2, 21, 204, 191);
-  Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0xe10000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(225), 1);
   Func_02001180();
   Call1(Actor_WaitForMoveById, 19);
   Call3(Actor_ArmCallback, 19, 0x5000, 0);
@@ -125,7 +126,7 @@ void Func_02000430(void) {
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 263, 30)
   Call3(Func_02001148, 21, 0, 5);
-  Call2(Func_02001158, 0, 0xe000);
+  Call2(Func_02001158, 0, FACING_NORTHEAST);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_02001148, 0, 0, 5);
@@ -142,8 +143,8 @@ void Func_02000430(void) {
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 263, 30)
   Call3(Func_02001148, 20, 0, 5);
-  Call3(Actor_ArmCallback, 4, 0xe000, 0);
-  Call2(Func_02001158, 18, 0xe000);
+  Call3(Actor_ArmCallback, 4, FACING_NORTHEAST, 0);
+  Call2(Func_02001158, 18, FACING_NORTHEAST);
   Call2(Actor_SetModeById, 18, 3);
   Call2(Motion_SetModeAndWaitAnimation, 4, 3);
   Call1(FieldEvent_Wait, 10);
@@ -175,7 +176,7 @@ void Func_02000430(void) {
   Call3(Func_02001148, 20, 0, 5);
   Call3(Actor_ArmCallback, 20, 0x5000, 0);
   Call3(Actor_ArmCallback, 21, 0x5000, 0);
-  Call2(Func_02001158, 18, 0xe000);
+  Call2(Func_02001158, 18, FACING_NORTHEAST);
   Call1(FieldEvent_Wait, 10);
   Call2(Motion_SetModeAndWaitAnimation, 18, 4);
   Call3(Func_02001148, 18, 0, 5);

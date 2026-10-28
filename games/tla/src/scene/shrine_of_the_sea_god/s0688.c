@@ -2,6 +2,7 @@
 #include "io_reg.h"
 #include "iowrite.h"
 #include "call.h"
+#include "scene_tables.h"
 
 void Func_020039a0(void);
 void Func_020039b8(s32 a, s32 b, s32 c);
@@ -18,17 +19,17 @@ void Func_02000688(void) {
   Func_020039d8();
   Func_02003b08(0);
   Func_020039a0();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   ShrineOfTheSeaGod_CamMove(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
   Func_02003b48(244);
-  Io_Write16(0x1001, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
   wait(10);
-  Io_Write16(0x1002, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(2, 16), &REG_BLDALPHA);
   wait(10);
-  Io_Write16(0x1003, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(3, 16), &REG_BLDALPHA);
   wait(10);
-  Io_Write16(0x1004, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
   wait(10);
   Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
@@ -42,28 +43,28 @@ void Func_02000688(void) {
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
   Func_0200063c(65, 51);
   Func_0200063c(65, 58);
-  Io_Write16(0xf05, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(5, 15), &REG_BLDALPHA);
   Func_0200063c(65, 65);
   Func_0200063c(65, 72);
-  Io_Write16(0xe06, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(6, 14), &REG_BLDALPHA);
   Func_0200063c(65, 79);
   Func_0200063c(65, 86);
-  Io_Write16(0xd07, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(7, 13), &REG_BLDALPHA);
   Func_0200063c(65, 93);
   Func_0200063c(65, 100);
-  Io_Write16(0xc08, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(8, 12), &REG_BLDALPHA);
   Func_0200063c(84, 51);
   Func_0200063c(84, 58);
-  Io_Write16(0xb09, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(9, 11), &REG_BLDALPHA);
   Func_0200063c(84, 65);
   Func_0200063c(84, 72);
-  Io_Write16(0xa0a, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(10, 10), &REG_BLDALPHA);
   Func_0200063c(84, 79);
   Func_0200063c(84, 86);
-  Io_Write16(0x90b, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(11, 9), &REG_BLDALPHA);
   Func_0200063c(84, 93);
   Func_0200063c(84, 100);
-  Io_Write16(0x80c, &REG_BLDALPHA);
+  Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
   for (i = 0; i < 24; i++)
     Func_02000618();
   for (i = 0; i < 24; i++)

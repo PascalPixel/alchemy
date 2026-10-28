@@ -1,6 +1,7 @@
 #include "shrine_of_the_sea_god.h"
 #include "macros.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern const u8 gData_02003cbc[];
 
@@ -96,7 +97,7 @@ void Func_02000e38(void) {
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x4000, 20);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
   Func_02003b48(245);

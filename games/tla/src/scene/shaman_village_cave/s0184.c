@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void FieldEvent_Wait();
@@ -55,7 +56,7 @@ void Func_02000184(void) {
     Call1(Actor_WaitForMoveById, 17);
     Call2(Func_02001188, 17, 1);
     Call2(Actor_StartRepeatedMotion, 17, 2);
-    Call3(Actor_ArmCallback, 17, 0x8000, 0);
+    Call3(Actor_ArmCallback, 17, FACING_WEST, 0);
     Call3(Actor_OffsetPositionAndResetMotion, 17, -8, 0);
     Call1(Actor_WaitForMoveById, 17);
     Call3(Actor_Jump, 17, 4, 20);

@@ -51,7 +51,7 @@ void Func_020004a8(void) {
 void Func_0200052c(void) {
   s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   CopyCells(96, 14, 72, 14, 2, 1);

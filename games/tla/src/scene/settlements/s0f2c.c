@@ -21,7 +21,7 @@ void Func_02000f2c(void) {
     }
     Func_0200156c(9);
     Func_020020c0(9, 0, 0);
-    Place(21, 0xb80000, 0xb80000);
+    Place(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
     CopyCells2(9, 11, 1, 1, 11, 12);

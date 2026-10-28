@@ -160,7 +160,7 @@ void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = Resource_FindFreeEntry();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
                         buffer);
-  Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
+  Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 0x500, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
   while (dma[2] < 0)

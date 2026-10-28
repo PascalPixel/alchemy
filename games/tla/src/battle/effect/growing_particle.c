@@ -2,6 +2,7 @@
 /// One frame of a sprite particle that grows as it drifts.
 #include "types.h"
 #include "effect_sprite.h"
+#include "fixed_math.h"
 
 /// A particle's position and velocity (16.16), integrated each frame, and its
 /// age in frames.
@@ -34,8 +35,8 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
     sprite->oam.index = tiles + picture * 8;
     scale = sprite->scaleX + 0x1999;
     sprite->scaleX = scale;
-    if (scale > 0x10000)
-      scale = 0x10000;
+    if (scale > Q16_ONE)
+      scale = Q16_ONE;
     sprite->scaleX = scale;
     sprite->scaleY = scale;
     position[0] = particle->x;

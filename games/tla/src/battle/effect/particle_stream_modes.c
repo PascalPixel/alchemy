@@ -25,7 +25,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
    * differ in tla-en. */
   __asm__("" : "+l"(palette));
   (void)channel[5];
-  Dma_Set(work + 0x7640, (void *)(palette << 19), 0xa2600001,
+  Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 

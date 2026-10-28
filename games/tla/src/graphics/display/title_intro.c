@@ -149,8 +149,7 @@ s32 Func_081a729c(s32 prompt) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
   data = Resource_GetTableEntry((s32)&ResourceId_TitleScreenPicture);
-  Dma_Set(data, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
-          REG_DMA3);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   {
     /* FAKEMATCH(pin): the native loads the cell buffer's address before it
      * starts the source offset; as Ram_MapCellBuffer at both uses, 2 of 254
@@ -161,8 +160,7 @@ s32 Func_081a729c(s32 prompt) {
      * the pin alone, 2 of 254 instructions differ in tla-en. */
     __asm__ __volatile__("" : "+l"(cells));
     Resource_DecodeType01(data + 0x1c0, cells);
-    Dma_Set(cells, (void *)0x06006800, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580,
-            REG_DMA3);
+    Dma_Set(cells, (void *)0x06006800, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
     /* FAKEMATCH(pin): the native loads the map's address before it starts
@@ -197,8 +195,7 @@ column:
     goto row;
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
-  Dma_Set(gBgScroll, (void *)0x04000010, (DMA_ENABLE | DMA_32BIT) << 16 | 4,
-          REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Window_LoadGraphics();
   Func_08014b70();
   if (prompt != 0) {

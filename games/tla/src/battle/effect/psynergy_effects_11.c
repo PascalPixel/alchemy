@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "macros.h"
+#include "fixed_math.h"
 
 struct EffectSprite {
   u8 unk00[4];
@@ -69,8 +70,8 @@ void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struc
   sprite->tile = tiles + ((particle->timer >> 2) & 7) * 8;
   scale = sprite->scaleX + 0x1999;
   sprite->scaleX = scale;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   sprite->scaleX = scale;
   sprite->scaleY = scale;
   SET_VECTOR(position, particle->x, particle->y, particle->z);

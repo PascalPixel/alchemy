@@ -31,6 +31,7 @@ extern const u8 gData_080f3500[];
 extern const u8 gData_080f34f4[];
 
 #include "iwram_call.h"
+#include "fixed_math.h"
 
 s32 ArcTan2(s32, s32);
 
@@ -76,8 +77,8 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self,
       if (self->y - entry->y > 0x2fffff)
         continue;
     }
-    dx = (entry->x - self->x) / 0x10000;
-    dz = (entry->z - self->z) / 0x10000;
+    dx = (entry->x - self->x) / Q16_ONE;
+    dz = (entry->z - self->z) / Q16_ONE;
     dist = Iwram_Sqrt(dx * dx + dz * dz);
     if (dist >= best)
       continue;

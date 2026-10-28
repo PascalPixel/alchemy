@@ -100,8 +100,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = 0x100c;
-  REG_BG2PA = 0x100;
+  REG_BLDALPHA = BLEND_ALPHA(12, 16);
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);

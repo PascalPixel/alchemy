@@ -7,6 +7,7 @@
 #include "resource.h"
 #include "render_input.h"
 #include "edition.h"
+#include "fixed_math.h"
 
 struct IconSprite {
   u8 unk00[4];
@@ -61,7 +62,7 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   sprite->height = 16;
   sprite->unk16 = 0;
   sprite->unk17 = 4;
-  sprite->scale = 0x10000;
+  sprite->scale = Q16_ONE;
   sprite->oam.index = tile;
   /* FAKEMATCH(barrier): the tile index stored before the palette byte is read;
    * as plain C, 2 of 68 instructions differ in tla-en. */

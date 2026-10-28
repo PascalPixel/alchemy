@@ -2,11 +2,10 @@
 #include "main_routine_work.h"
 #include "dma.h"
 
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define DMA3_BUSY 0x80000000
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+#define DMA3_BUSY (DMA_ENABLE << 16)
 #define START_DMA(source_, destination_, control_)                             \
-  Dma_Set((const void *)(source_), (void *)(destination_), (control_),         \
-          (volatile u32 *)0x040000d4)
+  Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA3_BUSY) != 0) {
@@ -43,19 +42,23 @@ void Func_080addf0(void) {
   s32 j;
 
   zero = 0;
-  START_DMA(&zero, &gMainRoutineWork, 0x850000b8);
+  START_DMA(&zero, &gMainRoutineWork,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
   zero = 0;
-  START_DMA(&zero, gData_02001000, 0x850007c8);
+  START_DMA(&zero, gData_02001000,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
   // The Japanese release waits through a copy of the channel register the
   // transfer above left in r3 where alchemy-gcc rebuilds the address (one
   // instruction); no form tried reproduces it, so that edition keeps this
   // function on its scaffold.
   WaitDma(DMA3);
   zero = 0;
-  START_DMA(&zero, gGameFlagBytes, 0x85000080);
+  START_DMA(&zero, gGameFlagBytes,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
   gData_02001000[4] = 0xff;
   zero = 0;
-  START_DMA(&zero, gOwnerStates, 0x85000298);
+  START_DMA(&zero, gOwnerStates,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Func_080af7ac();
   gMainRoutineWork.keys230 = 1;
   gMainRoutineWork.unk232 = 2;

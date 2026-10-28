@@ -101,7 +101,7 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 #define SERIAL_RUNTIME (&gSerialWork)
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
 
 #define START_DMA(source_, destination_, control_)                             \
   do {                                                                         \

@@ -4,6 +4,7 @@
 #include "fx_scene.h"
 #include "actor.h"
 #include "display_transition.h"
+#include "fixed_math.h"
 
 // The field event work's Reveal state (eventWork + 0xca4).
 struct RevealEvent {
@@ -70,8 +71,8 @@ void Func_080dd820(void) {
     Sound_PlayFar(SE_REVEAL);
     event->active = 1;
   } while (0);
-  event->centreX = transition->centreX / 0x10000;
-  event->centreY = transition->centreY / 0x10000;
+  event->centreX = transition->centreX / Q16_ONE;
+  event->centreY = transition->centreY / Q16_ONE;
   event->frames = REVEAL_FRAMES;
   event->markers = 1;
   Func_080cf554();

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
+#include "oam.h"
 
 /// A window as the render functions take it: its fields sit where a
 /// Window keeps its width, height and place.

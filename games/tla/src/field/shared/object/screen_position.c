@@ -3,6 +3,7 @@
 #include "metadata_lookup.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 /// Writes the object's position on screen, in pixels, to position[0] and
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
@@ -25,8 +26,8 @@ s32 Func_080d5bec(s32 objectId, s32 *position) {
   cameraZ = camera[1] & 0xffff0000;
   x = object->x - cameraX;
   z = object->z - cameraZ - object->y;
-  *position++ = x / 0x10000;
-  *position = z / 0x10000;
+  *position++ = x / Q16_ONE;
+  *position = z / Q16_ONE;
   if ((object->animationKind & 15) == 1)
     *position -=
         (s8)Resource_GetMetadataRecordFarFar(

@@ -27,7 +27,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     Io_Write16(mode, &REG_BLDY);
     BattleHighlight_ClearAllSpriteModes();
     wait(1);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
   }
   if (battle != NULL && mode != 0) {
     battle->highlightMode = mode;
@@ -55,7 +55,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
       }
     }
     wait(1);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
     Task_Add(Graphics_AdvancePaletteCycle, TASK_PASS_FRAME);
   }
 }

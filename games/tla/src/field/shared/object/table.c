@@ -50,8 +50,7 @@ void ObjectTable_Snapshot(void) {
     if (object == NULL)
       continue;
     *indices++ = i;
-    Dma_Set(object, copy, 0x84000000 | (sizeof(struct Actor) / 4),
-            REG_DMA3);
+    Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
     if (object->animationKind == 1) {
       sprite = object->animation;
       frame = sprite->frame;

@@ -1,6 +1,7 @@
 #include "objcmd.h"
 #include "types.h"
 #include "edition.h"
+#include "fixed_math.h"
 
 //--------------------------------------------------------------------------
 // Object motion scripts and the small tables between them. Most are The
@@ -200,8 +201,8 @@ const s32 gData_080f35c8[] = {
 /// Squash and stretch, twice in each round, for ever.
 const s32 gData_080f3614[] = {
     SC_LABEL(1),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),

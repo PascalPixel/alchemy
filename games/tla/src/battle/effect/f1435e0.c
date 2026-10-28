@@ -52,7 +52,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   display->secondMode = 1;
   wait(1);
   REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
+                          DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
   gBgScroll[1].y = 32;
   wait(1);
 
@@ -61,17 +64,32 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
 
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
+                          DISPCNT_MODE_1,
+                      IO_WRITE_16);
   wait(1);
-  REG_BG2CNT = bgControl | 0x784;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+  REG_BG2CNT =
+      bgControl | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
+                          DISPCNT_MODE_1,
+                      IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = 0;
   wait(1);
 
   Func_0814355c();
-  REG_WININ = 0x3537;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
+  REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
+              WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
+              WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
+                          DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                          DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+                      IO_WRITE_16);
 
   offset = 0;
   for (row = 0; row != 16; row++) {

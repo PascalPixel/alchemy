@@ -34,8 +34,8 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
      * pinned value is loaded. */
     do {
     } while (0);
-    *(volatile s32 *)0x04000028 = x;
-    *(volatile s32 *)0x0400002c = work->y;
+    REG_BG2X = x;
+    REG_BG2Y = work->y;
     work->x += work->stepX;
     work->y += work->stepY;
     work->counter = 0;
@@ -45,7 +45,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
 /// A task: restarts DMA0's HBlank copy of one WIN0H value per
 /// scanline from the map cell buffer.
 void BattleEffect_ArmWin0HBlankDma(void) {
-  volatile u16 *dma = (volatile u16 *)0x040000b0;
+  volatile u16 *dma = REG_DMA0;
   u16 control = dma[5];
 
   /* FAKEMATCH: ⚓️ reads the control word before it starts the mask; written as
@@ -57,6 +57,6 @@ void BattleEffect_ArmWin0HBlankDma(void) {
    * destination address (differ 2 without) */
   asm volatile("");
   (void)dma[5];
-  Dma_Set(Ram_MapCellBuffer, (void *)0x04000040, 0xa2600001,
+  Dma_Set(Ram_MapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 struct FxScene13 {
   u16 angle;
@@ -79,7 +80,7 @@ void Func_080e03cc(void) {
     object->x = origin.x + (target.x - origin.x) * step / 10;
     object->y = origin.y + (target.y - origin.y) * step / 10;
     object->z = origin.z + (target.z - origin.z) * step / 10;
-    scale = Interpolate(0x4000, 0x10000, step);
+    scale = Interpolate(0x4000, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -111,7 +112,7 @@ void Func_080e03cc(void) {
     object->x = target.x + (origin.x - target.x) * step / 10;
     object->y = target.y + (origin.y - target.y) * step / 10;
     object->z = target.z + (origin.z - target.z) * step / 10;
-    scale = Interpolate(0x10000, 0x4000, step);
+    scale = Interpolate(Q16_ONE, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);

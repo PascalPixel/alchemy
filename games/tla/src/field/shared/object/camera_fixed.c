@@ -111,8 +111,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
     Dma_Set(
         Render_DecodePictureCode,
         HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
-        (DMA_ENABLE | DMA_32BIT) << 16 |
-            ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
+        DMA_COPY_WORDS(
+            (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
   } while (0);
   eye = &camera->eye;

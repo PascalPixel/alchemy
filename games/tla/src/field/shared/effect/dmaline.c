@@ -19,7 +19,7 @@ struct DmaFxPages {
 void Func_080d5ff8(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;
-  volatile u32 *dest = (volatile u32 *)0x04000014;
+  volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
   u8 *event = Ram_HeapSlots->eventWork;
   volatile u32 *target;
 
@@ -50,5 +50,10 @@ void Func_080d5ff8(void) {
   *dest = *line++;
   *dest = *line++;
   *dest = *line++;
-  Dma_Set(line, (void *)target, 0xa6600003, REG_DMA0);
+  Dma_Set(
+      line, (void *)target,
+      (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)
+              << 16 |
+          3,
+      REG_DMA0);
 }

@@ -23,9 +23,13 @@ void Func_0812628c(s32 mode, s32 value, s32 fade) {
   transition->mode = mode;
 
   if (mode == 1)
-    IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f83, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
+                        BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
+                            BGCNT_PRIORITY(3),
+                        IO_WRITE_16);
 
-  Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
   if (fade == 0x80) {
@@ -34,7 +38,8 @@ void Func_0812628c(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     palette = work->palette;
-    Dma_Set(palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
+            REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *work;
     u16 *source;

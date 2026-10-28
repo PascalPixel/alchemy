@@ -1,6 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
@@ -28,7 +29,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
      * started; without it the limit is started first (one reordered pair,
      * differ 2). */
     asm volatile("");
-    if (scale < 0x10000) {
+    if (scale < Q16_ONE) {
       do {
         scale += 0x800;
         object->scaleY = scale;

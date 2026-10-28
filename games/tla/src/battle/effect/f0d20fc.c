@@ -11,7 +11,7 @@ void *Resource_GetTableEntry(s32 resourceId);
 extern s16 gData_080f3230[];
 extern char ResourceId_WindowTiles;
 
-#define DMA3 ((volatile u32 *)0x040000d4)
+#define DMA3 REG_DMA3
 
 /// Closes Func_080d1f20's picture window: fades the palette out while wiping
 /// the picture's 26 by 5 tiles from the left by the steps in gData_080f3230

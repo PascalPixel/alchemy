@@ -14,13 +14,11 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
-  Dma_Set(buffers->target + 0x2a0, state + 0x762,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
+  Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_COPY_WORDS(0x150),
+          REG_DMA3);
   if (*(s8 *)(state + 0xca4) == 0)
-    Dma_Set(buffers->target, state + 0x222,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
-  Dma_Set(buffers->target, buffers->current,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
+    Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
+  Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);

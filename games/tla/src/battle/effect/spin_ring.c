@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 struct Actor *Actor_GetById(u32 actor);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -47,7 +48,7 @@ void Func_080e37e0(s32 actor) {
     wait(1);
   }
   ring->scaleX = 0x18000;
-  ring->scaleY = 0x10000;
+  ring->scaleY = Q16_ONE;
   Sound_PlayFar(136);
   Actor_SetMode(ring, 6);
   object->scaleY = object->scaleX = 0x8000;

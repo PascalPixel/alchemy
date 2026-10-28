@@ -21,9 +21,12 @@ void BattleEffect_InitializeBuffers(void) {
 
   buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
   zero = 0;
-  Dma_Set(&zero, buffer, 0x85000a81, REG_DMA3);
-  Dma_Set((void *)0x05000000, buffer, 0x84000070, REG_DMA3);
-  Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
+  Dma_Set(&zero, buffer,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              (sizeof(*buffer) / 4),
+          REG_DMA3);
+  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (u8 *)buffer->palette + 0x1c0, DMA_COPY_WORDS(112),
           REG_DMA3);
   BattleEffect_BuildBuffer(0x10000, buffer, buffer->target, 0);
   Task_Add((s32)BattlePalette_UpdateBlend, TASK_PASS_VBLANK + 15);

@@ -22,7 +22,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
 
 s32 Func_081b83c4_Start(void) {
-  REG_DISPCNT = 0x40;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Func_081b83c4();
   return 0;
 }

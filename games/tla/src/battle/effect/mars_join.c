@@ -3,6 +3,7 @@
 #include "motobj.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 struct EffectVector {
   s32 x;
@@ -111,7 +112,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     objectPointer = slot;
     value = *(s32 *)objectPointer;
     Animation_ApplyChildValuesToRecordFar(value, 10);
-    value = Random16() / 3 + 0x10000; // 1.0 to 1.33
+    value = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     ((struct FieldParticle *)slot)->scaleY = value;
     ((struct FieldParticle *)slot)->scaleX = value;
     remaining--;
@@ -165,8 +166,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(10);
   slot = NULL;
   leader->update = slot;
-  leader->scaleX = 0x10000;
-  leader->scaleY = 0x10000;
+  leader->scaleX = Q16_ONE;
+  leader->scaleY = Q16_ONE;
   wait(30);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();

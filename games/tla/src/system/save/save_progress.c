@@ -41,7 +41,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   window = Window_Create(0, 0, 30, 20, 0);
   tiles = Heap_AllocEwram(0x100);
   Resource_DecodeType01(gWindow_ProgressBarTiles, tiles);
-  Dma_Set(tiles, (void *)0x06001000, 0x84000040, REG_DMA3);
+  Dma_Set(tiles, (void *)0x06001000, DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
   case 0:
     Text_DrawMessage((s32)&MsgSaving, window, SAVING_X, 40);

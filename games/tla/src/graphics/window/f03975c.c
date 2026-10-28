@@ -30,7 +30,7 @@ void Func_0803975c(s32 step) {
     u32 *row = base + n * PANEL_ROW_WORDS;
 
     Dma_Set(row + PANEL_ROW_LEAD + shift, row + PANEL_ROW_LEAD,
-            0x84000000 | (PANEL_ROW_WORDS - PANEL_ROW_LEAD - shift), REG_DMA3);
+            DMA_COPY_WORDS(PANEL_ROW_WORDS - PANEL_ROW_LEAD - shift), REG_DMA3);
     Iwram_FillWords(row + (PANEL_ROW_WORDS - shift), shift * 4, 0);
   }
 }

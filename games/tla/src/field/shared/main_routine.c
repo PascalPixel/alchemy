@@ -48,16 +48,14 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
 #define RUN_SAVING_PALETTES(call)                                              \
   {                                                                            \
     void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);         \
-    void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                            \
+    void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                          \
                                                                                \
-    Dma_Set(palette, saved,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(palette, saved, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
     entrance = call(entrance);                                                 \
-    Dma_Set(saved, palette,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(saved, palette, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
-    Heap_Release(saved);                                                            \
+    Heap_Release(saved);                                                       \
   }
 
 /// The main routine, as The Broken Seal's MainRoutine_Run, with this

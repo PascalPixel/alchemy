@@ -85,7 +85,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   }
 
   cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
-      shop->cursorResource, 0x40000000, (struct RenderInput *)listWindow, 0, 0);
+      shop->cursorResource, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow,
+      0, 0);
   cursorAnchor->kind = 1;
   cursorAnchor->unk00[4] = 0;
   Func_08108aa8(&shop->cursor, -32, 112);

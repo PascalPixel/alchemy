@@ -17,7 +17,7 @@ extern char ResourceId_BuildStamp;
 
 void Func_080132d0(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), gIwramHi_Data1,
-          0x84000003, REG_DMA3);
+          DMA_COPY_WORDS(3), REG_DMA3);
   gIwramHi_Data1[3] = 0;
 }
 
@@ -86,7 +86,7 @@ void Resource_LoadCode(u32 index, void *destination) {
     size = (u32)Resource_PatchThumbBranchCodeSize;
   } while (0);
   routine = (void (*)(void *, s32))Heap_Alloc(size);
-  Dma_Set(Resource_PatchThumbBranchCode, routine, 0x84000000 | (size >> 2),
+  Dma_Set(Resource_PatchThumbBranchCode, routine, DMA_COPY_WORDS(size >> 2),
           REG_DMA3);
   routine(destination, end);
   Heap_Release(routine);

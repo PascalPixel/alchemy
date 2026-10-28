@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "io_reg.h"
 
 void Func_0811bf18(struct Actor **from, struct Actor **to,
                    s32 percent) {
@@ -10,7 +11,7 @@ void Func_0811bf18(struct Actor **from, struct Actor **to,
 
   x = object->x + (target->x - object->x) * percent / 100;
   z = object->z + (target->z - object->z) * percent / 100;
-  *(volatile u16 *)0x04000050 = 0;
+  REG_BLDCNT = 0;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
   object->velocityY = 0x40000;

@@ -79,8 +79,8 @@ void Func_080d690c(void) {
     particle->timer = (i & 15) + 1;
     particle++;
   }
-  Io_Write16(0x3f00, &REG_BLDCNT);
-  Io_Write16(0x1008, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
   Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
 }

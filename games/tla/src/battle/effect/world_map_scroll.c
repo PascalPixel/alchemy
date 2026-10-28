@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "bg_scroll.h"
+#include "fixed_math.h"
 
 /// The world map cursor's position (x, then y, 16.16 pixels).
 extern s32 *Data_0202a62c;
@@ -46,8 +47,8 @@ void Func_080ed0a0(void) {
   if (y > bottom)
     y = bottom;
   if (Data_0202a640 == 0) {
-    dx = (x - SCROLL_X) / 0x10000;
-    dy = (y - SCROLL_Y) / 0x10000;
+    dx = (x - SCROLL_X) / Q16_ONE;
+    dy = (y - SCROLL_Y) / Q16_ONE;
     distance = Iwram_Sqrt(dx * dx + dy * dy) << 16;
     dx = x - SCROLL_X;
     dy = y - SCROLL_Y;

@@ -96,8 +96,8 @@ void Func_080d6f34(s32 withCue) {
     particle->posY = Map_GetTerrainHeightFar(0, (s32)p, z);
     particle->timer = (i & 11) + 1;
   }
-  Io_Write16(0x3f00, &REG_BLDCNT);
-  Io_Write16(0x1010, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   Io_Write16(clear, &REG_BLDY);
   Task_Add(Func_080d6674, TASK_PASS_VBLANK);
   if (withCue != 0)

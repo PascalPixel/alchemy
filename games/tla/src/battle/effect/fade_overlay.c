@@ -24,7 +24,9 @@ void BattleEffect_StartFadeOverlay(void *object) {
   VramCache_Load(94, 0x200, tiles);
   HeapSlot_Release(56);
   Task_Add(Func_080d1840, TASK_PASS_VBLANK);
-  Io_Write16(0x3f9e, &REG_BLDCNT);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                 BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+             &REG_BLDCNT);
   Io_Write16(16, &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);

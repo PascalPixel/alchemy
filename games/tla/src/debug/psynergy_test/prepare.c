@@ -6,6 +6,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "fixed_math.h"
 
 void Func_02000dac();
 void Func_02000e74();
@@ -45,7 +46,7 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
   if (mode == 2) {
     /* FAKEMATCH: ⚓️ loads the scale before it builds the bound. */
     __asm__ volatile("" : "+l"(object));
-    while (object->scaleX < 0x10000) {
+    while (object->scaleX < Q16_ONE) {
       wait(1);
       scale = object->scaleX;
       /* FAKEMATCH: and loads it again before it builds the step. */
@@ -54,8 +55,8 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
       object->scaleX = scale;
       object->scaleY = scale;
     }
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
   }
 }
 

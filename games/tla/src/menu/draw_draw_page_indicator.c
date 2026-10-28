@@ -17,8 +17,10 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 green;
   u32 blue;
 
-  Dma_Set((const void *)0x050001e0, palette, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
+          REG_DMA3);
   blue = palette[4] >> 10;
   green = (palette[4] >> 5) & 31;
   red = palette[4] & 31;

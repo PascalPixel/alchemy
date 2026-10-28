@@ -78,8 +78,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
       if (src == (const void *)-1)
         Iwram_ClearWords(dst, size);
       else
-        Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE | DMA_32BIT) << 16,
-                REG_DMA3);
+        Dma_Set(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
     }
     return (u32)offset >> 5;
   }

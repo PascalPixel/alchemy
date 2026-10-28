@@ -28,8 +28,7 @@ void Func_081a6030(void) {
 
   REG_DISPCNT = 0;
   source = Resource_GetTableEntry((s32)&ResourceId_Data018);
-  Dma_Set(source, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | (0x200 / 4),
-          REG_DMA3);
+  Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(0x200 / 4), REG_DMA3);
   BG_PLTT[0] = 0;
   /* FAKEMATCH: a one-pass block loads the cell buffer's address before 0x200 is
    * built for the source offset; as an argument the constant comes first
@@ -38,8 +37,8 @@ void Func_081a6030(void) {
     cells = Ram_MapCellBuffer;
   } while (0);
   Resource_DecodeByteLzInRam(source + 0x200, cells);
-  Dma_Set(cells, (void *)0x06000000,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (DATA018_TILE_BYTES / 4), REG_DMA3);
+  Dma_Set(cells, (void *)0x06000000, DMA_COPY_WORDS(DATA018_TILE_BYTES / 4),
+          REG_DMA3);
 }
 
 s32 Title_WaitOrPress(u32 frames) {

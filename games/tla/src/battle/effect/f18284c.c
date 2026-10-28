@@ -22,7 +22,7 @@ void Func_0818284c(s32 arg) {
     __asm__("" : "+l"(blend) : : "r2");
     REG_BLDCNT = blend;
   }
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;
   Func_08182898(arg);

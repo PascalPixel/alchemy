@@ -20,7 +20,7 @@ struct DmaFxWork {
 };
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
-  while ((channel->control & 0x80000000) != 0) {
+  while ((channel->control & DMA_ENABLE << 16) != 0) {
   }
 }
 
@@ -29,8 +29,10 @@ void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
   volatile u32 zero;
 
   zero = 0;
-  Dma_Set((void *)&zero, work, 0x850003c8, REG_DMA3);
-  WaitDma((volatile struct DmaRegisters *)0x040000d4);
+  Dma_Set((void *)&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
+          REG_DMA3);
+  WaitDma((volatile struct DmaRegisters *)&REG_DMA3SAD);
   work->kind = kind;
   work->unkf08 = a;
   work->unkf0c = b;

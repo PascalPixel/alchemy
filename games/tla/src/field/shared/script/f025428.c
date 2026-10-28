@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "map.h"
 #include "lib.h"
+#include "fixed_math.h"
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -50,12 +51,12 @@ s32 Func_08025428(struct Actor *cameraObject) {
       cameraObject->y = y;
       cameraObject->z = z;
     } else {
-      dx = (x - cameraObject->x) / 0x10000;
+      dx = (x - cameraObject->x) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
        * in global allocation and keeps it in r5 as native; without it, 54 of
        * 228 instructions differ in tla-en. */
-      dy = (y - cameraObject->y) / 0x10000;
-      dz = (z - cameraObject->z) / 0x10000;
+      dy = (y - cameraObject->y) / Q16_ONE;
+      dz = (z - cameraObject->z) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
       dx = x - cameraObject->x;
       dy = y - cameraObject->y;

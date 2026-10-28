@@ -37,7 +37,7 @@ void PaletteQueue_StepCycles(void) {
         buf[j] = *src++;
       for (j = 0; j < len - start; j++)
         buf[j] = *src++;
-      Dma_Set(buf, dest, 0x80000000 | len, REG_DMA3);
+      Dma_Set(buf, dest, DMA_COPY_HALFWORDS(len), REG_DMA3);
       start++;
       if (start >= len)
         start = 0;

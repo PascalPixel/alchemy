@@ -51,7 +51,7 @@ void Serial_PrepareSendPacket(void *payload) {
     /* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
     *(volatile u16 *)(pkt + 2) = sum;
     pkt[1] = recv ^ cur;
-    Dma_Set(payload, pkt + 4, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+    Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
   }
   {
     u16 *pkt;
@@ -76,5 +76,5 @@ void Serial_PrepareSendPacket(void *payload) {
     REG_TM3CNT_H = 0;
   sr->sendIndex = -1;
   if (sr->mode != 0 && sr->transferEnabled != 0)
-    REG_TM3CNT_H = 0xc0;
+    REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
 }

@@ -1,59 +1,46 @@
 # Matching
 
-Alchemy's C has to compile, with an old [compiler](../glossary.md#the-compilers), into exactly the
-instructions [Camelot](../glossary.md#camelot) shipped.
-
-A [decompilation](../glossary.md#matching-decompilation) is a program written by hand, in readable C, that a compiler
-turns back into the very bytes on the cartridge. Matching is the work of
-getting there one function at a time: write the function the way a person
-would, build the game, and compare. That takes some care. Two ways of writing
-the same thing in C can compile to different instructions, and now and then a
-function only matches in an odd shape until someone finds the plain one. When
-you're reading the source and a line looks stranger than it needs to be, the
-reason is usually written down here.
-
-The build makes twelve [editions](../glossary.md#editions): two games, [The Broken Seal](../glossary.md#the-two-games) (`tbs`) and The
-Lost Age (`tla`), each in Japanese, English, German, Spanish, French and
-Italian (`tbs-ja` to `tbs-it`). The Broken Seal's six are rebuilt entirely
-from source; The Lost Age is still being matched. Measurements on this page
+Alchemy's C has to compile, with an old
+[compiler](../glossary.md#the-compilers), into exactly the instructions
+[Camelot](../glossary.md#camelot) shipped. Two ways of writing the same thing
+in C can compile to different instructions, so where a line of the source looks
+stranger than it needs to be, the reason is usually written down here. The
+glossary says what a
+[matching decompilation](../glossary.md#matching-decompilation) is and what
+the twelve [editions](../glossary.md#editions) are; measurements on this page
 are taken in `tbs-en`, the English edition, unless they say otherwise.
 
 ## How a build is judged
-
-Each built edition is compared with the original cartridge by its
-fingerprint, and twelve matching fingerprints are a pass.
 
 `make compare-editions` builds all twelve editions and checks each ROM's
 SHA-1 hash against its line in `rom.sha1` (the `compare-%` rule in the
 `Makefile`). Each edition that matches prints a line ending in `: OK`, and
 twelve of them is a pass. The output is long, so it's easiest to send it to a
-log file and count those lines. The hash says only whether an edition is exact,
-never where it differs: changing a single bit anywhere gives a completely
-different one. `make compare-tbs` checks the six Broken Seal editions
-on their own, and `make compare-tbs-en` just the one.
+log file and count those lines. `make compare-tbs` checks the six Broken Seal
+editions on their own, and `make compare-tbs-en` just the one.
 
-The judgement is a hash of the whole image because the hash is the only thing
-from the original cartridge the build is allowed to see: the reference ROM
-judges the build and never feeds it. That makes the check all or nothing. One
-wrong byte anywhere fails its edition, and a hash can't say where that byte
-is. To find it, compare the compiler's output before and after your change.
-The build keeps each C file's assembly beside its object
-(`out/tbs-en/obj/games/tbs/src/runtime/irq.s` for `runtime.c`): copy it
-from a build that compared OK, rebuild, and diff the two with the `.L` label
-numbers ignored. The optional `alchemy-devtools diff` instead compares one
-function with the original's instructions read from your own ROM; it is a
-tool for people and never part of the build.
+The reference ROM judges the build and never feeds it (The Lost Age's
+scaffolds, below, aside), so the comparison is a hash of the whole image and
+is all or nothing. One wrong bit anywhere gives a completely different hash,
+which says nothing about where the difference is. To find it, compare the
+compiler's output before and after your change. The build keeps each C file's
+assembly beside its object (`out/tbs-en/obj/games/tbs/src/runtime/runtime.s`
+for `runtime.c`): copy it from a build that compared OK, rebuild, and diff the
+two with the `.L` label numbers ignored. The optional `alchemy-devtools diff`
+instead compares one function with the original's instructions read from your
+own ROM; it is a tool for people and never part of the build.
 
 The Broken Seal's editions need no ROM at all. The Lost Age's need your own
 ROMs under `roms/`, because the parts of The Lost Age that aren't C yet still
 come from `.incbin "baserom.gba"` scaffolds under `recon/tla`: bytes copied
 from the ROM, which don't count as decompiled.
 
-A change made on purpose, such as a mod or a fix for one of [the original](../glossary.md#the-original)'s
-bugs, changes the bytes, so it fails the comparison. That's expected: the
-comparison only tells you whether a tree is still the original game. So that
-kind of work lives apart from the matching tree, or behind [`BUGFIX`](../glossary.md#bug-bugfix-and-ubfix), which is
-off.
+A change made on purpose, such as a mod or a fix for one of
+[the original](../glossary.md#the-original)'s bugs, changes the bytes, so it
+fails the comparison. That's expected: the comparison only tells you whether a
+tree is still the original game. So that kind of work lives apart from the
+matching tree, or behind [`BUGFIX`](../glossary.md#bug-bugfix-and-ubfix),
+which is off.
 
 ## What the markers mean
 
@@ -72,7 +59,8 @@ device carries a tag inside the function it steers:
 
 The tag names the plain form and says how far it is from matching: N of the
 function's M instructions differ, measured over the whole function against the
-edition named. A real one, from `wait()`:
+edition named. A real one, from [`wait()`](../glossary.md#wait), the routine
+that lets a frame pass:
 
 ```c
 /* FAKEMATCH(volatile): the size reread through a volatile pointer, a
@@ -87,12 +75,12 @@ The kind says which device it is:
   place of the plain call or operator. Calling a declared function through a
   cast to another function type is a `wrapper`, with the declared call behind
   `UBFIX`. Calling code that has no declared function type at all, such as
-  code copied into RAM, is not (see Runtime below).
+  code copied into RAM, is not (see Calls below).
 - `volatile` is a qualifier that forces a load or store to stay where it's
   written. One that is part of a macro's own form, such as the fill word of
-  `Dma_Fill32`, is no device. Nor is one on memory an
-  interrupt handler shares with the code it interrupts, such as `gVBlankDone` and
-  `gFrameCount` (`include/frame.h`): there the C needs it to be correct.
+  `Dma_Fill32`, is no device. Nor is one on memory an interrupt handler
+  shares with the code it interrupts, such as `gVBlankDone` and `gFrameCount`
+  (`include/frame.h`): there the C needs it to be correct.
 - `temporary` is a variable holding a value the plain form wouldn't name.
 - `dead` is code that emits nothing and only changes which registers the
   compiler picks or the order of the instructions.
@@ -129,12 +117,13 @@ both turn on.
 
 `CAMELOT_ASM("proof")` marks the few handwritten instructions inside C, each
 an `asm` statement right after it whose instruction no C compiles to:
-`Dma_Set`, `Transform_SetIdentity`, `Iwram_CallReturnIp`, `wait()`'s stack switch,
-`MulQ16`, and the `swi 2` and `swi 3` BIOS calls. The macro expands to
+`Dma_Set`, `Transform_SetIdentity`, `Iwram_CallReturnIp`, `wait()`'s stack
+switch, `MulQ16`, and the `swi 2` and `swi 3` BIOS calls. The macro expands to
 nothing; it is there to be read, and its proof says why the `asm` is needed.
 
-[`UNUSED`](../glossary.md#unused) marks a function nothing calls, kept because its bytes are in the
-ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
+[`UNUSED`](../glossary.md#unused) marks a function nothing calls, kept
+because its bytes are in the ROM. It's GCC's `unused` attribute, so a current
+GCC doesn't warn about it.
 
 An assembly file in `games/` has to show why it is assembly at all: that no
 C compiler of the project's set could produce it. Each one opens with that
@@ -142,31 +131,26 @@ proof, written as comment lines (`@` starts a comment in assembly) that begin
 `@ Why assembly:`, or `@ Why <routine> is assembly:` where a file holds
 several; assembly counts as rebuilt source only with such a proof. In a
 handwritten file the proof names the instruction, stack frame or pattern
-alchemy-gcc can't emit. The [far-call](../glossary.md#far-call) tables,
-such as the `entry/` and `import/` files of the debug scenes, the menus and
-the [scenes](../glossary.md#scene), are proven once, where their entries
-are made: each is a [veneer](../glossary.md#veneer), a tiny piece of code
-that only jumps on: 8 bytes holding an `ldr r4` (load the target's
-address), a `bx r4` (jump to it) and that address, which the
+[alchemy-gcc](../glossary.md#the-compilers) can't emit. The
+[far-call](../glossary.md#far-call) tables, such as the `entry/` and
+`import/` files of the debug scenes, the menus and the
+[scenes](../glossary.md#scene), are proven once, where their entries are
+made: each entry is a [veneer](../glossary.md#veneer), which the
 `overlay_veneer` macro in `cartridge/overlay.s` writes out whole.
 
 ## Spellings that match at different sites
 
-A compiler does not translate C word for word. It looks at the whole
-function and picks instructions, and two lines that mean exactly the same
-thing can lead it to different choices. The original was compiled from one
-particular way of writing each line, so where the plain spelling gives
-different instructions, the matching C keeps the one that gives the
-original's.
+The original was compiled from one particular spelling of each line, so where
+the plain spelling gives different instructions, the matching C keeps the one
+that gives the original's.
 
 Each idea has one preferred spelling. Where a site matches only with a plain-C
 equivalent (an index or a pointer form, a macro or its expansion, a cast), that
 site keeps the equivalent, untagged, with a short `//` note beside it saying
 what the plain spelling would change. The patterns below are the ones that
 recur, each with one example; the sites themselves carry the rest. They use the
-system's words: a [heap slot](../glossary.md#heap-slot) is one of the numbered
-words of `gHeapSlots` that hold a mechanism's working block, and an `Actor`
-is the struct an [actor](../glossary.md#actor) is read through.
+system's words: an `Actor` is the struct an [actor](../glossary.md#actor) is
+read through.
 
 ### Indexes, pointers and casts
 
@@ -181,17 +165,17 @@ is the struct an [actor](../glossary.md#actor) is read through.
   `Battle_RollEffectSuccess` each status test written as `unit->field` merges
   with its neighbour's into one halfword or word load.
 - A field can be read or written by its byte offset,
-  `*(T *)((u8 *)p + offsetof(struct Actor, field))`, or a run of fields
-  through a byte cursor indexed with `sizeof` and `offsetof`. These views are
-  valid and keep the original's address bases: `Colosso_RestoreWarrior`
-  stores its two bytes that way, because a struct store at a varying address
-  may pass a load the ROM keeps after it. Through `Actor`'s
-  single/group union, the plain member form usually moves a load. A
-  pointer can likewise be stepped as an integer: a window's tilemap cell is
+  `*(T *)((u8 *)p + offsetof(struct S, field))`, or a run of fields through a
+  byte cursor indexed with `sizeof` and `offsetof`. These views are valid and
+  keep the original's address bases: `Colosso_RestoreWarrior` stores two bytes
+  of the actor system's work that way, because a struct store at a varying
+  address may pass a load the ROM keeps after it. Through `Actor`'s
+  single/group union, the plain member form usually moves a load. A pointer
+  can likewise be stepped as an integer: a window's tilemap cell is
   `work->tilemap + y * 32 + x` or a byte offset added to `(u32)work->tilemap`.
-- A function that walks three coordinates in a row takes a byte address and
-  steps across them, so it works on any struct whose x, y and z sit together
-  without treating them as an array (`Vector_AddPolarOffset`).
+- A function that moves a point's x and z takes a byte address and steps over
+  y, so it works on any struct whose x, y and z sit together without treating
+  them as an array (`Vector_AddPolarOffset`).
 - A value can be reached through a view of another type. That is undefined
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   `WindowSprite_AppendToList` stores the new tail through a
@@ -203,7 +187,8 @@ is the struct an [actor](../glossary.md#actor) is read through.
   `struct BattleElementStats` behind `UBFIX`.
 - Palette RAM and VRAM are written through either a volatile pointer or a
   plain one. Palette RAM is either `BG_PLTT_COLOR`, which is volatile, or a
-  plain pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
+  plain pointer to it such as
+  `*(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR)`.
   `BattleEffect_RunJudgment`'s brightening ramp keeps a `volatile u16 *`,
   because with a plain pointer the mask that picks out red is hoisted out of
   the loop.
@@ -213,20 +198,21 @@ is the struct an [actor](../glossary.md#actor) is read through.
 ### Views of one struct
 
 Some memory is read through a struct of its own, a field-for-field copy of
-the map that differs only where its reader does, because that reader's
+the layout that differs only where its reader does, because that reader's
 code matches only through it. [An actor](../glossary.md#actor)'s 112 bytes
 are `struct Actor` almost everywhere, but `BattleObject_SpawnObjectsForList`
 reads them as `BattleActor`, with the sprite word untyped; `update.c`,
 ARM code built with GCC 2.95.2, which cannot read `Actor`'s anonymous
 unions, keeps `ActorArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
-(`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
-menu cursors (`union MenuCursorRef`) and each menu screen's work
-(`ItemMenuWork`, `StatusScreenWork` and the others) follow the same rule.
+(`struct WindowSpriteCellView`), the selection records
+(`struct GlyphCursor`), the menu cursors (`union MenuCursorRef`) and each
+menu screen's work (`ItemMenuWork`, `StatusScreenWork` and the others) follow
+the same rule.
 
 Within `struct Actor`, a member's union is the form most sites match with, and
 the few that match only with the plain word reach it through a pointer of the
-member's own type (`*(s32 *)&actor->x`, `*(struct Sprite **)&actor->sprite`):
+member's own type (`*(s32 *)&actor->x`, `*(s32 *)&actor->z`):
 alchemy-gcc gives an access through a union the union's alias set, which
 conflicts with more stores than the plain word's does. `Exit_PrepareAnimation`
 puts the leader at its cell's middle that way; through `x.fixed` the store of
@@ -245,7 +231,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   differently, because each inline argument is a pseudo of its own and a
   constant two calls share is loaded again. An event command therefore keeps
   both spellings where its sites need both: events call `Actor_FaceDirection`,
-  the inline in `event_inline.h`, and the sites that match only with the
+  the inline in `event.h`, and the sites that match only with the
   direct call name its routine, `Actor_ArmCallback`; folding that inline into
   its routine changes 316 functions in tbs-en. Where an inline and its routine
   would share a name, the inline takes the `FieldActor_` or `FieldEvent_`
@@ -276,8 +262,9 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   counts letters in its `s32` value rather than in `i` or `j`.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches: Crossbone Isle's
-  `CrossboneIsle_MovePillar` takes `&state->sceneId` with `state = &gMainRoutineWork`,
-  because `&gMainRoutineWork.sceneId` folds into one literal.
+  `CrossboneIsle_MovePillar` takes `&state->sceneId` with
+  `state = &gMainRoutineWork`, because `&gMainRoutineWork.sceneId` folds into
+  one literal.
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move constants and addresses out of the loop,
   strength-reduce its counters and delete it when it is empty, and they let
@@ -296,9 +283,9 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 ### Calls
 
 - One routine can be reached by several routes, each kept where it matches: a
-  game flag by `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` or by the
-  `event.h`'s inlines `Event_GetFlag`, `Event_SetFlag` and
-  `Event_ClearFlag`; a unit by
+  [game flag](../glossary.md#game-flag) by `GameFlag_Get`, `GameFlag_Set` and
+  `GameFlag_Clear` or by `event.h`'s inlines `Event_GetFlag`,
+  `Event_SetFlag` and `Event_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or
   through `Item_CopyWords` (tagged). An inline call's argument is a pseudo of
@@ -307,10 +294,10 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   `CottageRoomsC_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in
-  another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
-  called ahead of their definitions, with the correct declarations in their
-  module headers under `UBFIX`, and `event.h` gathers the main-image routines
-  the scenes call that way (`Import_GameFlagSet`).
+  another order. Helpers in Colosso and in the Kolima Forest floodgate's
+  overlay are called ahead of their definitions, with the correct
+  declarations in their module headers under `UBFIX`, and `event.h` gathers
+  the main-image routines the scenes call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
   compiler library's call through r3, with the code's address as its fourth
@@ -324,19 +311,19 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 
 ### Heap slots
 
-The system keeps each mechanism's working state in a
-[heap](../glossary.md#heap-and-pools) block whose pointer sits in a numbered
-slot of `gHeapSlots`, and many of those slots also have a name of their own
-(`gFieldWork`, `gPaletteFadeWork` and so on), so the same block can be reached
-several ways: `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, `*(gHeapSlots + n)`, the
-slot's own name (`gWindowWork[0]`, `WINDOW_WORK`), from a neighbouring slot
+The system keeps each piece of code's [work](../glossary.md#work) in a block
+of [the heap](runtime/README.md#the-heap) whose pointer sits in a numbered
+[heap slot](../glossary.md#heap-slot) of `gHeapSlots`, and many of those
+slots also have a name of their own (`gFieldWork`, `gPaletteFadeWork` and so
+on), so the same block can be reached several ways: `HEAP_SLOT_BLOCK(n)`,
+`gHeapSlots[n]`, `*(gHeapSlots + n)`, the slot's own name (`gWindowWork[0]`,
+`WINDOW_WORK`), from a neighbouring slot
 (`gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND]` in
 `Weather_UpdateLightning`), through a base pointer (`slots[n - base]`,
 `EFFECT_SLOT`, `EFFECT_BLITTERS[n]`), or with `HeapSlot_AllocEwram`, which
 returns the existing block. Indexing past a named pointer
-(`(void **)&gBattleCamera`) is undefined behaviour, with its defined form behind
-`UBFIX`. Not every site has been measured against the other spellings; each
-keeps its spelling until it is, and its note says so.
+(`(void **)&gBattleCamera`) is undefined behaviour, with its defined form
+behind `UBFIX`.
 
 ### Where data is placed
 
@@ -348,6 +335,6 @@ keeps its spelling until it is, and its note says so.
 - One table can go by several extern names, given as `__asm__` labels, where
   the ROM keeps a literal for each use (`Resource_LoadTableEntry`).
 - A local array of constants compiles to an anonymous read-only constant
-  copied into the stack frame, and a struct copy of a named table to the same code;
-  which one a site keeps decides where the data lands
+  copied into the stack frame, and a struct copy of a named table to the same
+  code; which one a site keeps decides where the data lands
   (`ImilFuchinFalls_SpawnDust`).

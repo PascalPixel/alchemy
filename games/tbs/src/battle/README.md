@@ -7,7 +7,8 @@ take hold. The answers come from tables and dice rolls, and each shows up on
 screen as a message such as `Ivan takes 15 damage!`.
 
 [Battle](../../battle.md) explains a battle as a whole and is the place to
-start. [Battle effects](../battle_effect/README.md) draws them,
+start. [Battle effects](../battle_effect/README.md) draws what each ability
+looks like,
 [Windows](../window/README.md) holds the command menu and the
 [party](../../glossary.md#the-party)'s status window, and
 [Game rules](../game/README.md) holds the ability, item and enemy tables and
@@ -15,12 +16,8 @@ the arithmetic the rules call.
 
 ## Turns
 
-![Isaac, Garet, Ivan and Mia against the Lizard King, a Harridan and two Stone Soldiers: Ivan, Isaac and Mia attack the Harridan until it falls; Garet, whose target is gone, defends; then one Stone Soldier casts Blast, the other tries Mad Blast without enough PP, and the Lizard King casts High Impact.](https://alchemy.pascalpixel.com/guides/battle/turn-order.gif)
-
-Each turn, every unit (everyone in the fight, party member or enemy)
-chooses an action, and the actions play fastest first. Here the party,
-at level 35, is faster than all four enemies, so it acts first; Garet,
-slowest of the four, finds the Harridan already felled and defends instead.
+Each turn, every [unit](../../glossary.md#unit) (everyone in the fight, party
+member or enemy) chooses an action, and the actions play fastest first.
 
 Who acts first is decided by Agility, highest first, with a few twists:
 
@@ -36,27 +33,30 @@ Who acts first is decided by Agility, highest first, with a few twists:
 - Defend and Total Defense are raised as soon as the actions are sorted, so a
   defending unit is guarded against everything that turn.
 
-Before the first turn the formation becomes a set of enemies, each with its
-level and, when two of a kind meet, a letter to tell them apart, and the
-opening plays. Then each turn goes the same way: the actions are gathered
-and sorted; each action is announced, staged and animated, while the rules
-apply it to each target; the unit's action ends, which is when poison bites
-(a tenth of the maximum HP, deadly poison a fifth), the Grim Reaper takes a
-unit whose countdown has run out, and a
-[summon](../../glossary.md#summons)'s boost takes hold; and at the turn's
-end stat changes and statuses count down and the Djinn recover. When one side
-has nobody left, the spoils (coins, experience, items and level ups) are
-handed out.
+Before the first turn the [formation](../../glossary.md#formation) becomes a
+set of enemies, each with its level and, when two of a kind meet, a number
+after its name (a letter in Japanese) to tell them apart, and the opening
+plays. Then each turn goes the same way:
+
+1. The actions are gathered and sorted.
+2. Each action is announced, staged and animated, while the rules apply it to
+   each target.
+3. When a unit's action ends, poison bites (a tenth of the maximum HP, deadly
+   poison a fifth), the Grim Reaper takes a unit whose countdown has run out,
+   and a [summon](../../glossary.md#summons)'s boost takes hold.
+4. At the turn's end stat changes and statuses count down and the Djinn
+   recover.
+
+When one side has nobody left, the spoils (coins, experience, items and level
+ups) are handed out.
 
 `Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) runs the whole battle.
-The turn's steps are `Battle_GatherActions` and `BattleActionOrder_Sort`
-(`turn.c`), then for each action `BattleActionRun_Build` (`action.c`) and
+A turn runs `Battle_GatherActions` and `BattleActionOrder_Sort` (`turn.c`),
+then for each action `BattleActionRun_Build` (`action.c`) and
 `BattleStaging_DispatchAction` (`staging.c`), and last `Battle_ProcessTurnEnd`
 (`turn_end.c`); `spoils.c` closes the battle.
 
 ### Enemy actions
-
-![While the party defends, the first Gryphon uses Wing Flutter, a volley of light across the party, and the second casts Tornado.](https://alchemy.pascalpixel.com/guides/battle/gryphons.gif)
 
 Every enemy has a list of eight actions and a habit for choosing among them,
 and the dice do the rest. A Gryphon's list runs Wing Flutter, Tornado, Twin
@@ -66,7 +66,8 @@ number from 0 to 255, and Wing Flutter takes rolls 0 to 52, Tornado 53 to 99,
 Twin Beaks 100 to 140, and so on down to Ward's 245 to 255.
 
 An enemy chooses twice each turn. While the turn is put together it keeps
-its pick only if it is a guard, so that its guard goes up with the party's;
+its pick only if it is a guard or a flight, so that its guard goes up with
+the party's;
 when it acts it picks again. A pick it cannot use (too little
 [PP](../../glossary.md#psynergy-and-pp), a seal, no target worth it) is
 drawn again, and after 18 failed picks the enemy defends.
@@ -89,8 +90,6 @@ choice from the enemy's row of `../game/enemies.c`; the habits are
 
 ### First strikes and fleeing
 
-![A random battle with two Gryphons opens with `Isaac's party attacks first!`, and Isaac and Garet attack while the Gryphons stand still.](https://alchemy.pascalpixel.com/guides/battle/first-strike.gif)
-
 Now and then a random battle opens with `Isaac's party attacks first!` and the
 enemies stand still for a turn; more rarely it opens with
 `Isaac's party was caught by surprise!`, and some enemies act before the party
@@ -102,14 +101,13 @@ party the first strike. When the enemies strike first, the party chooses no
 commands and two to five enemies, drawn at random, act once each. Everything
 is back to normal at the turn's end.
 
-![The party, at level 20, chooses Flee against two Gryphons: `Isaac and friends run!` is followed by `But there's no escape!`, and the Gryphons use Wing Flutter and Twin Beaks. The next turn the party tries again and gets away.](https://alchemy.pascalpixel.com/guides/battle/flee.gif)
-
 Running away is a chance that grows with every failed try: 50 percent, plus
 20 for each failed try in the battle, plus 5 for each level the party's
 average is above the enemies' (or less, below). The party at level 20 against
-Gryphons at level 23 starts at 35 percent. A first strike makes running
-certain, and some battles, such as a Mimic's, cannot be fled at all. A failed
-try makes the rest of the turn one the enemies began.
+Gryphons at level 23 starts at 35 percent. When the party struck first,
+running always works, except from a battle that forbids it, such as a
+Mimic's. A failed try counts as a surprise: two to five enemies, drawn at
+random, act once each before the turn ends.
 
 `BattleWork.firstStrike` records which side has the jump, and
 `BattleFlee_CheckSuccess` (`turn.c`) rolls the escape. What kind of battle it
@@ -121,7 +119,7 @@ is, `gMainRoutineWork.battleType`, decides the rest:
 | `BATTLE_TYPE_NO_ESCAPE` | the party cannot run, as from a Mimic |
 | `BATTLE_TYPE_SCRIPTED` | a battle an [event](../../glossary.md#event) starts; the command menu refuses to run |
 | `BATTLE_TYPE_LINK` | a link battle |
-| `BATTLE_TYPE_DEBUG` | the debug battle menu's battle; the party may run |
+| `BATTLE_TYPE_DEBUG` | the battle test menu's battles; the party may run, and nothing else tests it. Nothing in the game opens that menu (`DebugBattle_RunMenu`) |
 
 ## Building an action
 
@@ -137,8 +135,6 @@ left in range) shows its own message instead and the action ends there.
 action's run, a `struct BattleActionRun`, and shows the announcement.
 
 ### Commands and ability ids
-
-![Isaac attacks Ivan with the Swift Sword: `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and the sword strikes three times for 281 damage.](https://alchemy.pascalpixel.com/guides/battle/unleash.gif)
 
 The command the player chose decides which ability the action carries. An
 Attack is usually just Attack, but a weapon can unleash its own ability in its
@@ -163,14 +159,12 @@ enemy's with its own. The commands are `enum BattleCommand`.
 
 ### Targets and range
 
-![Isaac aims Quake: the cursor moves along the Harridan, the Lizard King and the two Stone Soldiers, the enemies beside the aimed one lit too, and from the last it wraps round to the first.](https://alchemy.pascalpixel.com/guides/battle/aim.gif)
-
 Each side stands in a line, and a unit's position in it is its place. An
 ability reaches the places within its range of the aimed one, counted in
 places rather than in distance on the screen; the player sees the reach as the
 lit enemies around the cursor.
 
-A range of 1 is the aimed unit alone, and each step more adds a place on
+A range of 1 is the aimed unit alone, and each point more adds a place on
 either side; the widest range covers the whole side, with every target
 treated as the aimed one. The reach passes over a unit that has left the
 battle, and a downed unit unless the ability revives, but a downed unit still
@@ -187,8 +181,6 @@ cursor wraps round. Where the units stand on screen changes none of this.
 | `TARGET_MAX` | 14 | targets an action holds at most |
 
 ### Rolls made in advance
-
-![Isaac attacks Ivan twice: the first time `Ivan nimbly dodges the blow!`, the second a critical hit bursts in light and `Ivan takes 110 damage!`.](https://alchemy.pascalpixel.com/guides/battle/rolls.gif)
 
 A dodge and a critical hit look different from a plain blow, so the battle
 effect has to know which it is before it starts. The action therefore rolls them
@@ -256,13 +248,14 @@ For one target, the game first notes how far it stands from the aimed place
 and how strong the user is in the ability's element; rolls whether the added
 effect lands; brings in a new enemy if the ability calls one; deals the damage
 or healing; applies the added effect; and last rolls whether the hit woke the
-target. Nothing is drawn and nothing waits while this happens: the target's
-numbers change at once, and what the player should see is put in a queue to
-be shown afterwards ([below](#rules-and-pictures-meet-at-the-playback-queue)).
+target. None of this waits, and the only thing drawn is a redraw of the
+party's status window: the target's numbers change at once, and what the
+player should see is put in a queue to be shown afterwards
+([below](#how-outcomes-reach-the-screen)).
 
 `BattleAbility_ApplyToTarget`
-([`battle/target_exec.c`](battle/target_exec.c)) does this, its steps marked
-in its body.
+([`battle/target_exec.c`](battle/target_exec.c)) does this, its stages
+numbered in its body.
 
 ### The ability kind
 
@@ -344,8 +337,8 @@ place. The figures are percentages:
 
 Avalanche is a damage ability with a power of 160 and a range of 3. At an even
 match the aimed foe takes 160 to 163, one place away 128 to 131 and two places
-away 96 to 99; with the user's Power 20 ahead, 175 to 178, 140 to 143 and 105
-to 108, and a defending aimed foe 87 to 89. Blows work differently: with
+away 96 to 99; with the user's Power 20 ahead, a defending aimed foe takes 87
+to 89. Blows work differently: with
 Attack 100 against Defense 60, a plain Attack deals half the difference, 20
 to 23; Ragnarok (power 35) adds twice its power before halving, 55 to 58;
 Flint (power 16) multiplies the blow by 1.6, 32 to 35. Cure (power 70)
@@ -376,9 +369,7 @@ either.
 
 `Battle_RollEffectSuccess` (`../game/game/battle_calc.c`) makes the roll.
 
-### Calling an ally, and effects that change the damage step
-
-![A Fighter Bee uses Ally Search: `Fighter Bee looks for allies!`, and a second Fighter Bee flies in beside it, `Fighter Bee2 appears!!`.](https://alchemy.pascalpixel.com/guides/battle/ally-search.gif)
+### Calling an ally, and effects that change the damage
 
 Some added effects stand in for the damage or change how it is dealt, so they
 are applied before it. The most visible brings in a new enemy.
@@ -430,13 +421,20 @@ own damage has just felled. The rules the effects share are these.
   and removes a summon's boost. Kite lets the target act twice next turn,
   Ground costs it its next action, and Haunt sets an evil spirit on it.
 
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `STAT_CHANGE_TURNS` | 7 | turns an Attack, Defense or Resistance change lasts |
+| `AGILITY_CHANGE_TURNS` | 5 | turns Zephyr's or Vine's Agility lasts |
+| `STATUS_TURNS` | 7 | turns a status lasts |
+| `CURSE_TURNS` | 7 | turns of the Grim Reaper's countdown |
+| `PSY_SEAL_BIND` | 7 | Bind's seal: seven turns, which may end early |
+| `PSY_SEAL_LUFF` | 16 | Luff's seal: 8 counted off a turn, two turns that never end early |
+
 Each effect's details are in the case comments of
 `BattleAbility_ApplyToTarget` and the notes on `enum AbilityEffect`
 ([`battle_unit.h`](../../include/battle/battle_unit.h)).
 
 ### After each target
-
-![Isaac casts Quake at Garet, Ivan and Mia while Ivan is asleep: Quake's blow wakes him, `Ivan wakes from slumber!`.](https://alchemy.pascalpixel.com/guides/battle/wake.gif)
 
 A sleeping unit that is hit may wake up, and a unit haunted by an evil spirit
 pays for its own attacks.
@@ -447,33 +445,76 @@ HP or PP from, keeps aside a quarter of that loss (at least 1), and loses the
 total from its own HP at the end of its action. In the Djinn tutorial a
 Djinni's blow always leaves its target 1 HP, and a summon always fells it.
 
-## Rules and pictures meet at the playback queue
+## How outcomes reach the screen
 
 ![Ivan casts Plasma at Garet, Isaac and Mia: lightning bursts over them, and the damage messages follow one target at a time, `Garet takes 46 damage!`, `Isaac takes 56 damage!`, `Mia takes 44 damage!!!`.](https://alchemy.pascalpixel.com/abilities/plasma.gif)
 
-Each target's HP drops at once, but the player sees it happen in steps: the
-target flinches, its message appears and waits, and only then does the next
-target come. The rules leave a list of what to show, in order, and the
-screen plays the list.
+A target's HP changes in one go, but the player sees it happen one thing at a
+time: the target flinches, its message appears and waits, and only then does
+the next target come. Applying the ability to a target leaves a list of what
+to show, in order, and the screen plays the list.
 
-That list, the playback queue, is the one way the rules reach the screen: the
-rules never draw or wait, and a battle effect never works out an outcome.
-[Battle](../../battle.md#rules-and-battle-effects-run-together) shows how
-playback runs alongside the battle effect and starts on the frame the blow
-lands. Playback takes the targets in their order along the battlefield, not the
-aimed one first. Only the flinch (nine [frames](../../glossary.md#frame) of
-flashing) and the message (until the player presses A) make it wait; the names
-and numbers a message needs play within one frame, just before it. An outcome
-shown with no battle effect, such as a cast that is sealed or short of PP, plays
-the same queue straight through.
+The queue holds one target at a time: `BattlePlayback_Run` applies the
+ability to the next target only when the last one's commands have played, so
+a target's HP changes just before its own flinch and message.
+
+That list, the playback queue, is how a target's outcome reaches the screen.
+Applying an ability to a target waits for nothing and shows the player nothing
+except a redraw of the party's status window, and a battle effect never works
+out an outcome. [Battle](../../battle.md#rules-and-battle-effects-run-together)
+shows how playback runs alongside the battle effect and starts on the frame
+the blow lands. Playback takes the targets in their order along the
+battlefield, not the aimed one first. Three things make it wait: the flinch
+(nine [frames](../../glossary.md#frame) of flashing), a felled enemy's fall
+and dissolve, and a message, until it has finished typing and the player
+presses a button to go on. The names and numbers a message needs play within
+one frame, just before it. An outcome shown with no battle effect, such as a
+cast that is sealed or short of PP, plays the same queue straight through.
 
 The queue is `struct BattlePlaybackQueue`, filled by `BattlePlayback_Push`
 and played by `BattlePlayback_Run` ([`battle/playback.c`](battle/playback.c)),
 or by `BattlePlayback_RunAll` when there is no battle effect.
 
+## The zoomed battlefield
+
+The zooming layer, `BG2`, can name only 256 tiles, and the battlefield's
+background has 480: 15 rows of 32, 256 by 120 pixels at 8 bits a pixel, drawn
+in 128 colours (BG palettes 6 to 13). So the background is kept in two
+halves, its first eight rows in one character block and its last seven in the
+next, and one tilemap shows both, numbering the tiles of each half from 0. On
+every screen line the hardware is told which block to read. At each zoom
+`BattleCamera_SetRange` works out the first screen line that reaches the
+background's lower half; lines above it read character block 2, and lines
+from it down to line 135 read block 3. The plane covers
+the top 136 lines; the lines under the status window, and the top 16 except
+while commands are chosen (`FLAG_CHOOSING_COMMANDS`), read another tilemap,
+the one in screen block 31, instead of the battlefield's.
+
+A battle effect that needs `BG2` for its own canvas switches the background
+to a fixed-size copy on `BG1`, whose sideways scroll still follows the camera,
+and the staging or the turn's end switches it back
+([the canvas](../battle_effect/README.md#the-canvas)).
+
+`BattleCamera_SetRange` ([`battle/background.c`](battle/background.c))
+works out the zoom and scroll from the camera and writes the affine
+parameters and a page of one `BG2CNT` value for each of the screen's lines.
+There are two pages, and it writes the one not on screen before swapping them.
+In the VBlank pass `BattleBackground_ShowZoomedPage` copies the affine
+parameters and starts an HBlank DMA that writes the next line's `BG2CNT`
+during each line's HBlank. `BattleBackground_Load` unpacks the background into
+the two blocks, and `Graphics_BuildSequentialTileTable` builds the tilemap.
+
+| Name | Meaning |
+| --- | --- |
+| `BACKGROUND_PLANE_UPPER` | `BG2CNT` for a line in the background's upper half: character block 2 |
+| `BACKGROUND_PLANE_LOWER` | the same tilemap, reading the lower half from character block 3 |
+| `BACKGROUND_PLANE_OFF` | a line outside the plane: the tilemap in screen block 31 |
+| `BATTLE_BACKGROUND_ZOOMED` | the background zoomed on `BG2` |
+| `BATTLE_BACKGROUND_FIXED` | the background at a fixed size on `BG1`, `BG2` left to a battle effect |
+
 ## Design
 
-The rules and the pictures are kept apart on purpose. The rules decide
+The rules and what is drawn are kept apart on purpose. The rules decide
 everything before or while the battle effect plays, and leave only a list of
 what to show; the battle effect decides only when the damage appears. So the
 same arithmetic serves every battle effect, and a battle effect can be replaced
@@ -484,18 +525,16 @@ must show (a miss, a critical hit, a double blow) is rolled while the action is
 built, before anything is drawn, and everything else is rolled target by
 target as the blow lands.
 
-Some of the original's functions promise to return a value and end without
-one, and no caller reads it; the source keeps the promised type where writing
-`void` would change the compiled code, with the `void` form behind
-[`UBFIX`](../../glossary.md#bug-bugfix-and-ubfix) ([Matching](../MATCHING.md)).
-
-The battle is one object in the ROM and one in the build; its parts are cut
-where one family of functions ends and the next begins.
+Nothing in the ROM marks where Camelot's files began or ended, so the build
+compiles the battle as one object, `battle.c`, which includes the files under
+`battle/` in ROM order; those files are ours, cut where one family of
+functions ends and the next begins.
 
 ## How it fits with the rest of the game
 
-To the rest of the game a battle is one more sequence: the field leaves for it
-through an exit and comes back to the same spot
+To the rest of the game a battle is one more
+[sequence](../../glossary.md#sequence): the main routine runs it in place of
+the field sequence, and the party comes back to the same spot
 ([Battle](../../battle.md#starting-a-battle)). While it runs the battle
 borrows the system's [tasks](../../glossary.md#task) and heap, the field's actors, the
 window code for its menus and status window, and the
@@ -514,13 +553,12 @@ staging and hand back control when they finish.
 - `formations.c` has 380 formations, each of up to five kinds of enemy with
   the least and most of each. The encounter zones in
   `../overworld/encounter_zones.c` choose among them.
-- The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) events.
+- The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) playback commands.
 
 ## Words used here
 
-- **unit**, **unit id**: everyone in a fight. Party members keep their
-  character numbers as unit ids, and enemies take ids from 128
-  (`FIRST_ENEMY_UNIT`). A unit is a `struct Unit` (`Unit_GetFar`).
+- **unit id**: party members keep their character numbers as unit ids, and
+  enemies take ids from 128 (`FIRST_ENEMY_UNIT`).
 - **ability**, **ability id**: anything a unit does when it acts, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
   row number in three tables: `../game/abilities.c`, `gAbilityBattleEffects` and
@@ -537,20 +575,16 @@ staging and hand back control when they finish.
   added effect.
 - **place**: a unit's position in its side's line-up.
 - **side**: the party or the enemies.
-- **turn**: one pass in which every unit acts once, in Agility order; the
-  game's word, as in `HP recovery / turn`. Stat changes and statuses last a
-  number of turns.
-- **action**: one unit's go within a turn: a `struct BattleAction` while the
-  turn is gathered, then, once built, the action under way
-  (`struct BattleActionRun`): the acting unit, the
-  ability, its element, its targets with their distances and rolls, its
-  staging and its battle effect.
+- **action run**: the action under way (`struct BattleActionRun`): the acting
+  unit, the ability, its element, its targets with their distances and rolls,
+  its staging and its battle effect.
 - **battle object**: a unit's figure on the battlefield
   (`struct BattleObject`), with its shadow and status icon. The Kraken and the
-  Fusion Dragon are drawn in two parts.
-- **event**: one thing the battle shows while an action plays, waiting in the
-  playback queue: a message, a name or number the next message needs, a
-  flinch, a defeat, a redraw or a sound.
+  Fusion Dragon each load a second sprite beside their first.
+- **playback command**: one entry of the playback queue, one thing the battle
+  shows while an action plays: a message, a name or number the next message
+  needs, a flinch, a defeat, a redraw or a sound
+  (`enum BattlePlaybackCommand`).
 - **pose**: how a battle object stands (`POSE_*`).
 
 The parts give the same locals the same names: `battle` or `work` for
@@ -562,25 +596,12 @@ for one of its sprites, and `plan` for the action under way.
 
 Abilities and enemies are named from the label columns of their tables,
 `ability` and `enemy`, which follow the English release's text. The formulas
-are named from what `battle_calc.c` computes, and the event kinds from what
-playback does with each. The shadow under each unit is named from what the
-battle's recordings show.
+are named from what `battle_calc.c` computes, and the playback commands from
+what playback does with each. The shadow under each unit,
+`BATTLE_SHADOW_SPRITE`, is named from what the battle's recordings show.
 
 The chances and counts on this page were checked in a tbs-en build with
 `alchemy-devtools render`, answering `Battle_Random` with chosen numbers.
-Replaying a Gryphon's choice with each of the 256 rolls gave its actions in the
-spans above. One encounter (the Lizard King, a Harridan and two Stone
-Soldiers) opened both as a first strike, where only the four party members
-acted, and as a surprise, where three of the enemies did. Isaac's attacks on a
-copy of Ivan gave a miss (`Ivan nimbly dodges the blow!`), a critical hit of
-110 and, with the Swift Sword unleashing Sonic Smash, a triple blow of 281.
-Real calls of `Battle_GetElementMultiplier` fell on the element line: for
-Quake, Ivan at 52 points ahead and 1.26 times, Mia at 51 and 1.25, Isaac's
-copy at 30 behind and 0.85, and for an attack on Ivan, 8 behind and 0.98 on
-the blow's line. Against a Vermin, its delusion ended early with 5 turns left
-while both Defense changes ran their 7 turns. Aiming Quake along four large
-enemies moved the cursor from the last place round to the first. The party at
-level 20 ran from two Gryphons on its second try, the first forced to fail.
 
 Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects`
 (`EFFECT_ON_DOWNED`, `EFFECT_OTHER_SIDE`) are read, but no row in either game
@@ -589,11 +610,3 @@ nothing adds the second, so the side flip it asks for is unused. Only the Mars
 Lighthouse bosses (Saturos's second fight, Menardi and the Fusion Dragon) set
 the class bit that makes a beam blow land with `SE_HEAVY_IMPACT`
 (`BattleSprite_HasHeavyImpact`).
-
-The battle camera has a second point it can follow besides `followPosition`:
-`followEye`, which `ActorSystem_ProjectSprites` would use in place of the eye
-when it turns the sprites to face the camera. Every camera setup (the
-battle's, the World Map's and Lucky Dice's) clears it and nothing sets it, so
-the sprites always face the real eye. The last two words of
-`BattleBackgroundWork`, `unusedAfterFlag`, are cleared when a battle starts;
-no code in the battle, its battle effects or the field reads them.

@@ -1,179 +1,198 @@
 # Graphics
 
-The grassland behind a battle, the monsters, the fonts, the
-[map](../../glossary.md#map) tiles and the Title are kept here as
-ordinary picture files anyone can open and edit, and every build packs them
-into the forms the game reads. The folder also holds the code of the two
-screens that are mostly pictures, the title intro and the credits, the
-handwritten decoders that unpack tiles and animation pictures for the rest of
-the game, and a few helpers of the German and Italian message text that sit
-beside them on the cartridge.
+The images the game shows are kept here as ordinary PNGs anyone can open and
+edit: the battle backgrounds, the monsters, the fonts, the
+[map](../../glossary.md#map) tiles, the logos and the Title. Every build packs
+them into the forms the game reads. The folder also holds the code of the two
+screens that are mostly images, the title intro and the credits, and the
+handwritten decoders that unpack tiles and text for the rest of the game,
+beside a few tables of the German and Italian message text.
 [Battle effects](../battle_effect/README.md) load their sheets from
-`battle_effects/`, and each [map](../../glossary.md#map) in
-[Maps](../map/README.md) places its tiles from `tileset/`.
+`battle_effects/`, and each map in [Maps](../map/README.md) places its tiles
+from `tileset/`.
 
-## How a picture is built and placed
+## How an image is built and placed
 
-The console draws with a small list of colours per picture, and each pixel is
-a number into that list. The PNG files here are stored the same way, as
-indexed pictures with their own colour list, so an image editor can open them
-while the game sees exactly the colours it shipped with.
+The console draws each image from a palette of 16 or 256 colours, and each
+pixel is a number into it; a 16-colour image also carries a palette number
+saying which of sixteen palettes it uses. The PNGs here are stored the same way, as indexed images
+with their own colour list, so an image editor can open them while the game
+sees exactly the colours it shipped with.
 
-Each build packs every picture into the colours and pixels the game reads,
+Each build packs every image into the colours and pixels the game reads,
 usually compressed, and places the result on the cartridge under the name the
-code uses. A picture the game asks for by number is also a row of the
-resource directory
-([Cartridge and memory](../cartridge/README.md#the-resource-directory-and-table-order)): the
-grassland behind a battle is asked for that way, both by the battle and by
-the credits. Some packed pictures are followed by a few bytes
-[Camelot](../../glossary.md#camelot)'s packing tool left behind, which are
-kept beside the picture as they are.
+code uses, most of it after the code, at the end of the cartridge. The placing is a short assembly file in each folder:
+`battle_bg/battle_bg.s` places `Battle_GrasslandBackdrop` from
+`grassland.gbapal` and the packed `grassland.bitmap.d7`. An image the game asks
+for by number is also a row of the
+[resource directory](../cartridge/README.md#the-resource-directory-and-table-order):
+the grassland is asked for that way both by a battle on open ground and by the
+credits. Some packed images are followed by a few bytes
+[Camelot](../../glossary.md#camelot)'s packing tool left behind, kept beside
+the image with a `PACKER:` note.
 
-The placing is a short assembly file, usually beside its picture: the
-grassland is `battle_bg/grassland.s`, which places `Battle_GrasslandBackdrop`.
-A `.tsv` beside a picture holds its packing options, such as a font's first
+A `.tsv` beside an image holds its packing options, such as a font's first
 letter. A sprite's `.tsv` in `sprite/` also holds its animations, one line
 each, written as the commands the field reads: `picture 55 6` shows
-picture 55 for 6 frames, and `loop`, `play 1` or `hold` says what follows the
-last picture.
-
-## The palette fade
-
-![The title intro after the prologue: from black, the purple clouds, the mountain and the sun's lens flares brighten together until the picture has its full colours](https://alchemy.pascalpixel.com/guides/graphics/title-fade.gif)
-
-The title intro fades in by changing colours, not the picture: every one of
-the 512 colours on screen, backgrounds and sprites alike, takes an equal step
-each frame from near-black towards its own colour, so they all arrive
-together. Each colour is three levels, red, green and blue, and each level
-keeps a fraction beside it, so that a level which must rise by 7 over 60
-frames still arrives exactly. Every frame the new colours are handed to the
-screen in the next blank. The fade can also start from or head for one colour
-everywhere, or a filtered version of the picture, such as grey or sepia, but
-this game uses it only once: the intro's 60-frame fade from a dark red.
-
-The fade is a [task](../../glossary.md#task), `TitlePaletteFade_Update`, set
-up by `TitlePaletteFade_Initialize` and started by `TitlePaletteFade_Start`.
+[picture](../../glossary.md#picture) 55 for 6 frames, and `loop`, `play 1` or
+`hold` says what follows the last picture: start again, switch to animation 1,
+or stay on it.
 
 ## The intro
 
-![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the title picture](https://alchemy.pascalpixel.com/story/title.gif)
+The title intro is the short scene that plays after the logos, before the File
+Screen.
 
-After the logos, the camera seems to rise past a mountain towards the sun
-until the Golden Sun title fills the screen. The sense of depth comes from
-layers that scroll at different speeds: the clouds at the back slower than
-the mountain in front, with the sun tucked behind the mountain and its lens
-flares laid over everything, both blended with what is behind them.
+![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the Golden Sun logo](https://alchemy.pascalpixel.com/story/title.gif)
 
-At power-on the Nintendo logo shows, then the Camelot logo for two seconds.
-With a save file, the intro then scrolls the pictures while the sun rises
-along the slope, and flashes white into the title picture, where "Press
-Start" pulses for up to a minute; if nothing is pressed, the game starts
-again from the logos. With no save file the logos lead straight to the main
-menu. After the prologue the same intro plays without the prompt. A or Start
-cuts each part short.
+At power-on the Nintendo logo shows with its jingle, then the Camelot logo for
+two seconds. If the cartridge holds a save, the intro follows: the clouds and
+the mountain scroll down while the sun and its lens flares rise along the
+mountain's slope, then the screen flashes white into the Golden Sun logo, where
+"Press Start" pulses for up to a minute. If nothing is pressed, the screen
+fades out and the game starts again from the logos. With no save the logos
+lead straight to the File Screen. After the prologue the same intro plays
+without the prompt, holds the logo five seconds and goes on to Vale. A or
+Start cuts each part short.
 
-The title's [overlay](../../glossary.md#overlay), `Title_Run` in
-[Menus](../menu/README.md), decides what runs; the pictures are drawn by
-`Title_ShowNintendoLogo`, `Title_ShowCamelotLogo` and `Title_ShowIntro`, here
-in the title [bank](../../glossary.md#bank).
+The sense of depth comes from two
+[background layers](../../glossary.md#background-layer) scrolling at
+different speeds: the clouds at the back move a pixel every third frame, the
+mountain in front every other frame. The sun and its lens flares are
+sprites, placed by a VBlank task, `Title_UpdateIntroSprites`, which alternates
+two sets every other VBlank so twice as many show.
 
-## Two battle backgrounds in one background memory
+The Title is a [scene](../../glossary.md#scene) like any other: its
+[overlay](../../glossary.md#overlay)'s entry, `Title_Run` in
+[Menus](../menu/README.md), chooses by the entrance it was started with whether
+to show the logos and the intro, the intro after the prologue, the credits
+after the ship sails or the Golden Sun logo after the ending. The screens are
+drawn by `Title_ShowNintendoLogo`, `Title_ShowCamelotLogo` and
+`Title_ShowIntro`, in the title [bank](../../glossary.md#bank).
+
+### The title intro's own palette fade
+
+The intro fades in by changing colours, not the image: every one of the 512
+colours on screen, backgrounds and sprites alike, takes an equal step each
+frame from a dark red towards its own colour, so they all arrive together
+after 60 frames. Each colour is kept as three components, red, green and blue,
+with ten bits of fraction below each, so a small change spread over many
+frames still moves; on the last frame the fade copies the target colours
+outright. Each frame the new colours are packed into one of two pages, while
+the other page waits to reach the screen at the next VBlank.
+
+The fade can also head for a single colour or a filtered palette, but the game
+uses it only here. It is a [task](../../glossary.md#task),
+`TitlePaletteFade_Update`, set up by `TitlePaletteFade_Initialize` and started
+by `TitlePaletteFade_Start`.
+Scenes fade through the general palette fade instead, `PaletteFade_Update` in
+[color.c](../overworld/overworld/color.c), which the field sequence starts for
+every scene and which covers 224 background and 224 sprite colours.
+
+## The credits
+
+The credits are the staff names that roll over the game's battle backgrounds
+after the ending, as the Lemurian ship sails off.
 
 ![The staff names scroll up over a picture of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
 
-While the staff names roll, the picture behind them fades from one battle
-background to the next: stormy Vale, then Sol Sanctum's hall, then the
-grassland and on. A fade between two pictures needs both in memory at once,
-so the credits split the background's tile memory and colours into two
-halves: one shows while the next picture loads into the other, the screen
-blends across, and the halves swap roles.
+The backgrounds crossfade one into the next: stormy Vale, then Sol Sanctum's
+hall, then the grassland, 32 in all, and last a fade to black, after which the
+game goes on to the File Screen. `Credits_Run` runs them; the title overlay
+calls it through the credits bank's [far-call](../../glossary.md#far-call)
+table.
 
-The credits roll at the end of the game, as the Lemurian ship sails off with
-the ending music playing, and afterwards the game goes on to the File Screen.
-They show 32 battle backgrounds, each crossfading into the next over about
-a second, and end by fading to black. A battle background uses 128 colours,
-exactly half of what the background layers can show, so each half of memory
-takes one picture with its own 128 colours; a picture loaded into the second
-half has its colour numbers moved up by 128 as it is unpacked, so the same
-picture works in either. Both pictures also drift right a pixel every fourth
-frame, and since each is exactly as wide as the layer, it wraps round without
-a seam.
+### Two battle backgrounds in one background memory
 
-The credits are `Credits_Run`, which loads each picture with
-`Credits_LoadBackground`; the pictures are listed in `gCredits_Backgrounds`.
+A crossfade needs both images in memory at once, so the credits split the
+background tile memory and colours into two halves: one shows while the next
+image loads into the other, the screen blends across in 64 frames, about a
+second, and the halves swap roles. A battle background uses 128 colours,
+exactly half of what the background layers can show, so each half takes one
+image with its own 128 colours. An image loaded into the second half has its
+colour numbers moved up by 128 as it is unpacked, so the same image works in
+either. Both images drift right a pixel every fourth VBlank, and since each is
+exactly as wide as its layer, it wraps round without a seam.
+`Credits_LoadBackground` loads each image of `gCredits_Backgrounds`.
 
-## The scrolling names
-
-![The staff names scroll steadily up the screen over Sol Sanctum's torch-lit stone hall, each line appearing at the bottom edge and vanishing at the top](https://alchemy.pascalpixel.com/guides/graphics/credits-names.gif)
+### The scrolling names
 
 The list of names is far longer than the screen, and drawing it all at once
 would take more tile memory than the console can spare. Instead the names live
-in a ring of 32 rows, 16 on screen and 16 hidden: as the text scrolls up, each
-new line is drawn into the hidden row just below the screen, over a line that
+in a ring of 32 rows of tiles, 16 on screen and 16 hidden: as the text scrolls
+up, each new line is drawn into the hidden half of the ring, over a line that
 left the top long before, so the credits' memory never grows.
 
 The names are sprites, not a background: six sprites side by side make each
-line of 192 pixels. They move up a pixel every fourth frame, so a new line
-arrives every 32 frames. Opaque strips at the top and bottom of the screen
-hide the rows that are only partly on screen. Each letter is drawn with a
-shadow a pixel down and to the right. The original game forgets
-to give back one line's memory at the very end
+line of 192 pixels. They move up a pixel every fourth VBlank, so a new line
+arrives every 32 VBlanks, about half a second. Opaque strips of sprites at the
+top and bottom of the screen hide the rows that are only partly on screen. Each
+letter is drawn with a shadow a pixel down and to the right. The original game
+forgets to give back one line's buffer at the very end
 ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)), which does no harm,
-since all memory is cleared before the next scene.
+since the [heap](../../glossary.md#heap-and-pools) is emptied before the File
+Screen starts. Each line is drawn by `Credits_DrawEnteringLine` and
+`Credits_DrawLine`, set up by `Credits_InitTextSprites`; the text is
+`gCredits_Lines`.
 
-Each line is drawn by `Credits_DrawEnteringLine` and `Credits_DrawLine`, set
-up by `Credits_InitTextSprites`; the text is `gCredits_Lines`.
+### Taking over the screen
 
-## Running outside the system's frame
+For their length the credits run the screen themselves: they clear the task
+table and add their own tasks, stop the system's usual copy of the sprite list
+and send their own, and switch off the debug displays and the idle sleep. When
+they end they reload the windows' tiles and turn the sprite copy back on, as
+the next screen expects. The title intro does the same with its tasks and
+sprites.
 
-For their length the credits run the screen themselves: they set aside the
-system's usual task table and its copy of the sprite list, send their own
-sprites, and switch off the debug displays and the idle sleep. When they end
-they put the display back as the next screen expects it.
+The credits keep their state (the sprite buffer's address, the scroll, the last
+line drawn and an end-of-text latch) in four words of memory that belong to the
+flash chip's code, which isn't running while the credits roll and sets each
+word again before it reads it. [The original](../../glossary.md#the-original)
+reaches the words in a way the C language leaves undefined (`// UB:`), and
+`UBFIX` gives them proper types.
 
-The few numbers they keep live in four cells of memory borrowed from the save
-code, which isn't running while the credits roll and sets each cell again
-before it uses it. [The original](../../glossary.md#the-original) reaches the
-cells in a way the C language leaves undefined (`// UB:`), and `UBFIX` gives
-them proper types. `Credits_InitTextSprites` names the four cells.
+## The handwritten decoders
 
-## Design
+The routines that unpack tiles, sprites and text everywhere else are
+assembly, because each does something the game's compiler never produces:
+saving registers without the return address, a bit reader that carries a bit
+through the carry flag (`rrx`), a jump computed into a table of command
+routines, or `r11` used as an ordinary register. Each file opens with the
+instructions that prove it, and each is linked into the bank of the code that
+calls it.
 
-Only two parts of the folder have banks of their own: the credits are the
-credits bank and the title intro the title bank ([Source](../README.md)).
-Everything else here is linked beside the code that uses it.
-`Message_FindArm` carries the text window's prefix, though it sits beside
-`Text_DecodeSymbol` in `text/decode_symbol.s`.
+| Routine | What it unpacks | Called from |
+| --- | --- | --- |
+| `Text_DecodeSymbol` | one symbol of packed message text | the windows |
+| `Tile_Decompress4bpp`, `Tile_ExpandMasked`, `Tile_ExpandOpaque` | window images and icons | the windows |
+| `Render_DecodePicture` | a sprite animation's picture into its sprite | the field's sprite drawing |
+| `TileMap_DrawRows` | the world map's still picture, from its scaled layer | the world map |
+| `Tile_ConvertMapGrid` | a map's three decoded planes into cells | the map grid, as a map loads |
+| `BitDecoder_DecodeImage` | a battle background | the battle |
+| `Credits_DecodeBackground` | a battle background, its colours moved into a half | the credits |
 
-## How it fits with the rest of the game
-
-The title intro and the credits are main-image code the title overlay calls
-through their banks' [far-call](../../glossary.md#far-call) tables. The
-decoders are called by the code that loads pictures everywhere else, many
-from a copy in a [heap slot](../../glossary.md#heap-slot). The pictures
-belong to the code that loads them: battle effects, scenes, maps, windows
-and menus.
+Each is written in the processor's 32-bit instructions, which run slowly over
+the cartridge's 16-bit bus, so its caller copies it into RAM first, a
+[heap slot](../../glossary.md#heap-slot) or the heap
+([Field](../field/README.md#routines-run-from-ram)). For
+the two battle background decoders the copy is needed: they rewrite their own
+table of commands before they start, which code in ROM cannot do.
+`text/decode_symbol.s` also holds `Message_FindArm`, which finds where a
+message starts in the packed text for the windows.
 
 ## Limits
 
-- A credits picture has at most 128 colours and 256 by 120 pixels: half the
+- A credits image has at most 128 colours and 256 by 120 pixels: half the
   background colours, and 30 KB of its half's 32 KB of tile memory.
-- A credits line is 192 pixels wide, drawn centred.
-- The palette fade covers all 512 background and sprite colours.
+- A credits line is 192 pixels wide and always centred (the drawing routine
+  can also align left or right, but nothing asks it to).
 - The credits last about 3 minutes 8 seconds, besides the time taken loading.
 
 ## Words used here
 
 - **component**: one of a colour's three five-bit levels, red, green or blue,
-  as the palette fade keeps it, with a fraction beside it.
+  as the title intro's fade keeps it, with a fraction below it.
 - **half**: one of the two parts the credits split the background tile memory
   and colours into (`alternate` in the code).
 - **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
   reused as the text scrolls.
-
-## Evidence
-
-The pictures are named for what they show, from the scenes and battle
-animations that load them, and the decoders for the format each unpacks,
-proven in their headers. The credits' and the title's functions are named for
-what they draw.

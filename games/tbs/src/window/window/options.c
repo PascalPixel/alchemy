@@ -9,9 +9,9 @@ UNUSED void SettingsMenu_ReservedNoOpC9BC(void) {}
 UNUSED void SettingsMenu_ReservedNoOpC9C0(void) {}
 UNUSED void SettingsMenu_ReservedNoOpC9C4(void) {}
 
-/// One of the seven entries of the settings menu's work from offset 0x400;
-/// only its state is known, and only the unused SettingsMenu_ResetEntries
-/// writes it.
+/// One of the seven entries of the settings menu's work
+/// (OptionMenuWork.entries); only its state is known, and only the unused
+/// SettingsMenu_ResetEntries writes it.
 struct OptionMenuEntry {
   u8 unused[10]; ///< no code names it
   u16 state; ///< cleared to 0 by SettingsMenu_ResetEntries; nothing reads it
@@ -21,8 +21,7 @@ struct OptionMenuEntry {
 /// Clears the settings menu's seven entry states, its row, its tint and its
 /// cursor animation.
 UNUSED void SettingsMenu_ResetEntries(struct OptionMenuWork *work) {
-  struct OptionMenuEntry *entry =
-      (struct OptionMenuEntry *)((u8 *)work + 0x400);
+  struct OptionMenuEntry *entry = (struct OptionMenuEntry *)work->entries;
   u16 zero = 0;
 
   entry->state = zero;
@@ -315,8 +314,9 @@ void SettingsMenu_AnimateCursors(void) {
 void SettingsMenu_InitializeWork(void) {
   struct OptionMenuWork *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
-  Dma_Fill32(0, work, 0x628);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                             sizeof(struct OptionMenuWork));
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   work->option[0] = gMainRoutineWork.windowColor[0];
   work->optionCount[0] = 24;
   work->option[1] = gMainRoutineWork.windowColor[1];
@@ -668,8 +668,9 @@ void PauseMenu_AnimateCursor(void) {
 /// frame pass.
 void PauseMenu_Initialize(void) {
   void *work;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
-  Dma_Fill32(0, work, 0x628);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                             sizeof(struct OptionMenuWork));
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
 
@@ -793,13 +794,13 @@ s32 PauseMenu_Choose(void) {
   // the window. Outside Japanese it sits 8 pixels lower in debug mode, over
   // the debug menu's taller window.
 #if TBS_PATCH_1
-  y = -0x18;
+  y = -24;
   if (gDebugMode != 0) {
-    y = -0x10;
+    y = -16;
   }
-  pair = MenuTitle_Create(6, window, 0x28, y);
+  pair = MenuTitle_Create(6, window, 40, y);
 #else
-  pair = MenuTitle_Create(6, window, 0x28, -0x18);
+  pair = MenuTitle_Create(6, window, 40, -24);
 #endif
   wait(1);
   // The cursor starts where the block's page is, 0 after the fill.
@@ -836,7 +837,7 @@ s32 PauseMenu_Choose(void) {
       }
       top = window->y;
       x = window->x * 8;
-      y = (((selectedEntry * 3) + top) * 8) + 0x10;
+      y = (((selectedEntry * 3) + top) * 8) + 16;
       MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
     }
     MenuTitle_Bob(pair);

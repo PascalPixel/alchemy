@@ -9,6 +9,7 @@
 #include "types.h"
 #include "render_input.h"
 #include "cursor.h"
+#include "static_assert.h"
 
 /// The settings menu's work (heap block 20): the settings being edited and
 /// how many values each takes, the page, and the cursor, markers and icons.
@@ -45,6 +46,9 @@ struct OptionMenuWork {
   struct WindowSprite *choiceIcons[3][3];
   struct WindowSprite *icon[6];
 };
+
+STATIC_ASSERT(sizeof(struct OptionMenuWork) == 0x628);
+STATIC_ASSERT(offsetof(struct OptionMenuWork, entries) == 0x400);
 
 /// The settings menu's work, HEAP_SLOT_SETTINGS_MENU under its own name.
 extern struct OptionMenuWork *gOptionMenuWork;

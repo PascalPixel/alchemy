@@ -206,7 +206,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         selection, ScreenPoint_Coordinates(&actorPosition));
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = (u8)actorPosition.x;
-    cursorTracks[0].y = 0x80;
+    cursorTracks[0].y = 128;
   }
   window = Window_Create(0, 12, 30, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |

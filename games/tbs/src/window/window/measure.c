@@ -179,7 +179,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           else
             trailing = 0;
           glyph = 10;
-          if (code <= 0xff)
+          if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - 32].width;
           style = work->outline;
           if (style == 1 || style == 5)
@@ -258,7 +258,7 @@ done:
   // Each line's extra gap between characters, in 1/256 pixel, to spread it
   // across the window's inner width: the window's width in tiles, as
   // Window_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
-  // margin. Outside Japanese a gap over 12 pixels (0xc00) falls back to 2; in
+  // margin. Outside Japanese a gap over 12 pixels falls back to 2; in
   // Japanese one over 8 is dropped and the rest held to at most 1.
   width = (width + 19) >> 3;
   width = (width << 3) - 16;
@@ -274,13 +274,13 @@ done:
           gap = 0;
         gap = ((gap << 8) / (lineSpacingCounts[lineIndex] - 1));
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-        if (gap < 0 || gap > 0xc00)
-          gap = 0x200;
+        if (gap < 0 || gap > (12 << 8))
+          gap = 2 << 8;
 #else
-        if (gap < 0 || gap > 0x800)
+        if (gap < 0 || gap > (8 << 8))
           gap = 0;
-        if (gap < 0 || gap > 0x100)
-          gap = 0x100;
+        if (gap < 0 || gap > (1 << 8))
+          gap = 1 << 8;
 #endif
         *spacing++ = gap;
       }
@@ -372,7 +372,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           else
             trailing = 0;
           glyph = 10;
-          if (code <= 0xff)
+          if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - 32].width;
           outline = work->outline;
           if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
@@ -477,10 +477,10 @@ done:
           gap = 0;
         gap = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-        if (gap < 0 || gap > 0x800)
+        if (gap < 0 || gap > (8 << 8))
           gap = 0;
-        if (gap < 0 || gap > 0x100)
-          gap = 0x100;
+        if (gap < 0 || gap > (1 << 8))
+          gap = 1 << 8;
 #endif
         *spacing++ = gap;
       }

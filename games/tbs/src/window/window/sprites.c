@@ -204,8 +204,8 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior. GLYPH_DRAW_PAGE_ARROW shows the next-page arrow sprite in the
 /// window's corner instead. The code is the tile's number in WINDOW_PALETTE, so
-/// only codes up to 0xff are drawn; a place beyond the bottom or right frame is
-/// ignored.
+/// only codes up to TEXT_LAST_FONT_CODE are drawn; a place beyond the bottom or
+/// right frame is ignored.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -253,7 +253,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     if (out->active == 0)
       out->active = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
-  } else if (tile <= 0xff) {
+  } else if (tile <= TEXT_LAST_FONT_CODE) {
     // Past the border's top-left tile, and only inside the tilemap.
     x++;
     y++;
@@ -316,7 +316,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     if (out->active == 0)
       out->active = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
-  } else if (tile <= 0xff) {
+  } else if (tile <= TEXT_LAST_FONT_CODE) {
     if (tile - TEXT_VOICED_MARK <= 1) {
       // A kana mark goes in the tile above the character before it. Over the
       // frame's top edge or a divider line, it takes the mark tile drawn over
@@ -375,7 +375,7 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     palette = HIGHLIGHT_PALETTE << 12;
     break;
   case TILEMAP_ENTRY_ICON:
-    palette = 0x1000;
+    palette = 1 << 12;
     break;
   default:
     palette = 0;
@@ -488,10 +488,10 @@ void WindowSprite_UpdateAll(void) {
       }
       switch (windowSprite->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
-        // 0x60 is VRAM_CACHE_ENTRY_COUNT: no entry was free for the arrow.
+        // VRAM_CACHE_ENTRY_COUNT means no entry was free for the arrow.
         // Its 128-byte picture is an 8x16 sprite of 256 colours (colors 1,
         // shape 2, size 0), bobbing over 80 frames.
-        if (work->glyphResource != 0x60) {
+        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
 
           sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
@@ -614,7 +614,7 @@ void WindowSprite_UpdateAll(void) {
       }
       // Queue it unless it is hidden, or an arrow with no picture.
       if (windowSprite->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-        if (work->glyphResource != 0x60)
+        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
       } else if (windowSprite->active != WINDOW_SPRITE_MOTION_HIDDEN) {
         Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);

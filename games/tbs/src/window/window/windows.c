@@ -96,7 +96,7 @@ void WindowSystem_InitField(void) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
   // Make the sprite and palette pools available, then start the updates. The
-  // upload's order, 0x480, is TASK_PASS_VBLANK: it runs in vertical blank.
+  // upload's order is TASK_PASS_VBLANK: it runs in vertical blank.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
@@ -121,8 +121,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   // clears the rest of dst. A 4bpp row is 4 bytes: the copy takes rows 4 to 7
   // (16 bytes from byte 16), and the clear then blanks rows 3 to 7.
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
-    sourceTile &= 0x3ff;
-    destinationTile &= 0x3ff;
+    sourceTile &= TILE_NUMBER_MASK;
+    destinationTile &= TILE_NUMBER_MASK;
     Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
             BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP, DMA_COPY16(8),
             REG_DMA3);
@@ -203,9 +203,9 @@ void WindowSystem_UploadTilemap(void) {
 /// Erases a window's rectangle of the tilemap (x, y, width and height in
 /// tiles) and frees the text tiles it showed. The height is cut at the
 /// screen's 20th row, and width and height are clamped to 2 to 30 tiles. In
-/// battle the rows below row 16 take tile 0x7f, the tile the battle command
-/// row fills its empty panels with (screens/command_row.c), instead of
-/// the blank tile.
+/// battle the rows below row 16 take WINDOW_TILE_COMMAND_PANEL, the tile the
+/// battle command row fills its empty panels with (screens/command_row.c),
+/// instead of the blank tile.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
@@ -240,7 +240,7 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 
       if (*inBattle != 0) {
         if ((y + row) > 16)
-          tile = WINDOW_TILE(0x7f);
+          tile = WINDOW_TILE_COMMAND_PANEL;
         else
           tile = WINDOW_TILE_BLANK;
       }

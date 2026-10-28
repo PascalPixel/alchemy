@@ -5,10 +5,10 @@
 #include "../screens_internal.h"
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define OWNER_STATUS_TEXT_MAX 0x80
+#define OWNER_STATUS_TEXT_MAX 128
 #define OWNER_STATUS_VALUE_X 184
 #else
-#define OWNER_STATUS_TEXT_MAX 0x40
+#define OWNER_STATUS_TEXT_MAX 64
 #define OWNER_STATUS_VALUE_X 176
 #endif
 
@@ -160,7 +160,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   work = WINDOW_WORK;
   redraw = OWNER_STATUS_REDRAW_ALL;
   memberIndex = -1;
-  portraitSlot = VramCache_AllocEntry(0x200);
+  portraitSlot = VramCache_AllocEntry(512);
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
@@ -180,9 +180,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursor.drawnHelpEntry = 0;
   cursor.group = STATUS_CURSOR_GENERAL;
 
-  cursorSlot = VramCache_AllocEntry(0x80);
+  cursorSlot = VramCache_AllocEntry(128);
   for (i = 0; i <= 10; i++) {
-    statusSlots[i] = VramCache_AllocEntry(0x80);
+    statusSlots[i] = VramCache_AllocEntry(128);
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
 
@@ -384,7 +384,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       __asm__("");
 #endif
       portraitSprite.oam.f.tile = face->oam.f.tile;
-      portraitSprite.oam.f.x = 0xAC;
+      portraitSprite.oam.f.x = 172;
       portraitSprite.oam.f.y = 56;
       Oam_AddSpriteAtDepth((s32 *)&portraitSprite, 240);
     }
@@ -523,8 +523,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           if (hasDjinn != 0) {
             pal = 0;
           }
-          Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
-                                 0);
+          Window_SetTilemapEntry(statusWindow, LIST_TILE_SUMMON_ELEMENT + j,
+                                 7 + j * 4, pal + 8, 0);
           if (hasDjinn != 0) {
             Text_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
                                     40 + j * 32, 72);

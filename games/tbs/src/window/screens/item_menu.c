@@ -43,8 +43,9 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
 /// the border's top and bottom tees to tiles 0x200, 0x201, 0x210 and 0x211 as
 /// they open.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
-  Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
-          BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
+  Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
+          BG_CHAR_BLOCK(0) +
+              (destinationTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           DMA_COPY32(8), REG_DMA3);
 }
 

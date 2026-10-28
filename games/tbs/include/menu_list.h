@@ -141,9 +141,13 @@ struct BattleMenuWork {
   s32 tutorialDelay; ///< frames until the tutorial's next key press
   /// The party member whose commands are being chosen; -1 between members.
   s32 commandActor;
-  /// The Djinni each command has chosen, element << 8 | index, or 0x80000000.
+  /// The Djinni each command has chosen, element << 8 | index, or
+  /// BATTLE_MENU_NO_DJINNI.
   u32 chosenDjinn[8];
 };
+
+/// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
+#define BATTLE_MENU_NO_DJINNI 0x80000000
 
 STATIC_ASSERT(sizeof(struct BattleMenuWork) == 0x104);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, targetViewOffset) == 0x28);

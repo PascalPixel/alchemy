@@ -362,7 +362,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
         // Outside Japanese the left edge meeting a divider counts as a side
         // too. Window tile 7, taken as either side, is blank in every
         // edition's window tiles and no code places it, so it never matches.
-        case 0xf007:
+        case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE
         case WINDOW_TILE_BORDER_LEFT_TEE:
@@ -387,7 +387,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           topRight = right;
           bottomRight = tileColumn * 8 + 7;
           break;
-        case 0xf007:
+        case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_RIGHT:
 #if LANGUAGE != LANGUAGE_JAPANESE
         case WINDOW_TILE_BORDER_RIGHT_TEE:

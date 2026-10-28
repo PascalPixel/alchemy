@@ -141,7 +141,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 // Scratch capacities are in bytes unless the name says halfwords.
 #define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
 /// A byte string widened to codes: 255 bytes and the terminator.
-#define TEXT_WIDE_STRING_BUFFER_SIZE 0x200
+#define TEXT_WIDE_STRING_BUFFER_SIZE 512
 /// A name the decoder writes out into a message, decoded first into a buffer
 /// of this many halfwords.
 #define MESSAGE_NAME_HALFWORDS 24
@@ -175,6 +175,10 @@ enum {
   TEXT_VOICED_MARK = 222,    ///< dakuten
   TEXT_SEMIVOICED_MARK = 223 ///< handakuten
 };
+
+/// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
+/// window tiles cover; a code above it is a kanji (gFont_KanjiGlyphs).
+#define TEXT_LAST_FONT_CODE 0xff
 
 // The kana mark drawn with a character, in the top two bits of its code (the
 // index into gFont_MarkGlyphCodes).

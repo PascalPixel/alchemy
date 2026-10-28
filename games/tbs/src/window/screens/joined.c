@@ -58,7 +58,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY32(8), REG_DMA3);
-  palette[4] = 0x6318;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
     Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
                            HIGHLIGHT_PALETTE);
@@ -132,15 +132,15 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->dirty = 1;
 
     id = Portrait_GetForSpeaker(name);
-    Icon_LoadWithPalette(id, zero, &handle, &palette, 14, zero);
+    Icon_LoadWithPalette(id, zero, &handle, &palette, PORTRAIT_PALETTE, zero);
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its
-    // tile with sprite palette 14.
+    // tile with PORTRAIT_PALETTE.
     p = entry;
     *p++ = zero;
     *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
-    *p = palette | 0xe000;
+    *p = palette | (PORTRAIT_PALETTE << 12);
 
     // No voice blips while the message types.
     work->voiceSound = zero;
@@ -203,13 +203,13 @@ void Party_ShowJoinedMessage(s32 member) {
     work->dirty = 1;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(member)), 0,
-        &handle, &palette, 14, 0);
+        &handle, &palette, PORTRAIT_PALETTE, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = entry;
     *p++ = 0;
     *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
-    *p = palette | 0xe000;
+    *p = palette | (PORTRAIT_PALETTE << 12);
     work->voiceSound = 0;
     work->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
@@ -260,22 +260,22 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(first)), 0,
-        &firstHandle, &palette, 14, zero);
+        &firstHandle, &palette, PORTRAIT_PALETTE, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = firstEntry;
     *p++ = zero;
     *p++ = 0x800c000c;
-    *p = palette | 0xe000;
+    *p = palette | (PORTRAIT_PALETTE << 12);
 
     secondEntry = secondOam;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(second)), 0,
-        &secondHandle, &palette, 15, zero);
+        &secondHandle, &palette, PORTRAIT_PALETTE + 1, zero);
     p = secondEntry;
     *p++ = zero;
     *p++ = 0x802c000c;
-    *p = palette | 0xf000;
+    *p = palette | ((PORTRAIT_PALETTE + 1) << 12);
 
     ((struct WindowWork *)work)->voiceSound = zero;
     ((struct WindowWork *)work)->voiceCountdown = zero;

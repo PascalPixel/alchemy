@@ -4156,7 +4156,7 @@ Func_02003d44:
 .L_0200be8c:
 	.4byte gWorldMapPackedTiles
 .L_0200be90:
-	.4byte gWorldMapPackedFrames
+	.4byte gWorldMapPackedPictures
 .L_0200be94:
 	.4byte gIoWriteQueue
 .L_0200be98:
@@ -4934,7 +4934,7 @@ Func_020042e0:
 .L_0200c4d4:
 	.4byte gWorldMapPackedTilesB
 .L_0200c4d8:
-	.4byte gWorldMapPackedFramesB
+	.4byte gWorldMapPackedPicturesB
 .L_0200c4dc:
 	.4byte gIoWriteQueue
 .L_0200c4e0:

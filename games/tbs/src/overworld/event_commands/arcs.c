@@ -122,7 +122,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
     sprite->color = 0;
     sprite->shape = 1;
     sprite->size = 2;
-    sprite->child->frame = 0;
+    sprite->child->picture = 0;
   }
   // Arc B in front of everything, arc A at the caster's priority.
   // BUG: allocation failures above leave a missing arc or sprite here.

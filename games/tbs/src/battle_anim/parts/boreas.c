@@ -368,7 +368,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
       }
     }
 
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   //------------------------------------------------------------------
@@ -523,7 +523,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
     } else {
       BattleCamera_Shake(2, 2);
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   ANIM_RELEASE_BLITTERS();

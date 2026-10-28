@@ -1,17 +1,17 @@
 	.include "games/tla/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
-@ The three frames
-	.global gUiIcon_FramePointerTable
-gUiIcon_FramePointerTable:
-	.4byte UiIcon_Frame0, UiIcon_Frame1, UiIcon_Frame2
+@ The three pictures
+	.global gUiIcon_PicturePointerTable
+gUiIcon_PicturePointerTable:
+	.4byte UiIcon_Picture0, UiIcon_Picture1, UiIcon_Picture2
 	.4byte -1
-UiIcon_Frame0:
-	.incbin "games/tla/src/graphics/ui/marks/frame_0.icon4"
-UiIcon_Frame1:
-	.incbin "games/tla/src/graphics/ui/marks/frame_1.icon4"
-UiIcon_Frame2:
-	.incbin "games/tla/src/graphics/ui/marks/frame_2.icon4"
+UiIcon_Picture0:
+	.incbin "games/tla/src/graphics/ui/marks/picture_0.icon4"
+UiIcon_Picture1:
+	.incbin "games/tla/src/graphics/ui/marks/picture_1.icon4"
+UiIcon_Picture2:
+	.incbin "games/tla/src/graphics/ui/marks/picture_2.icon4"
 	.balign 4, 0
 
 @ The equipped, cross and phi marks

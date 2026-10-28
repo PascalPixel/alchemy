@@ -1,4 +1,4 @@
-@ Why Render_DecodeFrame is assembly:
+@ Why Render_DecodePicture is assembly:
 @ Computed add pc dispatch into code; a later block saves r5-r9 without lr.
 @ Why TileMap_DrawRows is assembly:
 @ r4 (0xffa00038) is at once two packed loop counters and an AND mask.
@@ -8,11 +8,11 @@
 @ and sl, r4, r8, lsr #20 uses the same register as the mask, of which only
 @ the low 0x38 can meet the 12 shifted bits. A compiler keeps two counters
 @ and a constant mask as separate values.
-@ Why assembly: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a frame.
+@ Why assembly: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a frame pointer.
 .syntax unified
 	.arm
-	.global Render_DecodeFrame
-Render_DecodeFrame:
+	.global Render_DecodePicture
+Render_DecodePicture:
 	cmp	r2, #0
 	bne	.Lmode
 	mov	r4, #255
@@ -146,8 +146,8 @@ AlchemyUncreditedEnd_render_decode_1:
 	.4byte 0x00000000
 	.4byte gSpriteColorTables - 0xe0
 	.4byte gSpriteColorTables - 0x100
-	.global gRender_DecodeFrameEnd
-gRender_DecodeFrameEnd:
+	.global gRender_DecodePictureEnd
+gRender_DecodePictureEnd:
 	.space 224, 0
 .syntax unified
 	.section .text.draw_map,"ax",%progbits

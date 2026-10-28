@@ -1,5 +1,5 @@
 	.section .rodata
-@ A copy of The Broken Seal's gFieldEffect_SparkleFrames
+@ A copy of The Broken Seal's gFieldEffect_SparklePictures
 	.global gData_080f0b7c
 gData_080f0b7c:
 	.2byte -2, 12

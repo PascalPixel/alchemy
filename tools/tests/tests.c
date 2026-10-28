@@ -237,29 +237,29 @@ graphics(void)
 	check(!exists("tiles.4bpp.d"), "a single source needs no dependency file");
 	free(listed.data);
 	free(rules.data);
-	Buffer frameRun = {0};
-	for (unsigned frame = 0; frame < 2; frame++)
+	Buffer pictureRun = {0};
+	for (unsigned n = 0; n < 2; n++)
 	{
-		Image picture = {.width = frame + 1, .height = 2, .depth = 8};
+		Image picture = {.width = n + 1, .height = 2, .depth = 8};
 		for (unsigned i = 0; i < 256; i++)
 			for (unsigned c = 0; c < 3; c++)
 				byte(&picture.palette, i);
 		for (unsigned i = 0; i < picture.width * 2; i++)
-			byte(&picture.pixels, frame * 16 + i);
-		append(&frameRun, picture.pixels.data, picture.pixels.len);
-		Buffer framePng = writeImage(&picture);
-		char *name = formatString("run_%02u.png", frame);
-		writeFile(name, &framePng);
+			byte(&picture.pixels, n * 16 + i);
+		append(&pictureRun, picture.pixels.data, picture.pixels.len);
+		Buffer png = writeImage(&picture);
+		char *name = formatString("run_%02u.png", n);
+		writeFile(name, &png);
 		free(name);
-		free(framePng.data);
+		free(png.data);
 		freeImage(&picture);
 	}
 	RUN("graphics", true, "run_00.png", "run.bitmaps");
-	Buffer frames = readFile("run.bitmaps");
-	equal(&frameRun, &frames, "a frame run writes each frame's pixels in turn");
+	Buffer written = readFile("run.bitmaps");
+	equal(&pictureRun, &written, "a picture run writes each picture's pixels in turn");
 	RUN("graphics", false, "run_01.png", "run.bitmaps");
-	free(frames.data);
-	free(frameRun.data);
+	free(written.data);
+	free(pictureRun.data);
 	textFile("map.tsv", "cell:u8\tgrid:2x3\tat:0,0\tfill:ff\n01 02\n\n03 04\n");
 	RUN("graphics", true, "map.tsv", "map.plane");
 	Buffer plane = readFile("map.plane");
@@ -395,12 +395,12 @@ static void
 spriteAnimations(void)
 {
 	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
-						 "adjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n"
+						 "adjust_y\tbox_x\tbox_y\tcodec\tpictures\tanimations\n"
 						 "Walker\t8\t8\t0x100\t0\t0\t0\t0\t0\t0\t-\tWalker\n");
 	textFile("Walker.tsv",
-			 "anim\tframe 3 6, wait 2, kind 17, jump 1\n"
+			 "anim\tpicture 3 6, wait 2, kind 17, jump 1\n"
 			 "anim\tblank 4, command 242 10, play 0, hold 1, end\n"
-			 "anim\tframe 0 1, loop\n");
+			 "anim\tpicture 0 1, loop\n");
 	RUN("graphics", true, "bank.tsv", "bank.sprites");
 	Buffer bank = readFile("bank.sprites");
 	const char *scripts[] = {
@@ -413,10 +413,10 @@ spriteAnimations(void)
 		check(strstr((char *) bank.data, scripts[i]) != NULL,
 			  "animation commands pack as command and argument bytes");
 	free(bank.data);
-	const char *rejected[] = {"anim\tframe 0 1, jump 0\n",
-							  "anim\tframe 0 1, jump 2\n",
-							  "anim\tframe 239 1\n", "anim\tcommand 253 0\n",
-							  "anim\tframe 0\n", "anim\tplay\n"};
+	const char *rejected[] = {"anim\tpicture 0 1, jump 0\n",
+							  "anim\tpicture 0 1, jump 2\n",
+							  "anim\tpicture 239 1\n", "anim\tcommand 253 0\n",
+							  "anim\tpicture 0\n", "anim\tplay\n"};
 	for (size_t i = 0; i < sizeof(rejected) / sizeof(*rejected); i++)
 	{
 		textFile("Walker.tsv", rejected[i]);

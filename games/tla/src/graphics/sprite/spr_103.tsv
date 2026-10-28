@@ -1,5 +1,5 @@
 list	0 0 0 1 2 3 4 5 6 7 8 9 10 11 12
-anim	frame 12 11, hold
-anim	frame 12 5, hold
-anim	frame 3 3, frame 6 3, frame 9 3, frame 12 3, loop
-anim	frame 0 5, hold 1
+anim	picture 12 11, hold
+anim	picture 12 5, hold
+anim	picture 3 3, picture 6 3, picture 9 3, picture 12 3, loop
+anim	picture 0 5, hold 1

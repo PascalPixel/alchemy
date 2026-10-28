@@ -4,7 +4,7 @@
 #include "graphics.h"
 #include "resource.h"
 
-extern u8 *gUiIcon_FramePointerTable[];
+extern u8 *gUiIcon_PicturePointerTable[];
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse);
@@ -37,7 +37,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gUiIcon_FramePointerTable[2];
+    work->encoded = gUiIcon_PicturePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);

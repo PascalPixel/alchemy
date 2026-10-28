@@ -1,25 +1,25 @@
 	.section .rodata
-	.global MenuCursor_FrameA
-MenuCursor_FrameA:
+	.global MenuCursor_PictureA
+MenuCursor_PictureA:
 	.incbin "games/tbs/src/graphics/shop/cursor_a.8bpp"
-	.global MenuCursor_FrameB
-MenuCursor_FrameB:
+	.global MenuCursor_PictureB
+MenuCursor_PictureB:
 	.incbin "games/tbs/src/graphics/shop/cursor_b.8bpp"
-	.global MenuCursor_FrameC
-MenuCursor_FrameC:
+	.global MenuCursor_PictureC
+MenuCursor_PictureC:
 	.incbin "games/tbs/src/graphics/shop/cursor_c.8bpp"
-	.global MenuCursor_FrameD
-MenuCursor_FrameD:
+	.global MenuCursor_PictureD
+MenuCursor_PictureD:
 	.incbin "games/tbs/src/graphics/shop/cursor_d.8bpp"
-	.global MenuCursor_FrameE
-MenuCursor_FrameE:
+	.global MenuCursor_PictureE
+MenuCursor_PictureE:
 	.incbin "games/tbs/src/graphics/shop/cursor_e.8bpp"
-	.global MenuCursor_FrameF
-MenuCursor_FrameF:
+	.global MenuCursor_PictureF
+MenuCursor_PictureF:
 	.incbin "games/tbs/src/graphics/shop/cursor_f.8bpp"
-	.global MenuCursor_FrameG
-MenuCursor_FrameG:
+	.global MenuCursor_PictureG
+MenuCursor_PictureG:
 	.incbin "games/tbs/src/graphics/shop/cursor_g.8bpp"
-	.global MenuCursor_FrameH
-MenuCursor_FrameH:
+	.global MenuCursor_PictureH
+MenuCursor_PictureH:
 	.incbin "games/tbs/src/graphics/shop/cursor_h.8bpp"

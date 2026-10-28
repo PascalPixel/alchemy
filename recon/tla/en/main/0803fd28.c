@@ -42,7 +42,7 @@ void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x,
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY);
-void *RenderResource_CreateFrame(s32 frame, s32 flags,
+void *RenderResource_CreateCommandIcon(s32 frame, s32 flags,
                                  struct RenderInput *input, s32 offsetX,
                                  s32 offsetY);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
@@ -154,20 +154,20 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   y = 28;
   work->frame[0][0] =
-      RenderResource_CreateFrame(gData_080367c9[0], 0, win, 84, y);
+      RenderResource_CreateCommandIcon(gData_080367c9[0], 0, win, 84, y);
   work->frame[0][1] =
-      RenderResource_CreateFrame(gData_080367c9[1], 0, win, 108, y);
+      RenderResource_CreateCommandIcon(gData_080367c9[1], 0, win, 108, y);
   work->frame[0][2] =
-      RenderResource_CreateFrame(gData_080367c9[2], 0, win, 132, y);
+      RenderResource_CreateCommandIcon(gData_080367c9[2], 0, win, 132, y);
   y = 52;
   work->frame[1][0] =
-      RenderResource_CreateFrame(gData_080367cc[0], 0, win, 100, y);
+      RenderResource_CreateCommandIcon(gData_080367cc[0], 0, win, 100, y);
   work->frame[1][1] =
-      RenderResource_CreateFrame(gData_080367cc[1], 0, win, 124, y);
+      RenderResource_CreateCommandIcon(gData_080367cc[1], 0, win, 124, y);
   y = 76;
   work->frame[2][0] =
-      RenderResource_CreateFrame(gData_080367ce[0], 0, win, 100, y);
+      RenderResource_CreateCommandIcon(gData_080367ce[0], 0, win, 100, y);
   work->frame[2][1] =
-      RenderResource_CreateFrame(gData_080367ce[1], 0, win, 124, y);
+      RenderResource_CreateCommandIcon(gData_080367ce[1], 0, win, 124, y);
   return win;
 }

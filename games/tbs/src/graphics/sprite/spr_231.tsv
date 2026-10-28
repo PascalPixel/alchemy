@@ -1,8 +1,8 @@
 list	0 1 2 3 3 4 5 6 7 7 8 9 10 11 12 13 14 15 16 17 8 9 10
-anim	frame 0 100, hold
-anim	frame 0 100, loop
-anim	frame 0 3, frame 5 3, loop
-anim	frame 10 100, loop
-anim	frame 15 100, loop
-anim	kind 88, frame 0 100, loop
-anim	kind 88, frame 0 100, loop
+anim	picture 0 100, hold
+anim	picture 0 100, loop
+anim	picture 0 3, picture 5 3, loop
+anim	picture 10 100, loop
+anim	picture 15 100, loop
+anim	kind 88, picture 0 100, loop
+anim	kind 88, picture 0 100, loop

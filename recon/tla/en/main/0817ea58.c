@@ -123,7 +123,7 @@ extern const Vec2 gUlysses_ScaleA;
 extern const Vec2 gUlysses_ScaleB;
 extern const Vec2 gUlysses_ScaleC;
 extern const s8 gUlysses_Shake[];
-extern const u8 gUlysses_FishFrames[];
+extern const u8 gUlysses_FishPictures[];
 extern const u8 gUlysses_FishStart[][2];
 extern const s32 gUlysses_FishVelocity[][2];
 extern const u8 gUlysses_FishDelay[];
@@ -524,7 +524,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       if (frame >= gUlysses_FishDelay[i]) {
         ((BlitFunc)blit[0])(dest,
                             work->frames + 0x36c0 +
-                                (gUlysses_FishFrames[(p->timer / 4) % 12] << 8),
+                                (gUlysses_FishPictures[(p->timer / 4) % 12] << 8),
                             p->x >> 16, p->y >> 16, 16, 16);
         p->x += p->vx;
         p->y += p->vy;

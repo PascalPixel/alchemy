@@ -1619,9 +1619,9 @@ Func_081b243c:
 .L_081b3060:
 	.4byte gReelGame_TitleLetterTiles
 .L_081b3064:
-	.4byte gReelGame_FrameSpriteY
+	.4byte gReelGame_MachineSpriteY
 .L_081b3068:
-	.4byte gReelGame_FrameSpriteX
+	.4byte gReelGame_MachineSpriteX
 .L_081b306c:
 	.4byte 0x8000207c
 .L_081b3070:

@@ -220,9 +220,10 @@ static void Lunpa_UpdateIcePillarDrawOrder(void) {
   }
 }
 
-/// Draws the three map grid regions that make one frame of the hidden passage.
-static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
-                                                s32 sourceRow) {
+/// Draws the three map grid regions that make one picture of the hidden
+/// passage.
+static inline void Lunpa_DrawHiddenPassagePicture(s32 sourceColumn,
+                                                  s32 sourceRow) {
   MapGrid_CopyCells(sourceColumn, sourceRow, 3, 4, 1, 14);
   MapGrid_CopyCells(sourceColumn + 3, sourceRow, 3, 4, 33, 14);
   MapGrid_CopyCells(sourceColumn + 6, sourceRow, 3, 4, 1, 46);
@@ -257,7 +258,7 @@ static void Lunpa_RevealSecrets(void) {
 #endif
   // The opened passage replaces the sparkle; otherwise show the hidden switch.
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
-    Lunpa_DrawHiddenPassageFrame(41, 49);
+    Lunpa_DrawHiddenPassagePicture(41, 49);
   } else {
     Actor_SetPosition(ACTOR_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SWITCH_SPARKLE), 0);
@@ -619,19 +620,19 @@ static void Lunpa_PressHiddenSwitch(void) {
   if (Event_GetFlag(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     return;
   }
-  // Open the passage over five map frames, then remember its final state.
+  // Open the passage over five map pictures, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Event_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   WaitFrames(1);
-  Lunpa_DrawHiddenPassageFrame(32, 45);
+  Lunpa_DrawHiddenPassagePicture(32, 45);
   WaitFrames(10);
-  Lunpa_DrawHiddenPassageFrame(41, 45);
+  Lunpa_DrawHiddenPassagePicture(41, 45);
   WaitFrames(10);
-  Lunpa_DrawHiddenPassageFrame(50, 45);
+  Lunpa_DrawHiddenPassagePicture(50, 45);
   WaitFrames(10);
-  Lunpa_DrawHiddenPassageFrame(32, 49);
+  Lunpa_DrawHiddenPassagePicture(32, 49);
   WaitFrames(10);
-  Lunpa_DrawHiddenPassageFrame(41, 49);
+  Lunpa_DrawHiddenPassagePicture(41, 49);
   WaitFrames(10);
   GameFlag_Set(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN);
 }

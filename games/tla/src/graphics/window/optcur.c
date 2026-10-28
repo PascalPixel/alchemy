@@ -28,7 +28,7 @@ struct OptionWork {
   void *frame[3][3];
 };
 
-extern char ResourceId_ShopCursorFrames;
+extern char ResourceId_ShopCursorPictures;
 
 void Func_08108030(union OptionCursor *cursor);
 void Func_08108038(union OptionCursor *cursor);
@@ -52,17 +52,17 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   Func_08108038(&work->marker[1]);
 
   if (selection == 0) {
-    src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+    src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src0 = (s32)&ResourceId_ShopCursorFrames;
+    src0 = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[0].output->index, 0x100,
                  Resource_GetTableEntry(src0));
 
   if (selection == 1) {
-    src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+    src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src1 = (s32)&ResourceId_ShopCursorFrames;
+    src1 = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[1].output->index, 0x100,
                  Resource_GetTableEntry(src1));

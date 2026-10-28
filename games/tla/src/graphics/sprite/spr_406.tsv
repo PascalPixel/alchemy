@@ -1,8 +1,8 @@
-anim	frame 0 7, hold
-anim	frame 0 41, hold
-anim	frame 1 14, hold
-anim	frame 2 31, hold 2
-anim	frame 3 31, hold
-anim	frame 4 31, hold 2
-anim	frame 5 31, hold
-anim	frame 6 7, hold
+anim	picture 0 7, hold
+anim	picture 0 41, hold
+anim	picture 1 14, hold
+anim	picture 2 31, hold 2
+anim	picture 3 31, hold
+anim	picture 4 31, hold 2
+anim	picture 5 31, hold
+anim	picture 6 7, hold

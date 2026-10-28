@@ -103,7 +103,7 @@ UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS();
 }
@@ -214,7 +214,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -322,7 +322,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS();
 }

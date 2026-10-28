@@ -34,7 +34,7 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
       work->pos = z;
       /* FAKEMATCH: then the codec and the frame. */
       asm("");
-      work->mode = info->frameCodec;
+      work->mode = info->pictureCodec;
       work->frame = 0xff;
     }
   }

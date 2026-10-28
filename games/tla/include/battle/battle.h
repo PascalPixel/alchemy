@@ -65,7 +65,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);
-void Map_RenderAllAnimatedTileFramesFar(void **, s32);
+void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *object,
@@ -147,7 +147,7 @@ void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(void *effect, s32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
-s32 Map_RenderAnimatedTileFramesForObjectFar(void *object);
+s32 Map_RenderAnimatedTilePicturesForObjectFar(void *object);
 #ifndef OWN_Object_Destroy
 void Object_Destroy(struct DispatchObject *work);
 #endif

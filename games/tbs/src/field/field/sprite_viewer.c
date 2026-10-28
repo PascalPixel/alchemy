@@ -10,7 +10,7 @@ enum {
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
-  /// An anim priority above 3, which Sprite_ComposeFrame skips.
+  /// An anim priority above 3, which Sprite_ComposePicture skips.
   UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8
 };
 
@@ -114,14 +114,15 @@ restart:
                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
   ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
-  // With no map loaded, the map cell buffer holds anim 0's frames; a
+  // With no map loaded, the map cell buffer holds anim 0's pictures; a
   // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the
-  // actor sprite buffer, as sprite frame cache 1.
-  SpriteFrameCache_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
+  // actor sprite buffer, as sprite picture cache 1.
+  SpritePictureCache_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId,
+                          0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
   if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART) {
-    SpriteFrameCache_Load(1, (u32 *)Ram_EnemySpriteSlots,
-                          layers[0].spriteId + 1, 0);
+    SpritePictureCache_Load(1, (u32 *)Ram_EnemySpriteSlots,
+                            layers[0].spriteId + 1, 0);
   }
 
   // Ten copies of the sprite; for a two-part sprite every other copy
@@ -147,7 +148,7 @@ restart:
     *spriteWork.flags = shadowsEnabled;
   }
 
-  // Priority 8 hides an anim: Sprite_ComposeFrame draws only
+  // Priority 8 hides an anim: Sprite_ComposePicture draws only
   // priorities 0 to 3.
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0) {
@@ -441,7 +442,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
-  case ANIM_FACING_THREE_FRAMES:
+  case ANIM_FACING_THREE_PICTURES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -456,10 +457,10 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIM_FACING_FIVE_FRAMES:
-  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_FIVE_PICTURES:
+  case ANIM_FACING_EIGHT_PICTURES:
   case ANIM_FACING_EIGHT_NO_TABLE:
-  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -474,8 +475,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIM_FACING_FOUR_FRAMES:
-  case ANIM_FACING_SIX_FRAMES:
+  case ANIM_FACING_FOUR_PICTURES:
+  case ANIM_FACING_SIX_PICTURES:
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << 16;
@@ -584,8 +585,8 @@ void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
         entry->timer = spriteIndex * ANIM_NORMAL_STEP;
         entry->step = ANIM_NORMAL_STEP;
         entry->scriptOffset = initialFrame;
-        entry->frameBase = initialFrame;
-        entry->frame = 0xff;
+        entry->pictureBase = initialFrame;
+        entry->picture = 0xff;
       }
       spriteGroup->offsetY = metadata->adjustY;
       spriteGroup->rotation = initialFrame;
@@ -634,21 +635,21 @@ void SpriteViewer_PlaceRing(void) {
   facingPositions = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
-  case ANIM_FACING_THREE_FRAMES:
+  case ANIM_FACING_THREE_PICTURES:
     angle = 0;
     step = 0x2aaa;
     count = 6;
     break;
-  case ANIM_FACING_FIVE_FRAMES:
-  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_FIVE_PICTURES:
+  case ANIM_FACING_EIGHT_PICTURES:
   case ANIM_FACING_EIGHT_NO_TABLE:
-  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     angle = 0;
     step = 0x2000;
     count = 8;
     break;
-  case ANIM_FACING_FOUR_FRAMES:
-  case ANIM_FACING_SIX_FRAMES:
+  case ANIM_FACING_FOUR_PICTURES:
+  case ANIM_FACING_SIX_PICTURES:
     angle = 0;
     step = 0x1999;
     count = 10;

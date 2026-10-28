@@ -38,7 +38,7 @@ void WorldMap_CreateLinkedEffects(struct Actor *parent) {
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
-        sprite->entries[0]->frame = 0;
+        sprite->entries[0]->picture = 0;
       }
     }
   }

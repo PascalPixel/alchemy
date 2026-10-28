@@ -241,7 +241,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *args, s32 element,
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   // Leave the canvas cleared and fully shown for the animation that follows,
   // without closing the layer.

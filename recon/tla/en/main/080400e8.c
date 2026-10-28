@@ -40,8 +40,8 @@ struct OptionScreen {
 };
 
 extern u8 MsgOptionA[], MsgOptionB[], MsgOptionC[], MsgOptionD[], MsgOptionE[];
-extern const s8 gOptionMenu_SpeedFrames[], gOptionMenu_SpeechFrames[],
-    gOptionMenu_SleepFrames[];
+extern const s8 gOptionMenu_SpeedIcons[], gOptionMenu_SpeechIcons[],
+    gOptionMenu_SleepIcons[];
 extern const u8 gOptionMenu_FirstColorPresets[],
     gOptionMenu_SecondColorPresets[];
 
@@ -55,7 +55,7 @@ struct RenderOutput *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 void Func_08045018(struct RenderOutput *pair);
 void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
+void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -117,7 +117,7 @@ s32 Func_080400e8(void) {
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeedFrames[i], resourceIndex,
+        RenderResource_LoadCommandIcon(gOptionMenu_SpeedIcons[i], resourceIndex,
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
@@ -128,7 +128,7 @@ s32 Func_080400e8(void) {
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeechFrames[i], resourceIndex,
+        RenderResource_LoadCommandIcon(gOptionMenu_SpeechIcons[i], resourceIndex,
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
@@ -139,7 +139,7 @@ s32 Func_080400e8(void) {
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SleepFrames[i], resourceIndex,
+        RenderResource_LoadCommandIcon(gOptionMenu_SleepIcons[i], resourceIndex,
                                  dimmed);
       }
 

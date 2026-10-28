@@ -1,4 +1,4 @@
-anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 6 2, frame 7 2, blank 10, hold
-anim	frame 0 2, frame 1 2, frame 2 2, frame 1 2, loop
-anim	frame 0 2, frame 1 2, frame 2 2, frame 1 2, frame 0 2, frame 1 2, frame 2 2, frame 1 2, frame 0 2, frame 1 2, frame 2 2, frame 1 2, frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 6 2, frame 7 2, hold
-anim	frame 6 2, frame 5 2, frame 4 2, frame 3 2, frame 2 2, frame 1 2, frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 4 2, frame 5 2, frame 6 2, frame 5 2, frame 6 2, frame 7 2, frame 6 2, frame 7 2, hold
+anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 2, picture 6 2, picture 7 2, blank 10, hold
+anim	picture 0 2, picture 1 2, picture 2 2, picture 1 2, loop
+anim	picture 0 2, picture 1 2, picture 2 2, picture 1 2, picture 0 2, picture 1 2, picture 2 2, picture 1 2, picture 0 2, picture 1 2, picture 2 2, picture 1 2, picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 2, picture 6 2, picture 7 2, hold
+anim	picture 6 2, picture 5 2, picture 4 2, picture 3 2, picture 2 2, picture 1 2, picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 2, picture 4 2, picture 5 2, picture 6 2, picture 5 2, picture 6 2, picture 7 2, picture 6 2, picture 7 2, hold

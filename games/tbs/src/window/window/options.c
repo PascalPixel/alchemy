@@ -267,8 +267,8 @@ void SettingsMenu_SelectionNoOp(void) {}
 /// The settings menu's per-frame task: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen
 /// setting's icon. The markers' pictures, 256 bytes each, are loaded every
-/// frame: the marker of the row in use steps through 8 frames of
-/// ResourceId_MenuCursorFrames, the other shows the first. Rows 2 to 4
+/// frame: the marker of the row in use steps through 8 pictures of
+/// ResourceId_MenuCursorPictures, the other shows the first. Rows 2 to 4
 /// (speed, speech, sleep) pulse their chosen icon.
 void SettingsMenu_AnimateCursors(void) {
   s32 cursorResource;
@@ -284,25 +284,25 @@ void SettingsMenu_AnimateCursors(void) {
 
   if (selectedOption == 0) {
     cursorResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorFrames;
+        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorPictures;
   } else {
-    cursorResource = (s32)&ResourceId_MenuCursorFrames;
+    cursorResource = (s32)&ResourceId_MenuCursorPictures;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
     markerResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorFrames;
+        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorPictures;
   } else {
-    markerResource = (s32)&ResourceId_MenuCursorFrames;
+    markerResource = (s32)&ResourceId_MenuCursorPictures;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(markerResource));
 
   if (selectedOption > 1)
     WindowSprite_Pulse(
-        work->frame[selectedOption - 2][work->option[selectedOption]]);
+        work->choiceIcons[selectedOption - 2][work->option[selectedOption]]);
   work->cursorFrame++;
 }
 
@@ -441,22 +441,22 @@ struct Window *SettingsMenu_Open(void) {
   }
 
   y = 28;
-  work->frame[0][0] = CommandIcon_Create(gSettingsMenu_SpeedFrames[0], 0,
-                                         window, OPTION_FRAME_X, y);
-  work->frame[0][1] = CommandIcon_Create(gSettingsMenu_SpeedFrames[1], 0,
-                                         window, OPTION_FRAME_X + 24, y);
-  work->frame[0][2] = CommandIcon_Create(gSettingsMenu_SpeedFrames[2], 0,
-                                         window, OPTION_FRAME_X + 48, y);
+  work->choiceIcons[0][0] = CommandIcon_Create(gSettingsMenu_SpeedIcons[0], 0,
+                                               window, OPTION_CHOICE_X, y);
+  work->choiceIcons[0][1] = CommandIcon_Create(gSettingsMenu_SpeedIcons[1], 0,
+                                               window, OPTION_CHOICE_X + 24, y);
+  work->choiceIcons[0][2] = CommandIcon_Create(gSettingsMenu_SpeedIcons[2], 0,
+                                               window, OPTION_CHOICE_X + 48, y);
   y = 52;
-  work->frame[1][0] =
-      CommandIcon_Create(gSettingsMenu_SpeechFrames[0], 0, window, 100, y);
-  work->frame[1][1] =
-      CommandIcon_Create(gSettingsMenu_SpeechFrames[1], 0, window, 124, y);
+  work->choiceIcons[1][0] =
+      CommandIcon_Create(gSettingsMenu_SpeechIcons[0], 0, window, 100, y);
+  work->choiceIcons[1][1] =
+      CommandIcon_Create(gSettingsMenu_SpeechIcons[1], 0, window, 124, y);
   y = 76;
-  work->frame[2][0] =
-      CommandIcon_Create(gSettingsMenu_SleepFrames[0], 0, window, 100, y);
-  work->frame[2][1] =
-      CommandIcon_Create(gSettingsMenu_SleepFrames[1], 0, window, 124, y);
+  work->choiceIcons[2][0] =
+      CommandIcon_Create(gSettingsMenu_SleepIcons[0], 0, window, 100, y);
+  work->choiceIcons[2][1] =
+      CommandIcon_Create(gSettingsMenu_SleepIcons[1], 0, window, 124, y);
   return window;
 }
 
@@ -514,34 +514,34 @@ s32 SettingsMenu_Run(void) {
       // Redraw each choice's icon at depth slot 0xfb, dimmed unless it is
       // the row's setting.
       for (i = 0; i <= 2; i++) {
-        frame = work->frame[0][i];
+        frame = work->choiceIcons[0][i];
         frame->sentinel = 0xfb;
         Icon_PrepareActorFar(frame);
-        resourceIndex = (u8)work->frame[0][i]->index;
+        resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        CommandIcon_Load(gSettingsMenu_SpeedFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeedIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        frame = work->frame[1][i];
+        frame = work->choiceIcons[1][i];
         frame->sentinel = 0xfb;
         Icon_PrepareActorFar(frame);
-        resourceIndex = (u8)work->frame[1][i]->index;
+        resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        CommandIcon_Load(gSettingsMenu_SpeechFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeechIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        frame = work->frame[2][i];
+        frame = work->choiceIcons[2][i];
         frame->sentinel = 0xfb;
         Icon_PrepareActorFar(frame);
-        resourceIndex = (u8)work->frame[2][i]->index;
+        resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        CommandIcon_Load(gSettingsMenu_SleepFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
@@ -750,7 +750,7 @@ struct Window *PauseMenu_Open(void) {
   y = -4;
   for (i = 0; i < rows; i++) {
     work->icon[i] =
-        CommandIcon_Create(gPauseMenu_IconFrames[first + i], 0, window, 12, y);
+        CommandIcon_Create(gPauseMenu_Icons[first + i], 0, window, 12, y);
     y += PAUSE_MENU_ROW_HEIGHT;
   }
   return window;
@@ -777,7 +777,7 @@ s32 PauseMenu_Choose(void) {
   s32 resourceIndex;
   s32 x;
   s32 top;
-  const s8 *iconFrames;
+  const s8 *pauseIcons;
   struct WindowSprite *icon;
   struct OptionMenuWork *work;
 
@@ -818,7 +818,7 @@ s32 PauseMenu_Choose(void) {
       i = 0;
       if (i < rows) {
         j = first;
-        iconFrames = gPauseMenu_IconFrames;
+        pauseIcons = gPauseMenu_Icons;
         do {
           icon = work->icon[i];
           icon->sentinel = 0xFB;
@@ -828,7 +828,7 @@ s32 PauseMenu_Choose(void) {
           if (i != work->page) {
             dimmed = 1;
           }
-          CommandIcon_Load(*(s8 *)(j + (s32)iconFrames), resourceIndex, dimmed);
+          CommandIcon_Load(*(s8 *)(j + (s32)pauseIcons), resourceIndex, dimmed);
           i++;
           j++;
         } while (i < rows);

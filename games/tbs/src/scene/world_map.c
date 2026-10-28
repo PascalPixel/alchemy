@@ -2210,9 +2210,9 @@ enum {
 
 u16 gWorldMapBlend;
 
-/// Queues one frame of the lighthouse transition, a whole tile map, into BG0's
-/// screen block.
-#define WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, offset)                       \
+/// Queues one picture of the lighthouse transition, a whole tile map, into
+/// BG0's screen block.
+#define WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, offset)                     \
   IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x140)
 
@@ -2754,10 +2754,10 @@ static void WorldMap_JitterTransitionCamera(void) {
   }
 }
 
-/// Queues one frame of the lighthouse transition and waits frames.
-static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
-                                                s32 frames) {
-  WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, offset);
+/// Queues one picture of the lighthouse transition and waits frames.
+static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
+                                                  s32 frames) {
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, offset);
   Event_WaitFrames(frames);
 }
 
@@ -2779,7 +2779,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillView();
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  FieldDecompress_TaggedLz(gWorldMapPackedFrames, buffer + 0x1000);
+  FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + lighthouse * 32),
                       DMA_ENABLE << 16 | 16);
@@ -2787,40 +2787,40 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x400);
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
-  WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
   Actor_GetById(gAdventure.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_PlaySong(SE_GLITTER);
 
-  // Fade through the inward frames, hold, then reverse the animation.
+  // Fade through the inward pictures, hold, then reverse the animation.
   gWorldMapBlend = BLEND_ALPHA(0, 14);
-  WorldMap_ShowTransitionFrame(buffer, 0x3480, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x3480, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
-  WorldMap_ShowTransitionFrame(buffer, 0x2e80, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WorldMap_ShowTransitionFrame(buffer, 0x2880, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x2880, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionFrame(buffer, 0x2280, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x2280, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionFrame(buffer, 0x1c80, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionFrame(buffer, 0x1680, 2);
+  WorldMap_ShowTransitionPicture(buffer, 0x1680, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 8);
-  WorldMap_ShowTransitionFrame(buffer, 0x1080, 140);
+  WorldMap_ShowTransitionPicture(buffer, 0x1080, 140);
 
-  WorldMap_ShowTransitionFrame(buffer, 0x1680, 4);
-  WorldMap_ShowTransitionFrame(buffer, 0x1c80, 4);
-  WorldMap_ShowTransitionFrame(buffer, 0x2280, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x1680, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x2280, 4);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionFrame(buffer, 0x2880, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x2880, 4);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionFrame(buffer, 0x2e80, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 4);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionFrame(buffer, 0x3480, 4);
+  WorldMap_ShowTransitionPicture(buffer, 0x3480, 4);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
   WorldMap_LoadAreaGraphics();
   Task_AddFrame(WorldMap_JitterTransitionCamera, TASK_PASS_FRAME);
   Sound_PlaySong(SE_RUMBLE);

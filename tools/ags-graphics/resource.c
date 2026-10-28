@@ -101,15 +101,15 @@ parts(const char *input, const Buffer *data, unsigned depth)
 }
 
 /*
- * A run of frames, NAME_00.png, NAME_01.png and on: each frame's pixels in
- * turn, for an animation whose frames differ in size and so share no sheet.
+ * A run of pictures, NAME_00.png, NAME_01.png and on: each picture's pixels in
+ * turn, for an animation whose pictures differ in size and so share no sheet.
  */
 static Buffer
-frameRun(const char *input)
+pictureRun(const char *input)
 {
 	size_t stem = strlen(input);
 	if (stem < 7 || strcmp(input + stem - 7, "_00.png"))
-		fail("a frame run starts at NAME_00.png");
+		fail("a picture run starts at NAME_00.png");
 	stem -= 7;
 	Buffer out = {0};
 	for (unsigned i = 0; i < 100; i++)
@@ -249,7 +249,7 @@ buildResource(const char *input, const char *form, const char *codec,
 	else if (!strcmp(form, "icons4"))
 		raw = iconBank(input, &data);
 	else if (!strcmp(form, "bitmaps"))
-		raw = frameRun(input);
+		raw = pictureRun(input);
 	else if (!strcmp(form, "sprites") || !strcmp(form, "spriteblocks"))
 		raw = spriteSource(input, !strcmp(form, "spriteblocks"));
 	else if (!strncmp(form, "delta", 5))
@@ -270,7 +270,7 @@ buildResource(const char *input, const char *form, const char *codec,
 		out = compressHalfwords(&raw);
 	else
 	{
-		/* A frame run's patch is NAME_patch.tsv, not NAME_00's. */
+		/* A picture run's patch is NAME_patch.tsv, not NAME_00's. */
 		char *name = !strcmp(form, "bitmaps")
 						 ? formatString("%.*s.png", (int) (strlen(input) - 7), input)
 						 : copyString(input);

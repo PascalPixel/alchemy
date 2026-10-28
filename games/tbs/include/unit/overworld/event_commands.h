@@ -43,13 +43,13 @@ enum FieldPsynergy {
   FIELD_PSYNERGY_AVOID = 16
 };
 
-/// One frame of a sparkle: its height offset and tile (fxdata.c).
-struct SparkleFrame {
+/// One picture of a sparkle: its height offset and tile (fxdata.c).
+struct SparklePicture {
   s16 dy;
   u16 tile;
 };
 
-extern const struct SparkleFrame gFieldEffect_SparkleFrames[32];
+extern const struct SparklePicture gFieldEffect_SparklePictures[32];
 
 void Event_UpdateDebugSkip(void);
 void Event_WaitFrames(s32 frames);

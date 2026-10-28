@@ -17,7 +17,7 @@
 #include "lib/call.h"
 
 extern u8 gWorldMapPackedTiles[];
-extern u8 gWorldMapPackedFrames[];
+extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 extern u16 gData_02006e08;
 
@@ -41,7 +41,7 @@ void Func_02004db8(s32 value);
 void Func_02004ac8(void);
 void MemFree(void *pointer);
 
-#define PUSH_FRAME(offset)                                                     \
+#define PUSH_PICTURE(offset)                                                     \
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06002000, (u32)(buffer + (offset)), 0x84000140)
 
 void Func_02003d44(s32 mode) {
@@ -63,7 +63,7 @@ void Func_02003d44(s32 mode) {
   buffer = Runtime_BumpAllocateAlternatePool(0x4000);
   ime = &REG_IME;
   Func_02004aa8(gWorldMapPackedTiles, buffer);
-  Func_02004aa8(gWorldMapPackedFrames, buffer + 0x1000);
+  Func_02004aa8(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                           0x80000010);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06001000, (u32)buffer, 0x84000400);
@@ -72,43 +72,43 @@ void Func_02003d44(s32 mode) {
   Func_02004db8(0);
   Func_02004e30(246);
   gData_02006e08 = 0xe00;
-  PUSH_FRAME(0x3480);
+  PUSH_PICTURE(0x3480);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0xd00;
-  PUSH_FRAME(0x2e80);
+  PUSH_PICTURE(0x2e80);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0xc00;
-  PUSH_FRAME(0x2880);
+  PUSH_PICTURE(0x2880);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0xb00;
-  PUSH_FRAME(0x2280);
+  PUSH_PICTURE(0x2280);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0xa00;
-  PUSH_FRAME(0x1c80);
+  PUSH_PICTURE(0x1c80);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0x900;
-  PUSH_FRAME(0x1680);
+  PUSH_PICTURE(0x1680);
   FieldEvent_WaitFrames(2);
   gData_02006e08 = 0x800;
-  PUSH_FRAME(0x1080);
+  PUSH_PICTURE(0x1080);
   FieldEvent_WaitFrames(140);
-  PUSH_FRAME(0x1680);
+  PUSH_PICTURE(0x1680);
   FieldEvent_WaitFrames(4);
-  PUSH_FRAME(0x1c80);
+  PUSH_PICTURE(0x1c80);
   FieldEvent_WaitFrames(4);
-  PUSH_FRAME(0x2280);
+  PUSH_PICTURE(0x2280);
   FieldEvent_WaitFrames(4);
   gData_02006e08 = 0x900;
-  PUSH_FRAME(0x2880);
+  PUSH_PICTURE(0x2880);
   FieldEvent_WaitFrames(4);
   gData_02006e08 = 0xa00;
-  PUSH_FRAME(0x2e80);
+  PUSH_PICTURE(0x2e80);
   FieldEvent_WaitFrames(4);
   gData_02006e08 = 0xb00;
-  PUSH_FRAME(0x3480);
+  PUSH_PICTURE(0x3480);
   FieldEvent_WaitFrames(4);
   gData_02006e08 = 0xc00;
-  PUSH_FRAME(0x3a80);
+  PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     Call3((void (*)())Func_02004b78, 0x20000, 0x20000, 0x10000);
     Func_02004e30(141);

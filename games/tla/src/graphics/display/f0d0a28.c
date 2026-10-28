@@ -8,24 +8,24 @@
 
 extern const u8 gData_080f0206[];
 
-/// The Broken Seal's DisplayTransition_UpdateFrame: steps the transition's
+/// The Broken Seal's DisplayTransition_UpdateDissolve: steps the transition's
 /// value toward its end each frame, turning DMA0 off when it arrives, then
 /// sets the two pixel nibbles the value selects and queues the tile to
 /// character block 0.
-void DisplayTransition_UpdateFrame(void) {
-  struct DisplayTransitionFrame *state;
+void DisplayTransition_UpdateDissolve(void) {
+  struct DisplayTransitionDissolveState *state;
   s32 value;
   s32 blend;
   u32 i;
 
-  state = (struct DisplayTransitionFrame *)Ram_HeapSlots->displayTransition;
+  state = (struct DisplayTransitionDissolveState *)Ram_HeapSlots->displayTransition;
   if (state->duration != 0) {
     if (state->step >= state->duration) {
       volatile u16 *dma0;
       u16 control;
 
       state->duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_UpdateFrame);
+      Scheduler_RemoveCallback(DisplayTransition_UpdateDissolve);
       dma0 = REG_DMA0;
       control = dma0[5];
       dma0[5] = control & 0xc5ff;

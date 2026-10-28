@@ -654,7 +654,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
+    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_16);
     state->start = 0;
@@ -741,7 +741,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
+    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -801,7 +801,7 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// ScreenTransition_Finish for the centre line with variant 0; when its run
 /// ends it removes itself and the HBlank handler.
 void ScreenTransition_Update(void) {
-  struct ScreenTransitionFrame *state = *Ram_DisplayWork;
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *display =
       *(struct ScreenTransitionWin **)Ram_MapGridWork;
   s8 *duration = &state->duration;
@@ -841,7 +841,7 @@ void ScreenTransition_Update(void) {
 ///
 /// The centre line's task for a non-zero variant.
 void ScreenTransition_UpdateFromCentre(void) {
-  struct ScreenTransitionFrame *state = *Ram_DisplayWork;
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *window =
       *(struct ScreenTransitionWin **)Ram_MapGridWork;
   s8 *duration = &state->duration;
@@ -954,8 +954,8 @@ again:
 /// The dissolve's task (from ScreenTransition_Start and
 /// ScreenTransition_Finish, and ScreenTransition_InitializeState). Queues the
 /// changed tile into character block 0 each frame.
-void ScreenTransition_UpdateFrame(void) {
-  struct ScreenTransitionFrame *state = *Ram_DisplayWork;
+void ScreenTransition_UpdateDissolve(void) {
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   s32 ditherIndex;
   s32 colorIndex;
   u32 i;
@@ -964,7 +964,7 @@ void ScreenTransition_UpdateFrame(void) {
     if (state->step >= state->duration) {
       volatile u16 *dma0;
       state->duration = 0;
-      Task_Remove(ScreenTransition_UpdateFrame);
+      Task_Remove(ScreenTransition_UpdateDissolve);
       dma0 = REG_DMA0;
       dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
       dma0[5] &= ~DMA_ENABLE;
@@ -1033,6 +1033,6 @@ void ScreenTransition_InitializeState(s32 value) {
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
+  Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   WaitFrames(0x78);
 }

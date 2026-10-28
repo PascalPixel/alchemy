@@ -603,7 +603,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *args, s32 mode) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   ANIM_FINISH_CANVAS();

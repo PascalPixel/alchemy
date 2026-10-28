@@ -40,12 +40,12 @@ struct SparkleWork {
   s32 stopped;
 };
 
-struct SparkleFrame {
+struct SparklePicture {
   s16 dy;
   u16 tile;
 };
 
-extern const struct SparkleFrame gData_080f0b7c[];
+extern const struct SparklePicture gData_080f0b7c[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);

@@ -61,9 +61,9 @@ struct MapPriorityWork {
 
 // The decoder's block: its code, tables and work area (constants.ld). Only
 // the code and tables are copied.
-extern u8 Render_DecodeFrameCode[];
-extern u8 Render_DecodeFrameCopyEnd[];
-extern u8 Render_DecodeFrameBlockSize[];
+extern u8 Render_DecodePictureCode[];
+extern u8 Render_DecodePictureCopyEnd[];
+extern u8 Render_DecodePictureBlockSize[];
 
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 void VramCache_ReleaseVram(s32 slot);
@@ -126,10 +126,10 @@ void Func_0802386c(void) {
   viewZ = map->viewZ & 0xffff0000;
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
-  Dma_Set(Render_DecodeFrameCode,
-          Runtime_AllocateHeapBlock(80, (s32)Render_DecodeFrameBlockSize),
+  Dma_Set(Render_DecodePictureCode,
+          Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
           (DMA_ENABLE | DMA_32BIT) << 16 |
-              ((u32)(Render_DecodeFrameCopyEnd - Render_DecodeFrameCode) >> 2),
+              ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
           REG_DMA3);
   object = Ram_HeapSlots->scriptObjects;
   system->used = 0;

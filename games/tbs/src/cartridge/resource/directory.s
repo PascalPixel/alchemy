@@ -18,7 +18,7 @@
 @ travel bare: the scene table (field/scenes.s) names each scene's overlay by
 @ number, objects.tsv numbers each overlay's rows, the layouts are counted on
 @ from ResourceId_Map001 (MapGrid_LoadMap), and the settings menu's marker
-@ steps through eight frames from ResourceId_MenuCursorFrames.
+@ steps through eight pictures from ResourceId_MenuCursorPictures.
 	.macro group kind:req, names:vararg
 	.irp n, \names
 	resource \n, \kind\()_\n
@@ -96,7 +96,7 @@ Resource_DirectoryTable:
 	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretTreeBranchBackdrop
 	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SolSanctumBackdrop, ForestBackdrop
 	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
-	resource LuckyWheelsFramePicture, LuckyWheels_FramePicture
+	resource LuckyWheelsMachinePicture, LuckyWheels_MachinePicture
 	resource LuckyWheelsIcons, LuckyWheels_Icons
 	resource LuckyWheelsJackpot, LuckyWheels_Jackpot
 	resource LuckyDiceBoard, LuckyDice_Board
@@ -144,14 +144,14 @@ Resource_DirectoryTable:
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
 	group Colosso, OpponentPathA, OpponentPathB, OpponentPathC, Lettering
-	resource MenuCursorFrames, MenuCursor_FrameA
-	resource , MenuCursor_FrameB
-	resource , MenuCursor_FrameC
-	resource , MenuCursor_FrameD
-	resource , MenuCursor_FrameE
-	resource , MenuCursor_FrameF
-	resource , MenuCursor_FrameG
-	resource , MenuCursor_FrameH
+	resource MenuCursorPictures, MenuCursor_PictureA
+	resource , MenuCursor_PictureB
+	resource , MenuCursor_PictureC
+	resource , MenuCursor_PictureD
+	resource , MenuCursor_PictureE
+	resource , MenuCursor_PictureF
+	resource , MenuCursor_PictureG
+	resource , MenuCursor_PictureH
 	group Ui, Icons, CommandIcons
 	group Monster, AxeGoblinSprites, GhoulSprites, HarpySprites, TrollSprites, WitchSprites
 	group Monster, GriffinSprites, ShieldKnightSprites, OrcSprites, ChimeraSprites, LivingArmorSprites

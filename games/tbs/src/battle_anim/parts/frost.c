@@ -319,7 +319,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   ANIM_RELEASE_BLITTERS();

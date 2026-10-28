@@ -206,7 +206,7 @@ script(const Buffer *input)
 			n = 0;
 			prefix = 0xffff;
 		}
-		else if (!strcmp(key, "frame"))
+		else if (!strcmp(key, "picture"))
 			n = 4;
 		else if (!strcmp(key, "control"))
 			n = 1;

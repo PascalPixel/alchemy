@@ -284,7 +284,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
       }
     }
     ANIM_RELEASE_BLITTERS();
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // Finish: the blitters were freed each frame.
@@ -427,7 +427,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
       }
     }
     ANIM_RELEASE_BLITTERS();
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

@@ -1,8 +1,8 @@
 /*
  * sprite.c
  *
- * Build sprite records, shared animations, and frame banks from TSV lists.
- * A sprite may borrow another sprite's frame or animation list. The bank owns
+ * Build sprite records, shared animations, and picture banks from TSV lists.
+ * A sprite may borrow another sprite's picture or animation list. The bank owns
  * all parsed metadata; assembly labels and pointers preserve those relationships
  * in either the flat-bank or sectioned layout.
  */
@@ -11,13 +11,13 @@
 
 typedef struct
 {
-	char *name, *files, *frames, *animations;
+	char *name, *files, *pictures, *animations;
 	size_t animationLimit;
 	uint8_t bytes[12];
 	Buffer *scripts;
 	size_t scriptCount;
-	Strings animationList, frameList, empty;
-	bool hasAnimations, hasFrames;
+	Strings animationList, pictureList, empty;
+	bool hasAnimations, hasPictures;
 } Sprite;
 typedef struct
 {
@@ -59,16 +59,16 @@ integer(const char *s, bool sign, unsigned max)
  * field reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
  * An anim line names them, separated by commas:
  *
- *   frame N D   show frame N for D frames (N below 239)
- *   wait D      keep the current frame D frames longer
- *   blank D     show nothing for D frames
- *   kind N      use facing table N
- *   play N      switch to animation N
- *   loop        continue at the first command
- *   jump N      continue at command N
- *   hold        stay on this command for good
- *   end         blank the sprite and stop
- *   command C A a command with no name here, C, with argument A
+ *   picture N D   show picture N for D frames (N below 239)
+ *   wait D        keep the current picture D frames longer
+ *   blank D       show nothing for D frames
+ *   kind N        use facing table N
+ *   play N        switch to animation N
+ *   loop          continue at the first command
+ *   jump N        continue at command N
+ *   hold          stay on this command for good
+ *   end           blank the sprite and stop
+ *   command C A   a command with no name here, C, with argument A
  *
  * hold and end take an optional argument, which the field ignores.
  */
@@ -100,7 +100,7 @@ animationScript(const char *text)
 		size_t n = words.len;
 		unsigned code = 256,
 				 argument = n > 1 ? number(words.items[n - 1], 10, 255) : 0;
-		if (!strcmp(name, "frame") && n == 3)
+		if (!strcmp(name, "picture") && n == 3)
 			code = number(words.items[1], 10, 238);
 		else if (!strcmp(name, "loop") && n == 1)
 			code = 253;
@@ -161,9 +161,9 @@ metadata(Sprite *sprite, const Buffer *data)
 		}
 		else if (!strcmp(line, "list"))
 		{
-			freeStrings(&sprite->frameList);
-			sprite->frameList = values;
-			sprite->hasFrames = true;
+			freeStrings(&sprite->pictureList);
+			sprite->pictureList = values;
+			sprite->hasPictures = true;
 			values = (Strings){0};
 		}
 		else if (!strcmp(line, "empty"))
@@ -217,7 +217,7 @@ readBank(const char *input)
 		for (unsigned j = 7; j <= 9; j++)
 			s.bytes[j + 1] = integer(f.items[j], false, 255);
 		if (strcmp(f.items[10], "-"))
-			s.frames = copyString(f.items[10]);
+			s.pictures = copyString(f.items[10]);
 		char *colon = strchr(f.items[11], ':');
 		if (colon)
 		{
@@ -229,7 +229,7 @@ readBank(const char *input)
 		char *name = formatString("%s.tsv", s.files),
 			 *path = sibling(input, name);
 		free(name);
-		if (owns(&s, s.animations) || (owns(&s, s.frames) && exists(path)))
+		if (owns(&s, s.animations) || (owns(&s, s.pictures) && exists(path)))
 		{
 			Buffer meta = readFile(path);
 			metadata(&s, &meta);
@@ -305,8 +305,8 @@ records(Bank *bank, Assembly *assembly)
 			fail("too many sprite animations");
 		byte(&assembly->bytes, count);
 		append(&assembly->bytes, sprite->bytes + 6, 6);
-		if (sprite->frames)
-			pointer(assembly, sprite->frames, "Frames");
+		if (sprite->pictures)
+			pointer(assembly, sprite->pictures, "Pictures");
 		else
 			word(&assembly->bytes, 0);
 		if (sprite->animations)
@@ -363,11 +363,11 @@ scripts(Sprite *sprite, Assembly *assembly)
 }
 
 /*
- * Frame pointers follow the editable list, while payloads follow sheet order.
- * Arena compression sees the encoded bytes of all preceding frames.
+ * Picture pointers follow the editable list, while payloads follow sheet order.
+ * Arena compression sees the encoded bytes of all preceding pictures.
  */
 static void
-frames(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
+spritePictures(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 {
 	char *name = formatString("%s.png", sprite->files);
 	// pictures.tsv draws a sprite with another sprite's picture.
@@ -387,14 +387,14 @@ frames(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 	free(png.data);
 	size_t width = sprite->bytes[0], height = sprite->bytes[1];
 	if (!width || !height || image.width != width || image.height % height)
-		fail("sprite frames have wrong dimensions");
+		fail("sprite pictures have wrong dimensions");
 	size_t count = image.height / height, size = width * height;
-	label(list, sprite->name, "Frames");
-	for (size_t i = 0; i < (sprite->hasFrames ? sprite->frameList.len : count);
+	label(list, sprite->name, "Pictures");
+	for (size_t i = 0; i < (sprite->hasPictures ? sprite->pictureList.len : count);
 		 i++)
 	{
 		const char *value =
-			sprite->hasFrames ? sprite->frameList.items[i] : NULL;
+			sprite->hasPictures ? sprite->pictureList.items[i] : NULL;
 		if (value && !strcmp(value, "-"))
 		{
 			word(&list->bytes, 0);
@@ -402,18 +402,18 @@ frames(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 		}
 		size_t n = value ? number(value, 10, SIZE_MAX) : i;
 		if (n >= count)
-			fail("frame list exceeds sprite sheet");
-		char *item = formatString("Frame%zu", n);
+			fail("picture list exceeds sprite sheet");
+		char *item = formatString("Picture%zu", n);
 		pointer(list, sprite->name, item);
 		free(item);
 	}
 	Buffer arena = {0};
 	for (size_t i = 0; i < count; i++)
 	{
-		char *item = formatString("Frame%zu", i);
+		char *item = formatString("Picture%zu", i);
 		label(data, sprite->name, item);
 		free(item);
-		Buffer frame = {image.pixels.data + i * size, size, size}, stream = {0};
+		Buffer picture = {image.pixels.data + i * size, size, size}, stream = {0};
 		bool empty = false;
 		for (size_t j = 0; j < sprite->empty.len; j++)
 			if (number(sprite->empty.items[j], 10, SIZE_MAX) == i)
@@ -421,28 +421,28 @@ frames(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 		if (empty)
 		{
 			if (sprite->bytes[10] != 3)
-				fail("only an arena frame can be empty");
+				fail("only an arena picture can be empty");
 			for (size_t p = 0; p < size; p++)
-				if (frame.data[p])
-					fail("empty arena frame is inked");
+				if (picture.data[p])
+					fail("empty arena picture is inked");
 		}
 		switch (sprite->bytes[10])
 		{
 		case 0:
-			stream = compressZeros(&frame);
+			stream = compressZeros(&picture);
 			break;
 		case 1:
-			stream = compressLz(&frame, &frame, "tagged", packer);
+			stream = compressLz(&picture, &picture, "tagged", packer);
 			break;
 		case 3:
 		{
-			Buffer decoded = empty ? (Buffer){0} : compressZeros(&frame);
+			Buffer decoded = empty ? (Buffer){0} : compressZeros(&picture);
 			stream = compressArena(&decoded, &arena);
 			free(decoded.data);
 			break;
 		}
 		default:
-			fail("sprite codec has no frames");
+			fail("sprite codec has no pictures");
 		}
 		append(&arena, stream.data, stream.len);
 		append(&data->bytes, stream.data, stream.len);
@@ -460,13 +460,13 @@ freeBank(Bank *bank)
 		Sprite *sprite = bank->sprites + i;
 		free(sprite->name);
 		free(sprite->files);
-		free(sprite->frames);
+		free(sprite->pictures);
 		free(sprite->animations);
 		for (size_t j = 0; j < sprite->scriptCount; j++)
 			free(sprite->scripts[j].data);
 		free(sprite->scripts);
 		freeStrings(&sprite->animationList);
-		freeStrings(&sprite->frameList);
+		freeStrings(&sprite->pictureList);
 		freeStrings(&sprite->empty);
 	}
 	free(bank->sprites);
@@ -476,7 +476,7 @@ freeBank(Bank *bank)
 
 /*
  * The flat layout groups tables and payloads. The sectioned layout follows
- * layout.tsv and emits each frame list after that sprite's frame payload.
+ * layout.tsv and emits each picture list after that sprite's picture payload.
  */
 Buffer
 spriteSource(const char *input, bool blocks)
@@ -492,10 +492,10 @@ spriteSource(const char *input, bool blocks)
 				animationList(&bank, bank.sprites + i, &data);
 		Assembly images = {0};
 		for (size_t i = 0; i < bank.count; i++)
-			if (owns(bank.sprites + i, bank.sprites[i].frames))
+			if (owns(bank.sprites + i, bank.sprites[i].pictures))
 			{
 				Assembly list = {0}, image = {0};
-				frames(&bank, bank.sprites + i, &list, &image);
+				spritePictures(&bank, bank.sprites + i, &list, &image);
 				appendAssembly(&data, &list);
 				appendAssembly(&images, &image);
 				freeAssembly(&list);
@@ -540,10 +540,10 @@ spriteSource(const char *input, bool blocks)
 		for (size_t i = 0; i < order.len; i++)
 		{
 			Sprite *s = find(&bank, order.items[i]);
-			if (!owns(s, s->frames))
+			if (!owns(s, s->pictures))
 				continue;
 			Assembly list = {0}, image = {0};
-			frames(&bank, s, &list, &image);
+			spritePictures(&bank, s, &list, &image);
 			appendAssembly(&data, &image);
 			alignAssembly(&data, 4, 0);
 			appendAssembly(&data, &list);

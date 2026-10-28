@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_ChimeraSprites
 Monster_ChimeraSprites:
-	.incbin "games/tla/src/graphics/monster/chimera.frames.lz"
+	.incbin "games/tla/src/graphics/monster/chimera.pictures.lz"

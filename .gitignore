@@ -19,11 +19,11 @@ tools/out/
 /games/**/*.8bpp*
 /games/**/*.bitmap
 /games/**/*.font
-/games/**/*.frames
 /games/**/*.gbapal
 /games/**/*.glyphs
 /games/**/*.icon4
 /games/**/*.icons
+/games/**/*.pictures
 /games/**/*.icons4
 /games/**/*.strips
 /games/**/*.blocks

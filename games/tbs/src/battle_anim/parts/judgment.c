@@ -437,7 +437,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
       }
     }
 
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // The sweep's setup: replace the formation with 16 debris sprites in three
@@ -1014,7 +1014,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
       gBgScroll[1].y = shake;
     }
 
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // The finish: release the debris sprites, then the canvas and its blitter.

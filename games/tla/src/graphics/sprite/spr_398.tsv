@@ -1,4 +1,4 @@
-anim	kind 17, frame 0 50, hold
-anim	kind 17, frame 0 20, loop
-anim	kind 17, frame 1 20, frame 2 20, frame 3 20, loop
-anim	kind 17, frame 3 20, frame 2 20, frame 1 20, loop
+anim	kind 17, picture 0 50, hold
+anim	kind 17, picture 0 20, loop
+anim	kind 17, picture 1 20, picture 2 20, picture 3 20, loop
+anim	kind 17, picture 3 20, picture 2 20, picture 1 20, loop

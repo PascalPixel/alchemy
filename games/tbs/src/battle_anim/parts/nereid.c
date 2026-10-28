@@ -262,7 +262,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *args) {
           }
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
     }
 
     // The impact burst builds its own blitters and transfer.

@@ -1,22 +1,22 @@
-anim	frame 0 5, hold
-anim	frame 0 121, frame 5 6, frame 0 61, frame 5 6, frame 0 61, frame 5 6, frame 0 16, frame 15 61, loop
-anim	frame 50 8, frame 25 7, frame 30 7, frame 35 8, frame 40 7, frame 45 7, loop
-anim	frame 10 11, play 1
-anim	frame 15 7, frame 0 4, frame 20 7, frame 0 4, frame 15 7, frame 0 4, frame 20 7, frame 0 4, play 1
-anim	frame 50 5, frame 25 5, frame 30 5, frame 35 5, frame 40 5, frame 45 5, loop
-anim	kind 17, frame 58 16, hold
-anim	frame 0 121, hold
-anim	frame 50 15, frame 25 13, frame 30 13, frame 35 15, frame 40 13, frame 45 13, hold
+anim	picture 0 5, hold
+anim	picture 0 121, picture 5 6, picture 0 61, picture 5 6, picture 0 61, picture 5 6, picture 0 16, picture 15 61, loop
+anim	picture 50 8, picture 25 7, picture 30 7, picture 35 8, picture 40 7, picture 45 7, loop
+anim	picture 10 11, play 1
+anim	picture 15 7, picture 0 4, picture 20 7, picture 0 4, picture 15 7, picture 0 4, picture 20 7, picture 0 4, play 1
+anim	picture 50 5, picture 25 5, picture 30 5, picture 35 5, picture 40 5, picture 45 5, loop
+anim	kind 17, picture 58 16, hold
+anim	picture 0 121, hold
+anim	picture 50 15, picture 25 13, picture 30 13, picture 35 15, picture 40 13, picture 45 13, hold
 anim	play 1
-anim	kind 17, frame 55 8, frame 56 10, frame 57 8, frame 56 10, loop
-anim	kind 17, frame 57 8, frame 58 16, hold
-anim	kind 17, frame 90 241, frame 91 91, frame 90 61, frame 92 91, frame 90 61, frame 91 46, frame 90 16, frame 92 91, loop
-anim	kind 3, frame 64 16, frame 59 16, hold
-anim	kind 17, frame 93 16, hold
-anim	frame 69 5, frame 74 25, frame 79 9, frame 84 16, hold
-anim	kind 17, frame 89 16, hold
-anim	frame 69 5, frame 74 25, hold
-anim	frame 74 3, frame 79 9, frame 84 16, hold
-anim	frame 90 241, hold
-anim	frame 50 5, frame 25 5, frame 30 5, frame 35 5, frame 40 5, frame 45 5, loop
+anim	kind 17, picture 55 8, picture 56 10, picture 57 8, picture 56 10, loop
+anim	kind 17, picture 57 8, picture 58 16, hold
+anim	kind 17, picture 90 241, picture 91 91, picture 90 61, picture 92 91, picture 90 61, picture 91 46, picture 90 16, picture 92 91, loop
+anim	kind 3, picture 64 16, picture 59 16, hold
+anim	kind 17, picture 93 16, hold
+anim	picture 69 5, picture 74 25, picture 79 9, picture 84 16, hold
+anim	kind 17, picture 89 16, hold
+anim	picture 69 5, picture 74 25, hold
+anim	picture 74 3, picture 79 9, picture 84 16, hold
+anim	picture 90 241, hold
+anim	picture 50 5, picture 25 5, picture 30 5, picture 35 5, picture 40 5, picture 45 5, loop
 animations	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 15 15 16 16 17 18 19 19 19 19 19 19 19 20 20

@@ -17,14 +17,14 @@
 #include "songs.h"
 
 enum {
-  VAULT_DOOR_OPENING_FRAME_COLUMN = 42,
-  VAULT_DOOR_OPEN_FRAME_COLUMN = 40,
+  VAULT_DOOR_OPENING_COLUMN = 42,
+  VAULT_DOOR_OPEN_COLUMN = 40,
   VAULT_DOOR_HALF_SIZE = 2
 };
 
 /// The two square halves are stacked in the source layout and drawn side by
 /// side.
-static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
+static inline void Vault_DrawDoorway(s32 sourceColumn) {
   MapGrid_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
                       VAULT_DOOR_HALF_SIZE);
   MapGrid_CopyCellsTo(sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE,
@@ -39,9 +39,9 @@ static void Vault_OpenDoorwayAndEnter(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_THUMP);
-  Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
+  Vault_DrawDoorway(VAULT_DOOR_OPENING_COLUMN);
   Event_WaitFrames(4);
-  Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
+  Vault_DrawDoorway(VAULT_DOOR_OPEN_COLUMN);
   Event_WaitFrames(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

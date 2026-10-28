@@ -60,7 +60,7 @@ void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
   }
 }
 
-void MenuIcon_SetFrame(s32 index, s32 frame) {
+void MenuIcon_SetPicture(s32 index, s32 frame) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
   /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */

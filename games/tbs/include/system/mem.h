@@ -37,7 +37,7 @@ static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
 extern u8 gEwramHeap[];
 /// The IWRAM heap's space, from 0x03002000 up to Ram_IwramHeapEnd. In battle
 /// it runs into the sound driver's mixer: with the heap at 0x0300667c,
-/// Sprite_ComposeFrame takes a 4 KB pixel buffer, 1,660 bytes of it over
+/// Sprite_ComposePicture takes a 4 KB pixel buffer, 1,660 bytes of it over
 /// SoundMainRAM, and clearing it overwrites the mixer. Nothing needs the mixer
 /// there: the VBlank handler mixes through Mixer_Enter and the resident code
 /// at IwramSoundMixEntry, and through a whole battle the code at 0x03007000

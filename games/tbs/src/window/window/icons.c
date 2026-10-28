@@ -29,7 +29,7 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
   GlyphTransfer *work;
 
   work = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  work->encoded = gIcon_FramePointerTable[frameIcon];
+  work->encoded = gIcon_PicturePointerTable[frameIcon];
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 0);
@@ -67,9 +67,9 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   if (glyph >= Icon_CountItemIcons())
     glyph = 0;
 
-  // Frame 2 is the icon frame items and Psynergy share.
+  // Picture 2 is the icon picture items and Psynergy share.
   if (withBase != 0) {
-    work->encoded = gIcon_FramePointerTable[2];
+    work->encoded = gIcon_PicturePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -120,7 +120,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   if (work == NULL)
     return -1;
   if (layers & ICON_FRAME) {
-    work->encoded = gIcon_FramePointerTable[2];
+    work->encoded = gIcon_PicturePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -280,7 +280,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gIcon_FramePointerTable[2];
+    work->encoded = gIcon_PicturePointerTable[2];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);

@@ -313,7 +313,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     sprite->fullColor = 0;
     sprite->shape = 1;
     sprite->size = 2;
-    sprite->firstEntry->frame = zero;
+    sprite->firstEntry->picture = zero;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.

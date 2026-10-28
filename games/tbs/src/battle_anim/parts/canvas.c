@@ -65,7 +65,7 @@ void BattleAnim_WipeCanvas(s32 direction, s32 fill) {
                      (wipePosition & 7)] = 1 - fill;
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
     } while (front <= 256);
   } else {
     s32 front;
@@ -88,7 +88,7 @@ void BattleAnim_WipeCanvas(s32 direction, s32 fill) {
                      (x & 7)] = 1 - fill;
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
     } while (front <= 191);
   }
 }

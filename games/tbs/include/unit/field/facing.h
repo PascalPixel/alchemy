@@ -3,15 +3,15 @@
 
 #include "types.h"
 
-extern const u8 gAnimationFacing_OneFrame[16];
+extern const u8 gAnimationFacing_OnePicture[16];
 extern const u8 gAnimationFacing_FrontBackSwapped[8];
 extern const u8 gAnimationFacing_FrontBack[8];
-extern const u8 gAnimationFacing_ThreeFrames[16];
-extern const u8 gAnimationFacing_FiveFrames[16];
-extern const u8 gAnimationFacing_EightFrames[8];
-extern const u8 gAnimationFacing_EightFramesMirrored[8];
-extern const u8 gAnimationFacing_FourFrames[64];
-extern const u8 gAnimationFacing_SixFrames[64];
+extern const u8 gAnimationFacing_ThreePictures[16];
+extern const u8 gAnimationFacing_FivePictures[16];
+extern const u8 gAnimationFacing_EightPictures[8];
+extern const u8 gAnimationFacing_EightPicturesMirrored[8];
+extern const u8 gAnimationFacing_FourPictures[64];
+extern const u8 gAnimationFacing_SixPictures[64];
 
 extern const u8 gSpriteDissolve_PixelOrder[64];
 extern const u16 gSpriteDissolve_PixelOrderTail;

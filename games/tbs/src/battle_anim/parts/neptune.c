@@ -465,7 +465,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
       blit[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
   // The second stage: restore the battle background, the scale tasks and

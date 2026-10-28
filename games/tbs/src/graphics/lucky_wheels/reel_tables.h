@@ -33,13 +33,13 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #endif
 };
 
-/// The positions of the frame's fourteen sprites, in screen pixels. Lucky
+/// The positions of the machine's fourteen sprites, in screen pixels. Lucky
 /// Wheels gives the first four tile 0x4e0 and the rest 0x4e8
 /// (overworld/lucky_wheels.c).
-const u8 gLuckyWheels_FrameSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
-                                        200, 28, 28,  208, 208, 219, 219};
-const u8 gLuckyWheels_FrameSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
-                                        104, 118, 140, 118, 140, 6,   108};
+const u8 gLuckyWheels_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
+                                          200, 28, 28,  208, 208, 219, 219};
+const u8 gLuckyWheels_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
+                                          104, 118, 140, 118, 140, 6,   108};
 
 /// The advance of each title letter, in pixels, from LUCKY_WHEELS_TITLE_X. The
 /// last letter's advance is never used; Japanese leaves it out (0).

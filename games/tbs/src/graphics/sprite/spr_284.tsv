@@ -1,9 +1,9 @@
-anim	frame 0 1, frame 1 1, frame 2 1, frame 3 1, frame 4 1, frame 5 1, frame 6 1, frame 7 1, blank 10, hold
-anim	frame 0 1, frame 1 1, frame 2 1, frame 3 1, frame 4 1, frame 5 1, frame 6 1, frame 7 1, hold
-anim	frame 3 1, frame 4 1, frame 5 1, frame 6 1, frame 7 1, blank 1, hold
+anim	picture 0 1, picture 1 1, picture 2 1, picture 3 1, picture 4 1, picture 5 1, picture 6 1, picture 7 1, blank 10, hold
+anim	picture 0 1, picture 1 1, picture 2 1, picture 3 1, picture 4 1, picture 5 1, picture 6 1, picture 7 1, hold
+anim	picture 3 1, picture 4 1, picture 5 1, picture 6 1, picture 7 1, blank 1, hold
 anim	blank 1, hold
-anim	frame 7 1, frame 6 1, frame 5 1, frame 4 1, frame 3 1, frame 2 1, frame 1 1, frame 2 1, frame 1 1, frame 2 1, frame 3 1, frame 2 1, frame 3 1, frame 4 1, frame 3 1, frame 4 1, frame 5 1, frame 4 1, frame 5 1, frame 6 1, frame 5 1, frame 6 1, frame 7 1, frame 6 1, frame 7 1, blank 1, hold
-anim	frame 7 4, frame 5 2, frame 5 2, frame 5 2, frame 5 2, frame 5 2, frame 7 2, blank 1, hold
-anim	frame 7 1, frame 6 1, frame 5 1, frame 4 1, frame 3 1, frame 2 1, frame 1 1, frame 0 1, play 7
-anim	frame 0 2, frame 1 2, loop
-anim	frame 4 2, hold
+anim	picture 7 1, picture 6 1, picture 5 1, picture 4 1, picture 3 1, picture 2 1, picture 1 1, picture 2 1, picture 1 1, picture 2 1, picture 3 1, picture 2 1, picture 3 1, picture 4 1, picture 3 1, picture 4 1, picture 5 1, picture 4 1, picture 5 1, picture 6 1, picture 5 1, picture 6 1, picture 7 1, picture 6 1, picture 7 1, blank 1, hold
+anim	picture 7 4, picture 5 2, picture 5 2, picture 5 2, picture 5 2, picture 5 2, picture 7 2, blank 1, hold
+anim	picture 7 1, picture 6 1, picture 5 1, picture 4 1, picture 3 1, picture 2 1, picture 1 1, picture 0 1, play 7
+anim	picture 0 2, picture 1 2, loop
+anim	picture 4 2, hold

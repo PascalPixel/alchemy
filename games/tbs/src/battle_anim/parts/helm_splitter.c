@@ -430,7 +430,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
     if (frame <= 35)
       BattleAnim_PlaceFormationObjects(formation, orgX, y);
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // Clear the canvas in VRAM (character block 1), so nothing is left on BG2.

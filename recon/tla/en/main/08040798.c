@@ -22,7 +22,7 @@ struct WorkspaceScreen {
   struct RenderOutput *icons[6];
 };
 
-extern const s8 gMenu_WorkspaceIconFrames[];
+extern const s8 gMenu_WorkspaceIcons[];
 
 s32 GameFlag_Test(s32 flag);
 void Func_080405dc(void);
@@ -33,7 +33,7 @@ struct RenderOutput *RenderResource_CreatePair(s32 group,
                                                s32 x, s32 y);
 void Func_08045018(struct RenderOutput *pair);
 void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
+void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
@@ -55,7 +55,7 @@ s32 Func_08040798(s32 selected) {
   s32 result;
   struct RenderOutput *icon;
   struct WorkspaceScreen *work;
-  const s8 *iconFrames;
+  const s8 *pauseIcons;
   s32 resourceIndex;
   s32 top;
   s32 x;
@@ -83,7 +83,7 @@ s32 Func_08040798(s32 selected) {
       i = 0;
       if (i < rows) {
         j = first;
-        iconFrames = gMenu_WorkspaceIconFrames;
+        pauseIcons = gMenu_WorkspaceIcons;
         do {
           icon = work->icons[i];
           icon->sentinel = 251;
@@ -92,7 +92,7 @@ s32 Func_08040798(s32 selected) {
           dimmed = 0;
           if (i != work->page)
             dimmed = 1;
-          RenderResource_LoadFrame(*(s8 *)(j + (s32)iconFrames), resourceIndex,
+          RenderResource_LoadCommandIcon(*(s8 *)(j + (s32)pauseIcons), resourceIndex,
                                    dimmed);
           i++;
           j++;

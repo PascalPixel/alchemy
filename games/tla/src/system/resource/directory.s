@@ -139,7 +139,7 @@ Resource_DirectoryTable:
 	resource , Ending_ReunionPicture
 	resource , Ending_SunsetPlainPicture
 	resource , Ending_TheEndPicture
-	resource SlotsFramePicture, Slots_FramePicture
+	resource SlotsMachinePicture, Slots_MachinePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpotBanner, Slots_JackpotBanner
 	resource , LuckyDice_Board
@@ -471,14 +471,14 @@ Resource_DirectoryTable:
 	resource , Field_WalkPathI
 	resource , Field_WalkPathJ
 	resource LetteringBanner, Lettering_Banner
-	resource ShopCursorFrames, Shop_CursorFrameA
-	resource , Shop_CursorFrameB
-	resource , Shop_CursorFrameC
-	resource , Shop_CursorFrameD
-	resource , Shop_CursorFrameE
-	resource , Shop_CursorFrameF
-	resource , Shop_CursorFrameG
-	resource , Shop_CursorFrameH
+	resource ShopCursorPictures, Shop_CursorPictureA
+	resource , Shop_CursorPictureB
+	resource , Shop_CursorPictureC
+	resource , Shop_CursorPictureD
+	resource , Shop_CursorPictureE
+	resource , Shop_CursorPictureF
+	resource , Shop_CursorPictureG
+	resource , Shop_CursorPictureH
 	resource WindowFrameFlash, Ui_WindowFrameFlash
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons

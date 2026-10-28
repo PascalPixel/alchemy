@@ -1,4 +1,4 @@
-sprite	width	height	scale	draw	adjust_x	adjust_y	box_x	box_y	codec	frames	animations
+sprite	width	height	scale	draw	adjust_x	adjust_y	box_x	box_y	codec	pictures	animations
 SPR_000	32	32	0x100	5	0	2	20	16	3	SPR_000	SPR_000
 SPR_001	32	32	0x100	5	0	2	20	16	3	SPR_001	SPR_001
 SPR_002	32	32	0x100	5	0	2	20	16	3	SPR_002	SPR_002

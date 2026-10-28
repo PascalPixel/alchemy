@@ -46,7 +46,7 @@ void Animation_WaitForTrackEnd(struct AnimObject *object) {
   }
 }
 
-void Map_RenderAnimatedTileFrame(u8 *object, u32 position) {
+void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
   u16 *destination;
   s32 count;
   u32 row;
@@ -85,21 +85,21 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position) {
   }
 }
 
-void Map_RenderAnimatedTileFramesForObject(u8 *object) {
+void Map_RenderAnimatedTilePicturesForObject(u8 *object) {
   u32 pos;
 
   pos = 0;
   do {
-    Map_RenderAnimatedTileFrame(object, pos);
-    Map_RenderAnimatedTileFrame(object, pos + 1);
-    Map_RenderAnimatedTileFrame(object, pos + 2);
-    Map_RenderAnimatedTileFrame(object, pos + 3);
+    Map_RenderAnimatedTilePicture(object, pos);
+    Map_RenderAnimatedTilePicture(object, pos + 1);
+    Map_RenderAnimatedTilePicture(object, pos + 2);
+    Map_RenderAnimatedTilePicture(object, pos + 3);
     pos += 4;
     WaitFrames(1);
   } while (pos <= 0x7f);
 }
 
-void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
+void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
   u8 **top;
   u8 **p;
   s32 n;
@@ -120,11 +120,11 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
       pos3 = pos + 3;
       n = cnt;
       do {
-        Map_RenderAnimatedTileFrame(*p, pos);
-        Map_RenderAnimatedTileFrame(*p, pos1);
-        Map_RenderAnimatedTileFrame(*p, pos2);
+        Map_RenderAnimatedTilePicture(*p, pos);
+        Map_RenderAnimatedTilePicture(*p, pos1);
+        Map_RenderAnimatedTilePicture(*p, pos2);
         n -= 1;
-        Map_RenderAnimatedTileFrame(*p++, pos3);
+        Map_RenderAnimatedTilePicture(*p++, pos3);
       } while (n != 0);
     }
     WaitFrames(1U);

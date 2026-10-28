@@ -300,7 +300,7 @@ void FieldMotes_Start(void) {
 /// Task: the sparkles. Now and then (1 frame in 256) a sparkle
 /// appears on the ground within 128 pixels of the leader, and up to three more
 /// follow on the same spot, each 4 frames shorter. Each plays
-/// gFieldEffect_SparkleFrames from the row its timer starts at down to row 0,
+/// gFieldEffect_SparklePictures from the row its timer starts at down to row 0,
 /// coming down onto the spot, flipping every other frame. No new bursts start
 /// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
 /// Sanctum's eruption event starts them (sol_sanctum_eruption.c).
@@ -342,7 +342,7 @@ void FieldEffect_UpdateSparkles(void) {
       cameraZ = camera[1];
       if (GameFlag_GetFar(FLAG_WEATHER_HELD) != 0)
         sparkle->timer++;
-      frame = (const u16 *)&gFieldEffect_SparkleFrames[sparkle->timer >> 1];
+      frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
       x = ((sparkle->positionX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);

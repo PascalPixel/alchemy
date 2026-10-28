@@ -83,7 +83,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0x480);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateDissolve, 0x480);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     state->start = 0;

@@ -1,17 +1,17 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
-@ The three frames
-	.global gIcon_FramePointerTable
-gIcon_FramePointerTable:
-	.4byte Icon_Frame0, Icon_Frame1, Icon_Frame2
+@ The three pictures
+	.global gIcon_PicturePointerTable
+gIcon_PicturePointerTable:
+	.4byte Icon_Picture0, Icon_Picture1, Icon_Picture2
 	.4byte -1
-Icon_Frame0:
-	.incbin "games/tbs/src/graphics/ui/marks/frame_0.icon4"
-Icon_Frame1:
-	.incbin "games/tbs/src/graphics/ui/marks/frame_1.icon4"
-Icon_Frame2:
-	.incbin "games/tbs/src/graphics/ui/marks/frame_2.icon4"
+Icon_Picture0:
+	.incbin "games/tbs/src/graphics/ui/marks/picture_0.icon4"
+Icon_Picture1:
+	.incbin "games/tbs/src/graphics/ui/marks/picture_1.icon4"
+Icon_Picture2:
+	.incbin "games/tbs/src/graphics/ui/marks/picture_2.icon4"
 	.balign 4, 0
 
 @ The equipped, cross and phi marks

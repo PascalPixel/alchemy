@@ -241,7 +241,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *args) {
     if (frame == CONDEMN_BOUNCE_FRAME) {
       GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity = 0xAB85;
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   // Finish: the tasks, then the battle background reloaded into
   // character blocks 2 and 3, its palettes darkened to level 24, as

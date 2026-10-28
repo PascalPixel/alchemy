@@ -20,7 +20,7 @@
 #include "animspr.h"
 
 extern u8 gWorldMapPackedTilesB[];
-extern u8 gWorldMapPackedFramesB[];
+extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
 void WaitFrames(s32 frames);
@@ -42,7 +42,7 @@ void Func_020042e0(void) {
 
   Func_02004aa8(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
-  Func_02004aa8(gWorldMapPackedFramesB, frames);
+  Func_02004aa8(gWorldMapPackedPicturesB, frames);
   ime = &REG_IME;
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06000000, (u32)buffer, 0x84000400);

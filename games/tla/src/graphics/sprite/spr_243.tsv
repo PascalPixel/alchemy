@@ -1,4 +1,4 @@
-anim	frame 12 7, hold
-anim	frame 0 26, frame 3 23, frame 6 26, frame 3 23, loop
-anim	frame 9 16, frame 12 13, frame 15 13, frame 12 13, loop
-anim	frame 18 8, frame 21 9, frame 24 8, loop
+anim	picture 12 7, hold
+anim	picture 0 26, picture 3 23, picture 6 26, picture 3 23, loop
+anim	picture 9 16, picture 12 13, picture 15 13, picture 12 13, loop
+anim	picture 18 8, picture 21 9, picture 24 8, loop

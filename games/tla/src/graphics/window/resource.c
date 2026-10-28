@@ -17,7 +17,7 @@
 
 extern char ResourceId_CommandIcons;
 
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
+void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
   s32 size = 1024;
   void *buffer = Runtime_AllocateBlock(56, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -31,7 +31,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
   }
 }
 
-struct RenderOutput *RenderResource_CreateFrame(s32 arg0, s32 arg1,
+struct RenderOutput *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
                                                 struct RenderInput *arg2,
                                                 s32 arg3, s32 arg4) {
   s32 index;
@@ -40,7 +40,7 @@ struct RenderOutput *RenderResource_CreateFrame(s32 arg0, s32 arg1,
   index = Resource_FindFreeEntry();
   entity = NULL;
   if (index != 0x60) {
-    RenderResource_LoadFrame(arg0, index, arg1);
+    RenderResource_LoadCommandIcon(arg0, index, arg1);
     entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
     entity->oam.palette256 = 1;
     entity->sentinel = 0xfb;

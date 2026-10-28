@@ -1,5 +1,5 @@
 anim	blank 100, hold
-anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 4, frame 6 5, play 0
-anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, loop
-anim	frame 0 90, loop
-anim	frame 0 6, loop
+anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 4, picture 6 5, play 0
+anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, loop
+anim	picture 0 90, loop
+anim	picture 0 6, loop

@@ -846,20 +846,20 @@ s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   /* FAKEMATCH(temporary): the mask in a variable and the frame read into
    * another, so 255 stays in a register across the calls and is or-ed in;
    * as child->frame |= 0xff, 10 of 46 instructions differ in tbs-en. */
-  u8 lastFrameMask = 0xff;
-  u8 previousFrame;
+  u8 lastPictureMask = 0xff;
+  u8 previousPicture;
 
   while ((record = GetMotionRecord(actor, recordIndex)) != NULL) {
     children = &record->entries[1];
     child = record->entries[0];
-    previousFrame = child->frame;
-    child->frame = previousFrame | lastFrameMask;
+    previousPicture = child->picture;
+    child->picture = previousPicture | lastPictureMask;
     entryCount = record->count;
     child->colorMode = colorMode;
     for (childIndex = 1; childIndex < entryCount; childIndex++) {
       child = *children++;
       child->colorMode = 0;
-      child->frame = 0xff;
+      child->picture = 0xff;
     }
     recordIndex++;
   }
@@ -1102,7 +1102,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
       entry = record->entries[0];
       records[recordCount] = record;
       entry->colorMode = SPRITE_COLOR_GREY;
-      entry->frame = 0xff;
+      entry->picture = 0xff;
       recordCount++;
     }
     WaitFrames(4);

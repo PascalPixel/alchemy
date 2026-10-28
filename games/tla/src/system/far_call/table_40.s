@@ -8,7 +8,7 @@ Func_080f8090:
 	.global Func_080f8098
 	.thumb_func
 Func_080f8098:
-	overlay_veneer MenuIcon_SetFrame
+	overlay_veneer MenuIcon_SetPicture
 	.global Func_080f80a0
 	.thumb_func
 Func_080f80a0:

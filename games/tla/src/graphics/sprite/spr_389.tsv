@@ -1,6 +1,6 @@
-anim	frame 0 64, hold
+anim	picture 0 64, hold
 anim	blank 64, hold
-anim	frame 1 64, hold
-anim	frame 0 64, hold
+anim	picture 1 64, hold
+anim	picture 0 64, hold
 anim	blank 64, hold
 anim	blank 64, hold

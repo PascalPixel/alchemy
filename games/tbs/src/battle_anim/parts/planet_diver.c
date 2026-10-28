@@ -497,7 +497,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *args) {
         member++;
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   // Finish: both tasks before the blocks they read.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

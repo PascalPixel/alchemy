@@ -111,7 +111,7 @@ void WaitFrames(s32 frames);
 
 extern char ResourceId_FarCall00C;
 extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_SlotsFramePicture;
+extern char ResourceId_SlotsMachinePicture;
 extern char ResourceId_SlotsIcons;
 extern char ResourceId_SlotsJackpotBanner;
 extern char ResourceId_JupiterDjinnSheet;
@@ -169,7 +169,7 @@ void ReelGame_Run(void) {
     }
   }
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
-  entry = Resource_GetTableEntry((s32)&ResourceId_SlotsFramePicture);
+  entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
   Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
   Resource_DecodeType01(entry, tiles);

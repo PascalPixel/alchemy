@@ -1,5 +1,5 @@
-anim	frame 0 15, frame 3 15, frame 6 15, frame 3 15, loop
-anim	frame 0 15, frame 3 15, frame 6 15, frame 3 15, loop
-anim	frame 0 15, frame 3 15, frame 6 15, frame 3 15, loop
-anim	frame 0 15, frame 3 15, frame 6 15, frame 3 15, loop
-anim	frame 0 15, frame 3 15, frame 6 15, frame 3 15, loop
+anim	picture 0 15, picture 3 15, picture 6 15, picture 3 15, loop
+anim	picture 0 15, picture 3 15, picture 6 15, picture 3 15, loop
+anim	picture 0 15, picture 3 15, picture 6 15, picture 3 15, loop
+anim	picture 0 15, picture 3 15, picture 6 15, picture 3 15, loop
+anim	picture 0 15, picture 3 15, picture 6 15, picture 3 15, loop

@@ -9,7 +9,7 @@
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
 /// clear a pixel. obj is the sprite (struct Sprite), pos the step
 /// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
-/// functions below and, as render_animated_tile_frameFar, by the battle's
+/// functions below and, as SpriteDissolve_StepFar, by the battle's
 /// playback (battle/battle/playback.c).
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;

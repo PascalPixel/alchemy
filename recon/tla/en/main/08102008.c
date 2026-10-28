@@ -102,7 +102,7 @@ void UiPanel_SetRectPalette(s32 panel, s32 x, s32 y, s32 width, s32 height,
 void Menu_SetPageArrowsB(s32 index, s32 count);
 s32 Func_08101a04(u32 entry);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
-void MenuIcon_SetFrame(s32 index, s32 frame);
+void MenuIcon_SetPicture(s32 index, s32 frame);
 void Func_08105350(s32 index, s32 scale);
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation);
 void *Unit_Get(s32 owner);
@@ -285,7 +285,7 @@ s32 Func_08102008(s32 mode) {
         }
         MenuIcon_SetPosition(mode, memberColumn % 4 * 56 + 48,
                              mode == 0 ? 62 : 54);
-        MenuIcon_SetFrame(mode, frame);
+        MenuIcon_SetPicture(mode, frame);
         if (redraw & 2)
           Func_08105350(mode, 0);
         MenuIcon_ReplaceObject(mode, element, animation);
@@ -722,6 +722,6 @@ s32 Func_08102008(s32 mode) {
     menu->pairMember[mode] = DJINN_OWNER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
-  MenuIcon_SetFrame(mode, 0x4000);
+  MenuIcon_SetPicture(mode, 0x4000);
   return result;
 }

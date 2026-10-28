@@ -1,3 +1,3 @@
-anim	frame 0 100, hold
-anim	frame 0 10, frame 1 10, frame 2 10, frame 3 10, frame 4 10, frame 5 10, loop
-anim	frame 6 10, play 2
+anim	picture 0 100, hold
+anim	picture 0 10, picture 1 10, picture 2 10, picture 3 10, picture 4 10, picture 5 10, loop
+anim	picture 6 10, play 2

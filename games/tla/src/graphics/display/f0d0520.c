@@ -50,7 +50,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0x480);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateDissolve, 0x480);
     state->start = 32;
     state->end = 64;
     state->duration = frames;

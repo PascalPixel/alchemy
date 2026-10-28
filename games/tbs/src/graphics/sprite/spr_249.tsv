@@ -1,2 +1,2 @@
-anim	frame 0 10, hold
-anim	frame 0 8, frame 1 8, frame 2 8, frame 3 8, frame 4 8, frame 5 8, loop
+anim	picture 0 10, hold
+anim	picture 0 8, picture 1 8, picture 2 8, picture 3 8, picture 4 8, picture 5 8, loop

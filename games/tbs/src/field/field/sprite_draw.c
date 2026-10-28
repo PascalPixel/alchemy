@@ -4,29 +4,29 @@
 
 #include "../field_internal.h"
 
-/// Draws one anim's frame into a sprite's pixel buffer (Render_DecodeFrame,
+/// Draws one anim's picture into a sprite's pixel buffer (Render_DecodePicture,
 /// run from RAM).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 /// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-/// Advances a sprite's anims by one frame, picks each anim's frame
-/// for the facing dir, and when any frame changed redraws the sprite: the
+/// Advances a sprite's anims by one frame, picks each anim's picture
+/// for the facing dir, and when any picture changed redraws the sprite: the
 /// anims composed by priority into one pixel buffer, an optional outline,
 /// and the result uploaded to the sprite's VRAM tiles. Returns 1 when anim
-/// 0's frame for this facing is drawn mirrored.
+/// 0's picture for this facing is drawn mirrored.
 ///
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
 /// and Render_PlaceProjectedSprite. Writes the anims' script position,
-/// timer and frame, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
+/// timer and picture, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
 /// and the ActorSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
-s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
+s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ActorSystemWork *system;
-  SpriteDrawFn decodeFrame;
+  SpriteDrawFn decodePicture;
   s32 decoderWasLoaded;
   struct SpriteAnim *layer;
   void *code;
@@ -39,7 +39,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   s32 drawCount;
   u32 key;
   s32 arg;
-  s32 frame;
+  s32 picture;
   u32 facing;
   s32 tile;
 
@@ -52,31 +52,31 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   // cell. The native form derives both cell addresses from this one base; using
   // HEAP_SLOT_BLOCK directly changes allocation and adds a literal-pool entry.
 #ifdef UBFIX
-  decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
+  decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-  decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
-                               gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                 HEAP_SLOT_ACTOR_SYSTEM];
+  decodePicture = (SpriteDrawFn)(*(void *(*)[]) &
+                                 gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                   HEAP_SLOT_ACTOR_SYSTEM];
 #endif
-  if (decodeFrame == 0) {
-    code =
-        AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, (s32)Render_DecodeFrameCodeSize);
-    Dma_Set(Render_DecodeFrame, code,
-            (((u32)gRender_DecodeFrameEnd - (u32)Render_DecodeFrame) >> 2) |
+  if (decodePicture == 0) {
+    code = AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH,
+                         (s32)Render_DecodePictureCodeSize);
+    Dma_Set(Render_DecodePicture, code,
+            (((u32)gRender_DecodePictureEnd - (u32)Render_DecodePicture) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
 #ifdef UBFIX
-    decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
+    decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-    decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
-                                 gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                   HEAP_SLOT_ACTOR_SYSTEM];
+    decodePicture = (SpriteDrawFn)(*(void *(*)[]) &
+                                   gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                     HEAP_SLOT_ACTOR_SYSTEM];
 #endif
     decoderWasLoaded = 0;
   }
 
-  // Step each anim's script: read commands until one shows a frame for a
-  // while, else count the current frame's time down.
+  // Step each anim's script: read commands until one shows a picture for a
+  // while, else count the current picture's time down.
   for (i = 0; i < animation->count; i++) {
     layer = animation->entries[i];
     if (layer == 0) {
@@ -89,9 +89,9 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     // 33 of 544 instructions differ in tbs-en.
   read_command:
     if ((s16)layer->timer <= 0) {
-      frame = layer->script[layer->scriptOffset++];
+      picture = layer->script[layer->scriptOffset++];
       arg = layer->script[layer->scriptOffset++];
-      switch (frame) {
+      switch (picture) {
       case ANIMCMD_PLAY:
         SpriteAnim_Start(layer, arg);
         animation->lastNo = arg;
@@ -104,25 +104,25 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
         break;
       case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
-        goto framed;
+        goto show_picture;
       case ANIMCMD_SET_KIND:
         layer->kind = arg;
         break;
       case ANIMCMD_BLANK:
-        layer->frameBase = 255;
-        frame = 255;
+        layer->pictureBase = 255;
+        picture = 255;
         layer->timer += arg << 4;
         goto select_direction;
       case ANIMCMD_END:
-        layer->frameBase = 255;
+        layer->pictureBase = 255;
         layer->script = 0;
-        frame = 255;
+        picture = 255;
         // Ending any anim lowers the sprite's anim count, as if the last had
         // ended. Only sprite 283, the impact of Lift, has animations that end,
         // and it is a sprite of one anim, so an ending always empties it.
         animation->count--;
         goto select_direction;
-      // Unused commands, skipped. 251 is not among them: it shows as a frame.
+      // Unused commands, skipped. 251 is not among them: it shows as a picture.
       case 242:
       case 243:
       case 244:
@@ -134,23 +134,23 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
       case 252:
         break;
       default:
-        layer->frameBase = frame;
+        layer->pictureBase = picture;
         layer->timer += arg << 4;
         goto select_direction;
       }
       goto read_command;
     }
-    // Time is left on this frame: count it down by the anim's step (16, the
+    // Time is left on this picture: count it down by the anim's step (16, the
     // normal speed, takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
-  framed:
-    frame = layer->frameBase;
+  show_picture:
+    picture = layer->pictureBase;
   select_direction:
     // The facing table of the anim's kind gives an offset from the base
-    // frame (low three bits) and whether to mirror it (bit 7).
+    // picture (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
-    case ANIM_FACING_ONE_FRAME:
-      facing = gAnimationFacing_OneFrame[dir >> 13];
+    case ANIM_FACING_ONE_PICTURE:
+      facing = gAnimationFacing_OnePicture[dir >> 13];
       break;
     case ANIM_FACING_FRONT_BACK:
     case ANIM_FACING_TWO_PART:
@@ -159,37 +159,37 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     case ANIM_FACING_FRONT_BACK_SWAPPED:
       facing = gAnimationFacing_FrontBackSwapped[dir >> 13];
       break;
-    case ANIM_FACING_THREE_FRAMES:
-      facing = gAnimationFacing_ThreeFrames[dir >> 12];
+    case ANIM_FACING_THREE_PICTURES:
+      facing = gAnimationFacing_ThreePictures[dir >> 12];
       break;
-    case ANIM_FACING_FOUR_FRAMES:
-      facing = gAnimationFacing_FourFrames[dir >> 10];
+    case ANIM_FACING_FOUR_PICTURES:
+      facing = gAnimationFacing_FourPictures[dir >> 10];
       break;
-    case ANIM_FACING_FIVE_FRAMES:
-      facing = gAnimationFacing_FiveFrames[dir >> 12];
+    case ANIM_FACING_FIVE_PICTURES:
+      facing = gAnimationFacing_FivePictures[dir >> 12];
       break;
-    case ANIM_FACING_SIX_FRAMES:
-      facing = gAnimationFacing_SixFrames[dir >> 10];
+    case ANIM_FACING_SIX_PICTURES:
+      facing = gAnimationFacing_SixPictures[dir >> 10];
       break;
-    case ANIM_FACING_EIGHT_FRAMES:
+    case ANIM_FACING_EIGHT_PICTURES:
       facing =
-          gAnimationFacing_EightFrames[((u32)(dir << 16) + 0x10000000) >> 29];
+          gAnimationFacing_EightPictures[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
-    case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
-      facing = gAnimationFacing_EightFramesMirrored[((u32)(dir << 16) +
-                                                     0x10000000) >>
-                                                    29];
+    case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
+      facing = gAnimationFacing_EightPicturesMirrored[((u32)(dir << 16) +
+                                                       0x10000000) >>
+                                                      29];
       break;
     default:
       facing = 0;
       break;
     }
-    frame += facing & 7;
+    picture += facing & 7;
     if (i == 0 && (facing >> 7) != 0) {
       mirrored = 1;
     }
-    if (layer->frame != frame) {
-      layer->frame = frame;
+    if (layer->picture != picture) {
+      layer->picture = picture;
       animation->dirty = 1;
     }
   }
@@ -207,10 +207,10 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
       if (layer == 0) {
         continue;
       }
-      if (layer->frames == 0) {
+      if (layer->pictures == 0) {
         continue;
       }
-      if (layer->frame == 255) {
+      if (layer->picture == 255) {
         continue;
       }
       key = layer->priority;
@@ -239,27 +239,29 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     }
     drawCount++;
 
-    // Draw the anims in that order, each by its codec. LZ frames are
+    // Draw the anims in that order, each by its codec. LZ pictures are
     // unpacked first, or drawn through a scratch buffer when the anim has a
     // draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
-      if (layer->mode == SPRITE_FRAME_TAGGED_LZ) {
-        Decompress_TaggedLz(layer->frames[layer->frame], pixels);
-      } else if (layer->mode == SPRITE_FRAME_LZ) {
+      if (layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
+        Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
+      } else if (layer->mode == SPRITE_PICTURE_LZ) {
         if (layer->colorMode != 0) {
           unpacked = Alloc(0x400);
-          decodeFrame(Decompress_Lz(layer->frames[layer->frame], unpacked),
-                      pixels, layer->colorMode);
+          decodePicture(
+              Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
+              layer->colorMode);
           Free(unpacked);
         } else {
-          decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
+          decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
           if (decoded != 0) {
-            decodeFrame(decoded, pixels, 0);
+            decodePicture(decoded, pixels, 0);
           }
         }
       } else {
-        decodeFrame(layer->frames[layer->frame], pixels, layer->colorMode);
+        decodePicture(layer->pictures[layer->picture], pixels,
+                      layer->colorMode);
       }
     }
 
@@ -312,7 +314,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     tile = VramCache_Load(animation->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
-      ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_FRAME_UPLOADER])(
+      ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_PICTURE_UPLOADER])(
           pixels, animation->width, animation->height, vram);
     }
     animation->image.tile = tile;
@@ -402,7 +404,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 screenY = *pos++;
   s32 groundHeight = *pos;
   s32 slot;
-  /* FAKEMATCH(dead): two unused arrays for 24 bytes of the native 68-byte
+  /* FAKEMATCH(dead): two unused arrays for 24 bytes of the native 68-byte stack
    * frame; without them, 2 of 250 instructions differ in tbs-en. */
   UNUSED s32 ground[3];
   UNUSED s32 screen[3];
@@ -414,7 +416,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   struct AnimationSpritePart *part;
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
-  flip = Sprite_ComposeFrame(sprite, facing);
+  flip = Sprite_ComposePicture(sprite, facing);
   if (flip == 0 && scaleX == Q16_ONE && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
@@ -511,7 +513,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
-      flip = Sprite_ComposeFrame(sprite, facing);
+      flip = Sprite_ComposePicture(sprite, facing);
       // Round the perspective scale to the nearest 1/32 (0x800) before
       // combining it with the sprite's own scale.
       roundedScale = (z + 0x400) & -0x800;

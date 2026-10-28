@@ -33,7 +33,7 @@ FarCall_FieldTable:
 	export Actor_StartCameraFar, Actor_StartCamera
 	overlay_veneer Actor_StartApproachLink
 	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
-	export render_animated_tile_frameFar, SpriteDissolve_Step
+	export SpriteDissolve_StepFar, SpriteDissolve_Step
 	export SpriteDissolve_RunFar, SpriteDissolve_Run
 	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
 	export MapGrid_LoadMapFar, MapGrid_LoadMap
@@ -80,7 +80,7 @@ FarCall_FieldTable:
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
 	export SpriteAnim_SumCommandLengthsFar, SpriteAnim_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
-	export SpriteFrameCache_LoadFar, SpriteFrameCache_Load
+	export SpritePictureCache_LoadFar, SpritePictureCache_Load
 	export MapGrid_SetMetatileBehaviorAtFar, MapGrid_SetMetatileBehaviorAt
 	export Sprite_SetAnimSpeedFar, Sprite_SetAnimSpeed
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels

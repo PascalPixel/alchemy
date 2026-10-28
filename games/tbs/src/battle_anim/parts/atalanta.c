@@ -268,7 +268,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   // Between the parts: stop the scroll, give BG1 back to the battle, release
   // the formation and load the ember streak sheet into the map grid cell buffer

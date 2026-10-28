@@ -928,17 +928,17 @@ BattleEvent_Playback:
 .L_08123442:
 	ldr r0, [r5]
 	mov r1, r8
-	bl Map_RenderAnimatedTileFrameFar
+	bl Map_RenderAnimatedTilePictureFar
 	ldr r0, [r5]
 	mov r1, r11
-	bl Map_RenderAnimatedTileFrameFar
+	bl Map_RenderAnimatedTilePictureFar
 	ldr r0, [r5]
 	mov r1, r9
-	bl Map_RenderAnimatedTileFrameFar
+	bl Map_RenderAnimatedTilePictureFar
 	subs r6, #1
 	ldmia r5!, {r0}
 	mov r1, r10
-	bl Map_RenderAnimatedTileFrameFar
+	bl Map_RenderAnimatedTilePictureFar
 	cmp r6, #0
 	bne .L_08123442
 .L_08123468:

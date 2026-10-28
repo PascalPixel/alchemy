@@ -1,9 +1,9 @@
-anim	frame 5 5, hold
-anim	frame 0 9, frame 6 17, loop
-anim	frame 1 9, frame 2 9, frame 3 9, frame 4 9, frame 5 9, play 0
-anim	frame 2 11, hold
-anim	frame 3 9, hold
-anim	frame 5 9, hold
-anim	frame 4 13, frame 3 13, frame 2 13, frame 1 13, frame 0 13, play 1
+anim	picture 5 5, hold
+anim	picture 0 9, picture 6 17, loop
+anim	picture 1 9, picture 2 9, picture 3 9, picture 4 9, picture 5 9, play 0
+anim	picture 2 11, hold
+anim	picture 3 9, hold
+anim	picture 5 9, hold
+anim	picture 4 13, picture 3 13, picture 2 13, picture 1 13, picture 0 13, play 1
 anim	blank 10, hold
-anim	frame 4 13, frame 3 13, frame 2 13, frame 1 13, frame 0 13, frame 0 13, play 7
+anim	picture 4 13, picture 3 13, picture 2 13, picture 1 13, picture 0 13, picture 0 13, play 7

@@ -87,7 +87,7 @@ enum AnimationCommand {
 
 /// The field's pool sizes, and an anim's timer step at normal speed.
 enum {
-  RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.frameCaches
+  RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
   ACTOR_COUNT = 64,        ///< gActors, HEAP_SLOT_ACTORS
   ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite anims
   ANIM_LAYER_COUNT = 4,    ///< Sprite.entries

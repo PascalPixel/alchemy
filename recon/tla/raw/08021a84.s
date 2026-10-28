@@ -451,9 +451,9 @@ Func_08021a84:
 .L_08021e00:
 	.4byte 0x000002c8
 .L_08021e04:
-	.4byte Render_DecodeFrameCopyEnd
+	.4byte Render_DecodePictureCopyEnd
 .L_08021e08:
-	.4byte Render_DecodeFrameCode
+	.4byte Render_DecodePictureCode
 .L_08021e0c:
 	.4byte .L_08021b30
 .L_08021e10:

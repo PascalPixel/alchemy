@@ -525,7 +525,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
                     djinnX - 10, sparkScreen.y - 4, 20, 40);
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
   /* FAKEMATCH(dead): position set again to the &djinnPos it holds, so the

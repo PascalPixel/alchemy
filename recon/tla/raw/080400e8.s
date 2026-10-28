@@ -124,7 +124,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl RenderResource_LoadFrame
+	bl RenderResource_LoadCommandIcon
 	cmp r5, #2
 	ble .L_080401b4
 	movs r6, #191
@@ -153,7 +153,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl RenderResource_LoadFrame
+	bl RenderResource_LoadCommandIcon
 	cmp r5, #1
 	ble .L_080401ee
 	movs r6, #192
@@ -183,7 +183,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl RenderResource_LoadFrame
+	bl RenderResource_LoadCommandIcon
 	cmp r5, #1
 	ble .L_0804022a
 	mov r1, r8
@@ -544,11 +544,11 @@ Func_080400e8:
 	bl Audio_PlayCue
 	b .L_080404a0
 .L_08040540:
-	.4byte gOptionMenu_SpeedFrames
+	.4byte gOptionMenu_SpeedIcons
 .L_08040544:
-	.4byte gOptionMenu_SpeechFrames
+	.4byte gOptionMenu_SpeechIcons
 .L_08040548:
-	.4byte gOptionMenu_SleepFrames
+	.4byte gOptionMenu_SleepIcons
 .L_0804054c:
 	.4byte 0x0000113b
 .L_08040550:

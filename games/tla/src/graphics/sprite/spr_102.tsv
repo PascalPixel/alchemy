@@ -1,6 +1,6 @@
 empty	15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
-anim	frame 0 9, hold
-anim	frame 0 151, frame 3 9, frame 0 121, frame 3 9, frame 0 101, frame 12 161, frame 0 151, frame 3 9, frame 0 11, frame 3 9, frame 0 151, frame 9 121, loop
-anim	frame 0 9, loop
-anim	frame 6 21, play 1
-anim	frame 9 9, frame 0 8, frame 12 9, frame 0 8, frame 9 9, frame 0 8, frame 12 9, frame 0 8, play 1
+anim	picture 0 9, hold
+anim	picture 0 151, picture 3 9, picture 0 121, picture 3 9, picture 0 101, picture 12 161, picture 0 151, picture 3 9, picture 0 11, picture 3 9, picture 0 151, picture 9 121, loop
+anim	picture 0 9, loop
+anim	picture 6 21, play 1
+anim	picture 9 9, picture 0 8, picture 12 9, picture 0 8, picture 9 9, picture 0 8, picture 12 9, picture 0 8, play 1

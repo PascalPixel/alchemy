@@ -1,4 +1,4 @@
-anim	frame 0 4, hold
-anim	frame 0 4, loop
-anim	frame 1 4, frame 2 4, frame 3 4, frame 4 4, frame 5 4, loop
-anim	frame 6 4, frame 7 5, frame 8 4, play 1
+anim	picture 0 4, hold
+anim	picture 0 4, loop
+anim	picture 1 4, picture 2 4, picture 3 4, picture 4 4, picture 5 4, loop
+anim	picture 6 4, picture 7 5, picture 8 4, play 1

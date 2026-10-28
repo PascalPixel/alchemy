@@ -24,10 +24,10 @@ const u8 gReelGame_TitleLetterTiles[REEL_TITLE_LETTERS] = {
 };
 
 /// The positions of the frame's sprites.
-const u8 gReelGame_FrameSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
-                                     200, 28, 28,  208, 208, 219, 219};
-const u8 gReelGame_FrameSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
-                                     104, 118, 140, 118, 140, 6,   108};
+const u8 gReelGame_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
+                                       200, 28, 28,  208, 208, 219, 219};
+const u8 gReelGame_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
+                                       104, 118, 140, 118, 140, 6,   108};
 
 /// The advance of each title letter.
 const u8 gReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {

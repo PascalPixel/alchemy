@@ -255,7 +255,7 @@ void BattleAnim_RunBeam(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
@@ -425,7 +425,7 @@ void BattleAnim_RunRingAndSpark(struct BattleAnimArgs *args) {
           mote->x -= 4;
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
     Actor_SetAnimationSpeedFar(actor, 16);
@@ -507,7 +507,7 @@ void BattleAnim_RunRingAndSpark(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

@@ -366,7 +366,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
                                           (frame - 151) * 20 - 12, 32, 96);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // Second part, 192 frames: a pillar of lightning strikes the

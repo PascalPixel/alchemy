@@ -1,6 +1,6 @@
-anim	frame 0 7, hold
-anim	frame 0 121, frame 3 11, frame 0 17, frame 3 11, frame 0 17, loop
-anim	frame 30 9, frame 15 10, frame 18 9, frame 21 9, frame 24 10, frame 27 10, loop
-anim	frame 6 36, play 0
-anim	frame 9 8, frame 0 7, frame 12 8, frame 0 7, frame 9 8, frame 0 7, frame 12 8, frame 0 11, play 0
-anim	kind 17, frame 33 11, hold
+anim	picture 0 7, hold
+anim	picture 0 121, picture 3 11, picture 0 17, picture 3 11, picture 0 17, loop
+anim	picture 30 9, picture 15 10, picture 18 9, picture 21 9, picture 24 10, picture 27 10, loop
+anim	picture 6 36, play 0
+anim	picture 9 8, picture 0 7, picture 12 8, picture 0 7, picture 9 8, picture 0 7, picture 12 8, picture 0 11, play 0
+anim	kind 17, picture 33 11, hold

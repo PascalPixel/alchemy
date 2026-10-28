@@ -296,7 +296,7 @@ void BattleAnim_TintBattler(s32 unitId, s32 palette, s32 animation,
                 part->colorMode = BattleObject_GetPaletteFar(unitId);
               else
                 part->colorMode = palette;
-              part->frame = 0xff;
+              part->picture = 0xff;
             }
             partIndex++;
           } while (partIndex != group->count);

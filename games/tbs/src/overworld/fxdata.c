@@ -425,7 +425,7 @@ const s16 gFieldEffect_GroundParticleFrames[80] = {
 /// one it starts at (row 15 for a burst's first sparkle, as far as row 29
 /// for the rest) to row 0: it comes down to its spot, slowing as it nears
 /// it, its tile going 0, 4, 8, 12.
-const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
+const struct SparklePicture gFieldEffect_SparklePictures[32] = {
     {-2, 12},
     {-4, 12},
     {-6, 12},

@@ -1,19 +1,19 @@
-anim	frame 0 9, hold
-anim	frame 0 121, frame 3 9, frame 0 91, frame 9 191, frame 0 91, frame 3 9, frame 0 191, frame 3 9, loop
-anim	frame 30 9, frame 15 9, frame 18 9, frame 21 9, frame 24 9, frame 27 9, loop
-anim	frame 6 11, play 1
-anim	frame 9 8, frame 0 7, frame 12 8, frame 0 7, frame 9 8, frame 0 7, frame 12 8, frame 0 7, play 1
-anim	kind 17, frame 33 121, frame 34 9, frame 33 151, frame 34 9, frame 33 91, frame 34 9, loop
-anim	frame 6 20, frame 0 20, frame 6 20, frame 0 20, frame 6 20, frame 0 20, play 1
-anim	frame 6 60, play 1
-anim	kind 17, frame 35 5, frame 36 25, frame 37 9, frame 37 16, hold
-anim	kind 17, frame 36 12, frame 35 5, play 1
-anim	kind 17, frame 35 5, frame 36 25, hold
-anim	kind 17, frame 36 3, frame 37 9, frame 37 16, hold
-anim	kind 17, frame 38 17, frame 39 19, frame 40 17, frame 39 19, loop
-anim	kind 17, frame 41 5, hold
-anim	kind 17, frame 42 5, hold
-anim	kind 17, frame 43 5, hold
-anim	kind 17, frame 44 5, hold
-anim	kind 17, frame 45 5, hold
-anim	kind 17, frame 46 5, hold
+anim	picture 0 9, hold
+anim	picture 0 121, picture 3 9, picture 0 91, picture 9 191, picture 0 91, picture 3 9, picture 0 191, picture 3 9, loop
+anim	picture 30 9, picture 15 9, picture 18 9, picture 21 9, picture 24 9, picture 27 9, loop
+anim	picture 6 11, play 1
+anim	picture 9 8, picture 0 7, picture 12 8, picture 0 7, picture 9 8, picture 0 7, picture 12 8, picture 0 7, play 1
+anim	kind 17, picture 33 121, picture 34 9, picture 33 151, picture 34 9, picture 33 91, picture 34 9, loop
+anim	picture 6 20, picture 0 20, picture 6 20, picture 0 20, picture 6 20, picture 0 20, play 1
+anim	picture 6 60, play 1
+anim	kind 17, picture 35 5, picture 36 25, picture 37 9, picture 37 16, hold
+anim	kind 17, picture 36 12, picture 35 5, play 1
+anim	kind 17, picture 35 5, picture 36 25, hold
+anim	kind 17, picture 36 3, picture 37 9, picture 37 16, hold
+anim	kind 17, picture 38 17, picture 39 19, picture 40 17, picture 39 19, loop
+anim	kind 17, picture 41 5, hold
+anim	kind 17, picture 42 5, hold
+anim	kind 17, picture 43 5, hold
+anim	kind 17, picture 44 5, hold
+anim	kind 17, picture 45 5, hold
+anim	kind 17, picture 46 5, hold

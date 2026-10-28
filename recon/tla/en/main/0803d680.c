@@ -14,7 +14,7 @@
 #include "ram_buffer.h"
 #include "item.h"
 
-extern u8 *gUiIcon_FramePointerTable[];
+extern u8 *gUiIcon_PicturePointerTable[];
 extern u8 *gUiIcon_ItemIconPointers[];
 extern u8 *gUiIcon_MarkPointers[];
 extern u8 *gUiIcon_DigitPointers[];
@@ -41,7 +41,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   if (work == NULL)
     return -1;
   if (layers & ICON_FRAME) {
-    work->encoded = gUiIcon_FramePointerTable[2];
+    work->encoded = gUiIcon_PicturePointerTable[2];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);

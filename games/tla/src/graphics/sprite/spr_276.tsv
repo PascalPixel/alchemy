@@ -1,4 +1,4 @@
-anim	frame 10 2, blank 100, hold
-anim	frame 0 4, frame 1 5, frame 2 6, frame 3 7, frame 4 7, blank 1, hold
-anim	frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 9 4, frame 10 3, blank 1, hold
-anim	frame 0 4, loop
+anim	picture 10 2, blank 100, hold
+anim	picture 0 4, picture 1 5, picture 2 6, picture 3 7, picture 4 7, blank 1, hold
+anim	picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 5 5, picture 6 5, picture 7 5, picture 8 5, picture 9 4, picture 10 3, blank 1, hold
+anim	picture 0 4, loop

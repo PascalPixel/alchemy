@@ -126,7 +126,7 @@ s32 VramCache_Reload(s32 slot, s32 source);
 s32 Trig_Sin(s32 angle);
 void Runtime_PushSlotEntry(void *entry, s32 priority);
 s32 BattleClass_GetDefeatSoundKind(s32 classId);
-void Map_RenderAnimatedTileFrameFar(void *record, s32 step);
+void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
 
 void BattleEvent_Playback(void) {
   u16 selection[2];
@@ -421,10 +421,10 @@ void BattleEvent_Playback(void) {
           s32 recordIndex;
 
           for (recordIndex = 0; recordIndex < count; recordIndex++) {
-            Map_RenderAnimatedTileFrameFar(records[recordIndex], step);
-            Map_RenderAnimatedTileFrameFar(records[recordIndex], base - 19);
-            Map_RenderAnimatedTileFrameFar(records[recordIndex], base - 18);
-            Map_RenderAnimatedTileFrameFar(records[recordIndex], base - 17);
+            Map_RenderAnimatedTilePictureFar(records[recordIndex], step);
+            Map_RenderAnimatedTilePictureFar(records[recordIndex], base - 19);
+            Map_RenderAnimatedTilePictureFar(records[recordIndex], base - 18);
+            Map_RenderAnimatedTilePictureFar(records[recordIndex], base - 17);
           }
         }
         events->timer++;

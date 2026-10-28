@@ -337,7 +337,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #84
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #236
@@ -349,7 +349,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #108
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #190
 	lsls r3, r3, #3
 	add r3, r9
@@ -360,7 +360,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #132
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #160
 	ldr r5, .L_080400e0
 	lsls r3, r3, #3
@@ -374,7 +374,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #100
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #191
 	lsls r3, r3, #3
 	add r3, r9
@@ -385,7 +385,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #124
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #160
 	ldr r5, .L_080400e4
 	lsls r3, r3, #3
@@ -399,7 +399,7 @@ Func_0803fd28:
 	movs r1, #0
 	movs r3, #100
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #192
 	lsls r3, r3, #3
 	adds r3, #4
@@ -411,7 +411,7 @@ Func_0803fd28:
 	mov r2, r11
 	movs r3, #124
 	str r7, [sp, #0]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	movs r3, #193
 	lsls r3, r3, #3
 	add r3, r9
@@ -444,8 +444,8 @@ Func_0803fd28:
 .L_080400d8:
 	.4byte 0xfffffc00
 .L_080400dc:
-	.4byte gOptionMenu_SpeedFrames
+	.4byte gOptionMenu_SpeedIcons
 .L_080400e0:
-	.4byte gOptionMenu_SpeechFrames
+	.4byte gOptionMenu_SpeechIcons
 .L_080400e4:
-	.4byte gOptionMenu_SleepFrames
+	.4byte gOptionMenu_SleepIcons

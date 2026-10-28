@@ -5,7 +5,7 @@
 // sp+24 down to decoderWasLoaded at sp+8; 305 the other way). Data_08021824Size
 // stands for the outline routine's size, a pool word in the native, which no
 // symbol names yet.
-// ☀️'s Sprite_ComposeAnimationFrame (games/tbs/src/field/field.c) on
+// ☀️'s Sprite_ComposeAnimationPicture (games/tbs/src/field/field.c) on
 // The Lost Age's sprite: command 252 plays a sound, 242 and 243 set the
 // sprite's offsets, a blank or a frame keeps reading commands, flag 0x20
 // takes the mirroring from the kind 2 table without drawing, and the
@@ -53,9 +53,9 @@ typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 typedef void (*OutlineFn)(u32 w, u32 h, void *pixels, u32 edge, u32 fill);
 
-extern u8 Render_DecodeFrameCode[];
-extern u8 Render_DecodeFrameCopyEnd[];
-extern u8 Render_DecodeFrameBlockSize[];
+extern u8 Render_DecodePictureCode[];
+extern u8 Render_DecodePictureCopyEnd[];
+extern u8 Render_DecodePictureBlockSize[];
 extern const u8 Data_08021824[];
 extern u8 Data_08021824Size[];
 extern const u8 Data_080209a8[];
@@ -95,10 +95,10 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   mirrored = 0;
   if (decodeFrame == NULL) {
     Dma_Set(
-        Render_DecodeFrameCode,
-        Runtime_AllocateHeapBlock(80, (s32)Render_DecodeFrameBlockSize),
+        Render_DecodePictureCode,
+        Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
         0x84000000 |
-            ((u32)(Render_DecodeFrameCopyEnd - Render_DecodeFrameCode) >> 2),
+            ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
     decodeFrame = Ram_HeapSlots->unk4c[1];
     decoderWasLoaded = 0;

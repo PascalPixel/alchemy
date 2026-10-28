@@ -489,10 +489,10 @@ void WindowSprite_UpdateAll(void) {
       switch (windowSprite->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // 0x60 is VRAM_CACHE_ENTRY_COUNT: no entry was free for the arrow.
-        // Its 128-byte frame is an 8x16 sprite of 256 colours (colors 1,
+        // Its 128-byte picture is an 8x16 sprite of 256 colours (colors 1,
         // shape 2, size 0), bobbing over 80 frames.
         if (work->glyphResource != 0x60) {
-          const u8 *tiles = &gWindowSprite_CursorFrameTiles[phase * 128];
+          const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
 
           sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
           windowSprite->index = sprite->tile;

@@ -1,3 +1,3 @@
-anim	frame 3 7, hold
-anim	frame 9 12, frame 3 91, frame 9 9, frame 12 9, frame 15 9, frame 3 151, frame 9 12, frame 3 181, loop
-anim	frame 0 11, frame 3 11, frame 6 11, frame 3 11, loop
+anim	picture 3 7, hold
+anim	picture 9 12, picture 3 91, picture 9 9, picture 12 9, picture 15 9, picture 3 151, picture 9 12, picture 3 181, loop
+anim	picture 0 11, picture 3 11, picture 6 11, picture 3 11, loop

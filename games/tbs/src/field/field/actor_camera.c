@@ -86,9 +86,9 @@ void ActorSystem_PlaceSprites(void) {
 #else
   system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
 #endif
-  // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
-  RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
-                   Render_DecodeFrameCodeSize);
+  // Copy the picture decoder (Render_DecodePicture) into its heap slot.
+  RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
+                   Render_DecodePictureCodeSize);
   system->used = 0;
   actor = gActors;
   for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
@@ -226,8 +226,8 @@ void ActorSystem_ProjectSprites(void) {
   camera = *(struct ActorCameraFixed **)(((u8 *)&gActors) + 0x1c);
   system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
 #endif
-  RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
-                   Render_DecodeFrameCodeSize);
+  RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
+                   Render_DecodePictureCodeSize);
   eye = &camera->eye;
   target = &camera->target;
   if (camera->followEye != NULL)

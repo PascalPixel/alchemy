@@ -1,17 +1,17 @@
-anim	frame 0 5, hold
-anim	frame 0 121, frame 5 6, frame 0 11, frame 5 6, frame 0 10, frame 5 6, frame 0 81, frame 20 121, frame 0 81, loop
-anim	frame 50 7, frame 25 7, frame 30 7, frame 35 7, frame 40 7, frame 45 7, loop
-anim	frame 10 11, play 1
-anim	frame 15 7, frame 0 8, frame 20 7, frame 0 8, frame 15 7, frame 0 8, frame 20 7, frame 0 11, play 1
-anim	frame 50 5, frame 25 5, frame 30 5, frame 35 5, frame 40 5, frame 45 5, loop
-anim	kind 17, frame 0 16, hold
-anim	frame 30 121, hold
-anim	frame 50 15, frame 25 13, frame 30 13, frame 35 15, frame 40 13, frame 45 13, hold
-anim	kind 17, frame 72 120, hold
-anim	frame 55 5, frame 60 25, frame 65 9, frame 65 16, hold
-anim	kind 17, frame 71 120, hold
-anim	kind 17, frame 70 240, hold
-anim	frame 55 5, frame 60 25, hold
-anim	frame 60 3, frame 65 9, frame 65 16, hold
-anim	frame 50 5, frame 25 5, frame 30 5, frame 35 5, frame 40 5, frame 45 5, loop
+anim	picture 0 5, hold
+anim	picture 0 121, picture 5 6, picture 0 11, picture 5 6, picture 0 10, picture 5 6, picture 0 81, picture 20 121, picture 0 81, loop
+anim	picture 50 7, picture 25 7, picture 30 7, picture 35 7, picture 40 7, picture 45 7, loop
+anim	picture 10 11, play 1
+anim	picture 15 7, picture 0 8, picture 20 7, picture 0 8, picture 15 7, picture 0 8, picture 20 7, picture 0 11, play 1
+anim	picture 50 5, picture 25 5, picture 30 5, picture 35 5, picture 40 5, picture 45 5, loop
+anim	kind 17, picture 0 16, hold
+anim	picture 30 121, hold
+anim	picture 50 15, picture 25 13, picture 30 13, picture 35 15, picture 40 13, picture 45 13, hold
+anim	kind 17, picture 72 120, hold
+anim	picture 55 5, picture 60 25, picture 65 9, picture 65 16, hold
+anim	kind 17, picture 71 120, hold
+anim	kind 17, picture 70 240, hold
+anim	picture 55 5, picture 60 25, hold
+anim	picture 60 3, picture 65 9, picture 65 16, hold
+anim	picture 50 5, picture 25 5, picture 30 5, picture 35 5, picture 40 5, picture 45 5, loop
 animations	0 1 2 3 4 5 6 7 8 9 10 10 10 10 10 10 10 10 11 12 13 14 15 15 15 15 15 15 15 15 15

@@ -23,9 +23,9 @@ extern s32 gCamera_UnreadWord1;
 extern s32 gCamera_UnreadWord2;
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
-/// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
+/// The size of Render_DecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an
 /// address equal to the size (constants.ld).
-extern u8 Render_DecodeFrameCodeSize[];
+extern u8 Render_DecodePictureCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (SpriteColor_RemapPixels).
@@ -50,7 +50,7 @@ struct MapEntry;
 struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
-struct SparkleFrame;
+struct SparklePicture;
 struct Swirl;
 struct Actor;
 
@@ -110,9 +110,9 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 #endif
-/// The lighthouse transition's frames, packed (tagged LZ), decoded 0x1000 bytes
-/// after the tiles (WorldMap_PlayLighthouseTransition).
-extern const u8 gWorldMapPackedFrames[];
+/// The lighthouse transition's pictures, packed (tagged LZ), decoded 0x1000
+/// bytes after the tiles (WorldMap_PlayLighthouseTransition).
+extern const u8 gWorldMapPackedPictures[];
 /// The lighthouse transition's tiles, packed (tagged LZ).
 extern const u8 gWorldMapPackedTiles[];
 /// The lighthouse transitions' palettes, 32 bytes each, loaded as BG palette
@@ -218,10 +218,10 @@ extern u16 gHeatGauge_VramSlot;
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
 extern struct MenuSprite gHeatGauge_Sprites[];
-#ifndef OWN_Render_DecodeFrame
-/// The sprite frame decoder, ARM code run from a copy in
+#ifndef OWN_Render_DecodePicture
+/// The sprite picture decoder, ARM code run from a copy in
 /// HEAP_SLOT_FRAME_SCRATCH.
-extern u8 Render_DecodeFrame[];
+extern u8 Render_DecodePicture[];
 #endif
 /// The statue scene's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];

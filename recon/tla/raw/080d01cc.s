@@ -274,7 +274,7 @@ DisplayTransition_Start:
 	strb r2, [r3]
 	b .L_080d0506
 .L_080d03fc:
-	.4byte DisplayTransition_UpdateFrame
+	.4byte DisplayTransition_UpdateDissolve
 .L_080d0400:
 	.4byte gIoWriteQueue
 .L_080d0404:

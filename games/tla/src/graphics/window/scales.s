@@ -23,14 +23,14 @@ gPaletteGlow_WaveTable:
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.byte 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 @ The options screen's sprite frames
-	.global gOptionMenu_SpeedFrames
-gOptionMenu_SpeedFrames:
+	.global gOptionMenu_SpeedIcons
+gOptionMenu_SpeedIcons:
 	.byte 0x22, 0x23, 0x24
-	.global gOptionMenu_SpeechFrames
-gOptionMenu_SpeechFrames:
+	.global gOptionMenu_SpeechIcons
+gOptionMenu_SpeechIcons:
 	.byte 0x25, 0x26
-	.global gOptionMenu_SleepFrames
-gOptionMenu_SleepFrames:
+	.global gOptionMenu_SleepIcons
+gOptionMenu_SleepIcons:
 	.byte 0x27, 0x28
 @ The window colour presets
 	.global gOptionMenu_FirstColorPresets
@@ -39,8 +39,8 @@ gOptionMenu_FirstColorPresets:
 	.global gOptionMenu_SecondColorPresets
 gOptionMenu_SecondColorPresets:
 	.byte 0, 11, 13, 7, 14, 14
-	.global gMenu_WorkspaceIconFrames
-gMenu_WorkspaceIconFrames:
+	.global gMenu_WorkspaceIcons
+gMenu_WorkspaceIcons:
 	.byte 0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00
 	.balign 4, 0
 @ The sound test's starting state and labels, then the debug warp presets' names

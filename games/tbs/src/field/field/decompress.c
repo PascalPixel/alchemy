@@ -12,7 +12,7 @@
 /// reads a big-endian halfword whose low 12 bits are a distance and high 4
 /// bits a length - 2 (or, when 0, the next byte + 16 + 2), and copies that many
 /// bytes from the literals' start minus the distance. A zero halfword ends the
-/// stream. Called only by Sprite_ComposeFrame, for a codec 3 (LZ)
+/// stream. Called only by Sprite_ComposePicture, for a codec 3 (LZ)
 /// sprite anim that has a draw parameter, into a 0x400-byte scratch buffer.
 u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;

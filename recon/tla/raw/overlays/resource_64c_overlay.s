@@ -1904,7 +1904,7 @@ Func_02001400:
 .L_02009548:
 	.4byte gWorldMapPackedTiles
 .L_0200954c:
-	.4byte gWorldMapPackedFrames
+	.4byte gWorldMapPackedPictures
 .L_02009550:
 	.4byte gIoWriteQueue
 .L_02009554:

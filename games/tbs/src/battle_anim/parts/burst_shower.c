@@ -371,7 +371,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *args, s32 mode) {
     if (mode != BURST_SHOWER_MODE_GREY) {
       BattleAnim_CountDownBattlerTints();
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
     frame += 1;
   } while (frame != BURST_SHOWER_FRAMES);
 

@@ -1,16 +1,16 @@
-anim	frame 3 4, hold
-anim	frame 0 60, hold
-anim	frame 3 60, hold
-anim	frame 6 60, hold
-anim	frame 1 3, frame 2 3, play 2
-anim	frame 4 3, frame 5 3, play 3
-anim	frame 5 3, frame 4 3, play 2
-anim	frame 2 3, frame 1 3, play 1
-anim	frame 7 4, hold
-anim	frame 7 60, hold
-anim	frame 7 60, hold
-anim	frame 9 60, hold
-anim	frame 7 3, frame 7 3, play 10
-anim	frame 7 3, frame 8 3, play 11
-anim	frame 8 3, frame 7 3, play 10
-anim	frame 7 3, frame 7 3, play 9
+anim	picture 3 4, hold
+anim	picture 0 60, hold
+anim	picture 3 60, hold
+anim	picture 6 60, hold
+anim	picture 1 3, picture 2 3, play 2
+anim	picture 4 3, picture 5 3, play 3
+anim	picture 5 3, picture 4 3, play 2
+anim	picture 2 3, picture 1 3, play 1
+anim	picture 7 4, hold
+anim	picture 7 60, hold
+anim	picture 7 60, hold
+anim	picture 9 60, hold
+anim	picture 7 3, picture 7 3, play 10
+anim	picture 7 3, picture 8 3, play 11
+anim	picture 8 3, picture 7 3, play 10
+anim	picture 7 3, picture 7 3, play 9

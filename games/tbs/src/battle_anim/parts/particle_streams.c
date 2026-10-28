@@ -291,7 +291,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
                                     (x & 7)] = 0;
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
     } while (limit <= 191);
   }
   // The rise: blend the map over the backdrop, colour the backdrop line by
@@ -497,7 +497,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
             mote->variant = -1;
         }
       }
-      ANIM_PRESENT_FRAME(work);
+      ANIM_PRESENT_CANVAS(work);
       frame++;
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
@@ -693,7 +693,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
     }
     work->shakeFrames = 1;
     BattleCamera_Shake(8, 8);
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   FreeHeapSlot(HEAP_SLOT_RAM_CODE);

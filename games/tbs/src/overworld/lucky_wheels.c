@@ -806,8 +806,9 @@ void LuckyWheels_Update(void) {
   }
 
   for (k = 0; k != 14; k++) {
-    work->oam[sprite].attr01 = (gLuckyWheels_FrameSpriteX[k] << 16) | objMode |
-                               gLuckyWheels_FrameSpriteY[k] | 0x80006000;
+    work->oam[sprite].attr01 = (gLuckyWheels_MachineSpriteX[k] << 16) |
+                               objMode | gLuckyWheels_MachineSpriteY[k] |
+                               0x80006000;
     if (k <= 3)
       work->oam[sprite].attr2 = 0x4e0;
     else
@@ -1004,7 +1005,7 @@ void LuckyWheels_Run(void) {
   }
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
                       sheet);
-  entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsFramePicture);
+  entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsMachinePicture);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   entry += 32;

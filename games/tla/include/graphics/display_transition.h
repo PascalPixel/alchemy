@@ -7,7 +7,7 @@
 
 /// The display transition state as the dissolve reads it: the dissolve's tile
 /// pixels and the transition's progress.
-struct DisplayTransitionFrame {
+struct DisplayTransitionDissolveState {
   u8 unk000[0x508]; ///< DisplayTransitionState's pages; not named here
   /// DisplayTransitionState's solidTile, as 4-bit pixels two a byte.
   u8 paletteNibbles[0x22];
@@ -65,9 +65,9 @@ struct DisplayTransitionState {
   s8 nextMode; ///< not named by TLA code
 };
 
-STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, value) == 0x52a);
-STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, start) == 0x53a);
-STATIC_ASSERT(sizeof(struct DisplayTransitionFrame) == 0x540);
+STATIC_ASSERT(offsetof(struct DisplayTransitionDissolveState, value) == 0x52a);
+STATIC_ASSERT(offsetof(struct DisplayTransitionDissolveState, start) == 0x53a);
+STATIC_ASSERT(sizeof(struct DisplayTransitionDissolveState) == 0x540);
 STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, dispcnt) == 0x14);
 STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, firstLine) == 0x100);
 STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, irqPhase) == 0x108);
@@ -91,7 +91,7 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200);
 void DisplayTransition_Update(void);
 void DisplayTransition_UpdateFromCentre(void);
 void DisplayTransition_UpdateScanline(void);
-void DisplayTransition_UpdateFrame(void);
+void DisplayTransition_UpdateDissolve(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void DisplayTransition_InitializeState(s32 mode);
 void DisplayTransition_UpdateScanlineTable(void);

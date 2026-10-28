@@ -134,9 +134,9 @@ extern const u8 gMenu_ShortcutRString[];
 extern const u8 gMenu_SlashString[];
 /// `x`, before an item's stat multiplier (not in Japanese).
 extern u8 gMenu_TimesString[];
-extern s8 gSettingsMenu_SleepFrames[];
-extern s8 gSettingsMenu_SpeechFrames[];
-extern s8 gSettingsMenu_SpeedFrames[];
+extern s8 gSettingsMenu_SleepIcons[];
+extern s8 gSettingsMenu_SpeechIcons[];
+extern s8 gSettingsMenu_SpeedIcons[];
 /// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gStatusPanel_LevelString[];
 extern u8 gMenuCursor_BobX[];

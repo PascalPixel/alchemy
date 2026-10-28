@@ -2,8 +2,8 @@
 	.global gWorldMapPalettes
 gWorldMapPalettes:
 	.incbin "games/tbs/src/graphics/world_map/storypal.gbapal"
-	.global gWorldMapPackedFrames
-gWorldMapPackedFrames:
+	.global gWorldMapPackedPictures
+gWorldMapPackedPictures:
 	.incbin "games/tbs/src/graphics/world_map/storymap.tilemap.lz"
 	.global gWorldMapPackedTiles
 gWorldMapPackedTiles:

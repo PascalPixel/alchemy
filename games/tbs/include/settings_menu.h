@@ -42,7 +42,7 @@ struct OptionMenuWork {
   u8 unusedAfterMarkers[0x18]; ///< no code names it
   /// Each choice's icon for message speed, voice sounds and auto-sleep
   /// (options 2 to 4); the chosen one pulses.
-  struct WindowSprite *frame[3][3];
+  struct WindowSprite *choiceIcons[3][3];
   struct WindowSprite *icon[6];
 };
 

@@ -36,7 +36,7 @@ void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0,
                               s32 x1, s32 y1);
 void UiText_DrawResource(s32 message, struct RenderInput *window, s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-struct RenderOutput *RenderResource_CreateFrame(s32 frame, s32 flag,
+struct RenderOutput *RenderResource_CreateCommandIcon(s32 frame, s32 flag,
                                                 struct RenderInput *window,
                                                 s32 x, s32 y);
 
@@ -95,7 +95,7 @@ struct RenderInput *Func_08040628(void) {
   y = -4;
   for (i = 0; i < rows; i++) {
     work->icons[i] =
-        RenderResource_CreateFrame(gData_0805ea8f[first + i], 0, win, 12, y);
+        RenderResource_CreateCommandIcon(gData_0805ea8f[first + i], 0, win, 12, y);
     y += 24;
   }
   return win;

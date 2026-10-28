@@ -1,3 +1,3 @@
-anim	frame 0 241, hold
-anim	frame 0 81, frame 1 26, frame 2 16, hold
-anim	frame 3 81, frame 4 26, frame 5 16, hold
+anim	picture 0 241, hold
+anim	picture 0 81, picture 1 26, picture 2 16, hold
+anim	picture 3 81, picture 4 26, picture 5 16, hold

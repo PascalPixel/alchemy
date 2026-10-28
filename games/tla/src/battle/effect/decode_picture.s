@@ -1,26 +1,26 @@
 .syntax unified
 	.thumb
-	.global Render_DecodeFrameCode
-Render_DecodeFrameCode:
-	.global Render_DecodeFrame
+	.global BattleEffect_DecodePictureCode
+BattleEffect_DecodePictureCode:
+	.global BattleEffect_DecodePicture
 	.thumb_func
-Render_DecodeFrame:
+BattleEffect_DecodePicture:
 	bx	pc
-AlchemyUncredited_08020daa:
+AlchemyUncredited_080c93ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08020daa:
+AlchemyUncreditedEnd_080c93ce:
 	cmp	r2, #0
-	bne	.L_08020ec4
+	bne	.L_080c94e8
 	mov	r4, #255
 	ands	r2, r0, #3
 	ldm	r0!, {r3}
 	add	r2, r2, r2, lsl #2
 	add	pc, pc, r2, lsl #2
-AlchemyUncredited_08020dc8:
+AlchemyUncredited_080c93ec:
 	nop
-.L_08020dcc:
-AlchemyUncreditedEnd_08020dc8:
+.L_080c93f0:
+AlchemyUncreditedEnd_080c93ec:
 	ands	r2, r4, r3
 	bxeq	lr
 	subs	ip, r2, #223
@@ -44,8 +44,8 @@ AlchemyUncreditedEnd_08020dc8:
 	ldm	r0!, {r3}
 	and	r2, r3, r3, lsr #16
 	ands	r2, r2, r2, lsr #8
-	beq	.L_08020dcc
-.L_08020e2c:
+	beq	.L_080c93f0
+.L_080c9450:
 	ands	r2, r4, r3
 	subs	ip, r2, #223
 	addhi	r1, r1, ip
@@ -65,28 +65,28 @@ AlchemyUncreditedEnd_08020dc8:
 	ldm	r0!, {r3}
 	and	r2, r3, r3, lsr #16
 	ands	r2, r2, r2, lsr #8
-	bne	.L_08020e2c
-	b	.L_08020dcc
+	bne	.L_080c9450
+	b	.L_080c93f0
 	.4byte	gDecodeFillByte
 	ldr	r2, [pc, #-12]
 	ldrb	r2, [r2]
-	b	.L_08020eb4
+	b	.L_080c94d8
 	mov	r2, #0
-	b	.L_08020eb4
+	b	.L_080c94d8
 	mov	r2, #1
-	b	.L_08020eb4
+	b	.L_080c94d8
 	mov	r2, #15
-	b	.L_08020eb4
-.L_08020ea8:
+	b	.L_080c94d8
+.L_080c94cc:
 	subs	r3, r3, #223
 	addhi	r1, r1, r3
 	strbls	r2, [r1], #1
-.L_08020eb4:
+.L_080c94d8:
 	ldrb	r3, [r0], #1
 	cmp	r3, #0
-	bne	.L_08020ea8
+	bne	.L_080c94cc
 	bx	lr
-.L_08020ec4:
+.L_080c94e8:
 	add	r4, r2, r2
 	ldrsh	r4, [pc, r4]
 	add	pc, pc, r4
@@ -97,7 +97,7 @@ AlchemyUncreditedEnd_08020dc8:
 	sub	r2, r2, #2
 	ldr	r4, [pc, #136]
 	cmp	r4, r2
-	beq	.L_08020f58
+	beq	.L_080c957c
 	str	r2, [pc, #124]
 	ldr	r3, [pc, #128]
 	add	r2, r3, r2, lsl #8
@@ -120,17 +120,17 @@ AlchemyUncreditedEnd_08020dc8:
 	ldm	r2!, {r4, r5, r6, r7, r8, r9, ip}
 	stmia	r3!, {r4, r5, r6, r7, r8, r9, ip}
 	pop	{r5, r6, r7, r8, r9}
-.L_08020f58:
+.L_080c957c:
 	add	r2, pc, #48
-	b	.L_08020f64
-.L_08020f60:
+	b	.L_080c9588
+.L_080c9584:
 	add	r1, r1, r4
-.L_08020f64:
+.L_080c9588:
 	ldrb	r3, [r0], #1
 	subs	r4, r3, #223
-	bhi	.L_08020f60
+	bhi	.L_080c9584
 	cmp	r3, #0
 	ldrbne	r3, [r2, r3]
 	strbne	r3, [r1], #1
-	bne	.L_08020f64
+	bne	.L_080c9588
 	bx	lr

@@ -141,7 +141,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *args) {
       screen.x >>= 1;
       draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   // The healing: sparkles scattered round each target, x and z within 64
   // pixels and 32 to 95 up, as BattleAnim_RunHealingMotes scatters them for
@@ -221,7 +221,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS();
 }

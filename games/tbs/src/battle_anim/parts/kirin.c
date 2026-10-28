@@ -289,7 +289,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *args) {
     } else {
       gBgScroll[1].y = 32;
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // The rise stage: restore the battle background and display, put the sprites

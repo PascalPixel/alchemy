@@ -240,7 +240,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *args, s32 element) {
       }
     }
     ANIM_RELEASE_BLITTERS();
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // Finish: the blitters were freed each frame.

@@ -1,13 +1,13 @@
 list	0 1 2 3 4 5 6 7 8 9 -
-anim	frame 0 6, hold
-anim	frame 0 6, loop
-anim	frame 1 6, hold
-anim	frame 2 6, hold
-anim	frame 3 6, hold
-anim	frame 4 6, hold
-anim	frame 5 6, hold
-anim	frame 5 6, hold
-anim	frame 6 6, hold
-anim	frame 7 6, hold
-anim	frame 8 6, hold
-anim	frame 9 6, hold
+anim	picture 0 6, hold
+anim	picture 0 6, loop
+anim	picture 1 6, hold
+anim	picture 2 6, hold
+anim	picture 3 6, hold
+anim	picture 4 6, hold
+anim	picture 5 6, hold
+anim	picture 5 6, hold
+anim	picture 6 6, hold
+anim	picture 7 6, hold
+anim	picture 8 6, hold
+anim	picture 9 6, hold

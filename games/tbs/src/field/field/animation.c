@@ -1,5 +1,5 @@
 /// @file
-/// Sprites, their anims and the frame caches they draw from.
+/// Sprites, their anims and the picture caches they draw from.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -14,32 +14,32 @@ enum {
   ANIM_OAM_WIDE = 1 << 14
 };
 
-/// A row of gSpriteFrameCache_Sources: the packed resource that holds an
-/// animation number's frames, ending at number 0.
-struct SpriteFrameCacheSource {
+/// A row of gSpritePictureCache_Sources: the packed resource that holds an
+/// animation number's pictures, ending at number 0.
+struct SpritePictureCacheSource {
   u16 resource;
   s16 number;
 };
 
-extern struct SpriteFrameCacheSource gSpriteFrameCache_Sources[];
+extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 
-/// Loads the frames of animation id number into frame cache slot's
-/// buffer: the resource listed for it in gSpriteFrameCache_Sources, decoded,
-/// its frame offsets turned into pointers, and for variant 1-5 its pixel
+/// Loads the pictures of animation id number into picture cache slot's
+/// buffer: the resource listed for it in gSpritePictureCache_Sources, decoded,
+/// its picture offsets turned into pointers, and for variant 1-5 its pixel
 /// colours (those up to 0xdf, the basic sprite palettes 0 to 13) remapped
 /// through that variant's conversion table; a variant above 5 uses variant 1's.
 /// The caller owns buffer, which must hold the decoded resource. Returns the
 /// image's size in pixels (width * height), or 0 when the slot or id is not
 /// known. Sets the slot's tag to (slot << 12) | number and its buffer; with
 /// a null buffer and number 0 it does only that, which is how the battle frees
-/// a frame cache. Called by the sprite viewer
-/// and, as SpriteFrameCache_LoadFar, by the battle for its enemy sprites
+/// a picture cache. Called by the sprite viewer
+/// and, as SpritePictureCache_LoadFar, by the battle for its enemy sprites
 /// (variant is the class's palette).
-s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
+s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ActorSystemWork *system;
-  struct SpriteFrameCache *record;
-  struct SpriteFrameCacheSource *entry;
+  struct SpritePictureCache *record;
+  struct SpritePictureCacheSource *entry;
   u32 *offset;
   u8 *pixels;
   u8 *end;
@@ -53,13 +53,13 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
   system = gActorSystemWork;
-  record = &system->frameCaches[slot];
+  record = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
-  record->frames = buffer;
+  record->pictures = buffer;
 
   // Resolve the animation number to its packed resource.
-  entry = gSpriteFrameCache_Sources;
+  entry = gSpritePictureCache_Sources;
   for (count = 0; count < 256; count++) {
     s16 *numbers = &entry->number;
 
@@ -73,7 +73,7 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   }
   size = Decompress_TaggedLz(Resource_GetTableEntry(resource), buffer);
 
-  // Turn the frame-offset directory into pointers before the pixel payload.
+  // Turn the picture-offset directory into pointers before the pixel payload.
   offset = buffer;
   for (count = 0; count < 256; count++) {
     if (*offset == 0)
@@ -103,22 +103,22 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
-/// Returns the buffer loaded into the sprite frame cache with this tag, or 0.
-/// An animation id that carries its slot in bits 12 and up finds its frames
+/// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
+/// An animation id that carries its slot in bits 12 and up finds its pictures
 /// here; called by the anim set-up functions below.
-s32 SpriteFrameCache_FindByTag(s32 tag) {
+s32 SpritePictureCache_FindByTag(s32 tag) {
   u32 i;
-  struct SpriteFrameCache *slot = gActorSystemWork->frameCaches;
+  struct SpritePictureCache *slot = gActorSystemWork->pictureCaches;
 
   for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
     if (slot->tag == tag)
-      return (s32)slot->frames;
+      return (s32)slot->pictures;
   }
   return 0;
 }
 
 /// Resets each anim of a sprite from its animation's metadata: its facing
-/// kind, frames, scripts and codec, with no frame shown and no script
+/// kind, pictures, scripts and codec, with no picture shown and no script
 /// running. The first anim also sets the sprite's size, scale and offsets.
 /// Returns 0. Called by Anim_SetIndexAndInitializeObjects.
 s32 Sprite_ResetAnims(struct Sprite *sprite) {
@@ -128,7 +128,7 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
     struct SpriteAnim *layer = sprite->entries[i];
     struct AnimationMetadata *metadata =
         Resource_GetMetadataRecordFar(layer->animationId);
-    void **frames;
+    void **pictures;
 
     if (metadata->width == 0)
       continue;
@@ -142,19 +142,19 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
       sprite->offsetX = metadata->adjustX;
     }
 
-    // An animation whose metadata has no frames takes them from the resource
-    // slot loaded under its id (SpriteFrameCache_Load).
-    frames = metadata->frames;
-    if (frames == 0)
-      frames = (void **)SpriteFrameCache_FindByTag(layer->animationId);
+    // An animation whose metadata has no pictures takes them from the resource
+    // slot loaded under its id (SpritePictureCache_Load).
+    pictures = metadata->pictures;
+    if (pictures == 0)
+      pictures = (void **)SpritePictureCache_FindByTag(layer->animationId);
 
     layer->kind = metadata->drawKind;
-    layer->frames = frames;
+    layer->pictures = pictures;
     layer->scripts = metadata->animation;
-    layer->mode = metadata->frameCodec;
-    // Frame 255 and no script: Sprite_ComposeFrame skips the anim
+    layer->mode = metadata->pictureCodec;
+    // Picture 255 and no script: Sprite_ComposePicture skips the anim
     // until an animation is selected on it.
-    layer->frame = 0xff;
+    layer->picture = 0xff;
     layer->script = 0;
     layer->scriptOffset = 0;
   }
@@ -166,7 +166,7 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
 /// Sprite_ResetAnims does for each anim. Called by the sprite
 /// viewer.
 void SpriteAnim_Reset(struct SpriteAnim *layer) {
-  void **frames;
+  void **pictures;
   s32 zero;
   struct AnimationMetadata *metadata;
 
@@ -174,15 +174,15 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
     metadata = Resource_GetMetadataRecordFar(layer->animationId);
     if (metadata->width != 0) {
       // Keep the anim inactive until an animation script is selected.
-      frames = metadata->frames;
-      if (frames == 0)
-        frames = (void **)SpriteFrameCache_FindByTag(layer->animationId);
+      pictures = metadata->pictures;
+      if (pictures == 0)
+        pictures = (void **)SpritePictureCache_FindByTag(layer->animationId);
       layer->kind = metadata->drawKind;
       layer->scripts = metadata->animation;
-      layer->frames = frames;
-      layer->mode = metadata->frameCodec;
+      layer->pictures = pictures;
+      layer->mode = metadata->pictureCodec;
       zero = 0;
-      layer->frame = 0xff;
+      layer->picture = 0xff;
       layer->script = (u8 *)zero;
       layer->scriptOffset = zero;
     }
@@ -291,7 +291,7 @@ void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index) {
 // name animations below 128, and the battle passes 0 or 1.
 /// Starts the indexed animation on a sprite anim when its metadata contains it.
 /// Bit 7 preserves the command cursor and timer; it remains part of the index.
-/// Reached through the animation script's play command (Sprite_ComposeFrame)
+/// Reached through the animation script's play command (Sprite_ComposePicture)
 /// and, as SpriteAnim_StartFar, from the battle's motion and objects.
 void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
   s32 keepPlace;
@@ -328,9 +328,9 @@ s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
   keepPlace = animation & 0x80;
   animation &= 0x7f;
 
-  // The loop is written with goto, which keeps an 8-byte frame: as for (i = 0;
-  // i < sprite->count; i++), loop.c strength-reduces entries[i] into a spilled
-  // cursor and 16 of 76 instructions differ in tbs-en.
+  // The loop is written with goto, which keeps an 8-byte stack frame: as for (i
+  // = 0; i < sprite->count; i++), loop.c strength-reduces entries[i] into a
+  // spilled cursor and 16 of 76 instructions differ in tbs-en.
   if (sprite->lastNo != animation) {
     i = 0;
     goto test_entry;
@@ -444,7 +444,7 @@ void ActorSystem_Configure(s32 mode) {
                  ANIM_OBJECT_COUNT * sizeof(struct SpriteAnim));
   VramCache_Load(ANIM_SHADOW_CACHE_ENTRY, ANIM_SHADOW_TILE_BYTES,
                  gActor_ShadowTiles);
-  RamCode_LoadSlot(HEAP_SLOT_FRAME_UPLOADER, Tile_CopyStrided,
+  RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Tile_CopyStrided,
                    Tile_CopyStridedCodeSize);
 }
 
@@ -457,7 +457,7 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
   struct SpriteAnim *found;
   struct SpriteAnim *layer;
   s32 i;
-  void **frames;
+  void **pictures;
   u8 **scripts;
 
   found = NULL;
@@ -476,22 +476,22 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
     if (found != NULL) {
       // Bind the metadata and start its first animation at command zero.
       // UB: the word view aliases a pointer field. It keeps the zero load
-      // ahead of frames as native; reading the pointer swaps those loads.
+      // ahead of pictures as native; reading the pointer swaps those loads.
 #ifdef UBFIX
-      frames = metadata->frames;
+      pictures = metadata->pictures;
 #else
-      frames = (void **)*(s32 *)&metadata->frames;
+      pictures = (void **)*(s32 *)&metadata->pictures;
 #endif
       layer = found;
       layer->animationId = id;
-      if (frames == 0)
-        frames = (void **)SpriteFrameCache_FindByTag(id);
+      if (pictures == 0)
+        pictures = (void **)SpritePictureCache_FindByTag(id);
 
       scripts = metadata->animation;
       layer->scripts = scripts;
-      layer->frames = frames;
-      layer->mode = metadata->frameCodec;
-      layer->frame = 0xff;
+      layer->pictures = pictures;
+      layer->mode = metadata->pictureCodec;
+      layer->picture = 0xff;
       layer->script = scripts[0];
       layer->scriptOffset = 0;
       layer->kind = metadata->drawKind;
@@ -552,7 +552,7 @@ struct Sprite *Sprite_Create(s32 id) {
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
   // Claim the cache entry with no VRAM yet (size 0): the first
-  // Sprite_ComposeFrame that draws the sprite gives it width * height
+  // Sprite_ComposePicture that draws the sprite gives it width * height
   // bytes. A 0 tile means no VRAM block is free, or that block 0 is the
   // first free one (VramCache_Load).
   tile = VramCache_Load(slot, 0, 0);
@@ -653,12 +653,13 @@ void Sprite_Destroy(struct Sprite *sprite) {
   }
 }
 
-/// Returns how long the first frameCount frames of animation number animation
-/// of id last: the sum of the arguments of its frame, wait and blank commands,
-/// up to frameCount of them or the first play, hold, jump or end command.
+/// Returns how long, in frames, the first timedCount timed commands of
+/// animation number animation of id last: the sum of the arguments of its
+/// picture, wait and blank commands,
+/// up to timedCount of them or the first play, hold, jump or end command.
 /// Called through SpriteAnim_SumCommandLengthsFar by the battle's
 /// staging.
-s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
+s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;
   u8 *script;
   u8 command;
@@ -682,8 +683,8 @@ s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
     if (command == ANIMCMD_WAIT || command == ANIMCMD_BLANK ||
         command < ANIMCMD_END) {
       durationSum += duration;
-      frameCount--;
-      if (frameCount == 0) {
+      timedCount--;
+      if (timedCount == 0) {
         break;
       }
     }

@@ -44,9 +44,9 @@ struct PlacedObject {
 
 // The decoder's block: its code, tables and work area (constants.ld). Only
 // the code and tables are copied.
-extern u8 Render_DecodeFrameCode[];
-extern u8 Render_DecodeFrameCopyEnd[];
-extern u8 Render_DecodeFrameBlockSize[];
+extern u8 Render_DecodePictureCode[];
+extern u8 Render_DecodePictureCopyEnd[];
+extern u8 Render_DecodePictureBlockSize[];
 extern const s32 gData_0802eb90[2];
 extern const s32 gData_0802eb98[12];
 s32 ArcTan2(s32 x, s32 y);
@@ -109,10 +109,10 @@ void ObjectSystem_UpdateCameraFixed(void) {
    * 93 instructions differ in tla-en. */
   do {
     Dma_Set(
-        Render_DecodeFrameCode,
-        Runtime_AllocateHeapBlock(80, (s32)Render_DecodeFrameBlockSize),
+        Render_DecodePictureCode,
+        Runtime_AllocateHeapBlock(80, (s32)Render_DecodePictureBlockSize),
         (DMA_ENABLE | DMA_32BIT) << 16 |
-            ((u32)(Render_DecodeFrameCopyEnd - Render_DecodeFrameCode) >> 2),
+            ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
         REG_DMA3);
   } while (0);
   eye = &camera->eye;

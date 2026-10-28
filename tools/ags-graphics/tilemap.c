@@ -35,18 +35,18 @@ copyTile(Image *run, const Image *drawing, size_t left, size_t top, size_t tile,
 
 /*
  * Find the visible bounds of the requested tile range, then recover each
- * frame into a complete horizontal run, including any hidden tiles.
+ * picture into a complete horizontal run, including any hidden tiles.
  */
 Buffer
 mappedPart(const char *input, const char *path, const char *form,
 		   const Strings *fields)
 {
 	if (fields->len != 5 && fields->len != 6)
-		fail("mapped part needs MAP FIRST COUNT [frames]");
+		fail("mapped part needs MAP FIRST COUNT [pictures]");
 	if (strcmp(form, "4bpp") && strcmp(form, "8bpp"))
 		fail("mapped part must be 4bpp or 8bpp");
-	bool frames = fields->len == 6;
-	if (frames && strcmp(fields->items[5], "frames"))
+	bool pictures = fields->len == 6;
+	if (pictures && strcmp(fields->items[5], "pictures"))
 		fail("invalid mapped part option");
 	size_t first = decimalOrHex(fields->items[3], 1023),
 		   count = decimalOrHex(fields->items[4], 1024);
@@ -108,13 +108,13 @@ mappedPart(const char *input, const char *path, const char *form,
 	size_t w = right + 1 - left, h = bottom + 1 - top, hidden = 0;
 	for (size_t i = 0; i < count; i++)
 		hidden += !shown[i];
-	size_t rows = h + (frames ? (hidden + w - 1) / w : 0);
+	size_t rows = h + (pictures ? (hidden + w - 1) / w : 0);
 	Image image = readImageFile(path);
 	if (image.width != w * 8 || image.height % (rows * 8) ||
-		(!frames && image.height != rows * 8))
+		(!pictures && image.height != rows * 8))
 		fail("tilemap drawing dimensions differ");
 	Buffer out = {0};
-	for (size_t frame = 0; frame < image.height / (rows * 8); frame++)
+	for (size_t picture = 0; picture < image.height / (rows * 8); picture++)
 	{
 		Image run = {count * 8, 8, {0}, {0}, {0}, 8};
 		reserve(&run.pixels, count * 64);
@@ -143,7 +143,7 @@ mappedPart(const char *input, const char *path, const char *form,
 					tile = hiddenSlot++;
 			}
 			size_t sourceX = cell % w * 8;
-			size_t sourceY = (frame * rows + cell / w) * 8;
+			size_t sourceY = (picture * rows + cell / w) * 8;
 			copyTile(&run, &image, sourceX, sourceY, tile, hf, vf,
 					 tile != SIZE_MAX && seen[tile]);
 			if (tile != SIZE_MAX)

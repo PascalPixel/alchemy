@@ -1,9 +1,9 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
-	.global gWindowSprite_CursorFrameTiles
-gWindowSprite_CursorFrameTiles:
-	.incbin "games/tbs/src/graphics/window/cursor_frame.8bpp8x16"
+	.global gWindowSprite_PageArrowTiles
+gWindowSprite_PageArrowTiles:
+	.incbin "games/tbs/src/graphics/window/page_arrow.8bpp8x16"
 @ The width of each main font glyph in pixels, from the space (0x20)
 	.global gFont_GlyphWidths
 gFont_GlyphWidths:

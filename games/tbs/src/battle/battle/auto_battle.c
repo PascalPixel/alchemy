@@ -540,7 +540,7 @@ void BattleMotion_PlayFall(s32 unitId) {
     Sprite_StartAnimFar(animation, POSE_DAMAGE);
     actorData = animation->entries[0];
     actorData->colorMode = SPRITE_COLOR_GREY;
-    actorData->frame = 0xFF;
+    actorData->picture = 0xFF;
     WaitFrames(4);
     SpriteDissolve_RunFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);

@@ -1275,7 +1275,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         part->image.size = 2;
-        part->entries[0]->frame = 0;
+        part->entries[0]->picture = 0;
       }
     }
   }

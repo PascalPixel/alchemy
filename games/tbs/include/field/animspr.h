@@ -2,7 +2,7 @@
 #define ALCHEMY_ANIMSPR_H
 
 /// @file
-/// Animated sprites: their layers, frames and colour modes, and the resource
+/// Animated sprites: their layers, pictures and colour modes, and the resource
 /// slots they draw from.
 
 #include "edition.h"
@@ -10,7 +10,7 @@
 #include "static_assert.h"
 #include "render_placement.h"
 
-/// SpriteAnim.colorMode: how Render_DecodeFrame colours a layer's pixels.
+/// SpriteAnim.colorMode: how Render_DecodePicture colours a layer's pixels.
 /// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
 /// gSpriteColorTables, then the four gSpriteColorRemapTables
 /// ones); the solid modes paint every drawn pixel one colour of the basic
@@ -37,37 +37,37 @@ enum SpriteColorMode {
 /// until it is given a mode again.
 #define SPRITE_COLOR_BLINK 0x100
 
-/// One of a sprite's four sprite anims: its animation id, frames, running
+/// One of a sprite's four sprite anims: its animation id, pictures, running
 /// script and timer.
 struct SpriteAnim {
-  s16 animationId; ///< the sprite id whose metadata and frames it uses
-  /// Time left on the current frame in sixteenths of a frame, read signed:
+  s16 animationId; ///< the sprite id whose metadata and pictures it uses
+  /// Time left on the current picture in sixteenths of a frame, read signed:
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
-  /// The facing table its frames follow (from the metadata, or
+  /// The facing table its pictures follow (from the metadata, or
   /// ANIMCMD_SET_KIND); zero marks a free sprite anim.
   u8 kind;
   u8 colorMode;    ///< SpriteColorMode its pixels are drawn with; 0 when taken
   u8 priority;     ///< drawing order 0 to 3 among the anims; above 3 not drawn
-  u8 mode;         ///< frame codec: 1 tagged LZ, 3 LZ, anything else raw
-  void **frames;   ///< frame pointers, from the metadata or a frame cache
+  u8 mode;         ///< picture codec: 1 tagged LZ, 3 LZ, anything else raw
+  void **pictures; ///< picture pointers, from the metadata or a picture cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
   u8 scriptOffset; ///< byte offset of the next command in script
   u8 step;         ///< taken off timer each frame; 16 is normal speed
-  u8 frame;        ///< frame shown, frameBase plus the facing offset; 255 none
-  u8 frameBase;    ///< frame the script chose, before facing; 255 blank
+  u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
+  u8 pictureBase; ///< picture the script chose, before facing; 255 blank
 };
 
-/// A sprite frame cache: the tag of the animation loaded into it (slot number
-/// and animation id) and the buffer holding its frames.
-struct SpriteFrameCache {
-  s32 tag;      ///< (slot << 12) | animation id
-  void *frames; ///< the decoded frames, their offsets made pointers
+/// A sprite picture cache: the tag of the animation loaded into it (slot number
+/// and animation id) and the buffer holding its pictures.
+struct SpritePictureCache {
+  s32 tag;        ///< (slot << 12) | animation id
+  void *pictures; ///< the decoded pictures, their offsets made pointers
 };
 
 /// The actor system's work: the flag that suspends sprite projection, the
-/// outline's edge and fill colours, and the sprite frame caches. Heap slot 6.
+/// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
 struct ActorSystemWork {
   u16 used;      ///< sprite pixel bytes composed since the camera reset it
   u8 unused[2];  ///< no code names it
@@ -76,13 +76,13 @@ struct ActorSystemWork {
   u8 fill;       ///< outline fill colour; 0 when the field sets up
   u8 spriteGroups[0x10]; ///< the sprite group tables, taken in turn by count
   s32 count;             ///< sprite group tables taken from spriteGroups
-  struct SpriteFrameCache
-      frameCaches[8]; ///< found by tag (SpriteFrameCache_FindByTag)
+  struct SpritePictureCache
+      pictureCaches[8]; ///< found by tag (SpritePictureCache_FindByTag)
 };
 
 STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
 STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, frameCaches) == 0x1c);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 0x1c);
 STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
 
 /// The hardware sprite attributes one part of an animated sprite (its image or

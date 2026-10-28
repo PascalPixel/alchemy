@@ -59,7 +59,7 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
                          animation; unfenced, the frames are stored two rows
                          later (one reordered row) */
     *(s32 *)&object->scripts = animation;
-    object->mode = metadata->frameCodec;
+    object->mode = metadata->pictureCodec;
     object->frame = 0xff;
     object->script = 0;
     object->pos = 0;

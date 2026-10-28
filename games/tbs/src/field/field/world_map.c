@@ -697,11 +697,11 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   }
 }
 
-/// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM. The
-/// frame is the still view WorldMap_StartStillView draws: 0x2580 words, 240 by
-/// 160 pixels at a byte each, shown as 256-colour tiles on screen block 6. Set
-/// as gVBlankCallback by WorldMap_StartStillView.
-void WorldMap_PresentStillFrame(void) {
+/// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM. The
+/// picture is the still view WorldMap_StartStillView draws: 0x2580 words, 240
+/// by 160 pixels at a byte each, shown as 256-colour tiles on screen block 6.
+/// Set as gVBlankCallback by WorldMap_StartStillView.
+void WorldMap_PresentStillPicture(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
   Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
@@ -717,7 +717,7 @@ void WorldMap_PresentStillFrame(void) {
 /// lighthouse transition. Sets animationActive, suspends the tileset
 /// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
 /// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
-/// gVBlankCallback to WorldMap_PresentStillFrame. WorldMap_LoadAreaGraphics
+/// gVBlankCallback to WorldMap_PresentStillPicture. WorldMap_LoadAreaGraphics
 /// undoes it.
 void WorldMap_StartStillView(void) {
   struct WorldMapFrameWork *frameWork =
@@ -734,7 +734,7 @@ void WorldMap_StartStillView(void) {
                           (u8 *)gMapGridCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;
-  gVBlankCallback = WorldMap_PresentStillFrame;
+  gVBlankCallback = WorldMap_PresentStillPicture;
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM. Restores

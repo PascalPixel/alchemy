@@ -124,9 +124,9 @@ extern char ResourceId_DesertBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_AerialViewBackdrop; ///< Drawn only by Judgment.
 
-/// Lucky Wheels' frame (LuckyWheels_Run): 16 colours for BG palette 10,
-/// then the picture.
-extern char ResourceId_LuckyWheelsFramePicture;
+/// The Lucky Wheels machine around the wheels (LuckyWheels_Run): 16 colours for
+/// BG palette 10, then the picture.
+extern char ResourceId_LuckyWheelsMachinePicture;
 /// The wheels' symbol sprites: 480 bytes of sprite colours, then the
 /// compressed tiles.
 extern char ResourceId_LuckyWheelsIcons;
@@ -288,9 +288,9 @@ extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
 /// Colosso's lettering pictures, which Colosso_LoadLettering decodes with
 /// their colours for sprite palette 15.
 extern char ResourceId_Lettering;
-/// The first of eight 256-byte cursor frames in consecutive rows; the option
-/// menu's slider marker adds the frame to it (SettingsMenu_AnimateCursors).
-extern char ResourceId_MenuCursorFrames;
+/// The first of eight 256-byte cursor pictures in consecutive rows; the option
+/// menu's slider marker adds the picture to it (SettingsMenu_AnimateCursors).
+extern char ResourceId_MenuCursorPictures;
 /// The 32x32 icons and portraits, each with 16 colours before its tiles
 /// (Icon_LoadWithPalette).
 extern char ResourceId_Icons;

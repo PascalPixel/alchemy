@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Monster_SwordsmanSprites
 Monster_SwordsmanSprites:
-	.incbin "games/tla/src/graphics/monster/swordsman.frames.lz"
+	.incbin "games/tla/src/graphics/monster/swordsman.pictures.lz"
 	.byte 0x40, 0x96, 0x00	@ PACKER: left in the buffer by Monster_SeaSerpentSprites+0x220d

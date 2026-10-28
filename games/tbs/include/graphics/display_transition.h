@@ -10,7 +10,7 @@
 
 /// The screen transition state as the centre-line transition and the dissolve
 /// read it: the dissolve's tile pixels and the transition's progress.
-struct ScreenTransitionFrame {
+struct ScreenTransitionDissolveState {
   u16 pages[2][322]; ///< ScreenTransitionState's; not named here
   /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
@@ -97,9 +97,9 @@ struct ScreenTransitionState {
   s8 nextMode;
 };
 
-STATIC_ASSERT(offsetof(struct ScreenTransitionFrame, value) == 0x52a);
-STATIC_ASSERT(offsetof(struct ScreenTransitionFrame, start) == 0x53a);
-STATIC_ASSERT(sizeof(struct ScreenTransitionFrame) == 0x540);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 0x52a);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 0x53a);
+STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 0x540);
 STATIC_ASSERT(offsetof(struct ScreenTransitionWin, dispcnt) == 0x14);
 STATIC_ASSERT(offsetof(struct ScreenTransitionWin, firstLine) == 0x100);
 STATIC_ASSERT(offsetof(struct ScreenTransitionWin, irqPhase) == 0x108);

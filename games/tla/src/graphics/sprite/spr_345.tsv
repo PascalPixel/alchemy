@@ -1,6 +1,6 @@
 list	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 23
-anim	frame 0 7, hold
-anim	frame 0 21, frame 5 21, loop
-anim	frame 10 21, frame 15 21, frame 20 21, frame 15 21, loop
-anim	frame 0 16, play 0
-anim	frame 0 16, play 0
+anim	picture 0 7, hold
+anim	picture 0 21, picture 5 21, loop
+anim	picture 10 21, picture 15 21, picture 20 21, picture 15 21, loop
+anim	picture 0 16, play 0
+anim	picture 0 16, play 0

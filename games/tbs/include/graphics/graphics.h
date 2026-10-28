@@ -168,7 +168,7 @@ extern u8 gScreenTransition_NoiseWidths[];
 /// The resource bank's far-call stubs, listed in the resource directory as
 /// both ResourceFarCalls and ResourceFarCallsAlternate.
 extern const u8 FarCall_ResourceTable[];
-/// The colour index Render_DecodeFrame paints every pixel of a layer drawn
+/// The colour index Render_DecodePicture paints every pixel of a layer drawn
 /// with SPRITE_COLOR_FILL; the sprite viewer sets it to 3.
 extern u8 gDecodeFillByte;
 /// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
@@ -203,9 +203,9 @@ extern const u8 gNameEntry_SemivoicedMarkRanges[];
 /// The name entry screen keyboard's compressed tilemap, the Spanish edition's
 /// with its own letters.
 extern const u8 gNameEntry_KeyboardTilemap[];
-/// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
+/// 224 zeroed bytes right after Render_DecodePicture's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
-extern const u8 gRender_DecodeFrameEnd[];
+extern const u8 gRender_DecodePictureEnd[];
 /// The move-to-front LZ decoder's ARM entry: it returns 4 unless the
 /// stream's first byte is 2, the move-to-front tag.
 extern const u8 Decompress_MoveToFrontLzCommands[];
@@ -274,8 +274,8 @@ extern s32 gWindowSprite_PulseScales[];
 extern const u8 gMenuTitleBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gIcon_DigitPointers[];
-/// The three icon frames; frame 2 is the one item and Psynergy icons share.
-extern u8 *gIcon_FramePointerTable[];
+/// The three icon pictures; picture 2 is the one item and Psynergy icons share.
+extern u8 *gIcon_PicturePointerTable[];
 /// The three marks ItemIcon_Compose draws over an item icon: 0 on a broken
 /// item, 1 on an equipped one and 2 on a cursed one.
 extern u8 *gIcon_MarkPointers[];
@@ -285,9 +285,9 @@ extern u8 *gIcon_OverlayPointerTable[];
 /// by Icon_CreateWithResourceVariant.
 extern u8 gIcon_ResourceTiles[];
 extern const s8 gWindowSprite_BounceOffsets[];
-/// The animated page arrow's frames, 8x16 sprites of 256 colours, 128 bytes
+/// The animated page arrow's pictures, 8x16 sprites of 256 colours, 128 bytes
 /// each.
-extern const u8 gWindowSprite_CursorFrameTiles[];
+extern const u8 gWindowSprite_PageArrowTiles[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 /// For each of the 16 text colours, the pen the font's light shade takes in
 /// the UI palette.

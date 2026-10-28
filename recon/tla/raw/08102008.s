@@ -499,7 +499,7 @@ Func_08102008:
 	bl MenuIcon_SetPosition
 	adds r1, r6, #0
 	ldr r0, [sp, #84]
-	bl MenuIcon_SetFrame
+	bl MenuIcon_SetPicture
 	ldr r0, [sp, #68]
 	movs r3, #2
 	ands r3, r0
@@ -2060,7 +2060,7 @@ Func_08102008:
 	movs r1, #128
 	ldr r0, [sp, #84]
 	lsls r1, r1, #7
-	bl MenuIcon_SetFrame
+	bl MenuIcon_SetPicture
 	adds r0, r5, #0
 	add sp, #112
 	pop {r3, r5, r6, r7}

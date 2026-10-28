@@ -2,7 +2,7 @@
  * pictures.c
  *
  * Encode the picture containers used by fonts, menus, and effects.
- * Each family owns its dimensions, frame order, offset table, and compression.
+ * Each family owns its dimensions, picture order, offset table, and compression.
  * The dispatcher reads one PNG; family encoders borrow that Image.
  */
 #include "resource.h"
@@ -112,15 +112,15 @@ monochromeTiles(const Image *image)
 }
 
 /*
- * Offsets stay in frame order although odd frames are packed before even
- * frames. An all-255 frame has an offset but contributes no payload.
+ * Offsets stay in picture order although odd pictures are packed before even
+ * pictures. An all-255 picture has an offset but contributes no payload.
  */
 static Buffer
-effectFrames(const Image *image)
+effectPictures(const Image *image)
 {
 	Buffer out = {0};
 	if (image->height % image->width)
-		fail("frames must be square and stacked");
+		fail("pictures must be square and stacked");
 	size_t count = image->height / image->width,
 		   size = image->width * image->width;
 	for (size_t i = 0; i <= count; i++)
@@ -129,13 +129,13 @@ effectFrames(const Image *image)
 		for (size_t i = parity ? 0 : 1; i < count; i += 2)
 		{
 			write32(out.data + 4 * i, (uint32_t) out.len);
-			Buffer frame = {image->pixels.data + i * size, size, size};
+			Buffer picture = {image->pixels.data + i * size, size, size};
 			bool blank = true;
 			for (size_t p = 0; p < size; p++)
-				blank &= frame.data[p] == 255;
+				blank &= picture.data[p] == 255;
 			if (!blank)
 			{
-				Buffer packed = compressZeros(&frame);
+				Buffer packed = compressZeros(&picture);
 				append(&out, packed.data, packed.len);
 				free(packed.data);
 			}
@@ -161,11 +161,11 @@ menuIcons(const Image *image)
 		if (out.len > 65535)
 			fail("icon bank is too large");
 		write16(out.data + 2 * i, (unsigned) out.len);
-		Image frame = *image;
-		frame.height = 32;
-		frame.pixels.data += i * 1024;
-		frame.pixels.len = 1024;
-		Buffer raw = tiles(&frame, 8, 8, 8),
+		Image icon = *image;
+		icon.height = 32;
+		icon.pixels.data += i * 1024;
+		icon.pixels.len = 1024;
+		Buffer raw = tiles(&icon, 8, 8, 8),
 			   packed = compressLz(&raw, &raw, "plz", packer);
 		alignBuffer(&packed, 32);
 		append(&out, packed.data, packed.len);
@@ -231,8 +231,8 @@ imageForm(const char *input, const char *form, const Buffer *data)
 		out = glyphBitmap(&image);
 	else if (!strcmp(form, "1bpp"))
 		out = monochromeTiles(&image);
-	else if (!strcmp(form, "frames"))
-		out = effectFrames(&image);
+	else if (!strcmp(form, "pictures"))
+		out = effectPictures(&image);
 	else if (!strcmp(form, "icons"))
 		out = menuIcons(&image);
 	else if (!strcmp(form, "strips"))

@@ -244,7 +244,7 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2, s32 clearBg1);
 void ScreenTransition_Update(void);
 void ScreenTransition_UpdateFromCentre(void);
 void ScreenTransition_UpdateScanline(void);
-void ScreenTransition_UpdateFrame(void);
+void ScreenTransition_UpdateDissolve(void);
 void ScreenTransition_FillTilemapAndSolidTile(s32 color);
 void ScreenTransition_InitializeState(s32 value);
 

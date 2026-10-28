@@ -75,8 +75,8 @@ struct ReelSave {
 extern u8 Data_0200024c[];
 extern const u8 gReelGame_SymbolPrizes[];
 extern const u8 gReelGame_TitleLetterTiles[];
-extern const u8 gReelGame_FrameSpriteX[];
-extern const u8 gReelGame_FrameSpriteY[];
+extern const u8 gReelGame_MachineSpriteX[];
+extern const u8 gReelGame_MachineSpriteY[];
 
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -491,8 +491,8 @@ void Func_081b243c(void) {
 
   for (k = 0; k != 14; k++) {
     work->obj[work->spriteCount].attr01 =
-        (gReelGame_FrameSpriteX[k] << 16) | objMode |
-        gReelGame_FrameSpriteY[k] | 0x80006000;
+        (gReelGame_MachineSpriteX[k] << 16) | objMode |
+        gReelGame_MachineSpriteY[k] | 0x80006000;
     if (k <= 3)
       work->obj[work->spriteCount].attr2 = 0x4e0;
     else

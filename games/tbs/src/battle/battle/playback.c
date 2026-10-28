@@ -358,20 +358,20 @@ void BattlePlayback_Run(void) {
           struct Sprite *record;
           s32 recordIndex;
           struct Sprite **slot;
-          s32 lastFrameMask;
+          s32 lastPictureMask;
 
-          for (recordIndex = 0, slot = records, lastFrameMask = 0xff;
+          for (recordIndex = 0, slot = records, lastPictureMask = 0xff;
                (record = GetMotionRecord(
                     BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
                recordIndex++) {
             struct SpriteAnim *child;
-            u8 previousFrame;
+            u8 previousPicture;
 
             *slot++ = record;
             child = record->entries[0];
-            previousFrame = child->frame;
+            previousPicture = child->picture;
             child->colorMode = colorMode;
-            child->frame = previousFrame | lastFrameMask;
+            child->picture = previousPicture | lastPictureMask;
           }
         }
         events->timer++;
@@ -383,7 +383,7 @@ void BattlePlayback_Run(void) {
         return;
       }
       if (events->timer > 4) {
-        // The dissolve: steps 0 to 127 of render_animated_tile_frame, four a
+        // The dissolve: steps 0 to 127 of SpriteDissolve_Step, four a
         // frame from timer 5 to 36; at 37 the tiles are cleared, the actor
         // released, and the queue goes on.
         struct BattleObject *slot;
@@ -413,13 +413,10 @@ void BattlePlayback_Run(void) {
           s32 recordIndex;
 
           for (recordIndex = 0; recordIndex < count; recordIndex++) {
-            render_animated_tile_frameFar((u8 *)records[recordIndex], step);
-            render_animated_tile_frameFar((u8 *)records[recordIndex],
-                                          base - 19);
-            render_animated_tile_frameFar((u8 *)records[recordIndex],
-                                          base - 18);
-            render_animated_tile_frameFar((u8 *)records[recordIndex],
-                                          base - 17);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], step);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 19);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 18);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 17);
           }
         }
         events->timer++;

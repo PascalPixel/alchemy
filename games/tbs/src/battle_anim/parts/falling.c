@@ -227,7 +227,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *args) {
     BattleAnim_CountDownBattlerTints();
     // Shakes while work->shakeFrames, which each landing sets to 2, lasts.
     BattleCamera_Shake(4, 4);
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
 
   // Finish: the tasks before the blocks they read, in the reverse of

@@ -1,4 +1,4 @@
-anim	frame 4 6, hold
-anim	frame 4 6, hold
+anim	picture 4 6, hold
+anim	picture 4 6, hold
 anim	play 3
-anim	frame 0 1, frame 1 1, frame 2 1, frame 3 1, frame 4 1, play 1
+anim	picture 0 1, picture 1 1, picture 2 1, picture 3 1, picture 4 1, play 1

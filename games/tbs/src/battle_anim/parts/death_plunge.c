@@ -170,7 +170,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *args) {
     if (frame == 53)
       work->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();
 }

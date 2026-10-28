@@ -15,7 +15,7 @@ void DisplayTransition_InitializeState(s32 value) {
   DisplayTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0x480);
+  Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateDissolve), 0x480);
   WaitFrames(0x78);
 }
 

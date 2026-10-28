@@ -99,7 +99,7 @@ Func_08040798:
 	mov r3, r9
 	ldrsb r0, [r6, r3]
 	str r4, [sp, #0]
-	bl RenderResource_LoadFrame
+	bl RenderResource_LoadCommandIcon
 	adds r7, #1
 	adds r6, #1
 	ldr r4, [sp, #0]
@@ -246,6 +246,6 @@ Func_08040798:
 .L_08040980:
 	.4byte gDebugMode
 .L_08040984:
-	.4byte gMenu_WorkspaceIconFrames
+	.4byte gMenu_WorkspaceIcons
 .L_08040988:
 	.4byte gInput

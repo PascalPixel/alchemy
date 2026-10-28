@@ -1,11 +1,11 @@
-anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 6 2, frame 7 2, blank 10, hold
-anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 6 2, frame 7 2, hold
-anim	frame 3 2, frame 4 2, frame 5 2, frame 6 2, frame 7 2, blank 1, hold
+anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 2, picture 6 2, picture 7 2, blank 10, hold
+anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 2, picture 6 2, picture 7 2, hold
+anim	picture 3 2, picture 4 2, picture 5 2, picture 6 2, picture 7 2, blank 1, hold
 anim	blank 1, hold
-anim	frame 7 2, frame 6 2, frame 5 2, frame 4 2, frame 3 2, frame 2 2, frame 1 2, frame 2 2, frame 1 2, frame 2 2, frame 3 2, frame 2 2, frame 3 2, frame 4 2, frame 3 2, frame 4 2, frame 5 2, frame 4 2, frame 5 2, frame 6 2, frame 5 2, frame 6 2, frame 7 2, frame 6 2, frame 7 2, blank 1, hold
-anim	frame 7 5, frame 5 3, frame 5 3, frame 5 3, frame 5 3, frame 5 3, frame 7 3, blank 1, hold
-anim	frame 7 2, frame 6 2, frame 5 2, frame 4 2, frame 3 2, frame 2 2, frame 1 2, frame 0 2, play 7
-anim	frame 0 3, frame 1 3, loop
-anim	frame 4 3, hold
-anim	frame 7 12, frame 6 12, frame 5 12, frame 4 12, frame 3 12, frame 2 12, frame 1 12, frame 0 32, frame 1 12, frame 2 12, frame 3 12, frame 4 12, frame 5 12, frame 6 12, frame 7 12, play 3
-anim	frame 7 6, frame 6 6, frame 5 6, frame 4 6, frame 3 6, frame 2 6, frame 1 6, frame 0 32, frame 1 6, frame 2 6, frame 3 6, frame 4 6, frame 5 6, frame 6 6, frame 7 6, play 3
+anim	picture 7 2, picture 6 2, picture 5 2, picture 4 2, picture 3 2, picture 2 2, picture 1 2, picture 2 2, picture 1 2, picture 2 2, picture 3 2, picture 2 2, picture 3 2, picture 4 2, picture 3 2, picture 4 2, picture 5 2, picture 4 2, picture 5 2, picture 6 2, picture 5 2, picture 6 2, picture 7 2, picture 6 2, picture 7 2, blank 1, hold
+anim	picture 7 5, picture 5 3, picture 5 3, picture 5 3, picture 5 3, picture 5 3, picture 7 3, blank 1, hold
+anim	picture 7 2, picture 6 2, picture 5 2, picture 4 2, picture 3 2, picture 2 2, picture 1 2, picture 0 2, play 7
+anim	picture 0 3, picture 1 3, loop
+anim	picture 4 3, hold
+anim	picture 7 12, picture 6 12, picture 5 12, picture 4 12, picture 3 12, picture 2 12, picture 1 12, picture 0 32, picture 1 12, picture 2 12, picture 3 12, picture 4 12, picture 5 12, picture 6 12, picture 7 12, play 3
+anim	picture 7 6, picture 6 6, picture 5 6, picture 4 6, picture 3 6, picture 2 6, picture 1 6, picture 0 32, picture 1 6, picture 2 6, picture 3 6, picture 4 6, picture 5 6, picture 6 6, picture 7 6, play 3

@@ -472,7 +472,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *args) {
         }
       }
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
   }
   ANIM_FINISH_CANVAS();
 }
@@ -567,7 +567,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *args) {
         i++;
       } while (i != work->args->targetCount);
     }
-    ANIM_PRESENT_FRAME(work);
+    ANIM_PRESENT_CANVAS(work);
     frame += 1;
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();

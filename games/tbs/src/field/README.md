@@ -146,7 +146,7 @@ as it is drawn: its colours swapped round, turned grey or tinted, or filled
 with one flat colour (`enum SpriteColorMode`).
 
 A sprite is `struct Sprite` and each of its animations a
-`struct SpriteAnim`; `Sprite_ComposeFrame` draws them into one picture, the
+`struct SpriteAnim`; `Sprite_ComposePicture` draws them into one picture, the
 commands of an animation are `enum AnimationCommand`, and `facing.c` holds
 the facing tables.
 
@@ -414,7 +414,7 @@ Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
 have none: the leader on the world map has a second anim, `SPRITE_BLANK_32`,
 which draws nothing. The recording of a sprite's anims is therefore of a
 battle, whose units are the same `struct Sprite` composed by the same
-`Sprite_ComposeFrame`.
+`Sprite_ComposePicture`.
 
 Three halfwords of the map work between the next message and the camera
 actor, `unusedAfterMessage` and the pair `unusedBeforeCamera`, are reset by

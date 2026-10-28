@@ -26,43 +26,43 @@ enum ActorSystemMode {
   ACTOR_SYSTEM_BATTLE = 4
 };
 
-/// SpriteAnim.kind: the facing table a sprite anim's frames follow
-/// (Sprite_ComposeFrame, facing.c). Each cuts the facing angle into
-/// sectors and gives each sector a frame and whether it is mirrored.
+/// SpriteAnim.kind: the facing table a sprite anim's pictures follow
+/// (Sprite_ComposePicture, facing.c). Each cuts the facing angle into
+/// sectors and gives each sector a picture and whether it is mirrored.
 enum AnimationFacingKind {
-  /// The animation script's own frame whatever the facing; zero also marks a
+  /// The animation script's own picture whatever the facing; zero also marks a
   /// free
   /// sprite anim.
   ANIM_FACING_NONE = 0,
-  ANIM_FACING_ONE_FRAME = 1,    ///< 8 sectors: one frame, mirrored to the left
-  ANIM_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
-  ANIM_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
-  ANIM_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
-  ANIM_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
-  ANIM_FACING_SIX_FRAMES = 6,   ///< 64 sectors
-  /// 8 sectors centred on the compass directions, a frame for each.
-  ANIM_FACING_EIGHT_FRAMES = 8,
+  ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
+  ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
+  ANIM_FACING_THREE_PICTURES = 3, ///< 16 sectors: front, side and back
+  ANIM_FACING_FOUR_PICTURES = 4,  ///< 64 sectors
+  ANIM_FACING_FIVE_PICTURES = 5,  ///< 16 sectors
+  ANIM_FACING_SIX_PICTURES = 6,   ///< 64 sectors
+  /// 8 sectors centred on the compass directions, a picture for each.
+  ANIM_FACING_EIGHT_PICTURES = 8,
   /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
   /// second the next sprite id (the sprite viewer).
   ANIM_FACING_TWO_PART = 20,
-  /// As ANIM_FACING_FRONT_BACK, with the front frame mirrored the other
+  /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other
   /// way.
   ANIM_FACING_FRONT_BACK_SWAPPED = 22,
   // XXX: likely an older eight-direction kind, because the viewer still lists
   // it; a sprite of this kind would settle it.
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
-  /// Sprite_ComposeFrame draws it as ANIM_FACING_NONE.
+  /// Sprite_ComposePicture draws it as ANIM_FACING_NONE.
   ANIM_FACING_EIGHT_NO_TABLE = 44,
-  /// As ANIM_FACING_EIGHT_FRAMES, with three of the frames mirrored.
-  ANIM_FACING_EIGHT_FRAMES_MIRRORED = 88
+  /// As ANIM_FACING_EIGHT_PICTURES, with three of the pictures mirrored.
+  ANIM_FACING_EIGHT_PICTURES_MIRRORED = 88
 };
 
-/// SpriteAnim.mode, from the metadata's frameCodec: how a sprite anim's frames
-/// are stored. Any other value is raw, for the frame decoder.
-enum SpriteFrameCodec {
-  SPRITE_FRAME_RAW = 0,
-  SPRITE_FRAME_TAGGED_LZ = 1, ///< Decompress_TaggedLz's format
-  SPRITE_FRAME_LZ = 3         ///< LZ-compressed
+/// SpriteAnim.mode, from the metadata's pictureCodec: how a sprite anim's
+/// pictures are stored. Any other value is raw, for the picture decoder.
+enum SpritePictureCodec {
+  SPRITE_PICTURE_RAW = 0,
+  SPRITE_PICTURE_TAGGED_LZ = 1, ///< Decompress_TaggedLz's format
+  SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
 
 /// Sprite.flags.
@@ -173,7 +173,7 @@ enum Collision {
 };
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
-s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir);
+s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir);
 void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
                                 s32 screenY, s32 groundHeight, s32 *scale);
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
@@ -183,8 +183,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth);
 void Sprite_SetAnimColorModes(void *rawSprite, u32 value);
-s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-s32 SpriteFrameCache_FindByTag(s32 tag);
+s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpritePictureCache_FindByTag(s32 tag);
 s32 Sprite_ResetAnims(struct Sprite *sprite);
 void SpriteAnim_Reset(struct SpriteAnim *layer);
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id);
@@ -405,7 +405,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn);
 void WorldMap_UpdateView(void);
 void WorldMap_UpdateCurrentTileBlock(void);
 void WorldMap_PreloadCurrentTileBlock(void);
-void WorldMap_PresentStillFrame(void);
+void WorldMap_PresentStillPicture(void);
 void WorldMap_StartStillView(void);
 void WorldMap_ShowBg1FromBuffer(void);
 void WorldMap_LoadAreaGraphics(void);

@@ -1,7 +1,7 @@
-anim	frame 0 9, hold
-anim	frame 0 90, frame 3 9, frame 0 90, frame 3 9, frame 0 120, frame 12 150, frame 0 120, frame 3 9, loop
-anim	frame 30 17, frame 15 20, frame 18 17, frame 21 17, frame 24 20, frame 27 18, loop
-anim	frame 6 20, play 1
-anim	frame 9 10, frame 0 9, frame 12 10, frame 0 9, frame 9 10, frame 0 9, frame 12 10, frame 0 9, play 1
-anim	frame 36 3, frame 33 3, frame 36 3, frame 33 3, frame 36 3, frame 33 3, frame 36 3, frame 33 3, frame 36 3, frame 33 3, frame 36 3, frame 33 3, hold
-anim	frame 39 3, frame 0 3, frame 39 3, frame 0 3, frame 39 3, frame 0 3, frame 39 3, frame 0 3, frame 39 3, frame 0 3, frame 39 3, frame 0 3, hold
+anim	picture 0 9, hold
+anim	picture 0 90, picture 3 9, picture 0 90, picture 3 9, picture 0 120, picture 12 150, picture 0 120, picture 3 9, loop
+anim	picture 30 17, picture 15 20, picture 18 17, picture 21 17, picture 24 20, picture 27 18, loop
+anim	picture 6 20, play 1
+anim	picture 9 10, picture 0 9, picture 12 10, picture 0 9, picture 9 10, picture 0 9, picture 12 10, picture 0 9, play 1
+anim	picture 36 3, picture 33 3, picture 36 3, picture 33 3, picture 36 3, picture 33 3, picture 36 3, picture 33 3, picture 36 3, picture 33 3, picture 36 3, picture 33 3, hold
+anim	picture 39 3, picture 0 3, picture 39 3, picture 0 3, picture 39 3, picture 0 3, picture 39 3, picture 0 3, picture 39 3, picture 0 3, picture 39 3, picture 0 3, hold

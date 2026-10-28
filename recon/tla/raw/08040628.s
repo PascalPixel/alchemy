@@ -156,7 +156,7 @@ Func_08040628:
 	movs r3, #12
 	str r7, [sp, #0]
 	str r4, [sp, #4]
-	bl RenderResource_CreateFrame
+	bl RenderResource_CreateCommandIcon
 	ldr r4, [sp, #4]
 	subs r5, #1
 	adds r6, #1
@@ -183,4 +183,4 @@ Func_08040628:
 .L_08040790:
 	.4byte 0x00001158
 .L_08040794:
-	.4byte gMenu_WorkspaceIconFrames
+	.4byte gMenu_WorkspaceIcons

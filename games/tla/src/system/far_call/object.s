@@ -5,18 +5,18 @@
 	.thumb_func
 Object_SetPositionAndResetMotionFar:
 	overlay_veneer Object_SetPositionAndResetMotion
-	.global Map_RenderAnimatedTileFrameFar
+	.global Map_RenderAnimatedTilePictureFar
 	.thumb_func
-Map_RenderAnimatedTileFrameFar:
-	overlay_veneer Map_RenderAnimatedTileFrame
-	.global Map_RenderAnimatedTileFramesForObjectFar
+Map_RenderAnimatedTilePictureFar:
+	overlay_veneer Map_RenderAnimatedTilePicture
+	.global Map_RenderAnimatedTilePicturesForObjectFar
 	.thumb_func
-Map_RenderAnimatedTileFramesForObjectFar:
-	overlay_veneer Map_RenderAnimatedTileFramesForObject
-	.global Map_RenderAllAnimatedTileFramesFar
+Map_RenderAnimatedTilePicturesForObjectFar:
+	overlay_veneer Map_RenderAnimatedTilePicturesForObject
+	.global Map_RenderAllAnimatedTilePicturesFar
 	.thumb_func
-Map_RenderAllAnimatedTileFramesFar:
-	overlay_veneer Map_RenderAllAnimatedTileFrames
+Map_RenderAllAnimatedTilePicturesFar:
+	overlay_veneer Map_RenderAllAnimatedTilePictures
 	.global Func_08020108
 	.thumb_func
 Func_08020108:

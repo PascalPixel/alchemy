@@ -877,10 +877,9 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
   }
 }
 
-/// Alternates two facial frames twice, ending on the first frame.
-static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 actorId,
-                                                            s32 firstFrame,
-                                                            s32 secondFrame) {
+/// Alternates two faces twice, ending on the first.
+static __inline__ void
+KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFrame, s32 secondFrame) {
   Import_ActorSetAnimation(actorId, firstFrame);
   WaitFrames(6);
   Import_ActorSetAnimation(actorId, secondFrame);
@@ -916,8 +915,8 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
       Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, TRET_FACE_OPEN,
-                                           TRET_FACE_CLOSED);
+      KolimaForestTree_AlternateFaces(ACTOR_TRET, TRET_FACE_OPEN,
+                                      TRET_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
       Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
@@ -940,8 +939,8 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
       Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
       break;
     case FACE_GESTURE_WRATHFUL_BLINK:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN,
-                                           TRET_FACE_WRATHFUL_CLOSED);
+      KolimaForestTree_AlternateFaces(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN,
+                                      TRET_FACE_WRATHFUL_CLOSED);
       break;
     case FACE_GESTURE_WRATHFUL_OPEN_EYES:
     case FACE_GESTURE_WRATHFUL_STARE:
@@ -969,8 +968,8 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
       Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
-      KolimaForestTree_AlternateFaceFrames(ACTOR_LAUREL, LAUREL_FACE_OPEN,
-                                           LAUREL_FACE_CLOSED);
+      KolimaForestTree_AlternateFaces(ACTOR_LAUREL, LAUREL_FACE_OPEN,
+                                      LAUREL_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
       Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);

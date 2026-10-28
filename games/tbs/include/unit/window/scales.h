@@ -10,7 +10,7 @@ extern const u8 gWindowColor_WaveTable[121];
 
 extern const u8 gSettingsMenu_HuePresets[6];
 extern const u8 gSettingsMenu_BrightnessPresets[6];
-extern const s8 gPauseMenu_IconFrames[8];
+extern const s8 gPauseMenu_Icons[8];
 
 extern const s16 gPortrait_CharacterMap[20];
 extern const s16 gPortrait_SpriteMap[100];

@@ -93,7 +93,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
       animation = metadata->animation;
       object->scripts = animation;
       object->frames = frames;
-      object->mode = metadata->frameCodec;
+      object->mode = metadata->pictureCodec;
       object->frame = 0xff;
       object->script = animation[0];
       object->pos = 0;

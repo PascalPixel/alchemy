@@ -185,15 +185,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (ANIM_SET_TRANSFER(work, mode, value),                                       \
    Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
-/// Ends a frame of a canvas animation: marks the canvas ready for the transfer
-/// task, then waits for the next frame. Nearly every animation loop ends
-/// so.
-#define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
+/// Presents the canvas: marks it ready for the transfer task, then waits for
+/// the next frame. Nearly every animation loop ends so.
+#define ANIM_PRESENT_CANVAS(work) ((work)->transferPending = 1, WaitFrames(1))
 
-/// The usual end of an animation frame: counts down the targets' flash timers
+/// The usual end of an animation's frame: counts down the targets' flash timers
 /// (BattleAnim_CountDownBattlerTints), then presents the canvas.
 #define ANIM_END_FRAME(work)                                                   \
-  (BattleAnim_CountDownBattlerTints(), ANIM_PRESENT_FRAME(work))
+  (BattleAnim_CountDownBattlerTints(), ANIM_PRESENT_CANVAS(work))
 
 /// Frees the two blitters, the alternate first.
 #define ANIM_RELEASE_BLITTERS()                                                \

@@ -7,8 +7,8 @@
 	.4byte	0x00000000
 	.4byte	Data_080c89cc - 0xe0
 	.4byte	Data_080c89cc - 0x100
-	.global BattleEffect_DecodeFrameCopyEnd
-BattleEffect_DecodeFrameCopyEnd:
+	.global BattleEffect_DecodePictureCopyEnd
+BattleEffect_DecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
@@ -17,5 +17,5 @@ BattleEffect_DecodeFrameCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0
-	.global BattleEffect_DecodeFrameEnd
-BattleEffect_DecodeFrameEnd:
+	.global BattleEffect_DecodePictureEnd
+BattleEffect_DecodePictureEnd:

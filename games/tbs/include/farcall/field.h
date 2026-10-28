@@ -75,7 +75,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
 /// Clears one step of a sprite's pixel-by-pixel dissolve in its OBJ VRAM tiles
 /// (SpriteDissolve_Step); `pos` is the step, 0 to 127.
-void render_animated_tile_frameFar(u8 *obj, u32 pos);
+void SpriteDissolve_StepFar(u8 *obj, u32 pos);
 /// Dissolves one sprite away over 32 frames; the auto battle uses it.
 void SpriteDissolve_RunFar(u8 *obj);
 /// Dissolves `cnt` sprites together over 32 frames; the battle's staging uses
@@ -205,9 +205,9 @@ s32 SpriteAnim_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
 /// block's terrain kind in `terrain_kind`, for the world map's encounters.
 s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
                                      s32 *terrain_kind);
-/// Decodes the frames of animation `number` into sprite frame cache slot
+/// Decodes the pictures of animation `number` into sprite picture cache slot
 /// `slot`'s `buffer`, remapping its colours for `variant` 1 to 5.
-s32 SpriteFrameCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
 void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);

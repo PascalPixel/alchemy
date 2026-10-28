@@ -476,8 +476,9 @@ s32 TolbiSpring_Initialize(void) {
   return 0;
 }
 
-/// Displays one frame of the spring's opening or closing prize animation.
-static inline void TolbiSpring_ShowPrizeFrame(s32 sourceColumn, s32 sourceRow) {
+/// Displays one picture of the spring's opening or closing prize animation.
+static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
+                                                s32 sourceRow) {
   MapGrid_CopyCellsTo(sourceColumn, sourceRow, 70, 0, 3, 8);
   Sound_PlaySong(SE_CAST);
   Event_WaitFrames(8);
@@ -494,20 +495,20 @@ static void TolbiSpring_RevealPrize(s32 item) {
 
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
   Event_WaitFrames(3);
-  TolbiSpring_ShowPrizeFrame(85, 20);
-  TolbiSpring_ShowPrizeFrame(88, 20);
-  TolbiSpring_ShowPrizeFrame(91, 20);
-  TolbiSpring_ShowPrizeFrame(94, 20);
-  TolbiSpring_ShowPrizeFrame(97, 20);
-  TolbiSpring_ShowPrizeFrame(100, 20);
+  TolbiSpring_ShowPrizePicture(85, 20);
+  TolbiSpring_ShowPrizePicture(88, 20);
+  TolbiSpring_ShowPrizePicture(91, 20);
+  TolbiSpring_ShowPrizePicture(94, 20);
+  TolbiSpring_ShowPrizePicture(97, 20);
+  TolbiSpring_ShowPrizePicture(100, 20);
 
-  TolbiSpring_ShowPrizeFrame(79, 29);
-  TolbiSpring_ShowPrizeFrame(82, 29);
-  TolbiSpring_ShowPrizeFrame(85, 29);
-  TolbiSpring_ShowPrizeFrame(88, 29);
-  TolbiSpring_ShowPrizeFrame(91, 29);
-  TolbiSpring_ShowPrizeFrame(94, 29);
-  TolbiSpring_ShowPrizeFrame(97, 29);
+  TolbiSpring_ShowPrizePicture(79, 29);
+  TolbiSpring_ShowPrizePicture(82, 29);
+  TolbiSpring_ShowPrizePicture(85, 29);
+  TolbiSpring_ShowPrizePicture(88, 29);
+  TolbiSpring_ShowPrizePicture(91, 29);
+  TolbiSpring_ShowPrizePicture(94, 29);
+  TolbiSpring_ShowPrizePicture(97, 29);
   MapGrid_CopyCellsTo(100, 29, 70, 0, 3, 8);
   Sound_PlaySong(SE_CAST);
 
@@ -517,20 +518,20 @@ static void TolbiSpring_RevealPrize(s32 item) {
   PartyInventory_GiveItem(item, 0);
   Event_WaitFrames(20);
 
-  TolbiSpring_ShowPrizeFrame(97, 29);
-  TolbiSpring_ShowPrizeFrame(94, 29);
-  TolbiSpring_ShowPrizeFrame(91, 29);
-  TolbiSpring_ShowPrizeFrame(88, 29);
-  TolbiSpring_ShowPrizeFrame(85, 29);
-  TolbiSpring_ShowPrizeFrame(82, 29);
-  TolbiSpring_ShowPrizeFrame(100, 20);
-  TolbiSpring_ShowPrizeFrame(97, 20);
-  TolbiSpring_ShowPrizeFrame(94, 20);
-  TolbiSpring_ShowPrizeFrame(91, 20);
-  TolbiSpring_ShowPrizeFrame(88, 20);
-  TolbiSpring_ShowPrizeFrame(85, 20);
-  TolbiSpring_ShowPrizeFrame(82, 20);
-  TolbiSpring_ShowPrizeFrame(79, 20);
+  TolbiSpring_ShowPrizePicture(97, 29);
+  TolbiSpring_ShowPrizePicture(94, 29);
+  TolbiSpring_ShowPrizePicture(91, 29);
+  TolbiSpring_ShowPrizePicture(88, 29);
+  TolbiSpring_ShowPrizePicture(85, 29);
+  TolbiSpring_ShowPrizePicture(82, 29);
+  TolbiSpring_ShowPrizePicture(100, 20);
+  TolbiSpring_ShowPrizePicture(97, 20);
+  TolbiSpring_ShowPrizePicture(94, 20);
+  TolbiSpring_ShowPrizePicture(91, 20);
+  TolbiSpring_ShowPrizePicture(88, 20);
+  TolbiSpring_ShowPrizePicture(85, 20);
+  TolbiSpring_ShowPrizePicture(82, 20);
+  TolbiSpring_ShowPrizePicture(79, 20);
   Event_End();
 }
 
@@ -958,11 +959,11 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
       if (entry->colorMode != colorVariant) {
         entry->colorMode = colorVariant;
         {
-          u32 frame = entry->frame;
+          u32 frame = entry->picture;
 
           // Invalidate the cached frame so the new colors are applied.
           frame |= invalidFrame;
-          entry->frame = frame;
+          entry->picture = frame;
         }
       }
     } while (--entriesLeft != 0);

@@ -15,7 +15,7 @@ struct AnimationMetadata {
   s8 adjustY;
   u8 boxX;
   u8 boxY;
-  u8 frameCodec;
+  u8 pictureCodec;
   void **frames;
   u8 **animation;
 };
@@ -25,7 +25,7 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 0x02);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 0x05);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 0x08);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 0x09);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, frameCodec) == 0x0a);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, frames) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
 

@@ -27,10 +27,10 @@ struct AnimationMetadata {
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
   u8 boxY;
-  u8 frameCodec; ///< SpriteAnim.mode: 1 tagged LZ, 3 LZ, anything else raw
-  /// The frame pointers; null takes them from the sprite frame cache slot
-  /// holding the animation (SpriteFrameCache_FindByTag).
-  void **frames;
+  u8 pictureCodec; ///< SpriteAnim.mode: 1 tagged LZ, 3 LZ, anything else raw
+  /// The picture pointers; null takes them from the sprite picture cache slot
+  /// holding the animation (SpritePictureCache_FindByTag).
+  void **pictures;
   u8 **animation; ///< the command scripts, one per animation number
 };
 
@@ -39,8 +39,8 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 0x02);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 0x05);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 0x08);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 0x09);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, frameCodec) == 0x0a);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, frames) == 0x0c);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
 
 struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number);

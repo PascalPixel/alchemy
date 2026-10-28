@@ -1,5 +1,5 @@
-anim	frame 0 7, hold
-anim	frame 0 91, hold
-anim	frame 1 91, hold
-anim	frame 2 91, hold
-anim	frame 2 7, frame 1 7, hold
+anim	picture 0 7, hold
+anim	picture 0 91, hold
+anim	picture 1 91, hold
+anim	picture 2 91, hold
+anim	picture 2 7, picture 1 7, hold

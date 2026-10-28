@@ -1,9 +1,9 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.global LuckyWheels_FramePicture
-LuckyWheels_FramePicture:
-	.incbin "games/tbs/src/graphics/lucky_wheels/frame.gbapal"
-	.incbin "games/tbs/src/graphics/lucky_wheels/frame.4bpp.lz"
+	.global LuckyWheels_MachinePicture
+LuckyWheels_MachinePicture:
+	.incbin "games/tbs/src/graphics/lucky_wheels/machine.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_wheels/machine.4bpp.lz"
 	.byte 0x0f, 0x8b, 0xa4	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x781
 	.global LuckyWheels_Icons
 LuckyWheels_Icons:

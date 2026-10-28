@@ -124,8 +124,8 @@ struct BattleAnimWork {
   /// BattleAnim_TintBattler, counted down by BattleAnim_CountDownBattlerTints.
   u8 actorTimers[8];
   s32 vblanksSinceTransfer; ///< 1 on a canvas copy's VBlank, then counts up
-  /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas
-  /// transfer task copies the canvas and clears it.
+  /// 1 once the animation has presented its canvas (ANIM_PRESENT_CANVAS); the
+  /// canvas transfer task copies the canvas and clears it.
   s32 transferPending;
   struct BattleAnimArgs *args; ///< the command being run
 };

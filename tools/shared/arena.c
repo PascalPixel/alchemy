@@ -1,14 +1,14 @@
 /*
  * arena.c
  *
- * Compress sprite frames against their previously encoded arena.
- * Candidate sources are bytes of earlier encoded frames, not decoded pixels.
+ * Compress sprite pictures against their previously encoded arena.
+ * Candidate sources are bytes of earlier encoded pictures, not decoded pixels.
  * Plan copies before emitting split literal/code streams, and retain the raw
  * form when compression fails the format's size and savings limits.
  */
 #include "compress.h"
 
-/* Find candidates first, then choose copy lengths from the end of the frame. */
+/* Find candidates first, then choose copy lengths from the end of the picture. */
 static void
 planArenaCopies(const Buffer *data, const Buffer *arena, size_t low,
 				size_t *lengths, size_t *sources, size_t *steps)

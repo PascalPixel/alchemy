@@ -475,9 +475,9 @@ Func_0802386c:
 .L_08023bf4:
 	.4byte 0x000002c8
 .L_08023bf8:
-	.4byte Render_DecodeFrameCopyEnd
+	.4byte Render_DecodePictureCopyEnd
 .L_08023bfc:
-	.4byte Render_DecodeFrameCode
+	.4byte Render_DecodePictureCode
 .L_08023c00:
 	.4byte 0x001fffff
 .L_08023c04:

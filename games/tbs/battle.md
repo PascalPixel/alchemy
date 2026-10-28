@@ -24,7 +24,7 @@ Every way into a battle in play leaves the same request in the field's
 [work](glossary.md#work): the number of a
 [formation](glossary.md#formation), the enemies to fight. A random encounter
 sets it after the party has walked far enough
-([Field code](src/field/README.md#random-battles)), and a chest that
+([Random encounters](field.md#random-encounters)), and a chest that
 turns out to be a mimic sets it from its
 [examine trigger](glossary.md#examine-trigger). An
 [event](glossary.md#event) sets it with

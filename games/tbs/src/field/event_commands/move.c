@@ -301,8 +301,6 @@ next_state:
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
-///
-/// Abilities: Move (FIELD_PSYNERGY_MOVE).
 void FieldPsynergy_Move(void) {
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;

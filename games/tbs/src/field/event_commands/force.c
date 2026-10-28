@@ -5,8 +5,6 @@
 #include "../event_commands_internal.h"
 
 /// Runs Force cast on a target, through FieldPsynergy_Force.
-///
-/// Abilities: Force (FIELD_PSYNERGY_FORCE).
 void FieldPsynergy_ForceOnTarget(s32 unused) { FieldPsynergy_Force(); }
 
 /// Writes the position 16 pixels above the actor.

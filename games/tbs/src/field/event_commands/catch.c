@@ -6,8 +6,6 @@
 
 /// Runs Catch cast on a target, through FieldPsynergy_Catch.
 ///
-/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
-///
 /// Called by FieldPsynergy_Dispatch; the target is ignored.
 void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
